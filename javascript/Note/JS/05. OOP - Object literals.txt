@@ -1,0 +1,31 @@
+05. OOP - Object literals
+
+VI. Object literals
+
+Object literals
+	> Object literals in Javascript are variables whose values are composed of SET OF KEY VALUE PAIRS
+	> value passed into Object literals are similar to JSON strings in format
+	> to access one of the key value pairs, we can use the dot operator (.)
+	> to add new property in Object, we can use dot operator, and assign a value to new property
+
+EX:
+// Creating Object literals
+const person = {
+  firstName: "John",
+  lastName: "Doe",
+  age: 30,
+  hobbies: ["music", "movies", "sports"],
+  address: {
+    street: "50 main st",
+    city: "Boston",
+    state: "MA",
+  },
+};
+
+// Accessing one of properties of person Object
+console.log(person.hobbies[1]);
+
+// Adding new properties into an Object literal
+person.email = "jd@mail.com";
+
+console.log(person.email);

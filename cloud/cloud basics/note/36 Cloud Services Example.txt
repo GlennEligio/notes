@@ -1,0 +1,32 @@
+36 Cloud Services Example
+
+
+Top service types
+1. Compute
+2. Storage
+3. Network
+
+
+Compute
+AWS - Elastic Cloud Compute (EC2)
+Azure - Azure Virtual Machine
+GCP - Google Compute Engine
+
+
+Storage
+ > different from databases
+ > typically used for BLOBs like JSON, image, etc 
+AWS - Simple Storage Service (S3)
+Azure - Azure Blob storage
+GCP - Google Cloud Storage
+
+
+Network
+AWS - Virtual Private Cloud (VPC)
+Azure - Virtual Private Network (VPN)
+GCP - Virtual Private Cloud (VPC)
+
+
+
+NOTE:
+1. Cloud Providers provide free tiers and in this free tiers, there are services that are eligible for this.

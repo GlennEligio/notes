@@ -1,0 +1,816 @@
+08 Decorators
+
+Content:
+01 Module Introduction
+02 A First Class Decorator
+03 Working with Decorator Factories
+04 Building More Useful Decorators
+05 Adding Multiple Decorators
+06 Diving into Property Decorators
+07 Accessor & Parameter Decorators
+08 When Do Decorators Execute
+09 Returning (and changing) a Class in a Class Decorator
+10 Other Decorator Return Types
+11 Example Creating an Autobind Decorator
+12 Validation with Decorators - First Steps
+13 Validation with Decorators - Finished
+14 Fixing a Validator Bug
+15 Wrap Up
+
+
+
+
+
+
+
+
+
+
+
+01 Module Introduction
+
+CONTENT:
+1. What is Decorator?
+2. Decorator Usage
+3. Examples
+
+
+
+
+
+
+
+
+
+02 A First Class Decorator
+
+Why use Decorator?
+1. Meta programming
+	> Metaprogramming is the writing of computer programs that write or manipulate other programs (or themselves) as their data, or that do part of the work at runtime that would otherwise be done at compile time. 
+	> In many cases, this allows programmers to get more done in the same amount of time as they would take to write all the code manually, or it gives programs greater flexibility to efficiently handle new situations without recompilation.
+
+
+Prerequisite for Using Decorator
+1. In tsconfig.json
+	- compilerOptions.target is ES6 and up
+	- compilerOptions.experimentalDecorators is set to true
+
+Decorators
+ > a special kind of declaration that can be attached to a class declaration, method, accessor, property, or parameter. 
+ > Decorators use the form @expression, where expression must evaluate to a function that will be called at runtime with information about the decorated declaration.
+
+Class Decorators
+ > these decorators are declared just BEFORE a class declaration
+ > The class decorator is applied to the constructor of the class and can be used to observe, modify, or replace a class definition.
+ 	- The expression for the class decorator will be called as a function at runtime, with the constructor of the decorated class as its only ARGUMENT.
+	- With constructor as parameter of Decorator function, we can use it to CREATE an instance of the Class and MODIFY its prototype
+ > by convention, we Capitalize the function that a Class Declaration points to
+
+EX:
+function Logger(constructor: Function) {
+  console.log("Logging...");
+  console.log(constructor);
+}
+
+@Logger
+class Person {
+  name = "Max";
+
+  constructor() {
+    console.log("Creating a person object");
+  }
+}
+
+const pers = new Person();
+
+
+Console log output
+Logging... 
+class Person {}
+	length: 0
+	name: "Person"
+	prototype: Object { … }
+Creating a person object
+
+
+NOTE:
+1. Decorators are an experimental feature that may change in future releases.
+2. Should you choose to return a new constructor function, you must take care to maintain the original prototype. The logic that applies decorators at runtime will not do this for you.
+
+
+
+
+
+
+
+
+
+
+
+03 Working with Decorator Factories
+
+Decorator Factories
+ > similar to a Decorator, but instead of pointing to a function, it RETURNS a function that is supposed to be the decorator function - hence Decorator Factories
+	- with this, instead of just passing the Function itself, we will call it in order to return a Decorator function
+	- ex: @Logger -> @Logger("some string input")
+ > the advantage of Decorator Factories over normal Decorators is that with Decorator Factories, it can take inputs
+
+
+EX:
+function Logger(logString: string) {
+  return function (constructor: Function) {
+    console.log(logString);
+    console.log(constructor);
+  };
+}
+
+@Logger("LOGGING - PERSON")
+class Person {
+  name = "Max";
+
+  constructor() {
+    console.log("Creating a person object");
+  }
+}
+
+const pers = new Person();
+
+
+
+
+
+
+
+
+
+
+04 Building More Useful Decorators
+
+NOTE:
+1. For parameters that we will not use inside the function, we can use underscore symbol (_)
+	> this is to prevent the TypeScript to throw error when a parameter is unused
+2. We can use the constructor parameter of the Decorator function to either
+	> create an instance of Class using the constructor
+	> modify the prototype of the said Class
+
+EX:
+In example below, we used the "WithTemplate" Decorator to 
+1. create a template in HTML
+2. populate it with the object's properties which is created using the constructor function
+
+function WithTemplate(template: string, hookId: string) {
+  return function (constructor: any) {
+    const hookEl = document.getElementById(hookId);
+    const p = new constructor();
+    if (hookEl) {
+      hookEl.innerHTML = template;
+      document.querySelector("h1")!.textContent = p.name;
+    }
+  };
+}
+
+// @Logger("LOGGING - PERSON")
+@WithTemplate("<h1>My Person Object</h1>", "app")
+class Person {
+  name = "Max";
+
+  constructor() {
+    console.log("Creating a person object");
+  }
+}
+
+const pers = new Person();
+
+
+
+
+
+
+
+
+
+
+05 Adding Multiple Decorators
+
+Adding Multiple Decorators
+ > if we add one or more Decorators, they will be process in these order
+	- The expression for each decorator are EVALUATED TOP-TO-BOTTOM
+	- The result of the each functions are CALLED FROM BOTTOM-TO-TOP
+ > this is because their evaluation is similar to function composition in mathematics
+	- in this model, when composing functions f and g, the resulting composite (f o g)(x) is equivalent to f(g(x))
+	- this means that the top decorator function receives the return function value of bottom decorator function
+
+EX:
+As you can see in Console logs, the Logger is evaluated first before the WithTemplate.
+But the WithTemplate returned the result first before the Logger result
+
+function Logger(logString: string) {
+  console.log("LOGGER FACTORY");
+
+  return function (constructor: Function) {
+    console.log(logString);
+    console.log(constructor);
+  };
+}
+
+function WithTemplate(template: string, hookId: string) {
+  console.log("TEMPLATE FACTORY");
+  return function (constructor: any) {
+    console.log("Creating template");
+    const hookEl = document.getElementById(hookId);
+    const p = new constructor();
+    if (hookEl) {
+      hookEl.innerHTML = template;
+      document.querySelector("h1")!.textContent = p.name;
+    }
+  };
+}
+
+@Logger("LOGGING - PERSON")
+@WithTemplate("<h1>My Person Object</h1>", "app")
+class Person {
+  name = "Max";
+
+  constructor() {
+    console.log("Creating a person object");
+  }
+}
+
+const pers = new Person();
+
+
+CONSOLE OUTPUT
+LOGGER FACTORY 			app.ts:2:10
+TEMPLATE FACTORY 		app.ts:11:10
+Creating template 		app.ts:13:12
+Creating a person object 	app.ts:29:12
+LOGGING - PERSON 		app.ts:5:12
+class Person {}			app.ts:6:12
+Creating a person object	app.ts:29:12
+
+
+
+
+
+
+
+
+
+
+
+06 Diving into Property Decorators
+
+Property Decorators
+ > we can also add Decorators to the Class' Properties
+ > like Class Decorator, they are evaluated and executed when we register the Class Definition
+ > Property Decorators takes two inputs
+	1. target 
+		- can be either prototype of Object or constructor of class
+		- for instance properties, they will get the prototype of the Object
+		- for static properties, they will get the constructor of the class
+		- in case the Property Decorator will be used in both instance and static property, we can set the 1st parameter type to any
+	2. propertyName
+		- can be either a string or Symbol
+
+EX:
+function Log(target: any, propertyName: string | Symbol) {
+  console.log("Property Decorator");
+  console.log(target, propertyName);
+}
+
+class Product {
+  @Log
+  title: string;
+  private _price: number;
+
+  set price(val: number) {
+    if (val > 0) {
+      this._price = val;
+    } else {
+      throw new Error("Invalid price - should be positive!");
+    }
+  }
+
+  constructor(t: string, p: number) {
+    Product.title = t;
+    this._price = p;
+  }
+
+  getPriceWithTax(tax: number) {
+    return this._price * (1 + tax);
+  }
+}
+
+Console logs
+// If title is instance property
+Property Decorator
+Object { … } title
+
+// If title is static property
+Property Decorator
+class Product { constructor(t, p) } title
+
+
+
+
+
+
+
+
+
+
+
+07 Accessor & Parameter Decorators
+
+Accessor Decorator
+ > added to the "get" or "set" accessors of the Class
+ > takes THREE arguments
+	1. target
+		- can be either the prototype of Object or constructor of class
+		- if instance accessor, its prototype
+		- if static accessor, its constructor
+	2. accessorName
+		- name of accessor method
+	3. descriptor
+		- PropertyDescriptor of accessor
+
+Method Decorator
+ > added to the methods of a Class
+ > takes THREE arguments, which are
+	1. target
+		- can be either the prototype of Object or constructor of class
+		- if instance accessor, its prototype
+		- if static accessor, its constructor
+	2. accessrorName
+		- name of accessor method
+	3. descriptor
+		- PropertyDescriptor of the method
+
+Parameter Decorator
+ > added to the parameters of a Classes' method or accessor
+ > takes THREE argument
+	1. target
+		- can be either the prototype of Object or constructor of class
+		- if instance accessor, its prototype
+		- if static accessor, its constructor
+	2. parameterName
+		- name of accessor method
+	3. position
+		- Index of the parameter in the function
+
+EX:
+function Log(target: any, propertyName: string | Symbol) {
+  console.log("Property Decorator");
+  console.log(target, propertyName);
+}
+
+function Log2 (target: any, name: string, descriptor: PropertyDescriptor){
+    console.log("Accessor decorator!")
+    console.log(target);
+    console.log(name);
+    console.log(descriptor);
+}
+
+function Log3(target: any, name: string | Symbol, descriptor: PropertyDescriptor) {
+    console.log("Method decorator!");
+    console.log(target);
+    console.log(name);
+    console.log(descriptor);
+}
+
+function Log4(target: any, name: string | Symbol, position: number) {
+    console.log("Parameter decorator!");
+    console.log(target);
+    console.log(name);
+    console.log(position);
+}
+
+class Product {
+  @Log
+  static title: string;
+  private _price: number;
+
+  @Log2
+  set price(val: number) {
+    if (val > 0) {
+      this._price = val;
+    } else {
+      throw new Error("Invalid price - should be positive!");
+    }
+  }
+
+  constructor(t: string, p: number) {
+    Product.title = t;
+    this._price = p;
+  }
+
+  @Log3
+  getPriceWithTax(@Log4 tax: number) {
+    return this._price * (1 + tax);
+  }
+}
+
+CONSOLE LOGS
+Accessor decorator! 
+Object { … }
+price 
+Object { get: undefined, set: price(val)
+, enumerable: false, configurable: true }
+
+Parameter decorator!
+Object { … }
+getPriceWithTax 
+0 
+
+Method decorator! 
+Object { … }
+getPriceWithTax 
+Object { value: getPriceWithTax(tax)
+, writable: true, enumerable: false, configurable: true }
+
+Property Decorator
+class Product { constructor(t, p) } title
+
+
+
+
+
+
+
+
+
+08 When Do Decorators Execute
+
+NOTE:
+1. Decorators, regardless of their type, will run/execute when the Class Definition is REGISTERED
+	> they are not like eventListener where we can define them and run/execute later when we want to
+
+
+
+
+
+
+
+
+09 Returning (and changing) a Class in a Class Decorator
+
+Returning (and changing) a Class in a Class Decorator
+ > with Decorators, we can also return and change a Class
+ > to do this, we will be returning a new Class inside the Decorator function	
+	1. we can extend the Class we are returns to the constructor parameter of Decorator function
+		-> with this, we can access the source Class' properties and method as long as we call super() in this constructor method
+ > we also need to modify the Decorator function, where in we make the Decorator function GENERIC
+	- this is to access the Constructor function type and therefore, its properties, methods, accessor, etc
+	- behind the scene, a Constructor function is just a new () function
+		-> this new () function make take one or more arguments of any types
+		-> and returns an Object, empty or populated with properties/methods of any types
+
+EX:
+function WithTemplate(template: string, hookId: string) {
+  console.log("TEMPLATE FACTORY");
+  return function <T extends { new (...args: any[]): { name: string } }>(
+    originalConstructor: T
+  ) {
+    return class extends originalConstructor {
+      constructor(..._: any[]) {
+        super();
+        console.log("Creating template");
+        const hookEl = document.getElementById(hookId);
+        if (hookEl) {
+          hookEl.innerHTML = template;
+          document.querySelector("h1")!.textContent = this.name;
+        }
+      }
+    };
+  };
+}
+
+@Logger("LOGGING - PERSON")
+@WithTemplate("<h1>My Person Object</h1>", "app")
+class Person {
+  name = "Max";
+
+  constructor() {
+    console.log("Creating a person object");
+  }
+}
+
+// const pers = new Person();
+
+Console logs if we did not instantiate Person Class
+LOGGER FACTORY 
+TEMPLATE FACTORY 
+LOGGING - PERSON 
+class  { constructor(_) }
+
+Console logs if we instantiate Person Class
+LOGGER FACTORY 
+TEMPLATE FACTORY
+LOGGING - PERSON
+class  { constructor(_) }
+Creating a person object
+Creating template
+
+
+
+
+
+
+
+
+
+
+10 Other Decorator Return Types
+
+Class Decorator
+ > with Class Decorator, we can return a new Constructor function which will replace the input Constructor function
+ > we can do this by accessing the Constructor function passed as argument to Decorator function
+
+Property and Parameter Decorator
+ > can return a value but is IGNORED or NOT USED by TypeScript
+
+Accessor and Method Decorator
+ > with Accessor and Method Decorator, we can modify them by using the PropertyDescriptor passed to their Decorator as argument
+ > the Accessor Decorator's contains PropertyDescriptor which contains the following properties
+	1. configurable: boolean
+		-> false if readonly
+	2. enumerable: boolean
+		-> if false, will not be accessible in for loops
+	3. get: function
+		-> not null if accessor is a getter
+	4. set: function
+		-> not null if accessor is a setter
+ > the Method Decorator contains PropertyDescriptor which contains the following properties
+	1. configurable: boolean
+		-> false if readonly
+	2. enumerable: boolean
+		-> if false, will not be accessible in for loops
+	3. value: function
+		-> refers to the function / method
+	4. writable: boolean
+
+
+
+
+
+
+
+
+
+
+
+11 Example Creating an Autobind Decorator
+
+Autobind Decorator
+ > this will be a Method/Accessor decorator that ALWAYS binds the method/accessor's "this" to the object where it is called
+ > to create this, 
+	1. we will access the PropertyDescriptor argument of Decorator
+	2. fetch the original method
+		- for method, its in the "value"
+		- for accessor, its either in "get" or "set"
+	3. create a new PropertyDescriptor
+		- for configurable and enumerable, set them to true and false respectively
+		- for the get, we will pass a new get() value
+			-> inside it, we will create a variable which will contain the original method that is bound to the "this"
+			-> "this" in this case will refer to the OBJECT where we accessed the method
+			-> we then return this variable that contains the bound originalMethod
+	4. return the new PropertyDescriptor
+
+EX:
+function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    enumerable: false,
+    get() {
+      const boundFn = originalMethod.bind(this);
+      console.log(this); // outputs the Object, which is { message: "This works!", type: "Laser printer" }
+      return boundFn;
+    },
+  };
+  return adjDescriptor;
+}
+
+class Printer {
+  message = "This works!";
+  type = "Laser printer";
+
+  @Autobind
+  showMessage() {
+    console.log(this.message);
+  }
+}
+
+const p = new Printer();
+
+const button = document.querySelector("button")!;
+button.addEventListener("click", p.showMessage);
+
+
+
+NOTE:
+1. Adding an underscore in front of parameter will avoid the TypeScript from throwing error if we did not use it inside the function itself
+
+
+
+
+
+
+
+
+
+
+
+12 Validation with Decorators - First Steps
+
+Validation with Decorators
+ > with Decorators, we can also validate the Class' properties
+ > we do this by adding a Property Decorator to the propreties and these Decorator have logic inside that checks the value
+ > one use case is when we create an Object with Class using the values fetch from form's input elements
+
+GOAL
+1. Create a Decorator for Property Validation
+2. Create interface to store different properties (refers to Class constructor name)
+	- this property will then have different properties as well (refers to the Class's properties)
+		-> this property will have a value of string array (refers to the validations to do in Class' property)
+2. Create an Object using the interface created
+3. Create a function to take an Object, and using its constructor, validate each of the properties of the input Object
+	- returns boolean
+
+EX:
+Incomplete Code
+function Required() {}
+function PositiveNumber() {}
+function validate(obj: object) {}
+
+class Course {
+  @Required
+  title: string;
+  @PositiveNumber
+  price: number;
+
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+}
+
+const courseForm = document.querySelector("form")!;
+courseForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const titleEl = document.getElementById("title")! as HTMLInputElement;
+  const priceEl = document.getElementById("price")! as HTMLInputElement;
+
+  const title = titleEl.value;
+  const price = +priceEl.value;
+
+  const createdCourse = new Course(title, price);
+  console.log(createdCourse);
+
+  if (!validate(createdCourse)) {
+    alert("Invalid input, please try again");
+    return;
+  }
+});
+
+
+
+
+
+
+
+
+
+
+13 Validation with Decorators - Finished
+
+Complete code
+interface ValidatorConfig {
+  [property: string]: {
+    [validatableProps: string]: string[];
+  };
+}
+
+const registeredValidators: ValidatorConfig = {};
+
+function Required(target: object, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ["required"],
+  };
+}
+
+function PositiveNumber(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ["positive"],
+  };
+}
+
+function validate(obj: any) {
+  const objValidatorConfig = registeredValidators[obj.constructor.name];
+  if (!objValidatorConfig) {
+    return true;
+  }
+  let isValid = true;
+  for (const prop in objValidatorConfig) {
+    for (const validator of objValidatorConfig[prop]) {
+      switch (validator) {
+        case "required":
+          isValid = isValid && !!obj[prop];
+          break;
+        case "positive":
+          isValid = isValid && obj[prop];
+          break;
+      }
+    }
+  }
+  return isValid;
+}
+
+class Course {
+  @Required
+  title: string;
+
+  @PositiveNumber
+  price: number;
+
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+}
+
+const courseForm = document.querySelector("form")!;
+courseForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const titleEl = document.getElementById("title")! as HTMLInputElement;
+  const priceEl = document.getElementById("price")! as HTMLInputElement;
+
+  const title = titleEl.value;
+  const price = +priceEl.value;
+
+  const createdCourse = new Course(title, price);
+  console.log(createdCourse);
+
+  if (!validate(createdCourse)) {
+    alert("Invalid input, please try again");
+    return;
+  }
+});
+
+
+
+
+
+
+
+
+
+14 Fixing a Validator Bug
+
+BUG:
+1. Property can only have one Validation Decorator
+	> reason is that inside the Decorator function, we OVERRIDE the value of the string[] of a Property, which contains the validators
+	> we can fix this by adding the existing validators using spread operator (...)
+
+EX:
+// Old Decorator
+function Required(target: object, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: ["required"],
+  };
+}
+
+
+// New Decorator
+function Required(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: [
+      ...(registeredValidators[target.constructor.name]?.[propName] ?? []),
+      "required",
+    ],
+  };
+}
+
+
+
+
+
+
+
+
+15 Wrap Up
+
+typestack/class-validator
+ > https://github.com/typestack/class-validator
+ > package used to help validating Class properties much easier
+
+
+
+
+
+
+

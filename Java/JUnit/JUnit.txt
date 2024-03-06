@@ -1,0 +1,286 @@
+JUnit
+
+Software Testing 
+	> is a process used to identify the developed compute software's
+		- correctness
+		- completeness
+		- quality
+	> includes a set of activites conducted with intent of finding ERRORS in software so that it could be corrected before the product is released to end users
+
+
+
+Levels of Software Testing
+1. Unit Testing
+	> testing individual components
+	> Unit can be 
+		- specific piece of functionality
+		- a part of program
+	> Help verify internal logic
+2. Integration Testing
+	> Testing components groups
+	> Test how each of the components Integrations in System works
+3. System Testing
+	> Testing the integrated system
+	> All components of software is tested
+	> Verify technical, business, functional aspects of software
+4. Acceptance Testing
+	> Testing the final system
+
+
+
+
+Unit Testing
+	> a way of testing the smallest piece of code referred to as a UNIT that can be logically isolated in a system
+	> mainly focused on the functional correctness of standalon modules
+	> in the code below, we test whether the Main Function's logic is current using assertion
+	> ADVANTAGE: It can run anytime you change the software so you can test whether the logic is still correct
+
+EX: 
+
+//Main Function
+def divider (a,b)
+	return a/b
+end
+
+// Testing Function
+class smallTest < MiniTest::Unit:testcase
+	def tiny_test
+		@a=6
+		@b=2
+		assert_equal(3, divider(a,b))
+	end
+end
+
+	
+	
+Benefits of Unit Testing
+
+1. Makes coding practice more agile
+	> we will be confident in adding changes in software since we know how to test each of them and see it some Unit's behavior is affected
+	> writing and testing repeatedly will cost us time and money in long run
+2. Improves the quality of the code
+	> we can see the defects in the code more clearly when we put Unit Testing
+3. Helps find software bugs early
+4. Facilitates changes and simplifies integration
+	> help us with refractoring the Units or Modules more easily into the Software
+5. Provides documentations to developers
+6. Makes debugging easier and quicker
+7. Helps create better software designs
+	> focus more on how the software will function
+8. Reduces testing costs
+
+
+What makes a good Unit Test?
+1. Easy to write
+2. Easily readable
+	> intent of Unit Test should be clear
+	> when test fails, the bug should be found easily
+3. Reliable
+	> should only fail if theres a bug
+4. Faster and efficient
+
+
+
+Tools needed for Unit Testing
+1. IDE - Eclipse IDE
+2. Unit Testing Framework - TestNG for Eclipse IDE
+
+
+Installing TestNG framework
+1. Help > Eclipse Marketplace
+2. Search TestNG for Eclipse
+
+Showing TestNG in Eclipse IDE
+1. Window > Show View
+2. Choose Other > Java > TestNG
+
+
+Best Unit Testing Frameworks available
+1. For C#	
+	a. NUnit
+2. For Java
+	a. JUnit
+		> open source
+		> for Test Driver Development (TDD) approach
+	b. TestNG
+3. For C and C++
+	a. Embunit
+4. For JavaScript	
+	a. HtmlUnit
+	b. Junit
+	c. TestNg 
+
+
+org.testng.*
+	> libraries that contains all the Classes and Interface of TestNG Framework
+
+@Test
+	> annotation added in a Test method
+	> TestNG will only recogize a method as Unit Test method if they have @Test
+
+Assert.assertEquals(Object actual, Object expected)
+	> used to check if actual result is smae as the expected result
+	> will return as FAIL if actual != expected
+	> will show the result of @Test in TestNG window
+	
+
+@Test(expectedException = Class[])
+	> annotation added when we are expecting an Exception to be thrown inside the Test method
+	> the Test will pass IF exception thrown in Test method is included in the expectedException param of @Test
+	> ex: @Test(expectedException = ArithmeticException.class) will be passed if an Exception of ArithmeticException is thrown
+
+
+
+
+
+Unit Testing Demonstration using TestNG
+
+1. Create new class
+	> MainFunctions
+2. Inside MainFunctions class, add the static methods
+	> add()
+		- takes two int
+		- returns int sum of two int param
+	> multiply()
+		- takes two int
+		- return product of two int param as int
+	> divide ()
+		- takes two int param
+		- check if divisor param is 0
+			= if zero, throw new IllegaArgumentException
+		- returns double whose value is quotient of 1st and 2nd param
+
+INSIDE MainFunctions.java
+
+public class MainFunctions {
+	public static int add(int first, int second) {
+		return first + second;
+	}
+	
+	public static int multiply (int multiplicand, int multiplier) {
+		return multiplicand * multiplier;
+	}
+	
+	public static double divide (int dividend, int divisor) {
+		if(divisor == 0) {
+			throw new IllegalArgumentException("Can not divide by zero (0)");
+		}
+		return dividend / divisor;
+	}
+}
+
+
+3. Create new class
+	> TestNGUnitTest
+
+4. Import the library inside the TestNGUnitTest
+	> org.testng.*;
+
+5. Inside the Class
+	> create a method to test function of MainFunction.add()
+		- void return, no param
+		- add @Test annotation
+		- inside body
+			= create variable that will hold expected value given an example input 
+			= create variable that will hold actual value 
+			= use Assert.assertEquals() of TestNG package to check if they are equal
+
+INSIDE TestNGUnitTest
+
+	@Test
+	public void add_TwoPlustTwo_ReturnsFour() {
+		final int expected = 4;
+		
+		final int actual = MainFunctions.add(2, 2);
+		
+		Assert.assertEquals(actual, expected);
+	}
+
+
+OUTPUT
+
+[RemoteTestNG] detected TestNG version 7.4.0
+PASSED: add_TwoPlustTwo_ReturnsFour
+
+===============================================
+    Default test
+    Tests run: 1, Failures: 0, Skips: 0
+===============================================
+
+
+===============================================
+Default suite
+Total tests run: 1, Passes: 1, Failures: 0, Skips: 0
+===============================================
+
+
+
+6. Create another @Test again to test multiply() of MainFunctions class
+
+INSIDE the class
+
+	@Test 
+	public void multiply_twoNumbers_returnsQuotient() {
+		final int expected = 4;
+		final int actual = MainFunctions.multiply(2, 2);
+		Assert.assertEquals(actual, expected);
+	}
+
+OUTPUT
+
+[RemoteTestNG] detected TestNG version 7.4.0
+PASSED: add_TwoPlustTwo_ReturnsFour
+PASSED: multiply_twoNumbers_returnsQuotient
+
+===============================================
+    Default test
+    Tests run: 2, Failures: 0, Skips: 0
+===============================================
+
+
+===============================================
+Default suite
+Total tests run: 2, Passes: 2, Failures: 0, Skips: 0
+===============================================
+
+
+
+7. Create a Test method to test the divide() of MainFunction
+
+INSIDE class
+
+	@Test
+	public void divide_twoNumbers_returnQuotient() {
+		final int expected = 4;
+		final double actual = MainFunctions.divide(16, 4);
+		Assert.assertEquals(actual, expected);
+	}
+
+OUTPUT 
+[RemoteTestNG] detected TestNG version 7.4.0
+PASSED: add_TwoPlustTwo_ReturnsFour
+PASSED: multiply_twoNumbers_returnsProduct
+PASSED: divide_twoNumbers_returnQuotient
+
+===============================================
+    Default test
+    Tests run: 3, Failures: 0, Skips: 0
+===============================================
+
+
+===============================================
+Default suite
+Total tests run: 3, Passes: 3, Failures: 0, Skips: 0
+===============================================
+
+
+
+8. Test the divide() again but this time, we should expect an IllegalArgumentException to be thrown to pass
+
+INSIDE Class
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void divide_TenDivideZero_ThrowIllegalArgumentException() {
+		MainFunctions.divide(10, 0);
+	}
+

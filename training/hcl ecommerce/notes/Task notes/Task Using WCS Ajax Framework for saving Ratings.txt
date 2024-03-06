@@ -1,0 +1,180 @@
+Task Using WCS Ajax Framework for saving Ratings
+
+
+MyNewView.jsp
+<!DOCTYPE html>
+<html>
+    <head>  
+    <%@include file="../Common/EnvironmentSetup.jspf" %>
+       <%@include file="../Common/CommonCSSToInclude.jspf" %>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Sample JSP </title>
+        <!-- Include script files -->
+		<%@include file="../Common/CommonJSToInclude.jspf" %>
+		
+		<fmt:setLocale value="${CommandContext.locale }"/>
+ 		<fmt:setBundle basename="/${sdb.jspStoreDir}/myprop" var="myprop" scope="request"/>
+ 		<script>
+ 			wcService.declare({
+				id: "AjaxSaveRating",
+				actionId: "AjaxSaveRating",
+				url: "AjaxSaveRating",
+				formId: ""
+
+				/**
+		 		* Clear messages on the page.
+		 		* @param (object) serviceResponse The service response object, which is the JSON object returned by the service invocation
+		 		*/
+				,successHandler: function(serviceResponse) {
+					console.debug("Save Rating Success");
+					cursor_clear();
+				}
+
+				/**
+		 		* Displays an error message on the page if the request failed.
+		 		* @param (object) serviceResponse The service response object, which is the JSON object returned by the service invocation.
+		 		*/
+				,failureHandler: function(serviceResponse) {
+					console.debug("save rating failed");
+					if (serviceResponse.errorMessage) {
+						MessageHelper.displayErrorMessage(serviceResponse.errorMessage);
+					}
+					cursor_clear();
+				}
+			})
+			
+			function SaveRatingData (productId, rating) {
+				params = [];
+				params["storeId"] = this.storeId;
+				params["catalogId"] = this.catalogId;
+				params["langId"] = this.langId;
+				params.productId = productId;
+				params.rating = rating;
+				
+				// For handling multiple clicks
+				if (!submitRequest()) {
+					return;
+				}
+				cursor_wait();
+				
+				wcService.invoke("AjaxSaveRating", params);
+			}
+ 		</script>
+         
+    </head>  
+	<body>
+	<%-- This file includes the progressBar mark-up and success/error message display markup --%>
+		<%@ include file="../Common/CommonJSPFToInclude.jspf"%>
+    
+    				<%out.flush();%>
+				<c:import url = "${env_jspStoreDir}Widgets/Header/Header.jsp">
+					<c:param name="overrideLazyLoadDepartmentsList" value="${overrideLazyLoadDepartmentsList}" />
+				</c:import>
+				<%out.flush();%>
+		<h1>Submit rating</h1>
+		<!-- <form id="testForm" name="testForm" action="${env_contextAndServletPath}/SaveRating" method="post">  -->
+		<form id="testForm" name="testForm" method="post">
+			<span><fmt:message bundle="${myprop}"  key="PRODUCT_ID" /> </span><input type="text" name="productId" id="productIdInput" >
+			<br/>
+			<span><fmt:message bundle="${myprop}" key="RATING" /> </span><input type="text" name="rating" id="ratingInput">
+			<br/>
+			<input type="hidden" name="URL" value="MyNewView">
+			<input type="submit" value="Send rating">
+		</form>
+		<wcf:rest var="rating" url="store/{storeId}/rating/findByProductId?productId={productId}">
+		<wcf:var name="storeId" value="${WCParam.storeId}" />
+		<wcf:var name="productId" value="${WCParam.productId}" />		
+	</wcf:rest> 
+    
+    <c:set var="ratingStars" value="${rating.rating}"/>   
+    
+    Rating from Rest Call: <br/>
+    Product Id:<c:out value="${rating.productId}"/> <br/>
+    Rating Stars:<c:out value="${ratingStars}"/> <br/>
+    RatingId: <c:out value="${rating.ratingId}"/>
+		<div id="footerWrapper">
+				<%out.flush();%>
+				<c:import url="${env_jspStoreDir}Widgets/Footer/Footer.jsp"/>
+				<%out.flush();%>
+			</div>
+			<script type="text/javascript">
+				$( "#testForm" ).on( "submit", function( event ) {
+					event.preventDefault();
+  					var productId = document.getElementById("productIdInput").value;
+  					var rating = parseFloat(document.getElementById("ratingInput").value);
+  					if(productId && rating) {
+  					SaveRatingData(productId, rating);
+  					}
+  					
+				});			
+			</script>
+	</body>
+</html>
+
+
+
+
+controllers-ext.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ =================================================================
+  Licensed Materials - Property of HCL Technologies
+
+  HCL Commerce
+
+  (C) Copyright HCL Technologies Limited 1996, 2020
+
+ =================================================================
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">  
+  <!-- Import customer controller files here 
+  <import resource="classpath:/WEB-INF/spring/AuroraStorefrontAssetStore/{my-controllers.xml}"/>
+  -->  
+  <bean id="actionUrlmapping-AuroraStorefrontAssetStore" class="com.ibm.commerce.store.mvc.registry.spring.StoreUrlHandlerMapping"> 
+    <property name="order" value="0"/>  
+    <property name="mappings"> 
+      <props> 
+      <!-- B2C delta controller config -->
+      <!-- Add customer controller url mappings here  
+      <prop key="/ProductDisplay/AuroraStorefrontAssetStore">productDisplay/AuroraStorefrontAssetStore</prop>
+      -->
+      	<prop key="/SaveRating">SaveRating</prop>
+      	<prop key="/AjaxSaveRating">AjaxSaveRating</prop>
+      </props> 
+    </property> 
+  </bean>  
+  <bean id="viewUrlmapping-AuroraStorefrontAssetStore" class="com.ibm.commerce.store.mvc.registry.spring.StoreUrlHandlerMapping"> 
+    <property name="order" value="2"/>  
+    <property name="mappings"> 
+      <props>  	
+      </props> 
+    </property> 
+    </bean>
+  <!-- B2C delta controller config -->    
+  <!-- Add customer controller bean definitions here
+  <bean id="productDisplay/AuroraStorefrontAssetStore" class="com.ibm.commerce.store.mvc.controller.spring.BrowsingRESTActionController"> 
+    <property name="authenticate" value="0"/>  
+    <property name="https" value="1"/>  
+    <property name="generic" value="1"/>
+    <property name="parameter" value="productLayout.productLayout"/>
+    <property name="credentialsAccepted" value="P"/>
+  </bean>
+  -->   
+  <bean id="SaveRating" class="com.ibm.commerce.store.mvc.controller.spring.RESTActionController"> 
+    <property name="authenticate" value="0"/>  
+    <property name="https" value="0"/>  
+    <property name="generic" value="1"/>  
+    <property name="parameter" value="ratingHandler.saveRatingData"/> 
+  </bean>
+    <bean id="AjaxSaveRating" class="com.ibm.commerce.store.mvc.controller.spring.AjaxRESTActionController"> 
+    <property name="authenticate" value="0"/>  
+    <property name="https" value="0"/>  
+    <property name="generic" value="1"/>  
+    <property name="parameter" value="ratingHandler.saveRatingData"/> 
+  </bean>
+</beans>
+
+
+

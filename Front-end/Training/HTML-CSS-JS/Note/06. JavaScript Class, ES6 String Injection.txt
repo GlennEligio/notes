@@ -1,0 +1,145 @@
+06. JavaScript Class, ES6 String Injection
+
+
+Javascript Class
+
+"class"
+	> keyword in Javascript uses to create Classes
+	> contains the following
+		a. Properties
+		b. method
+		c. constructor function
+			- function used to create the said class
+			- must be a global variable
+
+"constructor"
+	> method/function inside a Class used to create an instance of a Class (Object)
+	> whenever we call the constructor of Class, we will need to pass same amount of arguments as the amount of parameters
+
+"static"
+	> keyword added in a functions inside a Class
+	> these function can be called DIRECTLY to the Class
+
+"extends"
+	> keyword added after a Class when creating one
+	> used for INHERITANCE
+	> this is followed by another Class where we will INHERIT the properties from
+
+"super"
+	> method/function used to inherit functions from superclass
+	> added inside a method/function of subclass
+		- this method/function MUST BE overriden from the superclass (same method name)
+
+
+Object literal
+	> concept where we can create an object by passing literal variables into it
+
+Module exports
+	> used to export functions and variables in the Javascript
+	> we will use module.exports and pass the functions and vars into the {} assignment
+
+require()
+	> used  to import modules from other JS files
+	> requires a string that represents the directory of the JS file to import
+
+set and get
+	> "keyword" available for methods/functions available in ES6
+	> represents setters and getters in an object
+	> can be used in Object literals and Classes
+
+set
+	> added in a function/method
+	> takes parameter
+	> when calling a set method, to pass parameter, we will assign the set method property a value
+
+ex:
+set firstName(name){
+	this.name=name;
+}
+
+person.firstName = "Glenn"
+
+
+get
+	> keyword added in a function or method
+	> does not take parameter
+	> when calling a get method/parameter, no parameter is needed (with this, parenthesis is OPTIONAL)
+
+
+Map
+	> used to hold data key pairs
+	> similar to Map Interface of Java
+	> have following methods
+	> to iterate to its contents, we will use for let of loop
+
+set(Object key, Object value)
+	> used to add data key pairs
+
+has(Object key)
+	> check if Map contains data pair with key passed in argument
+	> returns a Boolean value
+
+delete(Object key)
+	> deletes a specific data pair with key passed in argument
+
+
+Set
+	> used to hold UNIQUE values
+	> adding existing values will not have any effect
+	> have following method
+
+add(Object data)
+	> used to add data in a Set
+has(Object data)
+	> used to check if data exist in Set
+	> returns a Boolean
+delete(Object key)
+	> used to delete a data in the Set
+
+
+for let of loop
+	> used to iterate data in a Collection
+
+SYNTAX:
+for (let tempData of collection){
+	//logic
+}
+
+EX:
+var numSet = new Set({1,2,3,4})
+for (let num of numSet){
+	console.log(num);
+}
+
+
+
+Array.join(String separator)
+	> method available in an Array object
+	> used to concatenate the contents of array, with String separator in between them
+
+
+
+ES6 Template
+Variable injection in String
+	> we can use ${variable} inside a String to inject its value inside it
+	> for these Strings, we will use backtick operator (`) to encapsulate the said String
+
+EX:
+var name = "Glenn";
+var age = 23;
+var info = `Name is ${name}, age is ${age}`;
+
+
+
+
+spread operator
+	> SYNTAX: ...variableName
+	> used to pass array or data with multiple values inside
+
+ex:
+var number = 302
+var numbers1 = [301,302,303,304];
+console.log(number, ...numbers1);
+
+
+

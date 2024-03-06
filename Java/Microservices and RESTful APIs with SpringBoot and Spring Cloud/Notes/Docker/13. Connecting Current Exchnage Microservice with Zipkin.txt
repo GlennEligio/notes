@@ -1,0 +1,68 @@
+13. Connecting Current Exchnage Microservice with Zipkin
+
+
+
+Distributed Tracing Architecture
+	> composed of the following
+		1. Distributed Tracing Server
+			- ex: Zipkin
+		2. Services that will send information to the server
+		3. Database that will store the informations
+		4. MessagingQueue Server
+			- ex: RabbitMQ
+			- optional
+			- used to queue up the call from service to the Distributed Tracing Server
+			- in case the Tracing Server is down, the MQ server can queue up the calls and prepare to fire them to Tracing server as soon as it goes up
+
+
+Connecting Spring Boot app to Zipkin
+I. Add necessary dependencies
+1. Spring Cloud Starter Sleuth
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-sleuth</artifactId>
+</dependency>
+
+2. Spring Cloud Sleuth Zipkin
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+</dependency>
+
+3. Spring RabbitMQ Support
+
+<dependency>
+    <groupId>org.springframework.amqp</groupId>
+    <artifactId>spring-rabbit</artifactId>
+</dependency>
+
+
+
+II. Configuring the application.properties of microservice
+1. Define the Sampling propability of the Spring Sleuth
+	> 1 means every request will be traced and sent to Tracing Server
+	> 0 means no request will be traced
+	> 0.5 means 50% of request will be trace
+
+	spring.sleuth.sample.probability=1
+
+
+2. Define the base url of the Tracing Server
+	> if spring-cloud-sleuth-zipkin is in dependencies, then the app will generate and report Zipkin-compatible traces via HTTP.
+	> By default it sends them to a Zipkin collector service on localhost (port 9411). Configure the location of the service using spring.zipkin.baseUrl
+
+	spring.zipkin.baseUrl=http://localhost:9411/
+
+
+
+Spring Cloud Sleuth and Loggers
+	> Spring Cloud Sleuth ADDS Trace and Span ids to the Slf4j MDC
+	> these means that if we send a log using Slf4j Loggers, the trace and span ids will be added in log message
+
+EX:
+2022-03-30 23:48:12.669  INFO [currency-exchange,82410cac150b0963,82410cac150b0963] 14568 --- [nio-8000-exec-2] c.g.m.c.c.CurrencyExchangeController     : retrieveExchangeValue called with USD to INR
+
+	> in this message, the '82410cac150b0963' is the trace and span id
+		

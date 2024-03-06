@@ -1,0 +1,18 @@
+05. Testing Installation
+
+
+1. Check Docker version
+	docker --version
+
+2. Pull the hello-world image from Docker hub and run it in a Container
+	docker run hello-world
+
+3. Check the Docker Images
+	> if step 2 is executed, we should see hello-world Docker image 
+
+	docker image ls
+
+4. Check the Docker containers
+	> we should see hello-world container
+	
+	docker container ls --all

@@ -1,0 +1,33 @@
+12. OOP ES6+
+
+XIV. OOP ES6+
+
+Class
+	> used to define the template for Object instantiation
+	> present in most of programming languages
+	> syntatic sugar
+		- does same thing as Prototypes but written in different manner
+	> Classes composed of
+		a. Constructor function
+			- uses "constructor" keyword
+		b. Properties and Methods
+
+
+EX:
+
+class Person {
+  constructor(firstName, lastName, dob) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.dob = new Date(dob);
+  }
+
+  getBirthYear() {
+    return this.dob.getFullYear();
+  }
+
+  getFullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+

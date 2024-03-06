@@ -1,0 +1,112 @@
+31. Circuit Breaker feature
+
+CircuitBreaker
+	> with CircuitBreaker, whenever a method / class' method outcome passes a certain threshold, it will break the "connection" and "short-circuit" it.
+		- when "short-circuit", it will not do the "normal" function
+		- instead, it will go immediately to the "fallback" function
+EX:
+ServiceA have method that calls to ServiceB, and the method have @CircuitBreaker attached to it. 
+If the method success/failure rate passes a certain threshold (due to ServiceB being down), the method will then go to a OPEN state
+At OPEN state, for the next subsequence method calls, it will instead immediately use the fallback method/logic
+
+	> The CircuitBreaker is implemented via a finite state machine with three normal states: CLOSED, OPEN and HALF_OPEN and two special states DISABLED and FORCED_OPEN.
+
+CLOSED
+	>  when the method is being executed continuously (or in normal execution mode)
+		- ex: ServiceA method for calling ServiceB using Feign or RestTemplate
+		- here it will continuously go to the normal function/method to execute first
+	> while in this state, the CircuitBreaker MONITORS all the execution of the method with @CircuitBreaker
+		- using the data result from these executions, it will define the failure rate on a specific execution/time
+	> a failure is defined by an execution try where an Exception is THROWN
+		- you can list all Exception to exempt to this (in this case, these Exception will count as SUCCESS)
+		- you can also list all Exception to ignore (in this case, the result is NEITHER SUCCESS NOR FAILURE)
+	> a CircuitBreaker can become CLOSED state from HALF_OPEN state
+		- this happens when failure rate in HALF_OPEN is BELOW the specified threshold
+OPEN
+	> CircuitBreaker goes to OPEN state when failure rate is ABOVE the specific threshold
+	> in this state, the chain of execution "short-circuits"
+		- instead of doing the normal execution -> then fall back function when error happens, it will IMMEDIATELY goes to fallback method
+	> after a specified wait duration, the Circuit Breaker transitions from OPEN to HALF_OPEN
+
+HALF_OPEN
+	> from OPEN state, after a specified WAIT DURATION, the CircuitBreaker goes from OPEN to HALF_OPEN state
+	> in HALF_OPEN state, the CircuitBreaker:
+		- goes to execution mode for half the execution tries (or half the duration of time-based)
+		- executes the fallback Method for the other half
+		- the CircuitBreaker will then measure the failure rate for the combined execution results of these two halves
+		- BY DEFAULT, the Permitted Number of calls in Half Open State is 10
+	> if the resulting failure rate is BELOW the specified threshold, the CircuitBreaker TRANSITIONS from HALF_OPEN to CLOSED
+	> if the resulting failure rate is ABOVE the specified threshold, the CircuitBreaker GOES BACK from HALF_OPEN to OPEN
+
+
+Properties that you can define for Resilience4j's CircuitBreaker
+
+application.yaml file
+
+resilience4j.circuitbreaker:
+    instances:
+        backendA:
+            registerHealthIndicator: true
+            slidingWindowSize: 100
+        backendB:
+            registerHealthIndicator: true
+            slidingWindowSize: 10
+            permittedNumberOfCallsInHalfOpenState: 3
+            slidingWindowType: TIME_BASED
+            minimumNumberOfCalls: 20
+            waitDurationInOpenState: 50s
+            failureRateThreshold: 50
+            eventConsumerBufferSize: 10
+            recordFailurePredicate: io.github.robwin.exception.RecordFailurePredicate
+          
+  
+NOTEWORTHY properties
+
+Config property			
+failureRateThreshold
+	> Default value is 50
+	> Configures the failure rate threshold in percentage
+	> When the failure rate is equal or greater than the threshold, the CircuitBreaker transitions to OPEN and starts short circuiting calls
+	
+slowCallRateThreshold
+	> default value is 100
+	> configures a threshold in percentage
+	> The CircuitBreaker considers a call as slow when the call duration is GREATER than slowCallDurationThreshold
+	> When the percentage of slow calls is EQUAL OR GREATER than the threshold, the CircuitBreaker state becomes OPEN
+
+slowCallDurationThreshold
+	> default value is 60000 [ms]
+	> Configures the duration threshold above which calls are considred as slow and increase the rate of slow calls
+
+permittedNumberOfCallsInHalfOpenState
+	> default value is 10
+	> configures the number of permitted calls when the CircuitBreaker is half open
+
+waitDurationInOpenState
+	> default value is 60000 [ms]
+	> the time that the CircuitBreaker should WAIT before TRANSITIONING from OPEN to HALF_OPEN
+
+
+Ex:
+
+@RestController
+public class CircuitBreakerController {
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@GetMapping("/sample-api")
+	//@Retry(name = "sample-api", fallbackMethod = "hardcodedResponse")
+	@CircuitBreaker(name = "sample-api", fallbackMethod = "hardcodedResponse")
+	public String sampleApi() {
+		logger.info("Sample Api call received");
+		ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8080/some-dummy-url", 
+				String.class);
+		return forEntity.getBody();
+	}
+	
+	public String hardcodedResponse(Exception e) {
+		logger.info("Fallback method");
+		return "hardcodedResponse";
+	}
+}
+

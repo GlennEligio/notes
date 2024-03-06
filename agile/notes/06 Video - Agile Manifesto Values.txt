@@ -1,0 +1,17 @@
+06 Video: Agile Manifesto: Values
+
+The Agile Manifesto - 4 Agile Values
+
+01 Individuals and Interactices over Processes and Tools
+ > face-to-face and chat with individual should come over the rigid workflow and processes
+
+02 Working Software over Comprehensive Documentation
+ > prioritize creating a working software over a documentation
+ > before, software developers focuses in documentation first before creating the software itself
+
+03 Customer Collaboration over Contract negotiation
+ > customer collaboration helps both developers and customer find the best solution to a need
+
+04 Responding to Change over Following to Plan
+ > plans are more likely to not be static and changes
+ > making adjustments based on the changes of requirements is important

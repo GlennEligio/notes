@@ -1,0 +1,209 @@
+Section 15 - Docker Commands
+
+95. Basic Docker Commands
+
+docker run <IMAGE_NAME>
+ > used to run or start a container given a specified image name
+ > if version or tag of the image is not specified, it will use the 'latest' version
+ > NOTES:
+	- that the latest might not be the actual latest version, it may be pointed to more older version or tag
+	- if image is available locally, it will be reused
+ > ex:
+	$ docker run nginx
+	
+docker ps
+ > list all of the running containers, alongside their basic informations about them like
+	- container id 
+	- image
+	- command used to start the service inside
+	- time created
+	- status
+	- port forwarding
+	- name
+ > container id is a randomly generated alphanumeric characters
+ > for name, if no name is specified in docker run command, it will generate random string id as well
+ > command options/flags includes
+	-a	= list all currently running containers
+		= also includes previously stopped or exited containers
+ > ex:
+	$ docker ps
+	$ docker ps -a
+		
+docker stop <NAME|ID>
+ > used to stop a container given the specified container name or container id
+ > ex:
+	$ docker stop silly_tamet
+	$ docker stop 7123aknasd
+
+docker rm <NAME|ID> <NAME2|ID2> <NAME3|ID3>
+ > used to remove the container completely, given the name and id specified
+ > ex:
+	$ docker rm silly_tamet
+ 
+docker images
+ > used to list all the images available in local docker engine
+ > ex:
+	$ docker images
+	
+docker rmi <IMAGE|ID> <IMAGE2|ID2> <IMAGE3|ID3>
+ > used to remove a docker image completely in local docker engine, given the specified image or id
+ > note to be able to remove an image, we must delete all dependent containers (i.e. containers that uses that said image) to be able to remove the image
+ > ex:
+	$ docker rmi nginx
+	
+docker pull <IMAGE_NAME>
+ > used to pull specific docker image into our local docker engine
+ > ex:
+	$ docker pull nginx
+	
+docker run -d <IMAGE_NAME>
+ > used to run docker image in a container in DETACHED mode
+ > detached mode meaning that it runs on background
+ > if '-d' flag is not specified, the default mode is ATTACHED mode, where the current console will be attached to the stdout of the container console
+	- at this point you can't do anything on the console unless you stop it
+ > ex:
+	$ docker run -d kodekloud/simple-webapp
+
+docker attach <CONTAINER_NAME|ID>
+ > used to attach the current console to the console of the container with container name or id specified
+ > can only be used with detached containers
+ > ex:
+	$ docker attach a043d
+	
+	
+NOTES:
+1. Docker containers are NOT MEANT to host operating systems, instead they are meant to host applications , services, database, task, computation, etc
+	> if we try to run a docker container using an ubuntu image for example, we will see that it immediately stop or exits as soon as we run it
+	> this is because the containers only lives as long as the process inside it is ALIVE. As soon as the process inside the container exits or stops, it will stop the docker container as well
+	> Docker images for OS like ubuntu is typically used as BASE IMAGE for other images
+	> though if we want to run a docker container with OS images, we can append it with commands like sleep
+		- ex: docker run ubuntu sleep 5
+2. When using container or image ids as input for docker commands (e.g. docker run or docker attach), we can just provide just the few initial characters of the id, assuming that it will be unique to all the current container or image id
+
+
+
+
+96. Demo - Docker Commands
+
+Commands used in Demo
+$ docker run centos
+$ docker run =it centos bash
+$ cat /etc/*release*
+$ exit
+
+$ docker ps
+$ docker run -d centos sleep 20
+$ docker ps
+$ docker ps
+
+$ docker ps -a
+$ docker rm 1619625d7fa
+$ docker rm nervous_tesla
+$ docker ps -a
+
+$ docker images
+$ docker rmi busybox
+$ docker rmi ubuntu
+
+$ docker run centos
+$ docker images
+$ docker rmi centos
+$ docker rmi hello-world
+
+$ docker ps
+$ docker images
+$ docker pull ubuntu
+$ docker images
+
+$ docker run -d ubuntu sleep 100
+$ docker ps
+$ docker exec c1a19d3a7ca7 cat /etc/*release*
+
+NOTES:
+1. To get the list of available public Docker images to use, go to Dockerhub website
+2. 'library' is the default library that contains the official docker images, if no user id is specified in the docker image name used
+	> ex: docker run centos, will fetch library/centos
+3. When fetching specific docker image that is not part of official images, we need to specify the user id in docker image name
+	> ex: docker run shuntjg/dntx-backend
+4, Using an OS image when running a docker container will have it exited immediately
+
+
+
+
+
+97. Demo - Docker Labs
+
+Docker Labs link -> https://kodekloud.com/topic/bootcmp-labs-basic-docker-commands-beta-4/
+
+NOTES:
+1. Once you've skipped a question, you'll not be go back
+
+
+
+
+
+
+98. Labs: Basic Docker Commands - Beta
+
+Q1: What is the version of Docker Server Engine running on the Host?
+S: Use 'docker version' command to check the version
+A: 20.10.24
+
+Q2: How many containers are running on this host?
+S: Use 'docker ps' command
+A: 0
+
+Q3: How many images are available on this host?
+S: Use 'docker image' command
+A: 9
+
+Q4: Run a container using redis image
+S: Use 'docker run redis' command. Add '-d' for detached mode
+
+Q5: Stop the container you just created
+S: Use 'docker ps' to check the container id or name, then use 'docker stop' and pass the name or id of the container you want to stop
+
+Q6: How many container are currently running on the system right now.
+A: 0
+
+Q7: How many containers are RUNNING on this host now?
+S: Use 'docker ps' to print all running containers
+A: 4
+
+Q8: How many containers are PRESENT on the host now? Including both Running and Not Running ones
+S: Use 'docker ps' with '-a' flag to print all running and not running containers
+A: 6
+
+Q9: What is the image used to run the nginx-1 container?
+S: Use 'docker ps -a' command, then check the image of the container with name 'nginx-1'
+A: nginx:alpine
+
+Q10: What is the name of the container created using the ubuntu image?
+S: Use 'docker ps -a' command, then check the container name of the container with image 'ubuntu'
+A: awesome_northcut
+
+Q11: What is the ID of the container that uses the alpine image and is not running?
+S: Use 'docker ps -a' command, then check the id of the container with image 'alphine', and not running
+A: e36a4bb1d87a
+
+Q12: What is the state of the stopped alpine container?
+S: Use 'docker ps -a', then check the status of the container with image 'alpine' that is stopped
+A: Exited
+
+Q13: Delete all containers from the Docker Host. Both Running and Not Running ones. Remember you may have to stop containers before deleting them.
+S: Use 'docker stop $(docker ps -a -q)' to stop all containers, then 'docker rm $(docker ps -a -q)' to remove all containers
+	> 'docker ps -a -q' is used to list the ids of all the containers
+	
+Q14: Delete the ubuntu image
+S: Use the 'docker rmi ubuntu' to delete the ubuntu image. Make sure no containers are using the said image
+
+Q15: You are required to pull a docker image which will be used to run a container later. Pull the image 'nginx:1.14-alpine'. Only pull the image, do not create a container
+S: Use 'docker pull nginx:1.14-alpine' command
+
+Q16: Run a container with the nginx:1.14-alpine image and name it webapp
+S: Use 'docker run' and pass the 'nginx:1.14-alpine' as image name, then add '--name' flag with 'webapp' as value
+	> docker run --name webapp nginx:1.14-alpine
+	
+Q17: Cleanup: Delete all images on the host. Remove containers as necessary
+S: Use 'docker rmi $(docker image ls -q)' to remove all docker images
+	> we can use 'docker stop $(docker ps -a -q)', then 'docker rm $(docker ps -a -q)' in order to remove all containers beforehand

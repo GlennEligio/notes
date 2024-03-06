@@ -1,0 +1,247 @@
+Section 14 - Docker Overview
+
+91. Introduction
+
+Objectives
+ > What are Containers?
+ > What is Docker?
+ > Why do you need it?
+ > What can it do?
+ 
+ > Run Docker Containers
+ > Create a Docker Image
+ > Networks in Docker
+ > Docker Compose
+ 
+ > Docker Concepts in Depth 
+	- Docker Registries
+	- Private Docker Registries
+ 
+ 
+ > Docker for Windows/Mac
+ 
+ > Docker Swarm
+ > Docker vs Kubernetes
+
+
+
+92. Docker Overview
+
+
+Why do we need Docker (or Containers)?
+Case study: Deploying a system that consist of different services with different tech stack
+	> services are:
+		1. Web Server (NodeJS and expressJS)
+		2. Database (mongoDB)
+		3. Message Queue (redis)
+		4. Orchestration (Ansible)
+Issues:
+1. We need to ensure that when deploying these services in a machine or system,
+	>  the following must be compatible to all services
+		a. Hardware Infrastructure
+		b. OS
+		c. Libraries
+		d. Dependencies
+	> For example, there are times when a specific service (ex: WebApp) is not compatible with the OS version currently installed. So when finding the compatible OS for the WebApp, we need to ensure that it is also compatible with the other services
+2. Long setup time for each developers
+3. Different Dev/Test/Prod environment, which can cause Environment Parity
+
+
+'Matrix from Hell'
+ > phrase used to describe the compability issue of different services installed in a machine with regards to Hardware, OS, Libraries, and Dependencies
+
+
+What can it do? - Use case for Docker / Containers
+1. Containerized application
+	> we can easily deploy each of the Services on their own Containers
+2. Run each service with its own dependencies in separate Containers
+	> these Containers are COMPLETELY ISOLATED with each other, meaning that we can install different version of libraries and dependencies on them without affecting others
+
+
+What are Containers
+ > completely isolated environment, each with their own Processes/Services, Network and Mounts
+ > these Containers, if running on the same machine, will share the same OS Kernel
+
+
+Underlying concept of Operating Systems
+ > under the hood, Operating Systems consist of two parts
+	1. OS kernel
+	2. Software
+ > OS Kernel is responsible for interacting with the underlying hardware
+	- for all Linux OS, all of them uses Linux OS Kernel
+ > Software is what Linux OS different from each other	
+	- these software may consist of different user interface, drivers, compilers, file managers, developer tools, etc
+	
+
+Docker - Sharing the Kernel
+ > earlier we've mentioned that Docker containers share the same OS Kernel
+ > this is due to Docker being able to run ANY FLAVOR of Linux OS on top of the OS Kernel, as long as they are all based on THE SAME Kernel
+	- this we can have Docker container running ubuntu, centos, redhat OS, assumming that the machine where Docker is running is running on same Kernel
+	- each additional Docker container contains the additional software for each of the Linux flavor, then it utilizes the underlying Linux Kernel on the host
+ > this also means that we CANNOT RUN Docker container running Windows in a machine with Linux Kernel, since they have DIFFERENT underlying Kernel
+
+
+Containers vs Virtual Machines
+Container setup
+Hardware infrastructure
+ > OS
+  > Docker
+	> Container 1
+	 > Application
+	 > Libraries
+	 > Dependencies
+	> Container 2
+	 > Application
+	 > Libraries
+	 > Dependencies
+	 
+Virtual Machine setup
+Hardware Infrastructure
+ > Hypervisor
+  > Virtual Machine 1
+   > OS
+    > Application
+	> Libraries
+	> Dependencies
+  > Virtual Machine 2
+   > OS
+    > Application
+	> Libraries
+	> Dependencies
+	
+Differences
+Utilization
+ > there will be more hardware utilization for VM setup compared to Docker since there are multiple VMs running
+Disk space consumption
+ > VM setup will have HIGHER disk space consumption than Docker since each VM will have their OWN Kernel, which is typically the largest contributor to the disk space
+ > VM might uses disk space in terms of GB compared to Docker container which might use space in terms of MB
+Boot up speed
+ > Docker will have faster boot up, usually in a matter of seconds
+ > Compared to VM where it might take a minute or more since it needs to start up the OS 
+Isolation
+ > Docker containers have less isolation compare to VMs since in Docker, resources are shared among the containers like Kernel
+ > For VMs, since they can run different Kernel, this can allow them to run different applications for different Kernel requirements 
+ 
+ 
+Containers & Virtual Machines 
+ > in practice, we typically use Virtual Machine in conjunction of Docker containers
+	- ex: two different VM running Docker within
+ > this allows us to utilize the advantages of both VM and Docker setups
+ 
+EX:
+Hardware Infrastructure
+ > Hypervisor
+  > VM 1
+   > OS
+    > Docker
+	 > Container 1
+	  > Application
+	  > Libraries
+	  > Dependencies
+	 > Container 2
+	  > Application
+	  > Libraries
+	  > Dependencies
+  > VM 2
+   > OS
+    > Docker
+	 > Container 1
+	  > Application
+	  > Libraries
+	  > Dependencies
+	 > Container 2
+	  > Application
+	  > Libraries
+	  > Dependencies
+	  
+	  
+How is it done? - Provisioning Docker containers
+ > as of now, there are lots of Containerized versions of application readily available. These will be in format of Docker image, which we can easily use
+	- ex: Ansible, MongoDB, redis, nodeJS, etc
+ > some of these Docker images are hosted in a public Docker repository/registry called 'dockerhub'
+ > using these public Docker images, we can easily run or provision these application using docker using 'docker run' command
+	- ex: 
+		$ docker run ansible
+		$ docker run mongodb
+		$ docker run redis
+		$ docker run nodejs
+		$ docker run nodejs
+		$ docker run nodejs
+	- for multiple docker instances of the same image, we typically setup a loadbalancer to balance loads for each of them
+	
+	
+Container vs Image
+ > Image can be seen as a template, a package, or a plan
+	- this is similar to a VM template that is typically use in a Virtualization world
+	- these images is then used to create one or more containers
+ > Containers are RUNNING INSTANCES of Images that are isolated and have their own environment and set of processes
+ 
+ 
+Docker in DevOps
+ > traditionally, Developers create application and hands it to the Operations team to deploy and manage it on the production environment
+	- in this setup, developers typically give a set of instructions like
+		a. host machine configurations
+		b. prerequisites softwares to be installed
+		c. application packaging instructions
+		d. dependency configurations
+	- since the Ops team did not develop the application on their own, they might struggle on setting it up, and talk with the developers with this issue
+ > with Docker, Developers and Operations teams work hand in hand to transform the guide into a 'Dockerfile' with both of their requirements
+	- Dockerfile is a file used for building images for their application
+	- This image is then deployed in a Docker container and is expected to run in the same way no matter where, and how many times they deploy it
+	
+
+Dockerfile
+ - Dockerfile is a file used to create Docker images
+ - These contains set of instruction used to configure the Docker Container that will be executed in order to set it up
+
+NOTE:
+1. Containers are not new to Docker. Containers have existed for a long time. Types of containers before includes LXC, LXD, LXCFS. Docker utilizes LXC containers
+2. For Docker Desktop on Windows, it creates a Linux VM, where the Docker engine will create the Docker containers with Linux OS softwares inside
+3. Unlike Hypervisors, Docker is NOT MEANT to VIRTUALIZE different operating system and kernel on the same hardware
+	> main purpose of Docker is to package and containerized applications and to ship and run them anywhere, at any time we want
+4. Docker containers
+
+
+
+
+
+
+93. Getting started with Docker
+
+Docker Editions available
+1. Community edition
+	> set of free Docker products
+2. Enterprise edition
+	> certified and supported container platform that comes with enterprise add-ons such as image management, image security, control plane for managing and orchestrating container runtimes, etc 
+	> not free
+	
+Community edition
+ > available in Linux, Mac, Windows, or in any Cloud platforms
+ > in the upcoming demo, we will be mainly using Linux OS for exploring Docker
+ > for Mac or Windows, we can either
+	1. Install Linux VM using VirtualBox, etc
+	2. Install Docker desktop, which will spin up Linux container behind the scene
+
+
+
+
+
+94. Demo - Setup and Install Docker
+
+SOURCE: https://docs.docker.com/engine/install/ubuntu/
+
+Install Docker in Linux using convenience script
+1. Execute the convenience script
+	$ curl -fsSL https://get.docker.com -o get-docker.sh
+		> downloads the script
+	$ sudo sh ./get-docker.sh
+		> runs the script
+		> adding '--dry-run' lets you get a preview on whats happening in the script
+2. Note that you will need root or sudo privileges to run the said script
+
+
+Testing the installation
+1. Check the docker version
+	$ sudo docker version
+2. Use a sample docker image for testing
+	$ sudo docker run docker/whalesay cowsay Hello-World!

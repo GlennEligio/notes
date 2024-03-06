@@ -1,0 +1,13 @@
+29 Cloud control of services
+
+
+Virtual Machine
+ > lowest unit in Cloud that you can reason
+
+
+Cloud Control of Services
+ > in Cloud, you will be given a GUI or an Interface in order to use their Services
+	- this will serve as "wrapper" or "abstraction" to what you typically do in the hardwares that you use
+	- ex: AWS Portal Web UI for Amazon
+ > behind the scene, all command/actions done in provided User interface will be processed by "control plane" of the Cloud
+ > also, all the hardware that is being used in Cloud is still being created/managed, its just that you are not the one doing it, instead its the Cloud Providers folks and their hardware engineers

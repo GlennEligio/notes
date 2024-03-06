@@ -1,0 +1,18 @@
+02 Creating an AWS Account
+
+
+Information needed
+1. Root user email address
+2. AWS account name
+3. Root user password
+4. Personal info
+5. Credit card info
+	> for billing
+	> initially you will be provided a 12 months free tier
+6. SMS or Voice call authentication
+
+
+
+NOTE:
+1. Dont forget the root user email address and root user password
+	> this two will be used when logging to AWS console

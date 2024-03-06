@@ -1,0 +1,29 @@
+87 S3 Storage Classes Hands On
+
+Setting Storage Classes when uploading an Object
+1. Create a new S3 bucket
+	> 'glenneligio-s3-storage-classes-demos-2022'
+2. Upload an Object
+	> add the File
+	> in the Upload page, look for the 'Properties' section
+	> select the Storage Class that S3 Object will belong to
+	> upload
+3. Check the Storage class of the Object
+	> click the Object
+	> go to Properties tab
+	> scroll and look for Storage class section, it should match the Storage class we set when we uploaded it
+	> we can also edit the Storage class by clicking the Edit
+
+
+
+
+Configuring S3 Lifecycle rules
+1. Go to the Bucket > Management tab
+2. Go to Lifecycle rules section
+3. Create a lifecycle rule
+4. In the Create lifecycle rule page
+	> set name of rule 'DemoRule'
+	> select 'Apply to all objects in bucket'
+	> select 'Move current versions of objects between storage classes' for lifecycle rule actions
+	> another section should be available, where you can define the Storage classes to transition and how long the Object will be transitioned to that Class after the Object is created
+	> create rule

@@ -1,0 +1,344 @@
+HCL DevOps training day 3
+
+
+Prometheus
+ > HCL Commerce 9.1 has extensive monitoring capabilities based on Prometheus-style metrics. The HCL Commerce pods make metrics available on internal end-point that are consumed by Prometheus thru a process known as scraping.
+ > Prometheus we use is a 3rd party Helm Chart which is NOT provided by HCL. The following distribution installs Prometheus only and Grafana must be installed separately
+	- https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus
+ > The HCL Commerce chart  provides options for enabling integration with Prometheus
+	- Although metrics are enabled by default, the serviceMonitor option must be enabled to match your Prometheus install
+ > Service Monitors instruct Prometheus Operator what Commerce services to scrape.
+	- Prometheus Operator must be installed before using this option, as otherwise Kubernetes will not recognize
+	
+
+EX:
+createSampleConfig:
+  dbHostName: eecomdevauthdb
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+	namespace: kube-monitoring
+	selector:
+	  prometheus: kube-prometheus
+  tsDb:
+    enabled: false
+	
+EX:
+	Managed Fields:
+	  API Version: monitoring.coreos.com/v1
+	  Fields Type: FieldsV1
+	  fieldsV1:
+		f:metadata:
+		  f:annotations:
+			.:
+			f:meta.helm.sh/release-name:
+			f:meta.helm.sh/release-namespace
+		  f:labels:
+			.:
+			f:app:
+			f:app.kubernetes.io/instance:
+			f:app.kubernetes.io/managed-by:
+			f:app.kubernetes.io/name:
+			f:chart:
+			f:component:
+			f:group:
+			f:heritage:
+			f:prometheus:
+			f:release:
+		  f:spec:
+			.:
+			f:endpoints:
+			f:namespaceSelector:
+			  ,:
+			  f:matchNames:
+			f:selector:
+	  Manager: helm
+	  Operation: Update
+	  Time: 2023-06-14T12:03:20z
+	Resource Version: 73101243
+	UID: 2132f0b4-0390-47f9-a896-88fe83a98d8f
+Spec:
+  Endpoints:
+    Interval: 15s
+	Path: /monitor/metrics
+	Port: metrics
+	
+
+NOTE:
+1. Command to get all pods for monitoring kubernetes cluster is
+	> kubectl --kubeconfig=/datadisk/kubeconfig_prod -n kube-monitoring get pods
+	
+	
+	
+
+	
+Grafana
+ > these dashboards are designed to bring attention to critical metrics and highlight problems. 
+	- They give insight into the overall performance, as well as internal components such as caching and backend services
+	- The dashboards can be used in production, or to support the performance tuning process
+ > They are the best way to learn and consume the metrics made available by Commerce
+ > You can use them as-is, or customize to meet your needs. 
+ 
+ 
+Grafana dashboards provided for HCL Commerce
+1. Transaction servers
+2. QueryApp servers Dashboards
+3. Alertmanager / Overview
+4. CRS Performance
+5. CoreDNS
+6. Elasticsearch
+7. Grafana Overview
+8. HCL Cache - Local Cache Details
+9. HCL Cache - Local Cache summary
+10. HCL Cache - Remote
+11. Java - Detailed Metrics by Pod
+12. Java - Summary metrics by pod
+13. Kubernetes / API server
+14. Kubernetes / Compute Resources / Cluster
+15. Kubernetes / Compute Resources / Namespace (Pods)
+16. Kubernetes / Compute Resources / Namesapce (Workloads)
+17. Kubernetes / Compute Resources / Pod
+18. Kubernetes / Compute Resources / Workload
+19. Kubernetes / Controller Manager
+20. Kubernetes / Kubelet
+21. Kubernetes / Networking / Cluster
+22. Kubernetes / Persistent Volumes
+23. Kubernetes / Proxy
+24. Kubernetes / Scheduler
+25. NiFi Performance
+26. Node Exporter / MacOS
+27. Node Exporter / MacOS
+28. Node Exporter / Nodes
+29. Node Exporter / USE Method / Cluster
+30. Node Exporter / USE Method / Node
+31. Prometheus / Overview
+32. REST Performance
+33. etcd
+
+Transaction and QueryApp servers Dashboards
+ > the Transaction Servers and QueryApp Servers dashboards include a comprehensive set of metrics that give you a detailed view into the performance and health of the servers
+ > The metrics displayed include:
+	a. Summary: 
+		- Container Image name; 
+		- Number of pods (available and unavailable); 
+		- Request per second 
+	b. Resources and pools:
+		- JVM Heap
+		- CPU usage
+		- WebContainer/Default Executor pool usage
+		- Datasource usage (tsApp only)
+	c. Logging:
+		- Total rate of logging (message per second by severity)
+		- Rate of warnings and error
+		- Rate of trace messages, by pods
+	d. REST calls - Executions:
+		- Total call per second
+		- Status (http) per second
+		- Total calls by resource per second, rate, and increase
+	e. REST calls - Response times
+		- Average response times by resource; 95 and 99 percentile
+	f. REST calls - Caching
+		- Cache hits and misses per second
+		- Cache hit ratios by resource
+	g. Backend request (QueryApp only):
+		- Active requests by service
+		- Total calls per second per service Average response times, 95 and 99 percentiles
+ > in the Transaction Servers dashboard, we can filter the sources of the metrics shown by:
+	- Prometheus
+	- namespace
+	- deployment (ex: cleprodlivets-app or cleprodauthts-app)
+	- pod
+	- resource
+	- http_status
+ 
+ 
+  
+NOTES:
+1. Grafana is being used to monitor performance when doing a performance testing
+QUESTIONS:
+2. AppDynamics is being used to monitor any of the request coming in and out of the K8s pods. 
+3. Grafana URL:
+	> grafana-cleprod.luxgroup.net/d/hcl_ts_app/transaction-servers
+4. Dashboards are located in the Search dashboard by name -> General
+5. Readme file where each dashboard is explained is located under
+	> ops-code-n1/helm_charts/code/Monitoring/helm/hcl-commerce-dashboards/CommerceDashboards.md
+6. Most of the testing of Grafana is done in the UAT
+
+
+AppDynamics
+	> This is given directly by HCL Commerce
+	> similar to DynaTrace
+	> need to install plugin/client of this in order to trace request
+	> URL: luxottica-dev.saas.appdynamics.com
+	> AppDynamics is licensed and is provided by Azure, where we install AppDynamics clients. 
+	> These clients will then send metrics to a central location
+
+
+
+
+Logging
+ > With containerization, tracking a problem can be a major challenge with the existing logging system. To improve the logging situation, we should use an extended logging solution.
+ > Filebeat can access the log files in the containers and then TRANSFER the logs (in JSON format) to the Elasticsearch system. You can then view the logs in the Kibana user interface
+ > in EssilorLuxottica, we use the ELK stack for logging
+ > in PROD, together with ts-app, we use "Splunk forwarder" to forward the logs of ts-app to the centralized log storage
+ 
+EX: Filebeat
+filebeatConfig:
+  filebeat.yml: |
+    filebeat.inputs:
+	- type: container
+	  paths:
+	    - /var/log/containers/*.log
+	  exclude_files:
+	    - /var/log/containers/metricbeat-.*\.log
+		- /var/log/containers/filebeat-.*\.log
+		- /var/log/containers/kube-prometheus-.*\.log
+	  multiline.pattern: '^[[:space:]]+(at|\.{3})\b|^Caused
+	  multiline.negate: false
+	  multiline.match: after
+	  processors:
+	  - add_kubernetes_metadata:
+	      host: ${NODE_NAME}
+		  matchers:
+		  - logs_path:
+		      logs_path: "/var/log/containers/"
+  output.elasticsearch:
+    host: '${NODE_NAME}'
+	hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:92}'
+	pipeline: 'filebeat-nginx-ingress-access'
+	
+	
+EX: Splunk integration
+WithSplunk: true
+SplunkLogDirPrefix: ts_
+SplunkWcsComponent: ts-app
+Volumes:
+  - name: prescriptionsandinvocies
+    volumeType: pvc
+	mountPath: /prescriptionsandinvocies
+	claimName: prescriptionsandinvocies-pvc
+SplunkLogPath: /splunk
+
+
+
+
+Troubleshooting Topics
+1. WCS_build
+2. Build Index
+3. Notice ts-utils restarting for Out of memory (OOM) during dataload
+
+
+wcs_build
+ > a Jenkins pipeline used for building the wcs application
+ > located under Dashboard > build > wcs_build
+ > takes a code from the repository, and build a container images based on it
+ > the parameters of this pipeline includes:
+	1. bitbucket branches to use for building
+		- be_branch
+		- conf_branch
+		- ops_brand
+	2. hcl verson to use
+	3. deploy or not deploy (checkbox)
+	
+	
+buildIndex
+ > Jenkins pipeline used for buildIndex the index to be used to populate the Elasticsearch, and Algolia index
+ > located under Dashboard > {brand} > {env} > operations > wcs > build_index
+ > takes the following parameters	
+	1. stores where build_index will happen
+	2. copyConfig checkbox to specify if we will create Algolia replicas
+ > in this pipeline, it will do a REST api call to build the index, and periodically, it will do REST API call to check for status
+	- after a certain period of time, it will time out if the ingest job is not finished still
+ > Ingest URL to check for run status
+	- https://ingest-cleprod.luxgroup.net/connectors/auth.reindex/runs/{statusId}/status
+	- ex: https://ingest-cleprod.luxgroup.net/connectors/auth.reindex/runs/i-f66fc2a0-f3f0-4564-a567-46341e68036a/status
+ > Note that status id that starts with "i-" are full index, will those that start with "n-" are nrt index 
+ 
+ 
+xc-app_cleanup
+ > Jenkins pipeline used to clean up the PVC located in pod xc-app's /SETUP/data directory
+	- specifically, it cleans the /SETUP/data/auth/{storeId}/archived directory
+	- /SETUP/data directory goes as follows
+		/SETUP/data/{subenv, like AUTH/LIVE}/{storeId}
+			/archived
+			/failed
+			/products
+			/unprocessed
+			/config
+ > the PVC is used by xc-app for build index of Algolia
+	- initially, the feed/data is first stored in "products" directory
+	- then based on the indexing output, it will be stored in either "archived" (success), "failed", "unprocessed", "config"
+ 
+
+Notice ts-utils restarting for Out of memory (OOM) during dataload
+ > back in the days, whenever they dataload, they notice that ts-utils restarts due to resource limits
+ > this in turn make the dataload process failed
+ > the solution they made is that they changed the resource limit to:
+	- CPU limit: 2
+	- CPU memory: 8Gi
+	
+	
+Recap Build / Deployment / Operations
+ - wcs_vault_deploy
+ - wcs_build
+ - wcs-delta-builds
+ - wcs_deploy
+ - wcs_deploy_delta
+ - acpload/dbdeploy
+ - buildIndex
+ - stage propagation
+ - index propagation
+ - algolia propagation
+ - dbclean
+ - xc cleanup
+ - clean cache
+ - akamai fastpurge
+ - wcs_tracespec - to set and unset the runtime loggers
+ 
+ 
+stage propagation and index propagation
+ > used to propagate changes in database and Elasticsearch index from AUTH to LIVE sub environment respectively
+ 
+
+algolia propagation
+ > used to "COPY" the Algolia AUTH index to the Algolia LIVE index
+ > LIVE index is what LIVE Storefront is consuming
+ > this pattern is based on the LIVE and AUTH stages used by HCL
+ 
+ 
+wcs-delta build 
+ > used for building specific parts of the wcs. wcs_deploy is the full build
+ > example parts:
+	- ts-utils
+	- search-query-app
+	- search-registry-app
+
+dbclean 
+ > for cleaning three tables
+	- cacheivl
+	- staglog
+	- scheduler job related tables
+ > a scheduled job, runs daily for 5 times, LIVE/AUTH DB for cacheivl and staglog, and one for scheduler job
+ 
+ 
+clean_cache
+ > used for clearing Redis cache
+ > also clears bff cache
+ 
+akamai_fastpurge
+ > configured by Alessandro Lupi
+
+wcs_tracespec 
+ > help us in debugging by enable or reset the runtime logging setting
+ 
+
+wcs_vault_deploy
+ > we only do it once
+ > then, unless we have changes in the Vault, we will not run this pipeline
+
+
+Delta build naming conventino
+ > cle-bugfix_CLE-3575-CachingIssue-LanguageId_db8
+ > db8 refers to the delta build 8
+

@@ -1,0 +1,562 @@
+POST, PUT, DELETE
+
+
+Topics to Discuss:
+1. How to create resources with POST
+2. How to validate the values of DTO properties
+3. How to update resources with PUT
+4. How to delete resources with DELETE
+
+
+
+I. Adding POST functionality and some Restriction to Client POST object inputs
+
+1. Add an abstract method for Adding/Creating Item in Repository Interface
+	> add a method with following properties:
+		a. void return type
+		b. Item parameter type
+
+
+INSIDE the IItemRepository interface
+
+
+using System;
+using System.Collections.Generic;
+using Catalog.Entities;
+
+namespace Catalog.Repositories
+{
+    public interface IItemRepository 
+    {
+        Item GetItem(Guid id);
+        IEnumerable<Item> GetItems();
+        void CreateItem(Item item);
+    }
+}
+
+
+
+2. Define the CreateItem() abstract method in the Concrete Class
+	> inside the implemented method, add the following
+		a. call Add() of items property and pass the Item parameter
+
+INSIDE the InMemItemsRepository class
+
+        public void CreateItem(Item item)
+        {
+            items.Add(item);
+        }
+
+
+
+
+
+3. Create another DTO for input contract of Client
+	> when a Client creates an Item in the Services we only want the Name and the Price	
+	> the GUID and DateCreated is TYPICALLY AUTOMATICALLY created by the REST API
+	> so, for the CreateItemDto, we would only want the Name and Price property
+
+INSIDE CreateItemDto.cs file
+
+namespace Catalog.Dtos
+{
+    public record CreateItemDto
+    {
+        public string Name { get; init; }
+        public decimal Price { get; init; }
+    }
+}
+
+
+
+
+4. Create a new Route endpoint in our Controller class
+	> this will be for adding Item in our webapi from our Client
+	> this method will have the following properties
+		a. [HttpPost] annotation
+		b. ActionResult<ItemDto> return type
+			= convention for POST endpoint is to return the newly created Entity
+		c. CreateItemDto parameter
+		d. Method body will include
+			- Create new Item
+			- Supply the Name and Price attribute of new Item from the CreateItemDto parameter
+			- Call the CreateItem() of repository and pass the Item object
+			- return CreateAtAction()
+				= needs the following parameters
+					> nameof ActionResult method
+					> new list of object that corresponds to Route endpoint parameter
+					> value created, with in our case, the item created and converted to a Dto
+
+INSIDE Controller class as one of the endpoints
+
+        // POST /items
+        [HttpPost]
+        public ActionResult<ItemDto> CreateItem(CreateItemDto itemDto)
+        {
+            var item = new Item
+            {
+                Id = Guid.NewGuid(),
+                Name = itemDto.Name,
+                Price = itemDto.Price,
+                CreatedDate = DateTimeOffset.UtcNow
+            };
+
+            repository.CreateItem(item);
+
+            return CreatedAtAction(nameof(GetItem), new {Id = item.Id}, item.AsDto());
+        }
+
+
+
+
+5. Test the new POST endpoint
+	> save all, run and debug
+	> call the GetItems() and observe result
+	> call the CreateItem() and add a CreateItemDto object inside request body
+	> call the GetItems() again to see the new Item 
+
+OLD ITEM LIST / GetItems() response
+
+[
+  {
+    "id": "9e73e628-6892-4db1-92b9-4db90829568b",
+    "name": "Potion",
+    "price": 9,
+    "createdDate": "2021-08-11T13:00:16.3920695+00:00"
+  },
+  {
+    "id": "9692e601-a1c0-452f-834c-499f276941cd",
+    "name": "Iron Sword",
+    "price": 20,
+    "createdDate": "2021-08-11T13:00:16.3921374+00:00"
+  },
+  {
+    "id": "e1636597-9ede-462c-83cf-4c4632eff5fa",
+    "name": "Bronze Shield",
+    "price": 18,
+    "createdDate": "2021-08-11T13:00:16.3921383+00:00"
+  }
+]
+
+
+NEW ITEM / Request body
+
+{
+  "name": "Diamond sword",
+  "price": 90
+}
+
+
+
+NEW ITEM LIST
+
+
+[
+  {
+    "id": "9e73e628-6892-4db1-92b9-4db90829568b",
+    "name": "Potion",
+    "price": 9,
+    "createdDate": "2021-08-11T13:00:16.3920695+00:00"
+  },
+  {
+    "id": "9692e601-a1c0-452f-834c-499f276941cd",
+    "name": "Iron Sword",
+    "price": 20,
+    "createdDate": "2021-08-11T13:00:16.3921374+00:00"
+  },
+  {
+    "id": "e1636597-9ede-462c-83cf-4c4632eff5fa",
+    "name": "Bronze Shield",
+    "price": 18,
+    "createdDate": "2021-08-11T13:00:16.3921383+00:00"
+  },
+  {
+    "id": "e5b03e3f-c11e-4d69-8852-7f0bcb0532cf",
+    "name": "Diamond sword",
+    "price": 90,
+    "createdDate": "2021-08-11T13:01:17.7384104+00:00"
+  }
+]
+
+	
+
+	Most of the time, we would want to add restrictions in the Client request bodies like
+		a. Cant be empty/null
+		b. Must be within specific range (in case of number)
+
+	For us to add restrictions to the Client request body input, we would need to add ANNOTATIONS to the properties of the DTO that we used (in this case, the CreateItemDto). 
+
+
+
+
+6. Add these annotations to CreateItemDto to restrict the client input data
+	a. [Required]
+		> property cant be null/empty when this is present
+		> add to both Name and Price
+	b. [Range(int minimum, int maximum)]
+		> property must be within the specified range when this is present
+		> add to the Price property
+		> set the min and max to 0 and 1000 respectively
+
+
+INSIDE CreateItemDto.cs file
+
+using System.ComponentModel.DataAnnotations;
+
+namespace Catalog.Dtos
+{
+    public record CreateItemDto
+    {
+        [Required]
+        public string Name { get; init; }
+        
+        [Required]
+        [Range(0, 1000)]
+        public decimal Price { get; init; }
+    }
+}
+
+
+
+
+7. Test the application again
+	> save all, run and debug
+	> send a POST request with no Name property
+	> send a POST request with Price outside 1-1000 range
+
+POST response for no Name
+400 Error
+
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "traceId": "00-da84aadd3e31574183757679a9bf44d5-8641c91e90f2bd4e-00",
+  "errors": {
+    "Name": [
+      "The Name field is required."
+    ]
+  }
+}
+
+
+POST response when Price is outside 1-1000 range
+
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "traceId": "00-792ecc01643ee848b15f104be73669f8-f0df33a86b55f946-00",
+  "errors": {
+    "Price": [
+      "The field Price must be between 0 and 1000."
+    ]
+  }
+}
+
+
+
+
+
+II. Add PUT endpoint for updating an Item
+
+8. Add another abstract method in Repository Interface
+	> abstract method will have following property
+		a. void return type
+		b. Item parameter
+
+INSIDE IItemRepository interface
+
+	void UpdateItem(Item item);
+
+
+
+
+9. Implement and define the new abstract method in the Concrete Implementation class 
+	> to implement, press the Concrete class name then press CTRL + .
+		 = choose implement methods option
+	> inside the implemented method, add the following
+		a. create a variable
+			= this will hold the index of the Item that we will replace
+		b. assign the variable the Item object inside items
+			= we will use FindIndex() for this
+			= inside FindIndex(), create a lambda expression to get the specific Item in items whose Id that matches the Item parameter's Id
+		c. replace the Item in the Item list with the Item parameter
+			= use the variable index for the index parameter of items
+
+
+INSIDE InMemItemsRepository class
+
+        public void UpdateItem(Item item)
+        {
+            var index = items.FindIndex(existingItem => existingItem.Id == item.Id);
+            items[index] = item;
+        }
+
+
+
+
+
+10. Create the DTO class for updating Item in Repository
+	> the properties will be the same as the CreateItemDto class
+	> name the class UpdateItemDto
+
+INSIDE UpdateItemDto.cs file
+
+using System.ComponentModel.DataAnnotations;
+
+namespace Catalog.Dtos
+{
+    public record UpdateItemDto
+    {
+        [Required]
+        public string Name { get; init; }
+        
+        [Required]
+        [Range(0, 1000)]
+        public decimal Price { get; init; }
+    }
+}
+
+
+
+
+
+11. Create another endpoint for updating Item in repo in Controller class
+	> the endpoint method will have the following property
+		a. [HttpPut("{id}")] annotation
+		b. ActionResult return type
+		c. Guid and UpdateItemDto parameter
+		d. inside the method body, we will do the following
+			- fetch the existing item inside the repository's items using Guid parameter
+			- check if the item we fetch is null
+				> if null, return NotFound()
+			- create another Item variable for holding the updatedItem
+				> we will use with-expression on the existing item we fetch
+				> then inside the with {}, modify the Name and Price by replacing them with UpdateItemDto parameter's Name and Price
+			- call UpdateItem() of repository and pass the Item we created
+			- return a NoContent()
+
+INSIDE ItemsController class, as one of its endpoint
+
+        // PUT /items/{"id"}
+        [HttpPut("{id}")]
+        public ActionResult UpdateItem(Guid id, UpdateItemDto itemDto)        
+        {
+            var existingItem = repository.GetItem(id);
+
+            if(existingItem is null)
+            {
+                return NotFound();
+            }
+
+            Item updatedItem = existingItem with 
+            {
+                Name = itemDto.Name,
+                Price = itemDto.Price
+            };
+            
+            repository.UpdateItem(updatedItem);
+            return NoContent();
+        }
+
+
+
+
+12. Test the PUT endpoint
+	> save all, run and debug
+	> call GetItems() and copy a GUID from the response body list
+	> using the GUID, send a PUT request with updated Name and Price inside the body
+	> call GetItems() again to see the changes
+
+INITIAL LIST
+
+[
+  {
+    "id": "446e8288-cae1-4fa3-a612-2e92af102695",
+    "name": "Potion",
+    "price": 9,
+    "createdDate": "2021-08-11T16:20:44.2980838+00:00"
+  },
+  {
+    "id": "9d2d56ba-b69e-4743-869e-702aefce7d97",
+    "name": "Iron Sword",
+    "price": 20,
+    "createdDate": "2021-08-11T16:20:44.2981416+00:00"
+  },
+  {
+    "id": "a305fb75-7413-427e-852e-b199e8abb647",
+    "name": "Bronze Shield",
+    "price": 18,
+    "createdDate": "2021-08-11T16:20:44.2981432+00:00"
+  }
+]
+
+
+UPDATED ITEM 
+
+{
+  "name": "Power potion",
+  "price": 20
+}
+
+
+UPDATED ITEM LIST
+
+
+[
+  {
+    "id": "446e8288-cae1-4fa3-a612-2e92af102695",
+    "name": "Power potion",
+    "price": 20,
+    "createdDate": "2021-08-11T16:20:44.2980838+00:00"
+  },
+  {
+    "id": "9d2d56ba-b69e-4743-869e-702aefce7d97",
+    "name": "Iron Sword",
+    "price": 20,
+    "createdDate": "2021-08-11T16:20:44.2981416+00:00"
+  },
+  {
+    "id": "a305fb75-7413-427e-852e-b199e8abb647",
+    "name": "Bronze Shield",
+    "price": 18,
+    "createdDate": "2021-08-11T16:20:44.2981432+00:00"
+  }
+]
+
+
+
+
+
+III. Adding DELETE endpoint to our Controller 
+
+
+13. Add abstract method in Repository Interface
+	> this is for deleting an item in repository
+	> the abstract method will have the following properties
+		a. void return type
+		b. Guid id parameter
+
+INSIDE IItemRepository interface
+
+using System;
+using System.Collections.Generic;
+using Catalog.Entities;
+
+namespace Catalog.Repositories
+{
+    public interface IItemRepository 
+    {
+        Item GetItem(Guid id);
+        IEnumerable<Item> GetItems();
+        void CreateItem(Item item);
+        void UpdateItem(Item item);
+        void DeleteItem(Guid id);
+    }
+}
+
+
+
+14. Implement the new abstract method to the Concrete Implementation class
+	> inside the implemented method, we will do the following
+		a. find the index of the item inside items using the Guid parameter
+		b. remove the item inside we got using Guid parameter from the items collection
+
+INSIDE InMemItemsRepository class
+
+        public void DeleteItem(Guid id)
+        {
+            var index = items.FindIndex(existingItem => existingItem.Id == id);
+            items.RemoveAt(index);
+        }
+
+
+
+
+15. Add a DELETE endpoint to our Controller class
+	> this endpoint method will have the following properties
+		a. [HttpDelete("{id}")] annotation
+		b. ActionResult return type
+		c. Guid parameter
+		d. inside the method body, we will do the following
+			- fetch the item from the items of repository using GetItem()
+			- check if item we got is null
+				> if null, return NotFound()
+			- delete the item in the repository using DeleteItem() of repository and pass Guid parameter
+			- return a NoContent()
+
+INSIDE ItemsController class
+
+        // DELETE /items/{"id"}
+        [HttpDelete]
+        public ActionResult DeleteItem(Guid id)
+        {
+            var item = repository.GetItem(id);
+
+            if(item is null)
+            {
+                return NotFound();
+            }
+
+            repository.DeleteItem(id);
+
+            return NoContent();
+        }
+
+
+
+
+16. Test the new DELETE endpoint
+	> save all, run and debug
+	> get all item using GetItems()
+	> copy a GUID from list
+	> call DeleteItem() and pass the Guid
+	> call GetItems() and see the changes
+
+INITIAL LIST
+
+[
+  {
+    "id": "7ae18ac8-2711-4b4c-819d-c7b7e83fc1b8",
+    "name": "Potion",
+    "price": 9,
+    "createdDate": "2021-08-11T16:36:40.201269+00:00"
+  },
+  {
+    "id": "bc1ede41-24a4-497e-a9c6-7cda4fc8a38a",
+    "name": "Iron Sword",
+    "price": 20,
+    "createdDate": "2021-08-11T16:36:40.2013241+00:00"
+  },
+  {
+    "id": "47211fab-aaae-4081-8704-1074dd034701",
+    "name": "Bronze Shield",
+    "price": 18,
+    "createdDate": "2021-08-11T16:36:40.2013263+00:00"
+  }
+]
+
+
+GUID used to remove Item
+
+7ae18ac8-2711-4b4c-819d-c7b7e83fc1b8
+
+
+
+UPDATED LIST
+
+[
+  {
+    "id": "bc1ede41-24a4-497e-a9c6-7cda4fc8a38a",
+    "name": "Iron Sword",
+    "price": 20,
+    "createdDate": "2021-08-11T16:36:40.2013241+00:00"
+  },
+  {
+    "id": "47211fab-aaae-4081-8704-1074dd034701",
+    "name": "Bronze Shield",
+    "price": 18,
+    "createdDate": "2021-08-11T16:36:40.2013263+00:00"
+  }
+]

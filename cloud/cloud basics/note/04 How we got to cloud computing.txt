@@ -1,0 +1,43 @@
+04 How we got to cloud computing
+
+
+1950s
+Mainframes
+ > a large bulky computers
+ > expensive
+ > due to the cost, people use "Time sharing"
+	- each programmer that will be using the Mainframes will share the usage of it based on time-window
+	- they also share the Mainframe based on the processing power percentages
+
+
+Model
+ > each programmer will submit instructions to the Mainframe via Terminal
+ > Terminals are connected to Mainframe
+
+		-> Terminal (programmer 1)
+Mainframe	-> Terminal (programmer 2)
+		-> Terminal (programmer 3)
+		-> Terminal (programmer 4)
+
+
+Characteristics
+1. Shared hardware
+2. Use when you want
+3. Economies of scale
+	> since Mainframe is expensive, typically one Mainframe is bought, and is shared through different users
+
+
+
+What happened next?
+1. Computers became cheap
+2. Everyone could own some
+3. Organizations could own some computers
+4. Data centers is created
+	> due to the computers becoming cheap, data centers became a thing
+
+
+
+Application evolution
+1. Web applications
+	> before, the application must be installed in the computers themselves
+	> with Web applications, the app service can be accessed in their own computers remotely

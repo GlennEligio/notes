@@ -1,0 +1,258 @@
+Introduction to Java
+
+Topics:
+1. History of Java
+2. Brief Java explanation
+3. Types of Java program
+4. Java Capabilities
+5. Java Virtual Machine
+6. JDK
+7. Interpret the Java Program
+
+
+History of Java
+	> introdcued in 1995 by James Gosling of Sun Microsystem
+	> object was to develop software for embedding in consume electronics
+	> intially called Ok
+	> with Java being secure, portable, and platform-indenpendent, it was found to be capable of addressing large scale problems across the Internet
+
+
+Java
+	> an Object-oriented programming (OOP)
+	> a cross-platform language
+	> used to create stand-alone applications, net-based programs and programs for consumer devices
+		- ex: cellular phones, palm pilots
+
+
+
+Features of Java
+1. Object oriented
+2. Simple
+3. Secured
+4. Platform independent
+5. Robust
+6. Portable
+7. Architecture neutral
+8. Dynamic 
+9. Interpreted
+10. High performance
+11. Multithreaded
+12. Distributed
+
+
+Object Oriented
+	> everything in Java is an Object
+	> which means that we organize our software as a combination of different types of objects that incorporates both DATA and BEHAVIOR
+	> a methodology that simplifies software development and maintenance by providing some rule
+
+Simple
+	> very easy to learn, and its syntax is simple, clean and easy to understand
+	> Java syntax is based on C++
+	> removed many complicated and rarely-used features of C++ like explicit pointers, operator overloading, etc.
+	> no need to remove unreferenced object because theres an Automatic Garbage Collection in Java
+
+Security
+	> No explicit pointers to access the memory directly to write/overwrite stuff
+	> Runs inside a Virtual Machine sandbox
+
+Platform independent
+	> Can run on any platform as long as the platform have JVM installed in them		
+		-> unlike C, C++ which are compiled into platform specific machines
+	> Write once, run anywhere (WORA)
+		- Java code is first compiled and converted into a bytecode
+		- This bytecode can then be ran into different platform with JVM
+
+Robust
+	> Strong memory management
+	> Lack of pointers which avoids security problems
+	> Automatic garbage collection for easy memory management
+	> Exception handling and type checking mechanism
+
+Architecture-neutral
+	> No implementation dependent features
+		-> ex: size of primitive types is fixed in Java
+	> In C programming, int data type occupies 2 bytes of memory for 32bit architecture and 4bytes of memory for 64-bit architecture
+	> However in Java, int occupies 4 bytes of memory for both 32 and 64 bit architectures in Java
+
+Portable
+	> only needs Java bytecode and JVM any platform to run Java
+
+Dynamic 
+	> supports dynamic loading of classes
+		-> means that classes are loading in demand
+	> also supports dynamic compilation and automatic memory management (garbage collection)
+
+Interpreted
+	> Java source code is first compiled into bytecode
+	> This bytecode is then interpreted by Java Intepreter into machine code and ran by JVM
+
+High performance
+	> faster than other traditional interpreted programming language because Java bytecode is close to native code
+	> still a little bit slower than a compiled language (e.g. C++)
+
+Multithreaded
+	> Can create Java programs that dealth with many tasks at once by defining multiple threads
+	> Multiple thread doesnt occupy memory for each thread
+		-> shares a common memory area
+
+Distributed
+	> facilitates users to create distributed applications in Java
+	> RMI and EJB are used for creating distributed application
+	> This feature of Java makes us able to access files by calling the methods from any machine on the internet
+
+
+
+Types of Java programs
+1. Applets
+	> programs created specially to work with the Internet
+2. CLI applications
+	> programs that run from a command prompt and do not display any GUI screen
+3. GUI applications
+	> programs that run standalone and accept user input through a GUI based screen
+4. Servlets
+	> suitable for web based n-tier application development
+	> also called server side applets
+	> For HTML form processing, process databases, and perform server side transactions
+5. Packages
+	> Class libraries in Java
+	> A programmer can create his/her own packages or used built-in packages
+		-> java.awt, java.io, and java.applet are some example
+6. Database applications
+	> Uses JDBC API for database connectivity
+	> Programs can be either applets or application
+
+
+
+Application Runtime
+	
+Java Development Kit (JDK)
+	> a software development environment used for developing Java applications and applets	
+	> includes the 
+		1. Java Runtime Environment (JRE)
+		2. Interpreter/loader (java)
+		3. Compiler (javac)
+		4. Archiver (jar)		
+		5. Documentation generator (javadoc)
+	> contains the software and tools needed to compile, debug, and execute application written in Java language
+
+Java Runtime Environment (JRE)
+	> provides the minimum required for executing a Java application
+	> consist of Java Virtual Machine (JVM), core classes, and supporting files
+	> the JRE is the on-disk system that takes your Java code, combines it with the necessary libraries, and starts the JVM to execute it
+
+
+Java Virtual Machine (JVM)
+	> is a running software system responsible for executing live Java programs
+	> an ABSTRACT MACHINE
+	> called VIRTUAL MACHINE because it doesn't physically exist
+	> a specification that provides a runtime environment in which Java bytecode can be executed
+	> can also run those programs which are written in other languages and compiled to Java bytecode
+	> has an INTERPRETER component that enables communication between Java bytecode and a computer's operating system
+	> responsible for platform independence and small size compiled code
+	> recognizes only a particular binary format called a class file (.class)
+
+JVM Task
+JVM performs the following operations:
+1. Loads code
+2. Verifies code
+3. Executes code
+4. Provides runtime environment
+
+JVM provides definitions for the:
+1. Memory area
+2. Class file format
+3. Register set
+4. Garbage-collected heap
+5. Fatal error reporting etc.
+
+
+JVM Architecture, composed of
+1. Class loader
+2. Memory Areas allocated to JVM
+	- Class area
+	- Heap
+	- Stack
+	- PC register
+	- Native method stack
+3. Execution engine
+	- Interpreter
+	- Just-In-Time Compiler
+	- Garbage collector
+4. Native method interface
+5. Java Native Libraries 
+
+
+1. Classloader
+	> a subsystem of JVM that used to load class files
+		-> java.lang, java.util, java.sql
+
+2. Memory Areas
+Class (Method) Area
+	> stores per-class structures such as the runtime constant pool, file and method data, the code for methods
+
+Heap
+	> it is the runtime data area in which objects are allocated
+
+Stack
+	> Java Stack stores frames
+	> holds local variables and partial results
+		-> plays a part in the method invocation and return
+	> each thread has a private JVM stack, created at the same time as thread
+	> a new frame is created each time a method is invoked
+		-> A frame is then destroyed when its method invocation completes
+
+3. Program Counter Register
+	> PC register
+	> contains the address of the Java virtual machine instruction currently being executed
+
+4. Native Method Stack	
+	> contains all the native methods used in the application
+
+5. Execution Engine
+	> contains a virtual process and Interpreter
+
+6. Just-In-Time (JIT) compiler
+	> used to improve the performances
+	> JIT compiles parts of the byte code that have similar functionality at the same time
+		-> with this, the byte code does not need to be interpreted and the Execution engine will just use the Native code of the SAME byte code portion to run
+		-> hence reduces the amount of time needed for compilation
+
+
+
+Difference between JDK, JRE, JVM
+JDK
+	> development tools
+	> used to provide an environment to develop your Java programs
+	> contains JRE + Development tools
+
+JRE
+	> installation package which provides environment to only run (NOT DEVELOP) the Java program onto your machine
+	> used only for running Java Programs i.e end users of your system
+	> caontains JVM + Library classes
+
+JVM
+	> very important part of both JDK and JRE
+		-> with this, JVM is contained or inbuilt in both
+	> whatever Java program you run using JRE or JDK goes into JVM
+	> responsible for executing Java program line by line
+		-> hence it is also known as Interpreter
+
+
+How JRE works
+Class Loader
+1. Class loader loads all necessary classes needed for the execution of a program
+	> It provides security by separating the namespaces of the local file system from that imported through the network
+	> These files are loaded either from a hard disk, a network, or from other sources
+	
+
+Byte Code Verifier
+2. The JVM puts the code through the Byte Code Verifier that checks the format and checks for an illegal code
+	> Illegal code, for example, is code that violates access rights on objects or violates the implementation of pointers
+
+Intepreter
+3. At runtime, the Byte Code is loaded, check and run by the interpreter
+	> The Interpreter has the following two functions:
+		a. Executes the Byte Code
+		b. Make appropriate calls to the underlying hardware
+
+	

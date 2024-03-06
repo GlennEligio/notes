@@ -1,0 +1,22 @@
+153 - Cloud Integrations Overview
+
+Section Introduction
+ > When we start deploying multiple applications, they will inevitably need to communicate with one another
+ > there are two patterns of application communication
+	1. Synchronous communication
+		- application to application
+		- ex: Buying Service <-----> Shipping Service
+	2. Asynchronous communication
+		- also called Event based
+		- happens between application to queue to application
+		- ex: Buying Service -> Queue -> Shipping Service
+		- in this case, the Buying Service and Shipping Service are "decoupled" because theres a queue in between them to talk to
+		
+When to use Asynchronous over Synchronous?
+ > Synchronous between applications can be problematic if there are sudden spikes of traffic
+	- ex: What if you need to suddenly encode 1000 videos where it is usually 10 videos
+ > In this case, its better to decouple your application. Below are the example services offered by AWS
+	- Simple Queue Service (SQS): queue model
+	- Simple Notification Service (SNS): pub/sub model
+	- Kinesis: real-time data streaming model
+ > These services can scale INDEPENDENTLY from our application!

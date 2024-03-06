@@ -1,0 +1,152 @@
+Day 2
+
+Linktag to navigate in HTML page
+	> we can use Link tags to navigate to a page
+	> to do this, we will 
+		1. Create a link tag
+			- for href, use the id or name attribute of the element we want to navigate
+			- syntax: href="#id" or href="#name"
+			- ex: <a href="#c4"><h1 id="c4">Chapter 4</h1>
+
+
+Nested List
+	> list nested inside a list
+	> in a list item <li> of a list <ul> or <ol>, theres another <ul> or <ol>
+
+<form>
+	> represents a form
+	> form is used to send data
+	> inside a form, there are <input>, <select>, and <textarea> nested inside to be able to input data
+
+Form attribute
+1. action
+	> defines where the form data will be submitted
+	> can be an external url to internet OR html page to the same project
+2. method
+	> defines the HTTP method to use when submitting data	
+		- GET will have the data submitted to query parameters
+		- POST will have the data submitted to request body
+
+
+<input>
+	> represents an input
+	> input is used to input data in form
+
+Input attributes
+1. input
+	> defines the input type of <input>
+	> can be
+		a. text, for text inputs
+		b. password, same as text input but the character is changed to hide the actual character
+		c. checkbox, for checkbox input type
+			- for checkbox, we can have more than ONE value
+			- for this type, if we want to have multiple checkbox option, we can create more than one
+			- but they MUST HAVE the same name value 
+		d. radiobutton
+			- radiobutton can have only ONE value to it
+			- to create more than ONE option, radiobutton inputs must have SAME NAME attribute
+		e. file
+			- used to upload file
+			- you will be given an "upload" button to prompt you to choose the file
+		f. hidden
+			- used to send hidden hardcoded data
+			- this input will NOT be displayed in the form
+		g. submit
+			- used to send the data of form to the "action"
+		h. reset
+			- used to reset the values in form
+2. value
+	> value of a specific input
+	> if we give this a value, it will be displayed in the textbox
+		- we can still change this in the HTML page itself
+3. size
+	> defines the size of the input textbox's length
+4. maxlength
+	> defines the max length of an <input>'s value
+5. name
+	> defines the name of the data
+
+
+<select>
+	> used to create dropdown menu 
+	> dropdown menu will have multiple options available for users to choose
+	> to add options, add <option> inside the select
+	> have the following attribute
+		a. name
+			= defines the name of the data to send
+		b. multiple
+			= defines if user can choose multiple options
+
+<option>
+	> represents an option
+	> nested inside a select tag
+	> have attribute
+		a. value
+			= defines the value of the option
+
+<textarea>
+	> represents a textarea
+	> used to pass a large body of text in form
+	> have the following attribute
+		a. name	
+			= represents the name of data
+		b. cols and rows
+			= represents the column and row size of textarea (by character size)
+
+
+<div>
+	> represents a division
+	> a block level element, takes up a whole line (hence division)
+
+<span>
+	> represents a span in a line
+	> an inline level element, takes up a portion of a line (hence span)
+
+
+CSS
+Three ways of using CSS
+1. Inline, as style attribute of element
+2. Internal, inside <style> tags inside <head>
+3. External, different file
+
+Three ways of selecting element
+<h1 class="h1class" id="h1Id">Header tag</h1>
+1. By HTML element
+	> syntax: element {}
+EX:
+h1 {
+background: black
+}	
+
+2. By Class
+	> syntax: .className {}
+EX:
+.h1class {
+text-decoration: underline
+}
+
+3. By element Id
+	> syntax: #elementId {}
+EX:
+#h1Id {
+font-style: italic
+}
+
+
+
+CSS Box model
+> composed of the following
+	1. Content
+		> strictly what the element shows (text, image)
+	2. Padding
+		> distance between the content and the border 
+	3. Border
+		> actual border of an element	
+		> this is what other element's border interact to
+	4. Margin
+		> an offset space outwards, starting from the border
+
+
+
+Padding
+	> defines the space between the content and the border of the element

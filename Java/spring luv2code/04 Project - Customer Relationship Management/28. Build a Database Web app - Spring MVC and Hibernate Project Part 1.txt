@@ -1,0 +1,194 @@
+28. Build a Database Web app - Spring MVC and Hibernate Project Part 1
+
+Contents:
+01 Project Overview and Demo
+02 Source Files for Spring MVC + Hibernate
+03 Set up Sample Data for Database
+04 Test Database Connenction Part 1
+05 Test Database Connection Part 2
+06 Set Up Dev Environment Part 1
+07 HEADS UP - FOR JAVA 9+
+08 Set Up Dev Environment Part 2
+09 Set Up Dev Environemtn Part 3
+10 Test Spring MVC Controller Part 1
+11 Test Spring MVC Controller Part 2
+
+
+
+
+
+
+
+
+01 Project Overview and Demo
+
+GOAL:
+Full working Spring MVC and Hibernate application that connects to a database
+
+STEPS - Customer Relationship Management (CRM)
+1. Set up Database Dev Environment
+2. List Customers
+3. Add a new Customer
+4. Update a Customer
+5. Delete a Customer
+
+
+
+
+
+
+
+
+
+
+02 Source Files for Spring MVC + Hibernate
+
+Source file contents
+sql-scripts
+ - 01-create-user.sql
+ - 02-customer-tracker.sql
+
+jar files to add in WebContent/WEB-INF/lib
+ > commons-logging-1.2
+ > javax.servlet.jsp.jstl-1.2.1
+ > javax.servlet.jsp.jstl.api-1.2.1
+ > mysql-connector-java-5.1.39
+
+
+
+
+
+
+
+03 Set up Sample Data for Database
+
+Set up Sample Data for Database
+01-create-user.sql
+ > create a new MySQL user for our application, with credentials
+	- user id: springstudent
+	- password: springstudent
+ > if you already have user in the sql server, skip this
+
+02-customer-tracker.sql
+ > used to do the following
+	1. create db schema
+	2. create table
+	3. insert sample data
+
+
+
+
+
+
+
+
+
+04 Test Database Connenction Part 1
+
+Create the CRM app
+1. Create a Dynamic Web app
+	> specify the Tomcat server to use
+2. After creating the Web app, insert the needed jar files that we just downloaded earlier in the
+	src/main/webapp/WEB-INF/lib
+3. Create a package in the src/main/java
+	com.luv2code.testdb
+4. Create a Servlet in the testdb package
+	> name is TestDbServlet
+	> click Next, then another Next
+	> in the Method stubs to create, leave only the "Inherited abstract methods" and "doGet" checked
+
+
+
+
+
+
+
+05 Test Database Connection Part 2
+
+Test Database Connection Part 2
+1. Add the mysql connector jar file in src/main/webapp/WEB-INF/lib
+2. Import the java.sql.* in the TestDbServlet class
+3. Inside ths servlet's doGet(), do the following
+	> setup connection variables
+	> get connection to database
+	> print something to the ServletResponse OutputWriter
+
+Ex:
+// TestDbServlet.java
+package com.luv2code.testdb;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.DriverManager;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.mysql.jdbc.Connection;
+
+@WebServlet("/TestDbServlet")
+public class TestDbServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// setup connection variables
+		String user = "root";
+		String password = "TEST_PASSWORD";
+		
+		String jdbcUrl = "jdbc:mysql://localhost:3306/web_customer_tracker?useSSL=false&serverTimeZone=UTC";
+		String driver = "com.mysql.jdbc.Driver";
+		
+		// get connection to database
+		try {
+			PrintWriter out = response.getWriter();
+			
+			out.println("Connecting to database: "+ jdbcUrl);
+			Class.forName(driver);
+			
+			Connection myConn = (Connection) DriverManager.getConnection(jdbcUrl, user, password);
+			
+			out.println("Success!!");
+			
+			myConn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ServletException(e);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+06 Set Up Dev Environment Part 1
+
+Set Up Dev Environment
+1. Copy start config files
+	- put these items in the src/main/webapp/WEB-INF
+	- web.xml and spring config
+2. Copy over JSTL libs
+	- put in the src/main/webapp/WEB-INF/lib
+	- javax.servlet.jsp.jstl-1.2.1 and javax.servlet.jsp.jstl-api-1.2.1
+3. Copy latest Spring JAR files
+4. Copy latest Hibernate JAR files
+
+
+
+
+
+
+
+
+07 HEADS UP - FOR JAVA 9+
+08 Set Up Dev Environment Part 2
+09 Set Up Dev Environemtn Part 3
+10 Test Spring MVC Controller Part 1
+11 Test Spring MVC Controller Part 2

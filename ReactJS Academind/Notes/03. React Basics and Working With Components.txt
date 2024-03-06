@@ -1,0 +1,868 @@
+React Basics and Working With Components
+
+
+001. Module Introduction
+
+Goal:
+1. Create Component-Driven UI
+
+
+Module Content
+1. React Core Syntax & JSX
+2. Working with Components
+3. Working with Data 
+
+
+
+
+
+
+002. What Are Components, and Why Is React All About Them?
+
+React
+	> a JS library for building user interfaces
+	> makes building complex, interactive and reactive user interfaces simpler 
+		- compared to just using HTML, Vanilla JS, and CSS
+	> all about "Component" and embraces it
+
+
+Components
+	> building block of all User Interfaces
+	> composed of the two parts
+		1. elements to display
+		2. function/logic/behavior behind these elements
+
+Why Components?
+1. Reusability
+	- we can use these Components multiple times
+	- helps developer to not repeatedly write the code
+3. Separation of Concerns
+	- keeps the code base small and manageable
+	- every Component will have ONE CLEAR CONCERN/FUNCTION/TASK
+4. Split big chunks of code into multiple smaller functions
+
+
+
+
+
+
+
+
+003 React Code is Written in a Declarative Way
+
+How Is A Component Built
+	> uses three Components
+		1. HTML for defining elements to display
+		2. JavaScript for defining behavior of the said elements
+		3. CSS for styling the elements
+			- OPTIONAL, not focus of React Components
+
+
+React	
+	> allows you to create RE-USABLE and REACTIVE Components
+	> these Components consist of HTML and JavaScript (and CSS)
+	> uses Declarative Approach to create this Components
+
+React and Declarative Approach
+	> in React, we define the "desired target state(s)" and let React figure out the actual JavaScript DOM instructions
+	> where in HTML + Vanilla JS, we explicit define the final state of DOM object
+
+
+
+
+
+
+
+
+005 Creating a new React Project
+
+Create React App
+	> used to create React projects
+		- these projects contains pre-configured folders with some basic React code files
+		- also contains a bunch of configuration files which help you build the React App for production use
+	> this also gives you a nice development environment with a development web server which allows you to preview the application locally on your machines
+	> it will allow you to preview this application in a way where the browser will update the page whenever we change something in the source code
+		- similar to Spring Boot Dev Tools
+
+
+Requirements
+1. NodeJS
+	> runtime for JavaScript
+	> needed for the Create React App tool
+		- for running the command
+
+
+Commands
+npx create-react-app <PROJECT-NAME>
+	> used to create react project
+npm install
+	> used to install missing dependencies
+	> create node_modules folder in project
+npm start
+	> used to 
+
+
+Creating React app
+1. Execute the command below
+	npx create-react-app <PROJECT-NAME>
+		- used to create a React app with specific name
+
+Installing dependencies of React project
+1. Execute "npm install" in the root directory of React app
+
+Start the React app
+1. Go inside the root directory of the React app
+	cd <PROJECT-NAME>
+2. Execute the command below
+	npm start
+
+
+
+
+
+007 Analyzing a Standard React Project
+
+NOTE:
+1. React js files are similar to Vanilla JS files
+2. Syntax of React js files is DIFFERENT to typical Vanilla JS file on browser
+	> React js inside src folder are TRANSFORMED into the browser friendly code when ran in the browser
+
+
+src/index.js
+	> entrypoint of React project
+	> first code file that will be executed when starting React project
+
+src/App.js
+	> can be considered as ROOT COMPONENT of the React app
+
+Content:
+ReactDOM.render(Component, DOM element)
+	> method of ReactDOM	
+	> renders a Component inside the specified DOM element
+	> ex: ReactDOM.render(<App />, document.getElementById('root'))
+		- in this case, we will render <App /> Component inside the DOM element result of the second parameter
+
+package.json
+	> contains informations about React project like
+		- dependencies
+		- scripts
+		- name, version
+		- etc
+
+react and react-dom dependencies
+	> components of React library
+
+public/index.html
+	> the single html page rendered by the React project
+
+
+
+
+008 Introducing JSX
+
+JSX
+	> stands for JavaScript XML
+	> in JSX's syntax, we can define XML (which are typically HTML element and Components) inside a JS file
+	> the React will then transform these JSX into browser friendly code
+
+Looking at Transformed JSX
+1. Run the React project
+	> npm start
+2. Go to the React website
+3. Inspect the page
+4. In the Inspect tab, navigate to Debugger then Sources
+5. Inside sources, go find the static/js folder
+6. Inside you should see bundle.js
+7. Search in bundle.js transformed JSX Component
+	> ex: if you have a functional Component App(), search "App()"
+
+EX:
+JSX App()
+
+function App() {
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+Transform App()
+
+function App() {
+  return /*#__PURE__*/(0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)("div", {
+    children: /*#__PURE__*/(0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)("h2", {
+      children: "Let's get started!"
+    }, void 0, false, {
+      fileName: _jsxFileName,
+      lineNumber: 4,
+      columnNumber: 7
+    }, this)
+  }, void 0, false, {
+    fileName: _jsxFileName,
+    lineNumber: 3,
+    columnNumber: 5
+  }, this);
+}
+
+
+
+
+
+
+009 How React Works
+
+How React Work	
+1. In React, use a Declarative Approach to define/describe the desired target state(s)
+	- the React then figure out the actual JavaScript DOM instructions
+	- to define the desired target state(s), we will use the JSX syntax
+2. The React then transforms these JSX into browser friendly code
+
+EX:
+Declarative approach in React
+	> here, we describe how the final state will be	
+		- in example below, we describe the final state to be a div with h2 inside
+
+function App() {
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+    </div>
+  );
+}
+
+export default App;
+
+
+Imperative approach
+	> in this approach, we define the steps needed to reach the final state that we want
+		- in example below, we defined steps to create the final state
+		- same final state as the one in declarative approach
+
+EX:
+const div = document.createElement('div');
+const heading2 = document.createElement('h2');
+heading2.textContent = 'Let's get started';
+div.append(heading2);
+document.getElementById('root').append(div)
+
+
+
+
+
+
+010 Building a First Custom Component
+
+NOTES:
+1. App.js is typically considered as the Root Component
+2. By convention, all Components are located inside src/component
+	- except the App.js
+3. By convention, all Component JS files starts with Capital Letter and written in CamelCase
+	- ex: ExpenseItem.js
+4. When importing Component inside another Component, we dont need to specify the .js extension of the source
+	- ex: import ExpenseItem from "./components/ExpenseItem"
+5. Components can be either a Class Component, or a Functional Component
+	- for Functional Component, it must return a JSX file
+	- for Class Component, the render() method inside must return a JSX file
+6. When returning a JSX, it must have ONE ROOT element
+7. For return a JSX with multiple lines, enclose them inside a parenthesis
+
+
+Creating Custom Component
+1. Create components folder inside src folder
+2. Inside the components folder, create a JS file named "ExpenseItem.js"
+3. Inside ExpenseItem.js, 
+	- create a function of the same name
+	- make the function return a JSX 
+	- export default the function itself
+
+ExpenseItem.js
+
+function ExpenseItem() {
+  return <h2>Expense Item!</h2>;
+}
+
+export default ExpenseItem;
+
+
+
+Importing Component inside another Component
+1. Import the Component
+2. Use the Component inside the JSX return of Component as if its an HTML element
+
+EX:
+import ExpenseItem from "./components/ExpenseItem";
+
+function App() {
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+      <ExpenseItem></ExpenseItem>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+011 Writing more Complex JSX Code
+
+Rules when writing a JSX Code
+1. The JSX must have one root element
+2. Multiline JSX must be enclosed with parenthesis
+3. Empty HTML tags (<></>) will NOT be rendered on the final HTML DOM
+	> useful when you have multiple root element in JSX
+
+EX:
+
+function ExpenseItem() {
+  return (
+      <div>
+        <h1>Line 1</h1>
+      </div>
+      <div>
+        <h1>Line 2</h1>
+      </div>
+  );
+}
+
+
+This will give an error, what we can do instead is to add an empty HTML tag just like the one below
+
+function ExpenseItem() {
+  return (
+    <>
+      <div>
+        <h1>Line 1</h1>
+      </div>
+      <div>
+        <h1>Line 2</h1>
+      </div>
+    </>
+  );
+}
+
+
+
+
+
+
+
+
+012 Adding Basic CSS Styling
+
+Importing CSS file
+	> Importing CSS file in a Component is the same as importing other stuff
+		- except we dont give it a name
+		- ex: import './ExpenseItem.css'
+	> CSS imported by a Component will be APPLIED to all of its subcomponents
+		- ex: If we import './App.css' in App.js, and ExpenseItem is nested inside App Component, the ExpenseItem will have App.css applied to it
+
+
+Applied CSS Class in JSX elements
+	> since "class" is a reserved word (used for declaring JS Classes), we will need to use "className"
+	> "className" works the same way as "class" in typical HTML-CSS
+
+
+EX:
+
+import "./ExpenseItem.css";
+
+function ExpenseItem() {
+  return (
+    <div className="expense-item">
+      <div>March 28th 2021</div>
+      <div className="expense-item__description">
+        <h2>Car Insurance</h2>
+        <div className="expense-item_price">$294.67</div>
+      </div>
+    </div>
+  );
+}
+
+export default ExpenseItem;
+
+
+
+
+
+
+013 Outputting Dynamic Data & Working with Expressions in JSX
+
+Injecting JavaScript inside JSX
+	> to do so, we will need to enclose the JS expression with curly braces {}
+	> in the JSX code, we can also inject basic JS expressions or JS variables
+		- ex: <h1>${1+1+2}</h1>
+		- ex: <p>{expenseTitle}</p>
+		- ex: <p>{isDiscounted ? "Discounted" : "Regular"}</p>
+	> these can be use to make the data in JSX element more dynamic
+	> locations where we can inject JS expression is not just limited to textContent, these includes
+		- innerHTML
+		- textContent
+		- className
+		- any HTML attribute
+
+NOTE:
+1. The JS expression that we inject MUST RETURN primitive datatype (number, string, char, etc)
+	- return Objects in JS expression will give out an error
+
+EX:
+
+import "./ExpenseItem.css";
+
+function ExpenseItem() {
+  const expenseDate = new Date(2021, 2, 28);
+  const expenseTitle = "Car Insurance";
+  const expenseAmount = 294.67;
+
+  return (
+    <div className="expense-item">
+      <div>{expenseDate.toDateString()}</div>
+      <div className="expense-item__description">
+        <h2>{expenseTitle}</h2>
+        <div className="expense-item_price">${expenseAmount}</div>
+      </div>
+    </div>
+  );
+}
+
+export default ExpenseItem;
+
+
+
+
+
+
+
+
+014 Passing Data via props
+
+
+props
+	> short for property
+	> used to dynamically pass/assign to the Components
+		- we do this pass/assign process in the Component that nest the Component that receives the props
+	> an Object that React Component receives
+		- all custom attribute that we pass in Component will be inside this Object
+	> IMMUTABLE, changed be reassigned to new value
+		- for MUTABLE data, use States
+	> to use props, we need to 
+		1. Pass props to a Component
+		2. Access and use the props from inside the Component
+
+
+Passing props to a Component
+	> similar to assigning value to HTML element property, but for React Components
+	> to do this, we will need to add custom attribute to the Component, and assign value to it
+		- later, we will use the name of this custom attribute to access the data through props
+
+EX: App.js
+
+import ExpenseItem from "./components/ExpenseItem";
+
+function App() {
+  const expenses = [
+    {
+      id: "e1",
+      title: "Toilet Paper",
+      amount: 94.12,
+      date: new Date(2020, 7, 14),
+    },
+    {
+      id: "e2",
+      title: "New TV",
+      amount: 799.47,
+      date: new Date(2020, 7, 14),
+    },
+    {
+      id: "e3",
+      title: "Car Insurance",
+      amount: 249.64,
+      date: new Date(2020, 7, 14),
+    },
+    {
+      id: "e4",
+      title: "New Desk (Wooden)",
+      amount: 450,
+      date: new Date(2020, 7, 14),
+    },
+  ];
+
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+      <ExpenseItem
+        title={expenses[0].title}
+        amount={expenses[0].amount}
+        date={expenses[0].date}
+      ></ExpenseItem>
+      <ExpenseItem
+        title={expenses[1].title}
+        amount={expenses[1].amount}
+        date={expenses[1].date}
+      ></ExpenseItem>
+      <ExpenseItem
+        title={expenses[2].title}
+        amount={expenses[2].amount}
+        date={expenses[2].date}
+      ></ExpenseItem>
+      <ExpenseItem
+        title={expenses[3].title}
+        amount={expenses[3].amount}
+        date={expenses[3].date}
+      ></ExpenseItem>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+Accessing and Using props
+	> to access the props Object, we will need to add "props" in the parameters of Functional Component
+		- or parameter in Constructor of Class Component
+	> we can then access the custom data in "props" Object that we passed in Component when we used it
+		- must be the same name
+
+EX: ExpenseItem.js
+
+import "./ExpenseItem.css";
+
+function ExpenseItem(props) {
+  return (
+    <div className="expense-item">
+      <div>{props.date.toDateString()}</div>
+      <div className="expense-item__description">
+        <h2>{props.title}</h2>
+        <div className="expense-item_price">${props.amount}</div>
+      </div>
+    </div>
+  );
+}
+
+export default ExpenseItem;
+
+
+NOTE:
+1. We can destructure the "props" Object in order to pass its properties to variables
+	- this way, we dont need to call props.<propName> each time
+
+EX:
+
+import "./ExpenseItem.css";
+
+function ExpenseItem({ date, title, amount }) {
+  return (
+    <div className="expense-item">
+      <div>{date.toDateString()}</div>
+      <div className="expense-item__description">
+        <h2>{title}</h2>
+        <div className="expense-item_price">${amount}</div>
+      </div>
+    </div>
+  );
+}
+
+export default ExpenseItem;
+
+
+
+
+
+
+
+
+015 Adding normal JavaScript Logic to Components
+
+NOTE:
+1. It is a better pratice to use helper variable instead of injecting long JS expression in JSX code
+	- in example below, we created helper variable to hold result value of a very long JS expression
+	- so instead of putting the JS expression in JSX code, we only put the variable itself
+
+EX:
+import "./ExpenseItem.css";
+
+function ExpenseItem(props) {
+  const month = props.date.toLocaleString("en-US", { month: "long" });
+  const day = props.date.toLocaleString("en-US", { day: "2-digit" });
+  const year = props.date.getFullYear();
+
+  return (
+    <div className="expense-item">
+      <div>
+        <div>{month}</div>
+        <div>{year}</div>
+        <div>{day}</div>
+      </div>
+      <div className="expense-item__description">
+        <h2>{props.title}</h2>
+        <div className="expense-item_price">${props.amount}</div>
+      </div>
+    </div>
+  );
+}
+
+export default ExpenseItem;
+
+
+
+
+
+
+
+016 Splitting Components into Multiple Components
+
+NOTES:
+1. Its a good practice to keep the Components small and focused
+2. Big Components should preferrably split into smaller Components
+3. No hard rules as to when we should split a Component
+	- comes with experience
+4. CSS imports of a Component will be APPLIED to its Subcomponents
+5. Components can be written as self-closing tag, instead of having open and close tags
+	- instead of <ExpenseItem></ExpenseItem>
+	- we can do <ExpenseItem />
+
+EX:
+Before creating ExpenseDate Component
+
+// ExpenseItem.js
+import "./ExpenseItem.css";
+
+function ExpenseItem(props) {
+  const month = props.date.toLocaleString('en-US', {month: 'long'});
+  const day = props.date.toLocaleString('en-US', {day: '2-digit'});
+  const year = props.date.getFullYear();
+
+  return (
+    <div className="expense-item">
+      <div>
+        <div>{month}</div>
+        <div>{year}</div>
+        <div>{day}</div>
+      </div>
+      <div className="expense-item__description">
+        <h2>{props.title}</h2>
+        <div className="expense-item_price">${props.amount}</div>
+      </div>
+    </div>
+  );
+}
+
+export default ExpenseItem;
+
+
+
+After
+// ExpenseItem.js
+import ExpenseDate from "./ExpenseDate";
+import "./ExpenseItem.css";
+
+function ExpenseItem(props) {
+  return (
+    <div className="expense-item">
+      <ExpenseDate date={props.date} />
+      <div className="expense-item__description">
+        <h2>{props.title}</h2>
+        <div className="expense-item_price">${props.amount}</div>
+      </div>
+    </div>
+  );
+}
+
+export default ExpenseItem;
+
+
+// ExpenseDate.js
+import "./ExpenseDate.css";
+
+function ExpenseDate(props) {
+  const month = props.date.toLocaleString("en-US", { month: "long" });
+  const day = props.date.toLocaleString("en-US", { day: "2-digit" });
+  const year = props.date.getFullYear();
+
+  return (
+    <div className="expense-date">
+      <div className="expense-date__month">{month}</div>
+      <div className="expense-date__year">{year}</div>
+      <div className="expense-date__day">{day}</div>
+    </div>
+  );
+}
+
+export default ExpenseDate;
+
+
+
+
+
+
+
+017 The Concept of Composition and props.children
+
+
+Composition
+	> concept where we combine Components together
+	> in Composition, we can:
+		- nest Components to another Components
+		- wrap Components around another Components to serve as a shell
+	> with Composition, we can have reusability with the Components
+
+Wrapper Component
+	> a Component that wraps around other Components
+	> by default, JSX code inside Components (inside opening and closing tags) will NOT be rendered
+	> but, using a special prop call "children", we can choose inside a Component where we can display JSX that is nested inside it
+
+props.children
+	> special prop inside the "props" Object
+	> the value of this prop is the JSX code inside Wrapper Component
+	> we can call this prop inside the JSX return value of Wrapper Component to define where we will render the wrapped JSX
+
+
+Creating Wrapper Component
+1. Create a Component
+	> with JSX code to return
+2. Add props parameter in Functional Component
+	> or in constructor of Class Component
+3. Insert the "props.children" in any place inside 
+	> this props.children refers to elements the Wrapper Component wraps
+4. OPTIONAL: Use props.className to fetch className assigned to the Component
+	> typically when styling the Wrapper Component, we can either
+		- add className attribute to Wrapper Component when we use it, then call "props.className" inside
+		- hardcode the className attribute inside the Wrapper Component directly
+
+
+EX:
+Wrapper Component (Card.js)
+
+import "./Card.css";
+
+function Card(props) {
+  const classes = "card " + props.className;
+
+  return <div className={classes}>{props.children}</div>;
+}
+
+export default Card;
+
+
+
+
+Use of Wrapper Component (ExpenseItem.js)
+
+import ExpenseDate from "./ExpenseDate";
+import Card from "./Card";
+import "./ExpenseItem.css";
+
+function ExpenseItem(props) {
+  return (
+    <Card className="expense-item">
+      <ExpenseDate date={props.date} />
+      <div className="expense-item__description">
+        <h2>{props.title}</h2>
+        <div className="expense-item_price">${props.amount}</div>
+      </div>
+    </Card>
+  );
+}
+
+export default ExpenseItem;
+
+
+
+
+
+
+
+
+019 A Closer Look at JSX
+
+JSX
+	> short for JavaScript XML
+	> a syntactic sugar, used to declaratively define the final state of UI
+	> React then transform this JSX into more browser friendly code
+
+One wrapper root in JSX	
+	> reason why we can only have one root element in JSX is that we can only return ONE React.createElement()
+
+EX:
+JSX code
+  return (
+    <div>
+      <h2>Let's get started!</h2>
+      <Expenses items={expenses} />
+    </div>
+  );
+
+React JS code behind the scene
+  return React.createElement(
+    "div",
+    {},
+    React.createElement("h2", {}, "Let's get started"),
+    React.createElement(Expenses, { items: expenses })
+  );
+
+
+
+
+
+020 Organizing Component Files
+
+Organizing Component Files
+	> there are many ways of organizing Component files
+	> we can either group them by
+		1. function/kind
+		2. resources that they are involve (Expense, Users, Item, etc)
+
+EX: 
+src
+ > components
+     > Expenses (resource 1)
+         > ExpenseDate.js
+         > ExpenseItem.js
+         > Expenses.js
+     > UI
+         > Card.js
+
+
+
+
+
+021 Alternative Function Syntax for Components
+
+Pre-ES6 function syntax
+
+function ExpenseItem(props) {
+  return (
+    <Card className="expense-item">
+      <ExpenseDate date={props.date} />
+      <div className="expense-item__description">
+        <h2>{props.title}</h2>
+        <div className="expense-item_price">${props.amount}</div>
+      </div>
+    </Card>
+  );
+}
+
+
+ES6+ function syntax
+
+const ExpenseItem = (props) => {
+  return (
+    <Card className="expense-item">
+      <ExpenseDate date={props.date} />
+      <div className="expense-item__description">
+        <h2>{props.title}</h2>
+        <div className="expense-item_price">${props.amount}</div>
+      </div>
+    </Card>
+  );
+}

@@ -1,0 +1,23 @@
+22 Practice Example Question
+
+Question: From Azure Fundamentals AZ-900 exam
+Which cloud approach is used by organizations to take full advantage of on-premises technology investments and allows data and applications to be shared between two environments?
+a. public cloud
+b. private cloud
+c. hybrid cloud
+d. on-premises datacenter
+
+My Answer: B
+The private cloud is the best approach in this situation because with private cloud, you can utilize the on-premises technology while allowing data and applications to be shared between two environments using the Cloud architecture the private cloud owner constructed
+
+
+
+Choices explanation
+a. public cloud
+	> cant use on-premises technology
+b. private cloud
+	> cant share data and application outside the private network
+c. hybrid cloud
+	> CORRECT ANSWER, the environment being referred to here is on-premise, private, and public cloud, which would make the hybrid cloud suitable
+d. on-premises datacenter
+	> can't allow data and application sharing

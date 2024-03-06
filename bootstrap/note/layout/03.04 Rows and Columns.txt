@@ -1,0 +1,94 @@
+03.04 Rows and Columns
+
+Rows and Column
+row
+	> class added in element (typically div)
+	> with this, the element's width will occupy ALL the space available inside a Container
+	
+
+row-cols-1
+row-cols-2
+row-cols-3
+row-cols-n
+	> added in the element with "row" class
+	> defines the number of max columns the row will have
+
+
+col
+col-1
+col-2
+col-n
+	> class added in element, mostly div
+	> the element must be WRAPPED by an element with class of "row"
+	> with this, it will occupy a PORTION of row's width based on the number
+		-> if no number is given, it will occupy all the available width of the row
+		-> if a number is given, it will occupy a PORTION of row's width
+			=> for this, the calculation is (n/12) where n is the number given to col
+
+EX:
+      <div class="row">
+        <div class="col">Col 1</div>
+        <div class="col">Col 2</div>
+      </div>
+
+In this case, the two col will occupy ALL the available space in row. They will share the space and end up with each half of row's width (6 columns or 50% of row's width)
+
+
+      <div class="row">
+        <div class="col-4">Col 1</div>
+        <div class="col-4">Col 2</div>
+      </div>
+
+In this, case, the two col will each occupy 4 out of 12 columns (33% of 12 col). They will occupy a total of 8 columns (66%).
+
+
+      <div class="row">
+        <div class="col-4">Col 1</div>
+        <div class="col">Col 2</div>
+      </div>
+
+Here, the first col will occupy the 4 out of 12 columns (33% of row's width). The second column will then occupy the REST of available space (8 columns or 66% of row's width)
+
+
+
+Column and Breakpoints
+	> we can also define the amount of columns an element occupies in a specific breakpoints
+	> we can do this by adding the breakpoint infix
+		-> ex: col-md-4 will occupy 4 columns in screen with width >= 768px
+	> NOTE: If theres no col specified for a specific breakpoint, the col will occupy 12 COLUMNS or 100% of row's column
+		-> with this, if two col occupies a row, the 2nd col will be wrapped to the next row
+
+
+
+
+Vertical Alignment (of Columns inside Row)
+	> to align the columns items inside a Row element VERTICALLY, we can use the "align-items-*" classes
+	> similar to the align-items property of the CSS Flexbox (with "flex-direction:row")
+	> NOTE: To see this in action, the row element's height must be DEFINED
+
+1. align-item-start
+	> align all col elements of row at the start (top)
+2. align-item-center
+	> align all col elements of row at the center
+3. align-item-end
+	> align all col elements inside the row at the end (bottom)
+
+
+
+
+Horizontal Alignment (of col elements inside row)
+	> to align the col elements of row HORIZONTALLY, we can use the "justify-content-*" classes
+	> similar to "justify-content" property of CSS flexbox
+
+1. justify-content-start
+	> align the col element at the start of row (left most)
+2. justify-content-center
+	> align the col element at the center of row 
+3. justify-content-end
+	> align the col element at the end of row (right)
+4. justify-content-around
+	> align the col elements so that they have equal margin left and right
+5. justify-content-between
+	> align the col elements so that they have equal space to each of the col elements
+6. justify-content-evenly
+	> align the col elements so that they have equal space to other col elements and sides of row

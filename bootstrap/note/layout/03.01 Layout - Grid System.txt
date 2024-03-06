@@ -1,0 +1,9 @@
+03.01 Layout - Grid System
+
+Bootstrap Grid System
+	> the Grid System uses ROWS and COLUMNS
+	> a Webpage can contain any amount of ROWS
+	> a Rows can contain AT MOST 12 COLUMNS
+
+Responsiveness
+	> the content of the webpage SHOULD ADJUST to the size of the screen

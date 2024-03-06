@@ -1,0 +1,52 @@
+77 S3 Security Bucket Policy Hands On
+
+Testing the initial Bucket Policy
+1. Go to an Object inside S3 Bucket
+2. Go to Details
+3. Copy the Object URL and paste it in the browser
+	> you should get Access Denied error
+
+
+Adding S3 Bucket Policy
+1. Go to the Bucket you want to change the Bucket Policy
+2. Go to Permissions tab
+3. Edit Block public access
+	> uncheck everything, and Save changes
+4. In the Bucket Policy, click edit
+	> copy the Bucket ARN in this page, we will use it later
+5. Click Policy generator to generate a Policy
+	> Policy example is provided by AWS themselves
+6. At AWS Policy Generator, Select Policy Type
+	> select S3 Bucket Policy as T
+7. In Statement
+	> select 'Allow' for effect
+	> pass '*' for the principal
+	> Add 'GetObject' as the Actions to permit
+	> for ARN, pass the S3 Bucket ARN you copied earlier, then add a '/*' at the end to select all resources under that S3 Bucket (which are the folders and files)
+	> Add the finished Statement
+	> Generate the Policy, and copy the JSON document
+8. Back in Bucket Policy page, paste the JSON document. Then Save Changes
+
+ex:
+{
+  "Id": "Policy1673932400272",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1673932382656",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::glenneligio-ccp-2022/*",
+      "Principal": "*"
+    }
+  ]
+}
+
+
+
+Testing the S3 Bucket Policy
+1. Go to any Object
+2. Go to Properties tab, and copy the Object URL
+3. Paste it in the browser, you should be able to access it

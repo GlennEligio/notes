@@ -1,0 +1,12 @@
+06. PRG pattern
+
+
+PRG
+	> stands for Post-Redirect-Get pattern
+	> development approach that prevents duplicate content when submitting forms and provides a more intuitive user interface. 
+	> The post-redirect-get pattern allows you to set bookmarks, share URLs, and reload a website that queries and sends form data - without creating duplicate content or near duplicate content.
+	> to do this, we will have to do 
+
+1. Send a form data in a POST API endpoint
+2. Inside the POST API endpoint, after performing logic in the form data received (e.g. save in db), we will REDIRECT the request
+3. The location of request redirect will be a GET mapping API endpoint

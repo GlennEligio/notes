@@ -1,0 +1,17 @@
+25 CapEx vs OpEx
+
+
+CapEx - Capital Expenditure
+ > refers to the capital cost of buying to own a hardware
+ > full upfront cost
+ > savings over time
+ > useful when you can predict the scale 
+ > usually the cheapest on consistent utilization
+ > means "on-prem data centers" on Cloud context
+OpEx - Operation Expenditure
+ > refers to the cost of "rent" a harware
+ > no upfront costs
+ > pay for what you use
+ > useful in scale or demand fluctuation
+ > can be more expensive in the long run
+	- due to address the scale or demand fluctuation

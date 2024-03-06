@@ -1,0 +1,332 @@
+JSON Web Tokens
+
+Authentication vs Authorization
+
+Authentication
+	> answers the question "Who you are?"
+
+Authorization
+	> answers the question "What can you do?"
+	> comes after Authentication
+
+
+JWT process
+
+Client > Server 	Client sends login credentials in a login route
+
+Server > Client		Server creates JWT with a secret key for the client
+			Returns the JWT to the client
+
+Client > Server		Clients want to fetch data in server
+			Clients add JWT in Authorization Header
+
+Server > Client		Validates token and returns the response
+
+
+
+
+JWT Token structure
+	> made up of three parts
+		a. Header
+			- defines the algorithm used for encrypting	
+			- defines what type of token type used
+		b. Payload
+			- defines the data like
+				=  date when token is issued
+				= date when token expires
+				= claims that the user have
+		c. Signature
+			- the encoded part of the JWT
+			- needs to have the Secret key which the Server ONLY have
+
+
+
+Steps to follow:
+1. Create SecretKey in AppSettings
+2. Install JwtBearer package
+3. Generate Token after Authentication
+4. Add services.AddAuthentication() in the ConfigureServices() of StartUp class
+5. Use JwtBearerDefaults in AddAuthentication()'s schemeType parameter
+6. Add app.AddJwtBearer
+
+
+
+
+1. Add a token field into the User Entity
+	> data Type string
+
+INSIDE Account.cs
+
+namespace Eze.Entities
+{
+    public class Account
+    {
+       [BsonId]
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Token { get; set; }
+    }
+}
+
+
+
+
+2. Create a Login Route endpoint in one of the Controllers for checking credentials
+	
+INSIDE AccountController.cs
+
+        [HttpGet("Login")]
+        public async Task <ActionResult<Account>> LoginAsync([FromBody] LoginAccountDto accountDto)
+        {
+            var account = ((await repo.GetAccountsAsync()))
+                            .Where(account => account.Username == accountDto.Username 
+                                                && account.Password == accountDto.Password); 
+
+            if(account == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(account);
+        }
+
+
+
+3. Add a JWTSettings property in the appsettings.json file
+	> add SecretKey item inside the JWTSettings	
+	> define the said SecretKey property
+
+INSIDE appsettings.json file
+
+  "JWTSettings":{
+    "SecretKey":"thisisasecretkeyandyoudonotwanttosharethis"
+  },
+
+
+
+
+4. Create a JWTSettings class that we will inject later to other class
+	> we will map the property values of this class to the JWTSettings section in appsettings.json config file
+	
+INSIDE ConfigureServices() of StartUp class
+
+            var jwtSettings = Configuration.GetSection("JWTSettings");
+            services.Configure<JWTSettings>(jwtSettings);
+
+
+
+5. Inject IOptions<JWTSettings> into the Controller class
+	> add a JWTSettings field into the Controller class
+	> add IOption<JWTSettings> into the Controller class constructor as parameter
+	> assign the parameter value into the JWTSettings field
+
+INSIDE AccountController class
+
+        private readonly JWTSettings jwtSettings;
+
+        public AccountController(IEzeRepository repo, IOptions<JWTSettings> jwtSettings)
+        {
+            this.repo = repo;
+            this.jwtSettings = jwtSettings.Value;
+        }
+
+
+
+6. Add the JwtBearer package into the project
+	> add this package into the project
+
+		dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+
+
+
+
+7. Add these codes inside the login route endpoint method
+	> after checking if User with following credentials is present, add these codes
+
+		var tokenHandler = new JwtSecurityTokenHandler();
+
+	> this will be the Handler responsible for making the JwtToken
+
+		var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
+
+	> this will convert the SecretKey into Bytes in ASCII format
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]{
+                    new Claim(ClaimTypes.Name, account.Username),
+                    new Claim(ClaimTypes.Role, "Admin")
+                }),
+                Expires = DateTime.UtcNow.AddMonths(3),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+            };
+
+	> this will define the description of the content of the Jwt token
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+	> this will make the tokenHandler create a token based on the token descriptor
+
+            var accountWithToken = new AccountWithTokenDto
+            {
+                Id = account.Id,
+                Name = account.Name,
+                Username = account.Username,
+                Password = account.Password,
+                Token = tokenHandler.WriteToken(token)
+            };
+
+	> create an AccountWithTokenDto object with the token weve just created
+
+
+INSIDE LoginAsync() of AccountController class
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]{
+                    new Claim(ClaimTypes.Name, account.Username),
+                    new Claim(ClaimTypes.Role, "Admin")
+                }),
+                Expires = DateTime.UtcNow.AddMonths(3),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var accountWithToken = new AccountWithTokenDto
+            {
+                Id = account.Id,
+                Name = account.Name,
+                Username = account.Username,
+                Password = account.Password,
+                Token = tokenHandler.WriteToken(token)
+            };
+
+
+
+
+
+8. Test the route method
+	> save all, build and run	
+	> send a GET request in LoginAsync with a LoginAccountDto body
+	> check the Token property from the AccountWithTokenDto object we received
+
+LoginAsync() Response body
+
+{
+    "id": "a749ed9b-8842-4ab3-9f27-bfafa6601243",
+    "name": "admin",
+    "username": "admin@gmail.com",
+    "password": "password",
+    "token": "RANDOM_JWT_TOKEN"
+}
+
+		
+
+9. Check the JWT in the jwt.io
+
+HEADER
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+PAYLOAD
+{
+  "unique_name": "admin@gmail.com",
+  "role": "Admin",
+  "nbf": 1631704764,
+  "exp": 1639567164,
+  "iat": 1631704764
+}
+
+
+
+
+10. Fetch the SecretKey value in the appSettings.JwtSettings configuration
+	> using the jwtSettings IConfiguration variable we made earlier, create a JWTSettings object
+	> using the JWTSettings object, get the SecretKey and assign it to a variable
+
+INSIDE ConfigureServices() of StartUp class
+
+            var appSettings = jwtSettings.Get<JWTSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.SecretKey);
+
+
+
+
+11. Add Authentication into the IServicesCollection of ConfigureServices()
+	> inside the ConfigureServices(), call the AddAuthentication() of IServiceCollection
+	> inside the AddAuthentication() parameter, configure the options by 
+		- setting DefaultAuthenticateScheme to JwtBearerDefaults.AuthenticationScheme
+		- setting DefaultChallengeScheme to JwtBearerDefaults.AuthenticationScheme
+
+INSIDE ConfigureServices() of StartUp class
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+
+
+
+
+12. After AddAuthentication(), call the AddJwtBearer() and configure its options parameter
+	> call AddJwtBearer() in AddAuthentication()
+	> inside the options parameter, configure the following using lambda expression
+		- set RequireHttpsMetadata to true
+		- set SaveToken to true
+		- set TokenValidationParameters to a new instance of it with following parameters
+			-> ValidateIssuerSigningKey to true
+			-> IssuerSigningKey to a new SymetricSecurityKey
+				=> pass the SecretKey to the SymetricSecurityKey
+			-> ValidateIssuer to false
+			-> ValidateAudience to false
+
+INSIDE ConfigureServices() of StartUp class
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options => 
+            {
+                options.RequireHttpsMetadata = true;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters{
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            }); 
+
+
+
+
+13. Lastly, add Authentication Middleware into the Request Pipeline
+	> to add it, put this code inside the Configure() of StartUp class
+
+		app.UseAuthentication();
+
+	> add this AFTER app.UseRouting() and BEFORE app.UseAuthorization()
+
+
+
+
+
+13. Test the application
+	> save all, build and run
+	> add [Authorize] attribute in a specific Route endpoint except Login
+	> first, get a token by calling the Login Get endpoint 
+	> using the Jwt token we received, put it in the Authorization header and call the Route endpoint with [Authorize]
+
+
+

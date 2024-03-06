@@ -1,0 +1,35 @@
+24. useCallback() hook
+
+
+useCallback()
+	> another way for memoization
+	> similar to useMemo() but instead of caching values, it caches FUNCTIONS
+	> syntax is similar to useMemo() as well
+	> the function will ever recalculated when one of the dependencies variables are changed
+	
+
+SYNTAX:
+const handleSomething = useCallback(() => {
+  return doSomething(a, b)
+}, [a, b])
+
+
+In this example, since we are using the useCallback() hook, the value of the handleSomething will be the 
+
+() => {
+  return doSomething(a, b)
+}
+
+If we are using the useMemo() hook, the value of the handleSomething will be the 
+
+return doSomething(a, b)
+
+
+
+	
+Use case
+1. For caching functions that is slow to create
+2. For referencial equality
+	-> since when Component re-render, it runs all the logic inside it
+	-> and inside Component, there maybe variables that holds function that we pass to the Child component for example
+	-> to avoid the said function variable to update its content, we can use the useCallback() hook

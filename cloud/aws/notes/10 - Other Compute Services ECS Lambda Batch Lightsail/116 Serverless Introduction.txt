@@ -1,0 +1,20 @@
+116 Serverless Introduction
+
+Serverless
+ > Serverless is a new paradigm in which the developers don't have to manage servers anymore...
+ > They just deploy code, or even just functions
+ > Initially, the Serverless started as FaaS (Function as a Service)
+ > Serverless was pioneered by AWS Lambda but now also includes anything that's managed. This includes:
+	- databases
+	- messaging
+	- storage
+	- etc
+ > Serverless does not mean there are no server.
+	- It means you don't have to manage/provision/see them
+
+
+Example of Amazon Services that is Serverless
+1. Amazon S3 - Storage of Objects/Files
+2. DynamoDB - Serverless implementation of MongoDB
+3. Fargate - for Containers
+4. Lambda - FaaS, you deploy a code and AWS will handle the server to host that function/code

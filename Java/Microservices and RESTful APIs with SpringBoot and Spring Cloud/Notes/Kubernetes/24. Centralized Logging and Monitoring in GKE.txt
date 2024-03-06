@@ -1,0 +1,43 @@
+24. Centralized Logging and Monitoring in GKE
+
+Navigating through Logging Panel of GKE
+1. Go to Clusters tab
+2. Click the Cluster where the logs you want to see is located
+3. Go to Features section, and find the "View Logs", and "View GKE Dashboard"
+4. In Logging Section (from View Logs), go to Logs Explorer
+5. In Log fields, choose the following
+	- Resource type: Kubernetes Container
+	- Pod_name: Name of Pod you want to search
+6. To fine grain our search, we can use the Query preview section
+	> here, we can add Queries to make the search of Logs precise
+	> in our case, we are trying to trace a request
+
+
+Tracing Request in GCP Logs Explorer
+1. To do a tracing, we will need to have Spring Cloud Starter Sleuth dependency in the Spring Boot apps
+	> Earlier, we left the Spring Cloud Starter Sleuth dependency
+	> this is because this dependency is responsible for adding trace and span ids in the request as it goes through the microservice
+	> these trace and span ids adding feature is integrated in the logger itself
+2. Using a specific trace id of a request, we can search trace the request itself
+	> to do this we will add a query in the Query Builder of GCP Logs Explorer
+		- textPayload:<traceId>
+		- ex: textPayload:f92d1697ddaa6f53
+
+
+Monitoring K8s cluster using GKE
+1. Go to GKE Dashboard
+	> we can do this by clicking the "View GKE Dashboard earlier"
+2. In the GKE Dashboard, we can see the following objects like
+	- Clusters
+	- Namespaces
+	- Nodes
+	- Workloads
+	- Kubernetes services
+	- Pods
+	- Containers
+3. We can also see information on these objects like
+	- Alerts
+	- Container restarts
+	- CPU utilization
+	- Memory utilization
+	- Disk utilization

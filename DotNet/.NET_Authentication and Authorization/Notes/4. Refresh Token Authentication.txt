@@ -1,0 +1,499 @@
+Refresh JWT
+
+
+Problems with the previous JWT process structure
+
+1. JWT have expiration dates
+	- JWT typically only have a few hour to a maximum of a day before it expires
+	- And if an Expired JWT is used, the client will not be able to be authorized to do stuff like fetching resources in Resource Server 
+	- This means that client needs to RE-LOGIN everytime its JWT is expired
+
+
+
+To solve this problem, we will implement a REFRESH TOKEN
+
+Refresh Token
+	> can be any random string
+	> when a client request have an expired JWT and Refresh Token with them, the server will send back a fresh JWT token
+
+
+
+
+JWT+Refresh Token process structure
+
+Sender				Receiver			Action
+
+~LOGGING IN~
+Client 			-> 	Authentication Server		Send POST /login username:password
+Authentication Server	-> 	Client				Generates JWT &  Refresh Token
+
+~REFRESHING JWT~
+Client			-> 	Authentication Server		Send JWT & Refresh Token
+Authentication Server	-> 	Client				Generates new JWT Token
+
+~FETCHING RESOURCES~
+Client			-> 	Resource Server			GET /data auth: Refreshed JWT Token
+Resource Server		-> 	Client				Authorizes & sends response
+
+
+
+Steps to follow
+1. Generate Refresh Token on Login
+2. API Call to Refresh JWT
+3. Make that API from Client
+
+
+INCLUDE:
+
+Validating Token
+	> to validate a JWT Token, we will check the following
+		- IssuerSigningKey
+			= included in the TokenValidationParameters input of ValidateToken()
+		- Algorithm used to encrypte the JWT Token
+	> with this, we will get the JWT Token which contain a ClaimPrincipal 
+		- using ClaimPrincipal, in which contains list of ClaimIdentity with different Claims (with ClaimTypes)
+			= we will see if one of the ClaimTypes.Name matches one in database
+
+
+
+NOTES:
+
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo: 'System.DateTime', Current time: 'System.DateTime'.
+
+	In this case, add ValidateLifetime in the TokenValidationParameters and set it to false.
+
+
+I. Generate a Refresh Token on Login
+
+1. Change the ClaimTypes.Name on the Subject property of the SecurityTokenDescriptor
+	> change from the user.EmailAddress to user.Id
+	> reason is that EmailAddress may have duplicate while the Id is unique
+
+INSIDE the LoginAsync() of the AccountController class
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]{
+                    new Claim(ClaimTypes.Name, account.Id.ToString()),
+                    new Claim(ClaimTypes.Role, "Admin")
+                }),
+                Expires = DateTime.UtcNow.AddMonths(3),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+            };
+
+
+
+
+2. Create a new Table/Document in the Database for storing RefreshTokens
+	> the schema of the RefreshToken table or document will be
+
+		int 		TokenId
+		Guid 		UserId
+		string 		Token
+		DateTimeOffSet 	ExpiryDate
+
+	> we will reference the UserId of Account table/document to the UserId in RefreshToken table/document
+
+INSIDE RefreshToken.cs
+
+using System;
+
+namespace Eze.Entities
+{
+    public class RefreshToken
+    {
+        public Guid TokenId { get; set; }
+        public Guid UserId { get; set; }
+        public string Token { get; set; }
+        public DateTimeOffset ExpiryDate { get; set; }
+    }
+}
+
+
+
+
+3. Create a function inside AccountController to generate a RefreshToken object
+	> inside the function, we will do the following
+		- create an instance of RefreshToken
+		- create an array of byte with size of 32 and assign it to a variable
+		- using RandomNumberGenerator class, create a random number and assign it to the Token field of RefreshToken instance
+		- assign a value to RefreshToken's ExpiryDate field
+			= 6 months duration by adding 6mons to date now
+
+
+INSIDE AccountController class
+
+        private RefreshToken GenerateRefreshToken()
+        {
+            RefreshToken refreshToken = new RefreshToken();
+            var randomNumber = new byte[32];
+
+            using(var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                refreshToken.Token = Convert.ToBase64String(randomNumber);
+            }
+            
+            refreshToken.ExpiryDate = DateTimeOffset.UtcNow.AddMonths(6);
+
+            return refreshToken;
+        }
+
+
+
+
+4. In LoginAsync(), add a function that adds a RefreshToken when a valid Account is found
+	- create RefreshToken using GenerateRefreshToken()
+	- assign the UserId field of RefreshToken to Id of the valid Account that was found
+
+INSIDE LoginAsync() after the Account Null check
+
+            RefreshToken refreshToken = GenerateRefreshToken();
+            refreshToken.UserId = account.Id;
+            await repo.CreateRefreshTokenAsync(refreshToken);
+
+
+
+
+5. Add a string field in the AccountWithTokenDto for RefreshToken
+	- since we will include a RefreshToken to the response alongside JWT Token, lets add RefreshToken field to the LoginAccountDto
+	- after adding the field, add the refreshToken we have generated into the AccountWithTokenDto that we will send as response
+
+INSIDE AccountWithTokenDto.cs
+
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Eze.Dtos
+{
+    public record AccountWithTokenDto
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+        public string Username { get; init; }
+        public string Password { get; init; }
+        public string Token {get; init;}
+        public string RefreshToken { get; set; }
+    }
+}
+
+
+INSIDE LoginAsync() of AccountController class
+
+            var accountWithToken = new AccountWithTokenDto
+            {
+                Id = account.Id,
+                Name = account.Name,
+                Username = account.Username,
+                Password = account.Password,
+                Token = tokenHandler.WriteToken(token),
+                RefreshToken = refreshToken.Token
+            };
+
+
+
+
+6. Test the RefreshToken generation
+	> save all, build and run	
+	> send a request in LoginAsync()
+	> check the response if the RefreshToken is not empty
+
+RESPONSE
+
+{
+    "id": "a749ed9b-8842-4ab3-9f27-bfafa6601243",
+    "name": "admin",
+    "username": "admin@gmail.com",
+    "password": "password",
+    "token": "RANDOM_JWT_TOKEN",
+    "refreshToken": "RANDOM_REFRESH_TOKEN"
+}
+
+
+
+
+II. API Call to Refresh JWT
+
+7. Create a method inside AccountController for creating JWT Token
+	> we will insert the lines of code we made earlier to create JWT token inside it
+	> the method will have the following properties
+		- private access
+		- Guid AccountId parameter
+		- string return type
+
+INSIDE AccountController class
+
+        private string GenerateAccessToken(Guid accountId)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]{
+                    new Claim(ClaimTypes.Name, accountId.ToString()),
+                    new Claim(ClaimTypes.Role, "Admin")
+                }),
+                Expires = DateTime.UtcNow.AddMonths(3),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+
+
+8. Change the field of the AccountWithTokenDto Token field into AccessToken
+	- this is to avoid confusion with the RefreshToken field
+
+INSIDE AccountWithTokenDto.cs
+
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Eze.Dtos
+{
+    public record AccountWithTokenDto
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+        public string Username { get; init; }
+        public string Password { get; init; }
+        public string AccessToken {get; init;}
+        public string RefreshToken { get; set; }
+    }
+}
+
+
+
+
+
+9. Use the GenerateAccessToken() method when assigning AccessToken to the AccountWithTokenDto that we will send as response
+
+INSIDE LoginAsync()
+
+            var accountWithToken = new AccountWithTokenDto
+            {
+                Id = account.Id,
+                Name = account.Name,
+                Username = account.Username,
+                Password = account.Password,
+                AccessToken = GenerateAccessToken(account.Id),
+                RefreshToken = refreshToken.Token
+            };
+
+
+
+
+
+
+10. Create the API Call or Route endpoint for refreshing JWT Token
+	> this route endpoint will have the following properties	
+		- HttpPost("RefreshToken") attribute
+		- public access, async modifier
+		- Task<ActionResult<AccountWithTokenDto>> return type
+		- [FromBody] Account account parameter
+
+INSIDE AccountController class
+
+        [HttpPost("RefreshToken")]
+        public async Task<ActionResult<AccountWithTokenDto>> RefreshToken([FromBody] LoginAccountDto accountDto)
+        {
+            
+        }
+
+
+
+
+11. Create a new Class for storing RefreshToken and AccessToken
+	> this RefreshRequest class with have the following properties
+		- string refreshToken
+		- string accessToken
+
+INSIDE RefreshRequest.cs
+
+namespace Eze.Entities
+{
+    public class RefreshRequest 
+    {
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+    }
+}
+
+
+
+
+12. Inside the RefreshToken Route endpoint, do the following
+	a. Fetch Account using the AccessToken in RefreshRequest that we received
+		- we will create a custom method for fetching Account
+	b. Check if the Account we fetched is NOT NULL AND if the JWT is Validated
+		- if both are TRUE, do the following
+			> create a new AccountWithTokenDto object
+			> set the AccessToken of the AccountWithTokenDto to a new JWT by using GenerateAccessToken()
+			> return the AccountWithTokenDto object
+		- if either of them is FALSE, return null
+
+INSIDE AccountController class
+
+        [HttpPost("RefreshToken")]
+        public async Task<ActionResult<AccountWithTokenDto>> RefreshToken([FromBody] RefreshRequest refreshRequest)
+        {
+            Account account = GetAccountFromAccessToken(refreshRequest.AccessToken);
+
+            if(account != null && ValidateRefreshToken(account, refreshRequest.RefreshToken))
+            {
+
+            }
+
+            return null;
+        }
+
+
+        private bool ValidateRefreshToken(Account account, string refreshToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Account GetAccountFromAccessToken(string accessToken)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+13. Define the GetUserFromAccessToken() method body
+	a. Create a JwtSecurityTokenHandler() and fetch the SecretKey of JwtSettings
+		- we can copy this from GenerateAccessToken method
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
+
+
+	b. Validate the accessToken parameter we have in GetAccountFromAccessToken()
+		- we can use the JwtSecurityTokenHandler to validate the accessToken by calling ValidateToken()
+		- ValidateToken() takes three parameters (2 input, 1 output)
+			= string token, the accessToken parameter
+			= TokenValidationParameters, the one we defined in the AddJwtBearer() in ConfigureServices()
+			= SecurityToken, we will create a null instance of a SecurityToken to be passed here
+		- catch the result of the ValidateToken() call in a variable
+			= the result is a ClaimPrincipal object that we can use to identify the Sender
+	c. Convert the SecurityToken (now having a value) into a JwtSecurityToken
+		- use the "as" to cast it
+	d. Check if the JwtSecurityToken is NOT NULL AND if the Header.Alg of the JwtSecurityToken is equal to the one we used
+		- in our case we use SecurityAlgorithms.HmacSha256 for encryption
+		- also, add a StringComparison type parameter as InvariantCultureIgnoreCase
+	e. In the Check, if it passed BOTH condition
+		- get the ClaimTypes.Name of the ClaimPrincipal that we got
+			= this should be the AccountId of the Sender
+		- find the Account use the AccountId we got from ClaimTypes.Name
+			= lets first converted the AccountId into a GUID
+			= or converted the AccountId of Accounts in filter and the AccountId from ClaimPrincipal into string
+	f. If it didnt pass BOTH condition
+		- return null
+
+
+INSIDE AccountController class
+
+        private async Task<Account> GetAccountFromAccessTokenAsync(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
+
+            var tokenValidationParameters = new TokenValidationParameters{
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+            SecurityToken securityToken;
+
+            var principal = tokenHandler.ValidateToken(accessToken, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+
+            if(jwtSecurityToken is not null && jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var accountId = principal.FindFirst(ClaimTypes.Name)?.Value;
+                var account = await repo.GetAccountAsync(Guid.Parse(accountId));
+                return account;
+            }
+
+            return null;
+        }
+
+
+
+
+
+14. Define the ValidateRefreshToken() method body
+	a. Determine if the refreshToken parameter exist in the database
+		- compare it to the most recent RefreshToken
+	b. Create a CHECK which looks for the following conditions
+		- check if refreshToken is NOT NULL
+		- check if the UserId of refreshToken IS EQUAL to the Id of the Account parameter
+		- check if expirationDate is GREATER THAN the DateTime.UtcNow
+			= this will be the main factor whether we will refresh the JWT Token or not
+	c. If it passes all condition, RETURN TRUE
+	d. If not, return FALSE
+
+
+INSIDE AccountController.cs
+
+        private async Task<bool> ValidateRefreshTokenAsync(Account account, string refreshToken)
+        {
+            RefreshToken refreshTokenUser = ((await repo.GetRefreshTokensAsync()) as List<RefreshToken>)
+                                                .Where(existingRefreshToken => existingRefreshToken.Token.Equals(refreshToken))
+                                                .OrderByDescending(existingRefreshToken => existingRefreshToken.ExpiryDate)
+                                                .FirstOrDefault();
+
+            if(refreshTokenUser != null && refreshTokenUser.UserId == account.Id
+                && refreshTokenUser.ExpiryDate > DateTimeOffset.UtcNow)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+
+
+
+15. Define the body of the Check inside the RefreshToken API call / route endpoint
+	a. Create a new AccountWithTokenDto object using the Account we got from GetUserFromAccessToken()
+		= there will be missing values in AccountWithTokenDto since this and Account object have different members
+	b. Using GenerateAccessToken(), assign new AccessToken to the AccountWithTokenDto that we will send back to the client
+
+
+INSIDE AccountController class
+
+        [HttpPost("RefreshToken")]
+        public async Task<ActionResult<AccountWithTokenDto>> RefreshToken([FromBody] RefreshRequest refreshRequest)
+        {
+            Account account = await GetAccountFromAccessTokenAsync(refreshRequest.AccessToken);
+
+            if(account is not null && await ValidateRefreshTokenAsync(account, refreshRequest.RefreshToken))
+            {
+                var accountWithToken = new AccountWithTokenDto
+                {
+                    Id = account.Id,
+                    Name = account.Name,
+                    Username = account.Username,
+                    Password = account.Password,
+                    AccessToken = GenerateAccessToken(account.Id),
+                    RefreshToken = refreshRequest.RefreshToken
+                };
+
+                return accountWithToken;
+            }
+
+            return null;
+        }
+	
+
+

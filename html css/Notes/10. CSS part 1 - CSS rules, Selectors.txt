@@ -1,0 +1,707 @@
+CSS Part 1
+
+includes:
+	Types of selectors
+	Selection grouping
+	Inheritance
+	Div and Span
+	Last rule
+	Specificity, Specificity Calculation, Specificity Hierarchy and Specificity Rule
+
+
+TYPES OF SELECTORS
+
+1. Element/Type selector
+	> selection where we will modify a specific type/element in HTML (ex: h1, h2, body, etc)
+
+STRUCTURE:
+type{
+	property:value;
+}
+
+EX: 
+h1{
+	color:red;
+}
+
+	> this will make h1 color red
+
+
+
+2. ID selector
+	> selection where we will only modify the element whose Id attribute MATCHES in name we have in selector
+	> NOTE: Id attribute must be used for identifying a UNIQUE element
+
+STRUCTURE:
+#idName{
+	property:value;
+}
+
+EX:
+Inside body
+<h1 id="heading">Title Heading</h1>
+
+Inside css
+#heading{
+	color:red;
+	background:black;
+}
+
+	> this will make the element whose Id attribute is "heading" (which in this case the h1 element) have the color of red and background of black
+
+
+
+
+3. Class selector
+	> selection where we will only modify the element who class set includes the class specified in css rule
+	> NOTE: elements can have MORE THAN ONE class
+		- classes in element are separated by space
+		- ex: class="green lowercase" belongs to both green and lowercase
+
+STRUCTURE:
+.className{
+	property:value;
+}
+
+EX:
+Single class
+Inside html file
+	<h3 class="green">I'm green</h3>
+
+Inside css file
+.green{
+	color:green;
+}
+
+	With this, the h3 element will have the green color since it have the "green" class
+
+
+EX:
+Multiple class
+Inside html file
+	<h3 class="green lowercase">I'm green</h3>
+
+Inside css file
+.green{
+	color:green;
+}
+.lowercase{
+	text-transform:lowercase;
+}
+
+	With this, the h3 element with class green and lowercase will INHERIT BOTH the properties of .green and .lowercase css rule. This will make the h3 element BOTH color green and in lowercase.
+
+
+
+
+
+SELECTOR GROUPING
+	> process where we select multiple things so we can modify them as one
+
+EX:
+
+h1,h2{
+	color:red
+}
+
+	> this will make h1 and h2 color red
+
+
+
+DIV vs SPAN
+	> both DIV and SPAN is used to group up elements
+	> this is especially useful when we want to modify specific element block in HTML file
+	> like other elements, we can assign Id and Class in both DIV and SPAN to style them and elements inside them
+	> difference between DIV and SPAN is
+		<div>	= used for blocking/grouping elements and for block-level modification
+			= adds a linebreak before its first element inside it
+		<span>	= used for inline modification
+			= doesnt have linebreak in it
+
+
+
+INHERITANCE
+	> in parent-child modification inheritance, there are rules
+		1. Child elements will INHERITS the properties in Parent element
+			EX: Parent have color:red, therefore all Child will be color:red
+		2. If Child and Parent modify THE SAME property, the Child will OVERRIDE the property
+			EX: Parent have color:red, Child have color:blue, therefore the Child will be color:blue
+		3. If Child and Parent doesn't have conflicting properties, no OVERRIDING will happen
+			EX: Parent have font-size:3rem, Child have color:red, therefore the Child will have BOTH font-size and color property
+		4. If Parent have a property that is NOT APPLICABLE to its Child element, the Child element will NOT INHERIT the said property
+			EX: div have h3 and p child. if div have border property, the h3 and p child will NOT inherit it since its not applicable to them
+
+
+
+
+LAST RULE
+	> a rule in CSS where in the latest rule that we added will OVERRIDE all the previous rules for the SAME SELECTOR	
+	> EX: in line 1, we added h1{color:red;} and in line 50, we added h1{color:blue;}. Since we added the h1 with color blue last, it will OVERRIDE the h1 with color red.
+
+
+
+
+SPECIFICITY
+	> If there are two or more conflicting CSS rules that point to the same element, the browser follows some rules to determine which one is most specific and therefore wins out.
+	> Think of specificity as a score/rank that determines which style declarations are ultimately applied to an element.
+	> The universal selector (*) has low specificity, while ID selectors are highly specific! 
+
+
+SPECIFICITY HIERARCHY
+1. Inline styles - An inline style is attached directly to the element to be styled. Example: <h1 style="color: #ffffff;">.
+2. IDs - An ID is a unique identifier for the page elements, such as #navbar.
+3. Classes, attributes and pseudo-classes - This category includes .classes, [attributes] and pseudo-classes such as :hover, :focus etc.
+4. Elements and pseudo-elements - This category includes element names and pseudo-elements, such as h1, div, :before and :after.
+
+
+
+SPECIFICITY CALCULATION
+	> Starting at 0
+		a. Add 0 for *, body, body *
+		b. Add 1000 for style attribute
+		c. Add 100 for each ID
+		d. Add 10 for each attribute, class, or pseudo-class
+		e. Add 1 for each element name or pseudo-element
+
+EX: 
+A: h1
+B: #content h1
+C: <div id="content"><h1 style="color: #ffffff">Heading</h1></div>
+
+The specificity of A is 1 (one element)
+The specificity of B is 101 (one ID reference and one element)
+The specificity of C is 1000 (inline styling)
+
+
+
+SPECIFICITY RULES:
+1. Equal specificity: the latest rule counts
+	> If the same rule is written twice into the external style sheet, then the lower rule in the style sheet is closer to the element to be styled, and therefore will be applied:
+
+EX:
+
+h1 {background-color: yellow;}
+h1 {background-color: red;}
+
+	> the latter rule is always applied.
+
+
+
+2. ID selectors have a higher specificity than attribute selectors
+	> Look at the following three code lines:
+
+EX:
+div#a {background-color: green;}
+#a {background-color: yellow;}
+div[id=a] {background-color: blue;}
+
+	> the first rule is more specific than the other two, and will be applied.
+
+
+
+3. Contextual selectors are more specific than a single element selector 
+	> The embedded style sheet is closer to the element to be styled. So in the following situation
+
+EX:
+From external CSS file:
+#content h1 {background-color: red;}
+
+In HTML file:
+<style>
+#content h1 {
+  background-color: yellow;
+}
+</style>
+
+	> the latter rule will be applied since its inside the HTML file itself
+
+
+4. A class selector beats any number of element selectors 
+	> a class selector such as .intro beats h1, p, div, etc:
+
+EX:
+.intro {background-color: yellow;}
+h1 {background-color: red;}
+
+
+5. The universal selector and inherited values have a specificity of 0 
+	> *, body * and similar have a zero specificity. Inherited values also have a specificity of 0.
+
+
+
+
+
+
+
+
+
+I. Element selector (single)
+
+1. Reset everything
+	> remove content of styles.css file
+	> remove the styles and element in index.html
+
+
+
+2. Add the following in the index.html body
+	> one h1, one h2, one p
+	> p will be lorem50
+
+INSIDE index.html body
+
+  <body>
+      <h1>Hello world</h1>
+      <h2>Hello world</h2>
+      <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquid, nobis at. Veniam quisquam, placeat sed veritatis id amet impedit, quam doloribus, vel perferendis voluptatum excepturi! Doloribus soluta cum, et repudiandae, iste similique temporibus eos necessitatibus eveniet exercitationem culpa hic reprehenderit possimus magni molestias recusandae ad saepe voluptates velit unde debitis!</p>
+  </body>
+
+
+
+
+3. In styles.css, do the following
+	> change h1 color to red
+	> change h2 color to green
+	> change p color to grey
+
+INSIDE styles.css
+
+h1{
+    color: red;
+}
+h2{
+    color: green;
+}
+p{
+    color: grey;
+}
+
+	> if we look at the Live Server, we can see the changes made by the styles.css
+
+
+
+II. Element selector (multiple)
+
+4. Remove the contents of styles.css
+
+
+
+5. Add the following to the styles.css
+	> body color to blue
+	> h1 and h2 to be color red
+
+INSIDE styles.css
+
+body{
+    color: blue;
+}
+h1,h2{
+    color:red;
+}
+
+	> if we look at the Live server, we can see that both the h1 and h2 are red while the p is blue
+
+
+
+
+III. Id selector
+
+6. Clean the content of styles.css and index.html body once again
+
+
+
+7. Inside the index.html body, add the following	
+	> one h1 with id of "heading" for title heading
+	> one p lorem20
+	> one h1 for footer
+
+INSIDE index.html body
+
+  <body>
+    <h1 id="heading">Title Heading</h1>
+    <p>
+      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Esse natus
+      suscipit tempore ea obcaecati necessitatibus consectetur alias architecto
+      eius quos.
+    </p>
+    <h1>Footer Heading</h1>
+  </body>
+
+
+
+8. Inside the styles.css, add the following
+	> modify #heading to have the following properties
+		- color to green
+		- background to black
+
+INSIDE styles.css
+
+#heading{
+    color: green;
+    background: black;
+}
+
+	> if we look at the Live Server, we can see that ONLY the h1 with id of "heading" is modified
+
+
+
+9. Add id to the second h1 for footer
+	> have it an id of "subheading"
+
+INSIDE index.html body.
+
+	<h1 id="subheading">Footer Heading</h1>
+
+
+
+10. Modify the "subheading" in styles.css
+	> modify it to have the following properties
+		- color to red
+		- background to gray
+
+INSIDE styles.css
+
+#subheading{
+    color: red;
+    background: gray;
+}
+
+	> if we check the Live server, we can see the second h1 with id of "subheading" changed
+
+
+
+
+IV. Class selectors
+
+11. Clean the index.html body and styles.css
+
+
+12. Add the following in the index.html body
+	> six h3 element 
+		- have them an alternating value and class attribute
+		- three have Im green value and green class
+		- three have Im red value and red class
+
+INSIDE index.html body
+
+  <body>
+    <h3 class="green">I'm green</h3>
+    <h3 class="red">I'm red</h3>
+    <h3 class="green">I'm green</h3>
+    <h3 class="red">I'm red</h3>
+    <h3 class="green">I'm green</h3>
+    <h3 class="red">I'm red</h3>
+  </body>
+
+
+
+13. Inside styles.css, modify the elements with red and green class
+	> for red class, color to red and background to grey
+	> for green class, color to green
+
+INSIDE styles.css
+
+.green{
+    color:green;
+}
+.red{
+    color:red;
+    background: grey;
+}
+	
+	> if we check the Live Server, those element with "green" class inherits the .green{} properties. the same with elements with "red" class
+
+
+
+
+14. Add a lowercase class in the h3 elements with red class
+	> to add another class in an element, we must separate the classes by space
+
+INSIDE index.html body
+
+  <body>
+    <h3 class="green">I'm green</h3>
+    <h3 class="red lowercase">I'm red</h3>
+    <h3 class="green">I'm green</h3>
+    <h3 class="red lowercase">I'm red</h3>
+    <h3 class="green">I'm green</h3>
+    <h3 class="red lowercase">I'm red</h3>
+  </body>
+
+
+
+15. Add another css rule in the styles.css
+	> select the lowercase class and with it, make the text to be lowercase
+
+INSIDE styles.css
+
+.green{
+    color:green;
+}
+.red{
+    color:red;
+}
+.lowercase{
+    text-transform: lowercase;
+}
+
+	> if we check the Live Server, we can see that those elements with "lowercase" class are now written in lowercases
+
+
+
+
+V. DIV and SPAN element
+
+16. Reset the index.html body
+
+
+17. Remove everything in the styles.css except the green and red class
+
+
+
+18. Inside the index.html file, add the following
+	> pair of h3 and p 
+		- h3 will denotes heading
+		- p will contain lorem20
+
+INSIDE index.html body 
+
+  <body>
+    <h3>heading number one</h3>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quod
+      deleniti nemo accusantium aspernatur vel corrupti! Perspiciatis et vel
+      est!
+    </p>
+    <h3>heading number one</h3>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quod
+      deleniti nemo accusantium aspernatur vel corrupti! Perspiciatis et vel
+      est!
+    </p>
+  </body>
+
+
+
+19. Modify the index.html body
+	> group up the first h3 and p to a div element
+		- nest the h3 and p inside the div element
+	> put some of the text in second p in a span
+
+INSIDE index.html body
+
+  <body>
+    <div>
+      <h3>heading number one</h3>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quod
+        deleniti nemo accusantium aspernatur vel corrupti! Perspiciatis et vel
+        est!
+      </p>
+    </div>
+    <h3>heading number one</h3>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      <span>Doloribus quod</span> deleniti nemo accusantium aspernatur vel
+      corrupti! <span>Perspiciatis et vel</span>
+      est!
+    </p>
+  </body>
+
+
+
+21. In in styles.css file, modify the div and span element
+
+INSIDE styles.css
+
+div{
+    color: red;
+    background: gray;
+}
+span{
+    color: green;
+}
+
+	> if we check the Live Server, we can see that
+		a. the first h3 and p is modified together
+		b. some text in second p is modified as well
+
+
+
+
+VI. Inheritance
+
+22. Clean the index.html body and styles.css
+
+
+23. Inside the index.html body, add the following
+	> h3 and p
+
+INSIDE index.html body
+
+  <body>
+    <h3>im heading</h3>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo
+      deserunt distinctio iste qui nam cumque tenetur ipsum officia animi ab.
+    </p>
+  </body>
+
+
+
+24. Inside styles.css, modify the <body> element
+	> make it color blue
+
+INSIDE styles.css
+
+body{
+    color: blue;
+}
+
+	> if we check the Live Server, we can see the both the h3 and p element inside body also turned into blue
+
+
+
+25. Add a div element inside the body
+	> inside div, nest the h3 and p
+
+INSIDE index.html
+
+  <body>
+    <div>
+      <h3>im heading</h3>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo
+        deserunt distinctio iste qui nam cumque tenetur ipsum officia animi ab.
+      </p>
+    </div>
+  </body>
+
+
+
+26. Inside the styles.css, modify the div element
+	> make it color red
+
+INSIDE styles.css
+
+body{
+    color: blue;
+}
+div{
+    color:red;
+}
+
+	> now, we can see that the properties inside the div has OVERRIDEN the properties of the body
+
+
+
+27. Inside the styles.css, modify the h3 element
+	> make it color green
+
+INSIDE styles.css
+body{
+    color: blue;
+}
+div{
+    color:red;
+}
+h3{
+    color: green;
+}
+
+	> if we take a look at the Live Server, we can see that the h3 property OVERRIDES both the body and div properties
+
+
+
+28. Add border property in div in styles.css
+
+INSIDE styles.css
+
+div{
+    color:red;
+    border: black solid 3px;
+}
+
+	> if we take a look at Live Server, we can see that the h3 and p DID NOT inherit the border property since its not applicable to them
+
+
+
+
+VII. Last rule
+
+29. Clean the index.html body and styles.css
+
+
+30. Add h1 element inside index.html body
+
+
+31. Add two h1 in the styles.css
+	> one h1 change color to blue, while other change color to red
+
+INSIDE styles.css
+
+h1{
+    color: blue;
+}
+h1{
+    color: red;
+}
+
+	> if we check the Live Server, we can see that the h1 element is color red since last rule change it to red
+
+
+
+
+VIII. Specificity
+
+32. Modify the index.html body
+	> add a p element after the h1
+	> add red class in p
+
+INSIDE index.html body
+
+  <body>
+    <h1>Im heading</h1>
+    <p class="red">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo consectetur
+      quod molestias quas ipsam repudiandae, reprehenderit nemo iusto alias
+      tenetur.
+    </p>
+  </body>
+
+
+
+33. Inside the styles.css, add rules to the following
+	a. red class
+		- change to color red
+	b. p element
+		- change to color blue
+
+INSIDE styles.css
+
+.red{
+    color:red;
+}
+p{
+    color:blue;
+}
+
+	> if we look at the Live Server, we can see that the .red rule OVERRIDES in p rule
+	> this is because the class selectors have MORE SPECIFICITY then element selectors
+
+
+
+
+IX. Universal Selector
+
+34. Add a universal selector rule
+	> * is the symbol for universal selector
+	> this represents all the elements
+	> they have specificity of 0, meaning they can be overriden by EVERYTHING
+
+INSIDE styles.css
+
+*{
+    color: blue;
+}
+
+	> if we look at the styles.css, we can see that all the elements has been changed to color blue

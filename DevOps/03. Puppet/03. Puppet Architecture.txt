@@ -1,0 +1,67 @@
+03. Puppet Architecture
+
+Puppet Version
+1. Puppet Open Source
+2. Puppet Enterprise
+
+Puppet Architecture Overview
+1. Client-Server architecture
+	> Puppet can be configured in Client-Server Overview, with two components
+		a. Puppet Master
+			- contains the Catalogs or Configurations to be PULLED by Puppet Agents
+		b. Puppet Agent
+			- Servers that request Configurations to the Puppet Master
+2. Stand-alone architecture
+	> Puppet can also be configured as standalone architecture using
+		a. Puppet apply application
+
+
+
+Puppet Master-Agent Architecture
+	> composed of two things
+		a. Puppet Master
+		b. Managed Nodes (Puppet Agents)
+	> these two communicates with each other using SSL certificates
+
+
+Master Server
+	> composed of the following
+		1. Puppet Server
+			- accepts the ConfigScript request
+		2. Certificate Authority
+			- determines if the Client that sent request are AUTHORIZE to request and receive the ConfigScript
+		3. PuppetDB
+			- contains information about the cluster
+			- cluster means collection of server or machine information
+
+Managed Nodes/Server
+	> composed of the following
+		1. Puppet Agent
+			> a software needs to be installed in Node
+			> connected to the Master Server
+			> responsible for executing the catalog or configscript
+		2. Facter
+			- describe the current state of the Managed Node
+			- these includes the OS, Ram, CPU, (configuration info for short)
+
+
+
+Communication Process
+
+I. MANAGED NODES -> MASTER
+1. Node sends facters to the Master and request a Catalog
+	> the facters contains information about the Managed Node resources (OS, applications, users, files, etc)
+
+
+II. MASTER -> MANAGE NODES
+2. Master will create a Catalog
+	> Catalog is a document
+		- contains instructions of the changes to be done in the Managed Node's resources
+		- same as Config Script
+3. The master compiles and returns the node's Catalog using the sources of information (Facter) the master has access to.
+4. The agent applies the catalog to the node by checking each resource the catalog describes
+
+
+III. MANAGED NODES -> MASTER
+5. The agent sends a report back to the master
+

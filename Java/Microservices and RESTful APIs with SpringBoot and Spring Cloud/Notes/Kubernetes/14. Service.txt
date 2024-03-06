@@ -1,0 +1,15 @@
+14. Service
+
+Service
+	> allows your application to receive traffic through a permanent lifetime address
+	> provides a constant frontend interface, irrespective of whatever changes are happening to the backend (which are all the Pods where the applications is running)
+	> in Kubernetes, it provides excellent integration with different cloud providers' specific Loadbalancers (for Service type of Loadbalancer)
+
+
+
+Definition from "kubectl explain service"
+
+     Service is a named abstraction of software service (for example, mysql)
+     consisting of local port (for example 3306) that the proxy listens on, and
+     the selector that determines which pods will answer requests sent through
+     the proxy.

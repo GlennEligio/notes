@@ -1,0 +1,336 @@
+11 Build A Complete Database Web App with JDBC Part 1
+
+Contents
+73 Project Overview and Demo
+74 Download JDBC Source Code
+75 Installing the MySQL Database on MS Windows
+76 Installing the MySQL Database on Mac
+77 Setting up our Project Database with Sample Data
+78 Setup Tomcat Datasource for Connection Pooling
+79 Test Tomcat Connection Pooling
+80 Resources Tune and Configure Tomcat JDBC Connection pool for Production User
+81 MVC Application Architecture
+
+
+
+
+
+
+
+
+
+73 Project Overview and Demo
+
+Class Project idea
+1. Full working JSP and Servlet application that conencts to a database
+	> JSP and Servlet using MVC
+	> Servlet connects to the database and fetches data
+	> User can do CRUD operations to Students info in the database
+
+Road Map
+1. Setup Database Dev Environment
+2. List Students
+3. Add a new Student
+4. Update a Student
+5. Delete a Student
+
+
+
+
+
+
+
+
+74 Download JDBC Source Code
+75 Installing the MySQL Database on MS Windows
+76 Installing the MySQL Database on Mac
+77 Setting up our Project Database with Sample Data
+
+GOAL:
+1. Create a user for the database that we will make
+2. Create a database and table inside it
+3. Execute the scripts below
+
+-- script for creating "webstudent" user for using "webstudent" database
+CREATE USER 'webstudent'@'localhost' IDENTIFIED BY 'webstudent';
+
+GRANT ALL PRIVILEGES ON * . * TO 'webstudent'@'localhost';
+
+
+-- script for creating database, alongside the tables for it
+CREATE DATABASE  IF NOT EXISTS `web_student_tracker` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `web_student_tracker`;
+-- MySQL dump 10.13  Distrib 5.6.13, for osx10.6 (i386)
+--
+-- Host: 127.0.0.1    Database: web_student_tracker
+-- ------------------------------------------------------
+-- Server version	5.6.16
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `student`
+--
+
+DROP TABLE IF EXISTS `student`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `student` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(45) DEFAULT NULL,
+  `last_name` varchar(45) DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `student`
+--
+
+LOCK TABLES `student` WRITE;
+/*!40000 ALTER TABLE `student` DISABLE KEYS */;
+INSERT INTO `student` VALUES (1,'Mary','Public','mary@luv2code.com'),(2,'John','Doe','john@luv2code.com'),(3,'Ajay','Rao','ajay@luv2code.com'),(4,'Bill','Neely','bill@luv2code.com'),(5,'Maxwell','Dixon','max@luv2code.com');
+/*!40000 ALTER TABLE `student` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2016-02-13 21:50:59
+
+
+
+
+
+
+
+
+
+78 Setup Tomcat Datasource for Connection Pooling
+
+Topics
+1. Database Connections in web apps
+2. Database Connection Pools
+3. Setting up a Tomcat Database Connection Pool
+
+
+Database Connection
+Best Practice
+1. Using Database Connection Pools
+	> DB connection pools can be seen as a group of pre-configured connection to db that is ready to be used by some application
+	> DB Connection Pool assign a connection to a request, and once its done using the connection, it can be released and added back to pool ready to be used again
+	> with this, it allows the app to scale and handle multiple users quickly
+	
+
+Database Connection in Tomcat
+1. Download JDBC Driver Jar file
+2. Define connection pool in {Content Directory}/META-INF/context.xml
+3. Get connection pool reference in Java code
+
+
+Download JDBC Driver Jar file
+ > each Database can have their own version of JDBC Driver (ex: MSSQL, MySQL, MongoDB)
+ > we will then add the JAR file in the WEB-INF/lib
+	- this is a special directory where we will place any supporting JAR files or libraries our application need
+
+Define connection pool: context.xml
+ > inside the %Content Directory%/META-INF/context.xml, we will define a Resource element inside Context
+ > In this Resource element, we can define several DB connection properties like the dburl, db credentials to use, max duration for idle, wait, active, etc
+ 	- "name" works like an alias that we can use in order to point to this resource
+	- "auth" is for defining authentication and "Container" means that Tomcat will handle the said authentication
+	- "type" defines the interface that we will use for Communicating with the Pool
+	- "maxActive" defines the max concurrent connections active
+	- "maxIdle" defines the number of connections present at all times 
+	- "maxWait" defines the duration in milisecond on how long someone can wait before they get a connection
+	- "username" and "password" is for DB credentials for authentication
+	- "driverClassName" is the fully qualified class name of the Driver that will be used
+	- "url" is the db url
+ > NOTE: In Java world, DataSource is often synonymous with Connection Pool
+
+EX:
+// WebContext/META-INF/context.xml
+<Context>
+  <Resource name="jdbc/web_student_tracker"
+	auth="Container"
+	type="javax.sql.DataSource"
+	maxActive="20"
+	maxIdle="5"
+	maxWait="10000"
+	username="webstudent"
+	password="webstudent"
+	driverClassName="com.mysql.jdbc.Driver"
+	url="jdbc:mysql://localhost:3306/web_student_tracker"/>
+</Context>
+
+
+Get connection pool in Java code
+ > Leverage resource injection with Servlets
+ > this means that Tomcat will AUTOMATICALLY SET the connection pool / datasource on your servlet
+
+
+
+
+
+79 Test Tomcat Connection Pooling
+
+GOAL:
+1. Test Tomcat Connection Pooling
+
+STEPS:
+1. Add JDBC JAR file in %Content Directory%/WEB-INF/lib
+2. Add pre-configured context.xml file in %Content Directory%/META-INF
+3. Create a package to contain the JDBC java code "com.luv2code.web.jdbc"
+4. Create a test Servlet inside the newly created package
+5. Create a private DataSource property to the Servlet class, and annotate it with @Resource
+	> in the @Resource, pass the name of the Resource we defined for DataSource in the META-INF/context.xml
+6. Inside the doGet method, we will create a connection, execute a query, read the resultset, and display the data
+
+
+// WEB-INF/context.xml
+<Context>
+  <Resource name="jdbc/web_student_tracker" 
+  			auth="Container" type="javax.sql.DataSource"
+               maxActive="20" maxIdle="5" maxWait="10000"
+               username="webstudent" password="webstudent" 
+               driverClassName="com.mysql.jdbc.Driver"
+               url="jdbc:mysql://localhost:3306/web_student_tracker?useSSL=false"/>
+</Context>
+
+
+// TestServlet.java
+package com.luv2code.web.jdbc;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
+@WebServlet("/TestServlet")
+public class TestServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	// Define datasource/connection pool for Resource Injection
+	@Resource(name="jdbc/web_student_tracker")
+	private DataSource dataSource;
+      
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// Step 1: Setup the printwriter
+		PrintWriter out = response.getWriter();
+		response.setContentType("text/html");
+		
+		// Step 2: get a connection to the database
+		Connection myConn = null;
+		Statement myStmt = null;
+		ResultSet myRs = null;
+		
+		try {
+			myConn = dataSource.getConnection();
+			
+			// Step 3: Create a SQL statements
+			String sql  = "SELECT * FROM student";
+			myStmt = myConn.createStatement();
+			
+			// Step 4: Execute SQL query
+			myRs = myStmt.executeQuery(sql);
+		
+			// Step 5: Process the result set
+			while(myRs.next()) {
+				String email = myRs.getString("email");
+				out.println(email + "<br>");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+80 Resources Tune and Configure Tomcat JDBC Connection pool for Production User
+
+A couple of students have asked about configuring the connection pool for Production use. 
+
+Here are three resources that can help you with this configuration:
+
+Configuring jdbc-pool for high-concurrency 
+ > http://www.tomcatexpert.com/blog/2010/04/01/configuring-jdbc-pool-high-concurrency
+
+
+Tomcat JDBC Connection Pool configuration for production and development 
+ > http://www.codingpedia.org/ama/tomcat-jdbc-connection-pool-configuration-for-production-and-development/
+
+
+Optimal number of connections in connection pool 
+ > http://stackoverflow.com/questions/1208077/optimal-number-of-connections-in-connection-pool
+
+
+
+
+
+
+
+
+81 MVC Application Architecture
+
+Topics
+1. Application Features
+2. Big Picture
+3. Student DB Utility
+
+
+Application Features
+1. List Students
+2. Add a new Student
+3. Update a Student
+4. Delete a Student
+
+
+
+Big Picture - MVC
+ > composed of the MVC, and Database
+ > Controller will be a Servlet, which will use a StudentDbUtil class as an interface/helper class for communicating to database
+	- Controller receives data from StudentDbUtil, which it will forward to the View
+ > StudentDBUtil will act as an interface between StudentController and Database
+	- this will contain methods that returns data from the DB
+ > View will be a JSP, which will display the Students data from the StudentController
+
+
+Student DB Utility
+ > responsible for interfacing with the database using JDBC code
+ > This is a common design pattern: Data Accessor Object (DAO)
+
+
+

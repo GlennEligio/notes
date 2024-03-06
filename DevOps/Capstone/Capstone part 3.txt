@@ -1,0 +1,64 @@
+Capstone part 3
+
+Install Docker in Jenkins Server
+1. Install Docker inside Server that host Jenkins
+	apt update
+	apt install docker.io
+2. Check docker version
+	docker --version
+3. Login your Docker account
+	docker login
+
+Create Dockerfile
+3. In the root directory of Github repo (same level as src), create a Dockerfile with following content
+	> change the <jar file> to the name of jar file in target folder
+		- myproj-1.0-SNAPSHOT.jar
+	> change <java file> to fully qualified name of java file/class
+		- com.glenn.App
+
+FROM openjdk:alpine
+RUN mkdir /mydata
+ADD target/<jar file> /mydata/<jar file>
+CMD java -cp mydata/<jar file> <java file>
+
+
+Create Job for creating Docker image
+4. Create new Item in Jenkins
+	> "DockerJob"
+	> Freestyle Project
+5. Configure the Jenkin Job/Item
+	> in Build
+		- add a Build step
+		- select Execute Shell
+		- enter the following commands
+			= change <Job name> to the job name of Maven Job
+
+cd /var/lib/jenkins/workspace/<Job name>
+sudo docker container prune --force
+sudo docker image prune --force
+sudo docker build . -t web:$BUILD_NUMBER
+sudo docker run -i web:$BUILD_NUMBER
+	
+	> save the Job
+
+6. Build the Job
+	> NOTE: Build will fail if theres no Docker Container running. This is due to the $(sudo docker ps -a -q) part not outputing anything if no container is running, thus giving a ["docker rm" requires at least 1 argument] error. To fix this, run a dummy Docker Container using [docker run -i nginx] first before building the Job
+
+
+7. Check the Docker images
+	> you should see web docker image with tag referring to the Build Number
+
+
+Configure DockerJob to run after MavenJob
+8. Go to MavenJob configuration
+	Dashboard > MavenJob > Configure
+9. In Post-build Action Section, add post-build action
+	> choose "Build other projects"
+	> pass the DockerJob name
+10. Save the Job
+
+
+Test the Pipeline
+11. In Github repo, create a change in App.java file
+12. Commit and push the change.
+13. Check the MavenJob and DockerJob build history

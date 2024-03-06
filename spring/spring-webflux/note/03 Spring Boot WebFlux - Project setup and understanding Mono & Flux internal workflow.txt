@@ -1,0 +1,99 @@
+03 Spring Boot WebFlux - Project setup and understanding Mono & Flux internal workflow
+
+
+Project Setup
+1. Use Spring Initialzr or Spring Assistant in IntelliJ
+2. Make sure that
+	> Java version is higher than 9
+	> Add Spring Reactive Web as dependency
+3. Check if the pom.xml or gradle file contains the necessary dependency after creating the project
+
+
+
+Mono
+ > this interface is located inside reactor.core.publisher
+ > a Publisher that emits only 0 or 1 item
+
+Mono methods:
+1. just(T data)
+	> static method of Mono
+	> used to create instance of Mono which takes a data that it may or may not publish
+2. subscribe()
+	> instance method
+	> subcribe to the Mono Publisher
+	> this method have four signature, which takes
+		- Consumer that receives the item
+		- Consumer that receives error thrown
+		- Runnable that will be executed when onComplete is emitted
+		- Consumer that will access the Subscription created by subscribe()
+3. log()
+	> instance method
+	> logs all the event emitted by the Mono, which includes the onSubscribe, request, onNext, onComplete, and onError
+	> also includes the arguments passed on these event methods
+4. then(Mono<T> mono)
+	> instance method
+	> used to chain another mono to the current Mono
+
+
+
+
+Flux
+ > this interface is also located inside reactor.core.publisher
+ > a Publisher that emits 0 or N items
+
+Flux methods:
+1. just(T... data)
+	> static method
+	> used to create instance of the Flux
+	> takes 1 or more items of same Type
+2. subscribe()
+	> similar method of Mono's subscribe()
+3. concatWithValue(T... data)
+	> adds another set of data into the Flux
+	> returns a new Flux with added data
+4. concatWith(Flux<T> flux)
+	> adds another Publisher to be subscribed to by the Subscriber after the Flux that this is called from
+
+
+NOTES:
+1. By default, onError will terminate the Data flow of Publisher->Subscriber
+	> but we can configure the Flux/Mono or the Subscriber so that it will still continue despite error being thrown
+
+
+
+Codes:
+// MonoFluxTest.java inside test folder
+public class MonoFluxTest {
+
+    @Test
+    public void monoComplete() {
+        Mono<?> monoComplete = Mono.just(1)
+                .log();
+        monoComplete.subscribe(System.out::println);
+    }
+
+    @Test
+    public void monoWithError() {
+        Mono<?> monoWithError = Mono.just(1)
+                .then(Mono.error(new RuntimeException("Exception occurred")))
+                .log();
+
+        monoWithError.subscribe(System.out::println, System.out::println);
+    }
+
+    @Test
+    public void fluxComplete() {
+        Flux<?> fluxComplete = Flux.just(1,2,3,4)
+                .log();
+        fluxComplete.subscribe(System.out::println);
+    }
+
+    @Test
+    public void fluxWithError() {
+        Flux<?> fluxWithError = Flux.just(1,2,3,4)
+                .concatWithValues(5,6,7)
+                .concatWith(Flux.error(new RuntimeException("Some error occured")))
+                .log();
+        fluxWithError.subscribe(System.out::println, System.out::println);
+    }
+}

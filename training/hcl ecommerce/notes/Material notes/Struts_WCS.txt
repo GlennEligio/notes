@@ -1,0 +1,120 @@
+Struts_WCS
+
+WebSphere Struts Components
+
+Presentation Layer Component
+ > WebSphere Commerce Web 1.0 storefront uses JSP pages throughout the entire store and administrative flows
+ > WebSphere Commerce browser-based tools include:
+	- WebSphere Commerce Accelerator
+	- WebSphere Commerce Administration Console
+	- Organization Administration Console
+ > B2B and B2C WebSphere Commerce storefronts
+ > Management Center, Sales Center, and Web 2.0 use different architecture
+
+
+WebSphere Commerce and the Struts Framework
+1. Action servlet
+ > ECActionServlet implemented for WebSphere Commerce
+ > This servlet must be used
+2. Request processor
+ > Basic Struts processor
+ > Can be replaced to add Tiles support
+3. Action mapping
+ > Map request pattern to action and parameters
+ > Three files are involved which includes:
+	- base definitions, 
+	- extensions, and 
+	- migration
+4. BaseAction
+ > Single action, BaseAction, calls to facade with an argument that defines the controller command interface
+ > Controller command returns view name
+ > Return ActionForwards, which determine the JSP to display
+5. JSP page
+ > Dynamic pages
+
+
+Struts Configuration files
+1. struts-config.xml
+ > core product configuration
+ > used for mappings in the WebSphere Commerce base
+ > it must not be modified
+2. struts-config-ext.xml
+ > used to store customized configuration ("extensions")
+ > where new mappings are added
+
+
+WebSphere Commerce Action Mapping
+ > maps a specific request url pattern to an Action
+ > each Action can be used in different Store by specifying its "storeend_id"
+ > each Action is also mapped to specific interface with specifies the Interface name passed to business logic facade (command alias)
+ > lastly, we can also specify its the request mapped to specific Action needs to be using https or needs to be authenticated
+
+EX: struts-config.xml (Action mappings)
+Action Mapping #1
+url: AddressAdd
+storeent_id: 0
+interface: com.ibm.commerce.usermanagement.commands.AddressAddCmd
+https: 0
+authenticated: 0
+
+Action Mapping #2
+url: AddressAdd
+storeent_id: 201
+interface: com.ibm.commerce.usermanagement.command.AddressAddCmd
+https: 1
+authenticated: 1
+
+Action Mapping #3
+url: StoreCatalogDisplay
+storeent_id: 0
+interface: com.ibm.commerce.catalog.commands.StoreCatalogDisplayCmd
+https: 0
+authenticated: 0
+
+
+
+WebSphere Commerce Global Forwards
+ > in example below, a specific Action is mapped to an Interface "AddressAddCmd"
+ > then the Interface or "Business logic facade" returns the view name "AddressBookForm"
+ > this view name will be used to look for the specific JSP to display in the Global Forwards
+ > the Global Forward returns a JSP
+
+EX: Action Mapping
+<action-mapping>
+  <action path="/AddressAdd"
+	parameter="com.ibm.commerce.usermanagement.commands.AddressAddCmd"
+	type="com.ibm.commerce.struts.BaseAction">
+    <set-property property="https" value="0:0, 201:1">
+    <set-property property="authenticate" value="201:1">
+  </action>
+</action-mapping>
+
+EX: Global Foward
+<global-forwards>
+  <forward name="AddressBookForm" path="/AddressBookForm.jsp" />
+</global-forwards>
+
+
+
+Development of Struts Components
+ > Customizations in WebSphere Commerce do not often involve customization of Struts components
+	- ECActionServlet is developed for WebSphere Commerce, and probably never has to be modified
+	- Request processors may be replaced (ex: to provide Tiles support)
+	- Custom request processors may be developed, but it is not common
+	- Development of new Struts actions is rare; BaseAction acts as a delegate to the facade, where the business logic implemented as a set of commands
+ 
+
+
+Adding Pages to the WebSphere Commerce Storefront
+ > JSP are called as the result of an Action
+    - Actions return action forwards; those forwards map to JSP anmes
+    - To add a new view, create a new JSP and make an entr in the Struts configuration files that map to that JSP
+    - To access that new view, map the return for an action to the new forward
+      -> it can be done on a store-by-store basis
+ > Alternatively, a new command or new implementation of an existing command could be developed to return a new forward, mapped to the new JSP
+ > New JSP's often require the modification of access control policies
+ 
+EX:
+<foward className="com.ibm.commerce.struts.ECActionForward"
+	name="StoreView/10001"
+	path="/index.jsp">

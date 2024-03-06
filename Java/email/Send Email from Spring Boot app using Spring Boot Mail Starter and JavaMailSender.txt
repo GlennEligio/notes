@@ -1,0 +1,71 @@
+Send Email from Spring Boot app using Spring Boot Mail Starter and JavaMailSender
+
+Dependencies needed
+1. spring-boot-starter-mail
+	> autoconfigures the JavaMailSender bean
+
+
+Configuring the JavaMailSender
+1. Add the following in the application.properties
+
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=glenneligio@gmail.com
+spring.mail.password=samplepassword
+spring.mail.properties.mail.debug=true
+spring.mail.properties.mail.transport.protocol=smtp
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+
+Creating the Service for sending emails
+1. To send a message, create a Service Class
+	> annotate it with @Service
+2. Inside, create a JavaMailSender property that we will inject to the MailService Class
+3. Create a method that will take the following properties
+	> String to
+	> String subject
+	> String body
+4. Inside the method, create a SimpleMailMessage, and set its properties
+	> To, Subject, Text
+5. Use the injected JavaMailSender to send it by calling the send() method and passing the SimpleMailMessage
+
+
+EXAMPLE: EmailService class
+package com.eze.backend.spring.service;
+
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+
+@Service
+public class EmailService {
+
+    private final JavaMailSender mailSender;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    void sendEmail(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("asadeased@gmail.com");
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        mailSender.send(message);
+    }
+}
+
+
+NOTES:
+1. Any properties that are the standard properties are need to be passed on to the engine that is actually doing the mail
+	> we do this by prefixing the property with "spring.mail.properties.-"
+	> ex: spring.mail.properties.mail.debug=true
+2. Any sensitive information added in the properties above SHOULD NOT BE HARDCODED
+	> this information should be injected as either ENVIRONMENT VARIABLES or as command argument when running the .jar file of the spring boot final build 
+
+
+
+
+

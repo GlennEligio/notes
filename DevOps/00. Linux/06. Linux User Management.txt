@@ -1,0 +1,4 @@
+06. Linux User Management
+
+User Management in Linux
+	> a user is an entity, in a Linux OS, that can manipulate files and perform several other operations

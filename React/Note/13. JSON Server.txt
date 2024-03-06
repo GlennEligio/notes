@@ -1,0 +1,51 @@
+13. JSON Server
+
+JSON Server for Mock Server
+	> json-server node package module is used to create a mock rest api server with a json file being its source/database
+	> to install the json-server, we can use the command
+		npm i json-server
+	> to verify installation, check in package.json dependencies section
+    		"json-server": "^0.17.0",
+
+
+Configuring a json-server
+	> add an item in the "scripts" section of the package.json file
+		"server": "json-server --watch db.json --port 5000"
+	> run the script in the root directory of React app
+		npm run server
+	> the command above will create a file named db.json
+		- this json file will have some default content that we can overrite
+	> the Route/Paths of this Mock Rest API that we can call changed dynamically
+		- will changed based on the content of the json file
+
+EX: 
+db.json file
+{
+  "tasks": [
+    {
+      "id": 1,
+      "text": "Doctors Appointment",
+      "day": "Feb 5th at 2:30pm",
+      "reminder": true
+    },
+    {
+      "id": 2,
+      "text": "Meeting at School",
+      "day": "Feb 6th at 1:30pm",
+      "reminder": true
+    },
+    {
+      "id": 3,
+      "text": "Food Shopping",
+      "day": "Feb 5th at 2:30pm",
+      "reminder": false
+    }
+  ]
+}
+
+
+Example routes/path
+GET 	localhost:5000/tasks 				to fetch all task
+GET	localhost:5000/tasks/1				to fetch task whose id is 1
+GET	localhost:5000/tasks?id=3&reminder=true		to fetch task whose id is 3 and reminder is true
+POST 	localhost:5000/tasks				to add a task in json-server

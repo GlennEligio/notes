@@ -1,0 +1,25 @@
+Day 21 Chat
+
+Francis Jan Dimata  to  Everyone 9:23 AM
+brb
+Francis Jan Dimata  to  Everyone 9:25 AM
+back
+rohit  to  Everyone 9:27 AM
+Registeration_UI.jsp
+<input type="text" name="x_customParam" value="" id="WC_UserRegistrationAddForm_FormInput_customParam_In_Register_1"/>
+step2: /crs-web/WebContent/WEB-INF/xml/config/com.ibm.commerce.person/rest-template-config.xml   add xcustomParam
+"birth_date" : "$birth_date",
+				"privacyNoticeVersion" : "$privacyNoticeVersion",
+    			"marketingTrackingConsent" : "$marketingTrackingConsent",
+    			"x_customParam" : "$x_customParam"
+rohit  to  Everyone 9:29 AM
+Rest/WebContent/WEB-INF/config/bodMapping/rest-person-clientobjects.xml
+String customParam =null;
+	
+	@Override
+	public void setRequestProperties(TypedProperty reqProperties) throws ECApplicationException {
+		
+		customParam = reqProperties.getString("customParam", "NOTFOUND");
+		System.out.println("-------customParam----"+customParam);
+		super.setRequestProperties(reqProperties);
+	}

@@ -1,0 +1,214 @@
+WCS 9 Customizing the Index lifecycle
+
+
+Customizing the index life cycle
+	> The HCL Commerce Search index life cycle provides numerous extension points.
+	> There are EIGHT main stages to the life cycle, and each of these comes with its own extension opportunities.
+	> Your primary tool for customization is the configuration files that control the indexing process. Beyond configuration, you can build and integrate you own custom code.
+	
+	
+The index lifecycle
+	> Indexing (including preprocessing) is performed in the HCL Commerce server
+	> After index preprocessing successfully completes, the Data Import Handler (DIH) can be run from the same HCL Commerce server. Solr can start creating and updating the Lucene index from the HCL Commerce temporary database tables
+	> If preprocessing is not required, such as for the inventory extension index, the DIG process can be started either from HCL Commerce or directly from a URL issued against the HCL Commerce Search server.
+
+
+EIGTH STEPS to the Indexing lifecycle
+1. Data Load - External System
+2. Preview
+3. Approve
+4. Indexing service
+5. Stagingprop
+6. Indexprop
+7. Replication
+8. Cache Invalidation
+
+1. Dataload - External System
+	> PIM (Product Information Management), or CMS (Content Management System), usually WebSphere Content Hub is used to load data into the Commerce authoring database
+	> While Data Load saves, for example, new season's product into the workspace schema database, it also records the new season's products' primary key into search specific delta tables
+		- Later, when buildIndex is running, it will check which data was added, changed, or deleted in the workspace schema from this specific delta table.
+		- It will then build the new season's products from the workspace database into workspace index
+	> You can customize Data Load by defining a new mediator.
+	> buildIndex can also be customized to build additional information into the workspace index
+2. Preview
+	> After the workspace index core has synchronized with the workspace schema database, your workspace administrators can make changes to the new season products
+	> They can preview new as-yet unapproved data, categories and content on the storefront. The event consumer analyzer built into each catalog will add the data changes coming from Management Center into each search-specific delta table
+	> The buildIndex process again reads from each delta table and builds the data into a workspace index core
+3. Approve	
+	> When the workspace administrator is satisfied with the catalog data, they approve and publish the workspace. The workspace schema data will be committed into the base schema database, and the workspace index will be committed into the base index (in the HCL Commerce server)
+4. Indexing service	
+	> The indexing service will first run the preprocess script located in the Transaction server to flatten the data into a temporary table or view. Then, the service runs DataImportHandler to import data from the temporary table or view into the index
+	> In the base schema, by default there are four types of index:
+		- CatalogEntry
+		- CatalogGroup
+		- Unstructured index
+		- Extended index (for Price and Inventory)
+	> The index can be customized by adding a new index. You can influence the behaviors of these indexes by customizing the following
+		- x-schema.xml
+		- x-solrconfig.xml
+		- x-data-config.xml
+	> Additional configuration files such as 'passwords.txt' permits fine-grained control over the indexing of search terms. 
+	> If you require deeper level customization, for example complete replacement of schema.xml, solrconfig.xml or data-config.xml, this could be achieved by leveraging the SRCHCONF and SRCHCONFEXT tables
+5. Stagingprop
+	> When everything is ready in the authoring environment, the database is propagated to the live instance
+6. Indexprop
+	> Data replication is done by the Search administration service
+7. Replication
+	> After the index is ready on the repeater, the Solr engine's built-in relpication process will replicate the index from the repeater to subordinate nodes (Slave search instances).
+	> You can configure whether to relpicate an external file or schema file, or whether to force a health check after replication.
+	> You can also customize on top of the Search-provided relpication handler
+8. Cache invalidation
+	> A data cache is enabled on the Search server. It is used mainly to cache three types of data:
+		1. database centralized operations, such as B2B entitlement information or facet configuration
+		2. search rule lookups that need a callback to the Transaction server
+		3. Category hierarchy information that is created by centralized index access
+	> When a facet or entitlement related database, search rule, or index is changed, invalidation is triggered to invalidate the data cache and storefront fragment cache
+	> Data invalidation is triggered by different  things
+		- entitlement, facet, and search rule cache invalidation is triggered by defining a database trigger
+		- category hierarchies are invaldiated by leveraging the CACHEIVL table
+	> Normally IndexProp will register cache invalidation events into the database in the CACHEIVL table.
+	> Later, every search REST call will call the cache manager in the Ssearch 
+	
+NOTE:
+1. While the Search and Transaction srvers do invalidation using the CACHEIVL table, the Store server issues invalidations by subscribing to a Kafka message
+
+
+
+Customization levels for Solr
+	> IBM provides three levels of support for customizing these steps:
+		1. Supported
+		2. Future support
+		3. Not supported
+	> Supported: The customization process is supported. 
+	> Future support: IBM intends to support the customization feature in the future release. If you have a related customization need, you can contact the IBM support team for more information
+	> Not supported: IBM is not planning to support such a customization feature in the future. You should avoid customizing the related area or look for alternatives in your implementation
+	
+	
+	
+Customizing by lifecycle steps
+	> the following table links the index lifecycle steps to corresponding configuration topics in the Knowledge Center
+	> Most steps in the table are listed as supported or unsupported, however some items are configurable. This means that their behavior can be changed using command parameters or other built in capabilities
+	
+1. Data Load: External System
+Customization point: buildIndex utility
+Level of support: Custom mediators; buildIndex
+
+2. Preview
+Method: Store preview / delta build
+Customization Point: Reindexing
+Level of support: Customization not supported. See "https://help.hcltechsw.com/commerce/9.1.0/search/concepts/csdsearchcontentstructureindex.html"
+
+3. Approve
+Method: Approve index
+Customization point: Data Commit to base schema
+Level of support: Customization not supported
+
+4. Indexing service
+Method: Customize default index "schema.xml" file
+Customization point: Add customized field reusing HCL Commerce fieldType into default index schema (including preprocess or buildIndex)
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/refs/rsdsearch_schemaxml.html
+
+Customization point: Add customized field type
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/refs/rsdsearch_schemaxml.html
+
+Customization point: Modify fields with Solr native fieldType in schema.xml (such as int, string, date, float, long, etc)
+Level of support: Customization not supported
+
+Customization point: Modify a HCL Commerce field in x-schema.xml (Such as wc_text*, add StopWords to partNumber_ntk)
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/refs/rsdsearch_schemaxml.html
+
+Customization point: Modify a HCL Commerce fieldType in x-schema.xml for specified language (for example, to customize StopWords for english only)
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/refs/rsdsearch_schemaxml.html
+
+Customization point: Add new language core for existing default index
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/tasks/tsdsearchsetupstructure.html
+
+Method: Customize native Solr using solrconfig.xml
+Customization point: Revert to previous versions' MultipleQueryComponent for customized extension core:
+	> Return filed from extended index. For example, return price information and inventory information. Return customized information from customized extended index as well
+	> Filter by extended index field. For example, only display products that have non-zero inventory
+	> Sort by extended index field. For example, sort by price
+	> Facet by extended index. For example, display price facet from 0 to 100
+	> Boost by extended index. For example, boost products that have inventory larger than 100
+	> Customize a Solr function to do sorting
+Level of support: Customization Supported. See https://help.hcltechsw.com/commerce/9.1.0/migrate/tasks/tmgsearch_restoreMultipleQueryComponent.html
+
+Customization point: Register a customized query parser
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/concepts/csd_guide_customize_components.html
+
+Customization point: Register a function parser
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/tasks/tsdsearchnewunst.html
+
+Customization point: Register a transfrom during buildIndex
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/concepts/csd_guide_indexprocess.html
+
+Customization point: Customize IndexSearcher related event listener
+Level of support: Customization not supported
+
+Customization point: Customize update related event listener
+Level of support: Customization not supported
+
+
+Method: Customization on wc-data-config.xml
+Customization point: Customization of existing field mapping in wc-data-config.xml for CatalogEntry/CatalogGroup/unstructured/Inventory/Price
+Level of support: Customization not supported
+
+Customization point: Add a new field mapping in wc-data-config.xml for CatalogEntry, CatalogGroup, Unstructured, Inventory, or Price
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/tasks/tsdwcdataconfigxml.html
+
+Customization point: Choose non-ATP or DOM inventory for wc-data-config.xml
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/concepts/csdwccomponentxml.html
+
+Customization point: Completely override the default wc-data-config.xml
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/tasks/tsdwcdataconfigxml.html
+
+
+Method: Customize Index Load
+Customization point: Indexload for master CatalogEntry or CatalogGroup
+Level of support: Customization not supported
+
+Customization point: Indexload for customized extension core
+Level of support: Customization not supported
+
+
+Method: Customization to Sharding
+Customization point: Shard on a core other than catentry
+Level of support: Customization not supported
+
+
+
+5. Stagingprop
+Method: Propagate staged data
+Customization point: Modify command-line parameters of the StagingProp utility
+Level of support: Configurable using the StagingProp utility. See https://help.hcltechsw.com/commerce/9.1.0/admin/refs/rssstageprop.html
+
+
+
+6. Indexprop
+Method: Index propagation
+Customization point: Modify command-line parameters of the IndexProp utility
+Level of support: Configuration using the IndexProp utility. See https://help.hcltechsw.com/commerce/9.1.0/search/refs/rsdindexprop.html
+
+
+
+7. Replication
+Method: Replication, operation, and healthcheck
+Customization point: Perform replication on a customized index, for example replicate from a master to a repeater, or from a repeater to a subordinate
+Level of support: Customization not supported
+
+Customization point: Replicate to an external file for a customized index
+Level of support: Customization not supported
+
+Customization point: Customize existing replication, operation, or healthcheck functions
+Level of support: Customization supported. See https://help.hcltechsw.com/commerce/9.1.0/search/refs/rsdhealthcheckxC.html 
+
+
+
+8. Cache Invalidation
+Method: Cache and cache invalidation
+Customization point: Cache invalidation by CACHEIVL table for a customized index
+Level of support: Configurable. See https://help.hcltechsw.com/commerce/9.1.0/admin/concepts/cdc_cacheinv.html
+
+Customization point: Replace with other centralized cache provider (such as WXS)
+Level of support: Customization not supported
+

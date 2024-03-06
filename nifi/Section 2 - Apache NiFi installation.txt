@@ -1,0 +1,45 @@
+Section 2 - Apache NiFi installation
+
+V. Installing Apache NiFi in a Mac/Linux
+
+
+
+VI. Installing Apache NiFi in a Windows machine
+
+
+Overview
+ > Apache NiFi does not come with different installers for different OS
+ > instead they offer Apache NiFi binaries from their official website, and using the OS specific startup file provided (.bat for windows, .sh for linux, etc)
+ 
+Prerequisite
+ > the only prerequisites in order to run NiFi in your local machine are:
+	1. the machine have Java installed
+		> support for Java 8 is not available, minimum is java 11
+	2. the machine have system environment variable "JAVA_HOME" and its value is set correctly
+	
+Installation
+1. Go to their website
+	> nifi.apache.org/download
+2. Download the binary file that you want
+	> for now, we can use the Binaries -> Apache NiFi Binaries link
+	> click it and in the next page, click the download link
+3. Extract the content anywhere in the local machine
+	> the folder output should contain the following folders
+		- bin
+		- conf
+		- lib
+4. In the folder output, go inside bin folder
+	> located here are the different OS specific startup files that we can use
+	> in our case, we will be using the "run-nifi.bat" file using Command Prompt
+5. After running the startup file, check the log/nifi-app.log file
+	> inside the log file, we can see the following:
+		- generated user and password
+		- endpoint exposed for us to explore NiFi user interface
+	
+	
+NOTE:
+1. It takes some time after running the startup script for the NiFi to setup. Give it some time to finish.
+2. Check the log/nifi-app.log to see the generate
+	
+	
+

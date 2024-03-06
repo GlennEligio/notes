@@ -1,0 +1,160 @@
+CSS part 4 Typography
+
+includes
+Properties
+Font-stack, generic family
+Google fonts
+
+
+Font-related CSS properties
+
+Font size
+	> defines the size of the text
+
+
+Font family
+	> defines the set of font style that the browser will use
+	> it first look at the font style at 1st index and iterates through all of them until it found the style that is available 
+	> pre-defined font-family values available in VS Code are the ones that look the same
+	> 1st font style will be a specific and the last will be the generic style
+	> the further the list, the more chances that it is available in most of browser
+
+EX:
+h1{
+	font-family: "Courier New", Courier, monospace
+}
+
+
+Font-weight
+	> defines the "thickness" of the characters of text
+	> comes from putting "weight" in each stroke where in heavier the stroke, the thicker the line
+	> can have multiple values, which includes
+		- in range of (100-900) with increment of 100 (100,200,300,...,900)
+		- bold, bolder
+		- lighter
+		- normal
+		- inherit
+		- initial
+	> the final font-weight of the text will STILL DEPEND on the available variants of the font itself
+		EX: if we only have Roboto 400 and 700 and we have two h3 with font-weight of 700 and 900. They will have BOTH 700 as font-weight since only 700 is the available
+
+
+
+
+Font-style
+	> property that specifies the font style for a text.
+	> there are several values that can be passed in font-style
+		a. normal 	- normal version of the text
+				- default value
+		b. italic	- style where the character is slanted by 8-12 degrees
+		c. oblique	- normal but slanted version
+				- if either italic or oblique is not available, the CSS will use the other one
+		d. intial	- set property value to its default value
+		e. inherit	- inherits the parent's font style value
+		
+
+
+
+generic fonts
+	> fonts that are wideky available to most of the devices
+	> these includes
+		- serif
+		- sans-serif
+		- cursive
+		- fantasy
+		- monospace
+
+
+
+
+Google fonts
+	> website is fonts.google.com
+	> website where we can source our fonts
+	> inside the Google fonts website, there are several sections where we can customize the fonts. These includes
+		a. Categories
+			- Serif
+			- Sans Serif
+			- Display
+			- Handwriting
+			- Monospace
+		b. Font properties (adjusted using sliders)
+			- Number of styles available
+			- Thickness
+			- Slant
+			- Width
+		c. Sort by
+			- Trending
+			- Most popular
+			- Newest
+			- Name
+		d. Language which the font is available
+
+
+
+
+Fetching a font-family in the Google Font
+1. Click the first font that you want to use
+2. In the Font style's webpage, select the styles of Font you want to add
+	EX: In Roboto, we can choose Thin 100 and Light 300
+3. When selected, they will be added in the "Selected family" section
+4. To see the Selected family section, press the icon at top right with 4square and plus icon
+
+
+Adding the Font family from Google Font to Webpage
+1. To add the Font-family in Webpage project, we can either
+	a. use <link> in the <head> tags
+	b. use @import inside <style> tags
+
+EX: 
+<link> method
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;1,100&display=swap" rel="stylesheet">
+
+@import method
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;1,100&display=swap');
+</style>
+
+
+2. To use the font-family in CSS rules, specify the Font style we used and the generic font style it is based on
+	> format will be
+
+		font-family: 'FontStyle', genericFontBase
+
+EX:
+	Roboto is based on san-serif. For us to use them in CSS rule, we will use
+
+		font-family: 'Roboto', sans-serif
+
+
+
+
+
+
+I. font-size and font-family
+
+1. Clean the index.html body and styles.css
+
+
+
+2. Inside the index.html body, add the following
+	a. h1 with "Hey dude im main heading"
+	b. p with lorem50
+
+INSIDE index.html body
+
+  <body>
+    <h1>Hey dude, I'm main heading</h1>
+    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Numquam quos eos fugit pariatur culpa ipsum, nesciunt voluptates accusamus dolores veniam eveniet, praesentium enim sed labore? Voluptate placeat quo magni atque molestias ea neque unde nesciunt quas nobis nulla ipsum sequi optio officiis, quidem iste beatae. Praesentium repellat earum minima eius?</p>
+  </body>
+
+
+
+
+3. Inside the styles.css, do the following
+	> body
+		font-family to Helvetica
+	> h1
+		font-family to Verdana

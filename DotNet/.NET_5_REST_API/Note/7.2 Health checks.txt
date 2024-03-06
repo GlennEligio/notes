@@ -1,0 +1,285 @@
+Health Checks
+
+Health Checks endpoint
+	> an endpoint in REST API to see if REST API (and its components like database) are healthy and alive
+
+
+For Additional HealthChecks of other components, go to:
+
+https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
+
+
+I. Adding default health check
+
+1. Add a Health checks service in the IServiceCollection in ConfigureService() of StartUp class
+	> call AddHealthChecks() of IServiceCollection parameter
+
+INSIDE ConfigureService() of StartUp class
+
+            services.AddHealthChecks();
+
+
+
+
+2. Add the HealthCheck middleware (endpoint) in the Configure() of StartUp class
+	> inside the UseEndpoints() call of IApplicationBuilder, call MapHealthChecks() of input parameter
+	> inside MapHealthChecks(), pass a string that will be the endpoint of the HealthCheck
+		= EX: if we want our health check url to be localhost/health, then we will pass "/health" to the MapHealthChecks()
+
+INSIDE Configure() of StartUp class
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
+            });
+
+
+
+
+
+3. Test the basic HealthCheck endpoint
+	> save all, run and debug
+	> send a GET request using the request url
+		
+		https://localhost:5001/health
+
+	We should get a HEALTHY response from the server
+
+
+
+
+
+
+II. Add customized health check (with checks on components like databases and dependencies)
+
+
+4. Add Nuget package for MongoDb health check
+	> this nuget package is not part of .NET core (3rd party package)
+	> we will use this package to add health check to our MongoDb
+	> to add these package, type in terminal the following
+
+		dotnet add package AspNetCore.HealthChecks.MongoDb
+
+
+
+
+5. Move the MongoDbSettings object creation line 
+	> from lambda expression of services.AddSingleton<>()
+	> to inside of ConfigureServices(), outside AddSingleton()
+	> we will use this MongoDbSettings object (specifically its ConnectionString) outside the lambda expression
+
+INSIDE ConfigureServices()
+
+FROM
+            services.AddSingleton<IMongoClient>(serviceProvide =>
+            {
+            	var mongoDbSettings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+                return new MongoClient(mongoDbSettings.ConnectionString);
+            });
+
+
+TO
+            var mongoDbSettings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+
+            services.AddSingleton<IMongoClient>(serviceProvide =>
+            {
+                return new MongoClient(mongoDbSettings.ConnectionString);
+            });
+
+
+
+
+
+6. Call AddMongoDb() after services.AddHealthChecks()
+	> this will add a health check to the MongoDb
+		= check will be based on whether or not we can reach the MongoDb
+	> inside AddMongoDb(), pass the following parameter
+		- MongoDb connection string (will be fetch from MongoDbSettings object)
+		- Health check name (can be anything)
+		- Timespan amount for the timeout (time limit for the healthcheck)
+
+INSIDE Configure() of StartUp class
+		
+            services.AddHealthChecks()
+                .AddMongoDb(mongoDbSettings.ConnectionString, name: "mongodb", timeout: TimeSpan.FromSeconds(3));
+
+
+
+
+7. Test the Healthcheck again
+	> save all, run and debug
+	> call the health check endpoint with Postman using this link
+
+		https://localhost:5001/health
+
+	The result should show a Healthy response with 200 OK response code, assuming the MongoDb is up and running too.
+ 
+
+
+
+
+8. Test the Healthcheck while MongoDb container is stopped
+	> stop the MongoDb container
+
+		docker stop mongo
+
+	> run and debug
+	> call the healthcheck endpoint
+
+	We should get an Unhealthy response with 503 Service Unavailable response code because the application cannot make contact with the MongoDb using the Connection string provided.
+
+
+
+
+
+
+III. Creating multiple healthcheck endpoints with different endpoint predicates
+
+
+9. Add a tags: parameter to the AddMongoDb() to the services.AddHealthChecks()
+	> pass a new ARRAY of String to the tags: that contains a string "ready"
+
+INSIDE ConfigureServices() of StartUp class
+
+            services.AddHealthChecks()
+                .AddMongoDb(mongoDbSettings.ConnectionString, 
+                            name: "mongodb", 
+                            tags: new[]{"ready"},
+                            timeout: TimeSpan.FromSeconds(3));
+
+
+
+
+10. Create HealthCheck endpoint for the AddMongoDb healthcheck
+	> for this MapHealthCheck, we will use "/health/ready" as Predicate route endpoint
+	> for the new MapHealthChecks, we will pass a new parameter which is a new HealthCheckOptions
+	> inside the HealthChecksOptions, define the Predicate variable as HealthChecks whose Tags contains "ready"
+		= we will use lambda expression to define the HealthChecks that will be using the Predicate route endpoint
+		= this will be for the AddMongoDb healthcheck
+
+INSIDE Configure() of StartUp class
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions{
+                    Predicate = (check) => check.Tags.Contains("ready")
+                });
+            });
+
+
+
+
+
+
+11. Create new MapHealthCheck endpoint for every HealthChecks that doesn't have a tag
+	> this will be the HealthCheck endpoint for all HealthChecks available
+	> for suffix route endpoint parameter, pass "/health/live"
+	> for the HealthCheckOptions, define its Predicate so that all HealthChecks that doesn't have Tags are included
+		= for this, we will not anything except an underscore to the its parameter and set it to false using lambda expression
+		= this means that anything will be included in this specific HealthCheck endpoint
+
+INSIDE Configure() of StartUp class
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions{
+                    Predicate = (check) => check.Tags.Contains("ready")
+                });
+
+                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions{
+                    Predicate = (_) => false
+                });
+            });
+
+
+
+
+12. Test the two new HealthCheck endpoint
+	> save all, run and debug
+	> test the "/health/live" HealthCheck first
+	> test the "/health/ready" HealthCheck after
+
+
+	The result of the "live" HealthCheck should always be healthy. But for the "ready" HealthCheck, it will depend on whether or not the MongoDb is up and running or down.
+
+	If MongoDb is up, the "ready" response should be Healthy, otherwise its Unhealthy.
+
+
+
+
+
+IV. Customizing the Response body of the HealthCheck
+
+13. Define the RepsonseWriter of the HealthCheckOptions	
+	> for defining ResponseWrite, we will need to pass two things into it
+		- context
+		- report
+	> lets also make this an asynchronous function by adding async to its parameter
+	> lets define this context and report parameter using lambda expression
+	> inside the lambda expression of these parameters, do the following
+		a. Create a new variable 
+			= this variable will hold a Json object using JsonSerializer.Serialize()
+		b. Define the json variable object content/properties
+			= the json properties will be fetched from the report parameter of ResponseWriter
+			= the json object will have these properties
+				- status, pull from report.Status
+				- checks, pull from report.Entries.Select()
+					> define the Entries that will be included in the Select using lambda expression
+					> the checks properties will also be a new json object with following properties
+						- name, pull from entry.Key
+						- status, pulled from entry.Value.Status transformed into String
+						- exception, if entry.Value.Exception is null, assign "none", else assign entry.Value.Exception
+						- duration, pull from entry.Value.Duration
+		c. Set ContentType of the context.Response to MediaTypeNames.Application.Json
+			= this will make the response into a Json format
+		d. Call WriteAsync() of context.Response and pass the json variable
+			= also since this is an Async method, add await at front of it
+
+
+INSIDE HealthCheck endpoint of the MongoDb
+
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions{
+                    Predicate = (check) => check.Tags.Contains("ready"),
+                    ResponseWriter = async(context, report) => {
+                        var result = JsonSerializer.Serialize(
+                           new {
+                               status = report.Status.ToString(),
+                               checks = report.Entries.Select(entry => new{
+                                   name = entry.Key,
+                                   status = entry.Value.Status.ToString(),
+                                   exception = entry.Value.Exception != null ? entry.Value.Exception.Message : "none",
+                                   duration = entry.Value.Duration.ToString()
+                               })
+                           }
+                        );
+
+                        context.Response.ContentType = MediaTypeNames.Application.Json;
+                        await context.Response.WriteAsync(result);
+                    }
+                });
+
+
+
+
+14. Test the MapHealthCheck endpoint response message of MongoDb
+	> save all, run and debug
+	> call the healthcheck endpoint of MongoDb
+
+RESPONSE BODY
+
+{
+    "status": "Healthy",
+    "checks": [
+        {
+            "name": "mongodb",
+            "status": "Healthy",
+            "exception": "none",
+            "duration": "00:00:00.4138575"
+        }
+    ]
+}

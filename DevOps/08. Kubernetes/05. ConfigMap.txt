@@ -1,0 +1,205 @@
+05. ConfigMaps
+
+includes:
+I. ConfigMap
+II. Creating ConfigMap
+III. Display ConfigMap
+IV. Consuming ConfigMaps as Configuration files in a VOLUME
+V. Consuming ConfigMap as Environment Variables
+VI. Creating ConfigMap using Manifest file
+VII. Delete ConfigMaps
+
+
+I. ConfigMap
+	> is an API object used to store NON-CONFIDENTIAL data in key-value pairs
+		- for confidential data, use Secrets
+	> Pods can consume ConfigMaps as
+		- environment variables
+		- command-line arguments
+		- configuration files in a volume
+	> A ConfigMap allows you to decouple environment-specific configuration from your Container Images, so that your applications are easily protable
+	> to fetch a data inside configmap, use the syntax
+		filename:key
+
+
+
+II. Creating ConfigMap
+	> we can create a Config by using either 
+		1. ad-hoc command "kubectl create configmap"
+		2. creating Manifest file with "kind: ConfigMap" and invoking "kubectl create -f <MANIFEST FILE>"
+
+kubectl create configmap <CONFIGMAP NAME> [OPTIONS]
+	> used to create a ConfigMap from a specific file
+	> we can add command flag options to define the source of the ConfigMap data
+		"--from-file=<FILE NAME>" 		specifies the files with data (ex: .txt files) that is used to fill ConfigMap content (used for configuration files)
+		"--from-literal=<KEY>=<VALUE>"		specifies the key-value pair to be added as ConfigMap (typically used for environment variables)
+	> we can specify more than one file source
+		- ex: kubectl create configmap nginx-configmap-vol --from-file=file-1.txt --from-file=file-2.txt
+		- ex: kubectl create configmap redis-configmap-env --from-literal=file.1=file.a --from-literal=file.2=file.b
+
+
+
+III. Display ConfigMap
+kubectl get configmaps
+	> show all configmaps available in cluster
+
+kubectl get configmaps <CONFIGMAP NAME> -o yaml
+	> show all information of a specific ConfigMap
+	> "-o" specifies the format of the output (yaml or json)
+
+kubectl describe configmaps <CONFIGMAP NAME>
+	> used to show all information of a specific ConfigMap
+
+
+
+IV. Consuming ConfigMaps as Configuration files in a VOLUME
+	> before consuming a ConfigMap, we must first create a ConfigMap
+	> for a Pod to consume a ConfigMap, we must do two things
+		1. add a volumeMount in the container where you want to use ConfigMap inside spec:
+		2. add a volume in spec:
+		3. inside the volume:, add a configMap 
+		4. inside configMap:, define
+			- name: this will be the name of the ConfigMap
+			- items: this defines the items that will be included in the volumeMount
+				= if we dont give items:, by default it will include ALL items
+
+
+ex: Manifest that uses ConfigMap
+
+#nginx-pod-configmap-vol.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-configmap-vol
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    volumeMounts:
+    - name: test-vol
+      mountPath: "/etc/non-sensitive-data"
+      readOnly: true
+  volumes:
+    - name: test-vol
+      configMap:
+        name: nginx-configmap-vol
+        items:
+        - key: file-1.txt
+          path: file-a.txt
+        - key: file-2.txt
+          path: file-b.txt
+
+	> In this Manifest file, we can see that we create a volume: field inside spec: volumes: named "test-vol"
+		- This "test-vol" contains a configMap: where in we added a "nginx-configmap-vol"
+		- In the "nginx-configmap-vol", we included the items "file-1.txt" and "file-2.txt" to the data to be included inside the Volume
+	> Then we added a volumeMount: in one of the container: to mount the volume "nginx-configmap-vol"
+		- To mount, we must specify the name of the volume to mount and also the destination of the said Volume inside the Container
+		- In this case, the data of Volume (which includes the ConfigMap) will be in the "/etc/non-sensitive-data" of the Container
+
+
+
+Verification of ConfigMap mounting
+	> We can then verify the success of Setup by either
+
+1. Going inside Container and look inside the mountPath directory
+	kubectl exec nginx-pod-configmap-vol -it /bin/sh
+	ls /etc/non-sensitive-data
+	cat /etc/non-sensitive-data/file-1.txt
+2. Using "kubectl exec <POD NAME> <COMMAND> <ARGS...>" to do command and see output from Host machine terminal
+	kubectl exec  ls /etc/non-sensitive-data
+	kubectl exec nginx-pod-configmap-vol cat /etc/non-sensitive-data/file-a.txt
+	kubectl exec nginx-pod-configmap-vol cat /etc/non-sensitive-data/file-b.txt
+
+
+
+
+V. Consuming ConfigMap as Environment Variables
+	> to consume ConfigMap as Env Variables, we must do the following steps in the Manifest File
+		1. Define an env: field inside a container of containers:
+		2. Inside a env:, we must define the following fields
+			a. name: 	string that will be used to refer to this env var inside Container
+			b. valueFrom:	defines the source of the environment variable
+		3. Inside valueFrom:, we must define the following fields
+			a. configMapKeyRef: 	specifies that the source is from ConfigMap
+		4. Inside configMapKeyRef:, we must define the the following fields
+			a. name: 	refers to the name of configMap in K8s cluster
+			b. key:		refers to the key of a literal key-value pair we added in the ConfigMap
+
+EX: Manifest file
+# redis-pod-configmap-env.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-pod-configmap-env
+spec:
+  containers:
+  - name: redis-container
+    image: redis
+    env:
+      - name: FILE_1
+        valueFrom:
+          configMapKeyRef:
+            name: redis-configmap-env
+            key: file.1
+      - name: FILE_2
+        valueFrom:
+          configMapKeyRef:
+            name: redis-configmap-env
+            key: file.2
+  restartPolicy: Never
+
+
+	> In this Manifest file, we can see that we defined TWO environment variables under spec: env:
+	> 1st Environment variable have properties:
+		- name is FILE_1 (will be used to refer to this env var inside Container)
+		- source is from a configMap named "redis-configmap-env"
+		- key used to fetch the value of environment variable is "file.1"
+	> 2nd Environment variable have properties:
+		- name is FILE_2 (will be used to refer to this env var inside Container)
+		- source is from a configMap named "redis-configmap-env"
+		- key used to fetch the value of environment variable is "file.2"
+
+
+
+VI. Creating ConfigMap from Manifest file
+	> to create a ConfigMap from Manifest file, we would need to
+		1. specify the kind to be "ConfigMap"
+		2. specify data: field inside root Manifest file
+		3. inside data: we can either add
+			a. property-like keys
+				- each key maps to a simple value
+				- similar to a "--from-literal" command flag of "kubectl create configmap"
+			b. file-like keys
+				- similar to the "--from-file" command flag of "kubectl create configmap"
+	> to create ConfigMap, we can use the "kubectl create -f <MANIFEST FILE>"
+	> to consume, refer to IV and V for consuming property-like and file-like keys of ConfigMap
+
+
+EX:
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  # property-like keys; each key maps to a simple value
+  player_initial_lives: "3"
+  ui_properties_file_name: "user-interface.properties"
+
+  # file-like keys
+  game.properties: |
+    enemy.types=aliens,monsters
+    player.maximum-lives=5    
+  user-interface.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true 
+
+
+
+
+VII. Delete ConfigMaps
+
+kubectl delete <RESOURCE> <RESOURCE NAME...>
+kubectl delete configmap <CONFIGMAP>
+	> used to delete a ConfigMap

@@ -1,0 +1,296 @@
+Custom Domain Part 2
+
+
+includes:
+
+Configuration class
+	> contains all the items that are located in:
+		a. appsettings.json
+		b. csproj
+		c. launchSettings.json
+	> to fetch an item in one of these location, we will only need to pass the name of the item (assuming item names are DISTINCT to each other)
+	> the format of this is
+	
+		context.Configuration["item_name"];
+
+
+
+UseHttpsRedirection()
+	> redirects an http request received into an https request
+	> this means that if we sent an http request, if the https version is available, it will instead create an https connection
+
+
+
+
+I. Adding UserSecret data pair to contain Certificate password in csproj file
+
+1. Create a UserSecret tag in csproj file of HttpsTest webapi
+	> this will hold the password to our weather.pfx certificate
+	> we will add this UserSecret in our csproj file
+		= we will add a UserSecretId item inside the PropertyGroup item
+
+INSIDE HttpsTest.csproj file
+
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretId></UserSecretId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+</Project>
+
+
+
+
+2. Install Insert GUID extension
+	> with this, we can easily GENERATE and INSERT GUIDs anywhere within our project
+
+
+
+3. Add a UserSecretsId item inside the PropertyGroup item of HttpsTest.csproj file
+
+INSIDE csproj file
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretId></UserSecretId>
+  </PropertyGroup>
+
+
+
+4. Use the Insert GUID in order to generate and insert GUID to the UserSecretsId value
+	> while text cursor is inside the tags of UserSecretsId, press F1 to open Search menu
+	> search for the Insert GUID extension
+	> when we click it, it will show several GUIDs that we can use
+
+
+
+
+5. Add a Data pair inside our Secret store
+	> to add a data pair into our User Secrets / Secret Store, we will need to pass the line in CLI
+
+		dotnet user-secrets set "<Data name>" "<Data value>"
+
+	> in our case it will be
+
+		dotnet user-secrets set "CertPassword" "pa55w0rd!"
+
+	> this Secret store will be generated using the UserSecretsId we added in the PropertyGroup
+	> this Secret store folder is unique to each user in the local machine
+	> the Secret store folder is located in the directory
+
+		c:\Users\<userid>\AppData\Roaming\Microsoft\UserSecrets
+
+	> you will need to have the Show Hidden item enabled beside it is inside a Hidden Folder
+	> the UserSecrets/SecretStore folder name should be the GUID we passed inside the UserSecrets item in csproj file
+	
+
+
+
+
+6. Check the content of the json file inside the UserSecrets folder
+	> we should see the Data pair that we inserted earlier using Dotnet CLI
+
+
+
+
+II. Adding the Certificate file path in appsettings.Developmen.json file
+
+7. Add an item inside appsettings.Development.json
+	> data name = CertPath
+	> data value = file path of weather.pfx certificate
+
+INSIDE appsettings.Development.json file, as one of its item
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "CertPath" : "d:\\weather.pfx"
+}
+
+
+
+
+
+III. Utilizing both the CertPath and CertPassword data
+
+8. Inside Program.cs file, create a static class
+	> name HostConfig
+	> have two static property
+		a. string CertPath
+		b. string CertPassword
+
+INSIDE the namespace of Program.cs
+
+    public static class HostConfig
+    {
+        public static string CertPath { get; set; }
+        public static string CertPassword { get; set; }
+    }
+
+
+
+
+	Now, using the Configuration Class of Context Class, we will fetch the 
+
+
+
+
+9. Call ConfigureServices() method of Host parameter in lambda expression of CreateHostBuilder()
+	> inside the ConfigureServices(), we will pass a context and services item
+	> using lambda expression, we will fetch the "CertPath" and "CertPassword" items inside Configuration (specifically appsettings.json and csproj file) and assign them to the static properties of HostConfig
+
+
+INSIDE CreateHostBuilder method of Program class
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((context, services) => {
+                    HostConfig.CertPath = context.Configuration["CertPath"];
+                    HostConfig.CertPassword = context.Configuration["CertPassword"];
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+
+
+
+
+10. Configure the Kestrel Web Server where our app will run
+	> we do this by using lambda expression AND calling ConfigureKestrel() of the webBuilder param of the ConfigureWebHostDefaults of Host param of CreatehostBuilder
+		= ConfigureKestrel() -> webBuilder param of ConfigureWebHostDefaults() -> Host param of CreateHostBuilder()
+	> using the lambda expression, we will pass an option variable and configure the option variable
+		= call ListenAnyIP() of option and pass 5000
+			=> this will be for http request
+		= call ListenAnyIP() and pass 5001, and a listOpt variable
+	> using the lambda expression, configure the listOpt variable of ListenAnyIP
+		= call UseHttps() of listOpt and pass the CertPath and CertPassword property of HostConfig static classs
+		
+	
+INSIDE ConfigureWebHostDefaults() of Host param of CreateHostBuilder()
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((context, services) => {
+                    HostConfig.CertPath = context.Configuration["CertPath"];
+                    HostConfig.CertPassword = context.Configuration["CertPassword"];
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.ConfigureKestrel(opt => {
+                        opt.ListenAnyIP(5000);
+                        opt.ListenAnyIP(5001, listOpt => {
+                            listOpt.UseHttps(HostConfig.CertPath, HostConfig.CertPassword);
+                        })
+                    })
+                    webBuilder.UseStartup<Startup>();
+                });
+
+
+
+
+11. Test the webapi application
+	> dotnet run
+
+
+	If we look at the console, we can see an error that states:
+
+warn: Microsoft.AspNetCore.Server.Kestrel[0]
+      Overriding address(es) 'https://localhost:5001, http://localhost:5000'. Binding to endpoints defined in UseKestrel() instead.
+
+	This is because, we have the localhost urls set in the launchSettings. The ConfigureKestrel() and its parameter overrides this localhost urls. To remove this error, just remove the localhost urls in launchSettings.json
+
+	If we look at the console info, we see this information
+
+info: Microsoft.Hosting.Lifetime[0]     
+      Now listening on: http://[::]:5000
+info: Microsoft.Hosting.Lifetime[0]
+      Now listening on: https://[::]:5001
+
+
+	The [::] means that it will listen to any ipAddress used to call the webapi as long as it send the request in the TCP port specified in the ListenAnyIP() which are 5000 and 5001.
+
+
+
+	> call the webapi using the https link
+
+
+
+		https://weather.io:5001/WeatherForecast
+
+
+
+	> we should get an output, and we should see that our connection is valid, with certificate issued to weather.io, by weather.io
+
+
+
+
+
+IV. Set DNS of our webapi to "weather.io"
+	> this will change the ip address of the kestrel web server to the specific ip address
+	> we will use the weather.io host entry we added earlier in host file earlier
+
+
+12. Create a variable that will hold the ip address that we will listen to
+	> name: host
+	> value: Dns.GetHostEntry("weather.io")
+		= this will return a list of hosts whose dns name is "weather.io"
+		= in our case, theres only 1 host with weather.io
+
+
+13. Use the var host in order to pass an ip address to Listen()
+	> we will change the method we called in options of ConfigureKestrel
+		= from ListenAnyIP to Listen()
+	> with Listen(), we can now specify the ip address that our webapi will listen to
+		= we will now need to pass the ip address first in Listen() parameters
+		= we will pass the 0th index of the AddressList[] of host variable (since host is a list of ip address whose dns name is "weather.io" and we only have 1 host)
+		= AddressList refers to the Ip Address of Host
+
+
+INICE ConfigureWebHostsDefaults() of Host param of CreateHostBuilder()
+
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    var host = Dns.GetHostEntry("weather.io");
+
+                    webBuilder.ConfigureKestrel(opt => {
+                        opt.Listen(host.AddressList[0],5000);
+                        opt.Listen(host.AddressList[0],5001, listOpt => {
+                            listOpt.UseHttps(HostConfig.CertPath, HostConfig.CertPassword);
+                        });
+                    });
+                    webBuilder.UseStartup<Startup>();
+                });
+
+
+
+14. Test the application
+	> dotnet run
+	> check the console
+
+	Now, if we observe the info sent by the console when we ran our webapi, we can see that it is now listening to the ip address we assign to dns name "weather.io" in host file. This ip address pertains to our local machines ip address set by the router we are connected in.
+
+info: Microsoft.Hosting.Lifetime[0]
+      Now listening on: http://192.168.254.107:5000
+info: Microsoft.Hosting.Lifetime[0]
+      Now listening on: https://192.168.254.107:5001
+
+
+	> now, we can either call our webapi using the dns name or the dns ip address it represents
+
+		dns name = weather.io
+		dns ip address = 192.168.254.107
+
+	
+

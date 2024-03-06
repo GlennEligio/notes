@@ -1,0 +1,68 @@
+Spring AutoWiring
+	> for dependency injection, Spring can use auto wiring
+	> Spring will look for a class that "matches" the property
+		- or matches by type (same class or at least, implements same interface)
+	> Spring will inject it automatically... hence it is "autowired"
+
+
+Autowiring Injection Types
+1. Constructor Injection
+2. Setter Injection
+	> inject dependencies by calling setter methods(s) on your class
+3. Field Injection
+	> inject depedencies by setting field values on your class directly
+	> accomplished using Java Reflection
+4. Method injection
+	> inject dependencies by calling ANY method in the class
+
+
+Development Process - Constructor Injection
+1. Define the dependency interface and class
+	> create a Interface and its Implementation Class 
+2. Create a constructor in your Class for injections
+	> add the said Interface inside the Class for injection as field member
+	> add the same Interface as one of parameters in the Class's constructor
+	> assign the Interface parameter as value of Interface field member
+3. Configure the dependency injection with @Autowired Annotation
+	> add @Autowired in the Constructor method that will take the Interface parameter
+		- if theres only 1 Constructor, @Autowired is OPTIONAL
+
+
+Development Process - Setter Injection
+1. Define the dependency interface and class
+	> create a Interface and its Implementation Class 
+2. Create setter method(s) in your class for injections
+	> this would be the setter method for the Interface we added as field member of Class to be injected
+3. Configure the dependency injection with @Autowired Annotation
+	> add @Autowired to the setter method of the Interface we added as field member for dependency
+
+
+Development Process - Method injection
+1. Define the dependency interface and class
+	> create a Interface and its Implementation Class 
+2. Create method(s) in your class for injections
+	> this would be the method whose parameter is the Interface dependency
+	> inside the method, we will assign the Interface parameter to the Interface field member
+3. Configure the dependency injection with @Autowired Annotation
+	> add @Autowired to the setter method of the Interface we added as field member for dependency
+
+
+Development Process - Field Injection
+1. Define the dependency interface and class
+	> create a Interface and its Implementation Class 
+2. Configure the depedency injection with @Autowired Annotation
+	> Applied directly to the field that we will have dependency
+	> No need for setter methods
+
+
+@Qualifier
+	> annotation used to define WHICH IMPLEMENTATION the Interface dependency will it use
+	> we will pass the id of the @Component of the desired implementation that we want the Interface dependency to be 
+
+Injection Types of @Qualifer annotation
+	> we can apply @Qualifer annotation to
+		- Constructor injection
+			> add @Qualifer to the Interface parameter and pass the id of specific implementation we want
+		- Setter injection methods
+		- Field injection
+			> add @Qualifier and pass the id of @Component to specify the implementation that we want

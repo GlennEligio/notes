@@ -1,0 +1,65 @@
+27. Horizontal Pod Autoscaler for Autoscaling Microservices with k8s
+
+
+Horizontal Pod Autoscaler
+	> resource in K8s used to horizontally autoscale a deployment
+	> horizontally because it creates new Pod instances in order to accomodate increasing load/traffic
+	> with this, we can AUTOMATICALLY scale a deployment based on several factors like
+		- CPU
+		- Memory
+
+Creating HPA
+1. Through CLI
+2. Through YAML
+
+Commands:
+kubectl autoscale deployment <deployment-name>
+	> used to autoscale a deployment horizontally
+	> options include
+		--max
+			> takes an integer
+			> REQUIRED		
+			> sets the upper limit of amount of Pods to be created
+		--min
+			> default value is -1	
+			> sets the lower limit of amount of Pods
+		--cpu-percent
+			> the target average CPU utilization of Nodes before the Cluster create new Pod
+
+
+kubectl get hpa
+	> shows the horizontal pod autoscaler resource in Cluster
+
+kubectl top pod
+	> shows the CPU (cores) and MEMORY (bytes) utilization
+
+kubectl top nodes
+	> shows the CPU (cores), CPU%, and MEMORY (bytes) utilization
+
+
+NOTE:
+1. A Metric Server must be running for hpa and "kubectl top" command to work
+2. if kubectl get hpa TARGETS column shows <unknown>, do the following
+	- add/define cpu/memory resource requests and limits on the scalable resource (Pod/StatefulSet)
+	- if the given cpu/mem resource is not enough that app boot time isnt done before livenessProbe check fails and restart the Pod, increase the livenessProbe.periodSeconds property
+
+EX:
+
+      containers:
+      - image: shuntjg/mmv2-currency-exchange-service:0.0.12-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        name: mmv2-currency-exchange-service
+        readinessProbe:
+          httpGet:
+            port: 8000
+            path: /actuator/health/readiness
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            port: 8000
+            path: /actuator/health/liveness
+          periodSeconds: 80
+        resources:
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"

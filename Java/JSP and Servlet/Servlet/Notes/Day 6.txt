@@ -1,0 +1,29 @@
+Apache Tomcat
+
+
+@WebServlet(String url)
+	> create a webpage that is accesible in
+		localhost:<HTTP:\1.1>/url
+
+EX:
+@WebServlet("/Welcome")
+public class Welcome extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		PrintWriter out = response.getWriter();
+		out.println("Welcome to my welcome servlet");
+	}
+}
+
+	> since we have HTTP:\1.1 in port 8090, we will be able to access this in localhost
+
+
+
+
+
+Servlet
+	> used to create logic behind the website
+
+

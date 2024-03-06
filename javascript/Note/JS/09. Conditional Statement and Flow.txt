@@ -1,0 +1,66 @@
+09. Conditional operators and flow
+
+X. Conditional operators
+
+Greater than (>)
+Less than (<)
+Equals operand (==)
+Greater than or equal (>=)
+Less than or equal (<=)
+
+Strict equal operands (===)
+	> used to compare variables or values
+	> unlike equal operand (==), String equal also checks the DATATYPE of the values being compared
+		- if same value but different datatype, will return false
+
+EX:
+// Strict equal operand
+
+const x = 20;
+
+if (x === 10) {
+  console.log("x is 10");
+} else if (x > 10) {
+  console.log("x is greater than 10");
+} else {
+  console.log("x is less than 10");
+}
+
+
+AND operator (&&)
+	> checks if two conditions are BOTH true
+	> if BOTH true, returns true. else return false
+
+OR operator (||)
+	> check if at least ONE condition is true
+	> if at least ONE condition is true, returns true
+	> else, return false
+
+EX:
+const x = 20;
+const y = 10;
+
+if (x > 10 && y > 5) {
+  console.log("x is greater than 10 AND y is greater than 5");
+} 
+if (x < 10 || y == 10) {
+  console.log("x is less than 10 OR y is equal to 10");
+}
+
+
+Switch
+	> used to compare a single variable to different values
+	> more efficient that if-else in cases where we use single variable for multiple cases
+	> composes of 
+		- variable
+		- multiple cases
+		- default case
+
+EX:
+// Switch
+switch (x) {
+  case 20:
+    console.log("x is 20");
+  case 10:
+    console.log("x is 10");
+}

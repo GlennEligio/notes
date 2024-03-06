@@ -1,0 +1,27 @@
+08.05. Input groups
+
+~~~~~ FORMS - INPUT GROUPS ~~~~~~
+Input groups
+	> in Bootstrap, we can easily extend form-cotnrols by adding text, buttons, or buttons groups on either side of textual inputs, custom selects and custom file inputs
+
+Creating Input groups
+1. Create div wrapper
+	- class .input-group
+2. Add input element inside the div wrapper
+	- class .form-control
+3. Add the extensions you want inside the div wrapper as immediate sibling of input
+	> this can be either span (with icon inside), checkbox, radio, buttons etc
+	> for checkbox and radio, wrap them inside a div
+4. Input group extensions must have
+	- class .input-group-item
+5. For button extension, .input-group-item can be omitted for .btn styles
+
+Classes
+.input-group
+	> added inside a div wrapper for input
+	> used for grouping up input group
+	> gives the div border radius and makes the element inside occupy all space
+.input-group-text
+	> used in extension of input in input groups
+	> gives it a grayish background
+

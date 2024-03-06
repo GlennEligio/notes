@@ -1,0 +1,149 @@
+03. Spring Boot Project Structure
+
+
+Project Structure
+	> Spring Boot make use of the Maven Standard Directory Structure
+
+DIRECTORY		DESCRIPTION
+src/main/java		Java source code
+src/main/resources	Properties / config files used by your app
+src/test/java		Unit testing source code
+
+
+
+Maven Wrapper files
+	> consist of
+		mvnw
+		mvnw.cmd (MS Windows) or mvnw.sh (Linux/Mac)
+	> with these Wrapper files
+		- theres no need to have Maven installed or present on your path
+		- it will automatically downloads the correct version and run the Maven
+	> to use these wrapper files, we will need to run in CLI
+		> mvnw clean compile test (MS Windows)
+		$ ./mvnw clean compile test (Linux/Mac)
+	> if you already have Maven installed in the local machine, theres no need for the mvnw file
+		- just use Maven as you normally would
+		- same command but we now use mvn instead of mvnw
+			ex: > mvn clean compile test
+
+
+Maven POM file
+	> pom.xml includes info that you entered at Spring Initialzr website
+		- GAV
+		- Dependencies
+		- Package type
+		- JDK version
+	> we can also add plugins into pom.xml in order to do additional functionality
+		- ex: spring-boot-maven-plugin from org.springframework.boot 
+			= this is to package executable jar or war archive
+			= can also easily run the app in CLI using this command	
+				mvnw package		
+				mvnw spring-boot:run
+			= can also use the mvn if local machine have Maven installed in it
+
+
+
+Java Source code
+	> composed of the following
+		a. Main Spring Boot application Class
+			- create by  Spring Initialzr
+		b. Controller, Entities, Utility Class
+			- created in the same package or sub package as the Main Spring Boot application class
+			- creating sub package is the STANDARD for the Spring Boot apps
+
+
+
+@SpringBootApplication
+	> annotation from org.springframework.boot.autoconfigure.SpringBootApplication
+	> behind the scenes:
+		a. Creates application context and registers all bean
+		b. Starts the embedded server (Tomcat, JBoss, etc)
+	> composed of the following annotations
+
+
+ANNOTATION			DESCRIPTION
+@EnableAutoConfiguration	Enables Spring Boot's auto-configuration support
+
+@ComponentScan			Enables component scanning of current package
+				Also recursively scans sub-packages
+
+@Configuration			Able to register extra beans with @Bean or import other configuration classes
+
+
+
+
+COMPONENT SCANNING - BEST PRACTICE
+	> "Place your main application class in the root package above your other packages"
+	> This implicitly defines a base search package
+		- Allows you to leverage default component scanning
+		- No need to explicitly reference the base package name
+			= common pitfall in traditional Spring apps
+
+
+
+Application Properties
+	> by default, Spring Boot will load properties from: application.properties
+	> empty at the beginning
+	> but we can add Spring Boot properties or custome properties
+
+EXAMPLES
+server.port=8585
+	> tell application to listen to this specific TCP port
+
+	> to read a specific data in application.properties, we will use @Value and passing the name of data
+
+EX:
+INSIDE application.properties
+#configure server port
+server.port=8484
+
+# configure my properties
+coach.name=Mickey Mouse
+team.name=The Mouse Crew
+
+INSIDE @RestController class
+
+@RestController
+public class FunRestController {
+
+	@Value("${coach.name}")
+	private String coachName;
+
+	@Value("${team.name}")
+	private String teamName;
+}
+
+
+
+Static Content
+	> by default, the Spring Boot will load the static resources from this directory
+		
+		src/main/resources/static
+
+ 	> examples of the static resources includes
+		- HTML files
+		- CSS
+		- JavaScript
+		- images
+		- etc
+
+
+WARNING FOR STATIC CONTENTS
+	> DO NOT use the src/main/webapp directory if your application is packaged as a JAR
+		- this is silently ignored by most build tools if you generate a JAR file
+	> src/main/webapp is mostly used for WAR packaging 
+
+
+
+TEMPLATES
+	> Spring Boot includes auto-configuration for the following template engines
+	> these templates are located in
+		src/main/resources/templates
+	
+
+
+UNIT TESTS
+	> located in src/test/java
+	> Spring Boot unit test class is automatically created inside 
+		src/test/java/<SpringBootUnitTestClass package name>
+	> we can add unit tests to the file

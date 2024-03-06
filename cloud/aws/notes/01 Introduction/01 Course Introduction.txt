@@ -1,0 +1,27 @@
+01 Course Introduction
+
+
+Your AWS Certification journey
+FOUNDATION
+ > SIX MONTHS of fundamental AWS Cloud and Industry knowledge
+	1. Cloud Practitioner
+
+ASSOCIATE
+ > ONE YEAR of experience solving problems and implementing solutions using AWS Cloud
+	1. Solutions Architect
+	2. Developer
+	3. SysOps Administrator
+
+PROFESSIONAL
+ > TWO YEARS of experience designing, operating, and troubleshooting solutions using the AWS Cloud
+	1. Solutions Architect
+	2. DevOps Engineer
+
+SPECIALTY
+ > Technical AWS Cloud experience in the Specialty domain as specified in the exam guide
+	1. Advanced Networking
+	2. Data Analytics
+	3. Database
+	4. Machine Learning
+	5. Security
+	6. SAP on AWS

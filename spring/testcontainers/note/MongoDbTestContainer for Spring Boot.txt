@@ -1,0 +1,231 @@
+MongoDbTestContainer for Spring Boot
+
+Contents:
+1. Sources
+2. Notes
+3. Dependencies
+4. Classes/Interfaces/Annotation used
+5. Codes
+
+Source:
+https://www.youtube.com/watch?v=7ExYGJxGC8Q&ab_channel=SunilYadav
+https://www.testcontainers.org/quickstart/junit_5_quickstart/
+https://www.testcontainers.org/modules/databases/mongodb
+
+
+Notes:
+1. For TestContainers to work, you will need to have Docker service running
+
+
+
+Dependencies needed
+1. Spring Reactive Web
+2. Spring Reactive MongoDB
+3. TestContainers dependencies
+4. Database specific TestContainer dependency
+
+
+
+Annotation used
+@Testcontainers
+ > @Testcontainers is a JUnit Jupiter extension to activate automatic startup and stop of containers used in a test case.
+ > The test containers extension finds all fields that are annotated with Container and calls their container lifecycle methods. 
+ > Containers declared as static fields will be shared between test methods. 
+ > They will be started only once before any test method is executed and stopped after the last test method has executed. 
+ > Containers declared as instance fields will be started and stopped for every test method.
+ > The annotation @Testcontainers can be used on a superclass in the test hierarchy as well. 
+ > All subclasses will automatically inherit support for the extension.
+ > Note: This extension has only been tested with sequential test execution. 
+	- Using it with parallel test execution is unsupported and may have unintended side effect
+
+
+@DynamicPropertySource
+ > Method-level annotation for integration tests that need to add properties with dynamic values to the Environment's set of PropertySources.
+ > This annotation and its supporting infrastructure were originally designed to allow properties from Testcontainers  based tests to be exposed easily to Spring integration tests. However, this feature may also be used with any form of external resource whose lifecycle is maintained outside the test's ApplicationContext.
+Methods annotated with @DynamicPropertySource must be static and must have a single DynamicPropertyRegistry argument which is used to add name-value pairs to the Environment's set of PropertySources. Values are dynamic and provided via a Supplier which is only invoked when the property is resolved. Typically, method references are used to supply values, as in the example below.
+
+
+
+Classes/Intefaces used
+MongoDBContainer
+ > Constructs a single node MongoDB replica set for testing transactions.
+ > To construct a multi-node MongoDB cluster, consider the mongodb-replica-set project on GitHub 
+ > Tested on a MongoDB version 4.0.10+ (that is the default version if not specified)
+
+
+
+Using TestContainer for Testing
+1. Add the necessary dependencies in the pom.xml, and reload the project
+2. Create a test class
+	> annotate it with the following:
+		- @Testcontainers
+		- @DataMongoTest (for testing Respositories or Data Access layer) or @SpringBootTest
+3. Inside the @Testcontainers test class, create a Container property, initialize it and start it in the @BeforeAll method
+	> this container object will depend on the specific Database module that you use (MongoDBContainer for my case)
+	> annotate this container property with @Container
+	> inside @BeforeAll, call the start() method of the Container instance
+4. Optional: If you encounter error related to connecting to TestContainer database, use @DynamicProperty to dynamically set config props of app for proper database repointing	
+	> Method annotated with @DynamicProperty must be static, returns void, and takes DynamicPropertyRegistry as parameter
+	> inside the method, we can use the Container instance to declare database related property correctly
+
+
+EX:
+// pom.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.7</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.example</groupId>
+	<artifactId>testcontainer</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>testcontainer</name>
+	<description>Spring Boot app with TestContainer for testing</description>
+	<properties>
+		<java.version>17</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Database specific TestContainer module -->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>mongodb</artifactId>
+			<version>1.17.6</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- TestContainer mandatory modules -->
+		<!-- JUnit is already included in Spring Boot Starter Test -->
+<!--		<dependency>-->
+<!--			<groupId>org.junit.jupiter</groupId>-->
+<!--			<artifactId>junit-jupiter</artifactId>-->
+<!--			<version>5.8.1</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<version>1.17.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>1.17.6</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+
+
+
+// EmployeeRepositoryTest.class, a @Testcontainers test class
+@Testcontainers
+@Slf4j
+@DataMongoTest
+public class EmployeeRepositoryTest {
+
+    @Autowired
+    private EmployeeRepository repository;
+
+    @Container
+    public static MongoDBContainer container = new MongoDBContainer(DockerImageName.parse("mongo:4.4.3"));
+
+    @DynamicPropertySource
+    static void mongoDbProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.uri", container::getReplicaSetUrl);
+    }
+
+    private Employee e1, e2, e3;
+
+    @BeforeAll
+    static void initAll() {
+        container.start();
+    }
+
+    @BeforeEach
+    void setup() {
+        e1 = new Employee(new ObjectId().toHexString(),"Emp1", 20);
+        e2 = new Employee(new ObjectId().toHexString(),"Emp2", 21);
+        e3 = new Employee(new ObjectId().toHexString(),"Emp3", 24);
+    }
+
+    @Test
+    void containerStartsAndPublicPortIsAvailable() {
+        assertThatPortIsAvailable(container);
+    }
+
+    @Test
+    void findByAgeBetween_returnsEmployeesWhoseAgeIsBetweenRange(){
+        double min = 19.0;
+        double max = 23.0;
+        repository.save(e1).block();
+        repository.save(e2).block();
+        repository.save(e3).block();
+
+        Flux<Employee> employeeFlux = repository.findByAgeBetween(Range.closed(min, max));
+
+        StepVerifier.create(employeeFlux)
+                .expectSubscription()
+                .expectNextMatches(employee -> employee.getAge() > min && employee.getAge() < max)
+                .expectNextMatches(employee -> employee.getAge() > min && employee.getAge() < max)
+                .expectComplete()
+                .verify();
+    }
+
+    private void assertThatPortIsAvailable(MongoDBContainer container) {
+        try {
+            log.info("Container is created in ip {} and port {}", container.getHost(), container.getFirstMappedPort());
+            new Socket(container.getHost(), container.getFirstMappedPort());
+        } catch (IOException e) {
+            throw new AssertionError("The expected port " + container.getFirstMappedPort() + " is not available!");
+        }
+    }
+}
+

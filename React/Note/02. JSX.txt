@@ -1,0 +1,25 @@
+02. JSX
+
+
+JSX - JavaScript Syntax Extension
+	> similar to HTML but just a syntactic sugar for JavaScript
+	> similar to HTML syntax aside from the few things
+		- some HTML parameter have different names (class -> className, for -> htmlFor) since they conflict with JS keywords
+	> we can inject Javascript expressions in the JSX using curly braces {}
+		- these JS expressions include
+			1. JS variables			{name }
+			2. JS ternary operations	{x ? 'Yes' : 'No'}
+			3. JS operations 		{1+2}
+		- in example below, we injected the "name" variable to JSX expression that we return
+
+EX:
+function App() {
+  const name = "Brad";
+
+  return (
+    <div className="App">
+      <h1>Hello from React</h1>
+      <h2>Hello {name}</h2>
+    </div>
+  );
+}

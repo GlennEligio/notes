@@ -1,0 +1,478 @@
+03 TypeScirpt Compiler (and its Configurations)
+
+Contents
+01 Module Introduction
+02 Using Watch Mode
+03 Compiling the Entire Project Multiple FIles
+04 Including & Excluding Files
+05 Setting a Compilation Target
+06 Understanding TypeScript Core libraries
+07 More Configuration & Compilation Options
+08 Working with Source Maps
+09 rootDir and outDir
+10 Stop Emitting Files on Compilation Errors
+11 Strict Compilation
+12 Code Quality Options
+13 Debugging with Visual Studio Code
+14 Wrap Up
+
+
+
+
+
+
+01 Module Introduction
+02 Using Watch Mode
+
+Watch Mode
+ > mode where TypeScript watches the .ts file for changes
+ > and when change happens, TypeScript automatically recompiles it
+ > to enter watch mode on specific file, add a "-w" or "--watch" command flag to the tsc fileName.ts command
+
+EX:
+tsc app.ts -w
+tsc app.ts --watch
+
+
+
+
+
+
+
+
+03 Compiling the Entire Project Multiple Files
+
+Compiling the Entire Project and files inside it
+ > right now, we use only one .ts file and compiles that single file
+ > but in most scenario, we will be working with multiple .ts file inside a project
+ > in order to tell TypeScript that we are working in one project, we can use "tsc --init" command
+ > after using "tsc --init", we can just use "tsc" or "tsc -w" in order to compile .ts file in rootDir and its subfolders
+
+tsc --init
+ > Creates a tsconfig.json with the recommended settings in the working directory.
+ > tsconfig.json contains several config settings that we can comment and uncomment to apply
+	- tells TypeScript how to compile the files as well
+
+tsc
+ > will compile all .ts file in rootDir and its subfolders
+ > options includes:
+	1. -w or --watch
+		> sets the tsc command in watch mode
+
+
+
+
+
+
+
+
+
+04 Including & Excluding Files
+
+Including & Excluding Files
+ > in TypeScript config, we can define the files that we want to be included and excluded in compilation process
+	- ex: not include a specific files 
+ > in order to do this, we will need to add and define these properties inside the tsconfig.json
+	1. exclude
+		- "exclude" all the files specific inside the string array
+		- takes an array of string
+		- the strings refers to the location of folders/directory/files that we want to exclude
+		- the strings can also have wildcards inside it
+	2. include	
+		- opposite of "exclude" where it includes all files passed to it
+		- same value as the include, string array and the elements can have wildcards
+		- if defined, all files not inside the "include" will NOT be included
+		- if not defined, all files will be included
+	3. files
+		- similar to include, but it can only take strings that points to specific files
+		- good for smaller projects
+
+EX: 
+{
+  "compilerOptions":{...},
+  "exclude": [
+    "**/*.dev.ts"	// excludes all files that ends with .dev.ts
+    "node_modules"
+  ],
+  "include": [
+    "**/*.ts"		// default behavior if include not defined
+  ],
+  "files": [
+    "app.ts"
+  ]
+}
+
+
+NOTE:
+1. By default, node_modules folder is EXCLUDED in TS compilation
+2. The resulting files that will be compiled by TS will be (include - exclude)
+
+
+
+
+
+
+
+
+05 Setting a Compilation Target
+
+Setting a Compilation Target
+ > Compilation Target refers to the JavaScript language the TypeScript compiles the .ts files to
+ > this includes es5, es6/es2015, es2016, es2017, ...
+ > to set this target, we will need to define it in tsconfig.json
+
+compilerOptions.target
+ > refers to the Compilation target
+
+EX:
+{
+  "compilerOptions": {
+    ...,
+    "target": "es2016"
+  }
+}
+
+
+
+
+
+
+
+06 Understanding TypeScript Core libraries
+
+TypeScript Core libraries
+ > tells the TypeScript what libraries to include/use when writing TypeScript
+ > if we dont set the compilerOptions.lib value in tsconfig.json, it will assume a default value
+	- this default value will be based on the compilerOptions.target value we set
+	- ex: target = es6 or es2015 will give us default value of "lib": ["DOM", "DOM.Iterable", "ES6", "ScriptHost"] 
+ > if we define the value of compilerOptions.lib, it will ignore the default value of lib based on the target
+
+EX:
+{
+  "compilerOptions": {
+    ...,
+    "target": "es2015",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES6",
+      "ScriptHost"
+    ],   		// default values of lib if we have target set to es2015
+  }
+}
+
+
+
+
+
+
+
+
+
+07 More Configuration & Compilation Options
+
+compilerOptions.allowJs
+ > tells TypeScript to also allow javascript files to be compiled
+
+compilerOptions.checkJs
+ > tells TS to check and report any errors in .js files
+
+compilerOptions.declaration
+ > mostly used to shipping libraries
+
+compilerOptions.jsx
+ > mainly for ReactJS 
+
+
+
+
+
+
+
+
+
+08 Working with Source Maps
+
+Source Maps
+ > created when compilerOptions.sourceMap inside tsconfig.json is set to true
+ > these acts as a "bridge" which is understood by modern browsers to connect the JavaScript files to their input files (TypeScript files)
+ > using this source maps, the browser can "recreate" the input typescript files
+	- this typescript files can then be used for debugging like adding breakpoints, etc
+
+compilerOptions.sourceMap
+ > Create source map files for emitted JavaScript files.
+ > if set to true, it will create these .js.map files alongside the resulting .js file when compiling
+ > and, in the browser's Sources tab (where Client-side source code is stored), the input typescript files will be available
+
+EX:
+// tsconfig.map
+{
+  "compilerOptions": {
+    "sourceMap": true
+  }
+}
+
+
+
+
+
+
+
+09 rootDir and outDir
+
+Additional compilerOptions properties in tsconfig.json
+
+rootDir
+ > takes a string value (must be specific, doesnt take a wild card)
+ > specify the source location where we will search for .ts file to compile
+	- also includes the subfolders
+
+outDir
+ > takes a string value (must be specific, doesnt take a wild card)
+ > specify the destination location where we will output the TS compiler's resulting .js files
+
+EX:
+{
+  "compilerOptions": {
+    ...,
+    "rootDir": "/src",
+    "outDir": "/dist"
+  }
+}
+
+NOTE:
+1. The folder structure of .ts files inside rootDir will be maintained when they are compiled as .js files in outDir
+
+EX:
+rootDir: "./src"
+outDir: "./dist"
+
+src
+│   app.ts
+│
+└───analytics
+        analytics.ts
+
+dist
+│   app.js
+│   app.js.map
+│
+└───analytics
+        analytics.js
+        analytics.js.map
+
+
+
+
+
+
+
+
+
+09.1 Additional compilerOptions
+
+removeComments
+ > returns the comments in the output compiled .js file
+
+noEmit
+ > do not output js files when compiled
+ > mainly used for developing in order to use features of TypeScript without compiling it
+
+downlevelIteration
+ > Emit more compliant, but verbose and less performant JavaScript for iteration.
+ > mainly used for compiling .ts file to older JS languagee that uses for loops
+
+
+
+
+
+
+
+
+
+10 Stop Emitting Files on Compilation Errors
+
+noEmitOnError
+ > property inside compilerOptions inside tsconfig.json
+ > not included by default inside tsconfig.json file, but it can be added
+ > takes a boolean value
+ > defines if .js files will be outputted or not whether theres an error in one of the .ts file
+	- if true, will not output ANY .js file if at least one .ts file have errors
+	- if false, will output the .js files of all .ts files regardless if they have compilation errors or not
+
+EX:
+// tsconfig.js
+{
+  "compilerOptions": {
+    ...,
+    "noEmitOnError": true
+  }
+}
+
+
+
+
+
+
+
+
+
+
+11 Strict Compilation
+
+Strict Compilation
+ > in TypeScript, we can set the "Strict Type-Checking Options" options inside compilerOptions
+ 
+Strict Type-Checking Options inside compilerOptions
+ > all this options takes boolean values
+
+strict
+ > takes boolean value
+ > Enable all strict type-checking options
+	- basically set all the other strict type-checking related options to true
+	- can be overriden if you set those options to false
+
+
+noImplicitAny
+ > Enable error reporting for expressions and declarations with an implied `any` type..
+ > happens when a function parameter that doesnt have defined type (in which case, TS will infer its type to "any")
+	- TS will give out error in this case if we pass argument value since this means that the said parameter implicitly has an 'any' type
+ > will now throw error for declared but not initialized variables with no assigned type
+	- TS will infer the variables type when we assign value to it
+
+EX:
+// will not throw error
+let logged;
+
+// fn param "data" will show IDE error or TS compilation error
+function sendAnalytics(data) {
+  console.log(data)
+  logged = true;
+}
+
+
+
+strictNullChecks
+ > enable strict null checks if true
+ > there are some scenarios when a variable may or may not be null 
+	- ex: querying element in DOM since TypeScript have no information about the DOM it is working with
+ > can be worked around by either
+	- adding "!" symbol at the end of the function that returns the value of variable
+	- added null check to the said variable
+
+EX:
+// with ! symbol
+const button = document.querySelector("button")!;
+
+button.addEventListener("click", () => {
+  console.log("Clicked!");
+});
+
+// with null check
+const button = document.querySelector("button");
+
+if (button) {
+  button.addEventListener("click", () => {
+    console.log("Clicked!");
+  });
+}
+
+
+
+strictFunctionTypes
+ > When assigning functions, check to ensure parameters and the return values are subtype-compatible
+ > mostly used with Class and Interface where they are extends to subtypes
+
+
+
+strictBindCallApply
+ > Check that the arguments for `bind`, `call`, and `apply` methods match the original function
+
+EX:
+const button = document.querySelector("button")!;
+
+function clickHandler(message: string) {
+  console.log("Clicked! " + message);
+}
+
+// button.addEventListener("click", clickHandler.bind(null)); // throws error since "message" param is missing
+button.addEventListener("click", clickHandler.bind(null, "You!")); 
+
+
+strictPropertyInitialization
+ > Check for class properties that are declared but not set in the constructor
+ > important when it comes to Classes's initialization
+
+
+noImplicitThis
+ > Enable error reporting when `this` is given the type `any`
+
+
+alwaysStrict 
+ > Ensure 'use strict' is always emitted.
+
+
+
+
+
+
+
+
+12 Code Quality Options
+
+Additional propertys of compilerOptions for Code Quality
+
+noUnusedLocals
+ > takes boolean input
+ > Enable error reporting when a local variables aren't read.
+ > Global variable is not check since they might be needed in other script file
+
+noUnusedParameters
+ > takes boolean input
+ > Raise an error when a function parameter isn't read
+ 
+noImplicitReturns
+ > Enable error reporting for codepaths that do not explicitly return in a function
+ > ex: if we have an if check and only the if case have return and the else case do not
+
+noFallthroughCasesInSwitch
+ > Enable error reporting for fallthrough cases in switch statements.
+ > ex: no default: case in switch statement
+
+
+
+
+
+
+
+
+13 Debugging with Visual Studio Code
+
+Extension needed:
+1. ESLint 
+	> for error checks
+2. Prettier 
+	> for automatic formatting
+3. Debugger for Chrome
+	> for debugging JS code in Chrome browser
+
+Debugging in VSCode using Debugger for Chrome extension
+1. Add "Debugger for Chrome" extension in VSCode
+	- if you use other browser, check for their equivalent debugger extension
+2. Enable "compilerOptions.sourceMap" in tsconfig.json
+3. Start debugging
+	- Run > Start Debugging > Choose Chrome
+	- used to create the launch.json in .vscode folder
+4. Go to .vscode/launch.json
+	- change the configurations.url to "http://localhost:3000" (where our typescript project is running)
+5. Set your breakpoint in one of typescript files
+6. Start debugging again
+
+
+
+
+
+
+
+
+14 Wrap Up

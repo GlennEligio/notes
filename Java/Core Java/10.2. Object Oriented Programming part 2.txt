@@ -1,0 +1,184 @@
+Object Oriented Programming Part 2
+includes:
+Important concepts of Object Oriented Programming
+1. Inheritance
+2. Polymorphism
+	2.1 Different types of Polymorphism
+Extension of a Class 
+Parent and Child class
+super keyword
+Overriding a method from Parent class to Child class
+
+Important concept of Object Oriented Programming
+1. Inheritance
+	- extends properties of a parent class to its child classes
+	- lessen the codes being repeated (DRY = Don't Repeat Yourself)
+2. Polymorphism
+	- means having two or more different forms
+            Examples:
+                1. Constructors same name but with different parameters
+                2. Methods with same name but with different functions
+                3. Methods with same name but with different numbers or types of parameters1. Inheritance
+            - extends properties of a parent class to its child classes
+            - lessen the codes being repeated (DRY = Don't Repeat Yourself)
+
+super
+	> keyword used to represent the superclass / parent class
+	> used to get the instance fields of the parent class to be used in child class
+
+
+How to override
+        Override Syntax
+
+        @Override
+        methodOfParentClassToOverride{
+            // insert new logic  or function
+        }
+
+
+
+Main Class
+
+
+package com.glenneligio.oop2;
+
+public class Main {
+ 
+    public static void main(String[] args) {
+        Bird phoenix = new Bird("Nina", "golden", 2, true, 2);
+        System.out.println(phoenix.getName());
+        phoenix.eat("Human");
+//        System.out.println(phoenix.getWings());
+        phoenix.fly(100);
+    }
+}
+
+
+Animal Class (Parent Class of Dog Class and Bird Class)
+
+package com.glenneligio.oop2;
+
+public class Animal {
+    private String name;
+    private String color;
+    private int legs;
+    private boolean hasTail;
+
+    public Animal(String name, String color, int legs, boolean hasTail) {
+        this.name = name;
+        this.color = color;
+        this.legs = legs;
+        this.hasTail = hasTail;
+    }
+
+    //Polymorphism with Animal class (different parameters)
+    public Animal(String name, String color) {
+        this.name = name;
+        this.color = color;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public int getLegs() {
+        return legs;
+    }
+
+    public void setLegs(int legs) {
+        this.legs = legs;
+    }
+
+    public boolean isHasTail() {
+        return hasTail;
+    }
+
+    public void setHasTail(boolean hasTail) {
+        this.hasTail = hasTail;
+    }
+
+    public void eat (String food){
+        System.out.println("Eating "+ food);
+    }
+}
+
+
+Dog class (Child class of Animal, Parent class of Shepherd)
+
+package com.glenneligio.oop2;
+
+public class Dog extends Animal{
+
+    public Dog(String name, String color, int legs, boolean hasTail) {
+        super(name, color, legs, hasTail);
+    }
+}
+
+
+Bird class (Child class of Animal)
+
+package com.glenneligio.oop2;
+
+public class Bird extends Animal{
+
+    private int wings;
+
+    public Bird(String name, String color, int legs, boolean hasTail, int wings) {
+        super(name, color, legs, hasTail);
+        this.wings = wings;
+    }
+
+    //Polymorphism with eat method in Animal Class (with different functions)
+    @Override
+    public void eat(String food) {
+        System.out.println("Chewing " + food);
+    }
+
+    public int getWings() {
+        return wings;
+    }
+
+    public void setWings(int wings) {
+        this.wings = wings;
+    }
+
+    public void fly (){
+        System.out.println(this.getName() + " is flying");
+    }
+
+    //Polymorphism with fly method (with parameter)
+    public void fly (int speed){
+
+    }
+
+    //Polymorphism with fly method (with different parameter)
+    public void fly (String name){
+
+    }
+}
+
+
+Shepherd Class (Child class of Dog)
+
+
+package com.glenneligio.oop2;
+
+public class Shepherd extends Dog{
+
+    public Shepherd(String name, String color, int legs, boolean hasTail) {
+        super(name, color, legs, hasTail);
+    }
+}
+

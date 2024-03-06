@@ -1,0 +1,25 @@
+14 Blocking Flux to get a Stream of element
+
+Flux.toStream()
+ > converts a Flux into Stream
+ > this will BLOCK the current thread Flux is running, until ALL element arrived in which it will be transformed into a Stream
+
+EX:
+public class Exercise3 {
+
+    public static void main(String[] args) throws IOException {
+
+        // Use ReactiveSources.intNumbersFlux()
+
+        // Get all numbers in the ReactiveSources.intNumbersFlux stream
+        // into a List and print the list and its size
+        List<Integer> intList = ReactiveSources.intNumbersFlux().toStream().toList();
+        System.out.println("List is: " + intList);
+        System.out.println("Total items: " + intList.size());
+
+
+        System.out.println("Press a key to end");
+        System.in.read();
+    }
+
+}

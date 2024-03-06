@@ -1,0 +1,180 @@
+Custom Domain Part 1
+
+
+  
+
+1. Open the Host file
+	> run the Notepad app as an administrator
+	> go to Local Disk C > Windows > System32 > drivers > etc
+	> show all files by changing the file shown from .txt files to all files
+	> choose the hosts file
+		= dont update the hosts.ics
+		= this is for the Internet Connection Sharing file
+	> open it using the Notepad app
+
+
+2. Add our custom domain into the Host file
+	> to add a custome domain, we need the following
+		a. Ip address
+		b. domain name
+	> for ip address, we will use the one assigned to our local machine by the LAN
+		= or you can check the ipv4 address assign on our localmachine by running ipconfig in command prompt
+	> for domain name, choose whatever you want
+		= for now we will use weather.io
+	> so we will add this at the end of the host file
+
+		192.168.254.107 weather.io
+
+
+
+3. Test the new domain name
+	> open command prompt
+	> ping the custom domain we added, to do this type the following in command prompt
+	
+		ping <domain-name>
+
+	> if we correctly added the custom domain, we should receive all of the data packets sent by the ping
+
+
+
+4. Open the PowerShell	
+	> search PowerShell in windows
+	> run it as an Administrator
+
+
+
+5. Add a new certificate for our custom domain we made using PowerShell
+	> type the following into the PowerShell
+
+		$cert = New-SelfSignedCertificate -certstorelocation cert:\localmachine\my -dns weather.io
+
+	> this line is compose of the following
+		a. $cert
+			= this variable will hold our certificate
+		b. New-SelfSignCertificate
+			= defines that the certificate will be a SelfSigned certificate
+		c. -certstorelocation
+			= flag to define the location of the certificate that we will make
+		d. -dns
+			= flag to define the domain name of the certificate
+
+
+
+
+6. Check the $cert variable
+	> enter $cert into the PowerShell
+	> this will be the output
+
+   PSParentPath: Microsoft.PowerShell.Security\Certificate::LocalMachine\my
+
+Thumbprint                                Subject
+----------                                -------
+BB681E0F2C4915ED50467D5EE97DFBEA3648D6FA  CN=weather.io
+
+
+
+7. Check the certificate we made in the Certificate Manager
+	> the certificate we made in Powershell will be located in
+
+		Certificates - Current User > Intermediate Certificate Authorities > Certificates
+
+	> when we open it, we can see in General tab that the CA Root certificate is not trusted still
+
+
+
+8. Create a password to secure our certificate using PowerShell
+	> type the following into the PowerShell
+
+		$pwd = ConvertTo-SecureString -String "pa55w0rd!" -Force -AsPlainText
+	
+	> this line is composed of
+		a. $pwd
+			= variable that will hold our password
+		b. ConvertTo-SecureString
+			= command that will convert the string we passed on its -String flag
+		c. -String
+			= contains the string that we will convert
+		d. -AsPlainText
+			= Specifies a plain text string to convert to a secure string.
+			= If you use this parameter to provide plain text as input, the system cannot protect that input in this manner. To use this parameter, you must also specify the Force parameter.
+		e. -Force
+			= Confirms that you understand the implications of using the AsPlainText parameter and still want to use it.
+
+
+
+
+9. Create a variable that will hold the Certificate path of our weather.io certificate	
+	> type this in the PowerShell
+
+		$certpath = "Cert:\localmachine\my\$($cert.Thumbprint)"
+
+	> the line is composed of:
+		a. $certpath
+			= variable that will hold the string that defines the certificate path
+		b. "Cert:\localmachine\my\$($cert.Thumbprint)"
+			= string value that we will assign to the $certpath
+			= we will pass the Thumbprint property of our $cert variable into the $certpath
+
+
+
+
+10. Check the $certpath value
+	> type $certpath in PowerShell
+	> output should be similar to this
+
+		Cert:\localmachine\my\BB681E0F2C4915ED50467D5EE97DFBEA3648D6FA
+
+
+
+
+
+11. Export a PfxCertificate using the $certpath and the $pwd
+	> type this in PowerShell
+
+		Export-PfxCertificate -Cert $certpath -FilePath d:\weather.pfx -Password $pwd
+
+	> this line is composed of:
+		a. Export-PfxCertificate
+			= command that makes a pfx certificate
+		b. -Cert $certpath
+			= flag that defines the location of the Certificate that we want to export
+			= we passed the $certpath to it
+		c. -FilePath d:\weather.pfx
+			= flag that defines the location where we will export the certificate
+		d. -Password 
+			= defines the password necessary to open the certificate
+
+	> the output should show the directory of the pfx certificate file and the file itself
+
+    		Directory: D:\
+
+
+		Mode                 LastWriteTime         Length Name
+		----                 -------------         ------ ----
+		-a----         7/27/2021  12:04 AM           2629 weather.pfx
+
+
+
+
+
+
+12. Import the said pfx file into the Certificate Manager
+	> specifically into the following certificate path
+
+		Certificates - Current User > Trusted Root Certificate Authorities > Certificates
+
+	> right click the Certificates folder, choose All Tasks, then choose Import...
+	> follow the instructions
+		a. select the pfx file that we want to install
+		b. enter the password that we assign to the certificate earlier
+			= this means that anyone can't just install this certificate in their server UNLESS they know the password assign to it
+		c. select what certificate path we want to place the pfx certificate
+			= since we used Import... in the Certificate, by default it will be the cert path location
+	> it will prompt you whether you trust the Certificate or not
+	> after adding, refresh the Certificate Manager to see if weather.io certificate is added
+
+
+
+
+13. Check the weather.io certificate
+	> open the certificate and check if the certificate is trusted by the local machine

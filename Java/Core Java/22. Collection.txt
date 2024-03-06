@@ -1,0 +1,188 @@
+Collections
+includes:
+ArrayList 
+List
+Map 
+Syntax for defining and declaring collections
+some (.) dot operator (or methods) used in collection
+For-each loop for class/collection
+
+package com.glenneligio.collection;
+
+import java.util.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class Main {
+    public static void main(String[] args) {
+
+       /*
+        Arrays have limited used, and one of the negatives of Arrays
+        is that Array are immutable, which means you can't add elements
+        that are greater than its size
+
+        //name array can only contain 5 elements
+
+            String[] name = new String[5];
+
+        //this function add the string "Glenn" in 6th element of name array
+          which is not possible and will result in outOfBoundException error
+
+            name[5] = "Glenn";
+        */
+
+        //defining arraylist, you have two possible options
+        /*
+            ArrayList<dataType> arrayListName = new ArrayList<>();
+            or
+            List<dataType> listName = new ArrayList<>();
+
+            note:   can put Class dataTypes in arrayList
+                    cant put primitive dataTypes in arrayList, must use generic dataTypes
+                Examples: String, Integer, Char, Double, Float, Boolean
+
+                Primitive           Generic
+                string              String
+                int                 Integer
+                double              Double
+                char                Char
+                boolean             Boolean
+
+                just capitalize the first letter
+         */
+        ArrayList<String> names = new ArrayList<>();
+
+        // List<String> students = new ArrayList<>();
+
+        /*
+            some of (.) dot operators of ArrayList
+            arrayList.add(element);         ----> to add new element to arraylist, must be the same dataType as the
+                                                  arrayList
+            arrayList.get(indexNumber);     ----> returns the element at indexNumber position
+            arrayList.size();               ----> returns the size of the arrayList
+            arrayList.clear();              ----> clears the arrayList, making the size to zero or none
+            arrayList.remove(element);      ----> removes the element argument from the arrayList, which also moves
+                                                  the index of the elements that comes after the removed element
+            arrayList.contains(element);    ----> returns a boolean value whether the arrayList contains the element
+                                                  that is defined in its argument
+            arrayList.isEmpty();            ----> return a boolean value whether the arrayList is empty or not
+            arrayList.indexOf(element);     ----> returns the index of the element inside its argument
+                                                  will return a value of -1 if element is not inside of arrayList
+         */
+
+        names.add("Add");
+        names.add("Sahar");
+        names.add("Glenn");
+
+//        System.out.println(names.get(0));
+//        System.out.println(names.size());
+//       names.clear();
+//       System.out.println(names.size());
+//
+//        names.remove("Add");
+//
+//        System.out.println(names.size());
+//        System.out.println(names.get(0));
+//        System.out.println(names.contains("Add"));
+//        System.out.println(names.contains("Sahar"));
+//        System.out.println(names.isEmpty());
+
+        System.out.println(names.indexOf("Brad"));
+
+        //a way to print every element of a arrayList
+        for (int i = 0; i<names.size(); i++){
+            System.out.println(names.get(i));
+        }
+
+        /*
+            Defining Map collection
+             1.  Map<dataType, dataType> contacts = new Map<String, String>()
+
+             ----> this will spawn many methods of this class
+
+             2.  Map<dataType, dataType> contacts =  new HashMap<>();
+
+               note:    can put Class dataType in Map collection type
+                        dataType, like in arrayList, cannot be primitive dataType
+
+             some (.) dot operators of HashMap
+
+             Map.put(element key, element value);       -----> add elements on the map
+             Map.get(element key);                      -----> will return the element value corresponding to the
+                                                               element key
+             Map.remove(element key);                   -----> will remove the element key and its corresponding
+                                                               element value
+             Map.size();                                -----> returns the size of Map
+             Map.containsKey(elementKey);               -----> returns a boolean value whether Map contains the
+                                                               elementKey or not
+             Map.containsElement(elementValue);         -----> returns a boolean value whether Map contains the
+                                                               elementValue or not
+             Map.clear();                               -----> will clear the content of map
+             Map.isEmpty();                             -----> will return boolean value whether the map is empty or not
+
+                             Map Name
+                  elementKey1       elementValue1
+                  elementKey2       elementValue2
+                  elementKey3       elementValue3
+                  elementKey4       elementValue4
+
+             elementKey works like index of ArrayList, while elementValue works like element in ArrayList
+         */
+
+        /*
+	*** CHANGING NAME OF VARIABLE TO THE WHOLE SOURCE CODE ***
+
+         1. click the variable name
+         2. right click
+         3. refactor
+         4. rename
+
+         or the shortcut SHIFT+F6
+         */
+
+        Map<String, String> emailList =  new HashMap<>();
+        emailList.put("Glenn", "glenneligio@gmail.com");
+        emailList.put("Brad", "brad@gmail.com");
+        System.out.println(emailList.get("Glenn"));
+        System.out.println(emailList.size());
+        emailList.remove("Brad");
+        System.out.println(emailList.size());
+        System.out.println(emailList.containsKey("Brad"));
+        System.out.println(emailList.containsValue("glenneligio@gmail.com"));
+        emailList.clear();
+        emailList.isEmpty();
+        emailList.values();
+
+
+        //using Class Student as dataType for arrayList
+        ArrayList<Student> students= new ArrayList<>();
+        students.add(new Student("Glenn", 201500129));
+
+        /*
+            For each loop
+             -> mostly used for Object oriented classes, and collections
+
+            Syntax
+            for (dataType dataTypeHolder: dataTypeName){
+                functionToRun;
+            }
+
+             dataType -> data type of the collection/class your going to iterate
+             dataTypeHolder -> can be anything you want, just a placeholder
+                            -> this placeholder is what you will use inside the
+                               for-each loop bracket
+             dataTypeName -> specific class/collection you want to iterate
+         */
+
+        //adding new Student in students arrayList
+        students.add(new Student("Shana", 201600129));
+        students.add(new Student("Xiana", 201400129));
+
+        for (Student s: students){
+            System.out.println(s.getName());
+        }
+
+
+    }
+}

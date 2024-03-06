@@ -1,0 +1,134 @@
+Java Developer
+	> can be categorized into
+		a. Web Developer
+		b. Android Developer
+		c. Full Stack Developer
+
+Skillset Required
+
+I. Beginner Level
+
+Concepts to master
+1. OOPs concepts in Java
+2. File input-output operations and Serialization
+3. Good Understanding of data structures in java
+4. Exception Handling
+5. JVM and Memory Management
+6. Multithreading and Synchronization
+
+IDEs to get comfortable with
+1. IntelliJ
+2. eclipse
+3. Netbeans
+
+
+
+II. Experienced level
+
+Concepts to master
+1. Artificial Intelligence and Machine Learning Libraries in Java
+2. Block chain
+3. Hadoop and Big Data Frameworks
+4. Spring Boot
+5. Microservices
+6. Advance Scripting Programming Languages such as
+	- Angular JS
+	- React JS
+	- Javascript
+
+
+
+
+Web Developer path
+
+Skillsets to have
+1. Java Servlet Pages (JSP)
+2. Popular Mark-up Languages like XML, HTML
+3. Model View Controller (MVC)
+4. Web Technologies like CSS, and Java Script
+5. Applets (Old technology, phased out)
+
+Frameworks to know
+1. Apache Express
+2. play
+3. Google Web Toolkit (GWT)
+4. Grails
+
+
+
+
+Android Developer
+
+Skillsets
+1. Android SDK (Software Development Kit)
+2. Android Testing
+3. Android API
+4. Databases and Database connectors like JDBC
+5. Android Security
+6. Git Version Control
+
+Frameworks to know
+A. User Interface Development Tools
+	1. Flutter
+	2. React JS
+B. OPEN SOURCE CROSS PLATFORM
+	3. Solar 2d
+C. ANDROID ONLY FRAMEWORK
+	4. Android Studio
+
+
+
+
+Full-Stack Developer
+	> knows how to create client-server application
+
+Skillsets to master
+1. Software Design and Architecture
+2. Understanding of DevOps
+3. Knowledge of Microservices
+4. APIs and Libraries
+5. Design Patterns in Java
+6. React and Angular
+7. Capable to Work on Front and Back end
+
+
+Frameworks to know
+A. Integration Tools
+	1. Jenkin
+	2. Azure DevOps
+B. Deployment Tools
+	3. Kubernetes
+	4. Docker
+C. Scripting Languages
+	5. Angular JS
+	6. React
+D. Frameworks
+	7. Spring
+E. Testing tools
+	8. JUnit
+
+
+
+
+
+Roles and Responsibilities
+
+I. Beginner Level
+
+1. Define Objectives by analyzing requirements
+2. Complete the assigned job before deadlines
+3. Design and Test basic codes
+4. Resolve the Reported issues
+5. Troubleshoot the code
+6. Improve existing code quality
+7. Support users with documentation
+
+
+II. Experienced Level
+1. All the basic responsibilites of a beginner
+2. Thorough knowledge of system functionality
+3. Design and Develop User-Interface
+4. Enhance Reputation of Company
+5. Recommend updates based on performance
+6. Ensure best possible Responsiveness
+7. Explore and add value to achievements

@@ -1,0 +1,447 @@
+Section 17 - Docker Images
+
+102. Docker Images
+
+Docker image
+ > in essence, docker image is used to setup container in a specific state
+ > to create a custom image, we can use Dockerfile
+ 
+Dockerfile
+ > Dockerfile is a file used for creating a docker image
+ > this file contains steps/instructions that will setup the container internally
+ > to use a Dockerfile when building an image, use 'docker build' command
+ > then using 'docker push' command, we can push the custom image in the public docker registry - Dockerhub
+ 
+EX: Setting up container to run flask webapp
+Steps:
+1. OS - Ubuntu
+2. Update apt repo
+3. Install dependencies using apt
+4. Install Python dependencies using pip
+5. Copy source code to /opt folder
+6. Run the web server using "flask" command
+
+Dockerfile for docker image with these setup
+# Dockerfile
+FROM Ubuntu
+
+RUN apt-get update
+RUN apt-get install python
+
+RUN pip install flask
+RUN pip install flask-mysql
+
+COPY . /opt/source-code
+
+ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
+
+Commands 
+$ docker build Dockerfile -t mmumshad/my-custom-app
+$ docker push mmumshad/my-custom-app
+
+
+Dockerfile steps syntax
+ > the syntax for each steps in the Dockerfile is:
+	INSTRUCTION ARGUMENT
+ > typically, the INSTRUCTIONS are written in ALL CAPS to better distinguish them
+ > ARGUMENT can be seen as the inputs for these instructions
+ > ex:
+	FROM Ubuntu
+ > each of these instruction instruct Docker to perform specific actions while creating the image
+ 
+ 
+Dockerfile instructions
+FROM
+ > specifies the base OS or base image to use
+ > ex: 'FROM Ubuntu' means that it will use 'ubuntu' image as base image
+ > All Dockerfile must start with FROM instruction
+ 
+RUN
+ > specifies a specific command to run on the base image
+ > ex: 'RUN apt-get update' will execute 'apt-get update' command inside the image
+
+COPY
+ > used to copy files from a directory of local machine to the Docker image
+ > ex: 'COPY . /opt/source-code' means it will copy all files in current directory to the /opt/source-code directory of the Docker image
+
+ENTRYPOINT
+ > specifies the command that will be executed when the image is used to run a container
+ > typically, the ENTRYPOINT command is commands used to start the service hosted in docker containers
+ > ex: 'ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run' is used to run the flask webapp 
+ 
+ 
+Layered Architecture
+ > Docker images are built in a layered architecture
+ > Each line of INSTRUCTIONS specified inside the Dockerfile of the image creates a new layered
+	- this layer contains just the changes from the previous layer
+ > ex: from the previous Dockerfile example
+	Layer 1: Base Ubuntu Layer
+	Layer 2: Changes in apt packages
+	Layer 3: Changes in pip packages
+	Layer 4: Source code
+	Layer 5: Update Entrypoint with "flask" command
+ > since all layers contains only the changes from the previous layers, it is reflected on the Docker image size as well
+	Layer 1 - 120 MB
+	Layer 2 - 306 MB
+	Layer 3 - 6.3 MB
+	Layer 4 - 229 B
+	Layer 5 - 0 B
+ > we can see these layers and their sizes using the 'docker history' command
+	$ docker history mmumshad/simple-webapp
+
+	
+
+Docker build output
+ > when 'docker build' command is executed, we will be able to see each of the steps involved when creating the Docker image
+ > these includes the specific instruction line, the console logs being printed of that specific instructions, image layer id, etc
+ 
+ 
+Docker image layer cache
+ > image layers are cached once they are created
+ > this allows the Docker to reused these cached layers when building Docker images
+ > one case can be when if a specific layer fails when building the image, the previous layers will be cached and when doing the build again, it will fetched the cached layers
+	- this can be seen in the 'docker build' logs as well
+	
+	
+What cna we containerized?
+ > Databases, webapps, operating systems
+ > we can also containerized simple applications like browsers, utilities like curl, application like Spotify, Skype, etc
+ > basically EVERYTHING can be containerized
+ 
+
+
+
+Commands:
+docker build DOCKERFILE_DIR_PATH -t NAME:TAG
+ > docker build is used to create a docker image given a specific Dockerfile, and the image name, and tag
+ > '-t' is an optional flag used to specify the name:tag of the docker image to be created
+	- tag is an optional input here
+	
+docker push IMAGE_NAME:TAG
+ > used to push an image to the Dockerhub
+ > in order to push a custom image in Dockerhub:
+	- we must have DockerHub account, and the account is currently logged in to the terminal
+	- the image name must have the user id or organization of the said dockerhub account
+		= ex: mmumshad/my-custom-app
+		= in this case 'mmumshad' is the dockerhub user id
+	- if user id or organization is not specified in the image name, it will use the 'docker.io/library' organization id. only the official Docker images can use this organization id, which means that if we tried to push images using this, we will get permission issues
+
+docker history <IMAGE_NAME>
+ > used to check the history of the specific docker image
+ > these includes informations such as
+	- image id
+	- date created
+	- created by
+	- size
+	- comment
+ > ex: 
+	$ docker history mmumshad/simple-webapp
+
+
+NOTE:
+1. All Dockerfile starts with FROM instruction
+2. Dockerfile layers are cached, meaning that when creating Docker image, if same instruction is present in cache, it will be reused. This makes the build process much faster
+
+
+
+
+
+103. Demo - Creating a new Docker image
+
+Test repo to use: https://github.com/mmumshad/simple-webapp-flask
+ > in the link, steps in order to run the simple webapp is listed
+ > we will be using this when creating our Docker image
+ 
+Command history
+docker run -it ubuntu bash
+ > start with base image, with bash command in order to execute commands
+ > -it flag to have the docker in interactive mode, with pseudo-terminal flag
+--- INSIDE DOCKER CONTAINER ---
+apt-get install -y python
+apt-get update
+clear
+apt-get install -y python
+python
+ > check python version
+pip install flask
+apt-get install python pip
+pip install flask
+cat > /opt/app.py
+ > paste the content of the app.py from the github repository to this file
+vi /opt/app.py
+ > recheck contents
+FLASK_APP=/opt/app.py flask run --host=0.0.0.0
+ > at this point, the Flask application should be running now
+
+--- Accessing the web app ---
+ > use the internal ip address assigned to the container
+ > this is due to the container not having port mapping so that we can use the host machine's ip address
+ > use the link below to access the endpoints exposed
+	- INTERNAL_IP:5000
+	- INTERNAL_IP:5000/how are you
+
+--- INSIDE DOCKER CONTAINER ---
+history
+exit
+ > this should turn off the Docker container
+ 
+--- INSIDE HOST MACHINE --- 
+docker ps
+ > container created earlier should be gone
+mkdir my-simple-webapp
+cd my-simple-webapp/
+cat > Dockerfile
+
+--- AT THIS POINT, WE ARE WRITING IN Dockerfile ---
+FROM ubuntu
+
+RUN apt-get update
+RUN apt-get install -y python python-pip
+RUN pip install flask
+
+COPY app.py /opt/app.py
+ENTRYPOINT FLASK_APP=/opt/app.py flask run --host=0.0.0.0 
+
+--- INSIDE HOST MACHINE --- 
+cat > app.py
+ > paste contents of app.py in the github repo
+docker build .
+clear
+docker image ls
+ > we should see the new image
+docker run my-simple-webapp
+
+--- Accessing the web app ---
+ > use the internal ip address assigned to the container
+ > this is due to the container not having port mapping so that we can use the host machine's ip address
+ > use the link below to access the endpoints exposed
+	- INTERNAL_IP:5000
+	- INTERNAL_IP:5000/how are you
+
+docker stop CONTAINER_ID
+docker ps
+clear
+docker push my-simple-webapp
+ > we should get error since it used the 'library' by default
+ > 'library' is only available for official docker images
+docker build . -t mmumshad/my-simple-webapp
+docker push mmumshad/my-simple-webapp
+ > we might get a permission error
+ > make sure you replace mmumshad with your own user id
+docker login
+ > login using our own Dockerhub account
+docker push mmumshad/my-simple-webapp
+ > this should be successfully pushed
+ > we can also check this in our Dockerhub account
+ 
+ 
+NOTE:
+1. Whenever we are creating custom Docker image, it is a best practice to do the steps to be executed in Docker image MANUALLY
+	> one of the possible methods is to spin up basic docker container with OS image, then go to its terminal and do the manually deployment there
+	> after you've confirm that the service you've deploy is manually working, we can list the steps and use them in Dockerfile instructions
+2. We can only push docker images in our own account
+	> this means when pushing custom docker images in DockerHub we must specify the user id of the docker hub acount
+	> ex: shuntjg/simple-webapp, where shuntjg is our user id
+
+
+
+
+
+104. Labs: Docker Images - File
+
+Q1: How many images are available on this host?
+S: Use 'docker image ls'
+A: 9
+
+Q2: What is the size of the ubuntu image?
+S: Use 'docker image ls' and check the ubuntu image size
+A: 77.8 MB
+
+Q3: We just pulled a new image. What is the tag on the newly pulled NGINX image
+S: Use docker image ls again, and compare the previous output to the new output
+A: 1.14-alpine
+
+Q4: We just downloaded the code of an application. What is the base image used in the Dockerfile. Inspect the Dockerfile in the webapp-color directory
+S:
+1. Go to the directory
+	$ cd /root/webapp-color
+2. Inspect Dockerfile
+	$ cat Dockerfile
+A: python:3.6
+
+Q5: To what location within the container is the application code copied to during a Docker build?
+Inspect the Dockerfile in the webapp-color directory
+S: Check the Dockerfile. Typically this step uses 'COPY' instruction
+A: /opt/
+
+Q6: When a container is created using the image built with this Dockerfile, what is the command used to RUN the application inside it.
+Inspect the Dockerfile in the webapp-color directory.
+S: Check Dockerfile. Typically, the ENTRYPOINT instruction is used to specify the command for starting the service hosted by container
+A: python app.py
+
+Q7: What port is the web application run within the container?
+Inspect the Dockerfile in the webapp-color directory
+S: Check the argument for EXPOSE instruction. This typically specifies the exposed ports by the container
+A: 8080
+
+Q8: Build a docker image using the Dockerfile and name it webapp-color. No tag to be specified
+S: docker build /root/webapp-color -t webapp-color
+
+Q9: Run an instance of the image webapp-color and publish port 8080 on the container to 8282 on the host
+S: Use command below
+	$ docker run -d -p 8282:8080 webapp-color
+	
+Q10: Access the application by clicking on the tab named HOST:8282 above your terminal.
+After you are done, you may stop the running container by hitting CTRL + C if you wish to.
+S: Either CTRL+C if you run the container in attached mode, or use docker stop if you ran it on detached mode
+
+Q11: What is the base Operating System used by the python:3.6 image?
+If required, run an instance of the image to figure it out
+S: Use the command 'docker run python:3.6 cat /etc/*release*' to run container using python:3.6 and print the release file
+A: debian
+
+Q12: What is the approximate size of the webapp-color image
+S: Use 'docker image ls' again and check size
+	> docker image ls | grep webapp
+A: 913 MB
+
+Q13: That's really BIG for a Docker image. Docker images are supposed to be small and light weight. Let us try to trim it down.
+
+Q14: Build a new smaller docker image by modifying the same Dockerfile and name it webapp-color and tag it lite.
+Hint: Find a smaller base image for python:3.6. Make sure the final image is less than 150 MB.
+S: Use python docker image of tag '3.6.15-slim' inside Dockerfile. Then use command 'docker build /root/webapp-color -t webapp-color:lite'
+
+Q15: Run an instance of the new image webapp-color:lite and publish port 8080 on the container to 8383 on the host
+S: Use command below
+	$ docker run -d -p 8383:8080 webapp-color:lite
+
+
+
+
+
+105: Environment Variables
+
+Environment Variables
+ > information, data, or variable that is accessible in the environment
+ > typically, the data we put in environment variable are data that we want to be externalized so that we can configure the application externally
+	- this is so that we don't need to rebuild the application if we desire to change this information
+	- these can include:
+		a. database configuration
+		b. port where the application will listen to
+		c. secret and api keys
+ > for these, we would need to configure the application so that it reads the environment variables
+ 
+		
+Environment variables in Docker
+ > in Docker, we have an option to specify environment variables via '-e' flag in the 'docker run' commands
+ > in additional, to inspect the expected environment variables of a docker image, we can use 'docker inspect' and check the 'Env' field of the JSON output
+ 
+Commands
+docker run -e ENV_NAME=ENV_VALUE IMAGE
+ > -e flag stands for environment,and is used to specify the environment variable to be added in docker container
+ > ex:
+	$ docker run -e APP_COLOR=blue simple-webapp-color
+	
+docker inspect IMAGE
+ > used to inspect information about docker image
+ > we can see here the expected environment variables used by the docker image
+
+
+
+
+
+106. Labs - Environment Variables
+
+Q1: Inspect the environment variables set on the running container and identify the value set to the APP_COLOR variable
+S: Use 'docker inspect' and pass the container id
+A: pink
+
+Q2: Run a container named 'blue-app' using image 'kodekloud/simple-webapp' and set the environment variable 'APP_COLOR' to 'blue'. Make the application variable on port 38282 on the host. The application listens on port 8080
+S: Use command below
+	docker run -d -e APP_COLOR=blue -p 38282:8080 --name blue-app kodekloud/simple-webapp
+N: 
+1. Make sure to stop the container after
+
+Q3: View the application by clicking the link 'HOST:38282' above yout terminal and ensure it has the right color
+
+Q4: Deploy a 'mysql' database using the mysql image and name it 'mysql-db'. Set the database password to use 'db_pass123'. Lookup the mysql image on Docker Hub and identify the correct environment variable to use for setting the root password
+S: Use the command below
+	docker run -d -e MYSQL_ROOT_PASSWORD=db_pass123 --name 'mysql-db' mysql
+
+
+
+
+107. Commands vs Entrypoint
+
+CMD - Command
+ > CMD instruction in Dockerfile is used to specify the command to be executed when the Docker image is ran
+ > the syntax for the CMD instruction goes as follows
+	CMD command param1
+	CMD ["command", "param1"]
+ > this instruction can be overriden when we specify a new command at the end of 'docker run' command
+	
+ 
+EX:
+# ubuntu-sleeper Dockerfile
+FROM Ubuntu
+CMD sleep 5
+
+$ docker run ubuntu-sleeper
+	> will execute 'sleep 5'
+$ docker run ubuntu-sleeper sleep 10
+	> will execute 'sleep 10', entirely overriding CMD instruction including the command and its parameters
+	
+	
+ENTRYPOINT
+ > ENTRYPOINT instruction is used to specify the initial command to be excuted
+ > typically, we use this instruction to start the application, example of these includes
+	- java command to run java app
+	- npm command to run npm app
+ > with ENTRYPOINT, any additional parameter we pass in 'docker run' after the image name will be APPENDED after the ENTRYPOINT
+	- this means that if the ENTRYPOINT command we used requires an argument, it will cause an error. this error can make the Docker container stop prematurely
+ > to resolve the issue for ENTRYPOINT commands that needs command parameters to not cause error, we can specify a CMD instruction AFTER the ENTRYPOINT
+	- the instruction paramaters we pass in CMD instruction will be APPENDED to the ENTRYPOINT, hence we can use this to give default parameters to the ENTRYPOINT
+	- still, if we pass additional argument in 'docker run' after the image name, the said CMD instruction will be overriden as well
+	
+EX:
+# ubuntu-sleeper Dockerfile 1
+FROM Ubuntu
+ENTRYPOINT sleep
+
+# ubuntu-sleeper Dockerfile 2
+FROM Ubuntu
+ENTRYPOINT sleep
+CMD 10
+
+With Dockerfile 1, we would need to pass an argument everytime we execute 'docker run' for this image since sleep requires an argument
+With Dockerfile 2, we can use 'docker run' command without passing additional argument. Doing so will just use the 10 from CMD as the sleep argument 
+
+
+NOTE:
+1. When using json array format for CMD instruction, the first item should always be the command. Adding command parameter in the first string item will result in an error
+	> ex: CMD ["sleep 5"]
+
+
+
+
+108. Labs - Command vs Entrypoint - File
+
+Q1: Dockerfiles for a few commonly used Docker Images are given in the /root (current) directory. Inspect them and try to answer the following questions.
+
+Q2: What is the ENTRYPOINT configured on the mysql image?
+S: Check Dockerfile-mysql
+A: docker-entrypoint.sh
+
+Q3: What is the CMD configured on the wordpress image?
+S: `Check Dockerfile-wordpress
+A: apache2-foreground
+
+Q4: What is the final command run at the startup when the wordpress image is run. Consider both ENTRYPOINT and CMD instructions
+A: docker-entrypoint.sh apache2-foreground
+
+Q5: What is the command run at startup when the ubuntu image is run
+A: bash
+
+Q6: Run an instance of the ubuntu image to run the sleep 1000 command at the startup. Run it in detached mode
+S: Use 'docker run', and pass 'sleep 1000'. Also add -d flag
+	$ docker run -d ubuntu sleep 1000

@@ -1,0 +1,106 @@
+Claims/ClaimsIdentity/ClaimsPrincipal/Authorization
+
+Topics to discuss:
+1. Middleware changes for Authentication/Authorization
+2. User explanation and how it is represented
+
+Tools needed:
+Visual Studio 2019
+
+
+
+
+INCLUDE:
+app.UseRouting()
+	> middleware to look which route the http request is going it and directs it to a specific endpoint
+
+app.UseEndpoints()
+	> middleware responsible for assigning the endpoint the request is going to based on its route
+
+[Authorize]
+	> decoration added to an endpoint
+	> this means that any request that will go through the route endpoint will first needs to be authorized
+
+
+Authorization
+	> ask the question "Are we allowed to call the route endpoint"
+
+
+app.UseAuthorization()
+	> add an Authorization Middleware in the Request Pipeline
+	> must be place BEFORE the app.UseRouting() middleware
+	> this is because the Authorization middleware must know which Route the request is going to in order to do an Authorization check and the useRouting() is the one giving those route list.
+
+
+service.AddAuthentication(string defaultScheme) or 
+service.AddAuthentication(Action<AuthenticationOption> configureOptions)
+	> adds a service in the Application that will help the Authorization middleware to determine which request are authorized to do something
+	> for string defaultScheme, we can pass the following strings
+		a. "CookieAuth"
+
+
+.AddCookie(string authenticationScheme, CookieAuthenticationOptions configureOptions)
+	> defines a Cookie Handler, creates an IAuthenticationHandler for a Cookie Authentication
+	> can be called after the service.AddAuthentication() 
+	> for string, we will pass
+		- "CookieAuth"
+	> for CookieAuthenticationOptions, we can use lambda expression in order to define the following propertes
+		a. options.LoginPath
+			- defines the route endpoint for the authentication
+			- we a request needs to be authenticated, we will be redirected to the route endpoint that corresponds to the LoginPath of CookieAuthentication
+			- if not defines, we will be redirected to this route endpoint
+				= "Account/Login?ReturnUrl=ReturnUrl"
+			- ReturnUrl is the string parameter of route endpoint method with Route("Account/Login")
+
+		b. options.Cookie.Name
+			- defines the new name for the Cookie
+
+
+AuthenticationScheme
+	> defines how the Authorization middleware will determine if a request is "authorize" to do something
+
+
+
+Claim
+	> object use to sort of "claim" who you are or what your identity is
+	> implementation of an abstraction from C#
+	> Claim object can have different form based on parameters passed into it
+		a. new Claim(ClaimType claimType, string value)
+			- claimType be either ClaimTypes.Name, ClaimTypes.Email, Claim.Role or any custom ClaimType
+
+
+ClaimsIdentity
+	> object used to define the "identity" of the claims source
+	> takes a list of Claim as parameter to create the said Identity
+	> Claim object can be created using the following constructor
+		a. new ClaimsIdentity(IEnumerable<Claim> claims, string claimsIdentityName)
+
+
+
+ClaimsPrincipal
+	> object used to create a User Identity based on different ClaimsIdentities from different sources
+	> in real world, one sources (Facebook) may have different ClaimsIdentity from another (Google)
+	> takes an array of ClaimsIdentity as parameter
+
+
+
+HttpContext.SignInAsync()
+	> used to signin an identity and add the request's Sender to the Authentication list of Application	
+	> this will also add a Cookie in the http request's Sender browser locally with the name being the defined Cookie.Name of CookieAuthenticationConfigOptions
+	> takes a ClaimsPrincipal parameter
+
+
+
+
+app.UseAuthentication()
+	> a middleware whose purpose is to authenticate the http request sender's identy 
+	> must be place AFTER app.UseRouting() and BEFORE app.UseAuthentication()
+	> logical sequence is that
+		- (UseRouting)		app must know which route request is trying to access 
+		- (UseAuthentication)	app must know who or what the identity of request's sender is
+		- (UseAuthorization)	app must know if the request's sender is allowed to do that it wants
+
+
+
+
+

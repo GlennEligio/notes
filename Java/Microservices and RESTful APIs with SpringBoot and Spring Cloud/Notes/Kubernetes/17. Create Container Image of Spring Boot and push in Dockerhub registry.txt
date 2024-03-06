@@ -1,0 +1,46 @@
+17. Create Container Image of Spring Boot and push in Dockerhub registry
+
+
+I. Create Container Image of Spring Boot app
+1. Configure the pom.xml 
+	> specifically the project.build
+	> the dockerhubId in the Docker image to be created should match your docker id
+		-> we will push this in your DockerHub registry later
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>shuntjg/mmv2-${project.artifactId}:${project.version}</name>
+					</image>
+					<pullPolicy>IF_NOT_PRESENT</pullPolicy>
+				</configuration>				
+			</plugin>
+		</plugins>
+	</build>
+
+
+
+2. Build the image
+	> mvn spring-boot:build-image
+		- we can add "-DskipTests" to skip testing and speed up the build image process
+		- ex: mvn spring-boot:build-image -DskipTests
+
+
+
+3. Push the built Docker image
+	> docker push <dockerId>/<repositoryName>:<tag>
+
+
+
+NOTE: 
+1. If you are having an error regarding "Unsupported class file major version 61 error", follow the links below
+	https://stackoverflow.com/questions/69798822/dockerbuild-fails-resulting-in-an-unsupported-class-file-major-version-61-error
+	https://stackoverflow.com/questions/69470384/spring-boot-java-modules-unsupported-class-file-major-version
+	https://stackoverflow.com/questions/71496063/maven-surefire-test-failed-unsupported-class-file-major-version-61
+2. Use jdk version that have openJdk Docker image equivalent
+	> one of them is jdk 17
+	> change the value of project.properties.java.version inside pom.xml

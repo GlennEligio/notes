@@ -1,0 +1,373 @@
+03 JSP Fundamentals
+
+Contents:
+15 JSP Hello World
+16 JSP expressions
+17 JSP scriptlets
+18 JSP declaration
+19 Calling a Java Class from JSP
+20 JSP built-in objects
+21 Including Files in JSP
+
+
+
+
+
+
+
+
+
+15 JSP Hello World
+
+JSP file
+ > stands for Java Server Page
+ > an HTML page with some Java code sprinked in
+ > include dynamic content from Java code
+ 	- these Java code snippet in JSP is called JSP expressions
+
+Where is the JSP processed
+ > JSP is processed on the server
+ > Results of Java code is included in HTML returned by browser
+ > Browser receives the HTML OUTPUT from processed JSP
+
+Where to place JSP file
+ > JSP files goes in the WebContent (or webapp by default for Maven projects) folder
+	- we can change this when creating the Dynamic Web Project by specifically defining the Content Folder directory
+	- ex: /WebContent or /src/main/webapp
+ > they must have .jsp extension
+
+
+EX:
+// helloworld.jsp
+<html>
+  <body>
+    <h3>Hello World of Java!</h3>
+    The time on the server is <%= new java.util.Date() %>
+  </body>
+</html>
+
+
+Demonstration
+1. Create a new Dynamic Web Project
+2. In the Project Setup, change the Content directory to /WebContent from /src/main/webapp
+3. Add a helloworld.jsp with the code above
+4. Run the jsp on the server by right clicking it, run, then run in server
+
+
+PROBLEMS:
+1. The server cannot started because one or more of the ports are invalid [Tomcat in Eclipse]
+	> double click the server to open server editor
+	> check if admin and host port is valid
+		- typically admin port is just a dash, if you didnt add credentials in server installation earlier
+		- make it 0
+2. Tomcat Server Error - Port 8080 already in use
+	> kill the service that uses the specific port
+3. SEVERE [main] org.apache.catalina.startup.Catalina.stopServer No shutdown port configured. Shut down server through OS signal. Server not shut down
+	> https://stackoverflow.com/questions/62912431/how-to-shutdown-apache-tomcat9-0-server
+
+
+
+
+
+
+
+
+
+
+
+16 JSP expressions
+
+JSP Scripting Elements
+Element			Syntax
+JSP Expression		<%= some Java expression %>
+JSP Scriplet		<% some Java code: 1 to many lines %>
+JSP Declaraction	<%! variable or method declaration %>
+
+
+JSP Expression
+ > used to compute an expression which returns an output (String, Integer, Boolean, etc)
+ > expression includes
+	- mathematical expression
+	- boolean expression
+ > the result is INCLUDED in HTML returned to the browser
+ > SYNTAX:
+	<%= some Java expression %>
+
+Ex:
+// expression-test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	Converting a string to uppercase <%= new String("Hello world").toUpperCase() %>
+	<br><br>
+	25 multiplied by 4 equals: <%= 25*4 %>
+	<br><br>
+	Is 75 less than 69? <%= 75 < 69 %>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+17 JSP scriptlets
+
+JSP scriptlets
+ > with this, we can insert 1 to many lines of Java code
+ > to include content in the page use: out.println(...)
+	- "out" is an implicit object in JSP which points to the OutputStream of HttpServletResponse
+	- with this, we can write to the response like HTML codes, etc
+ > SYNTAX:
+	<%
+	  // some lines of Java code
+	%>
+
+
+Best Practice - JSP Scriptlet
+1. Minimize the amount of scriptlet code in JSP
+2. Avoid dumping thousands of lines of cod 
+3. Refactor this into a separate Java class or make use of MVC
+	- when you want to write Business logic that is long
+
+
+EX:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+ <% 
+ 		for (int i = 1; i <= 5; i++) {
+ 			out.println("<br/>I really luv2code: " + i);
+ 		}
+ %>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+18 JSP declaration
+
+JSP Declaration
+ > allows you to declare a method in the JSP page
+ > Call the method in the same JSP page
+ > Syntax:
+	<%!
+	  // declare a method
+	%>
+
+Best Practice - JSP declarations
+1. Minimize the number of declarations in a JSP
+2. Avoid dumping thousands of lines of code in a JSP 
+3. Refactor this into a separate Java class using MVC
+	- dump all business logic in the Servlets
+
+EX:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<%!
+	String makeItLower(String data) {
+	return data.toLowerCase();
+	}
+%>
+
+Lower case "Hello World": <%= makeItLower("Hello World")%>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+19 Calling a Java Class from JSP
+
+JSP - Best Practices
+1. Minimize the number of declarations in a JSP
+2. Avoid dumping thousands of lines of code in a JSP 
+3. Refactor this into a separate Java class or make use of MVC
+	- dump all business logic in the Servlets/Java Class
+
+
+Calling a Java Class and its method in the JSP
+ > to do this, when using a Java class in the JSP, we will need to 
+	1. use its full identifier of the Class
+ 		- full identifier includes the class name AND the package name
+		- ex: com.luv2code.FunUtils
+	2. import the Class using the syntax:
+		- <%@ page import="full identifier of class" %>
+
+
+STEPS:
+1. Create Java class
+2. Call Java class from JSP
+	
+EX:
+// com.luv2code.jsp.FunUtils.java
+package com.luv2code.jsp;
+
+public class FunUtils {
+	public static String makeItLower(String data) {
+		return data.toLowerCase();
+	}
+}
+
+
+// fun-test.jsp using full identifier
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+Let's have some fun: <%= com.luv2code.jsp.FunUtils.makeItLower("FUN FUN FUN") %>
+</body>
+</html>
+
+
+// fun-test.jsp using import
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"
+    import="com.luv2code.jsp.FunUtils"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+Let's have some fun: <%= FunUtils.makeItLower("FUN FUN FUN") %>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+20 JSP built-in objects
+
+JSP implicit objects
+ > built-in server objects
+ > given to you for free
+ > can be used directly in the JSP page
+
+List of commoly used JSP objects
+Object		Description
+request		Contains HTTP request headers and form data
+response	Provides HTTP support for sending response
+out		JspWriter for including content in HTML page
+session		Unique session for each user of the web application
+application	Shared data for all users of the web application
+
+
+EX:
+// builtin-test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h3>JSP built-in objects</h3>
+Request user agent: <%= request.getHeader("User-Agent") %>
+<br></br>
+Request language: <%= request.getLocale() %>
+<br></br>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+21 Including Files in JSP
+
+Including Files in JSP
+ > common usage includes
+	1. adding standard headers and footers
+		- this makes the jsp or html modular and reusable
+ > syntax:
+	<jsp:include page="my-header.html"/>
+	<jsp:include page="my-footer.jsp"/>
+ > the included jsp or html file will be displayed BASED on the POSITION of the html where you included it
+
+EX:
+// my-header.html
+<h1 align="center">JSP Tutorial</h1>
+
+// my-footer.jsp
+<p align="center">
+Last updated: <%= new java.util.Date() %>
+</p>
+
+// homepage.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<jsp:include page="my-header.html"/>
+Blah blah blah ... <br/> <br/>
+Blah blah blah ... <br/> <br/>
+Blah blah blah ... <br/> <br/>
+<jsp:include page="my-footer.jsp"/>
+</body>
+</html>
+
+
+
+
+
+
+
+

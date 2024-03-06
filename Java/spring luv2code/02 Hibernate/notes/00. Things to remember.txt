@@ -1,0 +1,75 @@
+TIPS:
+1. Assign UNIQUE column name to the Entities column names
+	> if any of the Entities (especially those that have relationship like 1-1, 1-N, N-N) share the same column name, it will cause an error to JPA
+	> this can happen when two Entities uses the same property name and doesn't assign a column name to them (ex: id)
+	> to fix this, use @Column and assign unique column name to them
+
+
+EX:
+// For transaction entity
+@Entity
+@Table(name = "transaction_table")
+public class Transaction {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tx_id")
+    private Long id;
+    @Column(unique = true, nullable = false, name = "tx_code")
+    private String txCode;
+    @OneToMany(mappedBy = "transaction")
+    private List<Equipment> equipments;
+    @ManyToOne
+    @JoinColumn(name = "student_number", referencedColumnName = "student_number")
+    private Student borrower;
+    @ManyToOne
+    @JoinColumn(name = "professor_name", referencedColumnName = "name")
+    private Professor professor;
+    private LocalDateTime borrowedAt;
+    private LocalDateTime returnedAt;
+    @Enumerated(EnumType.ORDINAL)
+    private TxStatus status;
+
+// For professor entity
+@Entity
+public class Professor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "professor_id")
+    private Long id;
+    @Column(unique = true, nullable = false)
+    private String name;
+    private String contactNumber;
+    @OneToMany(mappedBy = "professor")
+    private List<Transaction> transactions;
+
+
+
+
+2. Check the Entity class name and properties if they use SQL reserved keywords
+	> ex: username, password, transaction, etc
+	> this reserved keyword set will be different for each RDBMS like MySQL, MSSQL, Oracle, etc
+
+
+
+
+3. For Entities that contains another Entities as properties and not just primitive datatypes, implement Serializable on them
+	> ex: if Transaction entity contains Requester entity as its child, implement Serializable interface to the Requester entity class
+
+
+@Entity
+public class Student implements Serializable {
+
+
+
+
+
+
+4. You can not assign an IMMUTABLE Collection in the Entity's property
+	> this applies to the properties that extends to the Collection class (List, Set, etc)
+	> JPA expects the Collection property to be a MUTABLE Collection
+ 	> you're most likely to encounter this problem when you use Stream api and collect the result using .toList() or .toSet()
+
+EX:
+
+List<Equipments> eqs = equips.stream().filter(e -> e.getEquipmentCode().equalsIgnoreCase(code)).toList()
+transaction.setEquipments(eqs); // will cause error "UnsupportedOperation" since we are assigning Immutable Collection to a Entity property

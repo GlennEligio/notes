@@ -1,0 +1,254 @@
+Section 28 - Ansible Introduction and Lab setup
+
+
+152. Introduction
+
+Curriculum
+1. Introduction to Ansible
+2. Setting up Ansible on VirtualBox
+3. Introduction to YAML
+4. Inventory file
+5. Playbooks
+6. Variables
+7. Conditionals
+8. Loops
+9. Roles
+
+
+
+153. Ansible Introduction
+
+Ansible Introduction
+
+Why Ansible? 
+ > To help with the following:
+	1. Provisioning
+	2. Configuration Management
+	3. Continuous Delivery
+	4. Application Deployment
+	5. Security Compliance
+ > previously, to do the following, we use scripts to automate these task. But these requires the following:
+	1. Time
+	2. Coding skills
+	3. Regular Maintenance
+ > With Ansible, this IT automation tool can easily help us do the task above. Ansible is:
+	1. Simple
+	2. Powerful
+	3. Agentless
+	
+	
+Sample: Scripts vs Ansible Playbooks
+Scripts
+#!/bin/bash
+# Script to add a user to Linux
+if [ #(id -u) -eq 0]; then
+	$username=johndoe
+	read -s -p "Enter password : " password
+	egrep "^$username" /etc/passwd >/dev/null
+	if [ $? -eq 0]; then
+		echo "$username exists!"
+		exit 1
+	else
+		useradd -m -p $password $username
+		[ $? -eq 0 ] && echo "User has been added to system!" || echo "Failed to add a user!"
+	fi
+fi
+
+Ansible Playbooks
+- hosts: all_my_web_servers_in_DR
+  tasks:
+    - user:
+	    name: johndoe
+		
+		
+Simple use case: Restarting a number of host machine in particular order		
+ > in this scenario, a portion of the host machine are web server, and others are database servers
+ > we would like to do the following steps:
+	1. turn down web servers
+	2. turn down database servers
+	3. power up database servers
+	4. power up web servers
+ > we could use Ansible playbook in order to execute these steps, and whenever we want to do it again, we can reuse the playbook
+ 
+ 
+Comple use case: Provisioning and configuring servers in public Cloud (e.g., AWS), and Private Cloud (e.g. VMWare)
+ > in this case, we would want to do the following
+	1. Provision virtual machines in either public or private Cloud providers
+	2. Configure the provisioned machines and set up communication between the machines. This may include:
+		- modifying configuration files
+		- installing applications on them
+		- configuring firewall rules
+ > we can also use Ansible to pull informations that we may use in automation process, example of this includes:
+	- pulling data from a Configuration Management Database (CMBD)
+		= ex: list of VMs we want to target
+	- trigger automation as soon as a new workflow from ServiceNow gets approved
+	
+	
+Ansible Documentation
+ > hosted in docs.ansible.com
+ > contains most if not all information required to get started with Ansible
+ > contains example playbooks as well
+
+
+
+
+154. Demo: Setup Ansible Local Environment - Using VirtualBox
+
+Prerequisite
+1. Virtualization software - Oracle VirtualBox
+	> Oracle VirtualBox works with most flavors of OS like Linux, Windows, OSX, etc
+	
+Steps:
+1. Install Oracle VirtualBox
+2. Create a template using CentOS
+3. Using the template, we will create the following
+	a. Ansible Control machine
+	b. Two Ansible Target machine
+		- the control machine will work and configure these target machines
+	
+DEMO - SETUP LAB - PART 1
+Install VirtualBox and create VM template
+1. Download installer of VirtualBox
+2. Follow instructions on the installer
+3. When creating the template, use the preconfigured images present in the OSBoxes website (www.osboxes.org/virtualbox-images).
+	> select the CentOS
+	> take note of the info tab for the version we select
+		- this will contain default user credentials and other information with regards to the preconfigured image
+	> use x64 bit version
+	> extract the content of archive file
+	> inside, there should be a .vdi file (stands for Virtual Disk Image)
+	> 
+4. In VirtualBox, create new virtual machine by clicking New. Then do the following
+	> Name: centos-template
+	> Type: Linux
+	> Version: Other Linux (x64)
+	> Memory size: 2gb
+	> Hard disk: use the .vdi file we downloaded earlier
+5. When we first starts the template, we will be greeted with a login prompt
+	> use the predefined user specified for the preconfigured CentOS image
+6. After logging in, go to the terminal and execute 'ifconfig'
+	> this will tell you the current configuration for network interfaces present in the machine
+	> this will also tell you the IP address assigned to the VM
+	> using the assigned IP address, we can SSH tunnel to this VM
+		- we can use any SSH client for tunnelling in
+		- this will also allow us to run the VM without rendering the UI
+
+NOTES:
+1. If there is no x64 bit in the versions when creating a VM in VirtualBox, it might be because the virtualization is not enabled in the local machine where we are using the VirtualBox
+	> this is typically configured in the BIOS
+
+
+
+
+
+155. Demo: Install Ansible
+
+DEMO - SETUP LAB - PART 2
+Clone VMs and install Ansible
+
+
+Steps: Cloning the template to create Ansible controller and target
+1. With the VM we created earlier with centos-template, clone the said VM to create the master/controller of Ansible
+	> name it 'ansible-controller'
+	> check the 'Reinitialize the MAC address of all network cards'
+	> set the Clone type to 'Linked clone' to save some space
+2. With same VM earlier, create the Ansible target machines
+	> name it 'ansible-target1'
+	> check the 'Reinitialize the MAC address of all network cards'
+	> set the Clone type to 'Linked clone' to save some space
+
+Steps: Installing and configuring Ansible in the VMs
+1. Enter the VMs in VirtualBox
+2. Set the IP address of the Ansible controller and target using the 'ifconfig' command in the terminal
+3. Use SSH client to establish SSH session through these VMs
+4. Inside the VM of ansible-controller
+	> modify the hostname to differentiate this from the 'ansible-target' VM 
+		- edit the /etc/hostname and change the value
+		- ex: ansiblecontroller
+	> modify the hostfile as well
+		- set the IPv4 and IPv6 loopback address alias to 'localhost', as well as the hostname we used earlier
+		- ex:
+			127.0.0.1	localhost ansiblecontroller
+			::1			localhost ansiblecontroller
+5. Inside the VM of ansible-target1, change the hostname as well as the hostfile
+	> /etc/hostname
+		target1
+	> /etc/hostfile
+		127.0.0.1	localhost target1
+		::1			localhost target1	
+6. Restart both ansible-controller and ansible-target1 VM
+	> after opening the VMs, we should see that the hostname is change
+	> we can see this in the terminal 
+		- ex: osboxes@ansiblecontroller
+7. Install Ansible on ansible-controller VM. Follow the commands below as specified in docs.ansible.com
+	$ sudo yum install ansible
+	$ ansible --version
+8. Test connectivity between the ansible-controller and ansible-target1
+	> controller and target machines must have connectivity since Ansible can not work if machines that it can not communicate
+	> for testing, we can SSH to the target1 VM from controller VM
+		$ ssh TARGET1_VM_IP_ADDRESS
+			- when prompted to test authenticity of host, accept
+			- provide the password of the account in target1 VM when prompted
+		$ exit
+			- exit in target1 VM to go back to controller vm
+
+Test connectivity of Ansible from controller VM to the target VMs
+1. create directory to contain the inventory file that will contain the set of host to be used by 'ansible' command 
+	> in our case, we will define the target1 VM here
+		$ mkdir test-project
+		$ cd test-project
+		$ cat > inventory.txt
+			- enter the line below
+			- target1 ansible_host=192.168.1.114 ansible_ssh_pass=osboxes.org
+		$ cat inventory.txt
+			- confirm the contents
+	> use command below to run the 'ping' module on the target1 host defined in inventory.txt
+		$ ansible target1 -m ping -i inventory.txt
+			- this should print the result of the ping test
+
+
+Create another target VM for ansible by cloning the centos-template VM
+1. Create new clone of centos-template VM
+	> same configuration as the 'ansible-target1' VM but with different name 'ansible-target2'
+2. Take note of the IP address of 'ansible-target2' to be used for SSH tu
+	> open the cloned VM
+	> open terminal inside
+	> execute 'ifconfig' command and take note of the 
+	> change /etc/hostname and /etc/hosts files
+		- hostname
+			= target2
+		- hosts
+			127.0.0.1	localhost ansiblecontroller
+			::1			localhost ansiblecontroller
+	> restart the VM
+	
+
+Test connectivity of Ansible from controller to target2
+1. Edit the inventory.txt in the ansible-controller to include target2
+
+EX:
+target1 ansible_host=192.168.1.114 ansible_ssh_pass=osboxes.org
+target2 ansible_host=192.168.1.115 ansible_ssh_pass=osboxes.org
+
+2. Do a ping test to target2, similar to the one we did in target1
+	> command:
+		ansible target2 -m ping -i inventory.txt
+	> this should fail since ansible-controller does not have the ECDSA key fingerprint corresponding to the target2 machine to the known host list
+	> earlier in target1, we added its key when we manually connect through it via SSH
+	> to fix this, we can either
+		1. do what we do earlier in target1 to the target2 machine
+		2. disable the host key checking in Ansible configuration
+			- NOT RECOMMENDED IN PRODUCTION
+			- to do this, edit the /etc/ansible/ansible.cfg file
+			- set the 'host_key_checking' property to false
+				= by default, it is enabled
+	> do a ping test again
+	
+
+	
+	
+NOTE:
+1. The Ansible inventory file defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.
+	> The inventory file can list individual hosts or user-defined groups of hosts. 
+	> This enables you to define groups of Junos devices with similar roles upon which to perform the same operational and configuration tasks. 
+	> For example, if you are managing one or more data centers, you can create Ansible groups for those switches that require the same set of operations, such as upgrading Junos OS and rebooting the device.

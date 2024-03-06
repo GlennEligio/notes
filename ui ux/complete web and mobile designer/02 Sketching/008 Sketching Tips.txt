@@ -1,0 +1,25 @@
+008 Sketching Tips
+
+Sketching Tips
+1. Dont worry about the sketches being messy
+	> goal is to throw out as many idea as possible, refining them will come later
+	> be lean, agile, sketch quickly and save time instead of worrying about the details
+2. Think about the sketch as BUILDING BLOCKS
+	> we can see all the items we added in sketchs a blocks, that we put together to make something more
+	> ex: in home page, we can create it with components like carousel, search bar, nav bar, etc
+3. Keep your sketches safe
+	> save the sketches you made
+	> we might revisit some of the sketches that you like or needed
+4. Always be prepared
+	> always keep a sketchpad or notebook near you
+	> reason is that there might be an idea that pops into your head and having them can help you record and later revisit
+5. Hang the sketches up so that they can easily be seen
+	> if you have your sketches physically, hang them in a cardboard
+	> if you have your sketches digital, display them in a separate monitor
+	> this will make it easy to view them all instead of shifting through the sketchpad or browser/desktop tabs
+	> other people can also easily see your sketches and may provide feedbacks on it
+6. Communicate to other team members
+	> designing, especially when youre in a team, is a collaborative process
+	> with your team members, you can receive valuable external feedbacks that you can use to improve your sketches
+	> example is when you want to implement a design feature, you might want to talk to a developer to discuss the feature feasibility
+7. 

@@ -1,0 +1,64 @@
+02. Introduction to Spring Cloud
+
+
+Spring Cloud
+	> provides tools for developers to quickly build some of the common patterns in distributed systems which includes
+		1. Configuration Management
+		2. Service Discovery 
+		3. Circuit Breaker
+		4. Intelligent Routing
+		5. Micro-proxy
+		6. Control bus
+		7. One-time tokens
+		8. Global locks
+		9. Leadership election
+		10. Distributed sessions
+		11. Cluster state
+	> composed of different projects under Spring Cloud, each providing different tools for making MicroService
+		1. Spring Cloud Config
+			- used to provide a centralized configuration management
+		2. Spring Cloud Bus
+			- enables microservices and the infrastructure components (e.g. configserver, api gateway) to talk to each other
+
+
+
+Challenges in building Microservices and their corresponding Spring Cloud solution
+
+1. Configuration Management	
+	> for this, we will use 
+		1. Spring Cloud Config Server	
+	> Spring Cloud config server provides an approach where you can store all configuration for all the different environment of all the microservices in a Git repository (or local Resource folder)
+	> with this, we can have a centralized location for storing configuration for different environments of different microservices
+		- makes it easy to maintain the configuration for all Microservices
+	> the Spring Cloud Config Server can be used to EXPOSE that configurations to all the microservices
+
+
+2. Dynamic Scalability
+	> for this challenge, we will use
+		1. Naming Server (Eureka)
+		2. Ribbon (Client Side Load Balancing)
+		3. Feign (Easier REST Clients)
+	> with Ribbon, we can dynamically distribute the load between all instances of service
+		- we can do this by scaling the service up or down by either creating or destroying instances of it
+	> with Eureka, we can do two things, Service Registration and Service Discovery
+		- Service Registration means we can register Services in it and give it a name
+		- Service Discovery means services can discovery each other as long as they are REGISTERED to same Eureka Server
+			= so instead of using the host url of a service, it will use the name it is registered
+			= ex: if Service A send request to Service B, it will use http://serviceBName/resource instead of http://localhost:8070/resource
+	> with Feign, we can write simple REST Client to be able to communicate with other microservices
+
+
+3. Visibility and Monitoring
+	> for this, we will use
+		1. Zipkin Distributed Tracing
+		2. Netflix Zuul API Gateway
+	> with Zipkin Distributed Tracing, we can trace request across multiple components
+	> with Netflix Zuul API Gateways, we can add cross-cutting functionalities to all Microservices like
+		- logging
+		- security
+		- analytics
+	
+
+4. Fault Tolerance
+	> for this, we will use
+		1. Hystrix

@@ -1,0 +1,71 @@
+Day 13
+
+
+WCS
+	> can host several Store sites at once
+	> with this we will need to use Store id to determine which Store we will apply specific changes
+	
+	
+Command method execution flow
+setRequestProperties -> validateParameters -> performExecute
+
+ECException -> global level, super class of all exception
+ECSystemException -> system level
+ECApplicationException -> Application level
+
+
+TIPS
+1. Create constants for the following since they are most commonly used
+	-> request parameter names 
+	-> method name
+	
+	
+Encrypt DB Password
+1. Go to C:\WCS_V9\bin
+2. Execute the following command
+	> wcs_encrypt <PLAIN TEXT PASSWORD>
+	> db2admin is the plain text password in current machine
+3. Check output, there should be two output, an ASCII and HEX one
+	> copy the ASCII one, and use it
+	
+ASCII encrypted string : H0/z9mOKBEgvYYmw6ct8KgE2ywCc0vyMHTawURb4vBo=
+HEX encrypted string : 48302F7A396D4F4B4245677659596D77366374384B674532797743633076794D485461775552623476426F3D
+
+C:\WCDE_V9\xml\policies\xml\SaveRatingCmd_ACP.xml
+
+
+crs-web
+	> contains the View-related logics
+	
+crs-web/WebContent/WEB-INF/spring/AuroraStorefrontAssetStore/view-ext.xm
+
+
+
+Creating Custom Store pages
+1. Create a directory in the "crs-web" project
+	> crs-web/WebContent/<StoreName>
+		- storename will define the Store the JSP page will be added
+2. Create a JSP file inside it (or JSPF file)
+3. Populate the JSP file with some HTML content
+
+Creating URL mapping for the new View / Store page sites
+1. Go to crs-web/WebContent/WEB-INF/spring/<StoreName>/views-ext.xml
+	> the StoreName should be the same as the StoreName of the Custom Store page where it is created
+2. Add a bean to define the mapping between url and Store page
+	> url: location of the JSP page relative to Store directory
+	> bean.id: string to use when calling for the Store page in browser
+3. Visit the page
+	> https://localhost:8443/wcs/shop/<BeanId>?storeId=<StoreEnt_Id>
+	> replace the <BeanId> with the BeanId you used in the mapping
+	> replace the <StoreEnt_Id> with the storeent id of the Store where you added in Custom Store page
+
+Ex:
+<!-- Mapping -->
+<bean id="MyNewView" class="com.ibm.commerce.store.mvc.view.spring.StoreInternalResourceView"> 
+    <property name="url" value="/Custom/MyNewView.jsp"/>  
+    <property name="credentialsAccepted" value="P"/> 
+    <property name="generic" value="1"/>
+</bean>
+
+URL:
+https://localhost:8443/wcs/shop/MyNewView?storeId=1

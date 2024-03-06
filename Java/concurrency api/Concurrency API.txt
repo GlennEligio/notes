@@ -1,0 +1,111 @@
+Java Concurrency and Multithreading
+
+Contents:
+01 Introduction
+02 Java Threads - Creating, Starting and Stopping Threads in Java
+03 The Java Memory Model 1 - The Basics
+04 The Java Memory Model 2 - Java Happens Before Guarantee
+05 Java Synchronized - The synchronized keyword in Java and Java synchronized blocks and methods
+06 Java Volatile
+07 CPU Cache Coherence + Java Concurrency
+08 Java ThreadLocal
+09 Race Conditions in Java Multithreading
+10 Concurrency vs Parallelism
+11 Thread Pools in Java
+12 Java Lock
+13 Java ExecutorService Part 1
+14 Java ExecutorService Part 2
+15 Deadlock in Java
+16 Deadlock Prevention in Java
+17 Java BlockingQueue
+18 Producer Consumer Pattern - With Java Example
+19 Compare and Swap in Java
+20 False Sharing in Java
+21 Single-threaded and Same-threaded designs
+22 Thread Congestion in Java
+
+
+
+
+
+
+
+
+
+01 Introduction
+
+History of Multitasking/Multithreading
+1. Singletasking
+	> here, a CPU can only execute one program (process) at a time
+2. Multitasking
+	> here, one CPU/Computer can run multiple programs at a time - by SWITCHING between executing one program at a time for a little time, and then switch to the next
+	> the switching mechanism is done by both CPU and OS
+	> may appear to user that programs are running at the same time
+3. Multithreading
+	> One CPU/Computer can run multiple programs (process) at a time, with multiple threads of execution inside
+ 	> The CPU switching from multiple programs still, and inside the program, it switches between multiple threads
+	> For multithreading with MULTIPLE CPUs, it is possible to perform programs/programs at the same time
+
+
+Why Multithreading?
+1. Better CPU utilization
+	> long running task (like IO task) can be delegated to another thread, instead the main thread waiting
+ 	> with this, we can perform other task then check of worker thread if the long running task is finished (and maybe get its output)
+2. Better IO utilization
+	> We can do IO task like reading and writing task more efficiently by utilizing different threads
+	> ex: two threads do a IO read alternately
+3. Higher application responsiveness
+	> Because of multithread, we can perform programs at the same time, hence less down time of application
+	> This will appear to user as the app being more responsive
+
+
+
+Multithreading Issues
+Shared mutable state Model:
+ > in this model, Thread can read the same memory
+ > issues include
+	1. Race conditions
+	2. Invisible writes
+	3. Congestion
+	4. Deadlock
+	5. Nested monitor lockout
+	6. Starvation
+	7. Slipped conditions
+	8. Missed signals
+
+No shared mutable state concurrency Model 
+ > threads dont share the same mutable state
+	1. Separate state concurrency
+	2. Functional parallelism
+	3. Parallel pipelines
+
+
+
+
+
+
+
+
+
+
+02 Java Threads - Creating, Starting and Stopping Threads in Java
+03 The Java Memory Model 1 - The Basics
+04 The Java Memory Model 2 - Java Happens Before Guarantee
+05 Java Synchronized - The synchronized keyword in Java and Java synchronized blocks and methods
+06 Java Volatile
+07 CPU Cache Coherence + Java Concurrency
+08 Java ThreadLocal
+09 Race Conditions in Java Multithreading
+10 Concurrency vs Parallelism
+11 Thread Pools in Java
+12 Java Lock
+13 Java ExecutorService Part 1
+14 Java ExecutorService Part 2
+15 Deadlock in Java
+16 Deadlock Prevention in Java
+17 Java BlockingQueue
+18 Producer Consumer Pattern - With Java Example
+19 Compare and Swap in Java
+20 False Sharing in Java
+21 Single-threaded and Same-threaded designs
+22 Thread Congestion in Java

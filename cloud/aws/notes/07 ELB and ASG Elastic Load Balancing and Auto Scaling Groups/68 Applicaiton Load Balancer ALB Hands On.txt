@@ -1,0 +1,66 @@
+68 Applicaiton Load Balancer ALB Hands On
+
+Creating EC2 instances to map to the ALB
+1. Create TWO EC2 instances
+	> same config as before
+	> exposes port for SSH and HTTP inbound everywhere
+	> add User Data script to run httpd service that exposes its modified index.html
+2. Check if they are working
+	> use the Public IP address to check
+
+User Data script to use
+#!/bin/bash
+# Use this for your user data (script from top to bottom)
+# install httpd (Linux 2 version)
+yum update -y
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
+echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
+
+
+
+Creating Application LoadBalancer
+1. Go to EC2 Dashboard > Load Balancing Section > Load Balancers
+2. Click 'Create Load Balancer' button
+3. Choose Application Load Balancer
+4. Basic Configuration:
+	> Scheme: Internet facing
+	> IP address type: IPv4
+5. Network Mapping
+	> VPC, select the default which is one VPC
+	> Mappings, select all the Availability Zone, at least two
+		- specifies where LB will be running
+6. Security group
+	> Create a new one, inbound, expose HTTP to all
+		- 'demo-sg-load-balancer'
+		- 'SG for ALB'
+7. Listeners and routing
+	> refers to the network mapping of the LoadBalancer. Here, we specific which target group will receive the request based on specific port
+	> Create a target group
+	> Set the target type ot Instances
+	> Name: demo-tg
+	> Port HTTP
+	> HTTP1
+	> for Registering target, select the two EC2 instance we created earlier, then set the port destination of the EC2 instance to port 80
+	> set Ports for the selected instances to port 80
+	> Include as pending below -> create target group -> Next
+	> then in the Target group dropdown, select the newly created Target group
+
+
+
+Testing the LoadBalancer
+1. Check the LoadBalancer dashboard
+2. Click the newly created Load balancer
+3. In the description tab, copy the DNS name and paste it to the browser
+4. Check if it reaches the EC2 instances correctly
+	> if we refresh this multiple times, the host name displayed in the index.html should change from time to time
+
+
+
+
+NOTE:
+1. Gateway Load Balancer is useful for when you need to monitor the incoming traffic and send the data to a third party to analyze
+2. When created a Load Balancer, we will create a MAPPING, where we map a specific port in Load Balancer to port of all EC2 instances included in the selected Target group
+3. We can use Security Groups to secure a Load Balancer
+4. EC2 instance included in a Target group will remain even if we stop it. But it will not receive any traffic

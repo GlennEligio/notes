@@ -1,0 +1,77 @@
+06. BufferedStreams
+
+
+BufferedStream
+	> subclass of FilterStreams
+	> composed of two types
+		1. BufferedInputStream
+		2. BufferedOutputStream
+	> big difference with FilterStream is that BufferedStreams have an internal "buffer"
+	> "buffer" is a byte[] array property of the BufferedStream
+
+
+BufferedInputStream
+	> extends to FilterInputStream
+	> A BufferedInputStream adds functionality to another input stream-namely, the ability to buffer the input and to support the mark and reset methods. 
+	> When the BufferedInputStream is created, an internal buffer array is created. 
+	> As bytes from the stream are read or skipped, the internal buffer is refilled as necessary from the contained input stream, many bytes at a time. 
+	> The mark operation remembers a point in the input stream and the reset operation causes all the bytes read since the most recent mark operation to be reread before new bytes are taken from the contained input stream.	
+
+
+Constructor of BufferedInputStream
+1. BufferedInputStream (InputStream in)
+2. BufferedInputStream (InputStream in, int size)
+	> int size defines the size of internal buffer array
+
+
+Properties of BufferedInputStream
+protected byte[] 	buf
+	> the internal buffer array where the data is stored
+
+protected int 		count
+	> the index one greated than the index of the last valid byte in the buffer
+
+protected int		marklimit
+	> The maximum read ahead allowed after a call to the mark method before subsequent calls to the reset method fail.
+protected int		markpos
+	> The value of the pos field at the time the last mark method was called.
+protected int		pos
+	> The current position in the buffer.
+
+
+
+BufferedOutputStream
+	> extends to FilterOuputStream
+	> The class implements a buffered output stream. 
+	> By setting up such an output stream, an application can write bytes to the underlying output stream without necessarily causing a call to the underlying system for each byte written.
+
+
+Constructor of BufferedOutputStream
+1. BufferedOutputStream (OutputStream out)
+2. BufferedOutputStream (OutputStream out, int size)
+	> int size refers to the size of buffer array
+
+
+Properties of BufferedOutputStream
+protected byte[]	buf
+	> The internal buffer where data is stored.
+protected int		count
+	> The number of valid bytes in the buffer.
+
+
+
+Mechanism of BufferedStream
+1. BufferedStream acts like FilterStream
+2. BufferedStream, with its "buffer" which is a byte[] array, will:
+	a. (BufferedInputStream) Read the bytes from the underlying InputStream and store it in "buffer"
+	b. (BufferedOutputStream) Write the bytes to be written to the underlying OutputStream
+3. Whenever the program reads or writes bytes to the underlying Input or Output stream, it will instead do it first in the "buffer"
+4. With this, the program doesn't read/write bytes directly to the stream source/destination by calling to the underlying system but instead do it in buffer first
+
+
+
+Benefits of BufferedStream
+1. Performance
+	> with BufferedStream and the "buffer", the program doesnt need to call to the underlying system to read/write bytes
+	> read/write of bytes to system is very taxing to the resources and system
+	> doing a read/write in the "buffer" byte[] array before doing the actual read/write increases performance

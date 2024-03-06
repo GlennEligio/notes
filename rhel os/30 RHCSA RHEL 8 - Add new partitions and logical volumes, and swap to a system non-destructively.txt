@@ -1,0 +1,46 @@
+30 RHCSA RHEL 8 - Add new partitions and logical volumes, and swap to a system non-destructively
+
+
+swap
+ > using the system disk to provide additional memory or ram
+ > if the system rans out of the memory, it will use the storage space that is previous assigned to as "swap" to use as addition to the memory
+
+GOAL:
+1. Create Logical Volume and assign it as swap
+
+
+Add Logical Volume as swap
+1. Create logical volume
+	$ lvcreate -L 2G -n swap1 vg1
+2. Setup a swap area for the logical volume
+	$ mkswap /dev/vg1/swap1
+3. Add the logical volume in the "etc/fstab" by adding the line below
+	/dev/vg1/swap1	swap	swap	defaults	0 0
+4. Enable swapon to the logical volume
+	$ swapon -a			for all devices
+	$ swapon /dev/vg1/swap1	for single device	
+5. Verify if swapon worked, there should be a swap area that matches the size of the logical volume
+	$ swapon -s
+
+
+Commands:
+mkswap
+ > setup a Linux swap area
+ > syntax:
+	$ mkswap [options] DEVICE [SIZE]
+ > EX:
+	$ mkswap /dev/vg1/swap1
+
+
+swapon, swapoff
+ > enable/disable devices and files for paging and swapping
+ > sypnosis
+	$ swapon [option] [specialfile...]
+	$ swapoff [-va] [specialfile...]
+ > option
+	-s 	display swap usage summary by device
+ > ex:
+	$ swapon /dev/vg1/swap1
+		> enable swapping for the /dev/vg1/swap1 LV
+	$ swapon -s
+		> list swap usage summary by device

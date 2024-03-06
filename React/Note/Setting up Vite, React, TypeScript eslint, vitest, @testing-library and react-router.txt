@@ -1,0 +1,18 @@
+Setting up Vite, React, TypeScript eslint, vitest, @testing-library and react-router
+
+
+01 Introduction
+
+vite + React + TypeScript Setup
+
+This setup will include
+1. eslint, eslint-airbnb-config, prettier
+2. vitest, jsdom, @testing-library
+3. react-router
+
+Steps
+1. Generate Vite + TypeScript app
+2. Setup eslint + typescript + prettier
+3. Setup vitest, jsdom, @testing-library
+4. Setup react-router
+5. Build an image search app

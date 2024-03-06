@@ -1,0 +1,106 @@
+Spring and Hibernate
+
+Course Road Map
+1. Getting Started with Spring and Hibernate: Dev Environment
+2. Apply Spring Inversion of Control / Dependency Injection
+3. Perform object/relational mapping with Hibernate
+4. Leverage the Hibernate API to develop CRUD app
+
+
+
+What is Spring?
+1. Very popular framework for building Java applications
+2. Initially a simple and lightwight alternative to J2EE
+3. Provides a large number of helper class to make enterprise development easier
+
+
+J2EE Structure
+
+Client-Side Presentation <--> Server-Side Presentation <--> Server-Side Business Logic <--> Database
+
+
+
+
+History of J2EE development
+
+J2EE 1.2
+Servlets
+JSP
+EJB
+	> Enterprise Java Beans
+RMI
+	> Remote Method Invocation
+JSM
+	> Java Message Server
+
+J2EE 1.3
+EJB
+CMP
+	> Container Manager Persistence
+JCA
+	> Java Connector Architecture
+
+J2EE 1.4
+Web Services Management Deploment
+
+Java EE 5
+Ease of use
+Enterprise Java Beans 3
+JPA
+	> Java Persistence API
+JSF
+	> Java Server Faces
+JAXB
+	> Java API for XML Binding
+JAX-WS
+	> Java Web Services (SOAP)
+
+Java EE 6
+Pruning
+Ease of use
+JAX-RS
+	> Java Web Services (REST)
+CDI
+	> Context Dependency Inject (IoC)
+Bean-validation
+
+Java EE 7
+JMS 2
+	> Java Message Service
+Batch TX
+Concurrency
+Web Sockets
+
+
+EJB v1 and v2 - Complexity
+	> early version of EJB (v1 and v2) were extremly complext
+	> multiple deployment descriptors
+	> multiple interfaces
+	> poor performance of Entity Beans
+
+
+Interfaces for Entity Beans
+1. EJB Client
+2. Home Interface
+3. Home Object
+4. Component Interface
+5. EJB Object
+6. Bean Class
+
+
+J2EE Development without EJB / Rise of Spring Framework
+
+Rod Johnson 
+	> Founder of Spring
+	> Created two books
+		1. J2EE Development without EJB
+		2. Java Development with the Spring Framework
+
+
+
+Why Spring is preferred over J2EE
+	> EJB is complex, hard to use, and slow downs the system at its early days?
+
+
+Spring vs J2EE today?
+	> Both, they have similar feature set and each of the skillset is transferrable to another framework

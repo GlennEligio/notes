@@ -1,0 +1,68 @@
+161 - CloudWatch Metrics & CloudWatch Alarms Overview
+
+
+Amazon CloudWatch Metrics
+ > CloudWatch provides metrics for every services in AWS
+ > Metric is a variable to monitor, it can be either
+	- CPUUtilization
+	- NetworkIn
+	- etc
+ > Metrics have TIMESTAMPS
+ > With this, we can create CloudWatch dashboards of metrics
+ 
+ EX: CloudWatch Billing metrics
+	> only available in us-east-1
+	> with this, we can see the EstimatedCharges metrics, which shows the estimated total bill charge based on your Cloud services consumption
+	> in this metric, it will show you a graph with the following variables as axis
+		- X-axis = timeline (ex: every 30 days)
+		- Y-axis = total estimated charge
+		
+
+Important Metrics
+EC2 instances:
+ > metrics that can be monitored includes:
+	- CPU Utilization
+	- Status Checks
+	- Network
+ > RAM/Memory is not included in the metrics
+ > Default metrics for every 5 minutes
+	- Option for Detailed Monitoring (metrics every 1 minute) is available but it cost more money
+EBS Volumes:
+ > metrics:
+	- Disk Read
+	- Disk Writes
+S3 buckets:
+ > metrics:
+	- BucketSizeBytes
+	- NumberOfObjects
+	- AllRequests
+Billing:
+ > metrics
+	- Total Estimated Charge (only in us-east-1)
+Service Limits:
+ > how much you've been using a service API
+Custom metrics:
+ > push your own metrics
+ 
+ 
+
+Amazon CloudWatch alarms
+ > Alarms are used to trigger notifications for any metrics
+ > Alarms actions are actions done when specific alarm is triggered and this includes but not limited to:
+	- Auto Scaling: increase or decrease EC2 instances "desired" count
+	- EC2 Actions: stop terminate, reboot, or recover an EC2 instance
+	- SNS notifications: send a notification into an SNS topic
+ > Various options to configure which includes:
+	- sampling frequency of data
+	- % like CPU utilization %, storage %, etc
+	- max amount
+	- min amount
+	- etc
+ > Can choose the period on which to evaluate an alarm as well
+ > Alarms states includes:
+	- OK: when everything is green
+	- INSUFFICIENT_DATA: When theres not enough data samples to figure out if everything is green or bad
+	- ALARM: when its bad, like the alarm is triggered or data is way past the alarm trigger configured
+	
+EX: Billing Alarm on the CloudWatch Billing metric
+ > we can create an Alarm to notify us if our total estimated charges goes beyond a specify amount (ex: max amount = $10)

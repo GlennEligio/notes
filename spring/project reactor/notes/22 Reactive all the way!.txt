@@ -1,0 +1,31 @@
+22 Reactive all the way!
+
+NOTES:
+1. In a Reactive web applications, only the HTTP request is waiting, everything else is asynchronous and non-blocking (reactive) in nature
+2. Example of a reactive web server is Netty
+	> It is a separate webserver meant for reactive programming
+
+
+Netty
+ > webserver meant for reactive programming
+ > handles the Http request coming in a reactive way
+ > the process includes
+	- User sent a request
+	- Browser waits for the response
+	- Netty does not wait for the response to come
+		- Instead it keeps track of the request to the Mono, in which it does not hold on to the Thread	
+		- Netty keeps the request information in a data structure somewhere in the memory
+		- This result in having no thread that are pending/idle
+	- It then returns a Mono back to Netty, 
+	- Netty will keep track of the Mono and does a callback to the Mono
+	- When the Mono is fulfilled, the return is processed by Netty
+ > with this, Netty can scale pretty well and can handle more request in parallel compare to a blocking, synchronous web servers
+
+
+
+EX: Spring Reactive Controller
+@GetMapping("/users/{userId}")
+public Mono<User> getUserDetails(@PathVariable String userId) {
+	return userService.fetchUserMono(userId);
+}
+

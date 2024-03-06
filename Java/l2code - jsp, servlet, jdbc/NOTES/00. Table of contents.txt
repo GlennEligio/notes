@@ -1,0 +1,20 @@
+JSP, Servlets and JDBC for Beginners
+
+Contents
+01 Course Introduction
+02 Getting Started with JSP
+03 JSP fundamentals
+04 Reading HTML Form Date with JSP
+05 State Management with JSP
+06 JSP Standard Tag Library (JSTL) - Core Tag
+07 JSP Standard Tag Library (JSTL) - Function Tags
+08 Build a Multi-Lingual App with JSTL - i18n tags
+09 Servlet Fundamentals
+10 MVC - Build an MVC App with Servlets and JSP
+11 Build A Complete Database Web App with JDBC - Part 1 
+12 Build A Complete Database Web App with JDBC - Part 2
+13 Build A Complete Database Web App with JDBC - Part 3
+14 Build A Complete Database Web App with JDBC - Part 4
+15 Build A Complete Database Web App with JDBC - Part 5
+16 Summary
+17 Bonus - Deploying a WAR file to Tomcat

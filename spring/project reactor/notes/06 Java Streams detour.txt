@@ -1,0 +1,26 @@
+06 Java Streams detour
+
+Java streams
+ > represent a sequence of data
+ > focus on computations
+ > unlike Collection which focus on storage
+ > iteration happens internally
+
+EX:
+// iterator through numbers array, and print all of them
+List<Integer> numbers = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
+number.stream().forEach(number -> System.out.println(number));
+
+
+Some Stream operations
+1. map		- map the Stream element into another form
+2. filter	- filter Stream element based on condition
+3. flatMap	- collects all the element of "Stream" returned, and "flatten" it so that all of them will be in a single Stream
+4. findFirst	- find the first element that matches the Predicate given
+
+
+Exercise prerequisite
+1. Java 9 and above
+2. IntelliJ or VSCode
+3. Git CLI
+

@@ -1,0 +1,220 @@
+Section 6 - Monitoring NiFi
+
+26. Monitoring NiFi
+27. Monitoring NiFi using Reporting Task
+28. Remote Monitoring NiFi using Reporting Task
+
+
+
+
+26. Monitoring NiFi
+Monitoring NiFi
+ > we can monitor the status of the NiFi by looking at the following sections:
+	1. Canvas-wide information
+	2. Component-level status information
+	
+Canvas-wide informations
+ > located at the status bar at the top of canvas
+ > shows all the information from the components display currently in the Canvas like the amount of components running, etc
+ > these includes (from left to right)
+	1. Active threads
+	2. Total queued data 
+		- number of queue FlowFile
+		- size of the queued FlowFile
+	3. Transmitting Remote Process Group
+	4. Not Transmitting Remote Process Group
+	5. Running components
+	6. Stopped components
+	7. Invalid components due to configuration issues
+	8. Disabled components
+	9. Last refreshed date
+ > it also shows information related to NiFi registry like:
+	1. Up to date Version process group
+	2. Locally modified version process groups
+	3. Stale version process groups
+	4. Locally modified and stale version process groups
+	5. Sync failure versioned process groups
+	
+	
+Component-level status information
+ > each component like Processor and ProcessGroup provide status information
+ > here, it also show THE SAME information as the Canvas-wide information, except the Last refershed date
+ > on top of the Canvas-wide informations, it also provide Component level status information such as
+	1. Amount of queued FlowFile
+	2. Amount of FlowFile that goes IN
+	3. Amount of Read/Write in bytes
+	4. Amount of FlowFile that goes OUT
+ > note that
+
+	
+	
+Status Snapshot configurations
+ > By default, the component level sampling rate is 5mins
+ > The status sampled is stored in the Status Repository
+ > To view statistics of a Component, we can right click -> View status history
+ > to change the snapshot frequency, we can change it in the "nifi.properties" file, with the "nifi.components.status.snapshot.frequency" property
+	
+	
+	
+Bulletin
+ > Bulletin is where all the errors/warnings/logs of each individual components is stored
+ > in the Components, it looks like a sticky note at the top right of the component
+	- by click it, it will show issues/errors produced by the processor in the past 5 mins
+ > we can also configure the log level that will be added in Bulletin for each component by going to its configuration
+	- Processor Configuration -> Settings -> Bulletin Level
+
+
+Bulletin board
+ > similar to Bulletin, but it reads all the logs provided by all of the components in the Canvas
+ > this can be access in the hamburger menu icon at the top right
+	
+	
+Demo: Bulletin
+ > here, we will make a processor go haywire
+ > using GetFile and providing an invalid directory, or directory that we have no permission, will throw an errors
+ 
+Steps:
+0. Create a directory
+	> set the "Read permission" directory to the current User to "Deny"
+1. Add a GetFile
+2. Configure the GetFile's property where the input directory is the directory defined earlier
+3. Run the processor
+	> we should see a red sticky note at the top right which states that we dont have access
+	
+	
+	
+	
+27. Monitoring NiFi using Reporting Task
+
+What is a Reporting Task?
+ > A reporting task in NiFi runs in the background and provides various statistics of the NiFi instance
+ 
+ 
+Example Reporting Tasks
+1. MonitorDiskUsage
+ > Checks the amount of storage space available for the specified directory and warns (via a log message and a System-Level Bulletin) if the partition on which it lives exceeds some configurable threshold of storage space
+ > configurations include
+	a. Threshold
+		- can be percentage (30%) or absolute value (8 GB)
+	b. Directory Location
+2. MonitorMemory
+ > Checks the amount of Java Heap available in the JVM for a particular JVM Memory Pool. 
+ > If the amount of space used exceeds some configurable threshold, will warn (via a log message and System-Level Bulletin) that the memory pool is exceeding this threshold.
+ > configurations:
+	a. Memory Pool of JVM to monitor
+	b. Usage Threshold
+		- can be percentage (30%) or absolute value (8 GB)
+	
+ 
+ 
+Adding a Reporting Task
+1. Click the global menu icon at the top right corner
+2. Select Controller settings
+3. Go to the Reporting Tasks tab
+4. Click plus icon at top right to add Reporting Tasks
+5. Add the following reporting task:
+	a. MonitorDiskUsage
+	b. MonitorMemory
+6. Configure the reporting task, where it will go off (send warning/alarm) IMMEDIATELY
+	a. MonitorDiskUsage
+		- set Threshold to 1%
+		- set Directory to your users folder (ex: C:/Users/glenneligio or /Users/glenneligio)
+	b. MonitorMemory
+		- set Memory pool to G1 Old Gen
+		- set Threshold to 1%
+7. Start the Reporting Tasks by clicking play icon
+8. Go to the dashboard and refresh
+9. We should see the bulletin at the top right corner (red file icon), and when hovering, we should see the warnings the Reporting Task fired off
+10. Alternatively, we can go to the Global menu icon at top right, then Bulletin board to see the warnings
+
+
+
+
+
+
+28. Remote Monitoring NiFi using Reporting Task
+
+
+Remote Monitoring Using Reporting Task?
+ > It's practically impossible for someone to sit in front of a computer and monitor for any errors using the UI
+ > NiFi provides various Reporting Tasks to monitor your NiFi instance remotely
+ > We will explore "SiteToSiteBulletinReportingTask" and "SiteToSiteMetricsReportingTask"
+ 
+ 
+ 
+What is Site-To-Site (S2S)?
+ > Site-To-Site is a protocol used to send data from one NiFi instance to another NiFi instance, in a smooth, effective, and secure way.
+ > You can also use the Site-To-Site protocol to transmit data from any application which produces data to a NiFi instance
+ 
+ 
+Demo - Prerequisites
+1. Two NiFi instance running
+	> to do so, create new copy of the nifi files in other directory
+	> then change the "nifi.web.http.port" property in nifi.properties file inside conf folder
+2. Remote Input port in the "destination" NiFi instance
+	> to create a remote input port, we need to add an input port at the ROOT LEVEL of the NiFi dashboard
+	> you should see a circle icon at the top left of the input port
+	
+Reporting task used
+
+
+Configuring Site to Site properties of NiFi
+1. Search the "Site to Site properties" in the nifi.properties
+2. Alternatively, search "nifi.remote.input.host" entry
+3. Change the following properties
+	a. nifi.remote.input.host
+		- should be the host of the other NiFi instance that we will talk to
+		- in my case, I have both nifi insntances running in same machine, so I will use the localhost (127.0.0.1)
+	b. nifi.remote.input.socket.port
+		- should be a free port in the machine
+		- nifi will use this port INTERNALLY, which means that we will still be using the port where the other NiFi instance is actually running (this is what it means by Site to Site protocol)
+		
+		
+EX:
+NiFi instance A
+nifi.web.http.port=8443
+nifi.remote.input.host=127.0.0.1
+nifi.remote.input.socket.port=8445
+
+NiFi instance B (destination)
+nifi.web.http.port=8444
+nifi.remote.input.host=127.0.0.1
+nifi.remote.input.socket.port=8446
+
+
+Using S2S Reporting Task
+1. In NiFI instance A, add the "SiteToSiteBulletinReportingTask"
+2. Configure the reporting task
+	> Instance URL
+		- url of the current instance (NiFi instance A)
+		- EX: http://${hostname(true)}:8443/nifi
+	> Destination URL
+		- url of the destination instance (NiFi instance B)
+		- Ex: http://${hostname(true)}:8444/nifi
+	> Input Port Name
+		- name of the Remote Input port setup in the Destination NiFi instance
+		- should be the same
+		- ex: bulletins
+3. In the NiFi instance B, create a setup where
+	> A Remote Input port at the ROOT level
+		- name is the same as the "Input Port Name" property
+	> A ProcessGroup with dummy input port inside
+	> connect the remote input port and processgroup
+4. Test the setup
+	a. Run the previous Reporting Task earlier to create entries in Bulletin
+	b. Run the input port in the Destination NiFi instance
+	c. Run the SiteToSiteBulletinReportingTask to send the bulletin entries
+	> we should see entries in the connection between the Remote input group and Dummy Processor
+5. Do the same with SiteToSiteMetricsReportingTask
+	a. add new Remote Input port in NiFi destination
+		- connect it to the dummy processgroup
+	b. add SiteToSiteMetricsReportingTask in the NiFi source
+	c. configure the SiteToSiteMetricsReportingTask
+		- destination url
+		- current instance url
+		- remote input port name
+	d. do the testing again
+
+
+NOTE:
+1. Change the default port of the NiFi instance (or any application) is one of the standard security recommendation in many organization

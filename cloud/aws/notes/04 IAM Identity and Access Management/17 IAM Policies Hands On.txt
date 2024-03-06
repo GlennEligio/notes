@@ -1,0 +1,92 @@
+17 IAM Policies Hands On
+
+Checking the Policy removal effect
+1. Login using the user we created with "admin" group
+2. Look for IAM service. This should be accessible to you
+3. Login on another browser (new session) using your root account
+4. Go to IAM, then groups, select "admin" group, and remove the user you created earlier in that group. This should make the IAM dashboard inaccessible to that user
+5. Go back to the User, check if you have permission for IAM 
+
+
+Checking the Policy addition effect
+1. In root account, go the the User
+2. Go to Permission tab, and click Add permissions
+3. Select "Attach existing policies directly" to add inline policy
+4. Select "IAMReadOnlyAccess", and add it to the User
+5. Check the IAM dashboard again, you should now have access to it
+6. Try to create a User group. When we create it, we should get an error saying we dont have permission. This is because we only have readonly access to IAM
+
+
+Checking the Multiple policies efffect
+1. Create another group "developer"
+2. Add any policy to it
+3. Go to the User groups
+4. Add the user created earlier in the "developer" and "admin"
+5. Go to the Users section
+6. See if the policies from both group is present
+
+
+
+Checking Policy JSON document
+1. In IAM, go to Policies section
+2. Search for AdministratorAccess and IAMReadOnlyAccess
+
+AdministratorAccess Policy JSON
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "*",
+            "Resource": "*"
+        }
+    ]
+}
+
+
+IAMReadOnlyAccess
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:GenerateCredentialReport",
+                "iam:GenerateServiceLastAccessedDetails",
+                "iam:Get*",
+                "iam:List*",
+                "iam:SimulateCustomPolicy",
+                "iam:SimulatePrincipalPolicy"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+
+
+Creating your own Policy
+1. Go to IAM Dashboard -> Policy
+2. Click Create Policy
+3. Use Visual Editor and select IAM as Service
+4. Search for ListUser and GetUser Actions
+5. Check the JSON tab to see the result
+6. Cancel the policy creation
+
+
+
+
+Cleanup
+1. Remove "developers" group
+2. Detach the inline policy added to the user
+
+
+
+
+
+
+
+NOTE:
+1. IAM needs to have AdministratorAccess policy in order to access
+2. In the IAM dashboard, we will be able to see all the policies of the User, either from the Group it is belonged to, or the inline policies provisioned
+3. When creating Policy with JSON, for "Action" and "Resource" fields, we are allowed to use wildcards like "*" to specify one or more Action or Resource

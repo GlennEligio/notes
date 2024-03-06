@@ -1,0 +1,102 @@
+RequestDispatcher
+	> used to forward a request into another url
+		- this url is typically the url of a Servlet in the same project
+	> remember that this will not change the url of the browser
+	> the url will NOT CHANGE (url will be the orginal url, not the one in requestDispatcher)
+	> the Request and Response will be the same one the Url1 receive
+		- unless they are modified before passing to forward()
+
+METHODS:
+forward(ServletRequest req, ServletResponse res)
+	> used to forward to its designated url
+
+
+Creating RequestDispatcher instance
+	> call getRequestDispatcher() of an HttpServletRequest or ServletRequest
+	> pass a String which will define where the request will be forwarded
+		- if forward to a Servlet in same project, need omit the (/) symbol in its url-link
+		- ex: "/welcome" will be "welcome"
+
+EX:
+
+	RequestDispatcher rd = req.getDispatcher("welcome");
+	rd.forward(req, res);
+
+
+PROCESS
+1. Client send request to Server1
+2. Server1 use requestDispatcher to send request, response to Server2
+3. Server2 process the request received and the response will be send to Server1
+4. Server1 will send back response it received from Server2 to Client
+
+
+
+
+
+sendRedirect(String url)
+	> method of HttpServletResponse
+	> will redirect the client into the different url
+	> this will CHANGE the url in the client/browser into the redirected Url
+	> example use in when in E-Commerce site, when checking out, it will redirect you to Payment Gateway site
+
+EX:
+
+	response.sendRedirect("https://www.google.com")
+
+
+PROCESS
+1. Client send request to Server1
+2. Server1 will send the request to Server2 using redirect
+3. Server2 will send a response to Client
+
+
+
+URL Rewritting
+	> technique of rewritting the Url by adding query parameters in it before redirecting the request to it
+
+MODIFYING Url passed on sendRedirect()
+	> in cases where the 2nd Server need to take a parameter from url, we can modify the url to be passed
+
+EX:
+	response.sendRedirect("page2?name=admin&pass=pass")
+
+
+
+
+REQUEST AND RESPONSE PROCESSING 
+	> since RequestDispatcher and Redirect behave in different way when it comes to the Request and Response processing
+
+RequestDispatcher
+	> RequestDispatcher resends the Request from Client to the new Page
+	> this means that we can modify the Request we received from Client, add Attributes to it, and send it to the new Page
+	> the new Page CAN ACCESS the attributes we added in the Request
+
+INSIDE Page 1
+
+	request.setAttribute("name", value);
+	request.getRequestDispatcher(request, response);
+
+INSIDE Page 2
+	
+	String name = request.getAttribute("name");
+
+
+
+
+Redirect
+	> with Redirect, we will send a NEW request and response to the new Page
+	> because of this, all the attributes of the request from Client that we added will NOT be accessible
+	> for us to send data to the new Page, we will use the HttpSession and setAttribute() , getAttribute() methods
+
+INSIDE Page 1
+
+	HttpSession session = response.getSession();
+	session.setAttribute("name", value);
+
+INSIDE Page 2
+	
+	String name = session.getAttribute("name");
+
+
+
+

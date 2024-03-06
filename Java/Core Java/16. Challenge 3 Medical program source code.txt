@@ -1,0 +1,327 @@
+Medical Program source code
+/*
+	tip: \n character -> new line
+	      \t character -> tab or indent
+
+Main class
+
+package com.glenneligio.medicalprogram;
+
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        int option;
+        Eye leftEye = new Eye ("Left eye", "Short sighted", "Blue");
+        Eye rightEye = new Eye ("Right eye", "Short sighted", "Blue");
+        Heart heart = new Heart ("Heart", "Normal", 65);
+        Stomach stomach = new Stomach ("Stomach", "PUD", false);
+        Skin skin = new Skin ("Skin", "Burned");
+        Person patient = new Person(null, 0, leftEye, rightEye, heart, stomach, skin);
+
+        Scanner scanner = new Scanner(System.in);
+        Prompt prompt;
+
+        //introduction prompt
+        System.out.println("Enter your name: ");
+        patient.setName(scanner.next());
+        System.out.println("Enter your age: ");
+        patient.setAge(scanner.nextInt());
+        prompt = new Prompt (patient.getName(), patient.getAge());
+
+        //main menu prompt
+        do{
+            prompt.mainPrompt(patient.getName(), patient.getAge());
+            option = prompt.promptOption();
+
+            switch (option) {
+                case 1 -> leftEye.promptOrgan();
+                case 2 -> rightEye.promptOrgan();
+                case 3 -> heart.promptOrgan();
+                case 4 -> stomach.promptOrgan();
+                case 5 -> skin.promptOrgan();
+            }
+        }while(option < 6);
+
+        if (option >= 6){
+            System.out.println("Program closed.");
+        }
+
+
+
+    }
+}
+
+Organ class
+
+import java.util.Scanner;
+
+public class Organ{
+	private String name;
+	private String condition;
+
+	public Organ(String name, String condition){
+	    this.name = name;
+	    this.condition = condition;
+	}
+
+	public String name getName() {
+	    return name;
+	}
+
+	public void setName(String name) {
+	    this.name = name;
+	}
+
+	public String condition getCondition() {
+	    return condition;
+	}
+
+	public void setCondition(String condition) {
+	    this.condition = condition;
+	}
+}
+
+
+Eye class (child class of Organ)
+
+package com.glenneligio.medicalprogram;
+
+import java.util.Scanner;
+
+public class Eye extends Organ{
+    private String color;
+    private boolean isClose = true;
+
+    public Eye(String name, String condition, String color) {
+        super(name, condition);
+        this.color = color;
+        this.isClose = isClose;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public boolean isClose() {
+        return isClose;
+    }
+
+    public void setClose(boolean close) {
+        isClose = close;
+    }
+
+    public void isClosed(){
+        if (isClose()) System.out.println(getName() + " is close.");
+        else System.out.println(getName() + " is open.");
+    }
+
+    @Override
+    public void promptOrgan(){
+        System.out.println("Name: " + getName());
+        System.out.println("Medical condition: " + getCondition());
+        System.out.println("Color: " + getColor());
+
+        if (!isClose()) {
+            System.out.println("\t1. Close the eye");
+        }else{
+            System.out.println("\t1. Open the eye");
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        int eyeOption = scanner.nextInt();
+
+        if (eyeOption == 1){
+            if(isClose()){
+                setClose(false);
+                System.out.println(getName() + " is now opened");
+            }else if(!isClose()){
+                setClose(true);
+                System.out.println(getName() + " is now closed");
+            }
+        }
+    }
+}
+
+
+
+Heart class 
+
+package com.glenneligio.medicalprogram;
+
+import java.util.Scanner;
+
+public class Heart extends Organ{
+    private int heartRate;
+
+    public Heart(String name, String condition, int heartRate) {
+        super(name, condition);
+        this.heartRate = heartRate;
+    }
+
+    public int getHeartRate() {
+        return heartRate;
+    }
+
+    public void setHeartRate(int heartRate) {
+        this.heartRate = heartRate;
+    }
+
+    @Override
+    public void promptOrgan(){
+        System.out.println("Name: " + getName());
+        System.out.println("Medical condition: " + getCondition());
+        System.out.println("Heart rate: " + heartRate);
+        System.out.println("     1. Change heart rate");
+        Scanner scanner =  new Scanner(System.in);
+        int heartOption = scanner.nextInt();
+
+        if(heartOption == 1){
+            System.out.println("Enter your new heart rate: ");
+            heartRate = scanner.nextInt();
+            System.out.println("Your new heart rate is " + heartRate);
+        }
+
+    }
+}
+
+Stomach class
+
+package com.glenneligio.medicalprogram;
+
+import java.util.Scanner;
+
+public class Stomach extends Organ{
+
+    private boolean isFed;
+
+    public Stomach(String name, String condition, boolean isFed) {
+        super(name, condition);
+        this.isFed = isFed;
+    }
+
+    public boolean isFed() {
+        return isFed;
+    }
+
+    public void setFed(boolean fed) {
+        isFed = fed;
+    }
+
+    @Override
+    public void promptOrgan(){
+        System.out.println("Name: " + getName());
+        System.out.println("Medical condition: " + getCondition());
+        System.out.println("Needs to be fed");
+        System.out.println("    1. Digest");
+        Scanner scanner = new Scanner(System.in);
+        int stomachOption = scanner.nextInt();
+
+        if (stomachOption == 1){
+            System.out.println("Digesting begins...");
+        }
+    }
+}
+
+Skin class
+
+package com.glenneligio.medicalprogram;
+
+public class Skin extends Organ{
+
+    public Skin(String name, String condition) {
+        super(name, condition);
+    }
+
+    @Override
+    public void promptOrgan(){
+        System.out.println("Name: " + getName());
+        System.out.println("Medical condition: " + getCondition());
+    }
+}
+
+Person class
+
+package com.glenneligio.medicalprogram;
+
+public class Person {
+    private String name;
+    private int age;
+    private Eye leftEye;
+    private Eye rightEye;
+    private Heart heart;
+    private Stomach stomach;
+    private Skin skin;
+
+    public Person(String name, int age, Eye leftEye, Eye rightEye, Heart heart, Stomach stomach, Skin skin) {
+        this.name = name;
+        this.age = age;
+        this.leftEye = leftEye;
+        this.rightEye = rightEye;
+        this.heart = heart;
+        this.stomach = stomach;
+        this.skin = skin;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Eye getLeftEye() {
+        return leftEye;
+    }
+
+    public void setLeftEye(Eye leftEye) {
+        this.leftEye = leftEye;
+    }
+
+    public Eye getRightEye() {
+        return rightEye;
+    }
+
+    public void setRightEye(Eye rightEye) {
+        this.rightEye = rightEye;
+    }
+
+    public Heart getHeart() {
+        return heart;
+    }
+
+    public void setHeart(Heart heart) {
+        this.heart = heart;
+    }
+
+    public Stomach getStomach() {
+        return stomach;
+    }
+
+    public void setStomach(Stomach stomach) {
+        this.stomach = stomach;
+    }
+
+    public Skin getSkin() {
+        return skin;
+    }
+
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+    }
+}

@@ -1,0 +1,72 @@
+IMPLEMENTING VALIDATIONS FOR RESTful Services
+
+spring-boot-starter-validation
+	> Starter dependency of Spring Boot that contains Validation API
+
+handleMethodArgumentNotValid()
+	> overrideable method inside ResponseEntityExceptionHandler abstract class
+	> Customize the response for MethodArgumentNotValidException.
+
+MethodArgumentNotValidException
+	> Exception to be thrown when validation on an argument annotated with @Valid fails.Extends BindException as of 5.3.	
+	> contains BindingResult property
+		- contains result of the data binding from Http Request body to the Java Object
+		- we can get the errors of data binding process using getError(), getFieldError(), getAllError(), etc
+
+
+When implementing Validations, we should 
+1. Add necessary dependency
+	> at least have the Hibernate Validator
+	> or you can use Spring Boot Starter Validation
+1. Add validation constraints annotations to Objects
+	> located in 
+		- ex: @Size, @Pattern, @NonNull
+	> defining "message" parameter of these Constraints annotation will have its value included in BindingResult error messages 
+2. Add @Valid to the @ResponseBody parameter of API endpoint method
+	> we normally put validations in POST and PUT since they receive Objects
+2. Define handleMethodArgumentNotValid() method of ResponseEntityExceptionHandler
+	> by default, if received Object doesnt pass validation, this method's default behavior is to send back a 400 Bad Request
+	> but like other @ExceptionHandler method we defined, we can give it a Response Body to give more information to Consumer about what happened
+	> for the ExceptionResponse, we want to give the following
+		- timestamp is new Date
+		- message is "Validation Failed"
+		- details is the "message" parameters we set in the constraints validation (@Size, @NonNull)
+			= we do this by calling getBindingResult().getAllErrors().toString() of MethodArgumentNotValidException parameter
+
+User class with constraint annotation
+public class User {
+
+	private Integer id;
+	@Size(min = 2, message = "Name must be at least 2 characters")
+	private String name;
+	private Date birthDate;
+
+API endpoint method in @RestController with @Valid in @ResponseBody parameter
+	// input - details of user
+	// output - CREATED & return the created URI
+	@PostMapping("/users")
+	public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
+		// fetch the saved User for its Id
+		User savedUser = service.save(user);
+		
+		// build URI for Location header (note: context path refers to base-url)
+		URI location = ServletUriComponentsBuilder
+				.fromCurrentContextPath()
+				.path("/users/{id}")
+				.buildAndExpand(savedUser.getId()).toUri();
+		
+		// return a ResponseEntity with 201 Created and pass the Location URI
+		return ResponseEntity.created(location).build();
+	}
+
+handleMethodArgumentNotValid() inside ResponseEntityExceptionHandler overriden
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		
+		ExceptionResponse exceptionResponse = 
+				new ExceptionResponse(new Date(), 
+										"Validation Failed", 
+										ex.getBindingResult().getAllErrors().toString());
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}

@@ -1,0 +1,388 @@
+<html>
+                <head>
+                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+                <title>033 FAQ Details on PageContext and Session objects</title>
+                </head>
+                <body>
+                <div class="container">
+                <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <p class="lead"><p><strong>PageContext</strong></p>
+
+<p><strong></strong></p>
+
+<p><strong></strong></p><strong>
+
+</strong>
+
+<p><strong>&gt;&gt; Please define clearly what pageContext is and what it does.</strong></p>
+
+
+
+<p>A PageContext instance provides access to all the namespaces associated with a JSP page, provides access to several page attributes, as well as a layer above the implementation details. Implicit objects are added to the pageContext automatically.</p>
+
+
+
+
+
+<p>The PageContext provides a number of facilities to the developer, including:</p>
+
+
+
+
+
+<p>- a single API to manage the various scoped namespaces<br>- a number of convenience API's to access various public objects<br>- a mechanism to obtain the JspWriter for output<br>- a mechanism to manage session usage by the page<br>- a mechanism to expose page directive attributes to the scripting environment<br>- mechanisms to forward or include the current request to other active components in the application<br>- a mechanism to handle errorpage exception processing </p>
+
+
+
+
+
+<p><strong>&gt;&gt; And how is pageContext.setAttribute("name", value) different from session.setAttribute("name", value).</strong></p>
+
+
+
+
+
+<p>PageContext has a set of attributes that are different from the Session object.</p>
+
+
+
+
+
+<p>The attributes set on PageContext are only available for a given page. The attributes are not available to other pages or servlets in the application.</p>
+
+
+
+
+
+<p>Session attributes are created per each user's session. The session attributes are unique to a given session id. Session attributes are available to other pages and servlets in the application for a given session id.</p>
+
+
+
+
+
+<p><strong>&gt;&gt; Your session ID is: ${pageContext.session.id}, why do this if we could get the session ID doing this: session.getId(). </strong></p>
+
+
+
+
+
+<p>As stated above, PageContext has a handle to the session object. You can access the session object via the pageContext or you can access the session object directly. Two different mechanisms for accessing the same object.</p>
+
+
+
+
+
+<p><strong>&gt;&gt; Please also include how it's instantiated and where it comes from besides its purpose.</strong></p>
+
+
+
+
+
+<p>The PageContext is implicitly instantiated by the application server.</p>
+
+
+
+
+
+<p>The JSP page will always have access to the PageContext.</p>
+
+
+
+<p>====<br></p>
+
+<p>The following information is from student Jose M. (thanks!)<br></p>
+
+
+
+<p><strong>Session Object</strong></p>
+
+
+
+<p><em>By default, JSPs have session tracking enabled and a new HttpSession 
+object is instantiated for each new client automatically. Disabling 
+session tracking requires explicitly turning it off by setting the page 
+directive session attribute to false as follows:</em></p>
+
+
+
+<p><em></em></p>
+
+<p><em></em></p><em>
+
+</em><p><em></em><br><em>&lt;%@ page session="false" %&gt;
+</em></p>
+
+
+
+
+
+
+
+
+
+<p><em></em></p>
+
+<p><em></em></p><em>
+
+
+
+
+
+</em><p>
+
+</p><p><em>The JSP engine exposes the HttpSession object to the JSP author through the implicit <strong>session</strong> object. Since <strong>session</strong> object
+ is already provided to the JSP programmer, the programmer can 
+immediately begin storing and retrieving data from the object without 
+any initialization or getSession().</em></p>
+
+
+
+<p><em></em></p>
+
+<p><em></em></p><em>
+
+
+
+</em>
+
+<p><em>Just thought it may 
+be useful to somebody that keeps wondering where the session object 
+comes from. <br></em></p>
+
+
+
+<p><em></em></p>
+
+
+
+<p>===</p>
+
+<p><strong>Question
+
+</strong></p>
+
+
+
+
+
+
+
+
+
+<p>When does the object we store in the session get updated? How does it work behind the scenes?</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><strong>Answer</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>When you use the statement:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><code>List&lt;String&gt; items = (List&lt;String&gt;) session.getAttribute("myToDoList"); </code> </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>The "items" variable is pointing to the SAME object in the session. 
+You don't get a local copy. You are pointing to the same object.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>Any changes to the "items" variable such as calling "items.add(...)" 
+performs the update on the session object since we are pointing to the 
+same object.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>As a result, there is no need to explicitly update the session object.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>You are not required to use the code below</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><code>session.setAttribute("myToDoList", items); </code> </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>---</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>The key here is that we are pointing to the same object in the session.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>Happy coding!</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>:-)</p>
+
+<p><br></p>
+
+
+
+<p><br></p></p>
+                </div>
+                </div>
+                </div>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+                </body>
+                </html>

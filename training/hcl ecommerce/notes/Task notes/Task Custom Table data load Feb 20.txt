@@ -1,0 +1,108 @@
+Task 3 CUSTOM TABLE DATA LOAD
+
+CUSTOM TABLE DATA LOAD STEPS
+1. Write SQL queries for
+	> Creating table
+	> Alter table to specify primary key
+	> Create Index on specific columns for the custom table
+	> Insert the custom table information in the KEYS table	
+		- make sure the tablename and primary key is in small caps
+	> Commit the changes
+2. Run the SQL for DB2
+3. Define wc-dataload.xml file with following content below
+4. Define wc-loader.xml file
+5. Define an input CSV file with following content
+	> first rows of the CSV indicates field names
+
+
+STEP 1: Write SQL queries
+STEP 2: Run the SQL for DB2
+CREATE TABLE X_CUSTOM_TABLE (
+  MY_SYSTEM_ID BIGINT NOT NULL,
+  MY_CUSTOM_ID BIGINT NOT NULL,
+  column1 VARCHAR(254),
+  column2 VARCHAR(254),
+  column3 VARCHAR(254)
+);
+
+ALTER TABLE X_CUSTOM_TABLE ADD PRIMARY KEY (MY_SYSTEM_ID);
+
+CREATE UNIQUE INDEX I0000_X_CUSTOM_TABLE ON X_CUSTOM_TABLE (
+  MY_CUSTOM_ID ASC
+);
+
+INSERT INTO KEYS (KEYS_ID, TABLENAME, COLUMNNAME, COUNTER, PREFETCHSIZE, LOWERBOUND, UPPERBOUND,
+OPTCOUNTER)
+VALUES ((SELECT MAX(KEYS_ID) + 1 FROM KEYS), 'x_custom_table', 'my_system_id', 0000, 1, 1000, 999999, 1);
+
+COMMIT;
+
+
+STEP 3: Define wc-dataload.xml file with the following content below
+wc-dataload.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<_config:DataLoadConfiguration
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.ibm.com/xmlns/prod/commerce/foundation/config ../../../../xml/config/xsd/wc dataload.xsd"
+xmlns:_config="http://www.ibm.com/xmlns/prod/commerce/foundation/config">
+<_config:DataLoadEnvironment configFile="./wc-dataload-env.xml" />
+<_config:LoadOrder commitCount="100" batchSize="1" dataLoadMode="Replace">
+<!--_config:property name="firstTwoLinesAreHeader" value="true" /-->
+<_config:LoadItem name="X_CUSTOM_TABLE" businessObjectConfigFile="wc-loader-custom.xml" >
+<_config:DataSourceLocation location="MyCustomData.csv" />
+</_config:LoadItem>
+</_config:LoadOrder>
+</_config:DataLoadConfiguration>
+
+
+STEP 4: Define wc-loader.xml file
+<?xml version="1.0" encoding="UTF-8"?>
+<_config:DataloadBusinessObjectConfiguration
+	xmlns:_config="http://www.ibm.com/xmlns/prod/commerce/foundation/config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.ibm.com/xmlns/prod/commerce/foundation/config ../../../../xml/config/xsd/wc-dataloadbusinessobject.xsd">
+  <_config:DataLoader className="com.ibm.commerce.foundation.dataload.BusinessObjectLoader">
+    <_config:DataReader className="com.ibm.commerce.foundation.dataload.datareader.CSVReader"
+firstLineIsHeader="true" useHeaderAsColumnName="true">
+      <_config:Data>
+        <_config:column number="1" name="MY_CUSTOM_ID" />
+        <_config:column number="2" name="column1" />
+        <_config:column number="3" name="column2" />
+        <_config:column number="4" name="column3" />
+      </_config:Data>
+    </_config:DataReader>
+    <_config:BusinessObjectBuilder
+className="com.ibm.commerce.foundation.dataload.businessobjectbuilder.TableObjectBuilder">
+    <_config:Table name="X_CUSTOM_TABLE">
+      <!-- System generated primary key-->
+      <_config:Column name="MY_SYSTEM_ID" value="MY_SYSTEM_ID" valueFrom="IDResolve">
+        <_config:IDResolve tableName="X_CUSTOM_TABLE" generateNewKey="true" />
+      </_config:Column>
+      <!-- Unique key fed from the CSV file-->
+      <_config:Column name="MY_CUSTOM_ID" value="MY_CUSTOM_ID" />
+      <_config:Column name="column1" value="column1" />
+      <_config:Column name="column2" value="column2" />
+      <_config:Column name="column3" value="column3" />
+    </_config:Table>
+    <_config:BusinessObjectMediator
+className="com.ibm.commerce.foundation.dataload.businessobjectmediator.TableObjectMediator" />
+    </_config:BusinessObjectBuilder>
+  </_config:DataLoader>
+</_config:DataloadBusinessObjectConfiguration>
+
+
+STEP 5. Define an input CSV file
+Content:
+MY_CUSTOM_ID,column1,column2,column3
+1234,mydata_old,mydata_old
+1234,mydata_new, mydata_new
+2345,mydata_old,mydata_old
+
+
+STEP 6: Run the dataload now
+dataload.bat 'C:\Users\Admin\Documents\Task Custom Table Dataload\wc-dataload.xml
+
+
+
+ERRORS:
+

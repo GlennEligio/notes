@@ -1,0 +1,65 @@
+61 RHCSA RHEL 8 - Using AutoFS with NFS
+
+
+Prerequisite for AutoFS
+1. NFS Client and Server sharing the same network
+2. /etc/exports that is configured to share the home directory of a user
+3. Client must have "autofs" installed
+	> check if you already have one install using systemctl status
+4. UserId AND GroupId of both the user in Client and user that shares the homedir must match
+	> user in Client will follow the user with NFS server's userid and groupid
+5. If id of user in Client is modified, modify the ownership of all the files that is owned by the said user
+	> usermod doesnt handle userid updates in the files/folders
+
+
+
+Setting up the NFS Server for AutoFS
+1. Add the "/home" directory in the /etc/exports to be used by Client with AutoFS
+	> $ vi /etc/exports
+	> add "/home 10.0.2.4(rw,no_root_squash)"
+		- check NFS section to see that this means
+2. Restart nfs-server service
+	> $ systemctl restart nfs-server.service
+	> $ systemctl status nfs-server.service
+
+
+Setting up NFS Client for AutoFS
+NOTES: In this example, the userid:groupid of server = 1005:1007, the userid:groupid of client = 1001:1001
+1. Check if the users IDs between the NFS server and client are the same using "id"
+	> $ id user1	in NFS server
+	> $ id user1	in NFS Client
+2. If not the same, use usermod command to make their userid and groupids match
+	> $ usermod -u 1005 user1		executed in client, to match the one in server
+	> $ usermod -g 1007 user1		executed in client as well
+3. Change the user and group ownership of the files/folder of the user (user1 in this case)
+	> this is due to the usermod not updating the file/folder owned by the modified user
+	> $ for i in `file / -user 1001`; do chown 1005 $i; done
+	> $ for i in `file / -group 1001`; do chgrp 1007 $i; done
+4. Install autofs if its still not available in system
+	> $ dnf install autofs
+	> $ systemctl status autofs
+	> $ systemctl start autofs
+5. Configure the autofs, first point autofs to our autofs.home file
+	> $ vi /etc/auto.master.d/home.autofs
+	> add the following line 
+		/home		/etc/autofs.home
+6. Create a new /etc/autofs.home with the actual configuration of autofs
+	> $ vi /etc/autofs.home
+	> add the line below
+		*	-rw	10.0.2.15:/home/&
+7. Enable and restart autofs
+	> $ systemctl restart autofs
+	> $ systemctl enable autofs
+
+
+Testing the AutoFS
+1. In client, login as the user used (user1) and create a file in /home/user1 
+	> $ touch fromclient
+2. In server, check the file created in the same directory
+	> $ ls -lhtra /home/user1
+3. In server as well, create a file in /home/user1
+	> $ touch fromserver
+4. In client, check the /home/user1 for the file
+	> $ ls -lhtra /home/user1
+5. Check the user and group ownership of the files created
+	> the user and group ownership must match from the "ls -lhtra" output in both server and client

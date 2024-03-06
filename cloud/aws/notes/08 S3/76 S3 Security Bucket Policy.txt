@@ -1,0 +1,93 @@
+76 S3 Security Bucket Policy
+
+S3 Security
+1. User based
+ > IAM policies - which API calls should be allowed for a specific user from IAM console
+2. Resource based
+ > Bucket Policies - bucket wide rules from the S3 console - allows cross account
+ > Object Access Control List (ACL) - finer grain
+ > Bucket Access Control List (ACL) - less common
+3. Encryption
+ > encryption objects in Amazon S3 using encryption keys
+
+
+Examples Use Cases and Solution
+1. Public Access - Use Bucket Policy
+
+Anonymous		S3 Bucket Policy (Allows Public Access)
+www website ---------->	S3 Bucket
+visitor
+
+
+
+2. User Access to S3 - IAM permissions
+
+(IAM Policy)		
+IAM User	------>	S3 Bucket
+
+
+
+3. EC2 instance access - Use IAM Roles
+
+EC2 Instance 	------> S3 Bucket
+(EC2 Instance Role
+attached with 
+IAM permission)
+
+
+
+4. Advance: Cross-Account Access - Use Bucket Policy
+
+IAM User
+Other AWS Account	------>	S3 Bucket 
+				(with S3 Bucket Policy
+				that Allows Cross-Account)
+
+
+
+
+S3 Bucket Policies
+JSON based policies
+ > Resources: buckets and objects
+ > Action: Set of API to Allow or Deny
+ > Effect: Allow/Deny
+ > Principal: The account or user to apply the policy to
+
+EX:
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicRead",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::examplebucket/*"
+      ]
+    }
+  ]
+}
+
+
+Use S3 bucket for policy to:
+ > Grant public access to the bucket
+ > Force objects to be encrypted at upload
+
+
+
+Bucket settings for Blocking Public Access
+ > you can access this in Permissions tab of the Bucket
+ > these settings were created to prevent company data leaks
+ > if you know your bucket should never be public, leave these on
+ > Can be set at the account level
+
+
+
+
+NOTES:
+1. An IAM principal can access an S3 object if
+	> the user IAM permission allow it OR the resource (in this case, the Bucket) policy ALLOWS it
+	> AND there's no explicit DENY

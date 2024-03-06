@@ -1,0 +1,26 @@
+09. Adding Bootstrap and Fontawesome in React
+
+includes
+Bootstrap inside React
+Font awesome library inside React
+
+
+
+Use Bootstrap inside React
+1. Add bootstrap npm in the project
+	npm install bootstrap
+2. Check if bootstrap is added in the package.json
+3. To use class templates of bootstrap, 
+	1. add "className" attribute of the HTML element
+	2. pass the class templates of bootstrap
+
+
+Font awesome library inside React
+1. Add font-awesome module in project
+	npm install font-awesome
+2. Check if font-awesome module is inside package.json dependencies
+3. To use class templates of font-awesome
+	1. add "class" attribute to the HTML element
+	2. pass the class templates of font-awesome
+
+

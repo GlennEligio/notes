@@ -1,0 +1,15 @@
+04. Linux Find Command
+
+find command
+	> a command line utility in UNIX for walking a file hierarchy
+	> can be used to fine files and directory and perform subsequent operations on them
+	> supports searching by file, folder, name, creation datte, modification date, owner, and permission
+	> accepts ant matchers string pattern as values
+
+find <directory> <option> <file-name>
+	> used to find files inside specified directory
+	> options or flags include
+		"-name"		= for searching using file name
+		"-empty"	= for searching empty file and directories
+	> the file-name can take ant matchers
+		ex: find /root -name *.txt	= for finding files that ends with .txt

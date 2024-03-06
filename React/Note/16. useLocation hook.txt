@@ -1,0 +1,28 @@
+16. useLocation hook
+
+React useLocation hook
+	> The useLocation hook is a function that returns the location object that contains information about the current URL. 
+	> Whenever the URL changes, a new location object will be returned.
+
+Location object properties
+1. hash: 	the anchor part (#)
+2. pathname: 	the path name
+3. search: 	the query string part
+4. state
+5. key
+
+useLocation hook Use cases
+	> useful in many cases when you want to trigger a function based on a change of the URL. 
+	> In general, it is used in conjunction with the useEffect hook provided by React.
+
+Ex: For example, the pages of your React app are taller than the height of the screen (100 vh) and you want to scroll to the top of the page every time the user switches the route, like this:
+
+// Create a custom hook that uses both useLocation and useEffect
+const useScrollToTop = () => {
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    // scroll to the top of the browser window when changing route
+    // the window object is a normal DOM object and is safe to use in React.
+  }, [location]);
+};

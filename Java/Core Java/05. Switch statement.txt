@@ -1,0 +1,26 @@
+	int a = 1;
+        int b = 3;
+
+        /* switch (valueBeingCompared)
+                case valueToCompare:
+                    // add logic / function
+                    break; // will end the switch statement if case is TRUE
+                default:  // equivalent to else in if-else statements
+                    // add logic / function
+                    break;
+         */
+
+        switch (a){
+
+            case 1:
+                System.out.println("A is One");
+                break;
+            case 2:
+                System.out.println("A is Two");
+                break;
+            case 3:
+                System.out.println("A is Three");
+                break;
+            default:
+                System.out.println("A is not One, Two, or Three");
+                break;

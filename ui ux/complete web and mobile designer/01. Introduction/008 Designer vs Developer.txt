@@ -1,0 +1,35 @@
+008 Designer vs Developer
+
+
+Designer
+ > focused on the aesthetics, experience of the user
+
+Developer
+ > focused more on the internals, and the things that make the product work
+
+Project phases
+1. Planning phase
+	> most important phase
+	> we will mostly talk to the client what their needs are, and plan according to that
+2. Design phase
+	> all about using the information in the planning phase and making it into reality
+	> examples are site structure, mobile structure, visual representation that users sees
+3. Development phase
+	> where we do the programming work
+	> we take all the assets and information that we gathered from the previous phase (Design phase) and try to implement it on a live website, or a live mobile app
+	> typically uses html css and javascript to make the designs come alive
+4. Launch phase
+	> this is where we deliver our product to the users, to the public
+	> we might do some tweaks, or some testing of our site to make sure that it works properly
+5. Post launch phase
+	> this is where we handoff the product to the client
+	> we will also monitor the launch of the product, how the users use the product, or if any issues are encountered
+
+
+NOTES:
+1. Project phases runs in loop
+	> all issues encountered in post launch will be logged to be used for planning phase again
+2. We will "never" be finished in our product
+	> we can always improve the product based on feedbacks
+3. Designer is in charge with planning, design, and post-launch phases
+4. Developers is in charge with development, launch, and post-launch phases

@@ -1,0 +1,18 @@
+13 A modern definition of Cloud
+
+
+Cloud characteristics
+1. Rent resource vs purchase hardware
+2. Pay for what you use
+	> services that you use is metered
+3. Runs on someone else's Data Center
+	> with this, the Geographical distribution of the resources you rented will come into play (ex: setting up EC2 instances in nearest Data Center to you)
+4. Cloud provider manages the physical hardware
+5. Cloud provider manages software they "they" provide
+	> ex: AWS EC2, where AWS manages the creation and start of the EC2, which is essentially a VM, anything that User does inside the VM will be user's responsibility
+
+
+Shared Responsibility Principle
+ > related to the Cloud and its services
+ > Cloud providers have a boundaries set to specify their responsibility. Outside of this and its the User's responsiblity
+ > ex: with AWS EC2, its AWS responsibility to create and start the EC2. Anything that you do inside the EC2 is the User's responsiblity

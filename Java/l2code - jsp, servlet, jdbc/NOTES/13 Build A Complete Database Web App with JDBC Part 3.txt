@@ -1,0 +1,269 @@
+13 Build A Complete Database Web App with JDBC Part 3
+
+Content
+89 Add Student - Overview
+90 Add Student - Setting up the Button
+91 Add Student - Constucting the HTML form
+92 Add Student - Developing the Servlet
+93 Add Student - Creating the JDBC Code
+
+
+
+
+
+
+
+
+89 Add Student - Overview
+
+Topics
+1. Add Student
+2. Big Picture
+3. Sequence Diagram
+
+
+Add Student
+ > add Button to add Student
+ > create JSP that contains form for adding Student
+
+
+Big Picture
+1. list-students.jsp contains button for adding Student. When click, it will navigate to add-student-form.jsp
+2. add-student-form.jsp takes input for student's firstName, lastName, and email and sends the data to StudentControllerServlet as POST request
+3. Inside StudentControllerServlet, we will override doPost() where we will handle the student register by using StudentDbUtil
+4. StudentDbUtil communicates with the database to add the student data to it, and method will return something to notify the status of adding
+
+
+Sequence Diagram
+1. doGet() of StudentControllerServlet is executed
+	> checks if the command parameter is "add"
+2. addStudent() of StudentDbUtil is executed if command parameter is "add"
+
+
+To Do List
+1. Update list-student.jsp
+	> New "Add Student" button
+2. Create HTML form for new student
+3. Update StudentControllerServlet
+	> Handle request to add student
+4. Update StudentDbUtil
+	> Add new JDBC method: addStudent(...)
+
+
+
+
+
+
+
+
+
+90 Add Student - Setting up the Button
+
+GOAL:
+1. Add a "Add Student" button where, when clicked, redirects the page to "add-student-form.jsp" page
+
+// inside list-students.jsp
+	<!-- put new button: Add Student -->
+	<input type="button" value="Add Student"
+		onclick="window.location.href='add-student-form.jsp'; return false;"
+		class="add-student-button"/>
+
+
+// add-student-form.jsp to avoid error 404 page
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Add Student</title>
+</head>
+<body>
+	Placeholder for Add Student Form
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+91 Add Student - Constucting the HTML form
+
+GOAL:
+1. Create add-student-form.jsp
+	> imports the two CSS files for styling
+	> contains form that sends a GET request to StudentControllerServlet
+		- takes firstname, lastName, and email data
+	> contains a hidden input that contains variable "command" with value "ADD"
+ 	> contains a link that sends back to the list-students.jsp
+
+
+// add-student-form.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Add Student</title>
+<link type="text/css" rel="stylesheet" href="css/style.css"/>
+<link type="text/css" rel="stylesheet" href="css/add-student-style.css"/>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="header">
+			<h2>FooBar University</h2>
+		</div>
+	</div>
+	<div id="container">
+		<h3>Add Student</h3>
+		<form action="StudentControllerServlet" method="GET">
+			<input type="hidden" name="command" value="ADD"/>
+				
+			<table>
+				<tbody>
+					<tr>
+						<td><label>First name:</label></td>
+						<td><input type="text" name="firstName"/></td>
+					</tr>
+					<tr>
+						<td><label>Last name:</label></td>
+						<td><input type="text" name="lastName"/></td>
+					</tr>
+					<tr>
+						<td><label>Email:</label></td>
+						<td><input type="text" name="email"/></td>
+					</tr>
+					<tr>
+						<td><label></label></td>
+						<td><input type="submit" value="Save"/></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+		<div style="clear: both;"></div>
+		<p>
+			<a href="StudentControllerServlet">Back to List</a>
+		</p>
+	</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+92 Add Student - Developing the Servlet
+
+GOAL:
+1. Modify StudentControllerServlet doGet() method
+	> checks the "command" parameter value using switch case
+	> if command is "ADD", execute addStudent(...) method inside StudentControllerServlet (will be created)
+	> if command is "LIST", execute listStudents(...) method
+	> default case is "LIST" behavior
+
+// doGet() of StudentControllerServlet
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		try {
+			// read the "command" parameter
+			String theCommand = request.getParameter("command");
+			
+			if (theCommand == null) {
+				theCommand = "LIST";
+			}
+			
+			switch(theCommand) {
+			case "LIST":
+				listStudents(request, response);
+				break;
+			case "ADD":
+				addStudent(request, response);
+				break;
+			default:
+				listStudents(request, response);
+			}
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+	}
+
+
+// addStudent() of StudentControllerServlet
+	private void addStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		// read student info from form data
+		String firstName = request.getParameter("firstName");
+		String lastName = request.getParameter("lastName");
+		String email = request.getParameter("email");
+		
+		// create a new student object
+		Student theStudent = new Student(firstName, lastName, email);
+		
+		// add the student to the database
+		studentDbUtil.addStudent(theStudent);
+		
+		// send back to main page (the student list)
+		listStudents(request, response);
+	}
+
+
+
+
+
+
+
+
+
+
+
+93 Add Student - Creating the JDBC Code
+
+GOAL:
+1. Create addStudent() method in StudentDbUtil
+	> takes Student as input
+	> inserts the student info using PreparedStatement
+
+NOTE:
+1. Parameter index of PreparedStatement (for set methods) is ONE based. Meaning that first index is 1
+2. In practice, we will want to know the status of Add Student (or any database process in general) and then show an appropriate display to the webapp user based on it
+
+
+// addStudent() of the StudentDbUtil class
+	public void addStudent(Student theStudent) throws SQLException {
+
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+
+		try {
+			// get db connection
+			myConn = dataSource.getConnection();
+
+			// create sql for insert
+			String sql = "INSERT INTO student " + "(first_name, last_name, email) " + "values (?, ?, ?)";
+			myStmt = myConn.prepareStatement(sql);
+
+			// set the param values for the student
+			myStmt.setString(1, theStudent.getFirstName());
+			myStmt.setString(2, theStudent.getLastName());
+			myStmt.setString(3, theStudent.getEmail());
+
+			// execute sql insert
+			// preferrably, we will use the return value to denote if add is successfully or
+			// not
+			myStmt.execute();
+		} finally {
+			// clean up JDBC objects
+			close(myConn, myStmt, null);
+		}
+
+	} 

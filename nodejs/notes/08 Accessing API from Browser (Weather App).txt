@@ -1,0 +1,336 @@
+08 Accessing API from Browser (Weather App)
+
+Content
+54 The Query String
+55 Building a JSON HTTP Endpoint
+56 ES6 Aside: Default Function Parameters
+57 Browser HTTP Requests with Fetch
+58 Creating a Search Form
+59 Wiring up the User Interface
+
+
+GOAL:
+1. Create a webserver that serves JSON data regarding the data it sends via HTTP request
+
+
+
+
+
+
+
+
+
+
+54 The Query String
+
+Accessing Query Parameters of Request
+ > we can access the Query Parameters of the Request (or any properties of the http request in general) in the Request argument of RequestHandlerCallback
+ > in the Request parameter, we can use the "query" properties which contains the query parameters in object format (in key:value pairs)
+
+EX:
+// url
+http://localhost:3000/products?search=games&rating=4.5
+
+// endpoint
+app.get("/products", (req, res) => {
+  console.log(req.query);
+  console.log(req.query.search);
+  res.send({
+    products: [],
+  });
+});
+
+// console log
+{ search: 'games', rating: '4.5' }
+
+
+NOTE:
+1. Sending response TWICE will cause the error below	
+	> Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+	> to avoid this, make sure we only send response ONCE
+
+
+
+
+
+
+
+
+
+
+55 Building a JSON HTTP Endpoint
+
+Building a JSON HTTP Endpoint
+ > with our current knowledge, we can build a JSON HTTP endpoint which
+	1. takes address as query parameter
+	2. returns a JSON with forecast, location, and address as properties
+
+EX:
+// URL
+http://localhost:3000/weather?address=Caloocan
+
+// endpoint
+app.get("/weather", (req, res) => {
+  if (!req.query.address) {
+    return res.send({
+      error: "You must provide an address",
+    });
+  }
+
+  const address = req.query.address;
+
+  geocode(address, (error, { longitude, latitude, location } = {}) => {
+    if (error) {
+      return res.send({
+        error,
+      });
+    }
+
+    forecast(longitude, latitude, (error, forecast) => {
+      if (error) {
+        return res.send({
+          error,
+        });
+      }
+
+      res.send({
+        forecast,
+        location,
+        address,
+      });
+    });
+  });
+});
+
+// response json
+{
+"forecast": "Partly cloudy. It is currently 88 degrees out. It feels like 97 degrees out.",
+"location": "Kalookan City, Caloocan, Philippines",
+"address": "Caloocan"
+}
+
+
+
+
+
+
+
+
+
+
+
+56 ES6 Aside: Default Function Parameters
+
+Default Function Parameters
+ > in JS, we can add default value to function parameter
+	- this default value will be used when NO VALUE is passed for this argument
+ > this default value will be OVERRIDEN when an argument for this parameter is passed
+ > with this, we are allowed to pass no argument to the parameter IF the said parameter with default value is the LAST PARAMETER of the function
+	- this is because parameters are NOT SKIPPED if we dont pass any value
+	- ex: if we have 2 parameter and 1st one have default value, passing only 1 argument will result to the argument being passed to 1st parameter instead of 2nd
+
+EX:
+const greeter = (name = "user", age) => {
+  console.log("Hello " + name);
+};
+
+greeter();
+greeter("Andrew");
+
+
+NOTE:
+1. Default function parameter is useful when we have an object parameter that is DESTRUCTURED
+	> if we dont have a default value to a destructured object parameter and we pass no value for it, we will get an error that states
+	> Cannot destructure property 'propName' of 'undefined' as it is undefined.
+		- reason is that we are accessing a property of "undefined", which doesnt exist
+	> to solve this issue, we can assign a default value of an empty object
+		- empty object have ALL its properties set to UNDEFINED
+
+EX:
+// code
+const transaction = (type, { label, stock } = {}) => {
+  console.log(type, label, stock);
+};
+
+transaction("order", product);
+transaction("order");
+
+// console log
+order Red notebook 201
+order undefined undefined
+
+
+
+
+
+
+
+
+
+
+
+57 Browser HTTP Requests with Fetch
+
+GOAL:
+ > Be able to create an HTTP request in Client-side JavaScript in order to update the webpage
+
+Solution:
+ > Fetch API
+
+Fetch API
+ > API used to send HTTP request
+ > not part of JavaScript, but a Browser-based API
+
+Fetch API methods/object
+fetch(uri: string, options: object): Promise
+ > used to send http request
+ > takes two argument
+	1. uri string
+	2. options object
+		- contains properties which points to the properties of the HTTP request
+		- if no object is passed, the default value of options is an object with properties of
+			-> {method: "GET", header: {}, body: null}
+ > returns a Promise object which represents the eventual completion (or failure) of an asynchronous operation and its resulting value
+ > in fetch, to access the value of the resolved or rejected Promise, we will call either
+	1. then(callback: (success) => {})
+		- method that takes a callback
+		- this callback receives the returned value when Promise is resolved
+	2. catch(callback: (failure) => {})
+		- method that takes a callback
+		- this callback receives the returned value when Promise is rejected
+
+EX:
+fetch("http://localhost:3000/weather?address=boston").then((response) => {
+  response.json().then((data) => {
+    if (data.error) {
+      return console.log(data.error);
+    }
+    console.log(data.location);
+    console.log(data.forecast);
+  });
+});
+
+// Console logs
+Boston, Massachusetts, United States
+Partly cloudy. It is currently 70 degrees out. It feels like 70 degrees out.
+
+
+
+
+
+
+
+
+
+
+
+
+58 Creating a Search Form
+
+GOAL:
+1. Create a search form
+2. Add eventListener to the form where it uses the input value to send fetch request for weather informations
+
+SOLUTION
+// index.hbs
+<html lang="en">
+  <head>
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/img/weather.png">
+    <script src="/js/app.js" defer></script>
+  </head>
+  <body>
+    <div class="main-content">
+      {{>header}}
+      <p>Use this site to get your weather!</p>
+      <form >
+        <input placeholder="Location" type="text">
+        <button>Search</button>
+      </form>
+    </div>
+    {{>footer}}
+  </body>
+</html>
+
+// app.js
+const weatherForm = document.querySelector("form");
+const search = document.querySelector("input");
+
+weatherForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const location = search.value;
+  fetch("http://localhost:3000/weather?address=" + location).then(
+    (response) => {
+      response.json().then((data) => {
+        if (data.error) {
+          return console.log(data.error);
+        }
+        console.log(data.location);
+        console.log(data.forecast);
+      });
+    }
+  );
+});
+
+
+NOTE:
+1. Make sure to either put <script> at the end of <body> OR add "defer" property to the <script>
+	> this is because inside the app.js script, we are doing a query to an HTML element
+	> and if we have the app.js in the <head> before the <body>, it will do a query and gets nothing, which results in an exception thrown
+	> to make sure that app.js only runs after the HTML elements are renders, we can either do following at the top
+
+
+
+
+
+
+
+
+
+
+
+59 Wiring up the User Interface
+
+GOAL:
+ > Wire up the UI where we display the result of the fetch request
+
+SOLUTION:
+// inside index.hbs, we added two paragraph element with id
+  <body>
+    <div class="main-content">
+      {{>header}}
+      <p>Use this site to get your weather!</p>
+      <form >
+        <input placeholder="Location" type="text">
+        <button>Search</button>
+      </form>
+      <p id="message-1"></p>
+      <p id="message-2"></p>
+    </div>
+    {{>footer}}
+  </body>
+
+// app.js
+const weatherForm = document.querySelector("form");
+const search = document.querySelector("input");
+const messageOne = document.querySelector("#message-1");
+const messageTwo = document.querySelector("#message-2");
+
+weatherForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const location = search.value;
+  fetch("http://localhost:3000/weather?address=" + location).then(
+    (response) => {
+      response.json().then((data) => {
+        if (data.error) {
+          messageOne.textContent = data.error;
+          messageTwo.textContent = "";
+          return;
+        }
+        messageOne.textContent = data.location;
+        messageTwo.textContent = data.forecast;
+      });
+    }
+  );
+});

@@ -1,0 +1,189 @@
+05 Spring Boot WebFlux - Functional Endpoint - Reactive Programming
+
+
+Interfaces used
+RouterFunction<T extends ServerResponse>
+ > a functional interface
+ > Represents a function that routes to a handler function.
+ > we typically create a @Bean of this in which inside the method, we will configure the RouterFunction using the RouterFunctions builder class.  
+ > configurations includes
+	1. Request URI path and which Handler function will handle the request
+	2. Filters to add before or after routes for cross cutting functionality
+
+
+
+RouterFunctions
+ > Central entry point to Spring's functional web framework. 
+ > Exposes routing functionality, such as to create a RouterFunction using a discoverable builder-style API, to create a RouterFunction given a RequestPredicate and HandlerFunction, and to do further subrouting on an existing routing function.
+ > Additionally, this class can transform a RouterFunction into an HttpHandler, which can be run in Servlet environments, Reactor, or Undertow.
+
+Methods:
+RouterFunctions.Builder route()
+ > Offers a discoverable way to create router functions through a builder-style interface.
+ > with this builder, we can call methods like
+	1. HTTP methods to create "RequestMapping", which will take a Request URI String and a Handler function
+	2. before(), after(), and filter() to add cross cutting functionality (logging, authentication)
+ > after configuring the Builder, we can call the build() to return a configured RouterFunction
+
+
+
+ServerResponse
+ > Represents a typed server-side HTTP response, as returned by a handler function or filter function.
+ > we typically create an instance of this inside the Handler Functions that we delegate in the route definitions of RouterFunctions
+ > we can use several of its builder methods to create an instance of this interface
+
+Methods:
+BodyBuilder ok()
+ > static method
+ > one of the status code methods available to ServerResponse, alongside created, noContent, notFound, etc
+ > returns a BodyBuilder that we can use to futher configure the ServerResponse
+
+BodyBuilder status(int code)
+ > static method
+ > used when you want to provide specific status code
+ > returns a BodyBuilder
+
+BodyBuilder.body(P publisher, Class<T> elementClass)
+ > static method of BodyBuilder 
+ > Set the body from the given Publisher. Shortcut for body(BodyInserter) with a Publisher inserter.
+ > used to add a body content to the ServerResponse
+ > takes two input
+	- a Publisher, either Mono or Flux
+	- Class, which specifies the Class of the element in Publisher
+
+BodyBuilder.contentType(MediaType contentType)
+ > static method of BodyBuilder
+ > set the Content Type of the ServerResponse
+ > takes a MediaType as input
+
+
+
+
+
+ServerRequest
+ > Represents a server-side HTTP request, as handled by a HandlerFunction.
+ > Access to headers and body is offered by ServerRequest.Headers and body(BodyExtractor), respectively
+
+Methods
+ServerRequest.pathVariable(string name)
+ > returns the pathVariable as String
+ > may need to be parsed
+
+ServerRequest.bodyToMono(Class elementClass)
+ServerRequest.bodyToFlux(Class elementClass)
+ > transforms the body of the ServerRequest to either Flux or Mono
+
+
+
+
+
+Creating a Functional Endpoints using Spring WebFlux
+1. Create a @Bean that will create the RouterFunction
+	> we will pass the ServerResponse type as its generic argument
+	> we can name it anything we want
+2. Inside the @Bean method of RouterFunction<ServerResponse>, we will use the RouterFunction Builder via the RouterFunctions class
+	> to start defining request mapping, call the RouterFunctions.route()
+	> then, call one of the Http method that we will use for request mapping
+	> inside this Http method (ex: GET()), we will pass two arguments
+		- String which is the Request URI to map
+		- HandlerFunction that will handle the ServerRequest
+	> finally, call the build() at the end, and return the value
+
+Ex:
+// inside RouterConfig @Configuration
+    @Bean
+    public RouterFunction<ServerResponse> routerFunction() {
+        return RouterFunctions.route()
+                .GET("/router/customers", customerHandler::loadCustomer)
+                .GET("/router/customers/stream", customerStreamHandler::getCustomers)
+                .GET("/router/customers/{id}", customerHandler::findCustomer)
+                .build();
+    }
+
+  
+
+
+Creating HandlerFunctions
+1. Create a @Service Class
+2. OPTIONAL - Inject the classes needed like Repositories or DAO classes/interface
+3. Create a Function which follows the HandlerFunction signature:
+	- Mono<ServerResponse> return type
+	- ServerRequest parameter
+4. Inside the HandlerFunction, we can do several things, but we must return a Mono of type ServerResponse
+	> we can do this by using ServerResponse and its builder methods
+
+EX:
+// inside CustomerHandler @Service
+    public Mono<ServerResponse> loadCustomer(ServerRequest request) {
+        Flux<Customer> customerFlux = dao.getCustomerList();
+        return ServerResponse.ok().body(customerFlux, Customer.class);
+    }
+
+
+
+Adding and Accessing Path Variables
+1. Add the typical path variable in the Request URI mapping in the route endpoint definition
+	> ex: GET("/customer/name/{name}")
+2. Inside the HandlerFunction, we can access the value of this path variable via the ServerRequest parameter
+	> ex: String customerName = request.pathVariable("name")
+
+EX:
+// RouterFunction @Bean method
+    @Bean
+    public RouterFunction<ServerResponse> routerFunction() {
+        return RouterFunctions.route()
+                .GET("/router/customers/{id}", customerHandler::findCustomer)
+                .build();
+    }
+
+// HandlerFunction
+    public Mono<ServerResponse> findCustomer(ServerRequest request) {
+        Integer id = Integer.parseInt(request.pathVariable("id"));
+        Mono<Customer> customerMono = dao.getCustomerList().filter(c -> c.getId() == id).next();
+        return ServerResponse.ok().body(customerMono, Customer.class);
+    }
+
+
+
+
+
+Changing the Content Type of ServerResponse to send individual elements to Client
+ > Right now, the default behavior is to send the JSON value of the List, which each element is concatenated to the JSON string
+ > This JSON string emitted at the start is an improper JSON, which does not have square bracket at the end to complete the JSON list
+ 	- ex: at first element sent, it will be like this
+	- [{"id":1, "name": "Glenn"}
+ > There are cases where we want to send the individual elements emitted by the Flux in WebFlux to the Client itself
+ > To do this, we will need to change the Content Type of ServerResponse to MediaType.TEXT_EVENT_STREAM
+ > NOTE:
+	1. Take note of the JSON serialization of the element emitted. It may not be in correct syntax. Override the toString() if necessary or do some data sanitization in Client side
+
+EX:
+    public Mono<ServerResponse> getCustomers(ServerRequest request) {
+        Flux<Customer> customerFlux = dao.getCustomersStream();
+        return ServerResponse.ok()
+                .contentType(MediaType.TEXT_EVENT_STREAM)
+                .body(customerFlux, Customer.class);
+    }
+
+
+
+Accessing the Request Body
+ > to access the ServerRequest body passed, we can either use ServerRequest.bodyToFlux() or ServerRequest.bodyToMono()
+
+EX:
+// Inside CustomerHandler @Service
+    public Mono<ServerResponse> saveCustomer(ServerRequest request) {
+        Mono<Customer> customerMono = request.bodyToMono(Customer.class);
+        Mono<String> transformedCustomer = customerMono.map(c -> c.getId() + ":" + c.getName());
+        return ServerResponse.ok().body(transformedCustomer, String.class);
+    }
+
+
+
+
+
+NOTES:
+1. We can use several of Flux method in order to fetch a single element and transform it to a Mono of same type
+	> take note that we still need to do some filtering most of the find through Flux.filter()
+	> Flux.take(1).single()
+	> Flux.next()

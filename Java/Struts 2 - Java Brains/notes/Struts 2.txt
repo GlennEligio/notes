@@ -1,0 +1,22 @@
+Struts 2
+
+Contents:
+01 Introduction to MVC
+02 Introduction to Struts 2
+03 Setting up
+04.1 Writing a Struts 2 Application part 1
+04.2 Writing a Struts 2 Application part 2
+05 Understanding Namespaces
+06 A Tag And A Business Service
+07 The ValueStack
+08 Accessing Input Parameters
+09 Post request to Actions
+10 Login Action and Best Practices
+11 Login Action and Best Practices Part 2
+12 Action Wildcards
+13 The ActionSupport Class
+14 Configuring methods in Action mappings
+15 Using Model objects
+16 Introducing Interceptors
+17 Configuring Interceptors
+18 Anatomy of an Interceptors

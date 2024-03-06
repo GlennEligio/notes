@@ -1,0 +1,38 @@
+124 CloudFormation Overview
+
+
+CloudFormation
+ > CloudFormation is a declarative way of outlining your AWS Infrastructure, for any resources (most of them are supported).
+ > For example, within a CloudFormation template, you say:
+	- I want a security group
+	- I want two EC2 instances using this security group
+ 	- I want an S3 bucket
+	- I want a load balancer (ELB) in front of these machines
+ > Then CloudFormation creates those for you, in the RIGHT ORDER, with EXACT CONFIGURATION that you specify
+
+
+
+Benefits of AWS CloudFormation
+1. Infrastructure as code
+ > No resources are manually created, which is excellent for control
+ > Changes to the infrastructure are reviewed through code
+2. Cost
+ > Each resources within the stack is tagged with an identifier so you can easily see how much a stack costs you
+ > Saving strategy: In Dev, you could automate deletion of templates at 5PM and recreate at 8AM, safely
+3. Productivity
+ > Ability to destroy and re-create an infrastructure on the cloud on the fly
+ > Automated generation of Diagram for your templates!
+ > Declarative programming (no need to figure out ordering and orchestration)
+4. Don't re-invent the wheel
+ > Leverage existing templates on the web!
+ > Leverage the documentation
+5. Support (almost) all AWS resources
+ > Everything we'll see in this course is supported
+ > You can use "custom resources" for resources that are not supported
+ 
+
+
+
+CloudFormation Stack Designer
+ > here, we can see all the
+ > also, we cna see the RELATIONS between the components

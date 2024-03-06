@@ -1,0 +1,52 @@
+60 EFS Overview
+
+
+EFS - Elastic File System
+ > Managed and Shared NFS (network file system) that can mounted on multiple (up to 100s) EC2
+ > EFS works ONLY with Linux EC2 instances in multi-AZ
+ > Highly available, scalable, expensive (3x of gp2 EBS), pay per use, no capacity planning
+	- if you only use specific amount of storage (ex: 20gb), then thats only what you will be paying
+
+
+EX: EFS mounted to multiple EC2 (different AZ) 
+us-east-1a	us-east-1b	us-east-1c
+EC2 instances	EC2 instances	EC2 instances
+	|		|		|
+	---------------------------------
+			|
+		Security Group
+			|
+		EFS File system
+
+
+EBS vs EFS
+ > with EBS, you need to need to use Snapshots in order to transfer data from different EC2 instances of different AZs
+ > with EFS, any EC2 instances can access (read/write) to an EFS using EFS Mount Target
+	- each EC2 instances will see the same files
+
+
+
+EFS Infrequence Access (EFS-IA)
+ > Storage class that is cost-optimized for files not being accessed every day
+ > Up to 92% lower cost compared to EFS Standard
+ > EFS will automatically move your files to EFS-IA based on the last time they were accessed
+ > Enable EFS-IA with Lifecycle Policy
+	- similar to Recycle Bin's Retention Policy
+ > EX: Move files that are not accessed for 60 days to EFS-IA
+ > Transparent to applications accessing EFS
+	- application will not be aware of the EFS-IA at all
+
+
+EX:
+EFS
+ > EFS Standard
+	> File1
+	> File2
+	> File3 (not accessed by 60 days, will be moved to EFS-IA)
+ > EFS-IA
+	> File3 (still accessible to other applications)
+
+
+
+NOTES:
+1. EFS File system can be protected using a Security Group

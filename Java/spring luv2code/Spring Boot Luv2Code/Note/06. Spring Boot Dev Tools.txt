@@ -1,0 +1,20 @@
+06. Spring Boot Dev Tools
+
+
+
+Spring Boot Dev Tools
+	> spring-boot-devtools
+	> automatically RESTARTS your application when code is updated
+	> simply add the spring-boot-devtools dependency to the POM file
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-devtools</artifactId>
+</dependency>
+
+
+
+Why Spring Dev Tools?
+	> without Spring DevTools, we will have to restart the application for each changes we make in source code
+
+

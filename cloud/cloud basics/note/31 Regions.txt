@@ -1,0 +1,43 @@
+31 Regions 
+
+
+Data Centers
+ > physical location that houses hardware infrastructure
+ > typically behind one network, with firewall added to secure it
+	- companies manages the internal network of these data centers
+ > most small companies used to have one on-prem
+ > Companies typically have a backup data center (DR)
+	- DR refers to Disaster Recovery data
+ 
+
+Cloud
+ > Data centers are ABSTRACTED out by design
+ > Cloud providers exposes this Data centers to you as "Regions"
+
+
+
+Regions
+ > in Cloud context, a Region refers to a bunch of Data centers in a specific geographical location
+ > these Regions are distributed around the world
+ > usually, the Regions are the context of all operations
+	- we can think of the Region as the higher level node under which all of the resources are created
+ > Cloud Providers gives the consumers/users an option to which Region they want the resources to be created (ex: Singapore, US East, US West, Japan, etc)
+
+
+
+Choosing a Region
+1. Cost
+	> same amount of resources may have different cost based on the region (ex: EC2 with same config can cost differ)
+2. User locations
+	> you want to choose a Region that is closest to you consumers. Reason is that your users may face network delays if your application is hosted on a server that is far from them
+3. Available services
+	> not all services are available in all regions
+	> this depends on the hardware that is available in that region
+	> ex: no Hypervisor hardware in a particular region
+4. SLAs
+	> different regions have their own SLAs
+	> choose Region who's SLA is okay to you
+5. Data Compliance
+	> applies only to specific company
+ 	> each region have their own data compliance and regulation
+	> ex: US citizen health info cant go outside US

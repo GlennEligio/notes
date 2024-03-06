@@ -1,0 +1,28 @@
+23 Practice Exam question
+
+Question: Azure Fundamental AZ-900
+Match the services on the left to the correct descriptions on the right
+Services
+A. Infrastructure as a Service (IaaS)
+B. Platform as a Service (PaaS)
+C. Software as a Service (SaaS)
+
+Descriptions
+1. Provides hosting and management of an application and its underlying infrastructure, as well as any maintenance, upgrades, and security patching
+2. Provides a fully managed environment for developing, testing, delivering, and managing cloud-based applications
+3. Provides server and virtual machines, storage, network, and operating systems on a pay-as-you-go basis
+
+
+My Answer
+A -> 3
+B -> 2
+C -> 1
+
+
+Explanation:
+Description 1:
+ > the application here refers to the "software" that you rent, so it should be SaaS
+Description 2:
+ > here, the environment refers to the "platform" that you want, so it should be PaaS
+Descriptino 3:
+ > IaaS since it mentions the servers and virtual machines, storage, networks, and OS. These are the barebone of a hardware

@@ -1,0 +1,61 @@
+04. Docker Concepts - Registry, Repository, Tag, Image, and Containers
+
+Docker Registry
+	> contains multiple Docker Repositories
+	> a Docker Registry can be either
+		- local or remote
+		- public or private
+	> eg. hub.docker.com
+		- public Docker Registry
+
+
+Docker Repository
+	> contains ALL the versions of a specific application
+	> ex: in28min/todo-rest-api-h2
+
+
+Docker Tag
+	> refers to the version of the application inside a Docker Repository
+	> ex: v1, 1.2.0.RELEASE
+
+Docker Image
+	> refers to a specific version of the application
+	> combination of both Docker Repository and Docker Tag
+	> contains all the things need for the application to run
+		- Software (e.g. Java)
+		- Libraries
+		- Any other dependencies
+	> A Static Template
+		- A set of bytes
+	> SYNTAX:
+		dockerRepo:dockerTag
+	> EX: in28min/todo-rest-api-h2:1.0.0.RELEASE
+
+
+Docker Registry
+	> Docker Repository
+		> Different versions of Docker Image
+
+
+Docker Container
+	> a running version of Docker Image
+	> we can create and run multiple Docker Container for a single Image
+	> when running a Docker Container, they will be included in the docker0 bridge network by default
+
+
+
+Running a Docker Container
+1. Use the 'docker run' command
+	
+	docker run -p 5000:5000 in28min/todo-rest-api-h2:1.0.0.RELEASE
+
+	> -p {HostPort}:{ContainerPort}
+		- maps a Container Port to the Host machines' Port
+		- with this, we can send request to the Container by sending it to the Host Port that it is mapped
+
+
+
+
+
+
+

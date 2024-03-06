@@ -1,0 +1,521 @@
+Section 27 - Microservice Architecture
+
+147. Microservice Architecture
+
+DEMO: Microservice Architecture demo using Voting Application
+ > this Voting application consist of interfaces for following
+		- Voting app, for the users to vote
+		- Result app, for the users to see the results
+ > the system consist of the following components
+	1. voting-app
+		> contains an FE application to provide users an interface to vote for either a cat or dog
+		> the vote will then be stored temporarily in the redis
+	2. in-memory database
+		> temporary in-memory database
+		> stores the votes of each users
+		> using redis
+	3. worker
+		> takes the data inside the in-memory database and process them
+		> after processing them, it persist this votes into the database
+		> .NET is used to create this worker
+	4. db
+		> contains the votes
+		> PostgreSQL is used
+		> contains table used to tallying the votes for cat and dog
+	5. result-app
+		> displays the information of the vote results
+		> NodeJS is used to create the application
+		> fetches teh data from the database
+		
+Deploying the Voting application using Docker
+ > we will be deploying the components in sequence, since some of them have dependency to other apps
+	- in-memory database
+	- database
+	- voting-app
+	- result-app
+	- worker
+ > commands used
+	docker run -d --name=redis redis
+	docker run -d --name=db postgres:9.4
+	docker run -d --name=vote -p 5000:80 voting-app
+	docker run -d --name=result -p 5001:80 result-app
+	docker run -d --name=worker worker
+ > but if we try to visit the Voting application, it seems to be not working
+	- this is due to the application inside each component not being able to communicate with other components (e.g. voting-app to in-memory db, or result-app to db)	
+	- to fix this, we can use the links in the Docker to link each of the containers
+ > below is the new commands to be executed to link each components to its dependencies
+	docker run -d --name=redis redis
+	docker run -d --name=db postgres:9.4
+	docker run -d --name=vote --link redis:redis -p 5000:80 voting-app
+	docker run -d --name=result --link db:db -p 5001:80 result-app
+	docker run -d --name=worker --link db:db --link redis:redis worker
+ 
+ 
+Code snippet in each application where it communicates with external apps
+
+1. voting-app
+ > here we can see that it tries to connect to a Redis application under hostname 'redis'
+ 
+def get_redis():
+	if not hasattr(g, 'redis'):
+		g.redis = Redis(host="redis", db=0, socket_timeout=5)
+	return g.redis
+	
+2. result-app
+ > here, the result-app tries to connect to a postgres database with hostname 'db'
+
+pg.connect('postgres://postgres@db/postgres', function(err, client, done)) {
+	if (err) {
+		console.error("Waiting for db");
+	}
+	callback(err, client);
+});
+
+3. worker
+ > here, it requires the redis and the database in order to do its work by connecting to redis with hostname 'redis', and database with hostname 'db'
+ 
+try {
+	Jedis redis = connectToRedis("redis");
+	Connection dbConn = connectToDb("db");
+	
+	System.err.println("Watching vote queue");
+}
+	
+
+Docker Links - Behind the scene
+ > what happens when we use links is that it ADDS an entry in the Docker container's 'hosts' file
+ > using the argument passed in the '--link' option
+	--link HOSTNAME:CONTAINER_NAME
+ > with this format, it creates an entry in the 'hosts' file of the container with the format below
+	CONTAINER_NAME_IP HOSTNAME
+ > this is why it is important to provide a name in the Docker containers when we are running one
+ > ex:
+	docker run --link redis:redis --name=vote
+	ip address of container with name 'redis': 192.17.0.2
+ > in hostfile of 'vote' container
+	192.17.0.2 redis
+	
+	
+NOTES:
+1. Using the links in Docker is decrepated and maybe removed in the future
+	> This is due to Docker Swarms and Networking supports better ways of achieving what we did with Links earlier
+
+
+
+
+
+148. Deploying voting app on Kubernetes
+
+Voting App Deployment Goals
+1. Deploy Containers in a Kubernetes cluster
+2. Enable Connectivity between the containers
+3. Enable External Access for external facing apps
+	- voting app and result app
+	
+Steps
+1. Deploy PODs
+2. Create ClusterIP Services to expose services internally
+	> ClusterIP service for redis and db
+		- this is due to the redis and db application is only access internally in cluster
+3. Create NodePort services to expose services externally
+	> for voting-app and result-app 
+	> this is due to them being external facing, being access by external user
+
+Demo: Example voting app
+Github: kodekloudhub/example-voting-app
+Docker images used:
+1. kodekloudhub/examplevotingapp_vote:v1
+2. kodekloudhub/examplevotingapp_result:v1
+3. redis
+4. postgresql
+5. kodekloudhub/examplevotingapp_worker:v1
+
+
+
+NOTES:
+1. When links the applications of a system via Services (or any connection interface in general), we should take account of the connectivity requirements of each app
+	> some application will have dependency on other apps
+		- redis is required for voting-app and worker
+		- postgres is required for result-app and worker
+	> in addition, we can also use the number of ap plication being connected to a specific app
+		- worker has no other app connecting to it
+	> with this, we need to plan our deployment accordingly
+2. When defining the hostname of the services access by your application, you should not have it hardcoded in the source code, instead we should have it externalized via configuration, environment variables, etc.
+
+
+
+
+
+149. Demo - Deploying voting app on Kubernetes
+
+POD YAML DEFINITIONS
+
+# voting-app-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+	name: voting-app-pod
+	labels:
+		name: voting-app-pod
+		app: demo-voting-app
+spec:
+	containers:
+	-	name: voting-app
+		image: kodekloudhub/examplevotingapp_vote:v1
+		ports:
+		-	containerPort: 80
+		
+# result-app-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+	name: result-app-pod
+	labels:
+		name: result-app-pod
+		app: demo-voting-app
+spec:
+	containers:
+	-	name: result-app
+		image: kodekloudhub/examplevotingapp_result:v1
+		ports:
+		-	containerPort: 80
+		
+# redis-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+	name: redis-pod
+	labels:
+		name: redis-pod
+		app: demo-voting-app
+spec:
+	containers:
+	-	name: redis
+		image: redis
+		ports:
+		-	containerPort: 6379
+		
+# postgres-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+	name: postgres-pod
+	labels:
+		name: postgres-pod
+		app: demo-voting-app
+spec:
+	containers:
+	-	name: postgres
+		image: postgres
+		ports:
+		-	containerPort: 5432
+		env:
+		-	name: POSTGRES_USER
+			value: "postgres"
+		-	name: POSTGRES_PASSWORD
+			value: "postgres"
+
+# worker-app-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+	name: worker-app-pod
+	labels:
+		name: worker-app-pod
+		app: demo-voting-app
+spec:
+	containers:
+	-	name: worker-app
+		image: kodekloudhub/examplevotingapp_worker:v1
+
+
+SERVICE YAML DEFINITIONS
+#redis-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+	name: redis
+	labels:
+		name: redis-service
+		app: demo-voting-app
+spec:
+	ports:
+	- 	port: 6379
+		targetPort: 6379
+	selector:
+		name: redis-pod
+		app: demo-voting-app
+		
+#postgres-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+	name: db
+	labels:
+		name: postgres-service
+		app: demo-voting-app
+spec:
+	ports:
+	-	port: 5432
+		targetPort: 5432
+	selector:
+		name: postgres-pod
+		app: demo-voting-app
+		
+# voting-app-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+	name: voting-service
+	labels:
+		name: voting-service
+		app: demo-voting-app
+spec:
+	type: NodePort
+	ports:
+	-	port: 80
+		targetPort: 80
+		nodePort: 30004
+	selector:
+		name: voting-app-pod
+		app: demo-voting-app
+		
+# result-app-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+	name: result-service
+	labels:
+		name: result-service
+		app: demo-voting-app
+spec:
+	type: NodePort
+	ports:
+	-	port: 80
+		targetPort: 80
+		nodePort: 30005
+	selector:
+		name: result-app-pod
+		app: demo-voting-app
+		
+
+Commands used for deploying pods and services
+kubectl create -f voting-app-pod.yaml
+kubectl create -f voting-app-service.yaml		
+kubectl get pods,svc
+minikube service voting-service --url
+kubectl create -f redis-app-pod.yaml
+kubectl create -f redis-app-service.yaml
+kubectl get pods,svc
+kubectl create -f postgres-pod.yaml
+kubectl create -f postgres-service.yaml
+kubectl get pods,svc
+kubectl create -f voting-app-pod.yaml
+kubectl create -f voting-app-service.yaml
+kubectl get pods,svc
+kubectl create -f worker-app-pod.yaml
+kubectl create -f worker-app-service.yaml
+kubectl get pods,svc
+kubectl create -f result-app-pod.yaml
+kubectl create -f result-app-service.yaml
+minikube service voting-service --url
+minikube service result-service --url
+		
+
+NOTES:
+1. We can add label in order to different components from one system to another system
+2. If an application contains or uses credentials within the source code, its better to externalize these data and have it fetched from either environment variable, vault, configuration, etc.
+	> sample of these data includes database credentials, api secret keys, etc
+3. Some docker images needs to have specific environment variables defined in order to work
+4. When deploying applications in the system, one must take account of the dependencies of the apps from other apps
+
+
+
+
+
+150. Demo - Deploying voting app on Kubernetes with Deployments
+
+DEPLOYMENT YAML DEFINITIONS
+# voting-app-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+	name: voting-app-deploy
+	labels:
+		name: voting-app-deploy
+		app: demo-voting-app
+spec:
+	replicas: 1
+	selector:
+		matchLabels:
+			name: voting-app-pod
+			app: demo-voting-app
+	template:
+		metadata:
+			name: voting-app-pod
+			labels:
+				name: voting-app-pod
+				app: demo-voting-app
+		spec:
+			containers:
+			-	name: voting-app
+				image: kodekloudhub/examplevotingapp_vote:v1
+				ports:
+				-	containerPort: 80
+				
+# redis-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+	name: redis-deploy
+	labels:
+		name: redis-deploy
+		app: demo-voting-app
+spec:
+	replicas: 1
+	selector:
+		matchLabels:
+			name: redis-pod
+			app: demo-voting-app
+	template:
+		metadata:
+			name: redis-pod
+			labels:
+				name: redis-pod
+				app: demo-voting-app
+		spec:
+			containers:
+			-	name: redis
+				image: redis
+				ports:
+				-	containerPort: 6379
+				
+# postgres-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+	name: postgres-deploy
+	labels:
+		name: postgres-deploy
+		app: demo-voting-app
+spec:
+	replicas: 1
+	selector:
+		matchLabels:
+			name: postgres-pod
+			app: demo-voting-app
+	template:
+		metadata:
+			name: postgres-pod
+			labels:
+				name: postgres-pod
+				app: demo-voting-app
+		spec:
+			containers:
+			-	name: postgres
+				image: postgres
+				ports:
+				-	containerPort: 5432
+				env:
+				-	name: POSTGRES_USER
+					value: "postgres"
+				-	name: POSTGRES_PASSWORD
+					value: "postgres"
+
+# worker-app-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+	name: worker-app-deploy
+	labels:
+		name: worker-app-deploy
+		app: demo-voting-app
+spec:
+	replicas: 1
+	selector:
+		matchLabels:
+			name: worker-app-pod
+			app: demo-voting-app
+	template:
+	metadata:
+		name: worker-app-pod
+		labels:
+			name: worker-app-pod
+			app: demo-voting-app
+	spec:
+		containers:
+		-	name: worker-app
+			image: kodekloudhub/examplevotingapp_worker:v1
+			
+# result-app-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+	name: result-app-deploy
+	labels:
+		name: result-app-deploy
+		app: demo-voting-app
+spec:
+	replicas: 1
+	selector:
+		matchLabels:
+			name: result-app-pod
+			app: demo-voting-app
+	template:
+		metadata:
+			name: result-app-pod
+			labels:
+				name: result-app-pod
+				app: demo-voting-app
+		spec:
+			containers:
+			-	name: result-app
+				image: kodekloudhub/examplevotingapp_result:v1
+				ports:
+				-	containerPort: 80
+
+Commands
+kubectl delete --all pods
+	> clean up all the pods before we add our deployments
+kubectl delete --all svc
+	> clean up all the svc before we add our deployments
+kubectl create -f voting-app-deploy.yaml
+kubectl create -f voting-app-service.yaml
+kubectl get deployments
+kubectl create -f redis-deploy.yaml
+kubectl create -f redis-service.yaml
+kubectl get deployments
+kubectl create -f postgres-deploy.yaml
+kubectl create -f postgres-service.yaml
+kubectl get deployments
+kubectl create -f postgres-deploy.yaml
+kubectl create -f postgres-service.yaml
+kubectl get deployments
+kubectl create -f worker-app-deploy.yaml
+kubectl get deployments
+kubectl create -f result-app-deploy.yaml
+kubectl create -f result-app-service.yaml
+kubectl get deployments,svc
+minikube service voting-service --url
+minikube service result-service --url
+ > used to get the urls to access voting and result services
+kubectl scale deployment voting-app-deploy --replicas=3
+kubectl get deployments voting-app-deploy
+
+
+
+NOTES:
+1. Replacing Pods with Deployments is good if you want to have the following:
+	a. ensure high availability via multiple instance and pod autohealing
+	b. load balancing with multiple instances
+	c. rolling update when theres a change in pod spec template
+
+
+
+
+
+151. Article: Demo lecture manifest files
+
+Demo lecture manifest file are available in the below repository:
+https://github.com/kodekloudhub/example-voting-app-kubernetes
+

@@ -1,0 +1,32 @@
+25. Exploring Rollout History and Rollback of K8s Deployments
+
+
+Rollout
+	> a rollout happens whenever we do create or change a deployment resource
+	> we can rollout by either 
+		a. creating
+			- kubectl create
+			- kubectl apply
+		b. modify
+			- kubectl apply
+			- kubectl scale
+	> a rollout will stop if an ERROR OCCUR
+		- ex: invalid image used in a Container of Pod
+		- in this case, the rollout will be saved in history, but will not be applied in the deployment
+		- for this, we can use the rollback command
+
+
+Commands for Rollout History and Rollback
+
+kubectl rollout status deployment <deployment-name>
+	> check the status of the current/latest rollout
+
+kubectl rollout history deployment <deployment-name>
+	> command used to see the REVISIONS of a specific deployment
+
+kubectl rollout undo deployment <deployment-name>
+	> command used to do a rollback
+	> options include
+		--to-revision
+			> specify the revision number to rollback
+			> ex: kubectl rollout undo deployment currency-exchange --to-revision=1

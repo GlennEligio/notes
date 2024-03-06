@@ -1,0 +1,24 @@
+19 Exam practice question
+
+
+Question: From AWS
+Under the shared responsiblity model, which of the following is the customer responsible for?
+a. Ensuring that disk drives are wiped after use
+b. Ensuring that firmware is updated on hardware devices
+c. Ensuring that data is encrypted at rest
+d. Ensuring that network cables are category six or higher
+
+
+My Answer: C
+Reason is that only C is within our control. Everything else are something only the Cloud provider, regardless of the service used, can control or change
+
+
+Actual Answer Explanation
+a. Ensuring that disk drives are wiped after use
+	> handled by the cloud provider
+b. Ensuring that firmware is updated on hardware devices
+	> very much infrastructure related, no way user is responsible for it
+c. Ensuring that data is encrypted at rest
+	> cloud is not responsible for the data the app generate
+d. Ensuring that network cables are category six or higher
+	> Infrastructure related stuff, not handled by user

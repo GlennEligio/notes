@@ -1,0 +1,50 @@
+115 ECS Fargate & ECR Overview
+
+EC2
+ > ECS = Elastic Container Service
+ > Launch Docker containers on AWS
+ > You must provision & maintain the infrastructure (the EC2 instances)
+ > AWS takes care of starting/stopping containers
+ > Has integrations with Application Load Balancer
+
+Diagram: ECS Service
+Here, whenever we create a new Docker Container, it will choose which EC2 instance (that we created) will it ran
+
+		New Docker Container
+		|	|	|
+	|-------|	|	|-------|
+	|		|		|
+	V		V		V
+	EC2		EC2		EC2
+	Instance	Instance	Instance
+
+
+
+
+Fargate
+ > Launch Docker containers on AWS
+ > You do not provision the infrastructure (no EC2 instances to manage) - simpler!
+ > Serverless offering
+ > AWS just runs containers  for you based on the CPU/RAM you need
+
+Diagram:
+
+New Docker Container --------> Fargate
+				(handles underlying
+				system to run the Container)
+
+
+
+ECR
+ > Elastic Container Registry
+ > Private Docker Registry on AWS
+ > This where you store your Docker images so they can be run by ECS or Fargate
+
+Diagram
+EC2			
+ > contains Image1 and Image2
+
+Fargate
+ > Container 1, uses Image2
+ > Container 2, uses Image1
+ > Container 3, uses Image1

@@ -1,0 +1,361 @@
+05 Rendering Lists & Conditional Content
+
+
+001 Module Introduction
+
+Module Content
+1. Outputting Dynamic Lists of Content
+2. Rendering Content Under Certain Conditions
+
+
+
+
+
+
+
+002 Rendering Lists of Data
+
+
+Rendering List of Component in JSX
+	> in JSX, we can pass an Array of Component inside a JSX
+		- EX: {[<Component/>, <Component/>, <Component/>, <Component/>]}
+		- this Array of Component will be rendered in the same layer/tier
+	> with this logic, we can also transform an Array of Object into an Array of Component using Array.prototype.map() function
+
+EX:
+props.items value
+  const expenses = [
+    {
+      id: "e1",
+      title: "Toilet Paper",
+      amount: 94.12,
+      date: new Date(2020, 7, 14),
+    },
+    {
+      id: "e2",
+      title: "New TV",
+      amount: 799.47,
+      date: new Date(2020, 7, 14),
+    },
+    {
+      id: "e3",
+      title: "Car Insurance",
+      amount: 249.64,
+      date: new Date(2020, 7, 14),
+    },
+    {
+      id: "e4",
+      title: "New Desk (Wooden)",
+      amount: 450,
+      date: new Date(2020, 7, 14),
+    },
+  ];
+
+
+map() usage
+
+      {props.items.map((expense) => (
+        <ExpenseItem
+          id={expense.id}
+          title={expense.title}
+          amount={expense.amount}
+          date={expense.date}
+        />
+      ))}
+
+
+
+
+
+
+003 Using Stateful List
+
+Using Stateful List
+	> if we want to add a Component by updating the list it is made from, the source list must be a State itself
+	> this way, if we update the list, it will execute/rerender the Functional Component, therefore updating the Component created from a Stateful List
+	> also, since updating a Stateful List or adding item into it depends on the previous State value, we will need to use the function input form of the Setter Method of useState()
+
+EX:
+function App() {
+  // Stateful list
+  const [expenses, setExpenses] = useState(DUMMY_EXPENSES);
+
+  // setExpenses with function input
+  const addExpenseHandler = (expense) => {
+    setExpenses((prevExpenses) => {
+      return [expense, ...prevExpenses];
+    });
+  };
+}
+
+
+
+
+
+
+004 Understanding Keys
+
+key
+	> a concept when renders a list of Components
+	> with "key", the React can uniquely identify Component from a List of them
+		- this means React can determine which specific Component in list a State belongs to
+		- this also means React can determine where to render a Component when a new item is added
+	> without "key", the React sees the items equally
+		- this means that if we add new item, it doesnt know where to put it in the list of items
+	
+What happens if we dont attach "key" to list of Component
+	> when we add item to the Array source of Component Array, it will
+		- create/render additional DOM elements 
+			-> the new JSX/Component created from additional item
+		- iterate on each of the Components and update their data
+			-> data of item of Array source that we used in JSX result
+	> this results in poor performance since it needed to check the DOM elements again and updated
+	> can also result in bugs
+		1. State data in Component item can be lost due to it being overwritten
+
+
+Getting the source of "key" value
+1. From index of the item
+	> not recommended
+	> we can do this by adding another parameter in function we pass in map()
+	> ex: props.items.map((item, index) => {<JSX key={index} item={item}/>})
+2. From the property of the item
+	> recommended, typically is the id of the item itself
+	> ex: props.items.map((item) => {<JSX key={item.id} item={item}/>})
+
+
+Using keys in JSX output of map()
+1. Add key property to the root element of JSX to return
+
+EX: Component
+
+      {props.items.map((expense) => (
+        <ExpenseItem
+          key={expense.id}
+          id={expense.id}
+          title={expense.title}
+          amount={expense.amount}
+          date={expense.date}
+        />
+      ))}
+
+
+EX: Normal HTML DOM element
+
+      {props.items.map((expense) => (
+        <div key={expense.id}>
+          <ExpenseItem
+            key={expense.id}
+            id={expense.id}
+            title={expense.title}
+            amount={expense.amount}
+            date={expense.date}
+          />
+        </div>
+      ))}
+
+
+
+
+
+
+005 Outputting Conditional Content 
+
+Two ways of outputting Conditional Content
+1. Use conditionals in the return JSX value of Component
+2. Use variables to hold JSX and create logic to define the value of said variable
+	> preferrable to keep JSX return lean
+
+1. Use conditionals in the return JSX value of Component
+	> we can either use:
+		- Logical && Operator
+		- Ternary Operator
+
+Logical && Operator
+	> will only render the JSX if the first condition returns true
+	> ex: {filteredItem.length === 0 && <p>No items content</p>}
+
+Ternary Operator
+	> will only render one of the two JSX based on the return value of condition
+	> if true, return first JSX, if false return second
+	> ex: {filteredItem.length === 0 ? <p>There is content</p> : <p>No item content</p>}
+
+
+
+2. Using variables to hold data and create conditional logic to determine its value
+	> we will then use this value in the return JSX of Component
+
+EX:
+  let expensesContent = <p>No expenses found.</p>;
+
+  if (filteredExpenses.length > 0) {
+    expensesContent = filteredExpenses.map((expense) => (
+      <ExpenseItem
+        key={expense.id}
+        id={expense.id}
+        title={expense.title}
+        amount={expense.amount}
+        date={expense.date}
+      />
+    ));
+  }
+
+  return (
+    <Card className="expenses">
+      <ExpensesFilter
+        selected={filteredYear}
+        onChangeFilter={filterChangeHandler}
+      />
+      {expensesContent}
+    </Card>
+  );
+
+
+
+
+
+
+006 Adding Conditional Return Statements
+
+Conditional Return Statements
+	> conditions that return value when condition is met
+	> we can also do this in Components
+	> we can create conditional statement (e.g. if-else) that determines which JSX code to return
+
+EX:
+const ExpensesList = (props) => {
+  if (props.items.length === 0) {
+    return <h2 className="expenses-list__fallback">Found no expenses.</h2>;
+  }
+  return (
+    <ul className="expenses-list">
+      {props.items.map((expense) => (
+        <ExpenseItem
+          key={expense.id}
+          id={expense.id}
+          title={expense.title}
+          amount={expense.amount}
+          date={expense.date}
+        />
+      ))}
+    </ul>
+  );
+};
+
+
+
+
+
+
+
+007 Demo App - Adding a Chart
+
+GOAL:
+Create Component to show percentage of total Expenses in a specific month of Year
+
+// Chart.js
+import React from "react";
+import ChartBar from "./ChartBar";
+
+const Chart = (props) => {
+  return (
+    <div className="chart">
+      {props.dataPoints.map((dataPoint) => (
+        <ChartBar
+          key={dataPoint.label}
+          value={dataPoint.value}
+          maxValue={null}
+          label={dataPoint.label}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default Chart;
+
+
+// Chart.css
+.chart {
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: #f8dfff;
+  text-align: center;
+  display: flex;
+  justify-content: space-around;
+  height: 10rem;
+}
+
+// ChartBar.css
+.chart-bar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-bar__inner {
+  height: 100%;
+  width: 100%;
+  border: 1px solid #313131;
+  border-radius: 12px;
+  background-color: #c3b4f3;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.chart-bar__fill {
+  background-color: #4826b9;
+  width: 100%;
+  transition: all 0.3s ease-out;
+}
+
+.chart-bar__label {
+  font-weight: bold;
+  font-size: 0.5rem;
+  text-align: center;
+}
+
+
+
+
+
+
+
+008 Adding Dynamic Styles
+
+Dynamic Styles in JSX
+	> earlier we talk about how we can inject JS expression in JSX code
+	> like other properties, we can also inject JS expression in "styles" property of an element
+
+EX:
+
+  let barFillHeight = "0%";
+
+  if (props.maxValue > 0) {
+    barFillHeight = Math.round((props.value / props.maxValue) * 100) + "%";
+  }
+
+Return JSX Value
+
+       <div
+          className="chart-bar__fill"
+          style={{ height: barFillHeight }}
+        ></div>
+
+
+
+
+
+009 Wrap Up & Next steps
+
+GOAL:
+1. Initialize Data Points in ExpenseChart
+2. Compute the values for each month (label) using for loop
+3. Pass the modified dataPoints to the Chart
+4. Use the dataPoints to determine maxValue
+	- map() to transform dataPoints to values
+	- Math.max(...arrayValues) to determine the max value
+5. Use the variables in the ChartBar components

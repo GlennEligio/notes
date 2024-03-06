@@ -1,0 +1,21 @@
+19 IAM MFA Hands On
+
+Editing Password Policy
+1. In IAM, go to Account Settings
+2. Look for Password Policy section and select "Edit"
+3. Select "Custom" and define how you want the password policy to be
+4. Save changes (OPTIONAL)
+
+
+Adding MFA to the Root Account
+1. Click the Username dropdown at the top right
+2. Select 'Security Credentials'
+3. If its your first time setting the MFA, you will see the "Assign MFA" button on the 'Security Credentials' page
+4. Click it
+5. Choose "Select MFA device"
+6. Open your Virtual MFA device (in my case, I used okta Verify)
+7. Open the QR code provided by AWS, and scan it using the Virtual MFA device
+8. When added, you should see the MFA code generated for it. Save two of them by waiting for the next one to be generated
+9. Provide the two MFA code generated
+10. Assign the MFA
+11. Next time we login to the Root Account, we will be prompted with the MFA in our Virtual MFA device

@@ -1,0 +1,41 @@
+11 RHCSA RHEL 8 - Create, delete, copy, and move files and directories
+
+
+Commands
+touch FILENAME
+ > creates a File with the FILENAME specified
+ > ex: touch app.log
+
+mkdir DIRNAME
+mkdir DIR1/DIR2/DIR3
+ > creates a directory with the specified name
+ > we can also pass a directory link, where we can define subdirectories
+ > ex: mkdir directory, mkdir 1/2/3
+
+rm [option] FILE
+ > removes a specific file
+ > ex:
+	rm app.log
+	rm -d directory/1
+	rm -r directory
+ > option
+	-f	Force remove
+	-d 	Removes a directory (by default, cant delete a directory)
+	-r 	Delete RECURSIVELY where all files and subdirectories are included (by default, cant delete non-empty directory)
+
+cp [option] SOURCEFILE DESTFILE
+ > copy the source file into the destination file
+ > keeps the source file
+ > ex:
+	cp app.log app1.log
+	cp -r directory/ newDirectory
+ > options:
+	-r 	Copy RECURSIVELY, which includes all the files and subdirectories of the directory to copy
+
+mv SOURCEFILE DESTFILE
+ > MOVES the source file into the destination file
+ > removes the source file after the move operation
+ > also works with directories
+ > ex:
+	my app1.log app2.log
+ 	my newDirectory/ directory/

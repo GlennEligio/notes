@@ -1,0 +1,82 @@
+Project Webpage
+
+Compose of the following
+
+Webpages
+1. Home
+2. About
+3. Numbers
+4. Contact 
+
+
+Home page
+
+Compose of the following
+1. Logo
+2. Company title (h3) Coffee Junkie
+3. Unordered list with the following pages in it as Linktags
+4. Big ass banner
+5. Feature products (h2)
+	> Each products will have
+		- Product name h2
+		- product image img
+		- description p lorem
+		- details linktag external, opens new tab
+	> products include
+		- House blend coffee
+		- French roast
+		- columbian roast
+6. Copyright with copyright trademark 2019
+7. Back to top linktag
+
+
+
+
+About page
+1. Logo
+2. Company title (h3)
+3. Unordered list with the following pages in it as Linktags
+4. Big ass banner
+5. About Us title h2
+6. About Us text p lorem 50?
+7. Copyright with copyright logo 2019
+8. Back to top linktag 
+
+
+
+Numbers
+1. Logo
+2. Company title (h3)
+3. Unordered list with the following pages in it as Linktags
+4. Big ass banner
+5. Our Store h2
+6. Table
+	> column name are
+		- City
+		- Chicago
+		- New York
+		- Los Angeles
+	> table rows are
+		- Orders, 125, 250, 500
+		- Profit, $10000, $20000, $30000
+7. Copyright with copyright trademakr 2019
+8. Back to top linktag
+
+
+Contact page
+1. Logo
+2. Company title (h3)
+3. Unordered list with the following pages in it as Linktags
+4. Big ass banner
+5. Contact Us h2
+6. Form
+	> includes the following
+		- Name textbox with Name placeholder
+		- Email textbox with Email placeholder
+		- Description p
+		- textarea
+		- submit Input
+7. Copyright with copyright icon 2019
+8. Back to top linktag
+
+	

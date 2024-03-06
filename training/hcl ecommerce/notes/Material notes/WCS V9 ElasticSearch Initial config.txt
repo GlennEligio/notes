@@ -1,0 +1,221 @@
+WCS V9 ElasticSearch Initial config
+
+Procedure
+1. Obtain the HCL Commerce Docker images
+	> To start the deployment process, download the HCL-Commerce-DevOps packages
+		a. Review the list of the latest available download packages to ensure that you are obtaining the most up-to-date version of HCL Commerce software
+			- https://help.hcltechsw.com/commerce/9.1.0/install/refs/rigbackuppak.html
+		b. Go to the HCL License and Delivery portal
+			- you will need an account for this
+		c. Search for the Package ID HCL_Commerce_Devops_Versions_9.1, OR File ID HCL_Commerce_DevOps_9.1.x.x.bundle
+			- https://hclsoftware-esd.flexnetoperations.com/flexnet/operations/viewproduct?intrawareProductID=11944467
+			- https://hclsoftware-esd.flexnetoperations.com/flexnet/operations/viewfile?intrawareFileID=17016777
+		d. Download the file
+		e. Download the Data Docker images.
+			- HCL_Commerce_Enterprise_9.1.x.x_Data_Query_Server_x86-64.tgz
+			- HCL_Commerce_Enterprise_9.1.x.x_Data_NiFi_Server_x86-64.tgz
+			- HCL_Commerce_Enterprise_9.1.x.x_Data_NiFi_Registry_Server_x86-64.tgz
+			- HCL_Commerce_Enterprise_9.1.x.x_Data_Ingest_Server_x86-64.tgz
+			
+			Run the following command on each downloaded image file
+				- docker load -i imagename
+				- ex: docker load -i HCL_Commerce_Enterprise_9.1.0.0_Data_Query_Server_x86-64.tgz
+		f. Clone the project in Git from the downloaded git bundle, and check the code into your source control management system. Run the following git command:
+			- git clone bundleName projectName
+			- where:
+				-> bundleName: the filename of the bundle you are cloning
+				-> projectName: the name of the git project that you are creating
+			- ex: git clone HCL_Commerce_DevOps_9.1.0.0.bundle HCL_Commerce_DevOps
+
+
+
+
+
+
+2. Deploy the HCL Commerce ElasticSearch-based data platform
+	> (9.1.6.0+) Deployment option #1: Deploy the Elasticsearch-based data platform via the deployment script.
+		- this option is limited to deployment within a Linux environment, due to the reliance on Bash scripts (.sh files)
+		A. Update the env.sh bash script with the details of your environment
+			i. Open env.sh for editing
+			ii. Set the following environment details.
+				- (9.1.7.0+) From version 9.1.7.0 onward, the SPIUSER_NAME parameter is optional. if it is not specified, then the default value is assumed
+				- For more information on the env.conf configuration file, review https://help.hcltechsw.com/commerce/9.1.0/install/refs/rigdockerenv.html
+			
+ex:
+SEARCH_ENGINE=elasticsearch 
+DEPLOY_TYPE=data 
+DATA_FOR_TOOLKIT=true 
+LICENSE_ACCEPTED=accept 
+TOOLKIT_HOST=<toolkitHost>
+DB_TYPE=<db2|oracle>
+DB_HOST=<databaseHost>
+DB_NAME=<databaseName>
+DB_USER=<databaseUser>
+DB_PASS=<databaseUserPassword>
+SEARCH_QUERY_IMAGE=<searchQueryImage>
+SEARCH_NIFI_IMAGE=<searchNifiImage>
+SEARCH_REGISTRY_IMAGE=<searchRegistryImage> 
+SEARCH_INGEST_IMAGE=<searchIngestImage>
+SPIUSER_PWD_ENCRYPTED=<encryptedSpiUserPassord>
+ADMIN_SPIUSER_PWD=<plainTextSpiuserPassword>
+SPIUSER_PWD_BASE64=<base46SpiuserPassword>
+
+			iii. Save and close the file
+			iv. Back up the env.sh script containing your environment details for future deployment
+		B. If you are using an Oracle database, ensure that there is a copy of the required JDBC driver (ojdbc8.jar) located within the volumes/jdbc/directory
+		C. Run the deployment bash script
+			- ./deploy.sh
+			- The script produces an Elasticsearch-based data platform Docker Compose file (docker-compose-data.yml) that is based on the environment configuration in env.sh
+			- The deployment will set the project to "commerce", so the created Docker services will have "commerce_" prefix.
+				-> EX: commerce_nifi_1
+			- The deployment script will automatically start the deployment.
+			
+			
+			
+	> (9.1.6.0+) Deployment option #2: Deploy the platform manually
+		- This option is the only deployment that is compatible with a Windows host operating system, due to its non-reliance on Bash scripts (.sh files)
+		A. Create a Docker Compose deployment file for your environment		
+			i. Select a deployment Docker Compose template file based on the database that you will use for the deployment. The template files are following the naming convention:
+				- docker-compose-elasticsearch-data-<DB_TYPE>-toolkit-template.yml
+				WHERE: <DB_TYPE> can be either db2 or oracle
+			ii. Copy the template into your Docker Compose deployment file (docker-compose.yml)
+		B. Update the env.sh bash script with the details of your environment
+			i. Open env.sh for editing
+			ii. Set the following environment details
+				- (9.1.7.0+) From version 9.1.7.0 onward, the SPIUSER_NAME parameter is optional. if it is not specified, then the default value is assumed
+				- For more information on the env.conf configuration file, review https://help.hcltechsw.com/commerce/9.1.0/install/refs/rigdockerenv.html
+			
+EX:
+SEARCH_ENGINE=elasticsearch 
+DEPLOY_TYPE=data 
+DATA_FOR_TOOLKIT=true 
+LICENSE_ACCEPTED=accept 
+TOOLKIT_HOST=<toolkitHost>
+DB_TYPE=<db2|oracle>
+DB_HOST=<databaseHost>
+DB_NAME=<databaseName>
+DB_USER=<databaseUser>
+DB_PASS=<databaseUserPassword>
+SEARCH_QUERY_IMAGE=<searchQueryImage>
+SEARCH_NIFI_IMAGE=<searchNifiImage>
+SEARCH_REGISTRY_IMAGE=<searchRegistryImage> 
+SEARCH_INGEST_IMAGE=<searchIngestImage>
+SPIUSER_PWD_ENCRYPTED=<encryptedSpiUserPassord>
+ADMIN_SPIUSER_PWD=<plainTextSpiuserPassword>
+SPIUSER_PWD_BASE64=<base46SpiuserPassword>
+
+			iii. Save and close the file
+			iv. Back up the env.sh script containing your environment details for future deployment
+		C. Copy your configured env.sh values into the Docker .env file on the same level as your Docker Compose file (docker-compose.yml). This allows for docker-compose to use these environment variables in the deployment
+		D. Set file permission for your persistent volumes
+			- Some volumes are mounted to your running containers and require write permissions
+			- Ensure that you recursively set write access to /volumes/, to ensure that it and all of the contained sub-directories are writable
+		E. Run the following command to start the HCL Commerce Elasticsearch data platform
+			- docker-compose up -d
+	
+	
+	
+	> Legacy deployment option: Deploy a legacy version of the platform manually
+		- In the event that you need to support an older version of HCL Commerce 9.1, this option is the only method available for deploying its corresponding Elasticsearch-based data platform
+		- NOTES:
+			1. This delpoyment option is no longer supported with HCL Commerce 9.1.6.0 and greater
+			2. This is the only option for HCL Commerce versions 9.1.0.0 through 9.1.5.0
+		A. From the docker-compose folder, copy the file 
+			- docker-compose-elasticSearch-data-db2-toolkit-template.yml (DB2) or
+			- docker-compose-elasticSearch-data-oracle-toolkit-template.yml (Oracle)
+		B. Update the .yml image tag for all HCL Commerce Docker containers
+			i. Determine the image repository and tag by running the Docker images
+			ii. Update each image tag in the .yml file with the its respective repository.tag
+				- Ex: image: commerce/search-nifi-app:9.1.0.0
+		C. Accept the LICENSE parameter for all HCL Commerce docker containers:
+			- EX: - LICENSE=accept
+		D. Update the following configuration for Nifi to point to the HCL Commerce development environment database
+		
+TEMPLATE:
+ AUTH_JDBC_URL: "jdbc:DBType://DBHost:50000/mall"
+ AUTH_JDBC_DRIVER_LOCATION: "/opt/nifi/nifi-current/lib/DBDriver"
+ AUTH_JDBC_USER_NAME: "USER"
+ AUTH_JDBC_USER_PASSWORD: "PASSWORD"
+ NLP_ENABLE_LANGUAGE_CODE: "nlpEnableLanguageCode"
+ 
+EX: DB2
+AUTH_JDBC_URL: "jdbc:db2://HOST:PORT/DATABASE"
+ AUTH_JDBC_DRIVER_LOCATION: "/opt/nifi/nifi-current/lib/db2jcc4.jar"
+ AUTH_JDBC_USER_NAME: "USERNAME"
+ AUTH_JDBC_USER_PASSWORD: "PASSWORD"
+ NLP_ENABLE_LANGUAGE_CODE: "EN"
+ 
+EX: Oracle
+AUTH_JDBC_URL: "jdbc:oracle:thin:@//HOST:PORT/orclpdb1"
+AUTH_JDBC_DRIVER_CLASSNAME: "oracle.jdbc.driver.OracleDriver"
+AUTH_JDBC_DRIVER_LOCATION: "/opt/nifi/nifi-current/lib/ojdbc8.jar"
+AUTH_JDBC_USER_NAME: "USERNAME"
+AUTH_JDBC_USER_PASSWORD: """
+NLP_ENABLE_LANGUAGE_CODE: "EN"
+	
+		E. Update the configuration for data-query
+			- TX_HOST: "TXHost"
+			- ex: TX_HOST: "tk.hclcommerce.com"
+		F. Create the following sub-directories within in the same directory where docker-compose.yml is located, and ensure that their permissions are set to 777
+			- IMPORTANT: If you are upgrading from 9.1.0.0 to 9.1.1.0 to a newer version of HCL Commerce, or if you have any issues related to teh search index or NiFi service connected, you must delete the contents of these directories		
+				- nifiLogs
+				- (9.1.1.0+)
+					- elasticsearch/data
+					- elasticsearch/config
+					- zookeeper
+					- nifi/data
+				- (9.1.2.0+)
+					- redis/data
+		G. (9.1.2.0+) Copy the hcl-cache-search folder to the location where the Docker Compose file (docker-compose.yml) is located
+		H. If you are using an Oracle or database, ensure that there is a copy of the required JDBC driver (ojdbc8.jar) in the same directory where the Docker compose file (docker-compose.yml) is located
+		I. Run the following command to start the HCL Commerce Elasticsearch data platform
+			- docker-compose up -d
+		
+		
+		
+		
+3. Verify that all the containers are up and healthy
+4. Set your HCL Commerce development environment Elasticsearch environment variables
+	- NOTE: If you want to change back to the Solr search engine at a later data, make a backup of jndi.xml under Liberty_Dir\usr\servers\crsServer\configDropins\overrides\, and namebindings.xml under WCDE_InstallDir\wasprofile\config\cells\localhost\nodes\localhost\servers\server1\. Then, you can revert to Solr with your Elasticsearch settings backed up
+	
+	a. Navigate to the WCDE_InstallDir/bin directory
+	b. Run the following command script
+		configureElasticSearch.bat elasticSearchDataQueryHost elasticSearchDataQueryPort elasticSearchIngestHost elasticSearchIngestPort
+elasticSearchHost elasticSearchPort elasticSearchScheme redisHost redisPort toolingSDKInstallDir
+reactStoreSDKInstallDir
+		WHERE:
+			elasticSearchDataQueryHost
+				- The Elasticsearch query hostname or IP address
+			elasticSearchDataQueryPort
+				- The Elasticsearch query port number
+			elasticSearchIngestHost	
+				- The ElasticSearch ingest hostname or IP address
+			elasticSearchIngestPort
+				- The ElasticSearch ingest port number
+			elasticSearchHost
+				- The Elasticsearch hostname or IP address
+			elasticSearchPort
+				- the ElasticSearch port number
+			elasticSearchScheme	
+				- The Elasticsearch URL scheme
+				- Values are http or https
+			redisHost
+				- available only for 9.1.3.0+ and greater
+				- the redis hostname or ip address
+			redisPort
+				- available only for 9.1.3.0+ and greater
+				- the redis port number
+			tooling SDKInstallDir
+				- the local installation directory of the HCL Commerce Developer Tooling environment software development kit
+				- NOTE: If the toolingSDKInstallDir path contains any spaces, ensure that it is fully encapsulated within double quotation marks (")
+			toolingStoreSDKInstallDir
+				- Optional: The local installation directory of the HCL Commerce Developer React Store environment Software Development Kit
+				- NOTE:
+					- The reactStoreSDKInstallDir parameter is optional
+					- If the reactStoreSDKInstallDir path contains any spaces, ensure that it it fully encapsulated within double quotation marks (").
+		EX: configureElasticSearch.bat elasticsearch.commerce.com 30921 elasticsearch.commerce.com 30801 elasticsearch.commerce.com 30200 http 
+elasticsearch.commerce.com 6379 C:\git-src\github01\toolingsdk C:\git-src\github01\store-web
+
+
+
+5. Optional: Enable the HCL Commerce Cache Manager application

@@ -1,0 +1,1171 @@
+ 12 API Authentication and Security (Task App)
+
+Contents:
+103 Securely Storing Password Part 1
+104 Securely Storing Password Part 2
+105 Logging in Users
+106 JSON Web Tokens
+107 Generating Authentication Tokens
+108 Express Middleware
+109 Accepting Authentication Tokens
+110 Advanced Postman
+111 Logging Out
+112 Hiding Private Data
+113 Authenticating User Endpoints
+114 The User/Task Relationship
+115 Authenticating Task Endpoints
+116 Cascade Delete Tasks
+
+
+
+
+
+
+
+
+
+
+
+103 Securely Storing Password Part 1
+
+Storing Password Securely
+ > when storing password data, we DO NOT WANT to store them in PLAIN TEXT
+	- by plain text, it means that everyone can see the password as it is
+ > the best practice when storing password data is to HASH them
+	- hashing is a practice where we hash the password using ONE-WAY ALGORITHM into random string using an algorithm
+		-> one way algorithm meaning we cant restore the hash string into the original value
+		-> different from encryption where we can get the original value back
+ > in the end, what we will store in database is not the password in plain text, but the hashed password
+
+BCrypt
+ > very secure, widely used hashing algorithm
+ > can be used for cryptographic uses cases, like securing a password
+
+bcrypt.js
+ > an npm module to use BCrypt algorithm to generate salted hash strings
+ > ex: https://www.npmjs.com/package/bcryptjs
+ > to install the package, we can use the command
+	- npm i bcryptjs
+
+Function/Objects from bcryptjs module
+bcrypt
+ > top level object exported by the "bcryptjs" module
+ > contains several functions/properties that we can use to either
+	- hash a string
+	- check if two hash are the same
+
+bcrypt.hash(s: string, salt: string | number): Promise<string>
+ > function of bcrypt used to hash the input string using a salt
+ > takes two arguments
+	1. s, the input string
+	2. salt, either a string or number
+		- if number is passed, it will be used to determine the length of salt string
+ > returns a Promise with the hashed string as resolved value
+
+bcrypt.compare(s: string, hash: string): Promise<boolean>
+ > function used to check if input string "match" the hash string's original value
+ > takes two argument
+	1. s, the input string we are trying to match
+	2. hash string, the string created from the original string
+ > returns a Promise the contains the matching result of strings as resolved value
+
+EX:
+const bcrypt = require("bcryptjs");
+
+const myFunction = async () => {
+  const password = "GlennEligio";
+  const hashedPassword = await bcrypt.hash(password, 8);
+
+  console.log(password);
+  console.log(hashedPassword);
+
+  const isMatch = await bcrypt.compare("GlennEligio", hashedPassword);
+  console.log(isMatch);
+};
+
+
+
+
+
+
+
+
+
+
+104 Securely Storing Password Part 2
+
+Function/Objects used
+mongoose.Schema
+ > returns the constructor of Schema object
+ > constructor thats an object as input
+
+Schema.pre(documentFn: string, middlewareFn: function)
+ > used to add a Document middleware function to execute BEFORE executing a specific document function
+ > takes two inputs
+	1. documentFn: string
+		- string that refers to the document function which we will add the middleware to
+	2. middlewareFn: function
+		- function that will be executed
+		- takes a single argument which we will use to signal that the middleware is "finished" in its operation
+ > "this" inside the middlewareFn refers to the Document object
+
+Document.isModified(path?: string | string[]): boolean
+ > checks if the Document is modified
+ > if we pass a path input, which refers to the Document field name(s), then it will only check those Document Fields
+ > returns a boolean that defines if Document is modified or not
+	- always returns true if the said Document is NEWLY CREATED (or is not pulled from database)
+
+
+
+Middlewares 
+ > Middleware (also called pre and post hooks) are functions which are passed control during execution of asynchronous functions. 
+ > Middleware is specified on the schema level and is useful for writing plugins.
+ > There are FOUR types of middleware in Mongoose, based on where we put the said middleware
+	- document middleware
+	- model middleware
+	- aggregate middleware
+	- query middleware
+ > for Document middlewares, we can add these middleware functions for the following document functions like
+	- validate
+	- save	
+	- remove
+	- updateOne
+	- deleteOne
+ > also in Document middleware functions, the "this" refers to the Document itself
+
+Adding Document Middleware
+ > our goal right now is to add a middleware where it hashes the "password" field BEFORE saving the Document (User document)
+ > to do this, we will need to do the following
+	1. Refactor the mongoose Model creation so that we will store the Schema in a variable
+	2. We will call pre() and pass the document function and the middleware function
+	3. Inside the middleware function, we will check if User Document is modified
+		- if it is, change the password Field into a hashed version
+ 	4. Call the Callback argument passed to middleware function
+
+// model/user.js
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is invalid");
+      }
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    trim: true,
+    minLength: 7,
+    validate(value) {
+      if (value.includes("password")) {
+        throw new Error(`Password can not include "password"`);
+      }
+      return true;
+    },
+  },
+  age: {
+    type: Number,
+    default: 0,
+    validate(value) {
+      if (value < 0) {
+        throw new Error("Age must be a positive number");
+      }
+      return true;
+    },
+  },
+});
+
+userSchema.pre("save", async function (next) {
+  const user = this;
+
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+
+  next();
+});
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;
+
+
+Setting up the PATCH endpoint to also execute the middleware for hashing passwords
+ > right now, we are using the Model.findByIdAndUpdate() function to update the User documents
+ > but, this function doesnt use the Document's save() function in order to do so, hence the password hashing middleware is not used
+	- this is a problem since in PATCH endpoint, we might modify the password of a User
+ > to solve this, we will refactor the PATCH endpoint so that it will do the Document save() function
+	1. Find the Document to update using Model.findById()
+	2. Update each of the property of the Model returned by the Promise of Model.findById()
+		- with the keys of the req.body, use the forEach array method to do the updates
+	3. Call Model.save() to the updated Model
+
+// inside route/user.js
+router.patch("/users/:id", async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["name", "email", "password", "age"];
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send();
+  }
+
+  try {
+    const user = await User.findById(req.params.id);
+
+    updates.forEach((update) => (user[update] = req.body[update]));
+    await user.save();
+
+    if (!user) {
+      return res.status(404).send();
+    }
+
+    res.send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+105 Logging in Users
+
+Function/Objects used
+Schema.statics
+ > returns an object that contains all the static functions of the Model
+ > we can also add custom static methods by assigning a new property to this object
+
+Ex:
+userSchema.statics.findCredentials = async (email, password) => {...}
+
+
+Schema.static(staticFnName: string, staticFn: function)
+ > function in schema used to add static function to the Model
+
+EX:
+userSchema.static("findCredentials", async (email, password) => {...}) 
+
+
+
+Logging in Users
+ > in this section, we will do the following
+	1. Add new function to the User Model for validating credentials
+	2. Setting up the User Schema so that email Field is unique
+	3. Add new POST endpoint for logging in
+
+1. Add new function to the User Model for validating credentials
+// inside models/user.js
+userSchema.statics.findCredentials = async (email, password) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error("User doesnt exist");
+  }
+
+  const isMatch = bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    throw new Error("Unable to login");
+  }
+
+  return user;
+};
+
+
+2. Setting up the User Schema so that email Field is unique
+// inside userSchema definition
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is invalid");
+      }
+    },
+  },
+
+
+3. Add new POST endpoint for logging in
+// inside router/user.js
+router.post("/users/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findCredentials(email, password);
+    res.send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+
+
+NOTE:
+1. If we change the Schema of a Model, we will need to drop the database to ensure that the new Schema will be applied
+2. We dont have to provide very specific error message when unable to login like "Correct email but wrong password"
+
+
+
+
+
+
+
+
+
+
+106 JSON Web Tokens
+
+JSON Web Tokens (JWT)
+ > a standard that is widely used for use cases such us authentication
+
+jsonwebtoken
+ > npm module used for dealing with JWTs like creating or validating them
+ > npm site: https://www.npmjs.com/package/jsonwebtoken
+ > to install, use the command
+	- npm i jsonwebtoken
+
+jsonwebtoken Functions/Objects
+jwt
+ > top level object exported by the "jsonwebtoken" module
+
+jwt.sign(payload: string | object, secretKey: jwt.Secret | string, options?: jwt.SignOptions): string
+ > used to sign a specific payload using a secretKey
+ > takes three inputs
+	1. payload	
+		- the payload of JWT
+	2. secretKey
+		- secretKey used to sign and validate the jwts
+	3. options
+		- object with contains the options for signing process
+		- the properties includes
+			a. algorithms
+			b. audience
+			c. issuer
+			d. expiresIn
+ > by default, adds "iat" property in payload, which represents Issued At date
+ > returns the JWT string
+
+jwt.verify(token: string, secretKey: jwt.Secret | string): object
+ > used to verify a JWT using a secretKey
+ > returns the payload as an object literal
+
+
+EX:
+// codes
+const jwt = require("jsonwebtoken");
+
+const myFunction = async () => {
+  const token = jwt.sign({ _id: "glenneligio" }, "thisisthesecretkey", {
+    expiresIn: "7 days",
+  });
+  console.log(token);
+
+  const payload = jwt.verify(token, "thisisthesecretkey");
+  console.log(payload);
+};
+
+myFunction();
+
+
+// console logs
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJnbGVubmVsaWdpbyIsImlhdCI6MTY1NTY5NTY0NSwiZXhwIjoxNjU2MzAwNDQ1fQ.baXorJH3gilfWsR9n8w0tNUdBlx4PKZV4vJ2vrJaoCk
+{ _id: 'glenneligio', iat: 1655695645, exp: 1656300445 }
+
+
+
+
+
+
+
+
+
+
+
+107 Generating Authentication Tokens
+
+Function/Objects used
+Schema.methods
+ > returns an object that contains all the instance methods of the said Model
+ > we can add custom instance methods by defining a new property to this object
+ > the "this" in this instance methods will refer to the Model instance
+	- for this reason, we would want to avoid using arrow functions
+
+EX:
+userSchema.methods.generateToken = async function () {...}
+
+
+GOAL:
+1. Modify the User Model
+	> add a "tokens" property, which is an array
+	> inside the "tokens" prop, we will define the Schema of the SubDocuments to store in this array
+2. Create a instance method to the User Model for generating token
+	> this instance method will 
+		- create token from the Model instance
+		- add the newly created token in the "tokens" property of Model
+		- save the Model
+		- return the Token
+3. Modify the POST /users/login and POST /users endpoint
+	> in login, we want to use the findCredentials() and generateToken() of the Model class and Model instance
+	> we want to return an object in response with the User Model and the newly created Token
+	> for register user, we just want to use generateToken() and return the same object
+
+
+EX:
+// inside userSchema object input
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+
+
+// models/user.js
+userSchema.methods.generateToken = async function () {
+  const user = this;
+
+  const token = jwt.sign({ _id: user._id.toString() }, "thisisasecretkey", {
+    expiresIn: "7 days",
+  });
+
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+
+  return token;
+};
+
+
+// router/user.js
+router.post("/users", async (req, res) => {
+  const user = new User(req.body);
+
+  try {
+    await user.save();
+    const token = await user.generateToken();
+    res.status(201).send({ user, token });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+router.post("/users/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findCredentials(email, password);
+    const token = await user.generateToken();
+    res.send({ user, token });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+108 Express Middleware
+
+Function/Objects used
+app.use(middlewareFn: (req,res,next) => {})
+ > an overload of app.use() function
+ > used to add middleware to the Routes througout the Application
+
+router.use(middlewareFn: (req, res, next) => {})
+ > an overload of router.use() function
+ > used to add middleware function to the Routes within the Router instance itself
+
+
+Middleware
+ > Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. 
+ > The next middleware function is commonly denoted by a variable named next.
+ > Middleware functions can perform the following tasks:
+	- Execute any code.
+	- Make changes to the request and the response objects.
+	- End the request-response cycle.
+	- Call the next middleware function in the stack.
+ > in essence, with Middleware, do something to the request or response before we run the Route handlers
+	- works similarly with Filters in J2EE
+ > note that we can customize the Middleware so that it will only target SPECIFIC Routes
+ > there are two types of Middleware, based on their scope
+	1. Application level middlewares
+		- applied to ALL Routes
+	2. Router level middlewares
+		- applied only to the Routes inside the Router instance
+
+Middleware functions
+ > middleware functions are function that process the request and/or response before sending it to the Route handlers
+ > this function receives three argument
+	1. req
+	2. res
+		- similar to the req and res parameters of the Route handler functions
+	3. next
+		- refers to the NEXT MIDDLEWARE FUNCTION
+ > for the Middleware function to finish processing the Request, we must do either of the following
+	1. call res.send()
+	2. call the next Middleware function by using next()
+
+EX:
+// app level middleware
+app.use((req, res, next) => {
+  if(req.method === "GET") {
+    res.send("GET methods not allowed")
+  }
+  next();
+});
+
+// route level middleware
+userRouter.use((req, res, next) => {
+  if(req.method === "GET") {
+    res.send("GET methods not allowed in Users")
+  }
+  next();
+});
+
+
+
+
+
+
+
+
+
+109 Accepting Authentication Tokens
+
+Functions/Object used
+app.get(path: string, middlewareFn: (req,res,next) => {}, routeHandlerFn: (req, res) => {})
+router.get(path: string, middlewareFn: (req,res,next) => {}, routeHandlerFn: (req, res) => {})
+ > another overload of the route functions of Application or Router object used to inject middleware to specific Routes
+ > we add the middleware function as the SECOND argument of the Route methods
+ > applicable to other Route method such as POST, PUT, PATCH, DELETE, etc
+
+req.header(name: String)
+ > used to fetch the value of specific header name in a request
+
+String.replace(oldVal: string, newVal: string)
+ > used to replace a specific substring in a String data into new substring
+
+req.[prop: string] 
+ > we can add any CUSTOM property to the request inside middleware
+ > the proceeding middleware or Route can then access this custom property in the request
+
+"FieldArray.ObjectElementProp": object
+ > a syntax used for matching a Document using one of its Field's Object element property
+ > in this case the Document's Field is an ARRAY and the Object is one of the Field's element
+ > ex: User.findOne({_id: decoded._id, 'tokens.token': token})
+	- here, we will match a Document whose tokens Field array contains a Subdocument whose "token" Field matches the "token" variables passed
+
+
+GOAL:
+1. Create a file inside the "middleware" folder inside "src". Inside the file, we will do the following
+	> fetch Authorization header in request, authenticate it, and fetch the payload
+	> using the payload, fetch the User Document whose id matches and token's field contains the token from Authorization header
+	> if User doesnt exist, throw an Error, else add the User found in the req as custom property
+	> call the next middleware function or route function
+	> surround all logic define earlier in try block and in catch, send a response with status 401 and response body with "error" property stating "Please authenticate"
+	> expose the middleware function
+2. Create endpoint for fetch own User
+	> GET /users/me
+	> uses the auth middleware
+ 	> returns the value of the req.user that came from the auth middleware
+
+EX:
+// middleware/auth.js
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
+const auth = async (req, res, next) => {
+  try {
+    const token = req.header("Authorization").replace("Bearer ", "");
+    const payload = jwt.verify(token, "thisisasecretkey");
+    const user = await User.findOne({
+      _id: payload._id,
+      "tokens.token": token,
+    });
+    if (!user) {
+      throw new Error();
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).send({ error: "Please authenticate" });
+  }
+};
+
+module.exports = auth;
+
+
+// inside routers/user.js
+const auth = require("../middleware/auth");
+
+router.get("/users/me", auth, async (req, res) => {
+  res.send(req.user);
+});
+
+
+
+
+
+
+
+
+
+
+
+110 Advanced Postman
+
+Advanced Postman configurations
+1. Environment
+	- key:value pairs that requests can use
+2. Setting up Collection-wide settings (Authorization)
+3. Pre-request Script
+	- javascript code that we can run before request is sent
+4. Test
+	- javascript that will be executed AFTER the request is sent and response is received
+	- mostly for testing the request
+	 
+
+
+Environments
+	> here, we can define environment variables that we can use in a specific WorkSpace
+ 	
+Creating a Environment, 
+ > make sure theres no Environment active in the current Workspace
+ > click the eye icon at top right, then in the window pop-up, click the "Add" in Environment section
+ > add the key: value pairs that you want
+ > after adding key: value pairs, DONT FORGET TO SAVE
+ > we can now select this Environment in the Workspace that we are working on
+
+Using Environment's key:value pairs
+ > to use a key in the Environment, we will need to use this syntax
+	{{key}}
+ > we can hover to this string in order to see the value of the key that we will be using
+ > ex: in the url, in order to use the Environment with value {url: localhost:3000} in the Request's url, we will need to pass in the url tab
+	- {{url}}/users
+
+
+Setting up Collection-wide settings (Authorization) 
+ > we can also set up the Authorization scheme for the whole Collection of Requests
+ > we can then set each of the Request to INHERIT AUTH FROM PARENT
+	- this will use the Authorization scheme that we set in the Collection itself
+ > to setup Collection's Authorization scheme, do this, 
+	1. right click the Collection (or click triple dots)
+	2. click Edit
+	3. In the Authorization tab, set up the Authorization scheme
+ > to setup the Request to inherit auth scheme to Parent,
+	1. Go to the Request
+	2. Go to Authorization tab
+	3. Set type to "Inherit auth from parent"
+		- this is the default type
+
+
+
+Tests
+ > we can set the Test scripts for each of the Request
+ > this Test scripts uses JavaScript
+ > in the scripts, we can use the "pm" implicit object to access different information about request and response
+
+pm
+ > object availabe in test scripts
+ > stands for postman
+ > contains several properties that we can use
+	1. pm.response: object
+		- contains information about the response received
+		- contains properties related to response like
+			-> code: number
+			-> json(): object 
+	2. pm.environment: object
+		- contains properties/function related to Environment like
+			a. set(key: string, value: string | number)
+
+
+Using Test Script, Environment, and Collection Auth Scheme to automate the setup of Auth scheme of all Request
+1. In the Collection Auth Scheme, set the value of Bearer Token to a key in Environment
+	> ex: {{authToken}}
+2. In one or more request, setup the Test Script so that
+	> checks the response is successful
+	> if successful, set the Environment that contains the authToken to the one of the response body property
+
+EX:
+// Bearer token value of Collection
+{{authToken}}
+
+// Test script in the "Login" request
+if(pm.response.code === 200) {
+    pm.environment.set("authToken", pm.response.json().token)
+}
+
+
+
+
+
+
+
+
+
+
+111 Logging Out
+
+GOAL:
+1. Add POST endpoint for logging out
+	> this endpoint will either
+		a. remove the token we are currently using in the "tokens" Field of the User
+			- for single logout
+		b. empty out the "tokens" Field array of the User
+			- for logout all
+
+STEPS
+1. Create POST endpoint
+2. Use auth middleware to it
+3. Access the user in the request
+4. Modify the "tokens" field
+5. Save the modified user
+
+EX:
+router.post("/users/logout", auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(
+      (token) => token.token !== req.token
+    );
+    await req.user.save();
+    res.send();
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.post("/users/logoutAll", auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+    res.send();
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+
+
+
+
+
+
+
+
+
+112 Hiding Private Data
+
+Function/Object used
+Model.toObject()
+ > used to convert a Model instance into an ordinary Object instance
+
+Object.toJSON
+ > a function property added to an Object/Class to define the serialization behavior of the said Object/Class
+	- with this, we can sanitize the Object by modifying or remove some of its properties
+ > this function property is called whenever an Object is serialized using JSON.stringify
+ 	- if this doesnt exist, it will just do the default behavior which is to stringify the object will ALL of its properties
+ > we pass a normal function syntax to this function property instead of arrow function since we will need to access the "this" keyword
+
+
+delete
+ > keyword used in conjunction with an Object property
+ > using this, we can remove the specified property of an Object
+ > syntax is
+	- delete object.property
+	- ex: delete user.password
+
+
+Hiding Private Data
+ > right now, we are exposing all data with regards to the User, which includes the password property
+ > to solve this issue, we can do either of the following
+	1. create instance method to User Model to sanitize the User model instance
+	2. add instance method named "toJSON" to modify the behavior of the Model serialization
+ > we prefer to use the toJSON method so that we dont need to call the custom instance method
+	- toJSON will work as long as we serialize the object
+
+Express and Response.send()
+ > with Express, when we pass an object to the Response.send(), the object will be AUTOMATICALLY be serialized using JSON.stringify behind the scene
+
+
+EX:
+// using toJSON method
+userSchema.methods.toJSON = function () {
+  const user = this;
+  const userObject = user.toObject();
+
+  delete userObject.password;
+  delete userObject.tokens
+
+  return userObject;
+}
+
+
+// using custom Model instance method
+userSchema.methods.getPublicProperties = function () {
+  const user = this;
+  const userObject = user.toObject();
+
+  delete userObject.password;
+  delete userObject.tokens
+
+  return userObject;
+}
+
+
+
+
+
+
+
+
+
+
+113 Authenticating User Endpoints
+
+Functions/Object used
+Model.remove(): Promise
+ > used to remove a Document that corresponds to the Model instance that the remove() is called
+
+GOAL:
+1. Create a DELETE Route to delete own user
+	> endpoint uses auth middleware
+	> from the req of Route, we can access the req.user which corresponds to the Model instance of the User associated with JWT token
+	> in Route, remove the Document associated with Model using Model.remove()
+	> return the deleted User
+2. Create an UPDATE Route to update own user
+	> endpoint uses auth middle
+	> using the User model instance in req from auth middleware, we will apply the changes
+	> we then save the updated User model instance and send it back in response
+
+EX:
+// Route for updating own user
+router.patch("/users/me", auth, async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["name", "email", "password", "age"];
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send();
+  }
+
+  try {
+    updates.forEach((update) => (req.user[update] = req.body[update]));
+    await req.user.save();
+
+    res.send(req.user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+
+// Route for deleting own user
+router.delete("/users/me", auth, async (req, res) => {
+  try {
+    await req.user.remove();
+    res.send(req.user);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+114 The User/Task Relationship
+
+Function/Objects used
+ref
+ > a property in the SchemaType option used for creating "relationship" between Models
+ > we pass the Model name to this property
+ > used to "reference" a specific Document from the Collection that the Model name refers to
+ > we typically use this alongside the Type "mongoose.Schema.Types.ObjectId"
+	- this ObjectId will be used to reference the specific Document in another Collection
+
+EX:
+In this example, we use the owner value, which in an ObjectId, to reference another Document from the Collection "User" model name refers to.
+// inside Task Schema as property
+owner: {
+  type: mongoose.Schema.Types.ObjectId,
+  required: true,
+  ref: "User"
+}
+
+
+Model.prototype.virtual(name: string, options: VirtualType)
+ > used to make a "virtual" property to the Model
+ > this "virtual" property will then be used create "relationship" by referencing a Document in another Collection
+ > takes two input
+	1. name
+		- refers to the name of the virtual property
+	2. options
+		- object of type VirtualType
+		- this MUST have three properties
+			a. ref: string
+				- defines the name of the Model to reference to
+			b. localField: string
+				- the Field in the Document used to reference this
+			c. foreignField: string
+				- the Field in the OTHER Document that is used to reference 
+
+EX:
+In this example, we create a virtual property "tasks", which will hold the Task of the User.
+The "ref" points to the Task model. The localField points to the "_id" Field in User Document. The foreignField points to the "owner" field in Task Document. Using the localField and foreignField, User and Task can reference each other
+
+// inside models/user.js
+userSchema.virtual("tasks", {
+  ref: "Task",
+  localField: "_id",
+  foreignField: "owner",
+});
+
+
+Model.populate(field: string): Promise
+ > used to populate the Document references inside the Documents inside
+ > Changed in Mongoose 6: the model you call populate() on should be the "local field" model, not the "foreign field" model.
+ > returns a Promise which returns the Model instance with its properties defined in populate() "populated"
+
+
+SchemaOptions
+ > object that we pass as optional SECOND argument when creating Schema
+	- ex: const userSchema = new mongoose.Schema(object: {[props: string]: SchemaType}, options: SchemaOptions)
+ > in this, we can define several Schema options which includes
+	1. toObject
+		- property of SchemaOption to define behavior of toObject() instance method
+		- inside we can also define some properties like
+			a. virtuals: boolean
+				- defines if we will include the virtual properties in toObject result
+	2. toJSON
+		- property of SchemaOption to define behavior of toJSON() instance method
+		- inside we can also define some properties like
+			a. virtuals: boolean
+				- defines if we will include the virtual properties in toJSON() result
+
+
+Creating relationship on Models
+ > to create a relationship from one Model to another, we can do either of the following
+	1. Create a "real" property in Schema
+		- we populate this with data that we can use to reference the Model
+		- we use the type: mongoose.Schema.Types.ObjectId to this property since we can only uniquely identify the related Model with this
+		- this property will REFLECT to the Document's Schema
+	2. Create a "virtual" property in the Schema's virtuals
+		- we dont directly add this property in Schema, instead we add this in its virtuals
+		- we need the following information to create relationship using this virtual prop	
+			1. Model name
+			2. Virtual property name
+			3. The local field name to identify this Model
+			4. The foreign field name that other Model used to reference this Model
+
+EX:
+Here, we use the "owner" property of Task model to reference a User
+// inside models/task.js
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
+
+Here, we create a virtual property "tasks" to reference the Task that reference this User 
+We will find Tasks by matching the Tasks' "owner" to the User's "_id"
+// inside models/user.js
+userSchema.virtual("tasks", {
+  ref: "Task",
+  localField: "_id",
+  foreignField: "owner",
+});
+
+
+Populating the Models property which reference other Models
+ > to do this, we will use the Model.populate() function, which takes either
+	1. an array of object with "path" property which refers to Model's property to populate
+		- OPTIONAL: we can add "select" property to this object, to define the property we want to fetch in the referenced Model
+	2. we can pass the name of the property we want to populate
+		- used for SINGLE property population
+
+EX:
+const main = async () => {
+  const user = await User.findById("62b2a57e72372e787d89500a");
+  await user.populate([{ path: "tasks" }]);
+  console.log(user);
+};
+
+main();
+
+
+
+NOTE:
+1. By default, the virtuals or virtual properties is NOT INCLUDED in the result of toObject() and toJSON() result of Models.
+	> to include them, we need to define them in the Schema creation through SchemaOptions
+2. If we define the toObject and toJSON behavior, it will add a "id" property alongside "_id"
+	> to remove the "id", define the "id" in SchemaOptions and pass false
+
+EX:
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    }
+  },
+  { toObject: { virtuals: true }, toJSON: { virtuals: true }, id: false }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+115 Authenticating Task Endpoints
+
+GOAL:
+Authenticate Task endpoints
+ > only perform CRUD operations to the Task that belong to the said User fetched from the JWT of auth middleware
+
+
+EX:
+router.get("/tasks", auth, async (req, res) => {
+  try {
+    const tasks = await Task.find({ owner: req.user._id });
+    res.send(tasks);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+router.get("/tasks/:id", auth, async (req, res) => {
+  try {
+    const task = await Task.findOne({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
+    if (task) {
+      return res.send(task);
+    }
+    res.status(404).send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.patch("/tasks/:id", auth, async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["description", "completed"];
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send();
+  }
+
+  try {
+    const task = await Task.findOne({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
+    if (!task) {
+      return res.status(404).send();
+    }
+    updates.forEach((update) => (task[update] = req.body[update]));
+    await task.save();
+
+    res.send(task);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+router.delete("/tasks/:id", auth, async (req, res) => {
+  try {
+    const deletedUser = await Task.findOneAndDelete({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
+    if (!deletedUser) {
+      return res.status(404).send();
+    }
+    res.send(deletedUser);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+
+
+
+
+
+
+
+
+
+116 Cascade Delete Tasks
+
+Function/Objects used
+Schema.pre("remove", middlewareFn: function(next) {})
+ > used to add a middleware function before we do a "remove" operation
+ > inside the middleware function, we can access the Document to remove with "this" keyword
+
+
+GOAL:
+1. Cascade the DELETE operation of a User to its Task
+
+EX:
+// middleware function before the remove operation on User Model
+userSchema.pre("remove", async function (next) {
+  const user = this;
+  await Task.deleteMany({ owner: user._id });
+  next();
+});
+
+
+
+
+
+
+
+

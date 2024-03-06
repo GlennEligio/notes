@@ -1,0 +1,27 @@
+22 RHCSA RHEL 8 - Preserve system journals
+
+Three methods of Preserving system journals on reboot
+1. Create the "/var/log/journal" directory, add SystemMaxUse in journal.conf of systemd and restart the systemd-journald service
+2. Change the Storage property of journald.conf to "persistent"
+	> no need to manually create /var/log/journal directory
+	> Note that with the restart of service you will loose all the logging of the current session. 
+	> Hence it is recommended to use killall -USR1 systemd-journald. 
+	> With this the memory log gets copied to the new disk location as well as all subsequent events.
+
+
+
+Create the "/var/log/journal" directory and restarting the systemd-journald service
+1. Change user to root
+2. Create directory "/var/log/journal" to contain the logs
+3. OPTIONAL: Add SystemMaxUse property to "/etc/systemd/journald.conf" file
+	$ echo "SystemMaxUse=100M" >> /etc/systemd/journald.conf
+4. Restart the systemd-journald service
+	$ systemctl restart systemd-journald
+
+
+Adding and changing Storage property of journald.conf
+1. Replace storage type with Storage=persistent of journald.conf
+	$ sed -i 's/#Storage.*/Storage=persistent/' /etc/systemd/journald.conf
+2. Restart the systemd-journald service
+	$ systemctl restart systemd-journald
+	

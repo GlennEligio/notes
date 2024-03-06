@@ -1,0 +1,39 @@
+Setup Spring Cloud API Gateway
+
+1. Add necessary dependency
+	> Spring Cloud Gateway API
+	> Spring Boot Starter Actuator
+		- we can monitor Gateway using /gateway endpoint of Actuator
+	> Spring Cloud Eureka Client
+
+
+2. Setup the configuration properties in the Gateway Spring Boot app
+	
+spring.cloud.gateway.discovery.locator.enabled
+	> defines if the Gateway will use Eureka Service Discovery for its Route Locator
+	> the API Gateway needs to have Eureka Discovery Client in its classpath/dependency
+	> takes a boolean value (true/false)
+	> the URI structure of the API gateway to invoke other Service API endpoints in Eureka Naming Server is
+		{API gateway host URL}/{Service Name}/{expose API endpoint of Service}
+
+spring.cloud.gateway.discovery.locator.lowerCaseServiceId
+	> defines if the service Id to use in API Gateway URL will be lower case or not
+		- by default, Services registed in Eureka Naming Server are in UPPERCASES
+		- so to invoke the Services, we will need to type the Service name in UPPERCASE
+	> takes boolean value (true/false)
+		- if set to false, we CAN ONLY invoke Services in lowercase
+		- ex: http://localhost:8765/currency-exchange/currency-exchange/from/USD/to/INR WILL return a result
+		- ex: http://localhost:8765/CURRENCY-EXCHANGE/currency-exchange/from/USD/to/INR WILL NOT return a result
+
+
+management.endpoint.gateway.enabled=true
+	> enables the gateway endpoint to be accessed
+	> used for monitoring the Gateway app
+
+management.endpoints.web.exposure.include: gateway
+	> includes "/gateway" in the endpoints to be exposed
+
+
+
+
+3. Create WebClient @Bean to perform Http request for authentication

@@ -1,0 +1,205 @@
+Section 16 - Docker Run
+
+99. Docker Run
+
+docker run <IMAGE_NAME>
+docker run <IMAGE_NAME:TAG>
+ > creates a docker container running on the image specified in the command
+ > if image is not present locally, it will pull from the public docker registry DockerHub
+ > also, if image tag (version) is not specified, it will use the 'latest' tag as default
+	- note that the 'latest' tag may not be pointed to the newest tag for that image
+	- to know where the 'latest' tag is pointed to, go to that image's dockerhub site
+ > ex:
+	$ docker run redis
+	$ docker run redis:4.0
+	
+RUN - STDIN and STDOUT
+docker run -i <IMAGE_NAME>
+ > '-i' flag stands for interactive
+ > used to run a container in an interactive mode
+ > this means that the stdin of the current console (where you executed the docker run command), and the stdin inside the container is connected to each other
+	- with this, you can interact with the container outside of it
+ > this means that whatever commands we execute after running this command will be executed INSIDE the container
+ > ex:
+	$ docker run -i kodekloud/simple-prompt-docker
+
+docker run -t <IMAGE_NAME>
+ > '-t' flag stands for pseudo-terminal
+ > this is used to connect the stdout of the container's terminal to the current terminal we are currently in
+ > this means that whatever console outputs being logged into the system will be logged into the current terminal as well
+ > typically used with '-i' flag to have full terminal connection
+ > ex:
+	$ docker run -it kodekloud/simple-prompt-docker
+ 
+
+RUN - Port mapping 
+ > when running a container where we need to access externally via HTTP or TCP request (ex: webapps, databases, etc), we would need to expose the said containers in order for other users/services to access them
+	- these services will CERTAINLY LISTEN to a specific port of the container itself (ex: Docker container running 'mysql' image will listen to port 3306 by default)
+ > by default, Docker containers are assigned an INTERNAL ip address within the host machine that runs the Docker engine. but in this case, the only way to access the service is within the host machine itself
+	- ex: Container1 will have 172.17.0.2 as IP address
+ > in order for other users outside the host machine to access services within the Docker containers, we can use PORT MAPPING, which will map a free port on the host machine's IP address to a port of container's IP address
+	- ex: 
+		Host machine IP = 192.168.1.5
+		Docker container internal IP assigned = 172.17.0.2
+		If we port map the port 80 of Host machine IP to the 8080 of the Docker container internal IP, this means that ALL request coming from 192.168.1.5:80 will be FORWARDED to 172.17.0.2 within the host machine
+ > in order to do PORT mapping, we can use the '-p' flag of docker run
+ 
+docker run -p <HOST_IP_PORT:CONTAINER_IP_PORT> <IMAGE_NAME>
+ > '-p' stands for port mapping
+ > used to map a free port of host machine's ip to the container's port
+ > ex: 
+	$ docker run -p 80:5000 kodekloud/simple-webapp
+		- runs a webapp that listens to port 5000 inside container
+		- since we map the host machine's port 80 to the port 5000 of container, we can access the webapp through port 80 of the host machine's ip address
+ > with this, we can run multiple instances of the same services, as long as they are mapped in different ports of host machine
+ > NOTES:
+	1. Make sure the port of host machine we are using is FREE. Using an occupied port will cause errors
+	
+
+RUN - Volume mapping	
+ > by default, when Docker containers are removed, all of its state like configuration, data, files, etc, are removed as well
+ > for some services hosted in Docker container, this is the preferred config. example of these are web services where they are supposed to be ephemeral, can be destroyed or created on whim with no effects whatsoever
+ > but there are some services where we can to maintain a specific state, data, or file, like for database services.
+ > in order to maintain this state, we can use Volume mapping to preserve these state/data and be used by succeeding containers as well
+ > with Volume mapping, we are essentially mapping a specific directory OUTSIDE the container (host machine running Docker engine) to a directory inside the container
+ > this will allow as to persist data created/modified by the container, so that it can be used by the next instance of container incase the previous one fails
+ > ex: /opt/datadir -> /var/lib/mysql
+	- in this case, we are mapping the directory of docker host /opt/datadir to the directory of Container /var/lib/mysql
+	- any changes done by the container in /var/lib/mysql will reflect on the /opt/datadir of the host machine
+	- conversely, any changes we do in /opt/datadir of host machine will reflect inside /var/lib/mysql of container
+
+docker run -v <HOST_DIRECTORY:CONTAINER_DIRECTORY> <IMAGE_NAME>
+ > '-v' flag is for volume mapping
+ > takes two inputs, separated by colon
+	- host directory
+	- container directory
+ > ex:
+	$ docker run -v /opt/datadir:/var/lib/mysql mysql
+
+
+Inspect container
+docker inspect <CONTAINER_NAME|CONTAINER_ID>
+ > used for inspecting the details about the docker container
+ > prints the details in JSON format
+ > ex:
+	$ docker logs blissful_hopper
+	
+
+Container logs
+docker logs <CONTAINER_NAME|CONTAINER_ID>
+ > used to print the logs of the docker container
+ > ex:
+	$ docker logs blissful_hopper
+ 
+ 
+NOTE:
+1. Boolean flags (those that do not require an input value, e.g. -i, -t, -d) can be used with each other in a single flag
+	> ex: 'docker run -itd' is the same as 'docker run -i -t -d'
+
+
+
+
+
+
+
+100. Demo - Advanced Docker Run Features
+
+Command history
+docker ps
+docker run ubuntu cat /etc/*release*
+docker run ubuntu:17.10 cat /etc/*release*
+ > used to check if version of ubuntu inside container changes
+docker run ubuntu sleep 15
+ > you will get stuck for 15 sec, since docker container is runnong on foreground
+
+# in other terminal - since current terminal is unusable
+docker ps
+docker stop d79c7d50dbf5
+docker run -d ubuntu sleep 1500
+ > -d flag is used to run docker container in background or detached mode
+docker ps
+docker attach f13b85a3e040
+ > used to attach the current terminal we are right now (host machine) to the terminal of the docker container
+ 
+# back to previous terminal
+docker ps
+docker stop f13b85a3e040
+clear
+docker run timer
+ > docker image that prints the current time every seconds
+ > make sure to stop this container
+
+# other terminal
+docker stop previoustimerimagecont
+docker run -d timer
+docker ps
+docker attach newtimercontainerid
+ > with this, we should be able to see the current time output
+clear
+
+docker run jenkins
+ > take note of the logs outputted when running jenkins container, we should see the initialAdminPassword for jenkins. we will be using this later
+docker ps
+ > we should see the container hosting jenkins
+ > by default, jenkins container listens to port 8080 and 50000
+ > using either the internal ip assigned to jenkins container, or ip address of host machine (assuming port mapping is done) + 8080, we should be able to access the jenkins website
+docker inspect jenkins-container-id
+ > find the internal ip address assigned to docker container, to access jenkins 
+docker ps
+docker stop previous-jenkins-container-id
+
+docker run -p 8080:8080 jenkins
+ > we will setup the jenkins service on this container
+docker run -p 8080:8080 jenkins
+ > at this point, there should be TWO jenkins containers
+ > we created a second container to see if the state/data/configurations we've made from previous jenkins container persist, which in this case it should not since we didnt configure any 
+mkdir my-jenkins-data
+docker run -p 8080:8080 -v /root/my-jenkins-data:/var/jenkins_home jenkins -u root
+ > here, we now added a volume mount to persist any state/data/configuration of the services running
+ > also, we've specify the 'root' as the user in order to avoid the permission issue with regards to read/write of the volume mounted
+ > at this point, we will also configure the jenkins service inside container. for this, we will be created a test Jenkins job
+docker stop second-jenkins-container-id
+docker run -p 8080:8080 -v /root/my-jenkins-data:/var/jenkins_home jenkins -u root
+ > this would be the THIRD jenkins container we are running
+ > since we've mounted the same volume to the /var/jenkins_home directory, when we accessed the Jenkins in this third container, we should be able to see the state/data/configurations we've done from SECOND Jenkins
+
+NOTES:
+1. When specifying an image when running Docker commands, it will first check if the image is present locally. If not it will fetch from public docker repository/registry - DockerHub
+
+
+
+
+
+101. Labs: Docker Run Commands
+
+Q1: Let us first inspect the environment. How many containers are running on this host?
+S: Use 'docker ps' to list all running containers
+A: 1
+
+Q2: What is the image used by the container?
+S: Use 'docker ps', and take note of the IMAGE column
+A: nginx:alpine
+
+Q3: How many ports are published on this container?
+S: Use 'docker ps', and take note of the PORTS column
+A: 2
+
+Q4: Which of the below ports are the exposed on the CONTAINER?
+S: Use 'docker ps', and take note of the PORTS column
+	> the format of PORTS values is HOST_MACHINE_PORT -> CONTAINER_PORT/PORT_TYPE
+	> CONTAINER_PORT is the port containers are exposing
+A: 3456 & 80
+
+Q4: Which of the below ports are published on Host?
+S: Use 'docker ps', and take note of the PORTS column
+	> the format of PORTS values is HOST_MACHINE_PORT -> CONTAINER_PORT/PORT_TYPE
+	> HOST_MACHINE_PORT is the ports published on host
+A: 3456 & 38080
+
+Q5: Run an instance of kodekloud/simple-webapp with a tag blue and map port 8080 on the container to 38282 on the host.
+G: 
+Image: kodekloud/simple-webapp:blue
+Container Port: 8080
+Host Port: 38282
+S: Use 'docker run IMAGE', and specify the values for the following flags: -p
+A: docker run -d -p 38282:8080 kodekloud/simple-webapp:blue  

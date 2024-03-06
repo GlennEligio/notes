@@ -1,0 +1,19 @@
+102 DynamoDB - Global Tables
+ 
+DynamoDB - Global Tables
+ > make a DynamoDB table accessible with LOW LATENCY in multiple regions
+ > Active-Active replication
+	- Users can read/write in any Region, since there are two way replicatino of all DynamoDB Global Table in all Region that you have specified
+
+
+EX:
+				Users
+				^
+		read/write	|
+	------------------------|--------------------------------			|							|
+	|							|
+	|							|
+	v							v
+N. Virgina (us-east-1)		2-way-replication	Paris (eu-west-3)
+DynamoDB		<-------------------------->	DynamoDB
+Global Table						Global Table

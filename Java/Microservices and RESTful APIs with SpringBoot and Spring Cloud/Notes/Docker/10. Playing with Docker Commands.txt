@@ -1,0 +1,46 @@
+10. Playing with Docker Commands
+
+docker events
+	> displays all the events that is happening inside Docker
+	> each events have information and these includes
+		- timestamp	
+		- action done (container, image, volume, network actions)
+		- container information
+
+docker top <ContainerID>
+	> shows the top processed running inside a Container
+	> information displayed includes
+		- PID
+		- USER
+		- TIME
+		- COMMAND
+
+docker stats <ContainerID>
+	> shows the statistics of Container/s
+		- not passing Container ID will show statistics of ALL Containers
+	> informations includes:
+		- Container ID
+		- Container Name
+		- CPU %
+		- Memory usage / Limit
+		- Mem %
+		- Network I/O
+		- Block I/O
+		- PIDs running
+
+
+docker system df
+	> shows the different things the Docker Daemon manages
+	> includes
+		- Images
+		- Containers
+		- Local Volumes
+		- Build Cache
+	> information in these following aspects include
+		- Type
+		- Total
+		- Active
+		- Size
+		- Reclaimable
+
+		

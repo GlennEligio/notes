@@ -1,0 +1,365 @@
+14 Build a Complete Database Web App with JDBC Part 4
+
+Contents:
+94 Update Student - Overview
+95 Update Student - Creating the Update Link
+96 Update Student - Prepopulating the HTML Form - Part 1
+97 Update Student - Prepopulating the HTML Form - Part 2
+98 Update Student -  Developing the Servlet
+99 Update Student - Creating the JDBC Code
+
+
+
+
+
+
+
+
+
+94 Update Student - Overview
+
+Topics
+1. Demo - Update Student
+2. Big Picture
+3. Sequence Diagram
+
+Demo - Update Student
+ > in list-students.jsp, we will add new column in table for Action links
+ > one of the link is for updating the Students
+ > when click will navigate the user to the update form, prepopulated with the Student info
+
+
+Big Picture
+1. list-students.jsp will navigate user to update-student-form.jsp when "Update" link is clicked
+2. The update student form will have prepopulated data, and the updated data will be sent to StudentControllerServlet with "command" parameter for update
+3. StudentControllerServlet will call one of StudentDbUtil method for updating Student data in database
+4. StudentDbUtil will communicate to the Database for Student update
+
+
+Sequence Diagram
+1. From update-student-form.jsp, the updateStudent(...) inside StudentController Servlet will be called
+2. Inside the StudentControllerServlet's method, we will call the StudentDbUtil's own updateStudent(...) method
+
+
+To Do List
+1. Update list-students.jsp
+	> New "Update" link
+2. Create update-student-form.jsp
+	> Prepopulate the form
+3. Update StudentControllerServlet
+	> Handle request to update student
+4. Update StudentDbUtil
+	> Add new JDBC method: updateStudent(...)
+
+
+
+
+
+
+
+
+
+
+95 Update Student - Creating the Update Link
+
+Function/Objects/Tags used
+
+c:url
+ > used to create a URL string and configure it inside the JSP
+
+GOAL:
+1. Update list-students.jsp
+	> Add new column to the table
+	> Inside the column cells, add a hyperlink to navigate user to update student form
+	> This hyperlink will point to the StudentControllerServlet, and will have two query params added
+		- one is for "command"
+		- other is for student id
+
+
+// new table inside list-students.jsp
+	<table>
+		<tr>
+			<th>First Name</th>
+			<th>Last Name</th>
+			<th>Email</th>
+			<th>Action</th>
+		</tr>
+		<c:forEach var="tempStudent" items="${STUDENT_LIST}">
+
+			<c:url var="tempLink" value="StudentControllerServlet">
+				<c:param name="command" value="LOAD"/>
+				<c:param name="studentId" value="${tempStudent.id }"/>
+			</c:url>
+		
+			<tr> 
+				<td>${tempStudent.firstName}</td>
+				<td>${tempStudent.lastName}</td>
+				<td>${tempStudent.email}</td>
+				<td><a href="${tempLink}">Update</a></td>
+			</tr>
+		</c:forEach>
+	</table>
+
+
+
+
+
+
+
+
+
+96 Update Student - Prepopulating the HTML Form - Part 1
+
+GOAL:
+1. Update StudentControllerServlet's doGet() to handle request with "command" parameter of "LOAD"
+	> with this, we will create a new method to execute when command parameter value is LOAD
+2. Create the loadStudent method of StudentControllerServlet
+	> this method will read request information, this information refers to the student id
+	> using student id, we will get the corresponding student data
+	> we will then place the student data in the request
+	> forward the request and response to update-student-form.jsp where it student data will be used to prepopulate the form
+3. Create the getStudent() method of StudentDbUtil
+	> this method will be used to fetch the corresponding Student based on student id
+	> this method will take student id as input
+
+// StudentControllerServlet doGet()
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		try {
+			// read the "command" parameter
+			String theCommand = request.getParameter("command");
+			
+			if (theCommand == null) {
+				theCommand = "LIST";
+			}
+			
+			switch(theCommand) {
+			case "LIST":
+				listStudents(request, response);
+				break;
+			case "ADD":
+				addStudent(request, response);
+				break;
+			case "LOAD":
+				loadStudent(request, response);
+				break;
+			default:
+				listStudents(request, response);
+			}
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+	}
+
+
+// StudentControllerServlet loadStudent()
+	private void loadStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+		
+		// read student id from request
+		String theStudentId = request.getParameter("studentId");
+		
+		// get student from database
+		Student theStudent = studentDbUtil.getStudent(theStudentId);
+		
+		// place student in the request
+		request.setAttribute("THE_STUDENT", theStudent);
+		
+		// send to jsp page: update-student-form.jsp
+		RequestDispatcher dispatcher = request.getRequestDispatcher("update-student-form.jsp");
+		dispatcher.forward(request, response);
+	}
+
+
+// StudentDbUtil getStudent()
+	public Student getStudent(String theStudentId) throws SQLException {
+		
+		Connection myConn = null;
+		ResultSet myRs = null;
+		PreparedStatement myStmt = null;
+		
+		try {
+			Student student = null;
+			Integer id = Integer.parseInt(theStudentId);
+			
+			// get db connection
+			myConn = dataSource.getConnection();
+			
+			// create sql statement for fetching student
+			String sql  = "SELECT * FROM students WHERE id=?";
+			
+			// set the param values for the student id
+			myStmt.setInt(1, id);
+			
+			// execute sql insert
+			myRs = myStmt.executeQuery();
+			
+			// read the data from result set
+			while(myRs.next()) {
+				String firstName = myRs.getString("firstName");
+				String lastName = myRs.getString("lastName");
+				String email = myRs.getString("email");
+				student = new Student(id, firstName, lastName, email);
+			}
+					
+			// return the student data
+			return student;
+		} finally {
+			// clean up JDBC objects
+			close(myConn, myStmt, myRs);
+		}
+	}
+
+
+
+
+
+
+
+
+97 Update Student - Prepopulating the HTML Form - Part 2
+
+GOAL:
+1. Create update-student-form.jsp	
+	> the same as the add-student-form.jsp in terms of appearance
+	> but the inputs is prepopulated by the student info from the request "THE_STUDENT" parameter
+	> we will also add the student id as another hidden input in the update-student-form form element
+	> we will change the hidden input "command" value into "UPDATE"
+
+// update-student-form.jsp updated form element
+		<form action="StudentControllerServlet" method="GET">
+			<input type="hidden" name="command" value="UPDATE"/>
+			<input type="hidden" name="studentId" value="${THE_STUDENT.id}"/>
+				
+			<table>
+				<tbody>
+					<tr>
+						<td><label>First name:</label></td>
+						<td><input type="text" name="firstName" value="${THE_STUDENT.firstName }"/></td>
+					</tr>
+					<tr>
+						<td><label>Last name:</label></td>
+						<td><input type="text" name="lastName" value="${THE_STUDENT.lastName }"/></td>
+					</tr>
+					<tr>
+						<td><label>Email:</label></td>
+						<td><input type="text" name="email" value="${THE_STUDENT.email }"/></td>
+					</tr>
+					<tr>
+						<td><label></label></td>
+						<td><input type="submit" value="Update"/></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+
+
+
+
+
+
+
+
+
+
+98 Update Student -  Developing the Servlet
+
+GOAL:
+1. Handle request in StudentControllerServlet doGet() for request with "command" parameter value "UPDATE"
+2. Create updateStudent() method to handle StudentDbUtil and request dispatching
+
+
+// StudentControllerServlet doGet()
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		try {
+			// read the "command" parameter
+			String theCommand = request.getParameter("command");
+			
+			if (theCommand == null) {
+				theCommand = "LIST";
+			}
+			
+			switch(theCommand) {
+			case "LIST":
+				listStudents(request, response);
+				break;
+			case "ADD":
+				addStudent(request, response);
+				break;
+			case "LOAD":
+				loadStudent(request, response);
+				break;
+			case "UPDATE":
+				updateStudent(request, response);
+				break;
+			default:
+				listStudents(request, response);
+			}
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+	}
+
+
+// StudentControllerServlet updateStudent() method
+	private void updateStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		// read student info from request
+		int id = Integer.parseInt(request.getParameter("studentId"));
+		String firstName = request.getParameter("firstName");
+		String lastName = request.getParameter("lastName");
+		String email = request.getParameter("email");
+		
+		// create a new student object
+		Student student = new Student(id, firstName, lastName, email);
+		
+		// perform update on database
+		studentDbUtil.updateStudent(student);
+		
+		// send them back to the "list students" page
+		listStudents(request, response);
+	}
+
+
+
+
+
+
+
+
+99 Update Student - Creating the JDBC Code
+
+GOAL:
+1. Create updateStudent() of StudentDbUtil
+	> takes Student object as input
+	> executes an UPDATE SQL query to the database for student data update
+
+// StudentDbUtil updateStudent() method
+	public void updateStudent(Student student) throws SQLException {
+		
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		
+		try {
+			// get db connection
+			myConn = dataSource.getConnection();
+			
+			// create sql query
+			String sql = "UPDATE student "
+					+ "SET first_name=?, last_name=?, email=? "
+					+ "WHERE id=?;";
+			myStmt = myConn.prepareStatement(sql);
+			myStmt.setString(1, student.getFirstName());
+			myStmt.setString(2, student.getLastName());
+			myStmt.setString(3, student.getEmail());
+			myStmt.setInt(4, student.getId());
+			
+			// execute sql query
+			myStmt.execute();
+			
+		} finally {		
+			// clean JDBC objects
+			close(myConn, myStmt, null);
+		}
+
+	}

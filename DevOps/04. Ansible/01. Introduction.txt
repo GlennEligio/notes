@@ -1,0 +1,85 @@
+01. Introduction
+
+Ansible
+	> Ansible is a deployment automation tool which traditionally uses push approach to achieve its objectives
+	> this is done by managing all the servers through one SINGLE machine running the Ansible Configuration Management Tool
+
+
+Ansible's Push Approach
+	> Ansible Clients do not have any agents installed on them, therefore there is no concept of POLLING with central server
+	> Ansible instead uses the PUSH approach instead
+		- still Ansible is flexible enough to let the user implement Pull architecture as well
+
+
+Push vs Pull Approach
+Push	
+	- Push approach does NOT require agents set up on individual nodes like pull does
+	- Push based systems are completely SYNCHRONOUS as you can see the changes made instantaneously and can fix the system if changes cause problems
+
+Pull
+	- Pull works in a master-slave architecture which requires AGENTS set up on all slave nodes
+	- Systems using pull architecture can scale quite easily which is not the case with push model
+
+
+
+
+Ansible Architecture
+	> Ansible connects to the nodes and pushes out small programs called 'Modules'.
+	> These Modules bring the systems to the desired state.
+	> Ansible uses SSH to execute these modules and then removes them when finished
+	> Composed of the following components
+		1. Ansible Playbook
+		2. Automation Engine
+		3. Configuration Management Database (CMDB)
+		4. Cloud
+
+1. Ansible Playbook
+	> Ansible uses Playbooks to IMPLEMENT the changes desired by the users
+	> Playbooks contains plays, plays have tasks, and tasks call modules
+	> Modules are the units which actually execute on the server
+
+2. Automation Engine
+	> The Ansible Automation Engine contains everything needed to bring about automation in the infrastructure
+	> contains the following
+		1. Modules
+		2. Inventory
+			- Ansible uses the inventory file to represent all the machines it is managing
+			- Users can then group the machines to their own liking
+		3. APIs
+			- The API's in Ansible are there to support services like cloud and CLI
+			- ex: Python API is used for Command Line Interface
+		4. Plugins
+			- Plugins act as extension to Ansible
+			- eg. Action plugin lets you perform tasks on your Ansible machine before you execute a Playbook
+
+
+Ansible Inventory files
+	> contains files and information related to the Ansible
+	> these files/informations includes
+		- machines/nodes being managed
+		- configuration settings
+	> located in /etc/ansible
+	> contains the following files
+		a. ansible.cfg
+			- configuration file for Ansible
+			- to modify the configuration settings
+				= UNCOMMENT the config setting (commented line starts with #)
+				= change the value
+		b. hosts
+			- defines the nodes/machines being managed
+			- includes the ip address used to connect to them using SSH
+
+
+
+
+3. Configuration Management Database (CMDB)
+	> The configuration management database keeps a record of all the configuration changes made in the system
+	> This database could be kept on the cloud platform or on the physical server
+
+
+
+
+4. Cloud
+	> Ansible has a huge support for numerous cloud applications
+	> These cloud applications can seamlessly be integrated with Ansible
+	> Ansible make provisioning cloud infrastructure easy

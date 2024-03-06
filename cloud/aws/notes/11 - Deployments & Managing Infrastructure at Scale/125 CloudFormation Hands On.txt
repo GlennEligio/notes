@@ -1,0 +1,147 @@
+125 CloudFormation Hands On
+
+
+Creating CloudFormation Stack
+ > in this case, we will be using our own CloudFormation yaml files
+1. Search CloudFormation service in AWS
+2. Make sure you are in us-east-1 region
+	> all AWS resources defined in yml files have AZ defined that is located in US-EAST
+3. Go to 'Stacks' tab
+4. Create a stack
+5. In Create stack section
+ > For template, select 'Template is ready'
+ > Then upload the template file we have prepared (0-just-ec2.yaml)
+ > When uploaded, you can click 'View in Designer' to see the resources that will be created and their relations
+	- we should be seeing only ONE EC2 instance
+6. In Specify stack details
+ > Pass a stack name (DemoCloudFormation)
+7. In Configure stack options
+ > For Tags, pass Name:CloudCF key value pair
+	- this will be used to set as default names for the resources
+8. In Review, create the CF Stack
+
+
+
+Checking the CloudFormation Stack
+1. Go to CloudFormation > Stacks
+2. Check the CF Stack that we created
+	> go to Template tab and check if it matches the yaml content
+	> go to Events tab to see the progress of the resources defined in CF Stack
+3. Check the EC2 instances, there should be one created by this CF Stack
+
+
+
+
+Update the CloudFormation Stack
+1. Create another CloudFormation Stack
+2. Select the CF Stack created earlier and 'Update'
+3. In Update stack
+ > Select 'Replace current template'
+ > Upload a template file to be used for replacement (1-ec2-with-sg-eip.yaml)
+ > View the template file in designer
+ > Click next
+5. In Specify stack details
+ > Define the 'SecurityGroupDescription' parameter value
+	- 'Demo Security Group'
+	- we defined this parameter in the yaml file
+6. In Configure stack options, keep them as is
+7. In Review, check the Change set preview section
+ > This section highlights all the actions that will be done to update the current CloudFormation stack
+ > we can see that the EC2 instance from earlier will be replaced (terminated and created again)
+ > Click Update
+
+
+
+Checking the CloudFormation Update Action
+1. Go to CloudFormation > Stacks
+2. Check for the CF Stack that we updated, and wait for the update to finish
+3. Check the Events tab
+4. Check the Resources tab
+	> click the physical ID of each resources to see them
+	> click the one for EC2 instance
+		- we should see two instances now, one is running and other is terminated (previous EC2)
+5. Check the Template tab
+	> check if its the same as the yaml content file
+
+
+
+Cleanup
+1. Delete the CloudFormation stack
+	> this will also delete ALL RESOURCES created under it
+
+
+
+NOTE:
+1. Remember that some of your resources defined in CloudFormation stack is REGION locked. Make sure you are creating the CloudFormation stack in correct region that matches the AZ property of resources defined
+
+
+
+
+
+Two CloudFormation yml files that we will use
+# 0-just-ec2.yaml
+---
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: us-east-1a
+      ImageId: ami-a4c7edb2
+      InstanceType: t2.micro
+
+
+
+# 1-ec2-with-sg-eip.yaml
+---
+Parameters:
+  SecurityGroupDescription:
+    Description: Security Group Description
+    Type: String
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: us-east-1a
+      ImageId: ami-a4c7edb2
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+        - !Ref ServerSecurityGroup
+
+  # an elastic IP for our instance
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyInstance
+
+  # our EC2 security group
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+
+  # our second EC2 security group
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Ref SecurityGroupDescription
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 192.168.1.1/32
+
+Outputs:
+  ElasticIP:
+    Description: Elastic IP Value
+    Value: !Ref MyEIP

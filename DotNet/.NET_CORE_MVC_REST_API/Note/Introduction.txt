@@ -1,0 +1,63 @@
+.NET MVC REST API
+
+
+I. Introduction
+1. API Demo
+2. Course Overview
+3. Ingredients / Tooling
+4. Application Architecture
+
+
+II. Coding Part 1
+5. Model & Controller
+6. Repository
+7. Dependency Injection
+8. 2 API Endpoints (GET)
+
+
+III. Coding Part 2
+9. Entity Framework Core
+10. DB Context
+11. SQL Server Overview
+12. Revisit Repository
+
+
+IV. Coding Part 3
+13. Data Transfer Objects (DTOs)
+14. Automapper
+15. 1 API Endpoint (POST)
+
+
+V. Coding Part 4
+16. PUT Endpoint
+17. PATCH Endpoint
+18. DELETE Endpoint
+
+
+VI. Final Thoughts
+19. Next Steps
+20. Wrap Up
+21. Supporter Credits
+
+
+
+Things that are needed to continue in lesson
+1. VS Code Text Editor
+2. SQL Server Express or Local DB
+3. Postman
+
+
+Application Architecture composes of the following Components
+1. Model
+	> represents the Data inside the Database (Internal)
+2. Controller
+	> manages the Requests and Actions
+	> typically we should have 1 Controller per Resource type
+3. Program and StartUp classes
+4. DB Context
+	> serves as mediator between the Database itself and the Web API
+5. Repository
+	> for persistence ignorance
+6. Data Transfer Objects
+	> converts the Model data into something that we will send to API Client (External)
+

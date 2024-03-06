@@ -1,0 +1,10 @@
+Step 1
+1. Choose an item in the store to update description
+	> take note of the SKU
+1. Check the current long and short description of the product
+	> select * from catentry where partnumber='HME037_370101';
+		- take note of the catentry_id
+	> select * from catentdesc where catentry_id=12787 and language_id=-1;
+2. Update the wc-dataload-env.xml file
+	> the BusinessContext with storeIdentifier="Extended Sites Catalog Asset Store" should be the one to use and not the AuroraESite
+3. 

@@ -1,0 +1,161 @@
+00. DevOps introduction
+
+Software Development LifeCycle (SDLC)
+	> is a process which followed by IT industry to design, develop, test
+
+SDLC phases
+1. Requirement Phase	
+	> get requirements of application/software to create
+	> done by pre-sales, sales team to the clients
+2. Design
+	> plan the overview of the software to create
+	> uses user stories
+	> create test cases to use
+3. Development
+4. Testing
+	> test the application
+5. Implementation
+	> similar to "production phase"
+	> the application is "live" and can be used by the end-users/consumers
+6. Maintenance
+	> application is being maintained and monitored for errors
+
+Dev team
+	> design, develop. test
+Ops team
+	> implementation, and maintenance
+
+
+
+Methodologies in SDLC
+1. Waterfall Methodology
+2. Agile
+3. DevOps
+
+
+Waterfall Methodology
+	> first SDLC process model
+	> developed in SEQUENTIAL based
+	> disadvantage are
+		a. very hard to adapt in Client's changing requirement
+		b. Client is very little involvement
+		c. lots of documentations for each step
+			= no automation in software's documentation
+	> steps includes
+		1. Requirement Analysis
+			- Client gives the requirement for Software to create
+		2. Design
+			- convert the Requirement into Software Design (Programming language, Database Structure)
+		3. Coding and Unit Testing
+			- Unit Testing is where we test each Unit in the program or software
+		4. Integration Testing
+			- Integration Testing is where they test how each of the software part integrates and works with each other
+				= ex: Database, Front end UI client, Backend APIs, etc,
+		5. Deployment
+			- Step where we move the Code/Software into Production / Live
+		6. Maintenance
+			- Application is being maintain and monitored for errors
+
+
+Agile Methodology
+	> ITERATIVE and INCREMENTAL process model
+	> divides the project into SMALL INCREMENTAL builds called "Chunks"
+	> development process consist of many ITERATIONS
+		- Iterations consist of
+			a. Requirement
+			b. Planning
+			c. Testing
+			d. Building
+			e. Design
+		- For each Iteration, the team may create one or more "Chunks" 
+		- After each Iteration, the client can check for the output for each Iteration and give inputs and feedback
+	> advantages includes
+		a. Client can be more involved since the team can show the process for software development for each iteration
+		
+
+JIRA
+	> used for documentation
+	> used for the client to give inputs
+
+
+
+
+
+Monolithic
+	> software architecture where the whole application is packed into one binary file
+		- binary files like .exe, .jar, .war, etc
+	> modules inside Monolithic Software are TIGHTLY COUPLED
+		- ex: in Monolithic App-Banking, there may be
+			a. Internet
+			b. Deposit
+			c. Withdraw
+			d. Customer Care
+	> reason for this configuration is
+		a. Machine configuration is EXPENSIVE to have
+		b. VMs are not present at that time
+	> disadvantage are
+		a. if one module fails, the ENTIRE system fails
+		b. redeploying one module will require the the ENTIRE system to shutdown and redeploy again
+
+
+Microservice
+	> software architecture where each System's modules are divided into "Services"
+	> each "Service" are typically run in each VM or Container (for Docker)
+	> each VM uses a specific amount of resources to run in its HOST machine
+	> advantage includes:
+		a. Modules / Services are loosely coupled
+			- status of each Services will not affect the other
+			- meaning one Service being down will shutdown the ENTIRE system
+		b. Scalability can be done of a specific Service only
+			- unlike Monolithic, we can scale each of the Services independently
+
+
+Scaling
+	> composed of two types
+		a. Vertical scaling
+			= increase infrastructure of each Server
+			= Scale up/down
+		b. Horizontal scaling
+			= increase server count
+			= Scale out/in
+
+
+
+DevOps methodology
+	> used for 
+		a. automation of SDLC
+		b. migration projects
+	> composed of Continuous Integration and Continuous Delivery
+	> CI/CD cycle includes steps
+		a. Dev team steps
+			1. Plan
+			2. Code
+			3. Build
+			4. Test
+		b. Ops team steps
+			5. Release
+			6. Deploy
+			7. Operate
+			8. Monitory
+
+Continuous Integration
+	> process where changes in source code will automatically
+		- integrate to source code
+		- test the new source code
+		- build the application, if tests are passed
+	> tools involved are
+		a. GitHub, for version source control
+		b. Apache Maven, for building the application's binary file
+		c. Docker for building the docker image of application
+		d. Selenium, for Testing
+		e. Jenkins for CI/CD plugin
+
+Continuous Delivery
+	> refers to automation of product build and delivery for "live" server deployment
+	> tools involved
+		a. Ansible
+		b. Docker, for containerization
+		c. Kubernetes, for Orchestration of containers
+
+Continuous Deployment
+	> refers to automation of product deployment to "live" server

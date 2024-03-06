@@ -1,0 +1,66 @@
+Try-catch method
+
+
+package com.glenneligio.concurrency;
+
+public class Main {
+    public static void main(String[] args) {
+
+        /*
+            try-catch method
+            > used to catch errors
+
+            Syntax
+
+            try {
+                functionsToTestForErrors;
+            } catch (exceptionType e) {
+                functionsToRunWhenErrorOccurred;
+            }
+
+            ** in exceptionType, if you don't know the specific error to catch
+                you can use the Generic exception name "Exception", this will
+                accept all exception
+
+            examples of exceptions
+            ArithmeticException = if a number is divided by zero
+            NullPointerException = if a variable with value null is used
+            InterruptedException = if the thread is interrupted
+            IOException = input/output errors
+
+            e.printStackTrace
+            > will trace and print the address where the error occurred
+            > will show
+                1. package name
+                2. Class
+                3. Method
+                4. Line
+         */
+
+        int a = 2;
+        int b = 0;
+
+        String name = null;
+
+        try {
+            System.out.println(a/b);
+        } catch (ArithmeticException e){
+
+            //will trace where the error occurred and print the address
+            e.printStackTrace();
+            System.out.println("B was zero");
+        }
+
+        try {
+            name.equals("Glenn");
+        } catch (NullPointerException e){
+            System.out.println("Name is null");
+        }
+
+        try {
+            System.out.println(a/b);
+        } catch (Exception e){
+            System.out.println("B was zero");
+        }
+    }
+}

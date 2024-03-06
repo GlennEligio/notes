@@ -1,0 +1,43 @@
+08.02. Select
+
+~~~~~ FORMS - SELECT ~~~~~~
+1. Default
+2. Sizing
+3. Disabled
+
+1. Default
+	> only need .form-select in select element to use custom style
+	> cant modify the option elements due to browser limitation
+
+.form-select
+	> added in select element
+selected
+	> added in option element
+	> defines the default value of the select
+multiple
+	> added in select element
+	> attribute
+size
+	> attribute element
+	> added in select element
+	> defines the max number of options displayed
+		-> ex: size="3"
+
+
+2. Sizing
+	> added in select
+	> used ALONGSIDE .form-select
+
+.form-select-{size}
+	
+Sizes
+lg
+sm
+
+
+
+3. Disabled
+
+disabled
+	> attribute added in select
+	> disables the select element

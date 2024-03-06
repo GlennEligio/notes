@@ -1,0 +1,61 @@
+00. Spring framework overview - JavaBrains
+
+Spring framework
+ > a framework to help us develop enterprise Java application with ease by providing patterns and structure
+ > Spring framework provides many things, this includes but not limited to
+	1. Application Context and Dependency Injection
+	2. Data Access
+	3. Spring MVC
+
+
+
+I. Handling interrelated dependencies among objects
+Problem
+1. Object needs to create new instance of their dependencies on their own
+ 	- Some of these object dependencies may only contain business logic which means we can just share an instance of this throughout the Application
+	- we can use Singleton pattern to solve this, but its cumbersome and adds more code
+2. Object graph is very complex and hard to manage
+
+Solution
+1. With Application Context, Spring can hold instances of these Object which we can add or inject as dependencies to another object
+	- Spring's Application Context also handles the management and creation of the object instances
+	- Also handles the connection/dependencies of the Object instances inside the App Context
+2. Dependency Injection
+	- with dependency injection, the Object doesnt need to create the dependencies instances on their own
+	- instead, the Object just PULL from the Application Context the dependencies that it needs
+	- this process is called Dependency injection
+
+
+II. Data Access
+Problem
+1. Database connectivity using the JDBC is cumbersome
+	> we also need to configure the connection, writing querying (that we will most likely use again), and transaction management
+Solution
+2. Spring provides several Data Access API and mechanism to handle the following features
+	> connectivity, querying, transaction management
+ 	> examples include 
+		1. Spring JDBC - to provide an abstraction layer to JDBC
+		2. Spring ORM - for object relational mapping like JPA, Hibernate
+
+III. Web
+Problem
+1. Creating Dynamic web page applications and REST APIs is hard in native J2EE
+	> we are limited to uses only Servlets and JSP to do this
+Solution
+1. Spring MVC
+	> spring Mvc provides an easy way to create dynamic web page apps and REST APIs
+ 		- behind the scene, it also uses Servlet and JSP,
+	> some of the components include WebSocket, Servlet, Web
+
+
+
+Other modules included in Spring
+1. AOP (spring-aop) provides an aspect-oriented programming implementation that can be used when creating applications.
+2. Aspects (spring-aspects) enables direct integration with the AspectJ programming extension by the eclipse foundation.
+3. Test (spring-test) is the Spring test module that supports unit and integration testing with JUnit and TestNG.
+
+
+
+Spring Projects
+1. Spring Cloud 
+2. Spring Security

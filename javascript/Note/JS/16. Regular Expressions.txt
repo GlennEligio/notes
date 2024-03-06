@@ -1,0 +1,28 @@
+16. Regular Expressions
+
+Two ways of creating regex
+1. regex literal
+	> syntax is
+		/regex pattern/
+	> ex: 
+		const regex = /^(09|\+639)\d{9}$/;
+
+2. Regexp constructor
+	> syntax is
+		new Regexp(pattern)
+	> ex:
+		const regex = new RegExp(`^(09|\+639)\d{9}$`);
+
+
+USE THE FIRST ONE, YOULL GET A "nothing to repeat" error when you use the second way
+
+
+Using regex object
+Methods
+regex.test(input)
+	> test if the input String passes the regex
+	> return a boolean, true or false
+
+EX:
+const regex = /^(09|\+639)\d{9}$/;
+regex.test("09062560574")	// return true

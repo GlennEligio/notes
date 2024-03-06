@@ -1,0 +1,778 @@
+ADO.NET
+
+Content:
+01 Introduction
+02 Environment Setup
+03 Disconnected Architecture
+04 Understanding DataSet
+05 Serializing DataSet
+06 Connected Architecture
+07 Establishing Connection
+08 Executing Commands
+09 CRUD Operations
+10 Reading Bulk Data
+11 SQL injection
+12 Parameterised Commands
+13 Executing Procedures
+14 SQL Command Builder
+15 SQL Bulk Copy
+16 Transactions
+
+
+
+
+
+
+
+
+
+01 Introduction
+ADO.NET
+ > framework used for connecting and communicating to Database
+ > Architecture is composed of different components
+	1. Database
+	2. Data Provider
+
+
+Two Types of Architecture
+1. Connected
+2. Disconnected
+
+
+Database
+ > contains all the data that will be accessed by application using classes in Data Provider
+ > it can be any database like RMBDS, NOSQL, MS Access, Oracle, SQL server, etc
+
+Data Provider
+ > contains ADO.NET Classes that is used to connect, and communicate with database
+ > contains several classes like
+	1. Connection
+		> used for creating connection with the database
+		> this have different implementation classes for different databases (SQLConnection for SQL servers, OracleConnection for Oracle)
+	2. Command
+		> classes used to executing queries in Database
+		> typically, we will use this for DML queries like UPDATE, CREATE, DELETE
+	3. DataReader
+		> used for reading data from database (preferrably small set of data)
+		> works in a COMPLETE Connected Architecture
+			- when a reading query like SELECT is executed, it will generate a RESULTSET in the database
+			- then each time we read from DataReader, it will check the ResultSet in the database one data at a time
+		> preferrable used for small set of data
+			- this is because it will create multiple roundtrips to Database's ResultSet is that generated
+			- ex: if we have 200 rows in ResultSet, it will create 200 roundtrips to DB
+	4. DataAdapter
+		> related Disconnected Architecture
+		> Represents a set of SQL commands and a database connection that are used to fill the DataSet and update the data source.
+		> after fetching the data using DataAdapter, it will be added in the DataSet
+		> preferred over DataReader for reading many data rows
+	5. DataSet
+		> Represents an in-memory cache of data.
+		> this data comes from the DataAdapter, which can be used in different things like formatting, displaying, etc
+		> Keeps the data in the Disconnected Mode
+ > NOTE: Connection, Command, DataReader, and DataAdapter have their own implementation for each different DB Provider 
+
+
+
+
+
+
+
+
+
+02 Environment Setup
+
+Setup needed:
+Tools:
+1. SQL server and a GUI for it
+2. Visual Studio
+
+
+
+
+
+
+
+
+
+
+03 Disconnected Architecture
+
+Disconnected Architecture
+ > Is the storeage and management of data without conenction
+ > Here, the Data is stored in client's machine
+ > System.Data provides the required classes
+ > DataTable, DataColumn, DataRow are few common classes
+ > Data is stored in tabular format only
+
+DataGridView
+ > a Control that can be used to display data from DataTable
+
+DataTable
+ > used to create a table of data programmatically
+ > data is stored in-memory
+ > contains functions like
+	DataTable(string tablename)
+		- contructor, takes a string input to define the table name
+	dt.Columns.Add(DataColumn dc)
+		- used to add column to a data table
+	dt.PrimaryKey
+		- property of data table
+		- contains the ARRAY of DataColumn that will serve as the Primary key
+		- array will typically only have ONE DataColumn
+	dt.Rows.Add(DataRow dr)
+		- used to add DataRow in a Data table
+	dt.Columns[int index], dt.Columns[string name]
+		- used to access a DataColumn inside DataTable
+
+
+DataColumn
+ > used to create a column in a datatable
+ > contains methods like
+	DataColumn(string colName, typeof t)
+		- constructor, create a column with specific name and data type
+		- makes the column typesafe
+
+DataRow
+ > represents a row of data in data table
+ > to create one, we will need to have a DataTable, and execute its method
+	dr = dt.newRow();
+ > to add data in a DataRow, we will use the square brackets just like in an array
+	- syntax: dr[index] = data
+	- ex: dr[1] = "Anadi";
+ > to access data in a DataRow, we will also use square brackets and passing the index OR the column name
+	- syntax: dr[index], dr[columnName]
+ 
+
+Passing a DataTable to the DataGridView control
+ > to do so, we will need to pass a DataTable instance as the DataGridView's "DataSource" property value
+ > ex: dataGridView1.DataSource = EmpTable;
+
+
+
+
+
+
+
+
+
+04 Understanding DataSet
+
+DataSet
+ > is a collection of data tables
+	- to access a specific data table, we can use its index in DataSet, or its name
+ > DataAdapters get the data from database, and fill the dataset
+ > Relationships can be maintained
+ > Can sync the data to the database
+	- any modification in DataSet can reflect in database
+
+DataSet
+ > class that represents a set of Data tables
+ > methods/properties include
+	DataSet(string name)
+		- constructor, takes a string to serve as its name
+	ds.Tables.Add(DataTable dt)
+		- method used to add DataTable in the DataSet
+	 	- each table will be given an index based on the order they are added (ZERO BASED index)
+	ds.Tables[int index], ds.Tables[string dtName]
+		- used to access a data table inside data set
+		- can be used when providing data table to a DataGridView control
+
+
+Establishing relationship between two DataTable inside DataSet
+1. Define DataColumns that will serve as the Primary Key and Foreign Key
+	- ex: Employee table references Department table through its "DeptId" column (which matches the Department's DeptId column)
+2. Create DataRelation object using its constructor, where we will need to pass three inputs
+	- string relName
+	- DataColumn primary key, refers to the "child"'s primary key
+	- DataColumn foreign key, refers to the "parent"'s foreign key that references the child pk
+3. Add the DataRelation object to the DataSet via ds.Relations.Add(DataRelation drel) method
+
+EX:
+DataColumn col_pk = ds.Tables["Department"].Columns["DeptId"];
+DataColumn col_fk = ds.Tables["Employee"].Columns["DeptId"];
+DataRelation drel = new DataRelation("Emp_Dept_Rel", col_pk, col_fk);
+ds.Relations.Add(drel);
+	
+
+
+
+
+
+
+
+
+05 Serializing DataSet
+
+Serializing DataSet/DataTable
+ > to serialize the DataSet/DataTable, we can use some of its methods
+
+XML serialization
+dt.WriteXml(string fileLoc)
+ > used to write the datatable content in an .xml file
+ > inside the .xml file, the datatable content will be written as XML format
+
+EX:
+DataTable emp = GetEmployeeTable();
+emp.WriteXml(@"E:\data\data.xml");
+
+
+JSON serialization
+ > for this, we will need to add Newtonsoft.Json library in the project
+ > then, we can use the JsonConvert.SerializeObject(Object o) and pass the DataTable
+ > for writing the output in a file, we can use StreamWriter and File.CreateText() method
+
+EX:
+DataTable emp = GetEmployeeTable();
+string json = JsonConvert.SerializeObject(emp);
+StreamWriter writer = File.CreateText(@"E:\data\data.json");
+writer.WriteLine(json);
+writer.Close();
+
+
+
+
+
+
+
+
+
+
+06 Connected Architecture
+
+Connected Architecture
+ > here, the application will establish a connection with the Database, using various providers
+ > ADO.NET provides different providers for different types of databases, which includes
+	- Odbc
+	- Oledb
+	- SqlClient
+	- OracleClient
+
+
+Different classes of ADO.NET and its uses
+ > Connection class establishes the database connection
+ > Command classes executes the command against connection
+	- typically used for DML queries
+ > DataReader reads data one by one from the database in forward only manner	
+	- typically used for reading queries like SELECT
+	- read the data ONE BY ONE from the ResultSet generated in Database
+	- fully work in connected environment where it needs to make roundtrips for each data row reads
+	- "forward only" means that it can only read the next row, it cant read the previous row (1 -> 2 -> 3, not 1 -> 2 -> 1)
+ > DataAdapter behaves as a bridge between connected and disconnected architecture
+	- typically used for reading queries like SELECT
+	- preferrable for BULK DATA READING
+ > NOTE: Each provides have different implementation for each of these classes
+
+
+
+
+
+
+
+07 Establishing Connection
+
+Connection Url
+ > contains all the information necessary to connect to a database
+ > these include
+	- ip address and port of database
+	- user credentials like username and password
+ > ex: con = new SqlConnection("server=.; initial catalog=MyDb; user id=sa; password=sql");
+	- server stands for server name, "." represents current machine name
+	- initial catalog will be the database name
+	- user id and password are the credentials for sql auth
+	- in case you want to use Windows Authentication, we will replace user id and password with "integrated security=true" or "integrated security=SSPI", though it is preferred to use SQL auth
+
+
+System.Data.SqlClient 
+ > namespace that contains all the Classes necessary for creating SQL connection
+ > includes
+	1. SqlConnection
+
+
+SqlConnection
+ > represents a Sql connection
+ > to create one, we will use its constructor and pass the connection url string
+	SqlConnection(string connUrl)
+		- creates a sql connection (not open one), takes a connection url string as input
+	con.Open()
+		- opens a connection
+	con.Close()
+		- closes a connection 
+ > all db connection are vulnerable to Exception errors, this includes
+	- wrong db name
+	- wrong server name	
+	- wrong sql auth credential
+	- connection string typo
+
+
+External Connection String
+ > in practice, we dont want to hard code the connection string inside source code
+	- this is because we might change the database that we will use
+ > to make the connection string of db connection of ADO.NET configurable, we can use the .config files, specifically the App.config
+ > inside the App.config's <configuration> tags, we can add <connectionStrings> tag
+ > then inside <connectionStrings>, we can add <add> tag, and define its "connectionString" and "name" property
+	- the "connectionString" will be the value
+	- the "name" will be the IDENTIFIER in the source code to refer to this connection string
+ > to refer to this connectionString inside App.config, we can use the following method
+	- ConfigurationManager.ConnectionStrings["connStrName"].ConnectionString
+
+ex:
+App.config
+<configuration>
+  <connectionStrings>
+    <add connectionString="server=TUTORIALSPOINT; initial catalog=MyDb; user id=sa; password=sql"
+         name="constr"/>
+  </connectionString>
+</configuration>
+
+
+
+
+
+
+
+
+
+08 Executing Commands
+
+Executing Commands 
+ > to execute command, specifically DML queries, we can use Command (or SqlCommand) class
+
+SqlCommand
+ > used to executing sql queries
+ > properties/methods include
+	SqlCommand(string query, SqlConnection conn)
+		- constructor, takes the sql query to execute, and the connection where it will be executed
+	cmd.ExecuteNonQuery(): int rowsAffected
+		- executes the sql query
+		- can only be used for DML queries (UPDATE, DELETE, INSERT) and not DQueryL (SELECT)
+ 		- returns the rows affected by the said DML query
+
+
+
+
+
+
+
+
+
+
+09 CRUD Operations
+
+Functions/Objects used
+
+cmd.ExecuteScalar()
+ > Executes the query, and returns the first column of the first row in the result set returned by the query. 
+	- Additional columns or rows are ignored.
+ > used when the DQL query executed returns a single value (ex: aggregate functions like MAX, MIN, COUNT, AVERAGE, etc) 
+
+
+string.Format(string template, Object... inputs)
+ > used to format a string by doing string injection
+ > all succeeding input after the string template will be injected
+ > ex: string.Format("INSERT INTO tbl_Departments values({0}, {1}, {2})", id, name, loc)
+	- id, name, and loc value will be inject in the {0}, {1}, and {2} respectively
+
+dr.Read()
+ > moves the Cursor of ResultSet in Database one step
+ > initially, the Cursor is BEHIND the first row of ResultSet
+
+
+CRUD
+Create
+ > here we can use an INSERT query, and the cmd.ExecuteNonQuery()
+
+EX:
+string command = string.Format("INSERT INTO tbl_Departments values({0}, {1}, {2})", id, name, loc);
+cmd  = new SqlCommand(command, conn);
+cmd.ExecuteNonQuery()
+conn.close();	
+
+
+
+Read
+ > here, we can use a SELECT query, then call ExecuteReader() of SqlCommand
+ > this returns a SqlDataReader, which we can use to read query data
+
+EX:
+string command = "SELECT * FROM tbl_Departments WHERE DeptId=" + id;
+cmd = new SqlCommand(command, conn);
+conn.Open();
+SqlDataReader dr = cmd.ExecuteReader();
+if (dr.Read()) {
+  string deptName = dr[1].ToString();
+  string locId = dr["LocId"].ToString();
+} else {
+  // show message box that said no dept was found
+}
+
+
+
+Update
+ > for update, we can create the UPDATE query using string.Format() to inject the updated values, and the cmd.ExecuteNonQuery()
+
+EX:
+string command = string.Format("UPDATE tbl_Departments SET DeptName='{0}', LocId={1} WHERE DeptId={2}", name, loc, id);
+cmd = new SqlCommand(command, con);
+con.Open();
+cmd.ExecuteNonQuery();
+con.Close();
+// show MessageBox for update success
+
+
+
+Delete
+ > for delete, we can use DELETE query, and pass dept id (typically the PRIMARY KEY of the row), then use the cmd.ExecuteNonQuery() again
+
+EX:
+string command = "DELETE FROM tbl_Departments WHERE DeptId=" + id;
+cmd = new SqlCommand(command, con);
+con.Open();
+cmd.ExecuteNonQuery();
+con.Close();
+// Messagebox to show delete success
+
+
+
+
+
+
+
+
+
+
+
+10 Reading Bulk Data
+
+DataAdapter for Bulk Data Reading
+ > earlier, we used DataReader for reading data. But it is not good for bulk data reading
+ > for this, we can use the DataAdapter, and DataSet
+ > SqlDataAdapter can be found in System.Data.SqlClient, while DataSet is found in System.Data
+
+
+SqlDataAdapter
+ > properties/methods includes
+	SqlDataAdapter(SqlCommand cmd, SqlConnection conn);
+		- constructor
+		- takes a SqlCommand to execute, and the SqlConnection on where it will be executed
+  	da.Fill(DataSet ds)
+	da.Fill(DataSet ds, string tablename)
+		- used to fill a DataSet with the content of DataAdapter, which includes all table received
+		- we can also pass a string to specify the table in DataAdapter to use for data filling
+
+DataSet
+ > properties/methods include
+	DataSet()
+		- constructor
+	ds.Table[index]
+	ds.Table["columnName"]
+		- used to access a specific data table in data set
+
+
+
+Using DataAdapter and DataSet to fetch data
+1. Create the SELECT query
+2. Initialize SqlDataAdapter by passing SqlCommand and SqlConnection
+3. Initialize DataSet
+4. Execute Fill() of DataAdapter and pass the DataSet (and optionally, the tableName to fill)
+
+
+Using DataSet for Dropdown list control
+ > when using DataSet for Dropdown list control, we will need to assign values to the following Dropdown list control properties
+	1. DataSource, which will be a specific DataTable inside DataSet
+	2. DisplayMember, which defines the values to show in Dropdown list
+		- refers to the column inside DataSource
+	3. ValueMember, which defines the values to send when an option is selected
+		- refers to the column inside DataSource
+
+
+EX:
+string command = "SELECT * FROM tbl_Locations";
+da = new SqlDataAdapter(command, con);
+ds = new DataSet();
+da.Fill(ds, "Location");
+ddl_Locations.DataSouce = ds.Tables["Location"];
+ddl_Locations.DisplayMember = "City";
+ddl_Locations.ValueMember = "LocId";
+
+
+
+
+
+
+
+
+
+
+
+
+
+11 SQL injection
+
+SQL injection
+ > A security vulnerability where a malicious user may inject malicious SQL query in the input that will be added in a SQL query
+
+EX:
+If user searches for a department, the department id input will be injected in the SQL query to be executed.
+ > string command = "DELETE FROM tbl_Departments WHERE DeptId=" + id;
+The user can input string which, when added in the original SQL query, performs additional operation like deleting tables, etc
+ > if user inputs "10; DELETE from tbl_Departments;" then the resulting SQL query to be executed will be which will delete everything inside tbl_Departments
+ 	- "DELETE FROM tbl_Departments WHERE DeptId=10; DELETE from tbl_Departments"
+ 
+
+
+
+
+
+
+
+
+
+
+
+12 Parameterised Commands
+
+Parameterised Commands
+ > Parameterised Commands are Commands that can take parameters
+ > in order to create a Paramaeterised Commands, we will need to change the syntax of the SQL query
+
+Creating SQL query for Parameterised Commands
+ > to add a parameter in the SQL query string, we will need to use the syntax @paramName
+ > ex: "INSERT INTO tbl_Departments VALUES(@deptid, @deptname, @locid)";
+ 
+Defining parameters in SqlCommand
+ > to add a parameter in SqlCommand, we will need to use the cmd.Parameters.Add(String paramId, SqlDbType type);
+ > ex: cmd.Parameters.Add("@deptid", SqlDbType.Int);
+
+Passing value to the parameters of SqlCommand
+ > to pass values to parameters, we will use the syntax cmd.Parameters["paramId"].Value and assign value to it
+ > ex: cmd.Parameters["@deptid"].Value = id;
+
+
+EX:
+string command = "INSERT INTO tbl_Departments VALUES(@deptid, @deptname, @locid)";
+cmd = new SqlCommand(command, conn);
+cmd.Parameters.Add("@deptid", SqlDbType.Int);
+cmd.Parameters.Add("@deptname", SqlDbType.VarChar);
+cmd.Parameters.Add("@locid", SqlDbType.Int);
+cmd.Parameters["@deptid"].Value = id;
+cmd.Parameters["@deptname"].Value = id;
+cmd.Parameters["@locid"].Value = id;
+
+
+
+
+
+
+
+
+
+
+
+13 Executing Procedures
+
+Executing Procedures
+ > to execute Procedure in ADO.NET, we will have to do the following
+	1. Pass the name of stored procedure when initializing SqlCommand
+	2. Set CommandType of SqlCommand to CommandType.StoredProcedure
+		- by default, it is CommandType.Text
+	3. Define and Assign values to the parameters of SqlCommand that corresponds to Stored Procedures parameters
+	4. Execute the Query based on the result (either ExecuteNonQuery, ExecuteScalar, or ExecuteReader)
+
+EX:
+USE [MyDb]
+GO
+
+/****** Object: StoredProcedure [dbo].[sp_AddDepartment] Script Date: 12/21/2016 12:22:55 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+create procedure [dbo].[sp_AddDepartment] @id int, @name varchar(20), @locid int as
+begin
+	insert into tbl_Departments values(@id, @name, @locid);
+end
+GO
+
+
+
+// inside WinForm
+cmd = new SqlCommand["sp_AddDepartment", conn];
+cmd.CommandType = CommandType.StoredProcedure;
+
+cmd.Parameters.Add("@deptid", SqlDbType.Int);
+cmd.Parameters.Add("@deptname", SqlDbType.VarChar);
+cmd.Parameters.Add("@locid", SqlDbType.Int);
+
+cmd.Parameters["@deptid"].Value = id;
+cmd.Parameters["@deptname"].Value = id;
+cmd.Parameters["@locid"].Value = id;
+
+
+
+
+
+
+
+
+
+
+
+14 SQL Command Builder
+
+SqlCommandBuilder
+ > Automatically generates single-table commands that are used to reconcile changes made to a DataSet with the associated SQL Server database. 
+	- ex: If we have retrieved data using DataAdapter in a DataSet, and changed the said DataSet later on, we can generate a SQL query to reflect the said changes to the db source, which will sync the data from client and database server
+ > This class cannot be inherited.
+ > contains methods like
+	SqlCommandBuilder(SqlDataAdapter da)
+		> constructor, takes a SqlDataAdapter as input
+
+
+Adding a SqlCommandBuilder to a DataAdapter
+ > to do so, we will just need to create a SqlCommandBuilder and pass the said DataAdapter
+ > ex: SqlCommandBuilder builder = new SqlCommandBuilder(da)
+
+Reflecting Changes in the DataTable to the Database
+ > for this, we will need to call the Update() function of DataAdapter, and pass the updated DataTable
+
+
+EX:
+// adding SqlCommandBuilder to the DataAdapter
+con = new SqlConnection(ConfigurationManager.ConnectionStrings["constr"].ConnectionString);
+da = new SqlDataAdapter("SELECT * FROM tbl_Departments", con);
+ds = new DataSet();
+cmdBuilder = new SqlCommandBuilder(da);
+da.Fill(ds, "department");
+
+
+// logic for updating a table in DataSet and passing the updated table for updating
+ds.Tables["department"].Rows[0][2] = 1;
+da.Update(ds.Tables["department"]); // will fail if SqlCommandBuilder is not present
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+15 SQL Bulk Copy
+
+SqlBulkCopy
+ > Lets you efficiently bulk load a SQL Server table with data from another source.
+ > properties/methods include
+	SqlBulkCopy(SqlConnection conn)
+		- constructor, takes a SqlConnection as input
+	copy.DestinationTableName
+		- property, string
+		- defines the Table where all content of DataTable will be written
+	copy.ColumnMappings.Add(int sourceTableColumnIndex, int destinationTableColumnIndex)
+	copy.ColumnMappings.Add(string sourceTableColumnName, string destinationTableColumnName)
+		- method to add mappings from source DataTable to the destination Database Table
+		- when bulk copy happens all values is transferred from source column to the mapped destination column 
+	copy.WriteToServer(DataTable dt)
+		- executes the bulk copy process
+
+
+EX:
+// function to execute bulk copy
+ds = new DataSet();
+ds.ReadXml(@"E:\data\data.xml") // reads data from the file
+DataTable dt = ds.Tables["Employee"];
+SqlBulkCopy copy = new SqlBulkCopy(conn);
+copy.DestinationTable = "Emp";
+copy.ColumnMappings.Add("EmpId", "EmpId");
+copy.ColumnMappings.Add("EmpName", "EmpName");
+copy.ColumnMappings.Add("DeptId", "DeptId");
+conn.Open();
+copy.WriteToServer(dt);
+conn.Close();
+
+
+
+
+
+
+
+
+
+
+
+
+
+16 Transactions
+
+Transactions
+ > when our database action takes one or more sql queries, its better if we use a Transaction
+ > with Transaction, if somethings bad happens during it, we can ROLLBACK to the previous state of database BEFORE the Transaction began
+	- transaction is rollback if ANY error is encountered during it, though we can use try-catch to handle this
+ > we typically use Transactions when executing multiple DML queries that have dependencies with each other
+
+
+SqlTransaction
+ > Represents a Transact-SQL transaction to be made in a SQL Server database. This class cannot be inherited.
+ > to create an instance, we will need a SqlConnection object and execute its BeginTransaction() method
+	ex: Transaction tran = conn.BeginTransaction()
+ > to commit (finalize) the transaction, we can execute Commit() of Transaction object
+ > to rollback the transaction, we can execute Rollback() of Transaction object
+
+
+EX:
+private static void ExecuteSqlTransaction(string connectionString)
+{
+    using (SqlConnection connection = new SqlConnection(connectionString))
+    {
+        connection.Open();
+
+        SqlCommand command = connection.CreateCommand();
+        SqlTransaction transaction;
+
+        // Start a local transaction.
+        transaction = connection.BeginTransaction();
+
+        // Must assign both transaction object and connection
+        // to Command object for a pending local transaction
+        command.Connection = connection;
+        command.Transaction = transaction;
+
+        try
+        {
+            command.CommandText =
+                "Insert into Region (RegionID, RegionDescription) VALUES (100, 'Description')";
+            command.ExecuteNonQuery();
+            command.CommandText =
+                "Insert into Region (RegionID, RegionDescription) VALUES (101, 'Description')";
+            command.ExecuteNonQuery();
+
+            // Attempt to commit the transaction.
+            transaction.Commit();
+            Console.WriteLine("Both records are written to database.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+            Console.WriteLine("  Message: {0}", ex.Message);
+
+            // Attempt to roll back the transaction.
+            try
+            {
+                transaction.Rollback();
+            }
+            catch (Exception ex2)
+            {
+                // This catch block will handle any errors that may have occurred
+                // on the server that would cause the rollback to fail, such as
+                // a closed connection.
+                Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                Console.WriteLine("  Message: {0}", ex2.Message);
+            }
+        }
+    }
+}

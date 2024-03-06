@@ -1,0 +1,32 @@
+Capstone Problem Statement questions
+Part 1 
+Step 1
+1. How to fix the error where the PDP page of the Catalog Entry with Field3, Field4 updated does not render
+	> error in Transaction server says "com.ibm.commerce.catalog.commands.ProductDisplayCmdImpl performExecute CMN1032E: Product "12624" does not exist"
+	> tables affected when catalog entry is updated thru dataload utility are
+		- CATENTRY
+		- STORECENT
+		- TI_DELTA_CATENTRY
+	> unlike catalog entry that is not updated yet, there are two 
+2. What if I accidentally deleted a catalog entry?
+	
+Step 2
+1. [ERROR   ] org.apache.solr.common.SolrException: Error CREATEing SolrCore 'MC_10001_CatalogEntry_Inventory_generic': Could not create a new core in C:\IBM\WEBSPH~1\Liberty\usr\servers\searchServer\resources\search\index\solr\MC_10001\generic\CatalogEntry\Inventoryas another core is already defined there
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+Solution
+Part 1
+Step 1
+1. Make sure the store id is the Extended Sites Catalog Asset Store and catalog id is Extended Sites Catalog Asset Store. Also, to rollback, delete the rows in the STORECENT table where the catentry_id is equal to the one with no PDP and storeent_id not equal to 10501

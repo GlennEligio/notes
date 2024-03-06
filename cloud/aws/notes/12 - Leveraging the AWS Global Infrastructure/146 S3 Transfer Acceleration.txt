@@ -1,0 +1,13 @@
+146 S3 Transfer Acceleration
+
+
+S3 Transfer Acceleration
+ > Increase transfer speed by transferring file to an AWS edge which will forward the data to the S3 bucket in the target region
+ > you can test the speed gain using the tool below
+	- https://s3-accelerate-speedtest.s3-accelerate.amazonaws.com/en/accelerate-speed-comparison.html
+
+
+EX:
+	Fast 				Fast
+File ------------> Edge Location -------------->  S3 Bucket
+(USA)	public www	(USA)	   public www	    (AU)

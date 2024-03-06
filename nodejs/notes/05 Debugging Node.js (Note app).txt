@@ -1,0 +1,87 @@
+05 Debugging Node.js (Note app)
+
+Content:
+26 Debugging Node.js
+27 Error Messages
+
+
+26 Debugging Node.js
+
+Types of error
+1. Compile error
+	> happens at compile time
+	> will not compile the source code
+2. Runtime error
+	> happens when app is running
+	> will stop the app when encounters
+3. Logic error
+	> logic problem in the code
+	> happens at runtime
+	> no error is thrown
+
+Tools that we can use
+1. loggers
+	> we can use loggers in order to see the value of specific variable at specific point of time
+	> ex: console.log()
+2. Node debugger
+	> with Node debugger, we can pause the code execution by adding a "breakpoint"
+	> we can then check the values of variable on that specific point of time
+
+Using Node debugger
+1. Adding breakpoint	
+	> to add breakpoint, we will add "debugger" statement at the place where we want to add one
+2. Running in debug mode
+	> to run the node app in debug mode, we either of the command
+		- node inspect <filename> [command] [...options]
+		- node --inspect-brk <filename> [command] [...options]
+	> first one may produce error in Windows, use the second one if first doesnt work
+3. Running the Chrome for debugging
+	> before you debug, make sure the Chrome is running
+	> in Chrome, type in url tab "chrome://inspect"
+	> you will be redirected to the DevTools page
+	> at this stage, execute the "node inspect" command 
+		- you should see a new item in the DevTools -> Remote Target section
+		- click "inspect"
+4. Debugging the node app in Chrome DevTools
+	> when you click the inspect, new window named "DevTools" will be opened
+	> in the DevTools, go to "Sources" section
+		- "Sources" section contains two tabs, Filesystem and Snippers
+		- Filesystem is where we can see the workspace that we are debugging
+		- We can add folders that we want to debug by clicking "Add folder to workspace"
+	> if you are here for the first time, the DevTools may ask for permission to be allowed to read the folder/files
+		- you need to allow this in order to see the node project files in Chrome DevTools
+	> in the Sources, navigate to the .js file that you want to debug
+5. You can start debugging once you see the file that you want to inspect
+6. After the code execution, you will need to execute the "node inspect" again and wait for a new item in "DevTools" -> "Remote Target" section
+
+
+NOTE:
+1. By default, there will be a breakpoint added at the start of the .js file you are inspecting	
+	> if you execute "node inspect app.js", it will add a breakpoint at the first line of app.js
+	> then, the next breakpoint will be at the place where you add the "debugger" statement
+
+
+
+27 Error Messages
+
+Error Messages
+ > consist of the following parts
+	1. Error thrown and the Explicit message that comes with the Error
+	3. Stack trace
+
+Error message parts
+Error thrown
+ > refers to the type of Error that was thrown
+	- ex: ReferenceError, InvalidException, etc
+ > also includes the message the comes with the error
+	- ex: "dataJSON" is not defined
+
+Stack trace
+ > refers to the trace of function that was executed that cause the error
+ > the first line in stack trace will be the innermost function that cause the error
+
+EX:
+ReferenceError: nots is not defined
+    at Object.addNote (D:\Study\programming\nodejs\workspace\05\notes-app\notes.js:25:25)
+    at Object.handler (D:\Study\programming\nodejs\workspace\05\notes-app\app.js:30:11)
+    at D:\Study\programming\nodejs\workspace\05\notes-app\node_modules\yargs\build\index.cjs:1:8891

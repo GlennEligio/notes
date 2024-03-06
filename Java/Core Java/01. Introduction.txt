@@ -1,0 +1,103 @@
+Introduction
+
+Contents:
+Java introduction
+java file compilation
+What is a JDK
+JDK download
+What is an IDE?
+IDE download
+project setup
+classes
+main method
+println()
+escape sequences
+comments
+tip & tricks
+
+
+Why Java
+1. Top 3 most popular language
+2. Extremely flexible (businesses, web apps, android apps, games)
+3. Easy to find a job as a developer
+
+
+
+Source code to object code
+	> Programs are between spectrum of two extremes
+		a. High-level language
+		b. Low-level language
+
+1. High-level language (for human)
+	> typically it starts with a source code
+	> Source code are easily readable by human (alphabets)
+	> Source code look something like this
+		
+		print("Hi mom!")
+
+	> ends with .java file extension
+
+2. Low-level language (for computers)
+	> typically it is an object code or machine code
+	> Machine code consist of ZEROES and ONE (binary)
+	> HARD for humans to read 
+
+
+Compiler
+	> transforms source code into machine code
+	> machines can only understand machine code (binary)
+	> to transform the source code we have written to object code, we will COMPILE it using Compiler
+
+
+
+Byte code
+	> every machine have its own specific machine code that it can understand (Window, Mac, Linux, etc)
+	> if source code is compiled in Windows, it typically can only run in Windows machine
+	> because of this, Java made "byte code"
+	> Byte code is cross-platform, meaning it can be run in any platform as long as the machine have the JVM
+	> Byte code typically have the .class file extension
+
+
+
+Java Virtual Machine
+	> enables the byte code to be run in the machine
+	> translate the byte code into machine code in runtime
+
+
+
+JDK, JRE, JVM
+
+Java Development Kit
+	> developer's toolkit to help us code
+	> contains JRE
+
+Java Runtime Environment
+	> contains libraries and toolkit
+	> contains JVM
+
+Java Virtual Machine
+	> translate byte code into machine code
+	> runs java programs
+
+
+Integrated Development Environment (IDE)
+	> software that helps us write software 
+	> used for
+		- write code
+		- check for errors
+		- compile
+		- run code
+
+
+IDEs for Java
+	> Eclipse
+	> IntelliJ IDEA 
+
+
+
+Class
+	> a collection of related code
+
+
+
+

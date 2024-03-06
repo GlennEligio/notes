@@ -1,0 +1,116 @@
+01. Introduction
+
+What is SonarQube?
+
+
+TABLE OF CONTENTS:
+I. Software Quality
+II. Static Code Analysis
+III. Technical debt
+IV. Sonar...
+V. SonarQube
+VI. SonarCloud
+
+
+I. SOFTWARE QUALITY
+Software Quality
+	> refers to the two distinct concepts
+		1. Software Functional Quality 
+			-> refers to how well a software compiles to a given design based on the Functional Requirements
+			-> it is the degree to which the correct software is produced
+		2. Software Structural Quality
+			-> refers to how it meets the non-functional requirements that supports the deliver of the Functional Requirements
+			-> includes Maintainability and Cleanliness of Source code
+			-> has a lot to do to the degree to which is software works as needed
+
+
+Two main approaches to Software Quality
+1. Defect Management
+2. Quality Attribute
+
+Software Defect
+	> regarded as failure to address the end-user requirements
+	> common defects includes
+		- Missed / Misunderstood requirements
+		- Errors in design
+		- Functional logic
+		- Data relationships
+		- Process timing
+		- Validity checking
+		- Coding errors 
+
+
+
+II. STATIC CODE ANALYSIS
+Static Code Analysis
+	> Static Code Review / Analysis can be done WITHOUT RUNNING the code
+	> Involve NO Dynamic execution of the software on the review
+	> Possible to detect problems at the early stage before running the program
+	> can be done by a machine to automatically analyze the source code to detect non-complying rules 
+		-> done to ensure PROPER coding standards
+		-> examples are the syntax errors the IDE throws
+Dynamic Code Analysis
+	> relies how the source code behaves DURING EXECUTION
+
+
+
+III. TECHNICAL DEBT
+Technical Debt
+	> coined by Ward Cunningham
+	> can be described as what results when development teams take actions to expedite the delivery of a piece of functionality or a project which later needs to be refactored. 
+		- In other words, it’s the result of prioritizing speedy delivery over perfect code.
+	> these debts (in Software Quality context) may refer to:
+		- Code Refractors
+		- Unfixed bugs and glitches
+		- Missing documentations
+		- Legacy codes
+	> in Technical Debt, you will get the following
+		+ Early to market due to sacrificing speedy delivery over proper source code
+		- Hard to refractor and maintain source code which will result in slow maintenance / updates of source code
+
+
+
+IV. SONAR...
+Sonar origin
+	> Sonar is an equipment used to INSPECT Ocean beds
+
+
+
+V. SONARQUBE
+SonarQube
+	> "Code Quality should be a concern of all developers, not just a few experts"
+	> used to do probing / inspection of large code bases much easier and faster
+	> an open source solution by Sonar Source for Continuous Inspection of Code quality
+	> does Static Code Analysis to detect
+		- bugs
+		- code smells
+		- security vulnerabilities
+	> can record metric history and provide evolution grapsh
+	> offers reports in 
+		- duplicate codes
+		- coding standards
+		- unit tests
+		- code coverage
+		- code complexity
+		- comments
+		- bugs
+
+
+
+VI. SONARCLOUD
+SonarCloud
+	> Software Quality solution for source codes stored in Cloud like
+		- BitBucket
+		- Github
+		- Azure DevOps repos
+	> in SonarCloud, we can do the following things
+		- sort Project based on 
+			a. Size
+			b. Quality Code
+			c. Reliability
+			d. Security
+			e. Programming language
+		- check the following data of projects
+			-> amount of Bugs
+			-> amount of Security Vulnerabilities
+			-> maintability / Technical Debt in terms of Days

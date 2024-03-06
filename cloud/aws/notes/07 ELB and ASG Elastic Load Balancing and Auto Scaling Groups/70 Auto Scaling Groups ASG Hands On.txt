@@ -1,0 +1,95 @@
+70 Auto Scaling Groups ASG Hands On
+
+Clean up
+1. Terminate all EC2 instances we created earlier for LoadBalancer
+
+Creating Auto Scaling Group Steps
+1. Choose launch template or configuration
+2. Choose instance launch
+3. Configure advanced options (optional)
+4. Configure group size and scaling policies (optional)
+5. Add notifications
+6. Add tags
+7. Review
+
+
+Choose launch template or configuration
+1. Go to EC2 Dashboard > Auto Scaling section > Auto scaling group
+2. Create an Auto Scaling Group
+3. Name: DemoASG
+4. Create a Launch Template
+	> this refers to the template used to define how to launch EC2 instances within the ASG
+	> similar to creating EC2 template
+5. Creating the Launch Template
+	> name: DemoLaunchTemplate
+	> same EC2 as before, which exposes SSH and HTTP, and a User Data script which runs an Apache Webserver listening to port 80 with a modified index.html
+6. Select the Launch template created in the ASG and click Next
+
+
+
+Choose instance launch
+1. In Network
+	> choose the default VPC
+	> choose all the AZ and subnets available
+2. Instance type requirements
+	> choose the default one created by the Launch Template created earlier
+
+
+
+Configure advanced options (optional)
+1. In Load balancing
+ 	> choose 'Attach to an existing load balancer'
+2. in Attach to an existing load balancer
+	> select 'Choose from your load balancer target groups'
+	> Then select the target group created earlier 'demo-tg'
+3. In Health checks
+	> select both EC2 and ELB for Health check type
+
+
+
+Configure group size and scaling policies (optional)
+1. For Group size
+	> Desired capacity - 2
+	> Minimum capacity - 1
+	> Maximum capacity - 4
+2. Click Next
+
+
+Add notifications - Skipped
+Add tags - Skipped for now
+
+
+
+
+Checking newly created ASG
+1. Go to EC2 Dashboard > Auto scaling >  Auto Scaling groups
+2. Select the new ASG
+3. Check the Instance management tab
+	> we should initially see TWO EC2 instances
+4. Check the EC2 instance dashboard as well to check for this
+5. Check the Target group 'demo-tg', where the EC2 instances from ASG earlier should be included as well
+6. Check the Loadbalancer
+	> use the DNS name in the browser
+	> we should be able to access the EC2 instances
+
+
+
+
+Healing capabilities of ASG
+ > this refers to making sure ASG maintains the specific number of instances
+ > ex: if the current instances amount is lower than the desired amount, it will create new instances to match it
+1. Terminate one of the instances
+2. Check the ASG 
+3. Wait for a couple of minutes
+4. Check the ASG Activity tab
+	> we should see the termination event and the instance creation event
+5. Check the EC2 instance dashboard
+	> it should now much the desired instance number
+
+
+
+
+NOTES:
+1. Make sure that the Target Group you selected in the ASG creation is ASSOCIATED with specific Elastic Load Balancer
+	> else, you need to create a new ELB and attach the said Target group
+

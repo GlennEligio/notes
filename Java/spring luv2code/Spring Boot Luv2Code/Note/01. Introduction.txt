@@ -1,0 +1,78 @@
+01. Introduction
+
+GOALS:
+1. Quickly develop Spring Boot applications
+2. Develop a REST API using Spring Boot
+3. Create a Spring MVC app with Spring Boot
+4. Connect Spring Boot apps to a Database for CRUD development
+5. Leverage all Java configuration (no xml) and Maven
+
+
+Why Spring Boot is created?
+1. Building a Spring application is really HARD
+	- What Maven archetype to use?
+	- Which Maven dependencies do I need?
+	- How do I set up configuration (xml or Java)?
+	- How do I install the server? (Tomcat, JBoss, etc...)
+2. Tons of configuration
+
+
+
+Spring Boot Solution
+	> Make it easier to get started with Spring development
+	> Minimize the amount of manula configuration
+		- perform auto-configuration based on props file and JAR classpath
+ 	> Help to resolve dependency conflict (Maven or Gradle)
+	> Provide an embedded HTTP server so you can get started quickly
+		- Tomcat, Jetty, Undertow, ...
+
+
+Spring Intialzr
+	> website to quickly create a starter Spring project
+	> inside, we can
+		- select the dependencies
+		- create a Maven/Gradle project
+	> then after configuring the project, we can import it to the IDE
+		- Eclipse, IntelliJ, NetBeans
+	> can be accessed in this website
+		
+		http://start.spring.io
+
+
+
+Spring Boot Embedded Server
+	> spring boot PROVIDE an embedded HTTP server so you can get started quickly
+		- Tomcat, Jetty, Undertow
+	> no need to install a server separately
+	> the result JAR file of Spring Boot application will include	
+		a. Application code
+		b. The application server
+	> self contained unit, nothing else to install
+
+
+How to run Spring Boot Apps
+	> Spring Boots apps can be run standalone (includes the embedded server)
+	> Run the Spring Boot app from the IDE or command-line
+	> For CLI, use these command
+		java -jar fileName.jar
+	> change the fileName to the name of the jar file
+
+
+
+Deploying Spring Boot Apps
+	> Spring Boot apps can also be deployed in the traditional way
+	> This means we deploy the WAR file to an external server (Tomcat, JBoss, WebSphere, etc)
+
+
+
+FAQ:
+1. Does Spring Boot replace Spring MVC, Spring REST, etc...?		
+	> No. Instead, Spring Boot actually uses those technologies behind the scene
+
+2. Does the Spring Boot run code faster than regular Spring code?
+	> No
+	> Behind the scene, Spring Boot uses same code of Spring Framework
+	> Spring Boot is about making it easier to get started by minimizing configuration ....
+
+3. Do I need a special IDE for Spring Boot?
+	> No, you can use any IDE for Spring Boot apps

@@ -1,0 +1,25 @@
+06. Docker Architecture
+
+Docker Architecture
+	> similar to a Client-Server one
+	> composed of the following parts
+		- Docker Client
+		- Docker Daemon
+		- Containers
+		- Local images
+		- Image Registry
+
+
+Docker Client
+	> receives the CLI commands given by the user
+	> the Docker Client will send specific request to Docker Daemon based on the command given
+
+Docker Daemon / Docker Engine
+	> responsible for 
+		- managing Local Containers
+		- managing Local Images
+		- pulling Images from remote Registries
+			-> will only pull remote Images that DOES NOT EXIST in Local images
+		- pushing local Images to a remote Registry
+	> here, information sent from Docker Client will be used to do actions to the Containers, Local images, or Image Registry
+	

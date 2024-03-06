@@ -1,0 +1,30 @@
+07 Virtual Machines
+
+Virtual Machines
+ > from the name itself, these are machines that runs in a hardware "virtually"
+ > based on the resources available on the hardware, we can run more than one virtual machine inside it
+ > these virtual machine thinks that it runs on its own machine, and is not aware of its virtual nature
+ > VMs are the first key step into moving to Cloud
+
+
+Model
+Hardware
+ > VM1
+ > VM2
+
+
+Description:
+ > VM1 and VM2 runs on Hardware. 
+ > These two share the resources of hardware where in their total resources consumption can not exceed that of the Hardware they are running.
+
+
+Advantage
+1. We can modify the resources used by each different VMs inside the hardware
+	> if VM1 needed to increase capacity, other VMs (VM2) can decrease the resources it is uses which the VM1 will take
+	> ex: from 50% each for VM1 and VM2, we can do 80% VM1 and 20% VM2 
+2. We can plan for peak capacity better, where in instead of planning for the the peak of single VM, we will be planning for the TOTAL PEAK of all the VM that runs the service
+
+
+
+NOTES:
+1. Modern web apps became the KEY DRIVER to the cloud

@@ -1,0 +1,29 @@
+03. Kubernetes Overview
+
+Kubernetes
+	> Container Orchestration tool
+	> A Resource Manager, which manages resources like Servers (Physical / Virtual)
+	> Different Cloud providers have different names for these Virtual Servers
+		- Amazon  	-> Elastic Compute Cloud (EC2)	
+		- Azure		-> Virtual Machines (VM)
+		- Google Cloud	-> Compute Engine
+	> Kubernetes calls these Servers with a generic name "Nodes"
+
+
+Kubernetes Architecture
+1. Cluster
+	> composed of nodes, which is divided into two groups
+		a. Master Node(s)
+			- manages Cluster, making sure Worker Nodes are up
+			- this Node needs to have at least 2 CPU
+			- a Cluster must have at least ONE Master Node
+				-> but for redundancy and high availability, we can deploy more than one Master Node
+		b. Worker Node(s)
+			- this nodes typically run all Pods/Containers that contain the application
+
+
+
+Services and Ingress
+Services
+	> a K8s resources used to expose a specific Pod/ReplicaSet/Deployment
+	> we can expose them in Cluster either INTERNALLY or EXTERNALLY

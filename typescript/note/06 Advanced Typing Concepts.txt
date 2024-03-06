@@ -1,0 +1,417 @@
+06 Advanced Typing Concepts
+
+Content:
+01 Module Introduction
+02 Intersection Types
+03 More on Type Guards
+04 Discriminated Unions
+05 Type Casting
+06 Index Properties
+07 Function Overloads
+08 Optional Chaining
+09 Nullish Coalescing
+10 Wrap Up
+
+
+
+
+
+
+
+
+
+01 Module Introduction
+
+Module Content:
+01 Intersection Types
+02 Type Guards
+03 Discriminated Unions
+04 Type Casting
+05 Function Overloads
+
+
+
+
+
+
+
+
+
+02 Intersection Types
+
+Intersection Types
+ > types that are created from the intersection of two Types
+ > to create an intersection type, we will use the symbol "&"
+ 	- ex: type Intersection = TypeA & TypeB
+
+Intersection of Union primitive Types
+ > for Types whose value is a Union of primitive types, the intersection result is the common Types available between the two Union Types
+
+EX:
+type Combinable = string | number;
+type Numberic = number | boolean;
+
+type Universal = Combinable & Numberic;	// will be type of number since thats the common in Combinable and Numeric
+
+
+Intersection of Object type
+ > for intersection of Object types, the resulting Object type will contain ALL properties available in input Object types
+ > for the interection of Object types to work, they must not have COMMON PROPERTY with different type
+ 	- if the two of the input Object types have common property but different types, there will be an error with intersection
+ > for properties of input Object types with common name, they will be counted as ONE
+ > we can also rewrite this using interfaces
+
+EX:
+type Admin = {
+  name: string;
+  privileges: string[];
+};
+
+type Employee = {
+  name: string;
+  startDate: Date;
+};
+
+type ElevatedEmployee = Admin & Employee;
+
+const e1: ElevatedEmployee = {
+  name: "Glenn",
+  privileges: ["Admin"],
+  startDate: new Date(),
+};
+
+
+// With interface syntax
+interface Admin  {
+  name: string;
+  privileges: string[];
+};
+
+interface Employee  {
+  name: string;
+  startDate: Date;
+};
+
+interface ElevatedEmployee extends Admin, Employee {}
+
+const e1: ElevatedEmployee = {
+  name: "Glenn",
+  privileges: ["Admin"],
+  startDate: new Date(),
+};
+
+
+
+
+
+03 More on Type Guards
+
+Type Guards
+ > idea or approach of check either of the two before we try to use it
+	1. a certain property or method exist in given Object
+	2. type of variable matches that type we are looking for
+ > for primitive types, we can do type guards using "typeof" keyword
+ > for Object types, we can do type guards using "in" and "instanceof"
+	- for "instanceof", it will only work in Classes and not Interfaces
+
+EX:
+// Type Guards with primitive types
+type Combinable = string | number;
+type Numberic = number | boolean;
+
+type Universal = Combinable & Numberic;
+
+function add(a: Combinable, b: Combinable) {
+  if (typeof a === "string" || typeof b === "string") {
+    return a.toString() + a.toString();
+  }
+  return a + b;
+}
+
+
+// Type Guard with Object types 
+class Car {
+  drive() {
+    console.log("Driving...");
+  }
+
+  speedUp() {
+    console.log("Speeding up...");
+  }
+}
+
+class Truck {
+  drive() {
+    console.log("Driving a truck...");
+  }
+
+  loadingCargo(amount: number) {
+    console.log("Loading cargo... " + amount);
+  }
+}
+
+type Vehicle = Car | Truck;
+
+const v1 = new Car();
+const v2 = new Truck();
+
+function useVehicle(vehicle: Vehicle) {
+  vehicle.drive();
+  if ("loadingCargo" in vehicle) {
+    vehicle.loadingCargo(1000);
+  }
+  if (vehicle instanceof Car) {
+    vehicle.speedUp();
+  }
+}
+
+useVehicle(v1);
+useVehicle(v2);
+
+
+
+
+
+
+
+
+
+
+
+04 Discriminated Unions
+
+Dicriminated Unions
+ > Discriminated Unions are unions of Objects/Class/Interface types where they have property COMMON to them using to identify which type the Object is
+ 	- this property is sometimtes called "discriminator"
+	- discrimator property is used to determine the specific type of Object/Class/Interface the variable is
+ > With Discriminated Unions, using the the discriminator property, the TypeScript can easily infer which Object type in Discriminated Union is being referred to
+
+EX:
+interface Bird {
+  type: "bird";
+  flyingSpeed: number;
+}
+
+interface Horse {
+  type: "horse";
+  runningSpeed: number;
+}
+
+type Animal = Bird | Horse;
+
+function moveAnimal(animal: Animal) {
+  let speed;
+  switch (animal.type) {
+    case "bird":
+      // with type "bird", TypeScript knows animal is instance of Bird
+      speed = animal.flyingSpeed;
+      break;
+    case "horse":
+      // with type "bird", TypeScript knows animal is instance of Horse
+      speed = animal.runningSpeed;
+      break;
+  }
+  console.log("Moving at speed: " + speed);
+}
+
+// with type "bird", TypeScript knows that flyingSpeed must be defined as well
+moveAnimal({ type: "bird", flyingSpeed: 200 });
+
+
+
+
+
+
+
+
+
+
+
+05 Type Casting
+
+Type Casting
+ > process where we "cast" a value into a specific Type
+ 	- with "cast", we can change the type of value from one Type to another
+ > to do a Type cast, we can either use opening and closing bracket or "as" keyword
+	1. <TypeToCastTo> expression
+	2. expression as TypeToCastTo
+ > typically used if we are sure as to what type we will received or returned by an expression
+	- ex: document.getElementById() returns an HTMLElement, but we maybe expecting an HTMLInputElement (subclass of HTMLElement). In thise case, we can do a TypeCast
+
+
+EX:
+// const userInputElement = <HTMLInputElement> document.getElementById("user-input");
+// const userInputElement = document.querySelector("input") as HTMLInputElement;
+const userInputElement = document.querySelector("input");
+
+if (userInputElement) {
+  (userInputElement as HTMLInputElement).value = "Hi There";
+}
+
+
+
+
+
+
+
+
+
+
+
+06 Index Properties
+
+SOURCE:
+https://www.logicbig.com/tutorials/misc/typescript/indexable-types.html
+
+Index Properties
+ > In TypeScript, interfaces can also describe indexable types i.e. the types which can be accessed via indexes.
+ > TypeScript only allows two types for indexes (the keys): string and number
+	- for the values, it can be any type depending on the index property defined
+ > With this, object with type is an Interface with index property can take multiple values in form of either
+	- object {}
+	- array []
+ > With array, the indexes type will be automatically set to number and the keys will be the indexes
+ > The type of the input we used to fill this index property will also be the resulting type of the Object that used the Interface
+	- if we used Object type, the Object will be of type Object
+	- if we used Array type, the Object will be of type Array
+
+EX:
+interface ErrorContainer {
+  [prop: string]: string;
+}
+
+interface RoleContainer {
+  [key: number]: string;
+}
+
+const errorBag: ErrorContainer = {
+  email: "Not a valid email!",
+  username: "Must start with a capital character!"
+}
+console.log(errorBag); // outputs object
+
+const roles: RoleContainer = ["ADMIN", "USER", "READ-ONLY"]
+console.log(roles); // outputs array
+
+
+
+
+
+
+
+
+
+
+07 Function Overloads
+
+Function Overloads
+ > Function Overloading is where we create multiple function signature for the same function identifier
+ > Function signature is determined by the combination of
+	- amount of parameters
+	- types of parameters
+	- type of return value
+ > To define these function overloads, we will need to add them on top of the function that contains the body
+ > Mostly used for function that have Union type as parameter type
+ > Reason as to why we use function overload is to define what Type the function will return based on the input parameter types
+	- This way, the TypeScript can infer the return type of function and determine its proper properties and functions
+
+EX:
+ > In example below, we created function overloads to the function "add".
+ > If we didnt created this, the result.split(" ") expression will throw error since TypeScript will infer the return value of it to "Combinable" which is union of string and number and split() is only available in string types.
+ > With the overloads, now TypeScript can infer that the return type will be of type string if we pass either of the following types in arguments of "add"
+	1. string, string
+	2. string, number
+	3. number, string
+
+
+type Combinable = string | number;
+type Numberic = number | boolean;
+
+type Universal = Combinable & Numberic;
+
+function add(a: string, b: string): string;
+function add(a: number, b: number): number;
+function add(a: number, b: string): string;
+function add(a: string, b: number): string;
+function add(a: Combinable, b: Combinable) {
+  if (typeof a === "string" || typeof b === "string") {
+    return a.toString() + a.toString();
+  }
+  return a + b;
+}
+
+const result = add("John", " Glenn");
+result.split(" ");
+
+
+
+
+
+
+
+
+
+
+08 Optional Chaining
+
+Optional Chaining
+ > mostly used for object (or its property) that you are unsure of if its undefined or null
+ > The optional chaining operator (?.) enables you to read the value of a property located deep within a chain of connected objects without having to check that each reference in the chain is valid. 
+ 	- The ?. operator is like the . chaining operator, except that instead of causing an error if a reference is nullish (null or undefined), the expression short-circuits with a return value of undefined. When used with function calls, it returns undefined if the given function does not exist. 
+ > with Optional Chaining, it provides us a way to simplify accessing values through connected objects when it's possible that a reference or function may be undefined or null
+ > this Optional chaining is equivalent to the expression
+	- let nestedProp = obj.first?.second;
+		-> first it will check if the obj.first property is not null or undefined
+		-> then if it is not undefined or null, it will fetch the obj.first.second
+		-> else if undefined or null, it will immediately short-circuits and returns undefined
+ 
+
+SYNTAX:
+obj.val?.prop
+obj.val?.[expr]
+obj.arr?.[index]
+obj.func?.(args)
+
+EX:
+// this variable may be from backend api server
+// this will most likely have a Type/Class it is based, so even if we dont have concrete value, the optional chaining will not throw error
+const fetchedUserData = {
+  id: "u1",
+  name: "Max",
+  job: { title: "CEO", description: "My own company" },
+};
+
+console.log(fetchedUserData && fetchedUserData.job && fetchedUserData.job.title);
+console.log(fetchedUserData?.job?.description);
+
+
+
+
+
+
+
+
+
+
+09 Nullish Coalescing
+
+Nullish Coalescing
+ > The nullish coalescing operator (??) is a logical operator that returns its right-hand side operand when its left-hand side operand is null or undefined, and otherwise returns its left-hand side operand. 
+	- ex: const username = data.username ?? "DEFAULT_USERNAME";
+		-> if data.username is null or undefined, "DEFAULT_USERNAME" will the value of username
+		-> else, its the data.username
+
+EX:
+const userInput = undefined;
+const storedData = userInput ?? "DEFAULT";
+console.log(storedData); // returns DEFAULT
+
+
+
+
+
+
+
+
+
+10 Wrap Up

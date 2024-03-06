@@ -1,0 +1,40 @@
+170 - CodeGuru Overview
+
+Amazon CodeGuru
+ > A Machine-Learning powered sevice for AUTOMATED CODE REVIEWS and APPLICATION PERFORMANCE RECOMMENDATIONS
+ > Provides two functionalities
+	1. CodeGuru Reviewer: Automated code reviews for static code analysis (development)
+		- similar to Linters like Sonarlint and ESLint
+	2. CodeGuru Profiler: Visibility/Recommendations about application performance DURING runtime (PRODUCTION)
+
+
+Code Development Process flow and CodeGuru application in each step
+1. While in development, the CodeGuru Reviewer will do static code analysis
+	> CodeGuru Reviewer will provide Built-in code reviews with actionable recommendations
+2. During the Build & Test phase, the CodeGuru Profiler will detect and optimize the expensive lines of code pre-prod
+3. When the application is deployed and live, CodeGuru Profile will identify performance and cost improvements in production
+
+
+Amazon CodeGuru Reviewer
+ > used to identify critical issues, security vulnerabilities, and hard-to-find bugs
+	- ex: common coding best practices, resource leaks, security detection, input validation
+ > uses Machine-Learning and automated reasoning
+ > Hard-learned lessons across millions of code reviews on 1000s of open-source and Amazon repositories
+ > Supports Java and Python
+ > Integrated with GitHub, Bitbucket, and AWS CodeCommit
+ > we can see each of the Code reviews the CodeGuru Reviewer made, which contains the following
+	1. General details of the code review
+	2. Recommendations, which includes the Code file, Code line, and the actions to take
+	
+	
+Amazon CodeGuru Profiler
+ > Helps understand the runtime behavior of your application
+	- ex: identify if your application is consuming excessive CPU capacity on a logging routing
+ > Features include:
+	1. Identification and removal of code inefficiencies
+	2. Improve application performance (e.g. reduce CPU utilization)
+	3. Decrease compute costs
+	4. Provides heap summary (identify which objects are using up the memory)
+	5. Anomaly Detection
+ > Support applications running on AWS or on-premise
+ > Minmal overhead on application

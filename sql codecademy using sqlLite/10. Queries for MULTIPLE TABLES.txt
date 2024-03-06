@@ -1,0 +1,247 @@
+SQL - MULTIPLE TABLE
+
+	> similar to Object Oriented Programming OOP
+	> often than not, some of the data in the SQL server are stored in different table
+
+EXAMPLE:
+Database Schema
+
+customers
+
+name			type
+customer_id		INT
+customer_name		VARCHAR(256)
+address			VARCHAR(256)
+
+	Rows: 10
+
+
+subscriptions
+
+name			type
+subscription_id		INT
+description		VARCHAR(256)
+price_per_month		INT
+subscription_length	TEXT
+
+	Rows: 9
+
+TABLE NAME: orders
+
+name			type
+order_id		INT
+customer_id		INT
+subscription_id		INT
+purchase_date		DATE
+
+
+In this case, we have three table. Each of them containing data that are related to each other. But in our case, some of the columns repeat itself. 
+
+For example, in the orders table, each row have order_id, subscription_id, customer_id, and purchase_date. Two of these column (subscription and customer id) is also used in other tables (orders and subscriptions table). In this section we will talk about how we can manipulate multiple table in order to get the desire result we want.
+
+
+
+1. JOIN
+	> used to combine two tables
+	> these tables must have something in similar
+	> used in conjunction with ON
+	> let say we want to combine order table and subscription table. If we combine the columns of the tables, how can we assign the values of subscription table's columns to the order's column. In order to solve this, we will use a column that is similar to them.
+	> this query will not combine the said columns in ON query, they will still be both present in the result, unless the said columns are not SELECTED
+	> if value in order's column doesn't have a pair in subscriptions' column, then that row will not be included in the result
+	
+EXAMPLE:
+
+SELECT *
+FROM orders
+JOIN subscriptions
+  ON orders.subscription_id = subscriptions.subscription_id;
+
+In this case, we JOIN the "orders" table to the "subscriptions" table, for us to determine the value of the columns of "subscriptions" table that will be joining the "orders" table, we will use the columns that we input in ON query. For example, if the subscription_id column of "orders" table is 2, we will look at the rows in the "subscriptions" table whose subscription_id value is 2. That row will be the values of the "subscription" table that is joined.
+
+BEFORE JOIN WITH C2 being the parameters in ON query
+
+C1	C2	C2	C3
+A	B	B	C
+Q	W	E	R	
+X	Y	Y	Z
+
+AFTER JOIN, removing the rows of table whose C2 values doesn't match
+C1	C2	C3
+A	B	C	
+X	Y	Z
+
+
+Database Schema for the Next topics
+Database Schema
+
+TABLE NAME: newspaper
+name			type
+id			INT
+first_name		VARCHAR(256)
+last_name		VARCHAR(256)
+email			VARCHAR(256)
+start_month		INT
+end_month		INT
+	Rows: 60
+
+TABLE NAME: online
+name			type
+id			INT
+first_name		VARCHAR(256)
+last_name		VARCHAR(256)
+email			VARCHAR(256)
+start_month		INT
+end_month		INT
+	Rows: 65
+
+TABLE NAME: months
+name			type
+month			INT
+	Rows: 12
+
+
+
+2. LEFT JOIN
+	> same with JOIN but instead of removing the row at which values of columnTable1 and columnTable2, their values (or their row) will be retain and be shown in the result.
+
+EXAMPLE:
+
+SELECT *
+FROM newspaper
+LEFT JOIN online
+ON newspaper.id = online.id;
+
+In this case, we will JOIN the newspaper and online table. But in the case of LEFT JOIN, it will retain the rows who's id columns of both newspaper and online table. 
+
+
+
+3. PRIMARY KEY VS FOREIGN KEY
+	
+PRIMARY KEYS
+	> column that uniquely identifies each row of the table
+
+Primary keys have a few requirements:
+	> None of the values can be NULL.
+	> Each value must be unique
+	> A table can not have more than one primary key column.
+
+In earlier examples, we have orders, customers, and subscription table. Each one of these table have PRIMARY KEY (which are named ids). 
+
+FOREIGN KEYS
+	> When the primary key for one table appears in a different table
+
+Since we used the PRIMARY KEYS of the customers and subscription table in orders table, these PRIMARY KEYS are now called FOREIGN KEYS in the orders table.
+
+
+
+4. CROSS JOIN
+	> while JOIN and LEFT JOIN matches rows that have some information in common, CROSS JOIN combines all the rows of one table with all rows of another table
+	> the resulting table will be the possible combinations of all the rows that we combine
+
+EXAMPLE:
+
+SELECT shirts.shirt_color,
+   pants.pants_color
+FROM shirts
+CROSS JOIN pants;
+
+shirt_color values (3)		pants_color values (2)
+white				light denim
+grey				black
+olive
+
+In this case, we CROSS JOIN the shirt_color column of shirt table and pants_color column values to pants table. The resulting table will show all the possible combinations of shirt color and pants color.
+
+RESULTING TABLE
+
+shirt_color			pants_color
+white				light denim
+white				black
+grey				light denim
+grey				black
+olive				light denim
+olive				black
+
+	> more common usage of CROSS JOIN is when we need to compare each row of a table to a list of values
+
+EXAMPLE 2:
+
+SELECT month,
+   COUNT(*) AS 'subscribers'
+FROM newspaper
+CROSS JOIN months
+WHERE start_month <= month 
+   AND end_month >= month
+GROUP BY month;
+
+
+	Here, our goal is to see how many subscribers we have in each month of the year in newspaper table. First, we get the newspaper table using FROM query. 
+	Then, we CROSS JOIN the newspaper table to the months table, which consist of INT from 1-12 representing months. Now after CROSS JOINing the two tables, we will have all the possible combinations of newspaper rows and months row. For example, one newspaper subscriber will be match with all the rows in months table. 
+	Now after CROSS JOINING, we will filter the result of it WHERE in the rows whose month column of months table is between the start_month AND end_month of the newspaper table. With this, only those rows who's month value is between the start and end month.
+	After filtering the CROSS JOIN result, we will now call the GROUP BY query in order to aggregate them by their month value. With this, we will create multiple table whose month value is the same.
+	With the table being aggregated now, we will now SELECT the month, and COUNT(*) column. This will show the number of rows for each table that results in the aggregation and also the values of month column. And while we're at it, lets set the name of the COUNT(*) column AS 'subscribers'.
+	With this, we can see the amount of subscribers for each month of the year.
+
+
+
+5. UNION
+	> used to combine / append data in a table
+	> the tables what will be combined with UNION must have:
+		a. same number of columns
+		b. their columns must have same dataType in the same order
+
+EXAMPLE:
+
+SELECT *
+FROM newspaper
+UNION
+SELECT * 
+FROM online;
+
+Since the newspaper and online table have the same number of columns, the same order of columns and the same dataType for columns, we can safely use the UNION query on them. The resulting table will be a combination of newspaper rows and online rows.
+
+
+
+6. WITH
+	> used to nest a seperate query that can be used on other query
+	> allows us to perform a separate query (such as aggregating customer’s subscriptions) 
+	> Essentially, we are putting a whole first query inside the parentheses () and giving it a name. After that, we can use this name as if it’s a table and write a new query using the first query
+
+
+EXAMPLE 1:
+
+WITH previous_results AS (
+   SELECT ...
+   ...
+   ...
+   ...
+)
+SELECT *
+FROM previous_results
+JOIN customers
+  ON _____ = _____;
+
+
+Here, we can see a use of WITH statement. Inside the with statement is a query that will result in a table. This table will be name 'previous_result' as written in the WITH _____ AS query. With this new table we created using WITH ___ AS query, we can use this and have it interact with other tables using other queries.
+
+
+EXAMPLE 2:
+
+WITH previous_query AS (
+  SELECT customer_id,
+   COUNT(subscription_id) AS 'subscriptions'
+FROM orders
+GROUP BY customer_id
+)
+SELECT customers.customer_name, previous_query.subscriptions
+FROM previous_query
+JOIN customers
+ON previous_query.customer_id = customers.customer_id;
+
+In this example, we have a WITH ___ AS query, where a query itself is nested. The query nested creates a table with customer_id, with the amount of subscriptions it have currently. This query will result in a table that will be named AS previous_query, which is the parameter that we passed in the WITH ____ AS query.
+
+After the WITH query, we created another query where we called the previous_query, the one we created earlier. We then JOIN the previous_query with the customers table with their customer_id's being parameters for ON query. After JOINING the previous_query and customers table, we will SELECT the customers_name column form customers table and subscriptions column from previous_query.
+
+
+
+

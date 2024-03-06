@@ -1,0 +1,140 @@
+Functional Interface (FI)
+	> interfaces with only one abstract method
+		- methods from Object class (equals, toString) dont count
+		- get compile error when you define more than one abstract method
+	> can be annotated with @FunctionalInterface, OPTIONAL
+	> can have static and default methods inside
+		- they do not count as method for Functional Interfaces
+
+
+Static methods in Interface
+	> methods that have ONLY ONE implementation	
+	> can be called using the Interface itself
+	
+
+Default methods in Interface
+	> methods that have a default implementation inside it
+		- this implementation will be used in case the default method is not overriden
+	> these methods can be overriden OPTIONALLY when we implemented the interface
+
+
+
+Examples of Functional Interfaces
+1. Predicate	
+	> public interface Predicate<T> { boolean test(T t); }
+	> performs a test that returns true or false 
+	> test() takes a single Object parameter and returns a boolean 
+	> the lambda expression below is the implementation of Predicate interface with its test()
+	> removeIf() of Collection and filter() of Stream interface takes a Predicate object
+
+EX: 
+	Predicate<Integer> as Lambda
+	list.removeIf(i -> i%2 == 0);
+
+
+2. Function interface
+	> public interface Function<T, R> { R apply(T t); }
+	> applies a computation on ONE parameter and returns a result
+	> apply() takes an Object and make modifications on it, it will then return the modified Object
+	> below, we can see it used in the Comparator.comparing()
+
+EX: Function<Thread, String> as lambda expression passed to comparing()
+
+		List<Thread> threads = new ArrayList<>(Arrays.asList(new Thread("Larry"), new Thread("Jacob"), new Thread("Moe")));
+		System.out.println(threads);
+		threads.sort(Comparator.comparing((t) -> t.getName()));
+
+
+3. BiFunction interface
+	> public interface BiFunction<T, U, R> { R apply(T t, U u); }
+	> applies a computation on TWO parameters and returns a result
+	> below, we used BiFunction<String, Integer, Integer> in order to modify the Values in the Map Entries
+
+EX: BiFunction<String, Integer, String> as lambda
+
+		Map<String, Integer> iqMap = new HashMap<String, Integer>(){
+			{
+				put("Larry", 100);
+				put("Curly", 100);
+				put("Moe", 100);				
+			}
+		};
+		iqMap.replaceAll((k,v) -> v-50);
+
+
+
+4. Consumer Interface
+	> A Consumer accepts a parameter & returns no result
+	> Can be compared to Runnable Interface
+	> public interface Consumer<T> { void accept(T t); }
+	> below, we can see the Consumer<Thread> uses the Thread input and prints it out using println
+
+EX:	Consumer<Thread> as lambda
+
+		List<Thread> threads1 = new ArrayList<>(Arrays.asList(new Thread("Larry"), new Thread("Curly"), new Thread("Moe")));
+		
+		// Using lambda
+		Consumer<Thread> con = n -> System.out.println(n);;
+		threads1.forEach(con);
+		threads1.sort(Comparator.comparing(Thread::getName));
+
+
+5. Supplier Interface
+	> A Supplier returns a value and take NO parameters
+	> public interface Supplier<T> { T get(); }
+	
+EX: Supplier<String> as lambda in orElseGet() of Optional object
+
+		Map<String, String> personMap = new HashMap<String, String>(){
+			{
+				put("Demon", "Naughty");
+				put("Angel", "Nice");
+			}
+		};
+		
+		String person = "...";
+		Optional<String> disposition = Optional.ofNullable(personMap.get(person));
+		System.out.println("Disposition of " + person + " = " + disposition.orElseGet(() -> "unknown"));
+
+
+
+
+Lambda Expression use in Functional Interface (FI)
+	> with Functional Interface having only ONE abstract method, we can use Lambda Expression to define that single method
+	> when we use Lambda Expression for instantiating a Functional Interface;
+		- the parameter list in lambda will be the parameter we pass on the method of FI
+		- the method body of lambda will be the method body of the "overridden" method of FI
+
+EX: 
+		// with Java 8 Lambda
+		new Thread(() -> System.out.println("Lambda")).start();
+		
+		// before Java 8
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("Without Lambda");
+			}
+		}).start();
+
+
+METHOD REFERENCES
+	> method reference is a compact, easy-to-read handle for a method that already has a name
+	> there are 4 kinds of method reference
+		1. Reference to a static method
+			> will call the static method of the said class
+				SYNTAX:	ContainingClass::staticMethodName
+				ex: String::valueOf	from 	s-> String.valueOf()
+		2. Reference to an instance method of a particular object
+			> will call the instance method of the given object
+				SYNTAX:	containingObject::InstanceMethodName
+				EX: 	s::toString	from	s -> s.toString()
+		3. Refereance to an instance method of an arbitrary object of a particular type
+			> will call instance method of object with specific dataType
+				SYNTAX:	ContainingType::methodName
+				EX:	String::toString	from 	s -> s.toString()
+		4. Reference to a constructor
+			> will make an instance of the said Class
+				SYNTAX:	ClassName::new
+				EX: 	String::new		from 	s -> ()
+			

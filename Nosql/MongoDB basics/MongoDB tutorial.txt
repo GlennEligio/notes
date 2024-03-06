@@ -1,0 +1,326 @@
+MongoDB tutorial
+
+SOURCE: https://www.youtube.com/watch?v=ofme2o29ngU&t=780s&ab_channel=WebDevSimplified
+
+Contents:
+01 Introduction
+02 Basic Commands
+03 Insert Commands
+04 Basic Query Commands
+05 Complex Query Commands
+06 Update Commands
+07 Delete Commands
+
+
+
+
+
+
+
+02 Basic Commands
+
+show dbs
+ > used to list all databases and the storage space it consumes
+ > initially only admin, config, and local is present
+
+
+use DB_NAME
+ > command to switch to specific database
+	- initially, you are in "test" database
+ > when the specific database is not present, it will create a new one
+	- NOTE: the new database will NOT show unless you put data inside it
+ > with this, all the queries we execute will point to this database
+ > ex: use appdb
+
+
+show collections
+ > list all the collections present in the current database
+
+
+db.dropDatabase()
+ > drops the database that you are currently in
+ > returns a json output with command status and database name that has been dropped
+
+cls
+ > clears the terminal screen
+
+
+exit
+ > exit the mongoshell terminal
+
+
+
+
+
+
+
+
+
+
+003 INSERT COMMANDS
+
+db.COLLECTION_NAME.insertOne(object document)
+ > used to insert a Document inside a Collection
+ > if the Collection does not exist, it will create a new one
+ > returns a json object that contains the following properties
+	- acknowledged: boolean
+	- insertedId: ObjectId	refers to the new Document's objectId
+ > ex: db.users.insertOne({name: "John"})
+
+
+db.COLLECTION_NAME.find()
+ > returns all the Documents inside the specified Collection as an Array of JSON objects
+ > ex: db.users.find()
+
+
+db.COLLECTION_NAME.insertMany(Array array)
+ > inserts many objects at once
+ > takes an Array input
+ > ex: db.users.insertMany([{name: "Jill"}, {name: "Mike"}])
+
+
+
+
+
+
+
+
+
+
+004 BASIC QUERY COMMANDS
+
+db.COLLECTION.find().limit(int limit)
+ > limits the amount of results to show based on the integer input specified
+ > ex: db.users.find().limit(2)
+
+db.COLLECTION.find().sort({[key: string]: [-1 | 1]})
+ > used to sort the result of find() based on the key passed and its designated value
+ > key refers to the Document Field key to be used for sorting
+ > -1 and 1 refers to whether the sorting will be ascending or descending
+	- ASC (1) and DESC (-1)
+ > if we pass multiple key fields, it will sort first using the first key, then if there's a "tie", it will use the next key
+ > ex: db.users.find().sort({name: -1}).limit(2)
+	- sort the result by name in descending order and limit the result by two
+ > ex: db.users.find().sort({age: 1, name: -1}).limit(2)
+	- get all Documents, sort by age ascending and name descending, and limit result by two
+
+
+db.COLLECTION.find().skip(int number)
+ > used to skip a specified amount of result
+ > ex: db.users.find().skip(2).limit(2)
+	- get all Documents, skip the first 2 in the result, and show the next two result as output
+
+
+db.COLLECTION.find(query, projection, options)
+db.COLLECTION.find(query, projection)
+ > used to query specific Document and define the fields that will be shown in result
+ > takes several inputs
+	query: {[key: string]: any}
+		- used for querying the Documents
+		- all Document that matches the query object will be selected
+		- note: data types must also match, ex: 1 is not equal to "-1"
+	projection: {[key: string]: 1 | 0}
+		- used to define which Document fields will be included
+		- if we specify only keys with 1 as value, only these keys will be included
+		- if we specify only keys with 0 as value, all but the keys specified will be included
+		- _id is included by default, unless you specify 0 to it
+ > ex:
+	db.users.find({name: "John"})
+		- shows all Documents with "John" as name Field
+	db.users.find({name: "John"}, {name: 1, age: 1})
+		- shows all Documents with "John" as name field, and only include _id, name, and age field in result
+	db.users.find({name: "John"}, {hobbies: 0})
+		- shows all Documents with "John" as name field, and include ALL BUT the "hobbies" field in the result
+
+
+
+NOTES:
+1. In MongoDB, the Document DOES NOT NEED to have the same Fields
+	> we can insert several Documents that have different JSON schema and MongoDB will store it in Collection just fine
+2. sort(), limit(), skip() can be chained to each other, though a find() method must be called first before any of these method can be called
+3. sort(), limit(), and skip() is used for pagination and sorting
+	- limit() and skip() for pagination, where skip() takes the page*size as input and limit() takes size as input
+	- sort() takes an object with Document keys for sorting
+
+
+
+
+
+
+
+
+
+
+005 Complex Query Commands
+
+ADDITIONAL SOURCE: https://www.mongodb.com/docs/manual/reference/operator/query/
+
+Query Operator
+ > earlier, we just use the equality in our query input for find()
+ > but we can also use other query operators in order to create more complex querys
+
+
+Comparison Query Operators
+$eq		Matches values that are equal to a specified value.
+$gt		Matches values that are greater than a specified value.
+$gte		Matches values that are greater than or equal to a specified value.
+$in		Matches any of the values specified in an array.
+$lt		Matches values that are less than a specified value.
+$lte		Matches values that are less than or equal to a specified value.
+$ne		Matches all values that are not equal to a specified value.
+$nin		Matches none of the values specified in an array.
+
+EX:
+db.users.find({name: { $eq: "John" }})
+ - this will find all Documents whose name is equal to "JO"
+db.users.find({name: { $ne: "John" }})
+ - this will find all Documents whose name is not equal to "JO"
+db.users.find({name: { $in: ["Kyle", "Sally"]}})
+ - returns all Document whose name field is in the array specified "Kyle" and "Sally"
+
+
+Element Query operators
+$exists 	Matches documents that have the specified field.
+$type		Selects documents if a field is of the specified type.
+
+Ex:
+db.users.find({age: {$exist: true}})
+ > returns all Users whose "age" field exist
+ > this means it will also include Users who's age key value is NULL
+
+
+Logical Query operators
+$and		Joins query clauses with a logical AND returns all documents that match the conditions of both clauses.
+$not		Inverts the effect of a query expression and returns documents that do not match the query expression.
+$nor		Joins query clauses with a logical NOR returns all documents that fail to match both clauses.
+$or		Joins query clauses with a logical OR returns all documents that match the conditions of either clause.
+
+
+EX:
+db.users.find({ $and: [{ age: 26}, {name: "Kyle"}]})
+	> find all Document whose age is 26 AND name is "Kyle"
+db.users.find({ $or: [{ age: {$lte: 20}, { name: "Kyle"}}]})
+ > returns Users whose name is less than 20 OR name is equal to "Kyle"
+db.users.find({ age: { $not : { $lte: 20 }}})
+ > returns all Users whose age is NOT less than 20
+ > different to $gte as NOT $lte includes all Users that dont have age defined
+
+
+
+Using Document Field to create expression for querying
+ > to use the Document Fields for querying, we need to add "$" in front of the Field name
+ > ex: db.users.find({$expr: {$gt: ["$debt", "$balance"]}})
+	- this will return the Users whose "debt" field is GREATER THAN the "balance" field
+
+
+
+Using Nested Fields for querying
+ > to use the nested field for querying, access them as if they are JSON objects
+ > ex:
+	db.users.find({"address.street": "123 Main Street"})
+		- this will return the Users whose "street" field inside the "address" field is equal to "123 Main Street"
+
+
+db.COLLECTION.findOne(query, projection, option)
+ > used to find the first Document that matches the query specified
+ > ex:
+	db.users.findOne({ age: { $lte: 40 }})
+		- returns the first User whose age is less than 40
+
+
+db.COLLECTION.countDocuments(query, projection, option)
+ > used to count all the Documents that matches the query specified
+ > returns an integer which is the number of Document matches
+ > ex:
+	db.users.countDocuments({ age: { $lte: 40 }})
+		- returns the number of Users whose age is less than 40
+
+
+
+
+
+
+
+
+
+
+006 Update Commands
+
+db.collection.updateOne(filter, update, option)
+ > used to update the first element that matches the "query" using the values set in "update"
+ > parameters include
+	filter: object
+		- similar to find()'s query parameter
+	update: object
+		- object whose keys refers to the operation to use ($set, $unset, $inc, $currentDate, etc)
+		- for other operations, visit the link below
+			-> https://www.mongodb.com/docs/manual/reference/operator/update/#std-label-update-operators
+ > returns an object with following properties
+	acknowledge: boolean
+	insertedId: int
+	matchedCount: int
+	modifiedCount: int
+	upsertedCount: int
+
+EX:
+db.users.updateOne({name: "Kyle"}, {$set: {age: 27}})
+ > updates the first Document that have a "name" equals to "Kyle" by SETTING the "age" field to 27
+db.users.updateOne({_id: ObjectId("6112809d7ec144c25156c4dd")}, {$inc: {age: 3}})
+ > updates the Document with matching _id by INCREMENTING the age field by 3
+db.users.updateOne({_id: ObjectId("6112809d7ec144c25156c4dd")}, {$rename: {name: "firstName"}})
+ > renames the "name" field of the User to "firstName"
+db.users.updateOne({_id: ObjectId("6112809d7ec144c25156c4dd")}, {$unset: {age: ""}})
+ > removes the field "age" in the User
+db.users.updateOne({_id: ObjectId("6112809d7ec144c25156c4dd")}, {$push: {hobbies: "Swimming"}})
+ > pushes the "Swimming" in the "hobbies" field, assuming "hobbies" field is an Array
+db.users.updateOne({_id: ObjectId("6112809d7ec144c25156c4dd")}, {$pull: {hobbies: "Bowling"}})
+ > removes the "Bowling" in the "hobbies" array field
+
+
+
+db.COLLECTION.updateMany(filter, update, option) 
+ > similar to updateOne() but it applies to ALL Documents that passes the filter specified
+ > takes similar input as the updateOne()
+
+EX:
+db.users.updateOne({ address: {$exist: true}}, {$unset: {address: ""}})
+ > this updates all Users that have "address" field by removing the "address" field
+
+
+
+db.COLLECTION.replaceOne(filter, replacement, options)
+ > used to replace the first Document that matches the filter specified by the replacement document provided
+ > this will COMPLETEDLY remove the matching Document and replace it with the new one
+ > NOTE: if no Document match is found, and upsert in options param is "true" (default), then new Document will be created with replacement value
+ > EX:
+	db.users.replaceOne({age: 30}, {name: "John"})
+		- replace the first User with age 30 with Document with field "name" of value "John"
+
+
+
+
+
+
+
+
+
+
+007 DELETE COMMANDS
+
+db.COLLECTION.deleteOne(filter, options)
+ > used to delete the first Document that matches the filter
+ > returns an object with following properties
+	- acknowledged: boolean
+	- deletedCount: int
+ > ex:
+	db.users.deleteOne({name: "John"})
+		- delete the first User found with the name John
+
+
+db.COLLECTION.deleteMany(filter, options)
+ > used to delete ALL Documents that matches the filter specified
+ > returns the same object as the deleteOne()
+ > ex:
+	db.users.deleteMany({age: {$exists: false}})
+		- deletes all Document whose "age" field does not exist
+

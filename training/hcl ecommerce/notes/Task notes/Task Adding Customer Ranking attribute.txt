@@ -1,0 +1,83 @@
+Task Adding Customer Ranking attribute
+SOURCE: https://help.hcltechsw.com/commerce/9.1.0/tutorials/tutorial/tsd_search2_intro.html
+
+Extend the catalog entry search index schema
+
+1. In your file manager utility, go to the C:\WCDE_V9\workspace\search-config-ext\src\index\managed-solr\config\v3\CatalogEntry directory.
+2. Open the x-schema.xml file for editing. You must use this file to extend the schema.xml file for field, fieldType, and copyField configurations.
+3. Add the following field and copyField configurations into the x-schema.xml.
+	> add the lines below at line 103
+
+    <!-- for ratings reviews custom -->
+	<field name="customerRanking" type="tfloat" indexed="true" stored="false" multiValued="false" />
+	<field name="customerRanking_display" type="float" indexed="true" stored="true" multiValued="false" />
+	<copyField source="customerRanking" dest="customerRanking_display"/>
+	<!-- for ratings reviews custom -->
+
+
+
+Configuring the search preprocessor
+1. Copy the sample Ratings.xml into any directory in local machine
+	> this is located in the zip file downloaded earlier, inside the example1 folder
+	> take note of the directory
+2. Go to C:\WCDE_V9\workspace\WC\xml\search\dataImport\v3\db2\CatalogEntry
+	> add a "wc-data-import-preprocess-custom.xml" file and pass the content below inside it
+3. Go to the WebSphereCommerceServerExtensionsLogic project and import the following package inside the same folder directory in the zip file
+	> com.mycompany.commerce.preprocess
+	> com.mycompany.commerce.preprocess.rating
+
+EX: wc-dataimport-preprocess-custom.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<_config:DIHPreProcessConfig xmlns:_config="http://www.ibm.com/xmlns/prod/commerce/foundation/config" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.ibm.com/xmlns/prod/commerce/foundation/config ../../xsd/wc-dataimport-preprocess.xsd ">
+  
+  <!-- load ratings into temp table -->
+  <_config:data-processing-config processor="com.mycompany.commerce.preprocess.StaticRatingsDataPreProcessor" batchSize="500">
+    <_config:table definition="CREATE TABLE TI_RATING_TEMP ( PART_NUMBER VARCHAR(256),RTYPE VARCHAR(256), RATING VARCHAR(256))" name="TI_RATING_TEMP"/>
+    <_config:query sql=""/>
+    <_config:mapping>
+      <_config:key queryColumn="CATENTRY_ID" tableColumn="CATENTRY_ID"/>
+      <_config:column-mapping>
+        <_config:column-column-mapping>
+           <_config:column-column queryColumn="" tableColumn="" />
+        </_config:column-column-mapping>
+        </_config:column-mapping>
+    </_config:mapping>    
+
+    <!-- this property is added new to locate the input file path instead of hard coding it to be in WC\bin -->
+    <_config:property name="inputFile" value="C:\searchindexratings\example1\Ratings.xml"/>
+  </_config:data-processing-config>
+  
+  <_config:data-processing-config processor="com.mycompany.commerce.preprocess.StaticRatingsDataPopulator" batchSize="500">
+    <_config:table definition="CREATE TABLE TI_RATING ( CATENTRY_ID BIGINT NOT NULL, PART_NUMBER VARCHAR(256),RTYPE VARCHAR(256), RATING VARCHAR(256))" 
+      name="TI_RATING"/>
+   <_config:query sql="insert into TI_RATING ( catentry_id,part_number, rating,rtype ) select catentry_id,part_number,rating,rtype 
+     from catentry,ti_rating_temp where catentry.partnumber=ti_rating_temp.part_number and catentry.member_id=7000000000000001001"/>
+    <_config:mapping>
+      <_config:key queryColumn="CATENTRY_ID" tableColumn="CATENTRY_ID"/>
+      <_config:column-mapping>
+        <_config:column-column-mapping>
+           <_config:column-column queryColumn="" tableColumn="" />
+        </_config:column-column-mapping>
+        </_config:column-mapping>
+    </_config:mapping>    
+  </_config:data-processing-config>
+</_config:DIHPreProcessConfig>
+
+
+
+BUILDING THE SEARCH INDEX
+1. Start the HCL Commerce test server and Search Test Server
+2. Execute this curl command to start building index
+3. Execute this curl command to know the status of the build index
+4. Check if the index is populated with rating data successfully
+
+Build Index:
+curl --user spiuser:passw0rd --insecure -X POST https://localhost:443/wcs/resources/admin/index/dataImport/build?masterCatalogId=10001
+
+Build Index Status:
+curl --user spiuser:passw0rd --insecure -X GET https://localhost:443/wcs/resources/admin/index/dataImport/status?jobStatusId=<JobStatus>
+
+Index query
+http://localhost:3737/solr/MC_10001_CatalogEntry_en_US/select?q=catentry_id:10001

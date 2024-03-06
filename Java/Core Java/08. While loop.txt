@@ -1,0 +1,17 @@
+	/* 
+		While loop, will run WHILE condition is TRUE
+
+                While (condition){
+                    // logic or function
+              	}
+         */
+
+
+      	while (a < 5) {
+          	a++;
+
+        if (a==8){
+              	continue; //continue function will skip/jump all functions inside while loop after this If statement
+         }
+          System.out.println("Hellooo");
+       	}

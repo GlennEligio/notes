@@ -1,0 +1,873 @@
+Algolia KT PPT
+
+
+Agenda:
+Objective: Algolia PLP Integration project
+
+Parts:
+Algolia Architecture Walkthrough
+Run Algolia Full Index & Demonstrate the full indexing process
+Demo Key Price UCs (use cases) including Storefront
+Algolia NRT Flow/Design Walkthrough
+Run the NRT process & show the NRT indexing process
+Cover the Key NRT UCs including Storefront
+Show Push to Live Process
+Walkthrough Configuration & Replica creation process
+Testing Artifacts
+Troubleshooting for ES and Algolia
+
+Next steps:
+Q&A
+
+
+
+Objective - Algolia PLP Integration project
+
+Implement Integrated Third Part SAAS-based Search Engine (Algolia) with HCL Commerce
+ > Design & Implement ETL from Commerce DB
+ > Change the Storefront to use Algolia on PLP pages
+ > Define & Maintain processes for Algolia Indexes
+ 
+Goal: Achieve below functionalities
+1. Search Engine:
+	> PLP with faceting and filters
+	> Search Result page
+	> Suggestions/InstantSearch
+2. Merchandising
+	> Product placing in PLP
+	> Ranking
+3. Recommendation/Product Sections
+	> Editorial product selection widgets
+	> You may also like
+	> Signal processing
+	
+	
+
+Algolia Integration Component Diagram
+ > actions that we can do includes:
+	1. Full index
+	2. NRT index
+	3. PushToLive
+ > composed of the following
+	1. Commerce
+		> HCL Commerce (TS-APP + XC-APP)
+			- TS-APP	
+				-> Scheduler
+				-> Configuration
+				-> REST
+			- XC-APP
+				-> Transform
+				-> REST
+				-> Persist
+		> HCL Commerce DB
+		> NiFi
+			- Core
+			- Attachments
+			- Relationships
+			- Price
+			- Category
+			- Attributes
+			- Description
+			- Inventory
+			- URL
+			- Custom
+		> ElasticSearch
+	2. Algolia
+ > for configurations:
+	- it is configured within TS-APP Configurations
+	- there are two configurations that can be done
+		1. mode: 0 (full index), 1 (NRT)
+		2. config: true (create replicas and configure), false (push data to primary index only)
+ > NiFi is a pipeline that consist of different steps
+	- inside each steps contains a SQL query responsible for fetching specific data in the Commerce DB
+	- at the end of the pipeline, it will ingest out a JSON object that contains all the data added by each steps in pipeline
+	
+	
+Algolia flow
+ > consist of the following components
+	1. HCL Commerce, consist of AUTH and LIVE stage, which in term consist of the following components
+		> Auth or Live DB
+		> TS-APP
+			- Datafeed
+			- BuildIndex
+			- Push_to_Live
+		> Algolia Client API lib
+			- /SETUP/data/clearly_ca (FileSystem)
+			- Build_index
+			- Data_feed
+			- Push_to_live
+		> Elastic
+	2. NiFi, consist of AUTH and LIVE counterpart, which consist of
+		> Auth.full and Auth.NRT index
+		> Live.full and Live.NRT index
+	3. Algolia App (CLEARLY)
+	4. FE Store Auth and Live for Business user and Shopper correspondingly
+		> Algolia Auth index for Clearly
+			- grouped
+			- ungrouped
+		> Algolia Live index for Clearly
+			- grouped
+			- ungrouped
+		> Replicas of Auth and Live index
+ > the flow goes as follows
+	1. From Auth or Live DB, we will create ElasticSearch index (either a full or NRT index) through NiFi
+	2. We will intercept the NiFi index creation process. Here, we will fetch the created index in NiFi and process it in the XC-APP using Algolia Client API lib
+	3. Using Algolia Client API lib, we will create Algolia index in Algolia App (Clearly) from the Index we got from the NiFi
+	4. In the Algolia app (Clearly), we can choose to Push the Algolia Auth Index to Live using "Push to Live" action
+	5. The Algolia Auth and Live index will now be consumed by either FE Store Auth and Live correspondingly, which will then be consumed by Business user and Shoppers
+	
+	
+	
+Service structure
+ > composed of the following:
+	- Rest Config
+	- Scheduler
+		- Controller Command
+			- Persist job summary
+				- WCS DB
+			- AlgoliaRequestHandler
+				- WCS DB
+			- AlgoliaResponseHandler
+			- PostUEConfig
+				- XC Service
+					- Algolia Client library
+ > the service flow goes as following	
+	- using Rest Config and Scheduler, we will run a Controller command
+	- this Controller command will be used to
+		a. Persist job summary 
+			- interacts with WCS DB
+		b. AlgoliaRequestHandler
+			- interacts with WCS DB
+		c. AlgoliaResponseHandler
+	- the Controller command will have a property (UECONFIGID, ocated in CMDREG) in order to determine the requestHandler and responseHandler to use
+	- the ControllerCommand will use the corresponding PostUEConfig to process the indexing
+	- the PostUEConfig will interact with XC Service
+	- the XC Service will use the Algolia Client library
+	
+	
+Key Concepts of Algolia
+ > https://luxotticaretail.atlassian.net/wiki/spaces/EECOM/pages/2298708050/N1+-​+Algolia+The+Definitive+Guide​
+ 
+ 
+ 
+Algolia Index Structure - Index naming
+ > consist of the following
+	- Primary index
+	- Replicas
+ > primary index index name is:
+	- Environment_SubEnvironment_Brand_Locale__PrimaryIndexName
+	- ex: N1INT1_Auth_CLEARLY_en_AU__grouped
+ > replica index name structure is:
+	- Environment_SubEnvironment_Brand_Locale__PrimaryIndexName_ReplicaName
+	- ex: N1INT1_Auth_CLEARLY_en_AU__grouped__EarlyAccess_asc
+
+
+Algolia Index Structure - Hierarchy
+ > the hierarchy goes as follows
+	 - Application (ex: Clearly)
+		- Env1 (ex: PROD)
+		- Env2
+			- Locale_A (ex: en_AU)
+			- Env1_Brand_localeA_Primary index 1
+				- Replica 1
+				- Replica 2
+				- Replica 3
+		- Locale_B
+ > the scope of an EStore here at EssilorLuxotica is within the Env1
+	- this means that each EStore site will use one of the Env within Application (ex: Clearly AU Live will use index for CLE_AU_LIVE under Clearly)
+	
+	
+EX: EssilorLuxottica Algolia Index Structure
+ > Structure of Algolia indices and its replicas in INT2 Application in Algolia as per above naming rules
+ 
+N1INT2
+	- Auth
+		- en_CA
+			- N1INT2_Auth_CLEARLY_en_CA_grouped
+				- Replica 1
+				- Replica 2
+				- Replica 3
+				- SUGGESTION INDEX
+		- fr_CA
+			- N1INT2_Auth_CLEARLY_fr_CA_grouped
+				- Replica 1
+				- Replica 2
+				- Replica 3
+				- SUGGESTION INDEX
+	- Live
+		- en_CA
+			- N1INT2_Live_CLEARLY_en_CA_grouped
+				- Replica 1
+				- Replica 2
+				- Replica 3
+				- SUGGESTION INDEX
+		- fr_CA
+			- N1INT2_Live_CLEARLY_fr_CA_grouped
+				- Replica 1
+				- Replica 2
+				- Replica 3
+				- SUGGESTION INDEX
+
+
+
+Full Index Step-by-Step
+ > consist of the following components
+	1. Jenkins/Manual
+	2. NiFi
+	3. ElasticSearch
+	4. FileSystem (to persist data from Nifi)
+	5. TS-APP and XC-APP
+	6. Algolia
+ > the step-by-step process consist of two parts
+	1. Create the data to be used for Algolia indexing from ElasticSearch indexing
+	2. Algolia indexing
+ > for creating the data to be used for Algolia indexing
+	1. Full Index on ElasticSearch is done either through Jenkins or Manually, which will call the NiFi
+	2. NiFi will then
+		- pull product data from DB
+		- do an HTTP call to ElasticSearch to send data
+			- this will update the ElasticSearch
+		- it will then do HTTP call to TS-APP to send data
+		- in parallel, the NiFi will also WRITE what it is sending to Elasticsearch in a file in K8s physical volume claim, which it will send to the TS-APP via an HTTP call
+	3. The data received by TS-APP will then be processed using /data_feed service on TS-APP
+		- TS-APP will first get all config from db related to store, archive and fail dir, etc
+		- It will then include the config into the original request with data from NiFi, and call data_feed service in XC
+	4. In the XC_APP, it will process the data received from TS-APP (data_feed service) in its own data_feed service
+		- it will persist the received data into the file in "/SETUP/data/clearly_au/products" directory
+		- this data will be stored in a persistent volume claim (PVC) while both XC-APP and TS-APP have access to
+ > for Algolia indexing:
+	1. Full Index on Algolia (Jenkins/Manual/Scheduled), which will call "/buildIndex" service on TS-APP
+	2. /buildIndex service on TS-APP will do the following:
+		- Get all config from db related to store, archive, fail dir, pricelists, algolia app, and key details
+		- Include the config into original request with data from NiFi and call data_feed service in XC
+	3. /build_Index of XC-APP will then receive the data from TS-APP do the following:
+		- Read the data files from "/SETUP/data/clearly_au/products" directory
+		- Convert the data into algolia records, do post processing to add derivative fields
+		- It will then send the records created to Algolia Auth index
+		- It will apply config and create replicas if flagged
+		- Lastly, it will move the file to archive dir
+		- this will result in new/updated Algolia Auth Index
+
+
+Algolia Index Configurations - Searchable Attributes
+ > these attributes includes:
+	1. categories_translated
+	2. attributes_translated.BRAND
+	3. attributes_translated.CL_BRAND
+	4. attributes_translated.MODEL_NAME
+	5. attributes_translated.MODEL_CODE_DISPLAY
+	6. attributes_translated.MODEL_FAMILY
+	7. attributes_translated.FRONT_COLOR
+	8. attributes_translated.FRONT_COLOR_FACET
+
+
+Algolia Index Configurations - Replica indices
+ > list of indices on which you want to replicate all indexing operations
+ > replica index name consist of 
+	- primary_index_name__replica_index_name
+ > these replica index names include:
+	- __EarlyAccess_asc
+	- __EarlyAccess_desc
+	- __Guest_asc
+	- __Guest_desc
+	- __newest_desc
+	- __RegisteredUsers_asc
+	- __RegisteredUsers_desc
+ > as we can see, most of them is created for Customer segment index separation and or newest products
+ 
+ 
+Algolia Index Configurations - Attributes for Faceting
+ > these attributes used for faceting are:
+	- attributes.BRANDLINE
+	- attributes.LX_SEARCH_PAGE_PRODUCT_TYPE
+	- attributes.LX_SOLDOUT
+	- attributes_translated.BRAND
+	- attributes_translated.CL_BRAND
+	- attributes_translated.CL_CORRECTION_TYPE
+	- attributes_translated.CL_IS_TRAVEL
+	- attributes_translated.CL_PACK_SIZE
+	
+	
+Algolia Index Configurations - Index Configuration 
+ > Configuration of indices can be applied with "config" param to the buildIndex api
+ > If the index is pre-existing and configured already, then this param can be set to "false"
+	- The API will just feed data to the primary index in that case and not make any changes to configs and replicas
+	- The data in existing replicas will be updated automatically as per primary index data
+ > Any new replicas can be created, or existing replicas can be removed by adding the replica name to the config.json file
+ > New primary indices can also be added, or existing ones can be removed by adding the replica name to the config.json file
+ > During push to live, if the live indices are being created for the first time, the algolia push to live job will configure the live indices and create replicas
+ > In Mode 1 - config should be false
+ > example request body for buildIndex api endpoint
+	{
+		"storeId":"70202",
+		"config":"true",
+		"mode": "0"
+	}
+	
+	
+	
+	
+Algolia Index Configuration - Example Algolia Index Configuration
+ > changes are made to Settings, Synonyms, and Replicas
+ > this "config.json" is located under hc-bp repository
+	- hc-bp -> commerceue-app -> config -> config.json
+ 
+[
+	{
+		"name": "__grouped",
+		"config": "__grouped.json",
+		"replicas": [
+			{
+				"name": "__grouped__EarlyAccess_asc",
+				"config": "__grouped__EarlyAccess_asc.json"
+			},
+			{
+				"name": "__grouped__EarlyAccess_desc",
+				"config": "__grouped__EarlyAccess_desc.json"
+			},
+			{
+				"name": "__grouped__Guest_asc",
+				"config": "__grouped__Guest_asc.json"
+			},
+			{
+				"name": "__grouped__Guest_desc",
+				"config": "__grouped__Guest_desc.json"
+			},
+			{
+				"name": "__grouped__newest_desc",
+				"config": "__grouped__newest_desc.json"
+			},
+			{
+				"name": "__grouped__RegisteredUsers_asc",
+				"config": "__grouped__RegisteredUsers_asc.json"
+			},
+			{
+				"name": "__grouped__RegisteredUsers_desc",
+				"config": "__grouped__RegisteredUsers_desc.json"
+			}
+		]
+	},
+	{
+		"name": "__ungrouped",
+		"config": "__ungrouped.json",
+		"replicas": [
+			{
+				"name": "__ungrouped__EarlyAccess_asc",
+				"config": "__ungrouped__EarlyAccess_asc.json"
+			},
+			{
+				"name": "__ungrouped__EarlyAccess_desc",
+				"config": "__ungrouped__EarlyAccess_desc.json"
+			},
+			{
+				"name": "__ungrouped__Guest_asc",
+				"config": "__ungrouped__Guest_asc.json"
+			},
+			{
+				"name": "__ungrouped__Guest_desc",
+				"config": "__ungrouped__Guest_desc.json"
+			},
+			{
+				"name": "__ungrouped__newest_desc",
+				"config": "__ungrouped__newest_desc.json"
+			},
+			{
+				"name": "__ungrouped__RegisteredUsers_asc",
+				"config": "__ungrouped__RegisteredUsers_asc.json"
+			},
+			{
+				"name": "__ungrouped__RegisteredUsers_desc",
+				"config": "__ungrouped__RegisteredUsers_desc.json"
+			}
+		]
+	}
+]
+
+
+
+Price Structure
+ > consist of the the following:
+	1. Store (ex: CLE_AU)
+	2. Offer or list price
+	3. Percentage discount
+	4. Amount of discount
+	5. Currency
+	6. Duration of price
+	7. Customer segment
+	8. Price precedence
+ > criteria for price rule to choose the winning price are:
+	1. startDate and endDate validity
+	2. customerSegment
+	3. offer-level precedence
+	4. lowest offer price
+
+
+Price Structure examples:
+prices: [
+	{
+		CLE_AUList: {
+			listPrice: 100,
+			offerPrice: 100,
+			percentageDiscount: 0,
+			amountOfDiscount: 0,
+			currency: "AUD",
+			startDate: "12-JAN-20 06.30.00.000000 AM",
+			endDate: "31-DEC-99 12.00.00.000000 AM",
+			pricelist: "CLE_AUList",
+			segment: "Guest",
+			precendence: 0,
+			priceListPrecendence: 2001
+		},
+		CLE_AU_PST_RegisteredUsers: {
+			listPrice: 100,
+			offerPrice: 70,
+			percentageDiscount: 30,
+			amountOfDiscount: 30,
+			currency: "AUD",
+			startDate: "12-JAN-20 06.30.00.000000 AM",
+			endDate: "31-DEC-99 12.00.00.000000 AM",
+			pricelist: "CLE_AUList",
+			segment: "Guest",
+			precendence: 0,
+			priceListPrecendence: 2001
+		},
+		CLE_AU_PST_EarlyAccess: {
+			listPrice: 100,
+			offerPrice: 70,
+			percentageDiscount: 30,
+			amountOfDiscount: 30,
+			currency: "AUD",
+			startDate: "12-JAN-20 06.30.00.000000 AM",
+			endDate: "31-DEC-99 12.00.00.000000 AM",
+			pricelist: "CLE_AUList",
+			segment: "Guest",
+			precendence: 0,
+			priceListPrecendence: 2001
+		},
+		CLE_AU_PST_EarlyAccess: {
+			listPrice: 100,
+			offerPrice: 75,
+			percentageDiscount: 25,
+			amountOfDiscount: 325,
+			currency: "AUD",
+			startDate: "12-JAN-20 06.30.00.000000 AM",
+			endDate: "31-DEC-99 12.00.00.000000 AM",
+			pricelist: "CLE_AUList",
+			segment: "Guest",
+			precendence: 0,
+			priceListPrecendence: 2001
+		},
+		CLE_AU_PST_ProductPriceList: {
+			listPrice: 100,
+			offerPrice: 80,
+			percentageDiscount: 20,
+			amountOfDiscount: ,
+			currency: "AUD",
+			startDate: "12-JAN-20 06.30.00.000000 AM",
+			endDate: "31-DEC-99 12.00.00.000000 AM",
+			pricelist: "CLE_AUList",
+			segment: "Guest",
+			precendence: 0,
+			priceListPrecendence: 2001,
+			futurePrices: [
+				{
+					listPrice: 100,
+					offerPrice: 80,
+					percentageDiscount: 20,
+					currency: "AUD",
+					startDate: "12-JAN-20 06.30.00.000000 AM",
+					endDate: "31-DEC-99 12.00.00.000000 AM",
+					pricelist: "CLE_AUList",
+					segment: "Guest",
+					precendence: 0,
+					priceListPrecendence: 2001
+				}
+			]
+		},
+	}
+]
+
+
+
+Price & Segments
+ > price and customer segments can also be seen in the CMC
+ 
+ 
+Statistics Logger
+ > everytime we do an indexing in the Algolia, we track all the Catalog entries that we indexed, and its other information like
+	- Locale
+	- Product type
+	- ParentPartnumber id
+	- Attribute size
+	- Attribute translated size
+	- Category
+	- Price available for different customer segments
+
+
+
+
+NRT FLOW
+
+NRT Step-by-Step
+ > composed of the following components
+	1. AUTH DB
+	2. CMC
+	3. Redis
+	4. NiFi
+	5. ElasticSearch
+	6. TS-APP
+	7. XC-APP
+	7. File system / PVC
+	8. Algolia
+ > step-by-step process is composed of the following
+	1. creating the file feed for the NRT indexing on Algolia
+	2. NRT indexing for Algolia
+ > for creating the file feed for the NRT indexing on Algolia
+	1. Whenever a dataload to Auth DB or Change is made in CMC Auth to Catalog, there will be a Redis NOTIFICATION to the NiFi
+	2. When NiFi receives the notification, it will pull only CHANGED DATA for the Product(s) data from DB
+	3. NiFi will do two things in parallel
+		- do an HTTP call to Elastic to send data, which will be used by Elastic to update the Index
+		- do an HTTP call to TS-APP (/datafeed service) to send data
+	4. TS-APP will receive the HTTP request from the NiFi
+	5. TS-APP will get all config from db related to store, archive and fail dir, etc
+	6. TS-APP will then include the config into original request with data from NiFi and call /data_feed service in XC-APP
+	7. XC-APP will then receive the data from TS-APP, and persist the said data into the files in /SETUP/data/clearly_au/products directory under the new sub dir, same as the runId
+		- the said directory is present in the PVC, both of which is accessible to XC-APP and TS-APP
+ > for doing the Algolia buildIndex:
+	1. NRT Index Algolia is done on Auth TS-APP
+		- this can be scheduled to be done every 5 MINUTES
+	2. In the TS-APP /buildIndex
+		- it will get all the config from database related to store, archive, fail directory, pricelists, algolia app and key details
+		- include the said configurations into original request with data from NiFi and call /data_feed service in XC-APP
+	3. In the XC-APP /build_Index
+		- read the data files from /SETUP/data/clearly_au/products directory
+			-> it will pick directories that start with "n-"
+		- convert the data into Algolia records. Do Post processing to add derivative fields 
+		- send the records into the Algolia Auth index
+		- apply config and create replicas if flagged
+		- lastly, move all the files used in the archive dir
+		
+		
+		
+NRT Cover the Key 2 NRT UCs including Storefront
+1. 3074457345616762848 (part number - 889652385358)
+	> List Price - $100 to List Price - $98
+1. 3074457345616762848 (part number - 889652385358)
+	> LX_SOLDOUT - numeric value to LX_SOLDOUT - NONE
+	
+
+
+
+
+
+PUSH TO LIVE FLOW
+
+Push to Live Step-by-Step
+1. CopyIndex operation is done to copy the records from Primary indices of AUTH (__ungrouped and __grouped) and is store first into the LIVE.tmp (temporary index)
+	> ex: N1INT1_Auth_CLEARLY_en_AU__grouped and N1INT1_Auth_CLEARLY_en_AU__ungrouped will be copied to N1INT1_Live_CLEARLY_en_AU__grouped.tmp and N1INT1_Live_CLEARLY_en_AU__ungrouped.tmp respectively
+2. MoveIndex operation is done to move the records from LIVE.tmp of primary indices to the LIVE index
+	> ex: N1INT1_Live_CLEARLY_en_AU__grouped.tmp and N1INT1_Live_CLEARLY_en_AU__ungrouped.tmp will be movied to N1INT1_Live_CLEARLY_en_AU__grouped and N1INT1_Live_CLEARLY_en_AU__ungrouped respectively
+
+Operational Configurations
+1. PriceLists
+	> configured in XSTORECONF
+	> namely 4 keys are created agains each store respectively
+		- indexedListPrice and indexedRXListPrice are to contain price list name contain listprice for standard & frames with lenses respectively
+		- indexedPriceList, indexedRXPriceList are to contain all types of offer priceLists names for standard & frames with lenses respectively
+	> is a Business config
+2. Mode
+	> configured in Request
+	> mode here signifies whether a partial update or full update is required when indexing to Algolia
+		- 0 for full
+		- 1 for NRT/Delta
+	> is a Developer config
+3. Config
+	> configured in Request
+	> Config determines whether the index in algolia is needed to be created with replicas or standalone
+		- True for Indexing with replicas
+		- False for Standalone index
+	> is a Developer config
+4. Algolia Config
+	> configured in STORECONF 
+	> Algolia configurations w.r.t. app name, write API key, is stored which is used to while connecting to Algolia app and writing the index
+	> is a Developer config
+5. XC dir Config
+	> configured in STORECONF
+	> These config are used to determine the directory structure for persist & processed feed files, namely:
+		- algolia.source.dir
+		- algolia.error.dir
+		- algolia.archive.dir
+		- algolia.unprocessed.dir
+		- algolia.config.dir
+		
+		
+		
+TESTING ARTIFACTS 
+ > Testing/Validations includes the following sections:
+	1. End to End Price UC'
+	2. Algolia Index Regression
+	3. NRT - CMC
+	4. Statistics Logger
+	5. Storefront
+	6. End to End process
+
+Testing/Validations - End to End Price UCs
+ > here, we will check the following scenarios
+	- HAPPY FLOW
+	- Registered Price Missing
+	- Early Access Missing
+	- Product Offer to Zero
+	- All offers missing
+	- List Price Missing
+	- Priority Evaluation on multiple offers 
+		-> priority here means the price precedence
+	- Future prices
+	- Future prices + dates+ priority
+ > we will use different product catentry to test this following scenarios, to all GEOS (stores like en_CA, en_AU, etc)
+	
+Testing/Validations - Algolia Index Regression
+ > here, we will check the following scenarios
+	1. Validate the correct "partnumberId" is mapped with the ObjectId of the Algolia record
+	2. Validate the correct associated "categories" reflected on the algolia index for the catentry
+	3. Validate the correct associated "categories translated" reflecting on the algolia index for the catentry
+	4. Validate correct "parentPartnumberId" mapped with the partnumberId
+	5. Validate the correct "attributes" are flowing for the catentry
+	6. Validate the correct "translated attribute" are flowing for the catentry
+	7. Validate the correct "offer" and "list" prices are displayed for the catentry
+	8. Validate "type-item" is only flowing in the index
+		- refers to the ItemBean, which means ProductBean should not be indexed
+	9. Validate the correct "storeId" is flowing for the catentry
+	10. Validate the correct "catalogId" is flowing for the catentry
+	11. Validate the correct "storeToken" is flowing for the catentry 
+	12. Validate the correct "languageId" is flowing for the catentry
+	15. Validate the correct "parentProductId" is flowing for the catentry
+	16. Validate the correct "category_ids" is flowing for the catentry
+	17. Validate the correct "categories_tree" is flowing for the catentry
+	18. Validate the correct "catagories_tree_translated" is flowing for the catentry
+	19. Validate the correct "categories_tree_ids" is flowing for the catentry
+	20. Validate the correct "longdescription" is folowing for the catenry
+	21. Validate the correct "buyable" flag status is flowing for the catentry
+	22. Validate the correct "display" flag status is flowing for the catentry
+	23. Validate the correct "url" is flowing for the catentry
+	24. Validate the correct "sortPrice_Guest" is flowing for the catentry
+	25. Validate the correct "sortPrice_RegisteredUser" is flowing for the catentry
+	26. Validate the correct "sortPrice_EarlyAccess" is flowing for the catentry
+
+
+Testing/Validations - NRT-CMC
+ > here, we will check the following scenarios and the expected result
+	1. Validate any update at product level(attribute) via CMC is displayed successfully in the index
+		- updated attributes should be displayed in the Index
+	2. Validate any Delete at product level (attribute) via CMC is displayed successfully in the index
+		- attribute should be delete in the index
+	3. Validate any update at product level via CMC is displayed successfully in the index
+		- updates should be displayed in the Index
+	4. Validate new product added to the catalogue is not displayed in the index successfully
+		- product should be added in the index
+	5. Validate delete offer price for item in the index for any catentry
+		- deleted price should not display in the index
+	6. Validate the updated price is displayed in the index
+		- updated prices should be displayed in the index
+	7. Validate the "buyable" check flag value at item level has precedence than attribute value at product level
+		- verify "buyable" flag is displayed in Algolia
+	8. Validate the "displayable" check flag field value at item level has precedence that attribute value at product level
+		- verify "display" flag is displayed in Algolia indexed
+	9. Validate only type "item" is displayed in the NRT index
+		- only item should be displayed, product bean should not be displayed
+	10. Validate product parent id is displayed for the product in the index
+		- product parent id should be displayed for the product in the index
+	11. Validate attributes specific to the product level are displayed at the item level apart from with common attributes
+		- attribute at product level are displayed along with the common attributes
+	12. Validate the URL field value at item level has precedence than attribute value at product level
+		- verify updated URL is displayed in Algolia
+	13. Validate product parent can be updated susccessfully
+		- updated parent product for an item should be displayed in the index
+	14. Validate new product item added to the catalogue has parent product id displayed in the Index successfully
+		- parent product id should be displayed in Algolia index
+	16. Validate categories_tree_translated in the Item published to Algolia index
+		- The categories_tree_translated should be displayed in Algolia
+	17. Validate categories_tree in the item published to Algolia index
+		- the categories_tree should be displayed in the Algolia index
+	18. Validate catagories in the item published to Algolia index
+		- the categories should be displayed in the Algolia Index
+	19. Validate category_ids in the Item published to Algolia index
+		- the category_ids should be displayed in the Algolia index
+	20. Validate all sortPrices in the item published to Algolia index
+		- the sortPrices should be displayed in the Algolia index
+	21. Validate the files are generated successfully with the end point and correct parameters in the request when NRT index is triggered
+		- Files should be generated successfully via invoke Algolia process
+	22. Validate the files are generated successfully with the endpoint and incorrect parameters in the request when NRT index is triggered
+		- File should NOT be generated and error message should be displayed
+	23. Verify update index sends files successfully from Algolia to Archive dir successfully
+		- File should be generated in the Archive folder/dir successfully
+	24. Verify index sends files successfully from Algolia to Unprocessed folder for any failed processing
+		- file should be generated in the Unprocessed folder
+	25. Verify update index sends succsessfully from Algolia to failed fodler for any failures
+		- file should be generated in Archive/failed folder
+	26. Validate re-running process from archive folder transfer the files successfully to Algolia
+		- file should be transferred to Algolia folder successfully after re-runnging
+	27. Validate the NRT is triggered successfully when NiFi is down	
+		- Run id feedfile folder is not created
+		
+		
+Testing/Validations - Statistics Logger
+ > testing scenarios includes:
+	1. Validate the catentry "count" consistenct in the statistics files across all stores
+	2. Validate the correct "localecode" is flowing for the specific store in the statistics file
+	3. Validate the correct 'groupkey' is flowing for each record in the statistics file
+	4. Validate the catentries with product type 'item' in the statistics file is reflected on the algolia index
+	5. Validate 'ParentPartnumberId' isreflecting for each catentry id with product type as 'item' in the statistics file
+	6. Validate ''Attr size' is reflecting for each catentry id in the statistics file
+	7. Validate 'Attr_translated_size' is reflecting for each catentry id in the statistics file
+	8. Validate correct 'Categories' count is reflecting for each catentry id in the statistics file
+	9. Validate correct count for 'catagories_translated' is reflecting for each catentry id in the statistics file
+	10. Validate correct count for 'categories_ids' is reflecting for each catentry id in the statistics file
+	11. Validate correct count for 'categories_tree_ids' is reflecting for each catentry id in the statistics file
+	12. Validate correct count for 'categories_tree' is reflecting for each catentry id in the statistics file
+	13. Validate correct count for 'categories_tree_translated' is reflecting for each catentry id in the statistics file
+	14. Validate 'sortGuest' is reflecting for each catentry id in the statistics file
+	15. Validate 'sortRegistered' is reflecting for each catentry id in the statistics file
+	16. Validate 'sortEarlyAccess' is reflecting for each catentry id in the statistics file
+	17. Validate the count consistency between 'attr size' and 'attr_translated_size' for all catentries
+	18. Validate the correct 'price' count is reflected based on the 'list price' availability and flag value in column 'sortGuest', 'sortRegistered', 'sortEarlyAccess' flag value
+	19. Validate the count consistency between 'categories' and 'categories_translated' for all catentries
+	20. Validate the count consistency between 'categories_ids' and 'categories_tree_ids' for all catentries
+	21. Validate the count consistency between 'categories_tree' and 'categories_tree_translated' for all catentries
+
+
+Testing/Validations - Storefront
+ > in testing Storefront, we will need to test these three pages
+	- Search
+	- PLP
+	- PDP
+ > inside each pages, there are several Feature and their associated scenario to test out
+	- Search	
+		1. Matching term: Validate matching term search
+	- PLP
+		1. Filter: Validate the filters on the PLP page
+		2. Sort: Validate the Pagination on the PLP page
+		3. Pagination Validate the pagination on the PLP page
+		4. Colour: Validate the colour selection on PLP page
+		5. Breadcrumb: Validate the bread crumb feature from PLP page
+		6. Footer: Validate the footer links on the PLP page
+		7. Search: Validate search on the PLP page
+		8. Category Navigation (Lenses): Validate the category navigation from the PLP page
+		9. Offer filter: Validate offer filter facets beneath breadcrumb
+		10. Images: Validate images on the PLP page
+		11. Price: Validate the List price
+		12. Price: Validate the offered price
+		13. Price: Validate the discount offered
+	- PDP
+		1. Images: Validate images on the PDP page
+		2. Breadcrumb: Validate the breadcrumbs
+		3. Size Advisor: Validate size advisor
+		4. Colour: Validate the colour availability
+		5. Price: Validate the list price
+		6. Price: validate the offered price
+		7. Price: Validate the discount offered
+		8. Navifation: Navigate back to Homepage
+		
+		
+Testing/Validations - End to End Process
+ > here, we will test the step by step process for Algolia indexing
+ > below are the steps and the NRT/Action to do
+	1. Prerequisite task
+		- CMC Edit (ex: Offer price update or change existing attribute value)
+	2. Indexing ElasticSearch stage/auth
+		- Work via Scheduler
+	3. Indexing Algolia Stage/Auth
+		- Work via Scheduler
+	4. Store Front validation Auth	
+		- Check the changes in product on Store Front Auth
+	5. Stageprop (Stage to Live)
+		- Triggered Job Manually
+	6. Indexprop ElasticSearch Stage to Live (job exist but need to be tested)
+		- Triggered job manually
+	7. Indexprop Algolia Stage to Live
+		- triggered job manually
+	8. Store Front Validation Live
+		0 Check changes Product on Store Front Live
+		
+
+
+NOTE:
+1. NiFi create the Feed in PVC for Algolia BY BATCH
+	> this means that for 120 categories for example, it might create 6 Feed files, each containing 20 categories to be fed in Algolia
+2. NiFi process regarding Algolia and ElasticSearch is a separate and independent
+	> if any of the process (index push in ElasticSearch or creating feed for Algolia) failed, it will not affect the other process
+3. We also do full indexing in AUTH, we rarely do Algolia indexing in LIVE
+	> the only case right now is when we want to 
+4. Data synchronization from AUTH/LIVE DB and Algolia AUTH/LIVE Index should be done often
+	> if we do changes in database, we should propagate changes in db to the algolia
+	> as of now, in Essilor, we have the algolia-propagation Jenkins pipeline to do this
+5. You can do "versioning" in NiFi pipeline
+	> with this, you can do changes in your pipeline with no worries since you can just rollback to previous versions
+	> this versions is stored in the NiFi registry
+6. As of now, we created a Job so that in case we created changes in ElasticSearch through buildIndex, after certain time (2-3 minutes), the buildIndex in Algolia will be done as well
+	> this ensures the synchronization of data in ElasticSearch and Algolia in AUTH environment
+	> for LIVE environment, we need to do a manual Jenkins job ("algolia-propagation")
+7. The reason why ControllerCommand is written in TS-APP and not in XC-APP, is because XC-APP do not have access to Database	
+	> in TS-APP, we will need to fetch some data in database in order to enrich/modify the feed from the NiFi
+8. AlgoliaIndexHandler is the entrypoint for Algolia-related REST API
+9. We use virtual Replica instead of Physical replicas since there is NO DIFFERENCE in the Record data
+10. For Algolia buildIndex, runId output for full index will start with "i-", while for NRT index will start with "n-".
+11. If we add new attribute in ElasticSearch and we want to add it in the Algolia as well, we will need to take account of the new attribute in Algolia deserializers.
+12. Statistics Logger
+	> log file that we are writing at the END of the Algolia indexing
+	> we are keeping the record of the catentry id and its information that we indexed, this includes:
+		- product type
+		- parentpartnumber
+		- attributes
+		- language id
+13. LX_SOLDOUT = "none" means that product is not sold out yet
+14. Settings may refers to 
+		- filters
+		- facets
+		- searchable attributes
+15. Adding "copyConfig" in the "/updateIndex" endpoint of Algolia and setting it to true, it will look for json file that is used for corresponding index, and apply it again to in order to update it. This assumes that you updated the config json files
+16. config folder contains the json files that specifies the index configurations. This includes:
+	> searchableAttributes
+	> attributesForFaceting
+	> ranking
+17. config folder, which contains json used for applying index configurations, is located under the hc-bp repository
+	> hcbp -> commerceue-app -> config
+18. In order for a record to be searched in Algolia index, all of the attributes in the index's "searchable attributes" must be PRESENT
+19. Push to live process is currently is an API endpoint exposed ("/store/{storeId}/algolia/pushToLive")
+
+
+
+PAGE 11
+1. The service flow includes:	
+	- request is sent to the AlgoliaRequestHandler via REST HTTP request
+	- inside the AlgoliaRequestHandler, 
+2. We don't really do any indexing process in TS-APP. Instead, TS-APP serves as a proxy to the XC-APP, which is really the one doing the Algolia Indexing
+3. Storeconf table is where most of the algolia related info like sourceDir, errorDir, configDir, archiveDir, AppId, API Keys, etc
+	> configDir is where we store configs for creating index and their replicas
+	> errorDir is where we store all the error related files
+4. Xstoreconf is where we store all indexed price attributes
+	> SELECT * FROM XSTORECONF WHERE NAME LIKE '%indexed%'
+	> there are four entries for each store of brand
+		- indexedListPrice
+		- indexedRXListPrice
+		- indexedPriceList
+		- indexedRXPriceList
+5. List price serves as a fallback price in case there is no offer price
+
+
+PAGE 16:
+1. The criteria/rules to determine the price to use is
+	> start and end date is valid
+	> correct price for the current customer segment
+	> precedence and pricePrecedence
+		- whichever is the highest will be the winning price to be used
+	> lowest price
+2. If there is no List price, which is the fallback price, there will be no price to be displayed in the storefront
+
+
+TODO:
+1. Revisit Services Structure slide, specifically with regards to Controller command and PostUEConfig
+
+
+Q&A
+1. Why choose Algolia instead of other Search service?
+2. When do we use the replica indices? Do we use them in the frontend as well?

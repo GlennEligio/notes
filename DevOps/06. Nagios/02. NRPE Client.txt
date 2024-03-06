@@ -1,0 +1,101 @@
+02. NRPE Client
+
+NAGIOS - NRPE Client installation
+
+1. Update list of packages for upgrade
+	sudo apt update
+2. Install the nagios-nrpe
+	sudo apt install nagios-nrpe-server nagios-plugins
+3. Configure the nrpe.cfg file, add the private ip of the server with Nagios Core (Ubuntu 1)
+	> uncomment server_address line
+	> assign the private ip of ubuntu1 server (server that contain nagios core) to the server_address
+4. Restart nagios-nrpe-server
+	sudo systemctl restart nagios-nrpe-server 
+
+
+
+Adding Remote Host to monitor in Monitoring Server (server with Nagios Core)
+1. Use root user
+	sudo su
+2. Create host1.cfg
+	vi host1.cfg
+3. Add the following text below inside the host1.cfg
+	> NOTE: Change the address: of define host{} to the PRIVATE IP of Ubuntu 3 Server
+	> here, we created a host 
+		- named "slave"
+		- uses "linux-server" template
+		- connected to the Ubuntu3 server defined in the address (172.31.24.12)
+	> we also defined the host group and services this host "slave" will have
+		- PING
+		- Root Partition
+
+
+define host{
+        use                     linux-server            ; Name of host template to use
+                                                        ; This host definition will inherit all variables that are defined
+                                                        ; in (or inherited by) the linux-server host template definition.
+        host_name               slave
+        alias                   nrpe-nagios
+        address                 172.31.24.12
+        }
+
+
+# Define an optional hostgroup for Linux machines
+
+define hostgroup{
+        hostgroup_name  linux-servers1 ; The name of the hostgroup
+        alias           Linux Servers1 ; Long name of the group
+        members         slave     ; Comma separated list of hosts that belong to this group
+        }
+
+
+
+
+
+
+# Define a service to "ping" the local machine
+
+define service{
+        use                             local-service         ; Name of service template to use
+        host_name                       slave
+        service_description             PING
+        check_command                   check_ping!100.0,20%!500.0,60%
+        }
+
+
+# Define a service to check the disk space of the root partition
+# on the local machine.  Warning if < 20% free, critical if
+# < 10% free space on partition.
+
+define service{
+        use                             local-service         ; Name of service template to use
+        host_name                       slave
+        service_description             Root Partition
+        check_command                   check_local_disk!20%!10%!/
+        }
+
+
+
+
+4. Go to /usr/local/nagios/etc#
+	cd .. 
+		> if you are in objects folder
+	cd /usr/local/nagios/etc 
+		> if you are not
+5. Edit the nagios.cfg inside etc folder
+	vi nagios
+
+6. Add the host1.cfg in the # Definitions for monitoring the local (Linux) host part
+	
+# Definitions for monitoring the local (Linux) host
+cfg_file=/usr/local/nagios/etc/objects/localhost.cfg
+cfg_file=/usr/local/nagios/etc/objects/host1.cfg
+
+7. Restart the Nagios
+	systemctl restart nagios
+
+8. Go to the Nagios website and wait for the changes to happen
+	> Host should have new item named "slave"
+	> Service should have two more items in "slave" host 
+		- PING
+		- Root Partition

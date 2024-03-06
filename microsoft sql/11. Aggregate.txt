@@ -1,0 +1,676 @@
+DATA MANIPULATION LANGUAGE COMMANDS
+	> manipulate or retrieve the data in the database based on your requirement
+	> we will tackle the following queries/commands
+		a. Queries like USE INSERT UPDATE DELETE MERGE SELECT QUEUE ROLLUP OFFSET PIVOT
+		b. Operators that will be used
+
+
+COMMANDS USED
+1. USE
+2. INSERT
+3. SELECT
+4. UPDATE
+5. WHERE
+6. DELETE
+7. MERGE
+8. ORDER BY
+
+
+AGGREGATE COMMANDS
+1. COUNT
+2. GROUP BY
+3. GROUPING SET
+4. HAVING 
+5. INTO 
+6. CUBE
+7. ROLL UP 
+8. OFFSET 
+9. FETCH 
+10. PIVOT 
+11. UNPIVOT
+
+
+DML COMMANDS
+1. USE	
+	> called in order to USE a Database
+	> this will make the commands/queries apply to the said database and its table
+
+SYNTAX:
+USE DatabaseName;
+
+EXAMPLE:
+Use Students
+
+
+
+
+
+
+2. INSERT
+	> used to insert rows of value into the table
+
+SYNTAX:
+Inserting one row using one INSERT command
+	INSERT INTO tableName VALUES ('column1Value', 'colummn2Value', 'column3Value',...);
+
+Inserting multiple rows using one INSERT command
+	INSERT INTO tableName (column1, column2, column3, column4, ...)
+	VALUES ('column1Value', 'column2Value', 'column3Value', 'column4Value', ...)
+	VALUES ('column1Value', 'column2Value', 'column3Value', 'column4Value', ...)
+	VALUES ('column1Value', 'column2Value', 'column3Value', 'column4Value', ...);
+
+
+
+
+
+
+
+3. SELECT
+	> used to show all the rows in the Results tab
+	> we can also use several keyword to modify the result set
+		- DISTINCT to return distinct rows
+		- ORDER BY and ASC/DESC to sort the rows by specific column either ascending or descending
+
+SYNTAX:
+Showing all columns and rows
+	SELECT * FROM tableName;
+
+Showing one column and rows
+	SELECT column1 FROM tableName;
+
+Showing multiple columns and rows
+	SELECT column1, column2, column3 FROM tableName;
+
+Show TOP X, where X is the number of top rows you want to show
+	SELECT TOP X columnName FROM tableName;
+
+Show all DISTINCT values of specific column/s
+	SELECT DISTINCT columnName FROM tableName;
+
+Show the result in ORDER BY specific values of column either ASCending or DESCending (ASC by default)
+	> can ORDER BY multiple column values
+	> these multiple column can be ORDER BY both ASC and DESC at the same time
+
+	SELECT columnName FROM tableName ORDER BY columnName ASC;
+	SELECT columnName FROM tableName ORDER BY columnName DESC;
+
+	SELECT columnName FROM tableName ORDER BY columnName DESC, columnName1 ASC;
+	
+
+
+
+
+
+
+
+3. UPDATE
+	> used to update specific rows of the table with given values
+	> used in conjunction with 
+		- WHERE (for conditions), 
+		- DISTINCT (for showing UNIQUE values), 
+		- ORDER BY (for ordering the rows based on column/s value)
+
+SYNTAX: 
+UPDATE tableName SET column1Name = 'value', column2Name = 'value';
+
+EX:
+UPDATE Student SET studentName = "Carlo" WHERE studentID = 3;
+
+
+
+
+
+
+
+
+
+
+
+4. WHERE
+	> used to create a conditional statement
+	> the condition must be met in order to be included in the specific query
+
+SYNTAX:
+WHERE condition1;
+
+EXAMPLE:
+ > This UPDATE the StudentsInfo, and SET the StudentName values and City Ahmedabad to 'Aahana' and 'Ahmedabad' on rows WHERE the StudentID value is 1.
+
+	UPDATE StudentsInfo SET StudentName = 'Aahana', City = 'Ahmedabad'
+	WHERE StudentID = 1;
+
+
+
+
+
+
+
+
+
+
+5. DELETE
+	> used to delete rows
+	> typically used in conjunction with WHERE in order to select rows that we want to DELETE
+
+SYNTAX:
+DELETE FROM tableName
+WHERE condition;
+
+EXAMPLE:
+ > This will DELETE the rows FROM StudentsInfo WHERE the StudentName value is 'Aahana'.
+
+	DELETE FROM StudentsInfo
+	WHERE StudentName = 'Aahana';
+
+
+
+
+
+
+
+
+
+
+
+6. MERGE
+	> used to perform the INSERT, UPDATE, and DELETE operations on a specific table, where the source table is provided.
+	> Assuming theres two Tables, the TargetTable and SourceTable, we will have the following
+		a. MatchedRows = where rows of Source and Target table is matched
+		b. Not Matched = rows of Source table that doesnt have a match
+		c. Not Matched By The Source = rows of Target table that doesnt have a match
+
+SYNTAX:
+	MERGE TargetTableName USING SourceTableName
+	ON MergeCondition
+	WHEN MATCHED
+	THEN Update_Statement
+	WHEN NOT MATCHED
+	Then Insert_Statement
+	WHEN NOT MATCHED BY SOURCE
+	THEN DELETE;
+
+
+In this format, we will try to update the TargetTable using the SourceTable. If theres a match in the two, we will UPDATE the TargetTable using the rows that MATCHED. Then, on rows in SourceTable that does NOT MATCH, we will INSERT it to the TargetTable, and for those rows in TargetTable that does NOT MATCHED BY SOURCE, we will DELETE them. 
+
+
+EXAMPLE:
+CREATE TABLE SampleSourceTable (StudentID int, StudentName varchar(8000), Marks int);
+CREATE TABLE SampleTargetTable (StudentID int, StudentName varchar(8000), Marks int);
+
+INSERT INTO SampleSourceTable VALUES ('1', 'Glenn', '87');
+INSERT INTO SampleSourceTable VALUES ('2', 'John', '92');
+INSERT INTO SampleSourceTable VALUES ('3', 'Eligio', 74');
+
+INSERT INTO SampleTargetTable VALUES ('1', 'Glenn', '87');
+INSERT INTO SampleTargetTable VALUES ('2', 'John', '67');
+INSERT INTO SampleTargetTable VALUES ('3', 'Jerome', '55');
+
+MERGE SampleTargetTable TARGET USING SampleSourceTable SOURCE 
+ON (TARGET.StudentID = SOURCE.StudentID)
+WHEN MATCHED AND TARGET.StudentName <> SOURCE.StudentName OR TARGET.Marks <> SOURCE.Marks THEN 
+UPDATE SET TARGET.StudentName = SOURCE.StudentName, TARGET.Marks = SOURCE.Marks
+WHEN NOT MATCHED BY TARGET THEN 
+INSERT (StudentID, StudentName, Marks) VALUES (SOURCE.StudentID, Source.StudentName, SOURCE.Marks)
+WHEN NOT MATCHED BY SOURCE THEN
+DELETE;
+
+SELECT * FROM SampleSourceTable;
+
+SELECT * FROM SampleTargetTable;
+
+
+We did the following in the example code:
+i. CREATED SampleTargetTable and SampleSourceTable
+ii. INSERTED them with values
+iii. MERGE the SampleTargetTable to the SampleSourceTable 
+	> This will match the rows WHERE StudentID of both table are the same
+	> SET SampleTargetTable as TARGET, SET SampleSourceTable as SOURCE
+	> WHEN MATCHED AND TARGET's StudentName not equal to SOURCE's StudentName OR TARGET'S Mark is not equal to SOURCE'S Mark
+		> THEN we will SET the TARGET'S StudentName and Mark to SOURCE's StudentName and Mark
+	> WHEN NOT MATCHED BY TARGET
+		> THEN we will INSERT the SOURCE's row (StudentID, StudentName, Marks) to the TARGET
+	> WHEN NOT MATCHED BY SOURCE
+		> THEN we will DELETE the rows in the TARGET
+iv. SELECT queries to show the SampleSourceTable and SampleTargetTable
+
+First, lets run the CREATE TABLE and INSERT queries, then the SampleTargetTable and SampleSourceTable to see their values. After seeing the initial state of the tables, lets run the MERGE query and see the changes. If we look at the result, which is the SampleTargetTable, we can see that the Marks of the rows that matches the SampleSourceTable has been updated based on SOURCE's value. Then the rows in SOURCE's that doesn't have a match to the TARGET has been added to the TARGET. Lastly, the rows in TARGET that doesnt have a match in SOURCE has been deleted.
+
+
+
+
+
+
+
+
+
+
+7. ORDER BY
+	> used to order the rows in the result
+	> used in conjunction of SELECT query
+	> needs two parameters
+		a. columnName
+		b. ASC (default) or DESC, will make the order ascending or descending based on column parameter
+	> can have multiple columnName parameters each having different ORDER (either ASC or DESC)
+
+
+SYNTAX:
+	SELECT columnName FROM tableName ORDER BY columnName ASC;
+	SELECT columnName FROM tableName ORDER BY columnName DESC;
+
+	SELECT columnName FROM tableName ORDER BY columnName DESC, columnName2 ASC;
+
+
+
+
+
+
+
+
+
+
+
+AGGREGATE FUNCTIONS
+1. COUNT
+	> used to count all the rows that have values in the specific column
+	> needs column/s parameter
+
+SYNTAX:
+SELECT COUNT(columnName) FROM tableName;
+
+EXAMPLE:
+ > This will count all rows that have value in StudentID column. Will return a number.
+
+SELECT COUNT(StudentID) FROM StudentsInfo;
+
+
+
+
+
+
+
+
+
+
+
+2. GROUP BY
+	> used to group or aggregate the table into different groups
+	> this means it will create multiple table whose value of specific column is the same
+	> needs a column/s parameter 
+
+SYNTAX:
+SELECT columnName, aggregate(columnName1) FROM tableName GROUP BY columnName;
+
+EXAMPLE:
+ > This will create multiple table for each City values, then we will show the number of students (COUNT(StudentID)) and City column. This means that we will see how many students in each city in StudentsInfo table.
+
+SELECT COUNT(StudentID), City FROM StudentsInfo GROUP BY City;
+
+
+
+
+
+
+
+
+
+
+3. GROUPING SET
+	> used to UNION ALL of the GROUP BYs in a query
+	> used to prevent the need to call multiple GROUP BYs, which will read the table multiple times
+	> used to aggregate an aggregated table
+
+SYNTAX:
+SELECT columnName, aggregate(columnName1) FROM tableName GROUP BY
+GROUPING SET ( (group1) , (group2) , (group3) );
+
+EXAMPLE:
+SELECT StudentID, StudentName, COUNT(City) FROM StudentsInfo GROUP BY
+GROUPING SET ( (StudentID, StudentName, City), (StudentID), (StudentName), (City) );
+
+This will result in the UNION ALL of the GROUP BYs of:
+	a. Group1 -> StudentID, StudentName, City
+	b. Group2 -> StudentId
+	c. Group3 -> StudentName
+	d. Group4 -> City
+
+The result of this will be:
+1. StudentsInfo aggregated by 1st Group -> 1st Aggregates
+	> StudentsInfo is GROUP BY based on the COMBINATIONS OF StudentID, StudentName, and City
+2. 1st Aggregate aggregated by 2nd Group -> 2nd Aggregate
+	> 1st Aggregates will be GROUP BY again based on StudentId
+3. 2nd Aggregate aggreagated by 3nd Group -> 3rd Aggregate
+	> 2nd Aggregates will be GROUP BY again based on StudentName
+4. 3rd Aggregate aggregated by 4th Group -> 4th Aggregate
+	> 3rd Aggregates will be GROUP BY again based on their City
+
+
+
+
+
+
+
+
+
+4. HAVING
+	> filters the aggregates
+	> works like WHERE query but for aggregates
+	> needs conditional statement parameter
+	> conditional statement must be aggregate, which should define a whole group like COUNT, SUM, AVE, etc.
+
+SYNTAX:
+SELECT columnName, aggregate(columnName) FROM tableName GROUP BY columnName HAVING condition;
+
+EXAMPLE:
+	SELECT COUNT(StudentID), City FROM StudentsInfo GROUP BY City HAVING COUNT(StudentID) = 1
+	ORDER BY COUNT(StudentID) DESC;
+
+
+Here, we first fetch data from StudentsInfo table, then we GROUP BY all of it by City, and we only included aggregate HAVING COUNT(StudentID) = 1, then we arranged it by COUNT(StudentID) in DESCending ORDER. Lastly, we only SELECT THE COUNT(StudentID) and City column from the result.
+
+
+
+
+
+
+
+
+
+5. INTO
+	> used to direct a query
+	> we can use this to create a backup by SELECTing all the rows an put it INTO the tableBackUp
+
+FORMAT:
+Transferring all columns and rows into a backup table
+
+	SELECT * INTO tableBackUp FROM tableName;
+
+Tansferring only specific columns and rows
+
+	SELECT column1, column2 INTO tableBackUp FROM tableName;
+
+Transferring only rows that meet specific conditions
+
+	SELECT column1, column2 INTO tableBackUp FROM tableName WHERE condition;
+
+EXAMPLE:
+
+	SELECT * INTO StudentsBackup FROM StudentsInfo;
+
+This will put the rows of StudentsInfo INTO the StudentsBackup.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+6. CUBE
+	> extension of GROUP BY clause
+	> allows you to generate the subtotal for all the combinations of the grouping column specified by the GROUP BY clause
+
+FORMAT:
+                                  
+	SELECT columnName, aggregate(columnName1) FROM tableName GROUP BY CUBE (columnName, columnName1) ORDER BY columnName;
+
+EXAMPLE:
+
+	SELECT StudentID, COUNT(City) FROM StudentsInfo GROUP BY CUBE(StudentID) ORDER BY StudentID;
+
+This will create a table that is similar to the GROUP BY table but with an additional row that dictate the grand or subtotal of an aggregate. This means that we can use aggregate functions like COUNT, ADD, SUM on every possible aggregate given the COLUMN parameters passed in GROUP BY.
+
+Assuming you passed column1 column2 column3 in a GROUP BY and column1 have 1 value, column2 and 3 have 2 value
+
+column1		column2		column3		aggregateQueryResult
+1		1		1		2
+1		1		2		3
+1		1		-		5	subtotal of aggregate that have column2 = 1
+1		2		1		4
+1		2		2		3
+1		2		-		7	subtotal of aggregate that have column2 = 2
+1		-		-		12	subtotal of aggregate that have column1 = 1	
+-		1		1		2
+-		1		2		3
+-		1		-		5	subtotal of aggregate that have column2 = 1, column 1 = anything
+-		2		1		4
+-		2		2		3
+-		2		-		7	subtotal of aggregate that have column2 = 2, column 1 = anything
+-		-		-		12	grandtotal of aggregate that have column2 = not null, column1 = not null
+
+As we can see we can see, we get every possible combination of the column values that we passed on the GROUP BY CUBE, these value also included the NOT NULL value, which can be practically anything. This is useful when getting a subtotal or grand total of a certain aggregate.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+7. ROLL UP
+	> extension
+	> same as the CUBE
+	> But here, we will not take account of every possible combination. We will see in the example
+
+FORMAT:
+
+	SELECT columnName, aggregate(columnName1) FROM tableName GROUP BY ROLLUP (columnName, columnName1) ORDER BY columnName;
+
+EXAMPLE:
+
+	SELECT StudentID, COUNT(City) FROM StudentsInfo GROUP BY CUBE(StudentID) ORDER BY StudentID;
+
+Same with the CUBE, this will create additional aggregate that will represent the subtotal or grandtotal of the aggregates.
+
+Assuming you passed column1 column2 column3 in a GROUP BY and column1 have 1 value, column2 and 3 have 2 values.
+
+column1		column2		column3		aggregateQueryResult
+1		1		1		2
+1		1		2		3
+1		1		-		5	subtotal of aggregate that have column2 = 1
+1		2		1		4
+1		2		2		3
+1		2		-		7	subtotal of aggregate that have column2 = 2
+1		-		-		12	subtotal of aggregate that have column1 = 1
+-		-		-		12	grand total of all aggregate that have column1 = NOT NULL, column2 = NOT NULL
+
+As we can see, we have the same result as the CUBE query. But here, we stop taking account of combinations that includes the NOT NULL values of the column1.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+8. OFFSET
+	> used with SELECT and ORDER BY clause
+	> needs an INT parameter to be pass
+	> causes the SELECT query to skip INT amount of rows in the final result
+
+FORMAT:
+	SELECT columnName FROM tableName
+	ORDER BY columnName
+	OFFSET X ROWS;
+
+Where X is an Integer variable;
+
+EXAMPLE:
+
+Lets create a table and populate it with INT values
+
+CREATE TABLE numbers (numbers INT);
+
+INSERT INTO numbers VALUES ('1');
+INSERT INTO numbers VALUES ('2');
+INSERT INTO numbers VALUES ('3');
+INSERT INTO numbers VALUES ('4');
+INSERT INTO numbers VALUES ('5');
+INSERT INTO numbers VALUES ('6');
+INSERT INTO numbers VALUES ('7');
+INSERT INTO numbers VALUES ('8');
+
+SELECT * FROM numbers 
+ORDER BY numbers;
+
+Lets see first the table result
+
+Numbers
+1
+2
+3
+4
+5
+6
+7
+8
+
+Then lets use the OFFSET in order to see the changes
+
+SELECT * FROM numbers 
+ORDER BY numbers ASC
+OFFSET 3 ROWS;
+
+Result:
+
+Numbers
+4
+5
+6
+7
+8
+
+As we can see, we skipped the 1,2, and 3 which corresponds to 3 rows we skipped using OFFSET.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+9. FETCH
+	> return a specific set of number of ROWS
+	> needs to pass INT variable
+	> used with SELECT and ORDER BY
+
+FORMAT:
+
+	SELECT columnName FROM tableName OFFSET X ROWS FETCH NEXT X ROWS ONLY;
+
+Where X is an Integer value
+
+EXAMPLE:
+
+	SELECT * FROM numbers
+	ORDER BY numbers ASC
+	OFFSET 1 ROWS
+	FETCH NEXT 2 ROWS ONLY;
+
+RESULT:
+
+numbers
+2
+3
+
+This will FETCH the NEXT 2 ROWS ONLY, after we OFFSET the table result by 1.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+10. PIVOT
+	> converts the DISTINCT column values into columns
+	> rotate rows to column values
+	> will run aggregate function on the remaining column values
+
+SYNTAX:
+
+SELECT (ColumnNames) 
+FROM (TableName) 
+PIVOT
+ ( 
+   AggregateFunction(ColumnToBeAggregated)
+   FOR PivotColumn IN (PivotColumnValues)
+ ) AS (Alias) //Alias is a temporary name for a table
+
+
+Before we tackle the PIVOT, lets first create a table that we will use, and populate it with data.
+
+CREATE TABLE SupplierTable
+(
+SupplierID int NOT NULL,
+DaysofManufacture int,
+Cost int,
+CustomerID int,
+PurchaseID varchar(4000)
+);
+	
+INSERT INTO SupplierTable VALUES ('1', '12', '1230', '11', 'P1');
+INSERT INTO SupplierTable VALUES ('2', '21', '1543', '22', 'P2');
+INSERT INTO SupplierTable VALUES ('3', '32', '2345', '11', 'P3');
+INSERT INTO SupplierTable VALUES ('4', '14', '8765', '22', 'P1');
+INSERT INTO SupplierTable VALUES ('5', '42', '3452', '33', 'P3');
+INSERT INTO SupplierTable VALUES ('6', '31', '5431', '33', 'P1');
+INSERT INTO SupplierTable VALUES ('7', '41', '2342', '11', 'P2');
+INSERT INTO SupplierTable VALUES ('8', '54', '3654', '22', 'P2');
+INSERT INTO SupplierTable VALUES ('9', '33', '1234', '11', 'P3');
+INSERT INTO SupplierTable VALUES ('10', '36', '6832', '33', 'P2');
+INSERT INTO SupplierTable VALUES ('1', '12', '1230', '11', 'P1');
+
+First, lets create a table that shows CustomerID and the AVG(Cost) of each CustomerID
+
+SELECT CUSTOMERid, AVG(Cost) as AverageCostOfCustomer FROM SupplierTable GROUP BY CustomerID;
+
+The result would be
+CUSTOMERid	AverageCostOfCustomer
+11		1676
+22		4654
+33		5238
+
+Now, we will create a PIVOT. To do this, we will need two things
+1. Source Table
+2. Pivot table
+
+SELECT 'AverageCostOfCustomer' AS Cost_According_To_Customers, [11], [22], [33]
+FROM 
+( SELECT CustomerID, Cost FROM SupplierTable ) AS SourceTable
+PIVOT
+( AVG(Cost) FOR CustomerID IN ([11], [22], [33]) ) AS PivotTable;
+
+This will PIVOT the Table we created earlier. First, we fetch the columns in SourceTable that we will PIVOT. Then we created a PivotTable using the AVG(Cost) for CustomerID whose values are [11], [22], [33]. Then, we create the "columns" or header of rows using the SELECT function and assign values to these "columns" using CustomerID, and AVG (Cost).
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+11. UNPIVOT
+	> used to convert columndata into rowdata
+
+SYNTAX:
+
+SELECT (ColumnNames) 
+FROM (TableName) 
+UNPIVOT
+ ( 
+   AggregateFunction(ColumnToBeAggregated)
+   FOR PivotColumn IN (PivotColumnValues)
+ ) AS (Alias)
+
+In addition to the table we create earlier, we will create another one and use them together to demonstrate UNPIVOT
+
+CREATE TABLE SampleTable (SupplierID int, AAA int, BBB int, CCC int)
+GO
+INSERT INTO SampleTable VALUES (1,3,5,6);
+INSERT INTO SampleTable VALUES (2,9,2,8);
+INSERT INTO SampleTable VALUES (3,8,1,7);
+GO 
+SELECT * FROM SampleTable;
+
+Lets run the query and see the result
+SupplierID	AAA	BBB	CCC
+1		3	5	6
+2		9	2	8
+3		8	1	7
+
+Now, lets UNPIVOT it, and use the Table earlier.
+
+SELECT SupplierID, Customers, Products
+FROM (SELECT SupplierID, AAA, BBB, CCC FROM SampleTable) AS SourceTable
+UNPIVOT
+(Products FOR Customers IN (AAA,BBB,CCC)) AS Example;
+GO
+
+Using, we will convert the Columns AAA, BBB, CCC into Row data, and instead of 4 columns - 3 rows, we have changed it to 3 columns - 9 rows.
+
+
+
+
+

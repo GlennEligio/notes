@@ -1,0 +1,114 @@
+07 JSP Standard Tag Library (JSTL) - Function Tags
+
+Contents:
+49 JSTL Function tags - length, toUpperCase and startsWith
+50 JSTL Function tags - split and join
+
+
+
+
+
+
+
+
+
+
+
+49 JSTL Function tags - length, toUpperCase and startsWith
+
+JSTL Functions - Prefix "fn"
+Collection Length
+1. length
+
+String manipulation
+ > toUpperCase, toLowerCase
+ > substring, substringAfter, substringBefore
+ > trim, replace, indexOf, startsWith, endsWith
+ > contains, containsIgnoreCase, split, join, escapeXml
+
+
+JSTL Function Reference
+ > every page that uses the Function tags must include this reference
+ 	<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+
+EX:
+// function-test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<c:set var="data" value="luv2code"/>
+	Length of the string <b>${data}</b> : ${fn:length(data)}
+	<br>
+	Uppercase version of the string <b>${data}</b>: ${fn:toUpperCase(data)}
+	<br>
+	Does the string <b>${data}</b> start with <b>luv</b>?: ${fn:startsWith(data, "luv")}
+</body>
+</html>
+
+
+
+
+
+
+
+ 
+
+
+
+
+50 JSTL Function tags - split and join
+
+fn:split()
+ > function that splits a String into an array of substring based on delimiter
+ > method signature
+	String[] split(String data, String delimiter)
+
+fn:join()
+ > function that concatenates a String array into a single String based on a delimiter
+ > method signature: String join(String[] data, String delimiter)
+
+
+EX:
+// split-join-test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+ 	<c:set var="data" value="Singapore,Tokyo,Mumbai,London"/>
+ 	<h3>Split Demo</h3>
+ 	<c:set var="citiesArray" value="${fn:split(data,',')}"/>
+ 	<c:forEach var="tempCity" items="${citiesArray }">
+ 		${tempCity} <br>
+ 	</c:forEach>
+ 	<h3>Join Demo</h3>
+ 	<c:set var="cities" value="${fn:join(citiesArray, '*')}"/>
+ 	Result of joining: ${cities}
+</body>
+</html>
+
+
+// HTML output
+Split Demo
+Singapore
+Tokyo
+Mumbai
+London
+Join Demo
+
+Result of joining: Singapore*Tokyo*Mumbai*London

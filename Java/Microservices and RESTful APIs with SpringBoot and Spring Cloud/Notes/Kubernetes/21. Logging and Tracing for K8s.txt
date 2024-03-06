@@ -1,0 +1,15 @@
+21. Logging and Tracing in Kubernetes
+
+Cloud Platform Exclusive Logging and Tracing API for K8s
+GCP / GKE
+1. Logging
+	- Cloud Logging API
+2. Tracing
+	- StackDriver APIs (Stackdriver, Stackdriver Monitoring, Stackdriver Trace, Stackdriver Error Reporting, etc)
+
+
+Cloud Neutral
+	> source: https://thechief.io/c/editorial/kubernetes-7-open-source-logging-and-tracing-tools-you-should-try/
+1. Jaeger
+	> inspired by Dapper and OpenZipkin
+	> created by Uber Technologies and donated to CNCF

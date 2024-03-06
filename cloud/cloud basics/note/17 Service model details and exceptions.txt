@@ -1,0 +1,43 @@
+17 Service model details and exceptions
+
+Service models
+1. Platform as a Service (PaaS)
+2. Infrastructure as a Service (IaaS)
+3. Software as a Service (SaaS)
+
+
+Additional Service models
+1. Function as a Service (FaaS)
+	> cloud provider provides a way for user to execute their defined functions
+	> ex: AWS Lambda
+2. Container as a Service (CaaS)
+	> cloud service model that allows users to upload, edit, start, stop, rate and otherwise manage containers, applications and collections
+
+
+
+Parts of Cloud that are managed by Cloud Provider for different Service Models (from high to low level)
+ > SOURCE: https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-iaas/#overview
+
+1. Hosted applications
+2. Development tools, database management, business analytics
+3. Operating systems
+4. Servers and storage
+5. Networking firewalls/security
+6. Data center physical plant/building
+
+
+
+
+Cloud Provider responsibility for each Service Model
+1. SaaS
+	> everything is their responsibility (1-6)
+2. PaaS
+	> all but no.1 is their responsibility
+3. IaaS
+	> all but no 1-3 is their responsibility
+
+
+NOTE:
+1. Regardless of the Service model you use, you must remember that in the end, what matters is that 
+	a. You want control over what matters to you
+	b. You want the provider to be responsible for the rest

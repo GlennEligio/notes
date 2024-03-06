@@ -1,0 +1,29 @@
+02 What is Cloud (Computing)
+
+Cloud (computing)
+ > Cloud computing is the on-demand availablity of computer system resources, especially data storage (cloud storage) and computing power, without direct active management by the user
+ > Large clouds often have functions distributed over multiple locations, each location being a data center
+
+
+
+Traditional Computing vs Cloud computing
+ > the computer is yours (or with you)
+ > you are directly managing the resources of this  computer
+ > with Cloud computing, you will have the cloud providers handle the management of these computers, and you will just specify the resources that you need (computing power, memory, data storage) and they will provide it to you (ex: AWS EC2 instances) 
+
+
+
+Cloud computing examples
+ > Emails and Calendar apps
+	- these services are running in remote server, and using their client in your computer, you are borrowing resources in the remote server to handle/process the email and calendar data
+ > Office 365 / Google Docs
+ > Cloud gaming / Video streaming
+
+
+
+Common usage of cloud computing
+1. Consumers/Programmers write the code or build an apps, and have a "cloud" or remote server run and serve it
+2. Organizations building a web based product
+	> these orgs "rent" hardware on the cloud
+	> they deploy their code on the rented hardware
+	> they also manage rented resources based on need, since they are paying based on their resource consumption

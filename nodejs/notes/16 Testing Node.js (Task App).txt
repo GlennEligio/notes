@@ -1,0 +1,1229 @@
+16 Testing Node.js (Task App)
+	> automated testing
+
+Contents:
+137 Jest Testing Framework
+138 Writing Tests and Assertions
+139 Writing Your Own Tests
+140 Testing Asynchronous Code
+141 Testing an Express Application Part 1
+142 Testing an Express Application Part 2
+143 Jest Setup and Teardown
+144 Testing with Authentication
+145 Advanced Assertions
+146 Mocking Libraries
+147 Wrapping up User Tests
+148 Setup Task Test Suite
+149 Testing with Task Data
+150 Bonus: Extra Test ideas
+151 Testing Middlewares
+
+
+
+
+
+
+
+
+
+
+
+137 Jest Testing Framework
+
+Frameworks for testing JavaScript
+1. Jest
+2. Mocha
+
+
+Jest
+ > is a delightful JavaScript Testing Framework with a focus on simplicity.
+ > It works with projects using: Babel, TypeScript, Node, React, Angular, Vue and more!
+ > features include
+	1. Zero configuration testing framework
+		- already configured by default at the start
+
+
+Using Jest in the Node.js app
+ > to use Jest in Node, we will install it as dependency (typically a devDependency since we will only use it in dev environment)
+ > to install Jest, we will use the command
+	- npm i jest
+
+
+Setting up script for running Jest
+ > in "scripts" of package.json, add the script 
+	- "test": "jest"
+ > now, we can just use "npm test" to run the Jest
+
+
+Creating a JavaScript test file
+ > when creating a JavaScript test, it is important to make it's extension ".test.js"
+	- this is because Jest SCANS for test files to run with extension ".test.js"
+	- the file is still a JavaScript file, but with ".test", Jest will know that it is a Test file, not a Source code file
+ > we also create the JavaScript test files in separate folder to the source code
+	- to make the project structure cleaner
+ > for naming convention, we name the test file with SAME NAME as the source code .js file it is testing
+
+EX:
+root
+ > src
+    - math.js
+    - index.js
+ > test
+    - math.test.js
+    - index.test.js
+
+
+Creating the Test case
+ > to create a Test case, we will use the test function
+ > the "test" function is provided by the Jest GLOBALLY
+	- this means that we can assess the test function ANYWHERE inside the project
+ > in the test function, we provide two inputs
+	1. name of test case
+	2. function to run
+ > when function input run successfully, it is considered a successful test
+ > when function input THROWS an Error, it is considered a failed test
+
+EX:
+// test case code
+test("Hello world", () => {});
+
+test("This should fail", () => {
+  throw new Error("Failed");
+});
+
+// console log output
+ FAIL  test/math.test.js
+  √ Hello world (1 ms)
+  × This should fail
+Tests:       1 failed, 1 passed, 2 total
+Snapshots:   0 total
+Time:        0.527 s
+
+
+Why Test our app?
+1. Saves time
+	> with automated testing, we can test the code much faster
+2. Creates reliable software
+	> with softwares having an EXPECTED behavior, we can create test to ensure they are working properly, hence ensuring software reliability
+3. Gives flexibility to developers
+	> Refactoring the source code will be easier since you will know if the modified code passes the test for it
+	> Collaborating with other developers is easier since they can easily know how the software or its individual unit behaves
+	> Profiling and optimizing the software is easier
+4. Peace of mind
+	> as developer, we have a peace of mind when modifying the source code as long as it passes the test case the Unit have
+
+
+
+
+
+
+
+
+
+
+
+138 Writing Tests and Assertions
+
+Function/Objects used
+test(name: string, testCase: function)
+ > method available globally if we have Jest installed
+ > takes two inputs
+	1. test case name
+	2. test case function
+		- test case is a success if NO ERROR IS THROWN
+
+expect(value: any)
+ > starting point when doing Assertions
+ > typically used inside the test() cases
+ > takes one input
+	1. value
+		- the value or variables to run assertions to
+ > expect() will then be method chained to the assertion methods available in Jest
+	- expect().assertionMethod()
+	- ex: expect("RealName").toBe("RealName") // passes
+
+.not
+ > called AFTER the expect()
+ > REVERSES the assertion result
+     - ex: if we pass "null" as value to expect().not.toBeNull(), then the Assertion would FAIL
+
+.toBeNull()
+ > method called after the expect()
+ > checks if the value will be null or not
+ 	- if null, then assertion passes, else it will fail
+
+.toBe(expectedValue: any)
+ > called after expect()
+ > checks if the value passed is EQUAL to the expectedValue
+	- if equal, assertion pass, else it fails
+
+
+Writing Tests and Assertions
+ > for writing Tests, we typically use the code/units inside ths source code, and test+assert their behavior and result
+ > because of this, we need to import the said code/units from the source code folder (src) to the Test file (inside test folder)
+ > inside the test case, we categories the actions we make in three categories, typically refered to as AAA
+	1. Arrange, this is where we arrange the necessary data in order to do the test
+	2. Act, this is where we perform the feature/unit,
+	3. Assert, this is where we will assert the result/behavior of the unit we acted
+
+EX:
+// unit to test inside ./src/math.js
+const calculateTip = (total, tipPercent = 0.25) => total * (1 + tipPercent);
+
+module.exports = {
+  calculateTip,
+};
+
+
+// test case for calculateTip inside ./test/math.test.js
+const { calculateTip } = require("../src/math");
+
+test("Should calculate total with tip", () => {
+  // Arrange
+  const total = 10;
+
+  // Act
+  const totalWithTip = calculateTip(total, 0.3);
+
+  // Assert
+  expect(totalWithTip).toBe(13);
+});
+
+test("Should calculate total with default tip", () => {
+  // Arrange
+  const total = 10;
+
+  // Act
+  const totalWithTip = calculateTip(total);
+
+  // Assert
+  expect(totalWithTip).toBe(12.5);
+});
+
+
+
+
+
+
+
+
+
+
+139 Writing Your Own Tests
+
+GOAL:
+1. Test the celsiusToFahrenheit and fahrentheitToCelsius units
+
+EX:
+// Units
+const fahrenheitToCelsius = (temp) => {
+  return (temp - 32) / 1.8;
+};
+
+const celsiusToFahrenheit = (temp) => {
+  return temp * 1.8 + 32;
+};
+
+
+// Test cases
+test("Should convert the Celsius to Fahrenheit correctly", () => {
+  const fahrenheit = celsiusToFahrenheit(50);
+  expect(fahrenheit).toBe(122);
+});
+
+test("Should convert the Fahrenheit to Celsius correctly", () => {
+  const celsius = fahrenheitToCelsius(122);
+  expect(celsius).toBe(50);
+});
+
+
+
+
+
+
+
+
+
+140 Testing Asynchronous Code
+
+Function/Objects/Commands used
+jest --watch
+ > used to run the jest in watch mode
+ 	- similar to tsc -w or nodemon
+ > any modification done to the test file (.test.js) will trigger the test to run
+
+test(name: string, (done) => {})
+ > an overload of the function input of the test() global function
+ > with the "done" parameter, we can call it to denote that the test case is FINISHED
+ > typically used for test cases that uses asynchrnous operation inside
+
+test(name: string, async () => {})
+ > variation of "test" where function input is an async function
+ > with the async function, we can utilize the await in order to wait for the asynchronous operation inside test case to finish
+ > more used than the done() method
+
+
+Setting up the Jest to run in watch mode
+ > add "--watch" in the "test" script
+
+EX:
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+    "test": "jest --watch"
+  },
+
+
+Testing Asynchronous Code
+ > when the test case have asynchronous operation inside it, we need to let the Jest to know and wait for it to finish
+	- if we dont, the test case function will run and finish, result in passing the test immediately
+ > to solve this issue, we can do two things
+	1. utilize the "done" function argument passed in the callback input of test case
+		- we can use the done function inside to make the Jest wait until the test case is finished
+	2. use the async/await
+		- we can make the callback input of test() async
+		- with this, we can use the await for asynchronous operations inside it 
+
+EX:
+test("Should add two numbers with done", (done) => {
+  add(2, 5).then((sum) => {
+    expect(sum).toBe(7);
+    done();
+  });
+});
+
+test("Should add two numbers with async/await", async () => {
+  const sum = await add(2, 5);
+  expect(sum).toBe(7);
+});
+
+
+
+
+
+
+
+
+
+
+
+141 Testing an Express Application Part 1
+
+Function/Objects/Commands used
+jest.testEnvironment
+ > a property in the package.json
+ > used to define the environment of the Jest when test case are executed
+ > default value is "jsdom" (for JavaScript running in Browsers), but we can also pass "node" for Node.js environment
+
+
+Setting up for Testing an Express Application
+1. Set the environment variables available in test environment
+2. Setup the testEnvironment of Jest
+
+
+Set the environment variables available in test environment
+ > typically, the environment variables for testing is different
+	- ex: database, api keys, credentials, etc
+ > with this, we would want to use the "env-cmd" in order to load the said env vars in the .env files that is only for testing
+	- we will modify the "test" script so that it uses the env-cmd
+
+EX:
+// test.env
+PORT=3000
+JWT_SECRET=thisisasecretkey
+MONGODB_URL=mongodb://127.0.0.1:27017/task-manager-api-test
+
+// package.json
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+    "test": "env-cmd -f ./config/test.env jest --watch"
+  },
+
+
+
+Setup the testEnvironment of Jest
+ > by default, it uses a testEnvironment of "jsdom", which is for JavaScript running in Browser
+ > but, we can also set it to "node" for JavaScript running in Node.js
+
+// inside package.json, as root property
+  "jest": {
+    "testEnvironment": "node"
+  },
+
+
+
+
+
+
+
+
+
+
+
+142 Testing an Express Application Part 2
+
+
+Testing an Express Application
+ > specifically, what we are gonna do is to test the endpoints Express app exposes
+ > to do this, we can do either
+	1. run the express app, and then make a real http request which we will assert the response
+	2. use "supertest" library
+
+supertest
+ > npm module used for testing Express app
+ > created by the team who also created Express
+ > with this, we dont actually need the Express app to be running (through app.listen() function)
+ > uses "superagent" library as dependency so we can also create Http client
+ > to install this, use the command (adding  --save-dev to make it a devDependency)
+	- npm i supertest --save-dev
+
+Function/Objects in supertest
+request
+ > top level constructor function exposed by the "supertest" module
+ > we can name it anything we want, but "request" makes most sense based on how we use it
+
+request(app: Application): SuperTest
+ > function to create a SuperTest instance for mocking Express app
+ > takes an Express Application as an argument
+	- this Express must be CONFIGURED before passing, which includes registering middlewares and routers
+	- we also must NOT CALL app.listen() when we export the Application to be used in .test.js files
+ > returns a Promise with the Response as resolved value
+	- we can fetch the value of this using await
+	- with the Response, we can also do assertions to it as well
+
+SuperTest.post(path: string): SuperAgentRequest
+ > function typically method chained after the SuperTest constructor function
+ > used to create a mock request to the mock Express app
+ > other HTTP methods are available as well
+	- ex: SuperTest.get()
+ > takes the relative path url of the endpoint that we are calling
+
+
+SuperAgentRequest.set(field: string, val: string): SuperAgentRequest
+ > used to set header values in the SuperAgentRequest instance, or in other words, modify it
+ > takes two input
+	1. header name
+	2. header value
+
+SuperAgentRequest.set(field: "Cookie", val: string[]): SuperAgentRequest
+ > used to add Cookies to the SuperAgentRequest
+
+SuperAgentRequest.send(data?: string | object): Test
+ > function called after the SuperTest method calls (ex. SuperTest.prototype.post())
+ > used to send the mock request to the mock Express application
+ > takes an optional data argument, which refers to the request body content
+ > returns a Test object which we can use for assertions
+
+SuperAgentRequest.attach(field: string, filename: string): Test
+ > function called after the SuperTest method calls (ex. SuperTest.prototype.post())
+ > used to send the mock request to the mock Express application with files/text attached to it
+	- transforms the request body into "multipart/form-data"
+ > takes two inputs
+	1. field: string
+		- the field name in the multitpart/form-data
+	2. filename: string
+		- defines the location of the filename that will be added in the form-data
+
+
+Test.expect(status: number)
+ > called after the send() function
+ > used to assert the response code of the mock request sent
+ > takes a number input which corresponds to the status code
+
+Test.expect(field: string, val: string)
+Test.expect(field: string, val: RegExp)
+ > called after the send() function
+ > used to assert the headers of the response if its the same as the value string, or matches the RegExp given
+ > takes two input
+	1. field: string
+		- the header name
+	2. val: string or RegExp	
+		- either the exact value of the header or the RegExp used to match it
+
+Using "supertest" module
+1. Install supertest module
+2. Setup the Express app so that we are just setting up the Application and then expose it	
+	> by setting up, it means
+		- registering middleware
+		- adding routers
+		- adding configurations
+	> after exposing it, we can either 
+		- pass it to the test cases in "test" folder where we will use supertest to conduct testing in Express routes
+		- pass it to the source code in "src" folder where we will run Express app and make it listen to specific port
+3. Setup the test case for testing Express route
+	> import supertest module
+	> make sure the configured Express Application instance is imported as well
+4. Create the test case and inside do the following
+	> use the top level function exported by "supertest" module and pass the imported Express Application to mock it
+	> call the method that matches the Http method of the mock request that we will send
+	> setup the mock request with set()
+	> send the mock request using send()
+	> call the test methods of Test to do assertions
+	> DONT FORGET to use make the callback input of test case "async"
+		- the request() or the top level function of supertest RETURNS a Promise, therefore we will need to use await
+
+EX:
+// ./src/app.js
+const express = require("express");
+require("./db/mongoose");
+const userRouter = require("./routers/user");
+const taskRouter = require("./routers/task");
+
+const app = express();
+
+app.use(express.json());
+app.use(userRouter);
+app.use(taskRouter);
+
+module.exports = app;
+
+
+// ./src/index.js
+const app = require("./app");
+
+const port = process.env.PORT;
+
+app.listen(port, () => {
+  console.log("Server is up at port: " + port);
+});
+
+
+// ./test.user.test.js
+const request = require("supertest");
+const app = require("../src/app");
+
+test("Should create a user", async () => {
+  await request(app)
+    .post("/users")
+    .send({
+      name: "Glenn",
+      email: "EMAIL@EMAIL.COM",
+      password: "PASSWORD",
+    })
+    .expect(201);
+});
+
+
+
+
+
+
+
+
+
+
+
+143 Jest Setup and Teardown
+
+Function/Object used
+beforeEach(setup: function, timeout: number)
+ > defines the function to run before executing each Test case
+ > takes two input
+	1. setup
+		- function to execute
+	2. timeout
+		- time in miliseconds before aborting the said function
+
+beforeAll(setup: function, timeout: number)
+ > defines the function to run before executing the Test Suite
+ > takes two input
+	1. setup
+		- function to execute
+	2. timeout
+		- time in miliseconds before aborting the said function
+
+afterEach(setup: function, timeout: number)
+ > defines the function to run after executing each Test case
+ > takes two input
+	1. setup
+		- function to execute
+	2. timeout
+		- time in miliseconds before aborting the said function
+
+afterAll(setup: function, timeout: number)
+ > defines the function to run after executing each Test case
+ > takes two input
+	1. setup
+		- function to execute
+	2. timeout
+		- time in miliseconds before aborting the said function
+
+
+Test Suite vs Test Case
+ > Test suite is used to group up Test cases
+ > by default, if no test suite is defined inside a test file with test cases inside it, the Jest will create a SINGLE Test Suite to contain those test cases
+
+
+Jest Setup and Teardown
+ > when testing, we may want to setup the environment 
+	1. before the Test Suite runs, or
+	2. before each of the Test cases runs
+	3. after the Test Suite runs
+	4. after each of the Test cases runs
+ > to do this, we can use the global variables exposed by Jest which are
+	1. beforeEach(callback: function)
+	2. beforeAll(callback: function)
+	3. afterEach(callback: function)
+	4. afterAll(callback: function)
+ > when setting up, we typically do 
+	1. reset the test database
+	2. populate the test database with dummy data
+	3. initialize variables that will be used in many test cases
+
+EX:
+// Test Suite setup
+const userOne = {
+  name: "Mike",
+  email: "mike@gmail.com",
+  password: "mikemike",
+};
+
+beforeEach(async () => {
+  await User.deleteMany();
+  await new User(userOne).save();
+});
+
+// test cases example
+test("Should login existing user", async () => {
+  await request(app)
+    .post("/users/login")
+    .send({
+      email: userOne.email,
+      password: userOne.password,
+    })
+    .expect(200);
+});
+
+test("Should NOT login existing user and returns 401 UNAUTHORIZED", async () => {
+  await request(app)
+    .post("/users/login")
+    .send({
+      email: "wrongemail@gmail.com",
+      password: "wrongcredentials",
+    })
+    .expect(400);
+});
+
+
+
+
+
+
+
+
+
+
+
+144 Testing with Authentication
+
+Function/Objects used
+SuperAgentRequest.set(field: string, val: string)
+ > used to add a header into the mock request
+ > takes two input	
+	1. field	- header name
+	2. val		- header value
+
+
+Testing with Authentication
+ > in this part, we will test the Authentication part of the Express app
+ > for this testing, we will need two things
+	1. the jsonwebtoken module
+		- for creating JWT
+	2. the mongoose module
+		- for creating ObjectId
+
+EX:
+// setup for data needed for Authentication testing
+const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+
+const userOneId = new mongoose.Types.ObjectId();
+const userOne = {
+  _id: userOneId,
+  name: "Mike",
+  email: "mike@gmail.com",
+  password: "mikemike",
+  tokens: [
+    {
+      token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET),
+    },
+  ],
+};
+
+
+// test cases where we test authentication feature
+test("Should get profile for user", async () => {
+  await request(app)
+    .get(`/users/me`)
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .send()
+    .expect(200);
+});
+
+test("Should not get profile for unauthenticated users", async () => {
+  await request(app).get(`/users/me`).send().expect(401);
+});
+
+test("Should delete account for user", async () => {
+  await request(app)
+    .delete("/users/me")
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .send()
+    .expect(200);
+});
+
+test("Should not delete account for user", async () => {
+  await request(app).delete("/users/me").send().expect(401);
+});
+
+
+
+
+
+
+
+
+
+
+145 Advanced Assertions
+
+Function/Objects used
+expect(val: object).toMatchObject(expectedObj: object)
+ > Jest method used to assert if two object matches
+
+
+Advanced Assertions
+ > right now, we are just asserting if the response code is correct
+ > but we can also do several assertions to ensure the Unit is performing correctly like
+	1. checking the response body
+	2. checking if database is changed correctly
+ > we can do this by getting the resolved value of the request(), which is a Response
+
+EX:
+// test case 1
+test("Should sign up a user", async () => {
+  const response = await request(app)
+    .post("/users")
+    .send({
+      name: "Glenn",
+      email: "EMAIL@EMAIL.COM",
+      password: "PASSWORD",
+    })
+    .expect(201);
+
+  // assert that the database was changed correctly
+  const user = await User.findById(response.body.user._id);
+  expect(user).not.toBeNull();
+
+  // assert that the response body (which is the new user created) is the same as the user we added in request body
+  expect(response.body).toMatchObject({
+    user: {
+      name: "Glenn",
+      email: "glenn@gmail.com",
+    },
+    token: user.tokens[0].token,
+  });
+
+  // assert if password is hashed in database
+  expect(user.password).not.toBe("glenneligio");
+});
+
+
+// test case 2
+test("Should login existing user", async () => {
+  const response = await request(app)
+    .post("/users/login")
+    .send({
+      email: userOne.email,
+      password: userOne.password,
+    })
+    .expect(200);
+
+  // Check if the token received in response is the same as the latest (2nd) token in User's tokens list
+  const user = await User.findById(response.body.user._id);
+  expect(user.tokens[1].token).toBe(response.body.token);
+});
+
+
+// test case 3
+test("Should delete account for user", async () => {
+  const response = await request(app)
+    .delete("/users/me")
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .send()
+    .expect(200);
+
+  const user = await User.findById(response.body._id);
+  expect(user).toBeNull();
+});
+
+
+
+
+
+
+
+
+
+
+146 Mocking Libraries
+
+Mocking Libraries/Modules in Jest
+ > Units typically use dependencies inside like third party npm libraries
+ > when testing Units, we dont want to "test" this dependencies, instead we just want to focus on the core logic inside the Unit
+ > this is where "mocking" comes in
+	- mocking is where we "mock" to artifically create this dependencies
+ > there are many ways to mock functions in the Jest, which includes
+	1. mocking a specific function (using Mock)
+	2. mocking specific function inside a module (Manual mocking)
+
+Manual mocking
+ > https://jestjs.io/docs/manual-mocks
+ > this is where we manually mock some, if not all, of the functions available inside a module
+ > to do this, we will need to
+	1. create "__mocks__" folder in the same directory where test case files are located
+	2. inside the __mocks__ folder, we will recreate the modules
+		- create the scope of the imported module with folders
+		- add the .js file imported by created the .js file
+ > with this, instead of the REAL module and its function, it will use the one inside the "__mocks__" folder
+
+EX:
+if we are using a module "@sendgrid/mail", where we use the setApiKey() and send() methods inside it, then we would want to create a file structure in the tests which includes
+
+// file structure
+test
+│   math.test.js
+│   user.test.js
+│
+└───__mocks__
+    └───@sendgrid
+            mail.js
+
+// inside mail.js
+module.exports = {
+  setApiKey () {},
+  send() {}
+}
+
+
+
+
+
+
+
+
+
+
+
+147 Wrapping up User Tests
+
+Function/Objects used
+.toEqual(expectedVal)
+ > called after expect(val) function
+ > used to check the val and expectedVal equality
+ > different from toBe() where in toBe uses STRICT EQUALITY
+
+expect.any(type?: Type)
+ > pass to the assertion methods like toBe() or toEqual()
+ > its the assertion so that it accept ANYTHING as long as it matches the type, if one is provided
+ > takes one input
+	1. type: Type
+		- can be object type, interface, or class
+ > ex: expect("anyString").toEqual(expect.any(String))
+
+SuperAgentRequest.attach(field: string, filename: string)
+Request.attach(field: string, filename: string)
+ > used to attach a file/text in the "multipart/form-data" of the mock or real Request
+ > called after any method function of SuperTest (ex. get(), post())
+ > replaces the SuperAgentRequest.send() method
+ > takes two input
+	1. field
+		- name of the field/key in the multipart/form-data
+	2. filename
+		- filename/directory where file is located
+
+
+Setting up "Fixtures"
+ > Fixtures are fix objects/data that we will be used throughout the testing
+ > we typically create a folder for this inside the "test" folder
+	- ex: test/fixtures/profile.jpg
+
+Wrapping up User Tests
+ > to wrap up the User Test, we will test the following functionality
+	1. Uploading user avatar picture
+		- must populate "avatar" field of User Document of buffer
+	2. Should update valid user fields
+		- update the name of the test user
+		- check the data to confirm its changed
+	3. Should not update invalid user fields
+		- update a location field and expect error status code
+
+EX:
+test("Should upload avatar image", async () => {
+  await request(app)
+    .post("/users/me/avatar")
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .attach("avatar", "test/fixtures/profile-pic.jpg")
+    .expect(200);
+
+  const user = await User.findById(userOneId);
+  expect(user.avatar).toEqual(expect.any(Buffer));
+});
+
+test("Should update valid user fields", async () => {
+  const response = await request(app)
+    .patch("/users/me")
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .send({
+      name: "NewName2",
+    })
+    .expect(200);
+
+  const user = await User.findById(response.body._id);
+  expect(user.name).toBe("NewName2");
+});
+
+test("Should not update valid user fields", async () => {
+  const response = await request(app)
+    .patch("/users/me")
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .send({
+      location: "value",
+    })
+    .expect(400);
+});
+
+
+
+
+
+
+
+
+
+
+
+148 Setup Task Test Suite
+
+Function/Objects/Commands used
+--runInBand
+ > option that can be added in "jest" command
+ > with this, the test suite and test cases inside it will run synchronously or in series
+
+Setup Task Test Suite
+1. Refactor the database logic
+	> right now, we have database setup logic in the user.test.js
+	> but since we will also use it in task.test.js, we would want to refactor it in a single file
+	> with this, both the test files will just import the stuff the db.js file exports
+2. Set the Jest so that it executes the test cases in series
+	> add "--runInBand" option to the jest command inside "test" script
+3. Create test file for testing Task Routes
+	> create task.test.js inside test folder
+
+EX:
+// package.json
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+    "test": "env-cmd -f ./config/test.env jest --watch --runInBand"
+  },
+
+// ./test/fixtures/db.js
+const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+const User = require("../../src/models/user");
+const Task = require("../../src/models/task");
+
+const userOneId = new mongoose.Types.ObjectId();
+const userOne = {
+  _id: userOneId,
+  name: "Mike",
+  email: "mike@gmail.com",
+  password: "mikemike",
+  tokens: [
+    {
+      token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET),
+    },
+  ],
+};
+
+const setupDatabase = async () => {
+  await User.deleteMany();
+  await new User(userOne).save();
+  await Task.deleteMany();
+};
+
+module.exports = {
+  userOneId,
+  userOne,
+  setupDatabase,
+};
+
+
+// ./test/user.test.js
+const { userOne, userOneId, setupDatabase } = require("./fixtures/db");
+beforeEach(setupDatabase);
+
+
+// ./test/task.test.js
+const request = require("supertest");
+const app = require("../src/app");
+const Task = require("../src/models/task");
+const { userOne, userOneId, setupDatabase } = require("./fixtures/db");
+
+beforeEach(setupDatabase);
+
+test("Should create task for user", async () => {
+  const response = await request(app)
+    .post("/tasks")
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .send({
+      description: "Eating",
+    })
+    .expect(201);
+
+  const task = await Task.findById(response.body._id);
+  expect(task).not.toBeNull();
+});
+
+
+
+
+
+
+
+
+
+
+149 Testing with Task Data
+
+GOAL:
+1. Add new test cases for GET /tasks
+	> must only fetch task belonging to the userOne
+	> must return 200 OK with same amount of task assign to the userOne
+2. DELETE /tasks/:id test case
+	> userTwo deleting userOne's task must not succeed
+	> must return 404 and userOne's task must still be present in database
+
+Configure db.js to add Task objects in Database
+// inside db.js
+const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+const User = require("../../src/models/user");
+const Task = require("../../src/models/task");
+
+const userOneId = new mongoose.Types.ObjectId();
+const userOne = {
+  _id: userOneId,
+  name: "Mike",
+  email: "mike@gmail.com",
+  password: "mikemike",
+  tokens: [
+    {
+      token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET),
+    },
+  ],
+};
+
+const userTwoId = new mongoose.Types.ObjectId();
+const userTwo = {
+  _id: userTwoId,
+  name: "Mike2",
+  email: "mike2@gmail.com",
+  password: "mikemike2",
+  tokens: [
+    {
+      token: jwt.sign({ _id: userTwoId }, process.env.JWT_SECRET),
+    },
+  ],
+};
+
+const taskOne = {
+  _id: new mongoose.Types.ObjectId(),
+  description: "First task",
+  completed: false,
+  owner: userOne._id,
+};
+const taskTwo = {
+  _id: new mongoose.Types.ObjectId(),
+  description: "Second task",
+  completed: true,
+  owner: userOne._id,
+};
+const taskThree = {
+  _id: new mongoose.Types.ObjectId(),
+  description: "Third task",
+  completed: true,
+  owner: userTwo._id,
+};
+
+const setupDatabase = async () => {
+  await User.deleteMany();
+  await Task.deleteMany();
+  await new User(userOne).save();
+  await new Task(taskOne).save();
+  await new Task(taskTwo).save();
+  await new Task(taskThree).save();
+};
+
+module.exports = {
+  userOneId,
+  userOne,
+  setupDatabase,
+};
+
+
+
+// task.test.js GET /tasks test case
+test("Should get all Task of userOne", async () => {
+  const response = await request(app)
+    .get("/tasks")
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .send()
+    .expect(200);
+
+  expect(response.body.length).toBe(2);
+});
+
+
+// DELETE /tasks/:id test case
+test("Should not delete other User's task", async () => {
+  await request(app)
+    .delete(`/tasks/${taskOne._id}`)
+    .set("Authorization", `Bearer ${userTwo.tokens[0].token}`)
+    .send()
+    .expect(404);
+
+  const task = await Task.findById(taskOne._id);
+  expect(task).not.toBeNull();
+});
+
+
+
+
+
+
+
+
+
+
+150 Bonus: Extra Test ideas
+
+Extra test ideas for Task Manager app
+ > link: links.mead.io/extratests
+
+
+
+
+
+
+
+
+151 Testing Middlewares
+
+SOURCES:
+https://github.com/howardabrams/node-mocks-http
+
+Dependency used
+node-mocks-http
+ > lets you mock the Http objects like Request and Response
+
+events
+ > core module of Nodejs
+
+
+Functions used
+httpMock.createRequest(options: RequestOptions)
+ > used to create a mock request
+ > takes options to modify the mocked request
+
+httpMock.createResponse(options: ResponseOptions)
+ > used to create a mock response 
+ > takes options to modify the mocked response
+
+
+
+Testing Middlewares
+ > when mocking middlewares, we often need to mock the request and response (rare)
+ > to do this, we will need to do the following
+	1. import the middleware to test	
+	2. mock the dependencies/stubs of the middleware function, which may include
+		- request
+		- response
+		- external modules
+
+Testing the Response of Middleware
+ > to test (or read) the response body, we need to define to do the following
+	1. make sure you use res.json() instead of res.send()
+		- this make sure that there will be a response json body
+	2. use EventEmitter core module of the NodeJS to define the "finish" event of a Response
+		- in "finish" event is where the Response will be finished and sent to the client
+		- here, we can access the Response body, which we can use for assertion
+
+
+EX:
+import ApiError from "../../error/ApiError";
+import { NextFunction, Request, Response } from "express";
+import httpMock from "node-mocks-http";
+import errorHandler from "../errorHandler";
+import events from "events";
+
+describe("ErrorHandler middleware", () => {
+  let mockRequest: Request;
+  let mockResponse: any;
+  let mockError: Error;
+  let nextFunction: NextFunction = jest.fn();
+
+  beforeEach(() => {
+    mockRequest = httpMock.createRequest({
+      originalUrl: "/api/v1/login",
+    });
+    mockResponse = httpMock.createResponse({
+      eventEmitter: events.EventEmitter,
+    });
+  });
+
+  test("should have same status code with the ApiError", () => {
+    mockError = new ApiError(400, "Bad request");
+    mockRequest.originalUrl = "/api/v1/login";
+    const expectedResponse = {
+      code: 400,
+      message: "Bad request",
+      path: "/api/v1/login",
+    };
+    mockResponse.on("finish", function () {
+      // Assertion
+      expect(mockResponse._getJSONData()).toMatchObject(expectedResponse);
+    });
+
+    errorHandler(
+      mockError as ApiError,
+      mockRequest as Request,
+      mockResponse as Response,
+      nextFunction as NextFunction
+    );
+  });
+
+  test("should have status code 500 with base Error", () => {
+    mockError = new Error("Internal Server Error");
+    mockRequest.originalUrl = "/api/v1/login";
+    const expectedResponse = {
+      code: 500,
+      message: "Internal Server Error",
+      path: "/api/v1/login",
+    };
+    mockResponse.on("finish", function () {
+      // Assertion
+      expect(mockResponse._getJSONData()).toMatchObject(expectedResponse);
+    });
+
+    errorHandler(
+      mockError,
+      mockRequest as Request,
+      mockResponse as Response,
+      nextFunction as NextFunction
+    );
+  });
+});
+

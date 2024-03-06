@@ -1,0 +1,660 @@
+Data Transfer Object (DTO)
+	> used in order to manage the data that we expose to the client
+	> utilizes AutoMapper in order to map the data inside the DTO class to the Model class
+	> there may be a 1:1 mapping where
+		= each of properties of Model data we send have equivalent property in DTO
+
+Whats wrong with not using DTO?
+1. We are exposing internal domain implementation detail
+	> some of the data in the internal domain may be
+		a. Potentially irrelevant
+		b. Wrong format
+		c. Insecure
+2. We are coupling our internals to our external contact, so:
+	> changes to our internal will be difficult in order to maintain our contract or...
+	> we will break out contract altogether
+
+What does using DTO achieves?
+1. Decouples our internal domain from what we send and receive
+
+
+
+includes:
+
+Profile
+	> used to Map out the Internal Domains (Model) to the External Domain equivalent (DTO)
+
+DbContext methods like
+	a. SaveChanges(), save any changes made in the database, else will not retain changes
+	b. Create()
+
+POST http request verb
+	> used to create an object inside the database of web api
+
+201 Created
+	> response code that refers to the resources being created in Web server
+
+500 Internal Server Error
+	> response code that refers to the resource not being created/added into the WebServer
+	> as the name suggest, the Internal Server (SQL) had a problem adding the resource
+	> sends the Error stack trace from source to the client
+
+400 Bad Request
+	> response code that refers to the client gave a Bad request
+	> sends the Error back to client alongside the definition and actions needed to correct it
+
+
+
+
+
+I. Add the necessary packages in the project
+
+1. Add the AutoMapper.Extensions.Microsoft.DependencyInject package into the project
+	> type the line in the terminal
+		= dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
+	> check in Commander.csproj file if its added successfully
+
+
+	We can manually Map each of the property of DTO into the Model class, but its more error prone to do.
+
+
+
+
+2. Add AutoMapper services into the ServiceCollection of StartUp
+	> AddAutoMapper() needs the current assemblies that we have in our Application
+		= we get it by using AppDomain.CurrentDomain.GetAssemblies()
+	> you will need to have AutoMapper namespace into the using directives
+
+INSIDE ConfigureServices() of StartUp class
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<CommanderContext>(opt => opt.UseSqlServer
+            (Configuration.GetConnectionString("CommanderConnection")));
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            
+            services.AddControllers();
+            services.AddScoped<ICommanderRepo, SqlCommanderRepo>();
+            // services.AddScoped<ICommanderRepo, MockCommanderRepo>();
+        }
+
+
+
+
+II. Creating a DTO Class object
+
+3. Create folder in the project
+	> name it Dtos
+
+
+
+
+4. Create a DTO C# file inside the Dtos folder
+	
+
+
+
+5. Add the following in DTO C# file
+	> namespace that corresponds to file location
+	> class that corresponds to function of DTO class
+		= in our case its a ReadDTO so we will name it CommandReadDTO	
+	> inside the class, add the following
+		= copy the properties of the Command Model class that we want to expose
+			>> all except the Platform
+		= remove the data annotations places in the properties
+
+
+INSIDE CommandReadDto.cs
+
+namespace Commander.Dtos
+{
+    public class CommandReadDto
+    {
+        public int Id { get; set; }
+        public string HowTo{ get; set; }
+        public string Line { get; set; }
+    }
+}
+
+
+
+
+
+III. Creating a Profile class object
+
+6. Create a new folder in project
+	> name Profiles
+
+
+7. Create new file inside the Profiles folder
+	> name it CommandsProfile.cs
+
+
+
+8. Add the following inside the CommandsProfile.cs
+	a. namespace that corresponds to the file location
+	b. class that inherits the Profile Class of AutoMapper library
+		= name it CommandsProfile
+	c. create a Constructor inside the class
+	d. call CreateMap<>() method inside the Constructor
+		= CreateMap<>() needs two parameter to be passed on <>
+			> the Internal Domain, which is the Command class
+			> the External Domain, which is the CommandReadDto class
+
+INSIDE CommandsProfile.cs file
+
+using AutoMapper;
+using Commander.Dtos;
+using Commander.Models;
+
+namespace Commander.Profiles
+{
+    public class CommandsProfile : Profile
+    {
+        public CommandsProfile()
+        {
+            CreateMap<Command, CommandReadDto>();
+        }
+    }
+}
+
+
+
+
+9. Change the GetCommandById() of CommandsController class
+	> right now, if we input an invalid endpoint (where theres no Command item corresponding to id input), we are getting a NoContent
+	> we will modify the GetCommandById() by 
+	> modify the GetCommandById() of Controller
+		= if commandItem is null, then return a NotFound() Result
+		= else return an Ok alongside the commandItem
+
+INSIDE CommandsController class
+
+        [HttpGet("{id}")]
+        public ActionResult<Command> GetCommandById(int id)
+        {
+            var commandItem = _repository.GetCommandById(id);
+            if(commandItem == null)
+            {
+                return NotFound();
+            }
+            return Ok(commandItem);
+        }
+
+
+
+
+
+10. Implement the Mapper into the CommanderController class
+	> we will add the IMapper interface into the CommanderController using dependency injection
+		a. Add IMapper interface as parameter in Controller Constructor
+		b. Add IMapper interface as field member of Controller class
+		c. Assign the value of IMapper parameter of Constructor to IMapper field member
+	> in the Route methods of the Controller, do the following:
+		a. Change any metion of the Model (Internal Domain) in return type to the DTO (External)
+			= ex: ActionResult<Model> to ActionResult<DTO>
+		b. In the method body, change the return value from Model to the DTO by using Map<>() of the IMapper field member
+			= ex: return Model;  to return mapper.Map<Dto>(Model)
+	> make sure that the dataType inside the <> of Map<>() is the same dataType as the one inside (), except instead of Model class, its the DTO class
+
+
+
+NEW MODIFIED CommanderController class
+
+    [Route("api/commands")]
+    [ApiController]
+    public class CommandsController : ControllerBase
+    {
+        private readonly ICommanderRepo _repository;
+        private readonly IMapper _mapper;
+
+        public CommandsController(ICommanderRepo repository, IMapper mapper)
+        {
+            _repository = repository;
+            _mapper = mapper;
+
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<CommandReadDto>> GetAllCommands()
+        {
+            var commandItems = _repository.GetAllCommands();
+            return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandItems));
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<CommandReadDto> GetCommandById(int id)
+        {
+            var commandItem = _repository.GetCommandById(id);
+            if(commandItem == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<CommandReadDto>(commandItem));
+        }
+    }
+
+
+
+
+11. Test the application
+	> save all 
+	> build and run
+	> send a Request for both of the Route endpoint methods
+	> observe the result
+
+RESPONSE from Request http://localhost:5000/api/commands
+
+[
+    {
+        "id": 1,
+        "howTo": "How to create migrations",
+        "line": "dotnet ef migrations add <Name of Migration>"
+    },
+    {
+        "id": 2,
+        "howTo": "How to run migrations",
+        "line": "dotnet ef database update"
+    }
+]
+
+
+RESPONSE from REQUEST http://localhost:5000/api/commands/2
+
+{
+    "id": 2,
+    "howTo": "How to run migrations",
+    "line": "dotnet ef database update"
+}
+
+
+
+	As we can see, the items inside the json response coincides with the properties we set in the CommandReadDto class.
+			
+	
+
+
+~~~~~~ ADDING POST VERB FUNCTIONALITY ~~~~~~~~
+
+IV. Modify SqlCommanderRepo for the POST requests
+
+12. Modify the ICommanderRepo
+	> add the following abstract method in the interface
+		a. SaveChanges()
+			= return type boolean
+		b. CreateCommand()
+			= void return type, Command parameter
+
+INSIDE ICommanderRepo interface
+
+    public interface ICommanderRepo
+    {
+        bool SaveChanges();
+        IEnumerable<Command> GetAllCommands();
+        Command GetCommandById(int id);
+        void CreateCommand(Command cmd);
+    }
+
+
+
+
+13. Remove errors in the Concrete implementation of the ICommanderRepo interface
+	> implement the methods we added earlier into these Classes
+
+
+
+
+14. Modify SaveChanges() implemented method in the SqlCommanderRepo class
+	> inside the SaveChanges() do the following
+		a. call SaveChanges() of the DbContext field member
+			= this will save any changes we made in the Database
+			= if this is not called, any changes made will not be retained
+		b. return a boolean expression where 
+			= DbContext.SaveChanges() >= 0
+			= this is because if SaveChanges() fails, it will return a -1 value
+
+INSIDE SqlCommanderRepo class
+
+        public bool SaveChanges()
+        {
+            return (_context.SaveChanges() >= 0);
+        }
+
+
+
+15. Modify CreateCommand() implemented in the SqlCommanderRepo class
+	> inside the CreateCommand(), do the following
+		a. Check if Command parameter is null
+			= if null, then throw new ArgumentNullException() and pass nameof(obj) wherein obj is the Command parameter
+		b. After the null check, call the Add() of the Commands of the DbContext
+			= pass the Command parameter in Add() of Command
+
+INSIDE SqlCommanderRepo class
+
+        public void CreateCommand(Command cmd)
+        {
+            if(cmd == null)
+            {
+                throw new ArgumentNullException(nameof(cmd));
+            }
+
+            _context.Commands.Add(cmd);
+        }
+
+
+
+
+V. Create a DTO for Creating Commands
+
+16. Create a new file in Dtos folder
+	> name it CommandCreateDto.cs
+
+
+17. Inside the C# file, add the following
+	a. namespace that corresponds to the file location
+	b. class named CommandReadDto, which have the following properties
+		> HowTo, Line, and Platform
+		> the reason Id properties is not included is because the database itself already provide it
+		> theres no reason the User that send the Command object needs to provide the Id property
+
+INSIDE CommanderCreateDto.cs
+
+namespace Commander.Dtos
+{
+    public class CommandCreateDto
+    {
+        public string HowTo{ get; set; }
+
+        public string Line { get; set; }
+
+        public string Platform { get; set; }
+    }
+}
+
+
+
+
+18. Create another Mapping in the CommandsProfile
+	> create another CreateMap<>() call
+		= pass the CommandCreateDto and Command in the <> of method call in this order
+	> this is for mapping the CommandCreateDto input we get from Client into a Command model object
+	> the reason for mapping is because we will add this CommandCreateDto we received into the Database and CreateCommand only accepts Command object
+
+INSIDE the Constructor of the CommandsProfile class
+
+    public class CommandsProfile : Profile
+    {
+        public CommandsProfile()
+        {
+            //Source -> Target
+            CreateMap<Command, CommandReadDto>();
+
+            //Target -> Source
+            CreateMap<CommandCreateDto, Command>();
+        }
+    }
+
+
+
+
+
+18. Create the POST Route Endpoint in the CommandController. The method will be the properties
+	a. [HttpPost] annotation
+	b. ActionResult<CommandReadDto> return type
+	c. CommandCreateDto parameter
+	d. Method body function will do the following
+		> Create a variable and pass the CommandCreateDto mapped into Command object as its value
+		> Add the said variable into Database using CreateCommand() of the ICommanderRepo field member
+		> return an Ok() ActionResult with the variable that hold Command object passed into it
+
+INSIDE CommandsController class
+
+        [HttpPost]
+        public ActionResult<CommandReadDto> CreateCommand(CommandCreateDto commandCreateDto)
+        {
+            var commandItem = _mapper.Map<Command>(commandCreateDto);
+            _repository.CreateCommand(commandItem);
+
+            return Ok(commandItem);
+        }
+
+
+
+		
+19. Test the POST Route Endpoint we created
+	> save all
+	> build and run the web api
+	> in postman, do the following
+		a. Set VERB to POST
+		b. input the URL to call the POST Route Endpoint
+		c. Add data into the Body of the Http request
+			= set to raw then type the json equivalent of the CommandCreateDto object
+			= set type from Text to JSON
+	> after modifying the Http request, send and observe the Response
+
+REQUEST for POST
+Http Request Url
+
+	http://localhost:5000/api/commands
+
+Http Request Raw Body
+
+{
+	"howTo": "Run a .NET Core app",
+	"line": "dotnet run",
+	"platform": ".NET Core CLI"
+}
+
+
+RESPONSE
+{
+    "id": 0,
+    "howTo": "Run a .NET Core app",
+    "line": "dotnet run",
+    "platform": ".NET Core CLI"
+}
+
+
+REQUEST GET to see all Commands
+http://localhost:5000/api/commands
+
+RESPONSE
+[
+    {
+        "id": 1,
+        "howTo": "How to create migrations",
+        "line": "dotnet ef migrations add <Name of Migration>"
+    },
+    {
+        "id": 2,
+        "howTo": "How to run migrations",
+        "line": "dotnet ef database update"
+    }
+]
+
+
+
+We have three problems in our Webn
+
+1. Response code
+	> it should be 201 Created instead of 200 OK
+2. Headers
+	> it should include the Location Header which is a URL that you can use to acccess the Command that you added in Database with POST request
+3. Database
+	> the Command that we added using POST was not added into the database as evident of the GET request to see all Commands
+
+
+
+
+20. Call the SaveChanges() of the ICommanderRepo in the POST Route Endpoint method of the CommandsController class
+	> this will solve the problem 3 which is that the Command that we POST isnt getting saved in the SQL Server. The SaveChanges() call will solve it
+
+INSIDE CreateCommand() of the CommandsController class
+
+        [HttpPost]
+        public ActionResult<CommandReadDto> CreateCommand(CommandCreateDto commandCreateDto)
+        {
+            var commandItem = _mapper.Map<Command>(commandCreateDto);
+            _repository.CreateCommand(commandItem);
+            _repository.SaveChanges();
+
+            return Ok(commandItem);
+        }
+
+
+
+
+
+21. Add a name parameter to the Route Endpoint that we will use to access the newly added Command
+	> to do this, add a name object in the parameters of HttpVerb annotation
+	> give it the value (preferable the same as the method name)
+
+INSIDE GetCommandById Route method
+
+        [HttpGet("{id}", Name = "GetCommandById")]
+        public ActionResult<CommandReadDto> GetCommandById(int id)
+        {
+            var commandItem = _repository.GetCommandById(id);
+            if(commandItem == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<CommandReadDto>(commandItem));
+        }
+
+
+
+
+
+22. Modify the CreateCommand() of the CommandsController
+	> add a new variable whose value is the Command Model variable mapped into a CommandReadDto
+	> Change the return type of the from Ok() to CreateAtRoute()
+	> CreateAtRoute() needs three parameters
+		a. name of the Route Endpoint that we will use to access the newly created object
+		b. a list of objects that corresponds to routeValues
+			= in our case, we have {id} routeValue in which we will assign the id of CommandReadDto that we will send to client
+		c. the object that we will insert in the body of RESPONSE
+			= this will be converted into JSON format
+
+INSIDE CreateCommand()
+
+        [HttpPost]
+        public ActionResult<CommandReadDto> CreateCommand(CommandCreateDto commandCreateDto)
+        {
+            var commandItem = _mapper.Map<Command>(commandCreateDto);
+            _repository.CreateCommand(commandItem);
+            _repository.SaveChanges();
+
+            var commandReadDto = _mapper.Map<CommandReadDto>(commandItem);
+
+            return CreatedAtRoute("GetCommandById", new {id = commandReadDto.Id}, commandReadDto);
+        }
+
+
+
+
+
+23. Test the application
+	> save all, build and run
+	> send a POST request with a body
+	> check the RESPONSE
+	> check if Command has been saved in the SQL Database by sendnig a GET request to check Commands
+
+POST Http request
+
+http://localhost:5000/api/commands
+
+POST RESPONSE
+
+    {
+        "id": 3,
+        "howTo": "Run a .NET Core app",
+        "line": "dotnet run"
+    }
+
+GET Http request to check all Commands
+http://localhost:5000/api/commands
+
+
+GET RESPONSE
+[
+    {
+        "id": 1,
+        "howTo": "Run a .NET Core app",
+        "line": "dotnet run"
+    },
+    {
+        "id": 2,
+        "howTo": "Run a .NET Core app",
+        "line": "dotnet run"
+    },
+    {
+        "id": 3,
+        "howTo": "Run a .NET Core app",
+        "line": "dotnet run"
+    }
+]
+
+
+	As we can see, we have successfully added a Command into the Database. Also, if we look at the Response Code and Headers, we can see that it returns 201 Created and the Location Header where we can access the newly created Command is present.
+
+
+
+
+24. Fixing the 500 Internal Server Error
+	> this happens because the Web API (or its Internal Server) has made an error to the request sent
+		= in this case, the client might not supply the correct/complete data
+		= i.e. one of the properties in the Json data that have [Required] annotation in Model class is not supplied
+	> we can solve this by adding the [Required] annotations in the CommandCreateDto properties
+	> this way, instead of the 500 error code, the client will receive a 400 Bad request
+
+INSIDE CommandCreateDto.cs
+
+using System.ComponentModel.DataAnnotations;
+
+namespace Commander.Dtos
+{
+    public class CommandCreateDto
+    {
+        [Required]
+        public string HowTo{ get; set; }
+
+        [Required]
+        public string Line { get; set; }
+
+        [Required]
+        public string Platform { get; set; }
+    }
+}
+
+
+
+
+
+25. Test the application again to see the error
+	> save all, build then run the Web Api
+	> using Postman, create a Request whose Body content is missing one of the properties that is [Required]
+
+HTTP POST request Url
+	http://localhost:5000/api/commands
+
+RESPONSE
+{
+    "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+    "title": "One or more validation errors occurred.",
+    "status": 400,
+    "traceId": "00-9d4378a00d467c42992193b2ef228c7d-09d901f7094bf740-00",
+    "errors": {
+        "Platform": [
+            "The Platform field is required."
+        ]
+    }
+}
+
+
+
+
+
+
+

@@ -1,0 +1,481 @@
+WCS V9 Architecture
+
+WebSphere Commerce features: Cross-channel
+ > seamless customer experience across multiple channels
+ > this channels includes
+   1. Web - WebSphere Commerce
+   2. Mobile - WebSphere Commerce Mobile Store
+   3. In Store POS and Kiosk - Retail Store Solutions
+   4. Call Center - Sterling Order Management
+   5. Social Media / Social Commerce
+
+
+Key benefits of WebSphere Commerce
+1. Supports all Ecommerce business models
+  > Business-to-consumer (B2C)
+  > Business-to-business (B2B)
+  > Supply and demand chains
+2. Provides powerful business user tools for
+  > Merchandising and search term associations
+  > Catalog Management
+  > Cross-channel precision marketing campaigns and promotions
+	- using Accelerator Console
+  > Site and store administration
+ 	- using Administration console
+3. Drives improved customer loyalty and increased shopping cart sizes (customer centricity)
+4. Delivers a seamless, branded shopping experience across all channels (cross channel focus)
+5. Uses the power of the underlying IBM platform for optimal performance, scalability, reliability, and high availability
+
+
+
+What is new in V9 of HCL Commerce - DEVELOPERS
+1. HCL Commerce Developer
+2. Distributed Servers
+3. Continuous Integration and Continuous Delivery (CI/CD)
+4. Externalized Customization (xC)
+5. HCL Commerce Search
+6. Enterprise JavaBeans to the Java Persistence API
+7. Db2 version 11
+8. Oracle Database 12c, Oracle Database 18c, and Oracle Database 19c
+9. Aurora Starter Store
+10. Assets Tool renamed Attachments Tool
+11. Management Center for HCL Commerce
+12. HCL Customer Service for HCL Commerce
+13. Promotions enhancements
+14. Generic External Order System Integration
+15. Payment Integration
+16. Taxation Integration
+17. Generic External Inventory System Integration
+18. Apply Pay on the Web Integration
+19. Dynamic Pricing Integration
+20. Elasticsearch-based search solution
+21. React-based store solution
+22. Cloud native
+23. Modernized business user tooling
+
+HCL Commerce Developer
+  > Create, test, and deploy an HCL Commerce site under the test environment and workspaces that are provided by Rational Application Developer (RAD) for WebSphere
+  > Build and extend HCL Commerce functionality
+	- A single toolkit is used to customized all servers
+	- HCL Commerce Developer is fully compliant with the new distributed servers included in HCL Commerce Version 9
+  > A new tool, HCL Commerce Build (WCB) tool, packages custom code developed in HCL Commerce Developer
+
+Distributed Servers
+  > HCL Commerce is modularizing into loosely coupled components
+  > In this release, the Store server and Search server are decoupled from the larger HCL Commerce server, now called the "Transaction server"
+  > This separation is along well-defined service interfaces that allow for better horizontal scaling of your e-commerce system
+  > HCL Commerce Version 9 evolves the traditional architecture into a microservices architecture with separate serves as Docker iamges
+  > In this version, the Transactions erver is separated into five major functional servers:
+    1. Transaction server
+      - Runs the transactional business logic and APIs that serve other HCL Commerce servers. The Transaction server container where all transactional operations run
+    2. Utility server
+      - A WebSphere Application Server-based server that runs application administration utilitys. Unlike the other servers, the Utility server does NOT EXIST in the development environment
+    3. Search server
+      - A WebSphere Application Server Liberty-based server that provides search engine capabilities for front end applications
+    4. Customization server	
+      - A WebSphere Application Server Liberty-based server that runs custom business logic in the form of xC extensions for supported components
+    5. Store server
+      - A WebSphere Application Server Liberty-based server that runs the storefront for all stores. It includes all custom storefront assets, such as JSP pages and widgets
+
+
+Continuous integration and Continuous Delivery (CI/CD)
+ > Using continuous integration and delivery, you can deliver features, fixes, and updates as they are developed.
+ > Individual enhancements are delivered in an ongoing manner, making adoption easier for your users
+
+
+Externalized Customization (xC)
+ > Externalized customization is a new programming pattern that introduces a separation between the core application components and your customization.
+ > By using this new pattern, HCL Commerce can delivery innovation more quickly
+
+
+HCL Commerce Search
+ > The architecture changes in HCL Commerce Version 9 means that most Search services run a dedicated Docker container, while a few functions are still done in the Transaction server
+
+
+Enterprise JavaBeans to the Java Persistence API
+ > All HCL Commerce data beans now following Java Persistence API
+ > By moving from EJB to JPA, HCL Commerce can use a lighter web container
+ > WebSphere Application Server Liberty replaces WebSphere Application Server for the Store, Search, and Customization servers
+ > The use of the Data Service Layer (DSL) is deprecated, use the JPA entities instead
+
+
+Db2 version 11
+ > In previous versions, support was provided fro the Derby database within the development environment. In HCL Commerce Version 9.0, Derby is no longer supported
+
+Oracle Database 12c, Oracle Database 18c, and Oracle Database 19c
+ > In HCL Commerce version 9.0, both the development environment and the runtime environment support Oracle Database 12c, Oracle Database 18c, and Oracle Database 19c
+
+Aurora starter store
+ > The Aurora starter store is rewritten to use JQuery. In addition to all the existing features that are supported in the Dojo version of the Aurora starter store, the jQuery version supports the following additional capabilities
+ > Store pages load a minimal number of JavaScript and CSS files, as a build script is provided that merges the code from all the files and then generates fewer files, with all its contents combines and minified. This performance strategy improves the web browser's page load time for store pages
+ > A store functionis available to control whether dynamic E-Marketing Spots are loaded either server-side with the page, or loaded after the initial page load is complete, to better support Content Delivery Network (CDN) caching
+ > Interactions in the category page are implemented using full page loads, rather than using AJAX. This strategy simplifies page coding and removes the complexity of handling the web browser's back, forward, and bookmark features
+
+Assets tool renamed Attachments tool
+ > In Version 9, business users can use Watson Content Hub or a third party file server to manage file assets. For compatibility with previous releases, a store can also serve static assets from Store server, or Transaction server. 
+ > For stores created Version 9, business users can refer to static assets on the Store server by using a relative or full URL
+
+Management Center for HCL Commerce
+ > In Version 8.0, the Management Center was updated to use Dynamic HTML (DHTML) and the open source Spring Framework
+ > This update makes it easier for developers to customize and embed custom tools in the Management Center. Its not dependent on Adobe Flash anymore
+
+HCL Customer Service for HCL Commerce
+ > HCL Commerce provides customer service enhancement with Customer Service for HCL Commerce that enable a customer service representative (CSR) to resolve common issues and capture orders
+ > These new capabilities are built into the HCL Commerce storefront and enable a CSR to perform key tasks on behalf of a guest, registered customers, and for both B2B and B2C business models
+
+Promotions enhancements
+ > The Maximum redemptions on a single order redemption limit can be applied to the Percentage off an order and Amount off an order, Order level promotions, and all Catalog entry level promotions
+
+Generic External Order system integration
+ > Integrate a distributed order management (DOM) system with your store to provide comprehensive coverage of the order lifecycle across channels, from capture to fulfillment
+
+Externalized Customization (xC)
+ > Externalized customization is a new programming pattern that introduces a separation between the core application components and your customizations. By using this new pattern HCL Commerce can deliver innovation more quickly
+
+Payment integration
+ > You can integrate HCL Commerce with a payment service provider through payment tokenization
+ > With payment tokenization, the shopper enters payment information through HCL Commerce, and HCL Commerce calls the payment service provider to replace sensitive payment information such as credit card number with a surrogate value (token)
+ > In this model, HCL Commerce only saves the token for payment processing, and non-sensitive data such as masked credit card number for display purposes.
+
+Taxation integration
+ > You can integrate HCL Commerce with a third party tax calculation system to provide tax calculations for your store.
+ > Integrating with a third-party tax service provider can help you to build and maintain a highly secure e-commerce site with a worldwide tax calculation process
+
+Generic External Inventory system integration
+ > Integrate an inventory management system with your store to ensure that inventory availability is constantly updated to reflect your store's current inventory levels.
+
+Apple Pay on the Web Integration
+ > Originally introduced in IBM WebSphere Commerce Version 8, Apple Pay on the Web integration with HCL Commerce provides you with an easy and secure way to accept and process payments.
+ > Apply Pay on the Web enables customers to purchase products in the Aurora starter store with a single touch in Safari on Mac, iPhone, and iPad
+
+Dynamic Pricing Integration
+ > This integration was originally introduced in IBM WebSphere Commerce Version 8. You can integrate Dynamic Pricing, a cloud-based pricing system, with HCL Commerce, so merchandisers can quickly analyze and react to pricing changes in the market
+
+Elasticsearch-based search solution
+ > Version 9.1 features a new search solution with cutting edge features such as Natural Language Processing (NLP) and partial-word features, while still maintaining compatibility with the Solr-based search solution used in previous WebSphere Commerce releases
+
+React-based store solution
+ > Version 9.1 features two new reference stores for B2B and B2C usages
+ > These reference stores leverage the React framework, the Elasticsearch-based search solution, and all of the architectural improvements present in modern HCL Commerce releases
+
+Cloud native
+ > Version 9.1 iterates on the containerized cloud native architecture of Version 9, and supports deployment on Kubernetes.
+ > You can also use HCL Software Factory to design and preview your software solution before generating a simple Helm Chart to use in your own deployment
+
+Modernized business user tooling
+ > Version 9.1 eliminates legacy business user tooling. Version 9.1 also streamlines access to, and improves the quality of life functionality within their replacements
+
+
+
+Functional Architecture
+ > Functional architecture provides both the set of patterns used to implement the business functionality and the frameworks in which business functions are executed:
+ > The areas of business functionality of HCL Commerce include:
+	- Catalog
+	- Merchandising	
+	- Marketing
+	- Promotions
+	- Trading
+	- User Management
+	- Order Management
+ > The frameworks in HCL Commerce are:
+	- Calculation framework
+	- Reporting framework
+	- Tools framework
+	- Business policy framework
+	- MVC	
+	- Command framework
+	- Runtime framework
+
+
+Commerce Common Architecture
+ > consist of the following components and subcomponents
+  1. Web Server
+    - host the 
+    - IBM HTTP server
+  2. WebSphere Liberty server
+    - HCL Commerce search server
+    - HCL Commerce store server
+    - HCL Commerce customization server
+  3. Database Server
+    - Database server
+  4. WebSphere Application server
+    - HCL Commerce transaction server
+  5. HCL Commerce Developer 
+    - Rational application developer
+    - Development database
+
+Web server
+ > first point of contact for incoming HTTP request for your e-commerce applciation
+ > In order to interface efficiently with the WebSphere Application Server, it uses the WebSphere Application Server plug-in to manage the connections between the two components
+
+WebSphere Application Server
+ > runs the Transaction server, which allows it to take advantage of many of the features of the application server
+ > In general, extensions to the application are made by modifying or extending the code for the Transactions erver
+
+Database Server
+ > holds most of your application's data, including product and customer data
+ > In addition, we may have a need to store data that falls outside of the realm of the HCL Commerce database schema within the Database
+
+HCL Commerce Developer
+ > includes the Rational Application Developer (RAD) and a Developer Database
+ > there can only be one to one mapping between the HCL Commerce instance and HCL Commerce Development database
+ > Rational Application Developer is used to perform the following tasks:
+	- Create and customize storefront assets such as JSP and HTML pages
+	- Create and modify business logic in Java
+	- Create and modify JPA entities
+	- Test code and storefront assets	
+	- Create and modify Web services
+
+WebSphere Liberty server
+ > contains servers for services that are decoupled from the Transaction server like Search, Store, and Customization server
+
+
+
+Commerce Common Architecture - Layers
+ > composed of several layers
+   - Presentation layer
+   - Control layer
+   - Business logic layer
+   - Persistence layer
+ > Presentation layer 
+   - displays the data to the customer
+   - using JSP pages, HTML JSTL Struts tags, and Spring. 
+   - ex: 
+	- HCL Commerce Accelerator (JSP pages, HTML, JSTL Struts), 
+	- Storefront, and Management Center (Spring)
+ > Control layer 
+   - receives the request from the Presentation layer
+   - uses Struts servlet and SDO tag library
+   - ex: HCL Commerce Accelerator and Storefront, Management Center web application
+ > Business Logic layer
+   - handles the logic side of application like data processing, data access/storage
+   - example of this is HCL Commerce services, which uses both Name-value apir processing commands and BOD processing commands
+ > Persistence layer
+   - responsible for persisting the data in the database
+   - can be done either using
+	a. Access beans and JPA
+	b. Data service layer with Physical object persistence service
+   - both method takes to the database to do data storage/access
+
+
+
+
+HCL Commerce runtime framework enhancements
+ > the runtime framework enhancements better enable support for multiple sales channels by further decoupling the presentation tier from the business logic tier
+ > consist of the 
+
+
+
+Architecture continued...
+ > looking at the HCL Commerce runtime framework enhancements.gif file inside images, we can see that HCL Commerce better enable support for multiple sales channel by decoupling the presentation tier from the business logic tier. 
+ > A sales channel is a method that a customer can use to purchase merchandise for example, in-store, from an online store, or from a call center. Requests can enter the Transaction server from different types of clients such as a rich client, kiosk or as a browser request.
+ 
+ 
+HCL Commerce runtime framework enhancements
+Web services
+	> A webservice is a series of open protocols and standards that are sued in communication between two system
+	> In HCL Commerce, web services perform functions that range from simple requests to complicated business processes. After a web service is registered, other applications can discover it
+	> In this release, the HCL Commerce web services framework has the following capabilities	
+		- Uses the WebSphere web service runtime infrastrusture and Rational tools
+		- Promotes the user of industry-standard service definitions
+		- Allows top-down and bottom-up creation of web services
+		- Uses the JSP page composition service to generate the web service response, allowing dynamic caching to e optimized (for either full page or fragment caching)
+	> The web services framework uses the existing command pattern to represent the business logic. The framework allows for the existing URL-based controller comamnds to also be used by the web services channel
+	> You can allow HCL Commerce to be the service provider by enabling its business functions as web services that can be accessed by external systems. You can also allow HCL Commerce to be the service requester by enabling it to start web services that are hosted by the external systems
+		- This refers to the ability of HCL Commerce for external integration
+		
+Business Context service
+	> In previous versions of HCL Commerce, runtime infrastructure was designed to service customers from the web channel. As HCL Commerce moves towards a service-oriented architecture (SOA) based infrastructure that exposes our business functions to new channels, a new infrastructure provides contextual information to business logic independent of channel. Business Context Service solves these problems by providing the following capabilities	
+		- Track user session information from different channels by using different types of business contexts
+		- Provides a pluggable interface where custom context information can be defined
+		- Extend HCL Commerce out session attributes with custom information
+		
+Optimistic Locking
+	> Optimistic locking allows the isolation level in database transactions to be lowered from "repeatable read" to "read committed". 
+	> In an optmistic locking shceme, database rows that are not normally accessed concurrently are not locked with an intent to update when they are read. Instead, when the update is eventually made, the row is checked to make sure that it was not updated concurrently since it was read. If it was updated concurrently, then the transaction is ROLLED BACK and the command can be restarted from the beginning in a new transaction
+	> In such a scheme, performance is improved when concurrent updates do not normally occur, because the relatively expensive process of obtaining the database locks with intent to update is avoided.
+	> For those operations where concurrent updates are more likely to occur, then pessimistic locking, whereby intent to update locks are obtained when the row is read, continues to be used. Pessimistic locking avoids the more expensive process of rolling back and restarting from the beginning in a new transaction
+	
+	
+Application Layers
+	> this incldues
+		1. Business models
+		2. Business processes
+		3. Presentation layer
+		4. Service layer
+		5. Business logic
+		6. Persistence layer
+		7. Database schema
+		
+Business models 
+	> Represents a sample business situation in which the WebSphere Commerce product may be used
+	> The business model provided are:
+		- B2B direct
+		- B2C
+	> Within each business model, HCL Comemrces provides tarter stores, which might be used as a starting point to develop online sites. You can create other business models to suit your business needs
+	
+Business processes
+	> Processes available is divided by business model. The business processes are divided into three areas
+		1. Administrative processes
+		2. Starter stores
+		3. Solution
+	> Administrative processes 
+		- processes that are used to administrer a site, a store, or an organization. Administrative processes are described generically. 
+		- These processes are generally used as-is. That is, a change to or an addition of an additional administrative process usually entails customizing HCL Commerce
+	> Starter stores
+		- Starter stores contain sample processes that would be followed by customers of the store
+		- Many different kinds of stores, satisfying a wide range of business needs can be created with HCL Commerce. Use the processes that are described in starter stores as a guideline, or a starting point, for site development. 
+		- Changing or adding a process to a starter store process requires changes to the site design
+		- Frequently, this type of change does not require customizing the underlying infrastructure
+	> Solution
+		- A solution describes the high-level view of how all the administrative processes and starter store processes fit under the overall business model
+		- A solution combines processes into a coherent picture which explains the relationship between the various process groups
+		
+Presentation layer
+	> The presentation layer is responsible for displaying results
+	> By default, there are two supported types of presentation layerrs supported: Web and Rich client
+	> For the Web presentation layer, the display is rendered using JSP files
+	> For the rich client, the presentation is rendered with Eclipse views and editors implemented using SWT Components
+
+Service layers
+	> The service layer, implemented using OAGIS (Open Application Group Integration Specification) messages, is a channel-independent mechanism that can access HCL Comemrce business logic.
+	> The service layer segregates the implementation of business logic such as order and catalog
+	> This segregation permits the underlying implementation to change without requiring that the caller changes
+	> All clients, including Web clients and back-end services, go through the service layer to run business logic. 
+	> The service layer supports two transport mechanism:
+		- local Java binding
+		- Web services
+		
+Business logic
+	> The business logic layer is where business rules are implemented independent of the presentation layer
+	> Business logic is implemented using the command pattern
+	> Two types of commands are implemented:
+		1. Controller commands
+			- Accessible by the presentation layer and used as a coordinator of tasks
+		2. Task commands
+			- Not accessible by the presentation layer but called from the controller commands
+			- This commands type is used to implement business rules
+	
+Persistence layer
+	> The persistence layer records the data and operations of the HCL Commerce system. The persistencen layer represents entities within the commerce domain and encapsulate the data-centric logic that is required to extract or intepret information that is contained within the database. These entities comply with the Enterprise JavaBeans specification
+	> These entity beans act as an interface between the business components and the datbase. In addition, the entity beans are easier to comprehend than complex relationships between columns in database tables
+	
+Database schema
+	> HCL Comemrce database schema, which includes over 600 tables, is designed specifically for e-commerce applications and their data requirements.
+	> The database schema support persistence requirements for the HCL Commerce subsystems (Order, Catalog, Member, Marketing, Trading)
+	> HCL Commerce supports OneDB (only in development environment), and both DB2 and Oracle relational database
+	
+	
+
+WebSphere Commerce functional Overview
+	> composed of the three main components	
+		1. JSP pages
+		2. WebSphere Commerce EJB container
+		3. WebSphereh Commerce database
+	> JSP page
+		- consist of Data bean and SDO tag library
+		- receives the request and interacts with WebSphere Commerce EJB Container
+	> WebSphere Commerce EJB Container	
+		- process the request from JSP page
+		- can be processes using Name-Value pair command (Controller and Task) or BOD processing Commands
+		- both of the methods will interact with the database
+		
+WebSphere Commerce functional overview - Layers
+Controller layer
+	> The conductor of operations for a request
+	> It controls the transaction scope and manages the session related information for the request
+	> The controller first dispatches to a commands and then calls the appropriate view processing logic to render the response
+Presentation layer
+	> Displays the result of commands execution
+	> Layer can use JSP pages, or other rendering technologies
+Business Context Service (BCS)
+	> Service that manages contextual information used by business components
+	> The contexts includes such information as globalization (ex: language, currency, date formats), and entitlement (ex: type of user)
+Business logic facade
+	> Generic interface is implemented as a stateless session bean which the controller calls to invoke controller commands	
+Entity beans
+	> Used in the persistence layer within WebSphere Commerce
+	> Architecture is implemented according to the EJB component architecture
+	> The EJB architecture defined two types of enterprise beans:
+		- Entity beans	
+		- Session beans
+		
+		
+HCL Commerce framework Overview diagram
+	> consist of the following main components and sub components
+		1. Servlet engine	
+			- Threads
+		2. Presentation controller
+			- Adapter manager
+			- Adapter framework
+				-> Browser adapter
+				-> PVC adapter 
+				-> Program adapter
+			- HCL Commerce Struts Controller
+		3. Business lgoic facade
+		4. HCL Commerce command model layer
+		5. Persistence layer
+		
+Servlet engine
+	> The servlet engine is the part of the WebSphere Application Server runtime environment that acts as a request dispatcher for inbound URL requests. The servlet engine is only used for Web applications
+	> The servlet engine manages a pool of threads to handle requests. Each request is executed on a separate thread. HCL Commerce commands can be invoked from various devices
+	> A protocol listener is a runtime component that receives inbound requests from transports and then dispatches the requests to the appropriate adapters, which are based on the protocol used. The protocol listener includes a Request servlet
+	
+	
+Presentation layer components
+Controller
+	> The controller plays a role in enforcing the programming model for the comemrce application. 
+	> For example, the programming model defined the types of commands that an application can write. Each type of command serves a specific purpose
+	> Business logic must be implemented in controller commands. The controller expects the controller command to return a view name
+Adapter Framework
+	> consist of the following adapters
+		1. HTTP browser adapter
+			- proves support for request to invoke HCL Commerce commands that are received from HTTP browsers
+		2. HTTP PvC adapter
+			- This is an abstract adapter class that can be used to develop specific PvC device adapters
+			- For example, if you needed to develop an adapter for a particular cellular phone application, you would extend from this adapter
+		3. HTTP Program adapter
+			- The program adapter provides support for remote programs that invoke HCL Commerce commands. The program adapter receives request and uses a message mapper to convert the request into a CommandPropperty object. After the conversion, the program adapter uses the CommandProperty object and executes the request
+Data bean manager and data beans
+	> HCL Commerce data beans that are inserted into JSP pages allows for the inclusion of dynamic content in the page. The recommended way of activating the data beans within a JSP page is by using the HCL Commerce "useBean" tag
+	> Alternatively, the database manager can be used. Access control is enforced by invoking data beans by using the data bean manager
+	> "com.ibm.commerce.bean.DataBeanManager.activate(data_bean, request, response)"
+		- where data_bean is the data bean to be activated, request is an HTTPServletRequest object, and response is an HTTPServletResponse object
+Display pages
+	> JSP pages are specialized servlets that are typically used for display purposes. Upon completion of a URL request, the Web controller invokes a view command that invokes JSP page. 
+	> A client can also invoke a JSP page directly from the browser without an associated command. In this case, the URL for the JSP page must include the request servlet in its path so that all of the data beans that are required by a JSP page can be activated within a single transaction. The request servlet can forward a URL request to a JSP page and execute the JSP page within a single transaction
+	> The data bean manager rejects any URL for a JSP page that does not include the request servlet in its path
+
+
+HCL Commerce command model layer
+	> HCL Commerce commands are beans that contain the programming logic that is associated with handling a particualr request. The main commands types are controller commands, and task commands
+	
+Persistence layer
+	> Entity beans are the persistence, transactional commerce objects that are provided by the HCL Commerce. If you are familiar with the commerce domain, entity beans represent HCL Commerce data in an intuitive way. That is, rather than having to understand the whole the database schema, you can access data from an entity bean which more closely models concepts and objects in commerce domain
+
+
+HCL Commerce framework interactions
+	> Web Container consist of the following components
+		- Threads, located in the Servlets receiving request
+		- HCL Commerce Servlet filter
+			-> uses Adapter framework for different channels
+		- Dynacache servlet container
+		- HCL Commerce Strusts Framework
+			-> Action Servlet
+			-> Request processor
+			-> Action
+			-> Struts configuration files
+			-> Action mapping
+			-> Action forward
+		- Business logic facade
+		- HCL Commerce command model layer
+		- Persistence layer
+		- Database
+		
+
+HCL Commerce framework layers
+1. Web layer
+2. Store layer
+3. Commerce and Search layers
+4. xC layer
+5. Persistence layer

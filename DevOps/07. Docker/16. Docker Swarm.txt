@@ -1,0 +1,146 @@
+16. Docker Swarm
+
+
+TERMS TO REMEMBER IN CLUSTER
+1. Redundancy
+	> Redundancy is the duplication of critical components or functions of a system with the intention of increasing reliability of the system, usually in the form of a backup or fail-safe, or to improve actual system performance, such as in the case of GNSS receivers, or multi-threaded computer processing.
+
+2. High Availability
+	> having high availability of components
+	> having backup in case of components being down
+
+3. Load Balancing
+	> distribution of load on the Cluster
+
+
+
+
+Cluster
+	> collection of computers/node that are connected to each other (in common network)
+	> Nodes can be VM, Physical server, etc
+	> In a Cluster, there are two types of Nodes
+		1. Master node (MANDATORY)
+		2. Worker node
+	> in a cluster, there must be ONE Master server (a node itself)
+	> Master server has COMPLETE cluster information which includes
+		- how many nodes in a cluster
+		- information of each nodes (ram, memory, workload, cpu, etc)
+		- availability of nodes 
+	> Master server stores these cluster information in either Database (MySQL) or a File database
+	> Containers inside a Worker node is NOT INCLUDED in the Cluster Master Node manages
+	> Single system (VM or Physical server) can be a cluster as long as theres a Master Node inside it
+
+
+
+
+CONTAINER ORCHESTRATION
+	> management of Containter which are created by Docker Swarm Service
+	> Cluster solution
+
+
+
+
+Docker Swarm
+	> A Docker Swarm is a group of either physical or virtual machine that are running the Docker application and that has been configured to join together in a cluster
+	> Docker Swarm is a container orchestration tool, meaning that it allows the user to manage multiple containers deployed across multiple host machines (nodes)
+	> introduced in Docker Engine 1.12
+	> in Docker Swarm Service, we can define the DESIRED state of the Containers in Cluster
+	> these states include
+		- Whether a Container should be UP
+		- Whether a specific number of replica of Container is running
+			= process of Cluster making copies of Worker node is called REPLICATION
+
+
+
+Types of Nodes in Docker Swarm
+	> NOTE: A Docker Swarm must have at least one Manager Node, and we cant have Worker node without at least one Manager Node.
+1. Manager Nodes
+2. Worker Nodes
+
+
+1. Manager Nodes
+	> handle cluster management tasks like:
+		- maintaining cluster state
+		- scheduling services
+		- serving swarm mode HTTP API endpoints
+	> uses Raft implementation for managers to maintain a consistent internal state of the enire swarm and all the services running on it
+	> for testing purpose, it is ok to run a swarm with a single manager
+		- but if the manager fails, your services still continue to run, but you need to create a NEW CLUSTER to recover
+	> When you have multiple managers, you can recover from the failure of a manager node WITHOUT DOWNTIME
+	> Docker recommneds you implement an ODD NUMBER of manager nodes according to your organization, at maximum of 7 (3,5,7)
+		- adding more managers DOES NOT mean increased scalabitiy or higher
+
+Fault Tolerance of Docker Swarm
+	> An N manager cluster tolerates the the loss of at most (N-1)/2 managers
+	> EX: A three-manager swarm tolerates a maximum loss of one manager.
+		(3-1)/2 = 1
+	> Ex: A five-manager swarm tolerates a maximum simultaneous loss of two manager nodes.
+		(5-1)/2 = 2
+
+
+
+2. Worker Nodes
+	> instances of Docker Engine whose sole purpose is to EXECUTE CONTAINERS
+	> Worker nodes dont participate in the Raft distributed state, make scheduling decisions, or serve the swarm mode HTTP API
+	> We cant create Worker node without at least having one Manager Node in Cluster
+	> By default, all Manager Node are also Worker Node
+		- this means they can also run Containers inside them
+		- to prevent this, set the availability of Manager Node to Drain using "docker node update" command
+
+
+
+
+Docker Swarm Security with Public Key Infrastructure (PKI)
+	> the Swarm mode Public Key Infrastructure (PKI) system built into Docker makes it simple to securely deploy a container orchestration system
+	> the Nodes in a Swarm use mutual Transport Layer Security (TLS) to authenticate, authorize, and encrypt the communications with other nodes in the swarm
+
+	1. When we create a swarm (using "docker swarm init"), Docker designate itself as a Manager Node
+		- with this, Manager node generate a new root Certicate Authority (CA) along with a key pair
+		- we can use this to secure communications with other nodes that join the swarm
+		- we can also specify our own externally-generated root CA, using "--external-ca" flag of the "docker swarm init" command
+	2. The Manager node also generates TWO tokens to use when you join additional nodes to the swarm
+		- one Worker Token for joining node as Worker
+		- one Manager Token for joining node as Manager
+		- each token includes the digest of the root CA's certificate and a randomly generated secret
+	3. When a node joins the swarm, the joining node uses the digest to validate the root CA certificate from the remote manager
+		- the remote manager uses the secret to ensure the joining node is an approved node
+	4. Each time a new node joinds the swarm, the manager issues a certificate to the node
+		- the cerficate contains a randomly generated node ID to identify the node under the certificate common name (CN) and the role under the organizational unit (OU)
+		- the node ID servers a the cryptographically secure node identity for the lifetime of the node in the current swarm
+
+
+
+
+COMMANDS RELATED TO DOCKER SWARM
+
+docker swarm init
+	> used to initialize a Docker Swarm
+	> this will also create a string with "docker swarm join" plus the token that can be used by other Nodes to join the Swarm
+		- ex: docker swarm join --token SWMTKN-1-5kfynaeu9tkfslv6i5y3y0vtpow0dcgda0manoh4zny23aql3t-
+	> node that initializes the Swarm is a Manager Node by default	
+	> "--external-ca" flag is used to provide external Certificate Authority
+	
+docker swarm leave
+	> used to make the Node leave the Swarm
+
+docker node ls
+	> used to see list of Nodes in the Swarm
+
+docker node rm <HOSTNAME OR ID>
+	> available only for Manager Nodes
+	> used to remove a Node in Swarm 
+
+docker swarm join-token manager
+docker swarm join-token worker
+	> available only for Manager Nodes
+	> used to create/fetch a Join Token for external node to use to join the Swarm as either Manager or Worker node
+
+docker node promote <HOSTNAME OR ID>
+	> used to promote a Worker Node into Manager node
+	> we can promote more than one Worker node in a single command
+		- they should be separated by space
+
+docker node demote <HOSTNAME OR ID>
+	> used to demote a Worker Node into Manager node
+	> we can demote more than one Worker node in a single command
+		- they should be separated by space

@@ -1,0 +1,236 @@
+Section 6: GIT Branches
+
+45. Git branches
+
+Branch
+ > Git branch is where we commit our changes
+ > By default, the branch of our first commit is in the 'master' branch
+ > We can see branches as a different version of the code base, where it points to the last commit of the source branch it used
+ > Typically when a new developer needs to work on the code base, they will create a new 'branch' of the code base (ex: feature branch like feature/sign-up), separate from other branches (ex: production branch)
+	- they will only work on that branch, which allows them to make changes without disrupting others
+	- after some time, they can 'merge' their changes in that branch back to the source branch
+
+Scenarios where branching is used
+1. Adding new feature
+	> typically for a new feature to be added in the system, they will first need to be developed, then tested
+	> for these, we typically dedicate a branch for these features in order for them to be developed and tested in isolation
+2. Deploying bugfix or hotfix
+
+
+HEAD
+ > refers to the latest commit on the current branch
+ > changing branches may change the HEAD as well
+
+
+Commands
+git branch
+ > list all the branches available in the local git repo, and the current branch we are in
+ > the current branch typically have the star icon besides them
+ 
+git branch BRANCH_NAME
+ > create a new branch using the specified name
+ > the current branch before using the command will be the source branch
+ > ex:
+	$ git branch sarah
+	
+git checkout BRANCH_NAME
+ > used to switch to the branch with specified name
+ > will throw error if the said branch does not exist
+ > ex:
+	$ git checkout sarah
+ 
+git checkout -b BRANCH_NAME
+ > used to create a new branch using the specified name, then immediately checkout/switch to that branch
+ > the current branch will be the source branch of this new branch
+ > ex:
+	$ git checkout -b max
+	
+git branch -d BRANCH_NAME
+ > used to delete a branch with specified name
+ > ex:
+	$ git branch -d max
+
+
+
+
+
+46. Lab: Branches - checkout, push branches
+
+Q1: What is a branch in git?
+A: pointer to a specific commit in git
+
+Q2: What is the default branch of a git repository?
+A: master
+
+Q3: Sarah has been working on a git repo at /home/sarah/story-blog and has written a short story. Check git log command output in that directory to see the activity.
+What's the name of the file created by Sarah?
+S:
+1. Go to git directory
+	$ cd /home/sarah/story-blog
+2. Check the file of sarah's last commit
+	$ git log --name-only
+	
+Q4: To which branch is the 🦁 lion-and-mouse.txt 🐭 file committed to in the git repository?
+S: Use 'git log --name-only' and get the branch where lion-and-mouse.txt is committed
+
+Q5: Sarah decides to write a new story - 🐸 The Frogs and Ox 🐂. Let's create and checkout a new branch named story/frogs-and-ox
+S:
+1. Create new branch
+	$ git checkout -b story/frogs-and-ox
+	
+Q6: View the output of the git log command and identify the branch to which HEAD is pointing to now.
+S: Execute 'git log' and find the first branch where the HEAD is pointing
+
+Q7: As you can see the HEAD always points to the last commit on the currently checked-out branch.
+
+Q8: Sarah is half way through the 🐸 Frogs and Ox 🐂 story. It's not complete yet.
+View the story she has written in the file frogs-and-ox.txt
+S: 
+1. Check if the file is tracked by git
+	$ git status
+2. Print the frogs-and-ox.txt
+	$ cat frogs-and-ox.txt
+	
+Q9: Max informs Sarah that in her first story there's a typo in the title and needs to be fixed ASAP!
+We must go back and fix the story in the master branch. But before we do that, let's commit the new story we have written so far. We don't want to carry our incomplete story to the master branch.
+Stage and commit the story with the message Add incomplete frogs-and-ox story
+S:
+1. Commit the changes first of frogs-and-ox.txt in story/frogs-and-ox branch
+	$ git checkout -b story/frogs-and-ox
+	$ git add frogs-and-ox.txt
+	$ git commit -m "Add incomplete frogs-and-ox story"
+	
+Q10: Now checkout the master branch.
+S: Use 'git checkout' and pass 'master' as the branch name input
+
+Q11: Let's fix the typo in the lion-and-mouse.txt file. LION 🦁 is mis-spelt as LIOON. Please fix it and then commit the changes.
+Commit message: Fix typo in story title
+S:
+1. Check git status
+	$ git status
+2. Check files
+	$ ls
+3. Open lion-and-mouse.txt and fix the typo
+	$ vi lion-and-mouse.txt
+4. Add the file to staging area and commit the changes
+	$ git add lion-and-mouse.txt
+	$ git commit -m "Fix typo in story title"
+	
+Q12: Great! Now that it's out of the way, let's finish the 🐸 frogs-and-ox 🐂 story. Switch back to the story/frogs-and-ox branch.
+S: Use 'git checkout' and pass 'story/frogs-and-ox' as branch name destination
+
+Q13: Sarah has now finished her story. Check the changes and commit them with the message Completed frogs-and-ox story
+S: 
+1. Check git status
+	$ git status
+2. Add changes in staging area and commit the changes
+	$ git add frogs-and-ox.txt
+	$ git commit -m "Completed frogs-and-ox story"
+	
+Q14: A new git repository is created at the path /home/sarah/website for hosting the story website.
+Count the number of branches available in that repository including the master branch.
+S:
+1. Go to the directory
+	$ cd /home/sarah/website
+2. Print the git branches
+	$ git branch
+	
+Q15: Looking at the commit history, try to guess what branch was the feature/signout branch created from?
+Checkout branch feature/signout and then use the command git log --graph --decorate to see previous commit history along with the branch they were committed on.
+S:
+1. Switch to feature/signout
+	$ git checkout feature/signout
+2. Print the commits done in the branch
+	$ git log --graph --decorate
+3. Determine which branch the pointer of the feature/signout is from
+
+Q16: Here's a fun one! Looking at the commit history of all branches, what's the best graphical representation of the branches in this repository?
+Checkout each branch and then use the command git log --graph --decorate to see previous branch.
+S: Switch to different branch using 'git checkout', then use the 'git log' command specified above
+1. For feature/cart, the branch is created from master
+2. For feature/checked-out, the branch is created from feature/cart
+3. For feature/signout. the branch is created from feature/sign-up
+4. For feature/sign-up, the branch is created from master
+	
+	
+	
+
+47. GIT Merging branches
+
+Merging branches
+ > after a develop is done working with their changes in other branch, e.g. feature branch, this branch will then be 'combined' back to the source branch, e.g. release branch, adding the changes made from one branch to another
+ > we call this process 'merge', where we merge the changes of one branch to another
+ 
+Types of merges
+ > there are two types of merges that git can perform
+	- fast forward merge
+	- no fast forward merge
+ > fast-forward merge can happen when the current branch has NO EXTRA COMMITS compared to the branch that we are merging
+	- this means that the HEAD of the source branch is the same to the pointer commit the branched to be merged
+	- this is the first solution that GIT will employ when merging branches
+	- this type of merge doesn't create a new commit, but rather merges the commits on the branch that we're merging right into the current branch
+	- rarely the case, especially if we are working with multiple people or teams
+ > no-fast-forward merge happens when the current branch have EXTRA COMMITS compared to the branch that we are merging
+	- in this case, GIT will create a new merging commit on the active branch
+	- both of the branches (the current branch and the merging branch) will both point to this merging commit
+	- in case of merge conflicts (where changes in the merging branch conflicts with changes in current branch), GIT will edit the conflicting files, where changes from both branches will be present
+	- user will need to resolve these conflicting branch, then the commit after this will be the merge commit
+ 
+ 
+Commands
+git merge BRANCH_NAME
+ > used to merge the changes made in the branch name specified to the current branch we are in
+
+
+
+
+
+48. Lab: Merging branch
+
+Q1: Let's proceed with where we left off in the previous lab. Sarah's local repository should be available at /home/sarah/story-blog
+How many stories are currently available in the master branch?
+S: 
+0. Go to the local git repo
+	$ cd /home/sarah/story-blog
+1. Switch to master branch
+	$ git checkout master
+2. Check the story files 
+	$ ls
+	
+Q2: What's the name of the story in the master branch?
+S: Check name of the file using 'ls' command
+
+Q3: How many branches does the repository currently have?
+S: Use 'git branch' to check number of branches
+
+Q4: The new story Sarah wrote is in the story/frogs-and-ox branch. It's time to merge the branch and bring it to the master branch.
+But before that look at the log of the master and story/frogs-and-ox branches and identify how many commits there have been in the past on each branch.
+S: 
+0. Switch to branch 'master' and check the number of commits
+	$ git checkout master
+	$ git log
+1. Switch to branch 'story/frogs-and-ox' and check the number of commits
+	$ git checkout story/frogs-and-ox
+	$ git log
+
+Q5: Correct! First sarah committed the 🦁 Lion and Mouse 🐭 story in the master branch and then created a new branch for the 🐸 Frogs and ox 🐂 story, then went back and fixed typo in the 🦁 Lion and Mouse 🐭 story and then went back and finished the 🐸 Frogs and ox 🐂 story.
+Next we will merge the new story into the master to have all stories in the master branch.
+
+Q6: Correct! First sarah committed the 🦁 Lion and Mouse 🐭 story in the master branch and then created a new branch for the 🐸 Frogs and ox 🐂 story, then went back and fixed typo in the 🦁 Lion and Mouse 🐭 story and then went back and finished the 🐸 Frogs and ox 🐂 story.
+Next we will merge the new story into the master to have all stories in the master branch.
+S: 
+1. Switch to master branch
+	$ git checkout master
+2. Merge the branch 'story/frogs-and-ox' to 'master'
+	$ git merge 'story/frogs-and-ox'
+	
+Q7: Check the log of the master branch and see how many commits are seen now
+S:
+1. Switch to master branch
+	$ git checkout master
+2. Check the number of logs
+	$ git logs
+	
+Q8: Git merged all the commits we made in the story/frogs-and-ox branch to the master branch. But since we made an additional commit on the master (fixing the typo from LIOON to LION) git created a new merge commit
+
+Q9: List the files in the master branch and make sure both the stories are visible.

@@ -1,0 +1,29 @@
+14. HTML Element Properties and Functions
+
+Element functions and properties
+textContent
+	> returns the text content of all element the property is called
+	> we can use this to change the text content of an element by assigning a new value
+		- ex: ul.firstElementChild.textContent = "Hello";
+
+innerText
+	> returns the text content of all element (except <script> and <style>) the property is called
+	> will not return the text of element that is HIDDEN with CSS
+	> we can use this to change the text of element by assigning new value
+		- ex: ul.children[1].innerText = "Brad";
+
+innerHTML
+	> similar to innerText and textContent, BUT we can pass html as well
+	> used to add an html element inside which will be rendered as well
+		- ex: ul.lastElementChild.innerHTML = "<h1>Hello</h1>";
+
+style.<CSS Prop>
+	> used to add/modify style of an element
+	> to add/modify a CSS property of an element, assign a value to the said CSS prop	
+		- ex: 	const btn = document.querySelector(".btn");
+			btn.style.background = "red";
+
+classList
+	> used to show the classes present in the element
+	> we can add class in the element using this by calling the add()
+		- ex: document.querySelector("body").classList.add("bg-dark");

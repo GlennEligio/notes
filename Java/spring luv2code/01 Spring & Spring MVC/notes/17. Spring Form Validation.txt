@@ -1,0 +1,321 @@
+Spring MVC Form Validation
+
+Why Validation?
+
+Check the user input form for
+1. Required fields
+2. Validate numbers in a range
+3. Validate with regular expressions
+3. Valid format (ex: postal code)
+4. Custom business rule
+
+
+Java's Standard Bean Validation API
+	> Java has a standard Bean Validation API	
+	> Defines a metadata model and API for entity validation
+	> Not tied to either the web tier or the persistence tier
+	> Available for server-side apps and also client-side JavaFX/Swing apps
+
+
+Spring and Validation support
+	> Spring version 4 and higher SUPPORTS Bean Validation API
+	> Perferred method of validation when building Spring apps
+	> Simple add Validation JARs to our projects
+	
+
+Validation Annotations
+	> all of these annotations have message="" parameter to send error message in case of validation error
+
+@NotNull
+	> Checks that the annotated value is not null
+	> for NotNull to work, the field the annotation is attached to must be NULLABLE
+	> this means we cant use primitive data type, only its WRAPPER CLASS equivalent
+		- ex: Integer instead of int
+@Max
+	> must be a number >= value
+	> have a value="" parameter to 
+		- specify the max value of input
+@Min
+	> must be a number <= value
+	> have a value="" parameter to 
+		- specify the min value of input
+@Size
+	> size must match the given size
+	> have a min="" and max="" parameters to 
+		- specify the input's max and min length size
+@Pattern 
+	> must match a regular expression (regex) pattern
+	> have regexp="" parameter
+		- specify the allowed input pattern that can be passed
+@Future / @Past
+	> date must be in future or past of given date
+
+
+
+Java's Standard Bean Validation API (JSR-303)
+	> only a specification
+	> vendor independent	
+	> portable
+	> still need an implementation
+
+
+Hibernate Validator
+	> made by Hibernate Team
+	> fully compliant to the JSR-303 specifications
+
+
+What Version of Hibernate Validator to use
+If Spring 5	-> Hibernate Validator 6.x
+If Jakarta EE 9	-> Hibernate Validator 7.x
+
+Hibernate Validator 6.2 has the SAME features as Hibernate Validator 7
+
+
+Hibernate Validator Maven Dependency
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.2.0.Final</version>
+		</dependency>
+
+
+
+
+Steps on adding Form Validation
+
+Step 1: ADDING VALIDATION ANNOTATION TO MODEL CLASS
+1. Add Validation Annotation to a field of Model Class
+	> define the message parameter of the Annotation
+		- we can pass this message to the Spring Form in JSP
+
+EX:
+	@NotBlank(message = "Username cant be blank")
+	public String userName;
+
+
+Step 2: DISPLAYING ERROR MESSAGE
+2. In the Spring MVC Form, add a <form:errors> inside the <form:form>
+	> add a path="" parameter to <form:errors> and pass the fieldName that you want to validate
+	> if the said fieldName didnt pass the validation when we are submitting the form, the message parameter of Validation Annotation will show
+	> ex: in example above, if we pass blank in the <form:input> whose path="userName", the <form:errors> with path:"userName" will show the "Username cant be blank" to the place we put it in
+	
+
+EX:
+
+<form:form action="processForm" modelAttribute="usr">
+Username: <form:input path="userName" />
+<form:errors path="userName"/>
+<br>
+Password: <form:input path="password" />
+<br>
+<input type="submit" value="Submit"/>
+</form:form>
+
+
+
+
+STEP 3: PERFORM VALIDATION IN CONTROLLER CLASS
+3. In one of @Controller class method, do the following
+	> Add @Valid to the parameter with @ModelAttribute
+		- this will check if the model attribute that we receive pass the validations that we defined earlier
+		- if theres validation errors that we got, those errors will be stored in the BindingResult parameter
+	> Add BindingResult parameter NEXT to the @ModelAttribute that we want to validate
+		- all of the validation errors will be stored here
+		- we can then use this BindingResult parameter to do stuff like redirect user to specific pages if theres a validation errors in it
+
+
+BindingResult
+	> stores all the validation results to the object its validating
+	> have the following methods
+
+boolean hasErrors()
+	> returns true if there at least ONE validation errors
+
+
+
+
+
+
+PREPROCESSING WEB REQUEST BEFORE PERFORMING FORM VALIDATION
+	> we do this by using the @InitBinder
+	
+
+@InitBinder
+	> added to a method inside @Controller or @RestController class
+	> the method signature must be
+		- public access modifier, void return type, WebDataBinder parameter
+	> preprocess the web request coming to @Controller 
+	> it can edit the request parameters from a web request by 
+		- defining a CustomEditor object
+		- registering the CustomEditor object to the WebDataBinder parameter
+
+
+EX:
+
+@InitBinder
+public void initBinder(WebDataBinder dataBinder){
+	StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+	dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+}
+
+	> in this example, we first created a CustomEditor that trims the String's leading and trailing whitespaces
+		- passing true will make the said String object null if after the trimming, no character is left
+	> we then register the Custom Editor to the WebDataBinder by calling registerCustomEditor()
+		- registerCustomEditor() takes two parameters
+			a. Class object
+				= defines what class the Custom Editor will take effect on
+			b. CustomEditor object
+				= defines the processing the object will take
+
+
+
+CUSTOM ERROR MESSAGE FOR FORM DATA VALIDATION ERROR
+1. Create custome error message in Properties file
+	> the syntax of the text to put in Properties file goes like this
+
+		errorType.springModelAttributeName.fieldName=CustomErrorMessage
+
+	> ex:
+
+		typeMismatch.customer.freePasses=Invalid number
+
+
+
+
+CREATING CUSTOM VALIDATION RULE / ANNOTATION
+
+Development Process
+1. Create custom validation rule
+2. Add validation rule to Customer class
+3. Display error message on HTML form
+
+
+In this demo, we will create @CourseCode()
+
+@CourseCode()
+	> checks if the value passed on textbox starts with "LUV"
+	> if not, returns false and sends a message
+
+I. Create custome validation rule
+1. Create @CustomAnnotaion annotation
+	- create an @Annotation interface
+
+Custom annotation class
+	> must have @interface syntax
+	> the name of the @interface will be the named used to call this custom annotation
+
+@Constraint(validatedBy = CourseCodeConstraintValidator.class)
+@Target({ElementType.METHOD, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CourseCode {
+	
+	// define default course code value
+	public String value() default "LUV";
+	
+	// define default error message	 value
+	public String message() default " must start with LUV"; 
+	
+	// define default groups
+	public Class<?>[] groups() default {};
+	
+	// define default payloads
+	public Class<? extends Payload>[] payload() default {};
+}
+
+
+@Constraint()
+	> defines which helper Class contains the business rules / validation logic
+		- this class will be used to do the validation
+	> we will pass a class here and this class must implement ConstraintValidator<Annotation, T>
+
+@Target
+	> defines the target of the said @Annotation validator
+	> takes an array of ElementType[] enum values
+	> in our example, we can apply our annotation to a method or field
+
+@Retention
+	> specify that the annotation will be retained in Java class file
+	> defines how long will the annotation be stored or used
+	> takes RetentionPolicy[] enum values
+	> in our example, the annotation will be process at runtime
+
+CUSTOM @Annotation parameter
+	> customized parameter added to @CourseCode
+
+public String value() default "LUV";
+	> defines the default course code value
+
+DEFAULT @Annotation parameter
+	> available to every @Annotation created
+
+public String message() default "must start with LUV";
+	> defines the default error message="" value
+	> the default defines the default values of these parameter in case these parameters are not defined
+
+public Class<?>[] groups() default {}
+	> defines which group the @CourseCode belongs	
+	> for now, lets set an empty collection as default
+
+public Class<? extends Payload>[] payload default{}
+	> defines provide custom details about validation failure
+		- (severity level, error code, etc)
+	> for now, lets pass an empty collection as default
+		
+
+
+
+HELPER CLASS
+	> contains business rules for validation
+
+public class CourseCodeConstraintValidator implements ConstraintValidator<CourseCode, String>{
+
+	private String coursePrefix;
+
+	@Override
+	public void initialize(CourseCode theCourseCode){
+		coursePrefix = theCourseCode.value();
+	}
+
+	@Override
+	public boolean isValid(String theCode, ConstraintValidatorContext theConstraintValidatorContext){
+		boolean result;
+
+		if(theCode != null){
+			result = theCode.startsWith(coursePrefix);
+		}else{
+			result = true;
+		}
+
+		return result;
+	}
+}
+
+
+
+ConstraintValidator<Annotation,T>
+	> interface to implement to create CustomConstraintValidator
+	> Annotation corresponds to the @interface that it will validate
+	> T corresponds to the dataType of the input that it will validate
+
+private String coursePrefix;
+	> corresponsed to the value="" that we pass on @CourseCode
+
+@Override
+void initialize(@interface annotation)
+	> one of methods to implement when using ConstraintValidator<Annotation,T> 
+	> used to initialize or setup stuff	
+	> will take the T @interface object as parameter
+	> using the @interface parameter, we can access its parameter values that we passed
+
+
+@Override
+boolean isValid(V value, ConstraintValidatorContext context)
+	> one of methods to implement when using ConstraintValidator<Annotation,T>	
+	> @Valid will call this method
+	> this is where we will write the business / validation logic
+	> returns a boolean
+	> will take the V as parameter 
+		- represents the HTML form data input that we will validate
+	> ConstraintValidatorContext as parameter
+		- helper class for additional error messages

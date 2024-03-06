@@ -1,0 +1,132 @@
+01. Introduction
+
+
+Jenkins
+	> leading open source automation server
+	> Jenkins provides hundreds of plugin to support building, deploying and automating any project
+	> Java based
+	> have some plugin like
+		- GitHub
+		- Maven
+		- Selenium
+	> Plugins are important in Jenkins and makes work in it much easier
+
+DevOps
+	> a culture that allows Development and Operations team to work together
+	> developers continuously develop and test codes
+	> there is contiuous integration taking place through out the lifecycle
+	> operations team continuously deploy the codes to the production environment
+	> allows better collaboration, increased trust and faster software releases
+
+
+What is CI/CD?
+
+	Continuous Integrations -> Continuous Delivery / Continuous Deployment
+
+CI	Plan -> Code -> Build -> Test
+CD	Release -> Deploy -> Operate -> Monitor
+
+CI - Continuous Integrations
+	> Continuous Integration (CI) is a development practice that requires developers to integrate code into a shared repository several times a day
+	> Each check-in is then verified by an automated build, allowing teams to detect problems early
+	> By integrating regularly, you can detect errors quickly, and locate them more easily.
+	> Processes in the CI part includes
+		1. Plan
+		2. Code
+		3. Build
+		4. Test
+
+
+Why Continuous Integration?
+	> If developers do not commit the changes on regular basis, then code changes has to be integrated and tested MANUALLY
+	> If developers commit the changes on regular basis like daily or weekly and build script, compiles the code and runs the test script automatically then on regular basis, the integration happens but still it is not completely continuous integration because the changes get compiled on regular basis and NOT IMMEDIATELY. 
+	> And in case of a Build failure (due to Build not passing Test cases), a notification will be sent back to developer
+	> So with CI process, developers can commit the code into source control anytime, and each commit in source control, Build process is executed IMMEDIATELY, and incase of failure, a NOTIFICATION is sent to developer
+
+
+Advantages of Continuous Integration
+	> No more long and tense integration
+	> Increase visibility enabling greater communication
+	> Catches the issues early 
+		- Test is being done before a product is delivered
+	> Spend less time for debugging and more time on adding more features
+
+
+
+CD - Continuous Delivery
+	>Continuous Integration is about how developers integrate code using a shared repository multiple times a day with the help of automation.
+	> process where delivery of application to production/live server will be done AUTOMATICALLY
+	> manual approval for production delivery is REQUIRED
+		- includes UAT (User Acceptance Testing) for determining whether to move application to production
+
+
+Continuous Deployment
+	> Continuous deployment goes further than Continuous Delivery, in that code changes will make their way through to production without any human intervention, (assuming there are no failures in the CI/CD pipeline, e.g. failing tests).	
+	> same process as Continuous Delivery, but NO APPROVAL IS NEEDED for application deployement to production
+	> very FEW company are mature enough to have Continuous Deployment 
+
+
+
+Architecture of CI/CD
+
+CI - Continuous Integration
+	> composed of the following parts
+		1. Developers
+		2. Version Source Control
+		3. CI/CD tool
+	> the following steps happens
+		1. Developers push code into the "Main" source code
+		2. CI/CD tool, detecting an event in Source code (push), will automatically do a Build and Test
+		3. If Build and Test is successful, it will do to CD part
+		4. If Build or Test failed, it will do its Feedback Mechanism (typically a Notification)
+
+
+CD - Continuous Delivery
+	> composed of the following part
+		1. CI/CD tool
+		2. SIT
+		3. UAT
+		4. PROD
+	> the following things happens
+		1. If Build and Test if successful, it will be ran through the SIT
+			- SIT stands for System Integration Test
+			- This will check if the changes integrate succesfully in the WHOLE system and complies to system specification
+		2. After SIT, if will then proceed to UAT 
+			- UAT stands for User Acceptance Testing
+			- UAT focuses on the requirements with the user point of view.
+		3. After passing both SIT and UAT, the product will then proceed to be push in Production Environment
+
+
+
+System Integration Testing (SIT) VS User Acceptance Testing (UAT)
+Basic of Testing
+SIT	-> refers to the interfacting
+UAT	-> focuses on the requirement with user point on view
+
+Performed by
+SIT	-> performed by Developers and Tester
+UAT	-> performed by Customers and End users
+
+Testing order
+SIT	-> After Unit Testing, but before System Testing
+UAT	-> At the end after System Testing
+
+General issue
+SIT	-> problems like data flow, control flow, etc.
+UAT	-> functionality issues or non-working features according to the user requirement
+
+
+
+INSTALLATION of Jenkins
+Minimum hardware requirements
+1. 256MB of RAM
+2. 1GB of drive space
+	- although 10GB is recommended minimum if running Jenkins as Docker container
+
+Recommended hardware configuration for a small team
+1. 1GB+ of RAM
+2. 50GB+ of drive space
+
+Software requirements:
+1. Java 8
+	- either a JRE or a JDK is fine

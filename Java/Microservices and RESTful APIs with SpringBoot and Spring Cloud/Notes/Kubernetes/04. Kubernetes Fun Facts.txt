@@ -1,0 +1,13 @@
+04. Kubernetes Fun Facts
+
+
+K8s
+	> shorthand for Kubernetes
+	> K + eight letters + s
+KOO BER NET EEZ
+	> pronounciation of Kubernetes
+Helmsman logo
+	> K8s logo resemble that of a steering wheel
+	> reason is because the wheel gives direction to the entire ship, which may contain Containers	
+Kubernetes on Cloud
+	> different Providers have different name for 

@@ -1,0 +1,505 @@
+Section 2: Linux Basics
+
+Section 2: Linux Basics
+4. Working your way through the CLI
+
+Why Linux?
+ > as per StackOverflow insights, the 'Most Loved, Dreaded, and Wanted Platform' and 'Most used Platform' is Linux
+ > most DevOps tools are first used in Linux environment, before they are made available in windows
+ > below are the example as to why we need to use/learn Linux
+	- Docker (2013) is only made available in Windows in 2016
+	- Ansible can only manage Windows hosts. Ansible cannot run on a Windows hast natively, though it can run under the Windows Subsystem for Linux (WSL)
+	- Kubernetes control plane, including the master components, can only run on Linux, no plans to have a Windows-only Kubernetes cluster
+	- Certain certification exams like RhelOS, Kubernetes, are only done in Linux machines
+	
+Linux Basics
+ > Linux CLI
+ > VI Editor
+ > Package Management
+ > Service Management
+ 
+Preferred Linux OS for Demos
+1. CentOS, 80%
+	> free community edition of RHEL OS
+2. Ubuntu, 54%
+3. RHEL, 37%
+
+
+Shell
+ > text based command line interface that helps us run commands to interact with the operating system is called the Linux shell
+ > there are different types of Shell available:
+	- Bourne Shell (Sh shell)
+	- C Shell (csh or tcsh)
+	- Z Shell (zsh)
+	- Bourne again Shell (bash)
+ > the newer Bash Shell supports many advanced features, such as arithmetic operations, conditionals, arrays, etc
+ > you can se ewhich shell you are on by printing the environment variable named Shell using the echo command
+	- echo $SHELL
+		= /bin/bash
+		
+NOTES:
+1. If you work with IT, you must get comfortable with using CLI. Most of the servers you work with in your work environment won't really have a graphical user interface
+
+		
+		
+		
+Basic Commands
+1. echo
+ > used to print a line of text
+ > word you enter after the echo command will be printed on your screen, as simple as that
+	- ex: echo Hi
+	- output: Hi
+ > the echo command is also used in scripts where
+ you want to print our information onto screen
+ 
+2. ls
+ > used to print the contents of the directory, which includes the files and folders
+	- ex: ls .
+	- output: File.txt my_dir1 file2.conf
+
+3. cd
+ > used for changing the current directory
+	- ex: cd my_dir1
+	- output: cd my_dir1
+	
+4. pwd
+ > used to show the present working directory you are currently in
+	- ex: pwd
+	- output: /home/my_dir1
+	
+5. mkdir
+ > make directory command, used to create a new directory
+	- ex: mkdir new_directory
+	
+
+Command - Directories
+1. mkdir -p DIR_TREE
+ > to create a new directory tree (directory inside a directory, inside a directory ...), we can specify the said directory tree, and add a "-p" command flag
+	- ex: mkdir -p /tmp/asia/india/bangalore
+
+2. rm -r DIR
+ > used to delete the contents of a directory recursively
+ > this means that not only it will delete the contents in the specified directory, but also the contents in the subdirectories of it as well
+	- ex: rm -r /tmp/my_dir1
+	
+3. cp -r SOURCE_DIR DEST_DIR
+ > used to copy all the contents of the specified source directory and its subdirectories to the specified destination directory
+	- ex: cp -r my_dir1 /tmp/my_dir1
+	
+	
+Commands - Files
+1. touch FILENAME
+ > used to create a new file with no contents
+	- ex: touch new_file.txt
+	
+2. cat > FILENAME
+ > used to add contents to the file specified
+ > you will be given a prompt in CLI to enter the contents you want to insert
+ > to finish and save, press CTRL+D
+	- ex: cat > new_file.txt
+
+3. cat FILENAME
+ > used to print out the contents of the file
+
+4. cp ORIG_FILENAME NEW_FILENAME
+ > used to copy the original filename into a new file with the new filename specified
+	- ex: cp new_file.txt copy_file.txt
+	
+5. mv ORIG_FILENAME NEW_FILENAME
+ > used to copy the original filename into a new file with the new filename specified
+	- ex: mv new_file.txt /tmp/sample_file.txt
+ > we can also use this to rename the file, but moving the file in the SAME directory, but with different name
+ 
+6. rm FILENAME
+ > used to remove a file
+	- ex: rm new_file.txt
+	
+
+NOTE:
+1. If you want to execute multiple command in a single line, separate them with a SEMI-COLON (;)
+	> ex: cd new_directory; mkdir www; pwd
+
+
+
+
+
+
+
+
+
+5. About KodeKloud Labs
+
+KodeKloud labs
+ > laboratory setup provided by KodeKloud in order to do the exercises in the course
+ > this serves as a sandbox used to emulate a machine like Linux, where we will be doing the experiments
+ > each Lab is specifically curated for each lecture, so theres no need for cleanups, no messed up environment, no missing configurations, etc
+ 
+NOTE:
+1. As for now, we will be using the labs provided by KodeKloud. Then later after finishing the course, you can setup your own local environments
+
+
+
+
+
+
+
+
+6. A Quick Reminder
+
+A Quick Reminder
+ > just a quick reminder to RESIST the urge to create your own local envirornment to do the exercises
+ > this is to ensure not encountering issue with regards to execises due to things out of our control
+
+
+
+
+
+
+
+7. Lab Introduction
+
+Accessing Lab 
+ > use the link in the Accessing the Labs part of the course
+ > then sign up for free in the kodecloud website
+ > Udemy credentials wont work with KodeCloud website
+ > Lab courses starts with the term 'Lab' in the name
+ > theres also an option to maximize the console window, and darkmode as well
+ 
+support@kodekloud.com
+ > support email
+
+
+
+
+8. Accessing the Labs
+9. Labs - Working your way through the CLI
+
+
+
+
+10. VI Editor
+
+VI Editor
+ > to use VI Editor to edit a file, use the command "vi FILENAME"
+	- ex: vi index.html
+ > inside VI Editor, there are two modes available
+	1. Command mode 
+		- default mode when entering VI Editor
+		- used to issue commands to the editor, such as 
+			a. to copy and paste lines, or 
+			b. delete a line or a word
+			c. navigate between lines
+		- here, you cannot WRITE contents to the file
+	2. Insert mode
+		- to switch to the insert mode, type lowercase "i"
+		- once you are in insert mode, you may modify the file contents as you would normally
+		- to switch back to insert mode to the command mode, press the escape key "ESC"
+
+VI Editor - Command mode
+Arrow keys / K,H,J,L - used to move around the editor/file
+X - used to delete a character
+dd - deletes the entire line
+yy - copies an entire line
+p - paste the entire line copies
+CTRL+u / CTRL+d - used for scroll up and down
+
+Colon (:) - takes you to the prompt where you can type in commands to save changes made to the file
+:w - used to save changes
+:q - discard the changes and quit
+:wq - save changes and quit
+
+/WORD_SEARCH
+ > used to search for specific word in the file
+	- ex: /category
+	- this will highlight those that match 'category' and places the cursor to it
+n - used to move to the next match/occurence in the find
+
+
+
+
+
+
+
+11. More Linux Commands
+
+User Accounts 
+Commands
+1. whoami
+ > prints the user you are currently using
+ 
+2. id
+ > gives more information about the user you are currently logged in
+ > this includes
+	- user id
+	- group id
+	- groups that the user belongs to
+
+3. su <USERNAME>
+ > used to switch user
+ > if the user is password protected, you will be prompted to enter password
+ > ex: su aparna
+ 
+4. ssh <USERNAME>@<HOST MACHINE IP>
+ > used to login to host's user through ssh
+ > the host machine must have port 22 (SSH) exposed and the user must exist in the machine as well
+ > if user is password protected, you will be prompted to enter password as well
+ > ex: ssh aparna@192.168.1.2
+ 
+ 
+User Accounts - ROOT user and Regular User
+ > Every machine or system has a super user known as the ROOT user
+	- ROOT user has no restrictions on the system and can perform any task
+	- this is the reason why in most production environment or enterprise environments, access to the root user is RESTRICTED and you will almost NEVER LOG IN to the systems as a root user
+ > If a regular user need to have pseudo privileges, similar to the ROOT user, the ROOT user can make that possible by adding an entry in "/etc/sudoers" file 
+	- $ vi /etc/sudoer
+	- in this case, the regular user will still be a regular user but with root privileges
+ > When a regular user is granted pseudo privilege, they can now elevate their permission level and perform tasks that they otherwise couldn't by simple prefixing a cmmand with the keyword "sudo"
+	- they'll be asked for their password, and on entering the password the command is executed
+	- ex: $ ls /root
+		= output: ls: cannot open directory /root: Permission denied
+	- ex: $ sudo ls /root
+		= output: anaconda-ks.cfg initial-setup-ks.cfg
+
+
+
+Download Files - Commands
+1. curl <LINK> -O
+ > used to download the output of a link and store it inside a file
+ > for this, we need to add the -O command flag
+	- if we don't it will just print the content of the curl command
+ > ex: curl http://www.some-site.com/some-file.txt -O
+
+2. wget <LINK> -O OUTPUT_FILENAME
+ > used to download a file from a link
+ > with -O command flag, we can specify the filename of the downloaded file
+ > ex: wget http://www.some-site.com/some-file.txt -O some-file.txt
+
+
+
+Check OS Version - Commands
+1. ls /etc/*release*
+ > used to print the files inside /etc folder with 'release' word in it
+ > typically, these 'release' file contain the specific version of the OS currently running
+ > EX: ls /etc/*release*
+	- /etc/centos-release 
+	- /etc/centos-release-upstream
+	- /etc/redhat-release
+	- /etc/system-release
+ > EX: cat /etc/*release*
+	- PRETTY_NAME="CentOS Linux 7 (Core)"
+
+
+
+
+
+12. Labs - More Linux Commands
+
+https://kodekloud.com/topic/bootcmp-labs-more-linux-commands-3/
+
+
+
+
+13. Package Management
+
+RPM (Redhat Package Manager)
+ > CentOS uses an RPM based packaged manager just like Redhat Enterprise Linux or Fedora
+ > A software is packaged into a bundle with extension ".rpm"
+
+RPM commands
+1. rpm -i PACKAGENAME
+ > used to install a package
+ > ex: rpm -i telnet.rpm
+ 
+2. rpm -e PACKAGENAME
+ > used to uninstall a package
+ > ex: rpm -e telnet.rpm
+ 
+3. rpm -q PACKAGENAME
+ > used to query for specific package in database
+ > ex: rpm -q telnet.rpm
+ 
+ 
+YUM
+ > a high level package manager that uses RPM underneath
+ > Running a simple yum install command (ex: yum install ansible) install the software and all of its dependent packages
+ > Yum searches software repositories that act as warehouses containing hundreds and thousands of RPM package
+ > These repositories can be local that is installed on your laptop, for example, or on a remote location, either a secure server in your enterprise or available publicly in the internet
+ > under the hood, Yum still make use of the RPM, so when you try to install a package using Yum, Yum searches these repositories, finds the required packages and dependencies, and installs all of them in the right order
+	- ex: when installing Ansible, it will first install its dependencies like PyYAML, python, sshpass
+	
+YUM repositories
+ > informations about the repositories is located in a configuration file at path "etc/yum.repos.d"
+ > each operating system comes bundled with its own set of repositories from which you can install a lot of commonly used software and tools, so you might not need to edit the list of repositories
+ > but at times, the default set of repositories may not have the software you need or may not have the latest version of software that you need to install
+	- in this case, you will need to configure additional repositories so that you can find those packages
+	- instructions to configure additional repositories are usually made available along with the software
+	
+	
+YUM Repos - Command
+1. yum repolist
+ > used to print all the available repositories on a system
+
+2. ls /etc/yum.repos.d/
+ > list all the ".repo" where all the repositories mentioned in 'yum repolist' command are configured
+ > inside each .repo file, you will see the URL where all the packages are stored
+ > when you visit the URL, you will see the .rpm files that YUM will eventually download on your local system with the RPM utility
+ 
+3. yum list PACKAGENAME
+ > used to see all the installed or available packages given the specific package name
+
+4. yum install PACKAGENAME
+ > used to install the package specified
+ > ex: yum install ansible
+ 
+5. yum remove PACKAGENAME
+ > used to remove specific package in the system
+ > ex: yum remove ansible
+ 
+6. yum --showduplicates list PACKAGENAME
+ > used to check available versions of the package
+	
+7. yum install PACKAGENAME-VERSION
+ > used to install specific package version
+ > ex: yum install ansible-2.4.2.0
+ 
+NOTES:
+1. On the RPM commands used, you need to specify the specific directory where the package is located
+	> ex: rpm -i /glenn/downloads/telnet.rpm
+2. When installing a package, it DOES NOT care about any dependencies that this package may have. Simply installing them with RPM command WOULD NOT take care of installing its dependecies if they are not already installed
+	> ex: installing Ansible requires other software available like Python or other dependent software
+ 
+ 
+ 
+ 
+14. Labs - Package Management
+
+
+15. Services
+
+Services
+ > command or application/software that you want to run in the system
+ > services in Linux help you configure software to run in the background and make sure that they run all the time automatically when servers are rebooted as well as they follow the right order of startup
+
+
+Services - Command
+1. service SERVICENAME start
+ > used to start a service with specified name
+ > uses systemctl utility underneath
+ > ex: service httpd start
+	- httpd is an apache web server
+	
+2. systemctl start SERVICENAME
+ > systemctl is the command used to manage services on a system and managed server
+
+3. systemctl stop SERVICENAME
+ > used to stop a service from running
+
+4. systemctl status SERVICENAME
+ > used to check the status of the service
+ 
+5. systemctl enable SERVICENAME
+ > configure service to start at STARTUP
+ 
+6. systemctl disable SERVICENAME
+ > configure service to NOT START at startup
+ 
+7. systemctl daemon-reload
+ > used to reload the systemd in case you have a new service configured
+ 
+Configuring a Service in Linux
+ > to add programs/application as a service, we must configure them as a 'systemd' service
+ 
+Steps
+1. to do this, a systemd service is configured using a systemd unit file
+	> these files are located at '/etc/systemd/system'
+2. Inside the said directory, create a file with .service extension
+	> make sure to have the name to be related to the service that you want to configure as a service
+	> ex: /etc/systemd/system/my_app.service
+3. Then inside the file enter the following
+	> [Service] is used to denote a service
+	> ExecStart specify the command to execute if we use the 'systemctl SERVICENAME start'
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/code/my_app.py
+
+4. Save the file
+5. Run systemctl daemon-reload to reload the newly created service
+6. Start the new service
+	> systemctl start my_app
+7. Check if the service is running using the systemctl status command
+	> systemctl status my_app
+8. To enable the run at startup for this service, we will need to add the [Install] section inside the .service file
+	> [Install] is used to denote install section
+	> WantedBy=multi-user.target means that the service will run AFTER the multi user target run level is started
+
+[Install]
+WantedBy=multi-user.target
+
+9. Execute systemctl enable to enable start at boot up
+	> systemctl enable my_app
+
+10. To add additonal metadata information like description of service that will allow others to understand what this service is about, add a new section in the file called [Unit] and use the description directive
+
+[Unit]
+Description=My python web application
+
+
+11. If your application has other dependencies such as commands or scripts that are to be run before starting the application or after starting the application, then add the 'ExecStartPre' and 'ExecStartPost'
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/code/my_app.py
+ExecStartPre=/opt/code/configure_db.sh
+ExecStartPost=/opt/code/email_status.sh
+
+
+12. To configure the application to automatically restart in case it crashes, specify the Restart directive
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/code/my_app.py
+ExecStartPre=/opt/code/configure_db.sh
+ExecStartPost=/opt/code/email_status.sh
+Restart=always
+
+
+Final /etc/systemd/system/my_app.service file
+
+[Unit]
+Description=My python web application
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/code/my_app.py
+ExecStartPre=/opt/code/configure_db.sh
+ExecStartPost=/opt/code/email_status.sh
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+Example service file (docker.service)
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+BindsTo=containerd.service
+After=network-online.target firewalld.service containerd.service
+Wants=network-online.target
+Requires=docker.socket
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd/sock
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+StartLimitBurst=3
+StartLimitInterval=60s
+LimitNOFILE=infinity
+LimitNPROC=inifinity
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+16. Labs - Services

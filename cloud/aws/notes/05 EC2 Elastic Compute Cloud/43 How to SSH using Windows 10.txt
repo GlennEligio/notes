@@ -1,0 +1,45 @@
+43 How to SSH using Windows 10
+
+
+Prerequisites
+1. Command line interface, either Windows PowerShell or Command Line Prompt
+2. .pem key file
+3. Full permission to the .pem file (RWX)
+
+
+Connecting to the EC2 instance through SSH
+1. Open the CLI that you want (PowerShell or CMD)
+2. Navigate so that you are in the same folder where .pem file is located
+3. Execute the command below
+	> ssh -i <FILENAME>.pem ec2-user@<EC2-PUBLIC-IP>
+	> ex: ssh -i EC2Tutorial.pem ec2-user@180.190.27.88
+	> ex: ssh -i 'EC2 Tutorial.pem' ec2-user@180.03.04.11
+4. You should be connected to the EC2 instance, and the CLI shows that you are ec2-user@ip-<IP-ADDRESS>
+
+
+
+Setting Permission and Accessibity to the Private .pem key
+ > by default, you will receive warning if too many user have FULL CONTROL to the .pem file
+ > for this, we will need to configure the permissions to this file
+1. Right click on file
+2. Select Properties
+3. Go to Security tab
+4. Click Advanced
+5. Copy the owner's email in this window, we will use it later
+6. Click Disable inheritance
+	> select Remove all option when prompted
+7. Add
+8. For Object name, pass the email of the Owner
+9. For basic permission, select Full Control
+10. Click Ok, then Add, and Apply
+11. Check the Security properties of the .pem file again, we should only see one User having full control to this file
+
+
+
+NOTE:
+1. There should be limited access to the .pem file
+	> you will get a warning from the Windows if that is not the case
+2. If the filename have spaces, single quotes to wrap the filename
+	> ex: if EC2 Tutorial.pem, use 'EC2 Tutorial.pem'
+3. Default username to use when SSH connecting for AWS EC2 instance is 'ec2-user'
+	> we can also use 'root' but it is not recommended

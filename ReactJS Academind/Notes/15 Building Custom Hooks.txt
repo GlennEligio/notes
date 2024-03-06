@@ -1,0 +1,471 @@
+15 Building Custom Hooks
+
+001 Module Introduction
+
+Module Content
+1. What & Why?
+2. Building a Custom Hook
+3. Custom Hook Rules & Practices
+
+
+
+
+
+002 What are "Custom Hooks"
+
+Custom Hooks
+ > Outsource stateful logic into re-usable functions
+ > Unlike "regular functions", these custom hooks can use OTHER React hooks and React state
+
+
+
+
+
+003 Creating a Custom React Hook Function
+
+Creating Custom React Hook Function
+1. Create folder in src named "hooks"
+	> by convention
+2. Create JS file named "use-<name>.js"
+	> by convention
+	> eX: use-counter.js
+3. Create function inside the JS file
+4. Export the function
+
+EX:
+import { useState, useEffect } from "react";
+
+const useCounter = () => {
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCounter((prevCounter) => prevCounter - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+};
+
+export default useCounter;
+
+
+NOTE:
+1. Custom Hooks JS file, by convention, is stored inside ./src/hooks
+2. Custom Hooks starts with "use-"
+	> ex: useCounter, useState, useEffect
+
+
+
+
+004 Using Custom Hooks
+
+Using Custom Hooks
+ > we use this Custom Hooks the same way as the built-in Hooks
+	- import the Hook
+	- use it inside the Component
+
+NOTES:
+1. Only the logic and NOT the Stateful data is SHARED among the Components that uses a Custom Hook
+2. Each instance of Custom Hook will have their OWN State
+	> for example, if a Custom Hook manages a State (ex: counter), and Component A and B uses both of them, these Component will have SEPARATE instance of "counter" State from their Custom Hook
+
+
+
+
+
+
+005 Configuring Custom Hooks
+
+Configuring Custom Hooks
+ > Custom Hooks, just like any functions, can be configured by adding arguments to it
+ > these makes the Custom Hooks configurable and reusable for other scenarios, based on the arguments
+
+EX:
+const useCounter = (start, increment, time) => {
+  const [counter, setCounter] = useState(start);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCounter((prevCounter) => prevCounter + increment);
+    }, time);
+
+    return () => clearInterval(interval);
+  }, [start, increment, time]);
+
+  return counter;
+};
+
+// Components used
+const ForwardCounter = () => {
+  const counter = useCounter(0, 1, 1000);
+  return <Card>{counter}</Card>;
+};
+
+const BackwardCounter = () => {
+  const counter = useCounter(0, -1, 1000);
+  return <Card>{counter}</Card>;
+};
+
+
+
+
+
+
+007 Building Custom Http Hook
+
+Building Custom Http Hook
+ > GOAL: To send http request and process the response
+ > CONFIGURABLE:
+	1. Request Config
+	2. Function to process request
+ > RETURNS:
+	1. Loading and Error state of Request
+	2. Function used to send Http request inside Hook
+
+// useHttp hook
+import { useState } from "react";
+
+const useHttp = (requestConfig, applyData) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const sendRequest = async (taskText) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(requestConfig.url, {
+        method: requestConfig.method,
+        body: JSON.stringify(requestConfig.body),
+        header: requestConfig.header,
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed!");
+      }
+
+      const data = await response.json();
+
+      applyData(data);
+    } catch (err) {
+      setError(err.message || "Something went wrong!");
+    }
+    setIsLoading(false);
+  };
+
+  return {
+    isLoading: isLoading,
+    error: error,
+    sendRequest: sendRequest,
+  };
+};
+
+export default useHttp;
+
+
+NOTE:
+1. In modern JS syntax for Objects, if key name is equal to variable name used to assign value, we can omit the keys
+
+EX:
+  return {
+    isLoading: isLoading,
+    error: error,
+    sendRequest: sendRequest,
+  };
+
+Will be
+
+  return {
+    isLoading,
+    error,
+    sendRequest,
+  };
+
+
+
+
+
+
+
+008 Using the Custom Http Hook
+
+// useHttp hook in App.js
+function App() {
+  const [tasks, setTasks] = useState([]);
+
+  const transformTasks = (tasksObj) => {
+    const loadedTasks = [];
+
+    for (const taskKey in tasksObj) {
+      loadedTasks.push({ id: taskKey, text: tasksObj[taskKey].text });
+    }
+
+    setTasks(loadedTasks);
+  };
+
+  const {
+    isLoading,
+    error,
+    sendRequest: fetchTasks,
+  } = useHttp(
+    {
+      url: "https://react-http-83f5f-default-rtdb.firebaseio.com/tasks.json",
+    },
+    transformTasks
+  );
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const taskAddHandler = (task) => {
+    setTasks((prevTasks) => prevTasks.concat(task));
+  };
+
+  return (
+    <React.Fragment>
+      <NewTask onAddTask={taskAddHandler} />
+      <Tasks
+        items={tasks}
+        loading={isLoading}
+        error={error}
+        onFetch={fetchTasks}
+      />
+    </React.Fragment>
+  );
+}
+
+
+NOTES:
+1. We can either return an Array, or an Object on the Custom Hooks
+	> only difference is that you will either do an Array or Object destructuring
+2. State changes in the Custom Hook will also trigger re-evaluation / re-render to the Component that uses it
+
+
+
+
+009 Adjusting the Custom Hooks
+
+// use-http.js
+const useHttp = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const sendRequest = useCallback(async (requestConfig, applyData) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(requestConfig.url, {
+        method: requestConfig.method ? requestConfig.method : "GET",
+        body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
+        header: requestConfig.header ? requestConfig.header : {},
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed!");
+      }
+
+      const data = await response.json();
+
+      applyData(data);
+    } catch (err) {
+      setError(err.message || "Something went wrong!");
+    }
+    setIsLoading(false);
+  }, []);
+
+  return {
+    isLoading,
+    error,
+    sendRequest,
+  };
+};
+
+// App.js
+function App() {
+  const [tasks, setTasks] = useState([]);
+
+  const transformTasks = useCallback((tasksObj) => {
+    const loadedTasks = [];
+
+    for (const taskKey in tasksObj) {
+      loadedTasks.push({ id: taskKey, text: tasksObj[taskKey].text });
+    }
+
+    setTasks(loadedTasks);
+  }, []);
+
+  const { isLoading, error, sendRequest: fetchTasks } = useHttp();
+
+  useEffect(() => {
+    fetchTasks(
+      {
+        url: "https://react-http-83f5f-default-rtdb.firebaseio.com/tasks.json",
+      },
+      transformTasks
+    );
+  }, []);
+
+  const taskAddHandler = (task) => {
+    setTasks((prevTasks) => prevTasks.concat(task));
+  };
+
+  return (
+    <React.Fragment>
+      <NewTask onAddTask={taskAddHandler} />
+      <Tasks
+        items={tasks}
+        loading={isLoading}
+        error={error}
+        onFetch={fetchTasks}
+      />
+    </React.Fragment>
+  );
+}
+
+
+NOTES:
+1. We can move the variables in dependencies array of useCallback() functions inputs into the parameter of the function itself
+	> this way, we can lessen the amount of dependency variables that we will have to watch
+ 	> this will also reduce the changes of a Component doing an infinite loop in useEffect()
+		- important especially for function used inside useEffect()
+
+EX:
+// useHttp hook where requestConfig and applyData are in useCallback dependencies
+const useHttp = (requestConfig, applyData) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const sendRequest = useCallback(
+    async (taskText) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(requestConfig.url, {
+          method: requestConfig.method ? requestConfig.method : "GET",
+          body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
+          header: requestConfig.header ? requestConfig.header : {},
+        });
+
+        if (!response.ok) {
+          throw new Error("Request failed!");
+        }
+
+        const data = await response.json();
+
+        applyData(data);
+      } catch (err) {
+        setError(err.message || "Something went wrong!");
+      }
+      setIsLoading(false);
+    },
+    [requestConfig, applyData]
+  );
+
+  return {
+    isLoading,
+    error,
+    sendRequest,
+  };
+};
+
+
+// useHttp where requestConfig and applyData is in the parameters of 
+const useHttp = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const sendRequest = useCallback(async (requestConfig, applyData) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(requestConfig.url, {
+        method: requestConfig.method ? requestConfig.method : "GET",
+        body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
+        header: requestConfig.header ? requestConfig.header : {},
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed!");
+      }
+
+      const data = await response.json();
+
+      applyData(data);
+    } catch (err) {
+      setError(err.message || "Something went wrong!");
+    }
+    setIsLoading(false);
+  }, []);
+
+  return {
+    isLoading,
+    error,
+    sendRequest,
+  };
+};
+
+
+
+
+
+
+010 Using The Custom Hook in More Component
+
+Using the Custom Http Hook to NewTask.js
+ > here, we will use the useHttp hook to send a request
+ > with this, what we will do is 
+	1. use the useHttp() hook
+	2. define the request configuration
+	3. define the function to process request
+
+// NewTask.js
+const NewTask = (props) => {
+  const { isLoading, error, sendRequest: sendTaskRequest } = useHttp();
+
+  const createTask = (taskText, taskData) => {
+    const generatedId = taskData.name; // firebase-specific => "name" contains generated id
+    const createdTask = { id: generatedId, text: taskText };
+
+    props.onAddTask(createdTask);
+  };
+
+  const enterTaskHandler = async (taskText) => {
+    sendTaskRequest(
+      {
+        url: "https://react-http-83f5f-default-rtdb.firebaseio.com/tasks.json",
+        method: "POST",
+        body: JSON.stringify(taskText),
+        headers: { "Content-Type": "application/json" },
+      },
+      createTask.bind(null, taskText)
+    );
+  };
+
+  return (
+    <Section>
+      <TaskForm onEnterTask={enterTaskHandler} loading={isLoading} />
+      {error && <p>{error}</p>}
+    </Section>
+  );
+};
+
+
+NOTE:
+1. bind() is a method in function used to pre-configure it before using it
+	> takes two argument
+		a. new "this" keyword value
+		b. arguments to configure/accept
+	> for the first argument, it basically assign new value to the "this" keyword
+	> for the second argument, it basically assign pre-determined argument values
+	
+EX:
+function createTask(taskText, taskData){...}
+
+createTask.bind(null, taskTextVal)
+
+createTask(taskDataVal)
+
+ > this will configure the createTask function so that
+	1. createTask will have its taskText parameter configured to have the value of taskText 
+	2. then, when we call createTask and pass an argument again, it will concatenate that argument to the configured argument earlier, which will result in createTask(taskTextVal, taskDataVal) call

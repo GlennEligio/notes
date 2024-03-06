@@ -1,0 +1,192 @@
+Day 9
+
+SOURCE:
+https://help.hcltechsw.com/commerce/9.1.0/developer/concepts/caxunderstandaccessmain.html
+
+Access
+ > way to provide a way for user to see/do things
+ > we can give the following things access 
+	- Controller Command
+	- Task Command
+	- Users/Accounts
+
+01
+NOTE:
+1. We can create access groups and roles in order to manage access to different Users
+
+
+02
+NOTE:
+1. Action refers to the activities that uysers can perofrm
+2. Resources refers to the entities that are protected like View, JPA Entities, etc
+
+
+03
+NOTE:
+1. Relationship are the relationship between the user and the resources
+
+
+04
+NOTE:
+1. Command level access control is also known as role-based access control
+
+
+05:
+NOTE
+1. Resource group will always be viewcommandresourcegroup
+2. In Command-level access, the command is the resource itself
+3. In Resource-level access, the view itself is the resource
+
+
+
+
+
+
+06
+NOTE:
+1. 
+
+07
+note:
+1. we can create access policies thru gui or xml files
+2. wcdinstalldir/xml/policies/xml is where we can find the xml files for policies
+	> ex: C:\WCDE_V9\xml\policies\xml\WidgetsAccessControlPolicies.xml
+3. Refreshing the Policies and Registries is done in the Administration Console, under Site level
+
+
+09
+1. Inside WC/xml/config/wc-server.xml, if the AccessControlUnitTest property of the <Instance> at line 186 refers to the ability to access the Control Unit tool
+2. 
+
+
+
+
+15
+NOTE:
+1. ElasticSearch is preferred over Solr
+2. ElasticSearch becomes available at HCL 9.1
+
+
+16
+NOTE:
+1. iNDEX, RUNTIME ENGINE
+2. Index file is a storage where we store index
+
+
+17
+NOTE:
+1. 
+
+19
+note:
+1. Elasticsearch 
+2. Apache NiFi is a component of ElasticSearch that does ETL or Extract Transform Loading
+
+
+20
+NOTE:
+1. Elasticsearch is hard to run in local development machines since it needs 70 to 80gb of ram
+2. Backward compatibility for Solr still exist in 9.1
+
+
+21
+NOTE:
+1. Solr runs as a traditional monolithic app
+2. Solr provide Natural language processing with Stanford CoreNLP
+3. Lemmatization is where we reduce multiple word into a single word
+	> ex: Building, build, built, builds is reduce/grouped into a single entry
+4. Sentiment analysis is related to machine learning. It is used by the CoreNLP of the Solr
+
+
+
+24
+NOTE:
+1. nifi cluster consist of nodes, and k8s ready
+
+
+25
+1. Storefront does not know if the search result is sent by Solr or Elasticsearch
+
+
+28
+NOTE:
+1. 
+
+
+29
+NOTE:
+1. 
+
+
+
+32
+NOTE:
+1. nifi ingest service can take a JSON template, which is use to create custom ingest process
+2. We can add new REST API in the query services. We can use Query API to add new services there
+
+
+
+33
+NOTE:
+1. For Solr based search local, we will do it locally in stores
+
+
+35
+1. sOLR  IS based on rest services
+2. Solr is monolithic, Elasticsearch is more microservies oriented
+3. In Elasticsearch, query and index services is decoupled
+
+36
+1. Elasticsearch have no repeater
+
+
+NOTE:
+1. When SPIUSER_NAME is not provided, it will default to spiuser
+
+
+MAIN GOAL FOR THE HCL COMMERCE
+1. Creating JPA entity bean
+2. Creating Controller Command
+3. Modifying existing Controller Command
+
+
+
+38
+1. When migrating from Solr to Elasticsearch, we do not scrap everything. Most of the time, we will just modify current Solr configuration and files 
+
+39
+1. Hero product image is the main image that comes with the page. It is the banner image in the ecommerce site
+
+
+NOTE:
+1. Hierarchy of policies are
+	Policy
+	 > Action Group
+	   > Resource Group
+	 > Member Group
+2. For B2B System, we will need to specify Organizations
+	> to change them, we will go to Organization Access Console
+3. 
+4. wcsadmin is part of the root organization and have access to the enitre organization, with site administrator as role
+
+
+px_promotion
+ > table that contains all the information of the Promotions
+
+px_description
+ > table that contains description of the promotions in different languages
+
+ResetPasswordGuestCmdImpl
+ > controller command implementation used to reset password for the user
+ > needs to have email integration to the WCS system using Administrator Console
+	- Admin Console, Configuration, Transports, Email
+	- activate the e-mail
+ > for gmail, we should specify the following
+	host smtp.gmail.com
+	protocol smtp
+
+Add Host:  
+Password: Gmail id password
+Port: 465
+Protocol: smtp
+User Name: gmail email id without @gmail.com

@@ -1,0 +1,17 @@
+005 The 2 Paths
+
+TWO PATHS
+1. Follow along
+	> follow along the course, from 
+		- sketching
+		- having ideas
+		- having final full pledge interactions
+		- animations
+		- final designs for the product
+2. I have a product
+	> you can use the steps/knowledge learned from this course to apply it to your own design system
+
+
+NOTES:
+1. The course is focused on showing you the steps a designer would take from the very beginning to the end
+	> by following until the end, you can implement this in order to create your own design system

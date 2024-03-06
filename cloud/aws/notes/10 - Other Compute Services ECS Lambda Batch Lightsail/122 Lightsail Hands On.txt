@@ -1,0 +1,39 @@
+122 Lightsail Hands On
+
+
+Creating an Instance using Lightsail (Wordpress site)
+1. Search Lightsail in AWS
+2. In Instance location, choose the closest Region and AZ
+3. Configure Instance image to run
+	> select Linux/Unix
+	> then for blueprint, choose Apps + OS, then choose WordPress
+4. Leave launch script and SSH key pair empty 
+	> similar to User Data for EC2
+5. Choose the cheapest instance plan
+	> this is free for first month, so we will not get charged 
+6. Create the Lightsail instance
+7. Check the database
+
+
+Checking the Wordpress instance
+1. Go to Instances
+2. Check the Wordpress instance and connect using SSH
+	> you should be greeted with Bitnami ASCII banner, with bitnami as user
+3. Click the Wordpress Instance and look for the public address
+4. Copy and paste it on the browser
+5. You should be seeing a default html page from Wordpress
+
+
+Clean up
+1. Delete Lightsail instance
+
+
+NOTES:
+1. With Lightsail, you can not create security group for each components of it
+2. Lightsail is meant to be a lightweight version of AWS
+3. In Lightsail, we can do the following, but with simplified options	
+	> Instances
+	> Databases
+	> Networking	
+	> Storage
+	> Snapshots

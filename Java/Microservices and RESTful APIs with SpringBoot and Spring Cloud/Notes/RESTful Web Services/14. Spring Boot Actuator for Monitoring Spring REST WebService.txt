@@ -1,0 +1,100 @@
+14. Monitoring Spring REST WebService
+
+
+Tools to Use
+
+Spring Boot Actuator
+	> using Spring Boot Actuator, it will expose different ENDPOINTS that gives information about the WebService to be used for monitoring
+	> to add Actuator in the Spring Boot application, use the Maven dependency below
+	> note that this SHOULD NOT BE ENABLED in PRODUCTION	
+		- affects the Spring application performance
+
+Spring Boot Actuator Maven dependency
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+	> by default, it will expose three endpoints
+		- /actuator/health/**
+		- /actuator/health
+		- /actuator/
+			= shows all exposed Actuator endpoints
+	> to EXPOSE ALL endpoints, add this line in application.properties file
+		management.endpoints.web.exposure.include=*	
+	> there are different endpoints in Actuator which can be used for monitoring like
+
+
+/auditevents
+	> related to security
+	> shows 
+		- users that are properly validated
+		- people that failed the authentication
+
+/beans
+	> shows all the Spring @Bean that are configured
+
+/health
+	> checks the status of application
+
+/conditions
+	> sends all the Beans which are configured and not configured
+
+/configprops
+	> sends all the configuration properties
+
+/env
+	> shows environment variables 
+
+/loggers
+	> sends Loggers that are configured
+
+/metrics
+	> shows all the metrics names that we can monitor
+	> ex: system.cpu.usage
+
+/metrics/{metricName}
+	> show the information for a specific metric
+
+/httptrace
+	> shows all the traces and http request that were executed
+
+/mappings
+	> shows all the URI mappings in the Spring Application
+
+
+
+Spring Data Rest HAL Browser 
+	> as of Spring 2.0+, it is now referred to as Spring Data Rest HAL Explorer
+	> HAL stands for Hypertext Application Language
+	JSON Hypertext Application Language, or HAL, is a simple format that gives a consistent and easy way to hyperlink between resources in our API. Including HAL within our REST API makes it much more explorable to users as well as being essentially self-documenting.
+	> It works by returning data in JSON format which outlines relevant information about the API.
+	> The HAL model revolves around two simple concepts.
+		1. Resources, which contain:
+			- Links to relevant URIs
+			- Embedded Resources
+			- State
+		2. Links:
+			- A target URI
+			- A relation, or rel, to the link
+			- A few other optional properties to help with depreciation, content negotiation, etc
+	> The HAL browser was created by the same person who developed HAL and provides an in-browser GUI to traverse your REST API.
+	> to add HAL browser in Spring Boot, use dependency below
+
+Spring Data Rest Hal Explorer
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-rest-hal-explorer</artifactId>
+		</dependency>
+
+	> to access HAL explorer page, we can go to the host url or base url
+		- we will then be redirected to HAL Explorer page
+		- ex: localhost:8080/
+
+
+
+Using HAL Explorer to explore the Actuator Endpoints
+1. In the Edit Headers textbox, type "/actuator"
+	- we will then be shown all the endpoints in /actuator path
+
+

@@ -1,0 +1,122 @@
+01. Thymeleaf
+
+Thymeleaf
+	> Thymeleaf is a Java templating engine
+	> Commonly used to generate the HTML views for web apps
+	> However, it is a general purpose templating engine
+		- can use Thymeleaf for non-web purposes
+	> Have a lot of synergy between the Spring Framework and Thymeleaf
+		- this is the reason why they are often mentioned together
+	> To use the Thymeleaf in Spring, Spring Boot provides a Starter dependency for it
+
+
+Spring Boot Starter Thymeleaf dependency
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+
+
+NOTES:
+	- You can create Java apps with Thymeleaf (No need for Spring)
+	- Thymeleaf is a separate project, unrelated to spring.io
+
+
+Thymeleaf template
+	> can be an HTML page with some Thymeleaf expression
+		- include dynamic content from Thymeleaf expressions
+	> process on the SERVER
+		- results included in HTML return to browser
+	> Thymeleaf templates files go in 
+		- src/main/resources/templates
+
+
+Thymeleaf vs JSP
+	> similar to JSP
+		- can be also used for web view templates
+	> but theres one key DIFFERENCE
+		- JSP can ONLY be used in a web environment
+		- Thymeleaf can be used in web OR non-web environments
+	> Unlike JSP, you DONT need to provide PREFIX and SUFFIX for ViewResolver in application.properties
+		- If you have Spring Boot Starter Thymeleaf, it will AUTOMATICALLY search for templates in src/main/resources/templates
+	> HTML is generated dynamically
+		- the Thymeleaf expression is not displayed in the page sources
+		- it is replaced by the actual value of the Thymeleaf expression itself
+		- in example below, we can see the ${theDate} is not shown but instead that actual value shown in browser itself
+
+EX:
+INSIDE browser html page source
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Thymeleaf Demo</title>
+</head>
+<body>
+	<p>Time on the server is Wed Dec 15 17:27:12 CST 2021</p>
+</body>
+</html>
+
+INSIDE the html file in project
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Thymeleaf Demo</title>
+</head>
+<body>
+	<p th:text="'Time on the server is ' + ${theDate}"/>
+</body>
+</html>
+
+
+
+
+Thymeleaf Use Cases (non-web)
+1. Email template
+	- ex: When student signs up for a course then send welcome email
+
+EX: 
+Hi <<firstName>>,
+
+Thanks for joining <<course>>!
+
+
+2. CSV Tempalte
+	- ex: Generate a monthly report as CSV then upload to Google drive
+
+EX:
+Product, Quantity, Price, Total
+... 
+...
+
+
+3. PDF Tempalte
+	- Generate a travel confirmation PDF then send via email
+
+Flight: <<flightNum>>
+Depart: <<departAirport>>
+Arrive: <<arrivalAirport>>
+
+
+FAQ: Should I use JPS or Thymeleaf?
+	> Depends on your project requirements
+	> If you only need web views, you can go either way
+	> If you need a general purpose tempalte engine (non-web), use Thymeleaf
+
+
+How to create Thymeleaf Template
+1. Create html file
+	- file location should be src/main/resources/templates
+2. To use Thymeleaf expression, add this as property of <html> tag
+	- <html xmlns:th="http://www.thymeleaf.org">
+
+
+
+ADDITIONAL FEATURES
+1. Looping and conditional
+2. CSS and JavaScript integration
+3. Template layouts and fragments

@@ -1,0 +1,77 @@
+13. DOM Objects (window, document)
+
+
+DOM
+	> Document Object Model
+	> like a tree structure of the whole Document (e.g. html tags)
+
+
+DOM Objects
+1. window
+	> represents the browser's window
+	> all global Javascript object, functions, and variables automatically become members of the window object
+		- Global variables are properties of window object
+			= ex: innerHeight, innerWidth
+		- Global function are methods of window object includes but not limited to
+			a. alert()	- for alerting user
+			b. prompt()	- for prompting user for input
+			c. confirm()	- for comfirming to use to do an action
+			d. setTimeout()	- for executing a function after a certain period of time
+	> since window belongs to the very top level, we can omit the use of "window." when calling its variables and functions.
+		- ex: 	window.alert("Alert")	-> 	alert("Alert")
+			window.innerHeight	-> 	innerHeight
+	> to see all variables and functions of "window" DOM object, print the object itself
+		- console.log(window)
+
+
+
+2. document
+	> The document object represents your web page.
+	> If you want to access any element in an HTML page, you always start with accessing the document object
+		- for selecting, we can either do a 
+			a. Single element selection
+			b. Multiple element selection
+	> this DOM object have the following variables and functions
+		
+document functions
+getElementById(String id)
+	> used to fetch an HTML element using its ID
+
+querySelector(String query)
+	> used to fetch an HTML element using a query
+	> since it only fetch a SINGLE html element, it will fetch the FIRST element that matches
+	> this query string can take either
+		1. className		('.className')		ex: document.querySelector('.btn')
+		2. html tag name	('tagName')		ex: document.querySelector('h1')
+		3. element id		('#id')			ex: document.querySelector('#form')
+
+querySelectorAll(String query)
+	> used to select all elements the matches the String query search
+	> query string can be 
+		- class name ('.className')		ex: document.querySelectorAll('.item')
+		- html tag name ('elementName')		ex: document.querySelectorAll('h1')
+		- id ('#id')				ex: document.querySelectorAll('#my-form')
+	> will result in a NodeList object
+		- similar to Array object
+		- can perform Array methods
+	> preferred over getElementsByTagName() and getElementsByTagName()
+
+getElementsByClassName(String className)
+	> used to fetch all elements that matches the className
+	> String input argument syntax is
+		- 'className'
+		- ex: document.getElementsByClassName('item')
+	> output of the function is HTMLCollection
+		- HTMLCollection is not Array
+		- Cant perform Array method
+		- Must convert to Array manually
+
+getElementsByTagName(String tagName)
+	> used to fetch all elements that matches the html tag name
+	> String input argument syntax is
+		- 'tagName'
+		- ex: document.getElementsByTagName('h1')
+	> output of the function is HTMLCollection
+		- HTMLCollection is not Array
+		- Cant perform Array method
+		- Must convert to Array manually

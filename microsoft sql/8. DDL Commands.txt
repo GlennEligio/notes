@@ -1,0 +1,186 @@
+Data Definition Language (DDL) commands
+ > In order to demonstrate the SQL server commands, we will first need to make a query. To make a query, create a new one by pressing the New Query at top menu. When clicked, it will automatically create a new Query.
+
+1. CREATE command	
+	> self descriptive, used to create something, for example, a DATABASE
+	> can be used to create things like
+		- Database
+		- Tables
+		- Logins
+		- Users
+SYNTAX:
+For creating Database
+CREATE DATABASE database_name;
+
+For creating table
+CREATE TABLE table_name (
+   column_1 data_type, 
+   column_2 data_type, 
+   column_3 data_type
+);
+
+EX:
+CREATE DATABASE Students;
+	
+CREATE TABLE StudentsInfo
+(
+StudentID int,
+StudentName varchar(8000),
+ParentName varchar(8000),
+PhoneNumber bigint,
+AddressofStudent varchar(8000),
+City varchar(8000),
+Country varchar(8000)
+);
+
+
+
+
+
+
+
+
+2. USE command
+	> used in order to set the Database where other commands will be directing its action to
+ 	> after using this command, all succeeding commands will act on the said Database
+
+SYNTAX:
+Use database_name
+
+EX:
+USE Students;
+
+
+
+
+
+
+
+
+
+4. DROP
+	> used to delete/drop a SQL resource like Database or Table
+	> NOTE: you can't DROP A DATABASE that is currently in USE
+
+SYNTAX:
+DROP TABLE table_name;
+DROP DATABASE database_name
+
+EXAMPLE:
+DROP TABLE StudentInfo;
+DROP DATABASE Students;
+
+
+
+
+
+
+
+
+
+
+5. ALTER 
+	> used to ALTER a table, either by ADDING or DROPPING
+	> for ADD, needs a column and its dataType as parameter
+	> for DROP, needs to mention that youre dropping a column by adding 'COLUMN' keyword before the columnName you want to remove
+
+SYNTAX:
+Adding a column in a table
+ALTER TABLE tableName ADD columnName dataType;
+
+Dropping a column in a table
+ALTER TABLE tableName DROP COLUMN columnName;
+
+Changing a column's datatype in a table
+ALTER TABLE tableName ALTER COLUMN columnName newDataType;
+
+EXAMPLE:
+ALTER TABLE StudentsInfo ADD BloodGroup varchar(800);
+ > this will add a BloodGroup column with dataType varchar(800) in the table StudentsInfo
+
+ALTER TABLE StudentsInfo DROP COLUMN BloodGroup;
+ > this will drop the BloodGroup column in the table StudentInfo
+
+ALTER TABLE StudentsInfo ALTER COLUMN BloodGroup TEXT;
+ > this will change/alter the BloodGroup's dataType to TEXT;
+
+
+
+
+
+
+
+
+
+
+6. INSERT
+	> used to insert rows in a Table by passing data for the said row columns
+	> we can also insert rows from one Table to another
+
+SYNTAX:
+INSERT INTO table_name VALUES (columnValue1, columnValue2,....);
+INSERT INTO table_name (column1_name, column2_name, column3_name) VALUES (column_value1, column2_value, column3_value);
+INSERT INTO table_name (SELECT * FROM table_name)
+
+EXAMPLE:
+INSERT INTO StudentsInfo VALUES ('01','John Glenn','Jaydee','639062560574','Niugan','Malabon','Philippines');
+ > This will add a row in the StudentsInfo whose values are indicated inside the VALUES parameter.
+ > Make sure that the values are the same dataType of the columns of table in the same order.
+
+INSERT INTO tableName1
+SELECT *
+FROM tableName2
+ > this will transfer all the rows in tableName2 to tableName1
+
+
+
+
+
+
+
+
+
+
+
+7. TRUNCATE
+	> used to remove the rows of the specific table
+	> similar to DELETE but without WHERE filter
+	> similar to DROP TABLE but will remain complete table structure 
+
+SYNTAX:
+TRUNCATE TABLE tableName;
+
+EXAMPLE:
+TRUNCATE TABLE StudentsInfo;
+ > this will remove all the rows in the StudentsInfo table
+
+
+
+
+
+
+
+
+
+
+
+8. sp_rename
+	> equivalent of RENAME query
+	> unique to the Microsoft SSMS
+	> needs two parameters, the old tableName (with its database location) and the new tableName
+	> these sp_rename query will look at the oldTableName in the database that we currently in USE.
+
+FORMAT:
+	sp_rename 'OldTableName', 'NewTableName';
+
+EXAMPLE:
+	sp_rename 'StudentsInfo', 'StudentInformation';
+
+
+
+
+
+
+
+
+

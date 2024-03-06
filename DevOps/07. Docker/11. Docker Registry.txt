@@ -1,0 +1,62 @@
+11. Docker Registry
+
+Docker Images Registry
+	> serves as a repository for images
+	> types of repository includes
+		1. Local registry
+			- images are stored in local machine for caching
+		2. Remote registry
+			- images are stored outside local machine
+			- to fetch images inside this registry, we will use docker pull command
+			- types of Remote registry includes
+				a. Private registry
+					- Docker registry running in the Local machine
+				b. Global registry
+					- Docker registry running outside local machine / global
+
+
+
+Docker Registry
+	> a registry is a storage and content delivery system, holding named Docker images available in different tagged version
+	> Docker Registry itself is a Docker image
+			
+
+docker container run -d -p 5000:5000 --name local_registry registry
+	> used for creating a Docker Registry locally
+	> since Docker Registry is an Image itself, we will use the "run" command
+	> also, we must set the specific port of the container
+	> "-d" since we would want to be in dettached mode (background)
+
+
+docker push <machine ip:tcp port>/<image name>
+	> used for pushing an Image in the Local Docker Registry
+	> same as to when we push an Image in dockerhub registry
+	> except we will use the <machine ip>:<tcp port mapped to docker registry>
+		- ex: docker push localhost:5000/web
+
+docker pull <machine ip:tcp port>/<image name>
+	> used for pulling an Image in the Local Docker Registry
+	> same as to when we pull an Image in dockerhub registry
+	> except we will use the <machine ip>:<tcp port mapped to docker registry>
+		- ex: docker image pull localhost:5000/web
+
+
+
+ACCESS PRIVATE DOCKER REGISTRY
+1. Using CLI
+	curl localhost:5000/v2/_catalog
+	curl <machine's public ip>:5000/v2/_catalog
+		- ex: curl 29.123.242.123:5000/v2/_catalog
+
+2. Using External Browser
+	http://<machine's public ip>:5000/v2/_catalog
+		- ex: http://29.123.242.123:5000/v2/_catalog
+
+
+3. In the Local machines directory
+	> inspect the Container where Docker registry image is running
+		docker container inspect local_registry
+	> go to "Mounts" section of docker inspect output
+	> check the "Source" value
+	> go to this directory
+		cd <Source>/docker/registry/v2/repositories

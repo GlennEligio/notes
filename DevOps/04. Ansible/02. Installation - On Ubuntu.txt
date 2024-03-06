@@ -1,0 +1,20 @@
+02. Installation - On Ubuntu
+
+I. Setting up SSH communication
+1. In Master server (with Ansible), generate an SSH key
+	ssh-keygen
+2. Copy the public key (file that ends with .pub)
+	cat /root/.ssh/id_rsa.pub
+3. In Managed Nodes / Clients, paste the public SSH key of Master Server to the "authorized_keys" file on NEXT LINE
+	sudo su
+	vi /root/.ssh/authorized_keys	
+
+II. Installing Ansible
+1. Before installing Ansible package add Ansible repository to your system
+	sudo apt-add-repository ppa:ansible/ansible
+2. Update the list of packages for upgrade for packages
+	sudo apt-get update
+3. Install Ansible	
+	sudo apt-get install ansible
+4. Check Ansible version for installation verification
+	ansible --version

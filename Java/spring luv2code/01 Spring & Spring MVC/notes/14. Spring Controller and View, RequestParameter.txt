@@ -1,0 +1,42 @@
+Spring Home Controller and View
+
+
+Development Process - Controller and View
+
+1. Create Controller class 
+	> Annotate a Class with @Controller
+		- @Controller inherits from @Component
+		- because of this, @Controllers are included in the component scans
+2. Define Controller method
+	> can have any method name
+	> return type MUST be String
+3. Add Request Mapping to Controller method
+	> we MUST annotate it with @RequestMapping
+		- @RequestMapping defines the url to be appended to base-url + dispatcher-url to be able to access this method
+		- ex: @RequestMapping("/login") , we can access this by going to localhost:8080/login
+4. Return the View Name 
+	> inside method body, it must return a view name 
+		- ex: to have the method navigate to login.jsp, we must return "login"
+5. Develop View Page
+	> add something inside the body of the view page we want to navigate
+
+
+NOTE: 
+The text below denotes that the Spring Container has been setup sucessfully
+	INFO: FrameworkServlet 'dispatcher': initialization completed in xxx ms
+
+
+
+
+Development Process - Reading HTML Form Data
+
+1. Create Controller class
+2. Show HTML form
+	a. Create controller method to show HTML form
+	b. Create View Page for HTML form
+3. Process HTML form
+	a. Create controller method to process HTML form
+	b. Develop View Page for Confirmation
+
+
+

@@ -1,0 +1,56 @@
+20. Forms in React
+
+
+Using Form in React JS
+1. In Forms, we often define two event behavior
+	a. onSubmit
+		- eventListener for <form> element
+		- triggers if the form is SUBMITTED
+	b. onChanged
+		- eventListener for form's <input>'s (or button/textarea/checkbox etc.)
+		- triggers if the input value is CHANGED
+2. For input elements inside Form, they must have two parameters defined
+	a. value
+		- gives us a way to fetch the value in an input from the SyntheticEvent parameter of their Event
+		- alternative to using document.getElementById(id).value
+	b. onChanged
+		- a eventListener that will trigger if the value inside an input CHANGES
+3. In onChanged eventHandler, we typically 
+	- fetch the value of the input using
+		e.target.value
+	- NOTE: for checkbox and radiobuttons, we will use 
+		e.currentTarget.checked
+	- map the value of the inputs to the State it corresponds to
+4. In onSubmit eventHandler, we
+	- prevent default behavior using preventDefault() of SyntheticEvent parameter
+	- fetch the value of the value of the inputs using
+		e.target.elements.<inputName>.value
+
+EX: for onSubmit eventHandler
+  onSubmit = (e) => {
+    e.preventDefault();
+
+    const post = {
+      title: this.state.title,
+      body: this.state.body,
+    };
+
+    fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(post),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data));
+  };
+
+
+
+EX: for onChanged eventHandler
+  onChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };

@@ -1,0 +1,180 @@
+DAY 8
+
+React Routing
+React Navigation
+React Redux
+React Lifecycle
+React.PureComponent
+React Functional Hooks
+
+
+
+React Routing
+	> Routing is where we redirect user from one page to another page
+	> to use routing functionality in React, we will need REACT ROUTING MODULE	
+	> to install React Route, we can use the command
+
+		npm install react-router-dom@4.2.2
+
+	> to adding BrowserRouter functionality in a ReactJS file, we can add the line
+		- enables Routing in ReactApp
+		
+		import {BrowserRoute} from 'react-router-dom';
+
+	> to use Route functionality in ReactJS file, we can add the line
+		- used to Route the request of User to a specific page
+
+		import {Route} from 'react-router-dom'
+
+
+Route
+	> used to redirect a request to another page/component
+	> have the following attributes to define
+		a. path
+			- defines which URL path user will use to find a specific component
+			- takes a String which represents the relative-URL to go to
+			- ex: path="/Welcome"
+		b. component
+			- defines the component the URL path will go to
+			- takes a React.Component the URL path will reroute to
+			- ex: component={Welcome}
+		c. render
+			- define the render function, which is used to show a specific component
+			- takes a function which must return an HTML element
+			- ex: render=() => <Welcome />;
+	> the syntax of usage will be
+	
+1. Using path and component
+<Route path="/Welcome" component={Welcome}>
+
+2. Using path and render
+<Route path="/Welcome" render=(() => (<Welcome/>)) />
+
+
+
+
+Link
+	> used to provide a Link to navigate user's request to another ReactApp component
+	> to add Link in a ReactJS file, we will add this line
+	
+		import {Link} from 'react-route-dom';
+			
+	> have the following attributes;
+		a. to
+			- defines the URL path location of Link
+			- takes a relative path url to navigate user's request
+			- ex: to="/addProduct"
+SYNTAX:
+<Link to="/relativeUrl"/>
+EX:
+<Link to="/login"/>
+
+
+
+USAGE
+1. Define the Routing in a single ReactJS 
+
+
+
+
+Redirecting from previous page
+1. On render attribute of <Route>, add "history" parameter
+2. On the <Component> inside render(), add "onHistory" attribute and pass the "history" parameter
+3. Inside the Component, we can redirect to previous page by
+	- access the onHistory from props
+	- call the push() and pass the url you want to redirect to
+		ex: this.props.onHistory.push("/welcome");
+
+
+
+React.Component Class Lifecycle
+1. Mounting
+2. Updating
+3. Unmounting
+
+
+Mounting methods
+	> these methods are called in this order
+		1. constructor()
+		2. getDerivedStateFromProps(props, state)
+			- static method
+			- have props and state as parameter
+			- setting state based on props received
+		3. render()
+			- used to display view
+			- also gets called in the Updating phase
+		4. componentDidMount()
+			- mainly we use for API calls
+			- triggers last
+Updating
+	> shouldComponentUpdate()
+		- defines if the Component should update its content
+		- by default, returns true
+		- can be overriden to return false
+			= if set to false, proceeding method in Updating phase will NOT get called
+	> getSnapshotBeforeUpdate(prevProps, prevState)
+		- takes prevProps and prevState as parameter
+			= we can use this to see the Component State and Props before it gets updated
+	> componentDidUpdate()
+		- called together with getSnapshotBeforeUpdate()
+		- will be called AFTER component gets updated
+
+Unmounting
+	> componentWillUnmount()
+		- this will get called BEFORE we remove a React.Component
+
+
+
+
+Conditional JSX
+	> adding conditions inside a JSX expression
+
+SYNTAX:
+{(condition) && (JSX expression)}
+
+EX:
+{this.state.screen === 'john' && (<h1>My Name is John Glenn</h1>)}
+
+	> in this case, the <h1> will only display the condition is met (this.state.screen==='john')
+
+
+
+PureComponent
+	> PureComponent is a base class for React class-based components. It implements shouldComponentUpdate lifecycle method
+	> in shouldCompoentUpdate(), it will perform a shallow equality check on the ComponentState's before and after
+		- if they are equal, it will not call the render() in which it will not render
+	> mostly used to avoid Child Components' re-rendering because of Parent's state change
+		- in previous case, even if Child Component's state doesnt change, it will still render just because its Parent component state changed
+	> to use PureComponent
+		1. import React package
+		2. extend Class to React.PureComponent
+
+EX:
+export default class Login extends React.PureComponent
+
+
+
+
+React Functional Hooks (Function component)
+	> refers to the logical functions that we can "hook" to components
+	> to use Functional Hooks, we will things to import from 'react' module
+		1. React
+		2. useEffect
+		3. useState
+	> there are four main methods used for Functional Components
+		1. useState()
+		2. useEffect()
+			- same as ComponentDidMount in terms of time of execution
+		3. useRef()
+			- used to manipulate the HTML document using a reference
+			- to add refence in HTML element, we can add ref attribute
+			- in ref attribute, we can pass a useRef() variable
+		4. useReducer()
+			- contains a state and an action
+			- these actions include add, edit, delete
+	> In Functional Component, we use setData to update its Data
+		- equivalent to setState() of the React.Component
+	> These are typically use to
+		- load data
+		- do api calls and fetch data
+	> to initialize the data of Functional Component, we will use useState{[]};

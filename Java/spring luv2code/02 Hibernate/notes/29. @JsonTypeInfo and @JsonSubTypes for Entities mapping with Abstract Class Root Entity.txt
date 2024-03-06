@@ -1,0 +1,117 @@
+Mapping Abstract Class's JSON data into its Concrete Implementations
+
+
+Scenario
+1. We will store Entities that have Abstract Class as their Superclass / Root Entity
+2. We use the said Abstract Class to store the data we add to database or fetch from database
+	
+EX:
+GroceryBill	- abstract class
+DiscountedBill	- concrete class implementation of GroceryBill
+RegularBill	- concrete class implementation of GroceryBill
+
+
+Problem:
+1. We cant create an instance of the said Abstract Class to store deserialized JSON for fetching/adding data in database
+	> In example below, we have a parameter GroceryBill groceryBill that we fetch from Request Body
+	> Since its an Abstract Class, we can not create an instance of it to store the deserialized JSON of Request Body
+
+EX:
+	@PostMapping("/groceryBills")
+	public ResponseEntity<? extends GroceryBill> createNewGroceryBill(@RequestBody GroceryBill groceryBill) {
+		log.info("Creating Grocery Bill " + groceryBill);
+		if(groceryBill != null) {
+			groceryBill.getTotalBill(); 
+			System.out.println(groceryBill);
+			if(groceryBill != null) {
+				GroceryBill billDb = service.addGroceryBill(groceryBill);
+				if(billDb != null) {
+					return ResponseEntity.ok(groceryBill);
+				}
+			}
+		}
+		return ResponseEntity.notFound().build();
+	}
+
+ERROR:
+
+
+
+
+
+Solution:
+1. Use @JsonTypeInfo and @JsonSubTypes
+
+
+@JsonTypeInfo
+	> annotation added in an Abstract or Interface
+	> Annotation used for configuring details of if and how type information isused with JSON serialization and deserialization, to preserve information about actual class of Object instances. 
+		- This is necessarily for polymorphic types, and may also be needed to link abstract declared types and matching concrete implementation. 
+	> Properties that we can define
+		a. use
+			-> defines the kind of type metadata to use when serializin type information for instances of annotated type and its subtypes; as well as what is expected during deserialization.
+			-> takes a JsonTypeInfo.Id enum values
+				- NONE
+				- CLASS
+				- NAME
+				- MINIMAL_CLASS
+				- DEDUCTION
+				- CUSTOM
+
+EX:
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+	> in this example, the deserializer will look for a "@type" property in JSON file
+	> based on the value of "@type" property, it will determine which concrete implementation of Abstract class it will map the JSON
+
+
+
+@JsonSubTypes
+	> Annotation used with JsonTypeInfo to indicate sub-types of serializable polymorphic types, and to associate logical names used within JSON content (which is more portable than using physical Java class names). 
+	> Note that just annotating a property or base type with this annotation does NOT enable polymorphic type handling: in addition, JsonTypeInfo or equivalent (such as enabling of so-called "default typing") annotation is needed, and only in such case is subtype information used.
+	> takes an Array of @JsonSubType.Type annotations
+
+
+@JsonSubType.Type
+	> Definition of a subtype, along with optional name(s). If no name is defined(empty Strings are ignored), class of the type will be checked for JsonTypeName annotation; and if that is also missing or empty, a defaultname will be constructed by type id mechanism.
+	> Default name is usually based on class name.
+
+
+
+EX:
+
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = DiscountedBill.class, name = "discounted"),
+        @JsonSubTypes.Type(value = RegularBill.class, name = "regular")})
+public abstract class GroceryBill implements Serializable {
+
+
+	> with this configurations, if the value of "@type" property of JSON received is
+		a. "@type":"discounted"
+			-> the GroceryBill JSON will be mapped to a DiscountedBill Object
+		a. "@type":"regular"
+			-> the GroceryBill JSON will be mapped to a RegularBill Object
+	
+
+EX:
+{
+    "@type": "regular",
+    "itemList": [
+        {
+            "name": "item5",
+            "price": 800.0,
+            "discountPercentage": 0.5,
+            "isDiscounted": true
+        }
+    ],
+    "totalBill": 400.0,
+    "shoppingClerk": {
+        "id": 0,
+        "name": "John Glenn3"
+    }
+}
+
+
+
+

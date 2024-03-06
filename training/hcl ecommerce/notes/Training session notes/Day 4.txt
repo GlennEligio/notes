@@ -1,0 +1,182 @@
+Day 4
+
+PAGE 6:
+NOTES:
+1. EJB are mostly replaced by the JPA object
+
+7
+NOTES:
+1. 
+
+
+8
+NOTES:
+1. ContentManagement-WorkspaceFlowData is used for User management like reading User data. There usually have two-layer authorization that happends
+2. Everybody 
+3. Extenda
+4. To make migration easier, we must not modifier any out of the box HCL Commerce Enterprise Beans. Instead we should extend from it
+
+
+9
+NOTES:
+1. Object lifecycle is dependent on its parent or child objects
+	> ex: Class C is dependent on Class B, and Class B is dependent on Class A. If Class A is deleted, Class B will be deleted and in extension, the Class C as well
+
+
+10
+NOTES:
+1. 
+
+
+14 
+NOTES:
+1. Every table needs a primary key
+
+
+15 
+NOTES:
+1. Access Bean is the equivalent to Commands in V8
+2. Result of Access Bean get set methods are not cached unless they are included in OPHelper
+3. OPHelper used for entity beans
+
+
+
+16
+NOTES:
+1. Business support OGIS framework
+2. Business Logic layer is INDEPENDENT of the technology used to store data (database)
+3. We do not create new BODs, not recommended
+
+
+17
+NOTES:
+1. 
+
+
+18
+NOTES:
+1. 
+
+19:
+NOTE:
+1. Member Data Model is the heart of the e-commerce user management
+2. USERPWDHST contains user password change history
+3. USERPROF contains user
+4. MBRREL contains member relationships
+5. MEMBER table "type" column refers to the 
+6. MBRREL ancestor and descendant id refers of the 
+
+
+TASK
+1. logout from website. add items to cart. check the usertype and register type for that customer
+2. check the roles for your registered customer
+3. check the member replationship for your registered customer
+4. How will you find address for your registered customer
+5. Details of order for your order placed on last thursday/friday
+6. Details of order for your order placed today
+
+
+
+20:
+NOTE:
+1. Store table contain information about the Store set up in the hcl ecommerce
+2. "storecat" table contain the catalog item and which store it belongs
+
+
+21
+NOTE:
+1. CATGRPREL table refers to the catalog item groups of the catalog item. Example is a dress where it will have men/women/children
+2. CATGPENREL
+3. CATALOGDSC is the description of the catalog item. Also the alternative description text for each languages
+
+
+22
+NOTE:
+1. CATENTRY table refers to the catalog entry items. No product in the system that is not included in the CATENTRY. Primary table 
+2. CATENTDESC table contains information about the catalog item
+3. Product is different from item. Example is a potato, where a Product is a potato, and an item is 1kg potato, or 2kg potato. Another example is a dress, where it can be red, blue, green dress
+
+
+24
+NOTE:
+1. ATTRIBUTE contains attribute information of a Catalog item. Example of this is a dress, where it will have different attribute like Brand, Washing instruction, Allergy notification, Size available, Color available
+2. Two types of attributes, defining and descriptive. Descriptive is where it describes an attribute like washing instruction, allergy instruction. Defining where it defines a product, which are typically used for querying/searching an item, like color, size available, cloth type,
+3. Package beans and item bean are used to define relationship
+
+
+
+25
+NOTE:
+1. Orders and Store needs to have relationship data for Store's order tracking and statistics report
+2. Order will have their own Address info separate from its Member's address since member can have multiple Address, and we need a specific address info or Order
+
+
+
+26 
+NOTE:
+1. To maintain offer (discount) to different customers, we will use TRADEPOSCN (Trade position).
+2. Two prices for the item, list price and offer price. List price is the SRP of the item while offer is the discounted one
+
+
+
+27
+NOTE:
+1. 
+
+
+DEMONSTRATION OF TABLES NOTES:
+1. CATTOGRP contains mapping of catalog item to a catalog group
+2. CATGROUP contains all the catalog group which all catalog item is mapped to
+3. CATGROUPDSC contains all catalog group description. The name column here will be the one displayed in the page. To have the changes take effect, we will need to rebuild the index again
+4. CATGRPREL contains all the relationship between catalog group. It contains parent and child catalog group relationship. Contains column like Catgrp_id_parent and catgrp_id_child like 
+5. Cart order id is stored in the cookies, which we can use to query/update the order
+
+Login to the website
+Add some items to the cart
+Check order id, and user type
+
+
+
+Assignment 2:
+Step 1. Login, add some itens to cart. logout
+take its order ID and status, and order items ID from orderitems table
+
+Step 2. Now after logout add 2 different items to cart.
+check the order id, usertype and register type for that customer, and status, also order items ID from orderitems table
+
+Step 3.  Now login again in same browser window
+a. check status of old Order, order items details
+b. check new order that was created and its order items that you noted in step2
+
+
+
+SQL COMMANDS:
+select * from MEMBER;
+SELECT * from ORGENTITY;
+select * from users;
+select * from userreg;
+select * from mbrrel;
+select count(*) from MBRREL where Ancestor_id = -2001 and descendant_id != -2001;
+select * from MBRREL where Ancestor_id = -2001;
+select * from address;
+select * from orders;
+select * from MBRROLE;
+select * from storeent;
+select * from store;
+select * from storecat;
+select * from catalog;
+select * from catalogdsc;
+select * from catentry;
+select count(*) from catentry;
+select * from cattogrp where CATALOG_id = 10502;
+select * from catentdesc;
+select * from catgroup where catgroup_id = 1;
+select * from catgrpdesc where catgroup_id between 1 and 10 and language_id = -1;
+select * from catgrpdesc where catgroup_id = 10015 and language_id = -1;
+select * from CATGRPREL where catgroup_id_parent = 1 and CATALOG_id = 10502;
+select * from catentry where partnumber = 'GVE034_340301';
+select * from catentrel where catentry_id_child = 12751;
+select * from catentry where catentry_id in (12750,12751) ;
+select * fr
+
+Logout

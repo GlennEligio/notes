@@ -1,0 +1,51 @@
+Front End Introduction
+
+HTML, CSS, Javascript, Typescript, and React
+
+Programming language types
+1. Client side programming language
+	> used in front-end development
+	> uses resources from the Client's local machine
+	> some of this are
+		- HTML (Hyper text markup language)	
+		- CSS (Cascading style sheet)
+		- Javascript
+		- Javascript Libraries (jQuery, React)
+		- Javascript Framework (Angular)
+2. Server side programming language
+	> used for back-end development
+	> uses resources from Server's machine
+	> used for
+	 	- Interact with database
+		- File system
+		- Network applications
+	> some of this are
+		- Java
+		- Python
+		- Perl
+		- Asp.NET
+
+3. Database
+	- used to store data
+	- some of this are
+		a. Oracle
+		b. Mysql
+		c. Sql
+		d. SqlLite
+
+4. Nosql Database
+	- used to store data
+	- dont use SQL as query language
+
+
+Full Stack Web Developer
+	> must know Client Side, Server side, and Database\
+
+Coverage of this Training
+	> Client Side
+
+
+Tools needed
+1. Visual Studio Code (Coding Editor)
+2. Chrome Browser (or any browser in general)
+3. nodeJS

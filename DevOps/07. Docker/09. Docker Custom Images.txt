@@ -1,0 +1,35 @@
+09. Docker Custom Images
+
+
+Docker Images
+	> we can create Images by:
+		a. Creating Image from existing Container using Docker Commit
+		b. Creating Image from existing Docker Image
+		c. Dockerfile
+			- script to create custom docker image
+			- mainly used for automation
+
+
+DOCKER COMMANDS
+
+1. Creating Image from existing Container
+
+docker commit <container name> <new image name>
+	> will create a Docker Image based on Docker Container specified
+	> ex: docker commit webserver webimg
+		- this will create a Docker image "webimg" based on the "webserver" Container
+	> even if the Docker Container where this Image is based from is deleted, the Docker Image will STAY
+
+
+2. Creating Image from existing Image
+
+docker image tag <base image> <new image>
+	> will create a Docker image based on Docker image specified
+	> ex: docker image tag ubuntu myubuntu
+		- this will create a "myubuntu" Docker image based on the "ubuntu" image
+	> even if base image is removed/delete, the new image will stay and persist
+
+3. Dockerfile
+	> set of instruction used to create a Docker image
+
+

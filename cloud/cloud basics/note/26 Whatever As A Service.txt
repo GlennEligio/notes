@@ -1,0 +1,20 @@
+26 Whatever As A Service
+
+
+Things to consider when considering Cloud vs On-prem
+1. Cloud Services have NO OWNERSHIP
+	> in essence you are paying for a service over time
+	> this means that when you stop paying for it, you get nothing, even the resources you use
+2. Buy vs Rent Hardware
+	> for Cloud, you are "renting" the hardware like in on-prem, you are buying it
+	> for "renting", it will be 
+		- low-upfront cost
+		- in the long run, it will be more expensive	
+		- you will get nothing when you stop renting
+	> for buying, it will be 
+		- high-upfront cost 
+		- in the long run, it will be less expensive
+		- you will still own the hardware when you stop using it
+3. Computer hardware depreciation
+ 	> relevant to when you buy hardware
+	> while you can sell the hardware to get some of the upfront cost back, it will most likely depreciated in price overtime

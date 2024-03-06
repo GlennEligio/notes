@@ -1,0 +1,20 @@
+02 What is reactive programming
+
+Reactive programming
+ > Reactive programming is a declarative programming paradigm concerned with data streams and the propagation of change
+ > with this paradigm, its possible to express static (e.g. arrays) or dynamic (e.g., event emitters) data streams with ease, and also communicate that an inferred dependency within the associated execution model exist, which facilitates the automatic propagation of the changed data flow
+ > React to something
+ 	- react to a certain trigger in which it acts
+	- ex: When user clicks this button, run this function
+
+
+Traditional Reactive programming use cases
+1. User events
+	> When user clicks a button
+	> When I/O response happens
+
+
+Why Reactive programming?
+1. Server side web development in Java is synchronous
+	> typical process is request -> process -> response
+ 	> to get updated data, we will need to do separate request again

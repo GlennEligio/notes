@@ -1,0 +1,93 @@
+95 Databases Introduction
+
+Database Intro
+ > storing data on disk (EFS, EBS, EC2 Instance Store, S3) can have its limits
+ > Sometimes, you want to store data in a database where:
+ 	- You can structure the data
+ 	- You build indexes to efficiently query/search through the data
+ 	- You can define relationships between your datasets
+ > Database are optimized for a purpose and come with different features, shapes and constraints
+
+
+
+
+Types of Databases
+1. Relational Databases
+2. No-SQL databases
+
+
+
+
+Relational Database
+ > looks just like Excel spreadsheets, with links between them!
+ > can use the SQL language to perform queries/lookups
+
+Ex:
+Student ID	Dept ID		Name 		Email
+1		M01		Joe Miller	joe@abc.com
+2		B01		Sarah T		sarah@abc.com
+
+Student ID	Subject
+1		Physics
+1		Chemistry
+1		Math
+2		History
+2		Geography
+2		Economics
+
+Dept ID	SPOC		Email		Phone
+M01	Kelly Jones	kelly@abc.com	+123475678
+B01	Satish Kumar	satish@abc.com
+
+
+
+
+NoSQL Databases
+ > NoSQL = non-SQL = non relational databases
+ > NoSQL databases are purpose built for specific data moedls and have flexible schemas for building modern applications
+ > Benefits
+	- Flexibility: easy to evolve data model
+	- Scalability: designed to scale-out by using distributed clusters
+	- High-performance: optimized for a specific data model
+	- Highly functional: types optimized for the data model
+ > Examples: Key-value, Document, Graph, In-memory, Search databases
+
+
+JSON: NoSQL data example
+ > JSON = JavaScript Object Notation
+ > JSON is a common form of data that fits into a NoSQL model
+ > Data can be nested 
+ > Fileds can change over time
+ > Support for new types: arrays, another JSON, etc
+
+EX:
+{
+  "name": "John",
+  "age": 30,
+  "cars": [
+    "Ford",
+    "BMW",
+    "Fiat"
+  ],
+  "address": {
+    "type": "house",
+    "number": 23,
+    "street": "Dream Road"
+  }
+}
+
+
+
+
+
+Databases & Shared Responsibility on AWS
+ > AWS offers use to manage different databases
+ > Benefits include:
+	- Quick Provisioning, High Availability, Vertical and Horizontal Scaling
+	- Automated Backup & Restore, Operations, Upgrades
+	- Operating System Patching is handled by AWS
+	- Monitoring, Alerting are integrated
+ > AWS handles all of the management related to database, all you need to worry is how you will store the data
+ 
+NOTE:
+1. We can also run database technologies inside EC2 instance. But you must handle everything by yourself like resiliency, backup, patching, high availability, fault tolerance, scaling etc.

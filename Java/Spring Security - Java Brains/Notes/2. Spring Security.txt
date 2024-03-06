@@ -1,0 +1,26 @@
+Spring Security
+	> a Application security framework
+	> main goal is Application Level Security
+	> can give features like
+		- Login and logout functionality
+		- Allow/block access to URLs to logged in users
+		- Allow/block access to URLs to logged in users AND with certain roles
+
+
+WHY Spring Security
+	> Handles common vulnerabilities like
+		1. Session fixation
+		2. Clickjacking
+		3. Click site request forgery
+	> Widely adopted
+		- popular target for hackers
+		+ Vulnerabilities get the most attention and quick response
+
+
+WHAT Spring Security can do
+	> User name / password authentication
+	> Single Sign on / Okta / LDAP
+	> App level Authorization
+	> Intra App Authorization like OAuth
+	> Microservice security (using tokens, JWT)
+	> Method level security

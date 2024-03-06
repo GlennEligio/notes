@@ -1,0 +1,217 @@
+10 Spring WebFlux OpenAPI 3 | Swagger Documentation for WebFlux Functional Programming Model
+
+Dependencies needed
+1. springdoc-openapi-webflux-core
+2. springdoc-openapi-webflux-ui
+3. springdoc-openapi-starter-webflux-ui
+	> as of Spring Boot 3.0.0, we only need to use this instead of the 1st and 2nd dependencies together
+
+
+Properties need to be added
+ > SOURCE: https://springdoc.org/properties.html
+springdoc.api-docs.groups.enabled=true
+springdoc.swagger-ui.path=/swagger-doc/swagger-ui.html
+springdoc.api-docs.path=/swagger-doc/v1/api-docs
+
+
+Creating OpenAPI definition
+ > this will serve as the top level information of the Open API documentation
+ > to do this, we will need to add @OpenApiDefinition to the @SpringBootApplication
+
+@OpenApiDefinition
+ > The annotation that may be used to populate OpenAPI Object fields info, tags, servers, security and externalDocs 
+ > If more than one class is annotated with OpenAPIDefinition, with the same fields defined, behaviour is inconsistent
+ > inside, we can pass arguments like
+	1. info
+		- takes @Info
+		- used to contain top level information about the API
+	2. extension, externalDocs, tags, security, servers
+
+
+@Info
+ > annotation that is used to create top level info about the API we document
+ > arguments include
+	1. title 	- the title of api
+	2. version	- version of api
+	3. description	- description of api
+	4. contact
+	5. licence
+	6. extension
+	7. termsOfService
+
+
+
+@RouterOperations
+ > used to contain and define one or more @RouterOperation
+ > takes argument like
+	value(@RouterOperation{})
+		- takes one or more @RouterOperation
+
+
+@RouterOperation
+ > used to define a single Router Operation as an OpenAPI Operation, and/or to define additional properties using @Operation annotation
+ > arguments include
+	path: String		- defines the path of route operation
+	beanClass: class	- defines the class the route's handlerFunction is contained
+	produces		- defines what the Route produces (ex: MediaType.APPLCATION_JSON_VALUE)
+	beanMethod: String	- the name of the handlerFunction inside the beanClass that is used in the route
+	method: RequestMethod	- method of the route
+	operation: @Operation	- defines the operation of the route
+				- this includes operationId (MANDATORY), responses, etc
+
+@Operation
+ > The annotation may be used to define a resource method as an OpenAPI Operation, and/or to define additional properties for the Operation
+ > arguments includes:
+	operationId: String		- mandatory
+	responses: @ApiResponses[]	- defines one or more possible response of the route (ex: 200OK, 404NotFound)
+	parameters: @Parameter[]	- defines one or more parameter the router operation takes
+	requestBody: @RequestBody	- defines the requestBody information of the request
+
+
+@Parameter
+ > The annotation may be used on a method parameter to define it as a parameter for the operation, and/or to define additional properties for the Parameter. 
+ > It can also be used independently in Operation.parameters() or at method level to add a parameter to the operation, even if not bound to any method parameter.
+ > arguments:
+	in: ParameterIn		- defines the location of parameter (ex: path, query, header, cookie)
+	name: String		- the name of the parameter
+
+
+@ApiResponse
+ > The annotation may be used at method level or as field of Operation to define one or more responses of the @Operation.
+ > arguments:
+	responseCode: String	- http response code
+	description: String	- description of the response
+	content: @Content[]	- defines the Contents of the ApiResponse
+
+
+@Content
+ > The annotation may be used to define the content/media type of a parameter, request or response, by defining it as field Parameter.content(), RequestBody.content() or ApiResponse.content().
+ > arguments:
+	schema: @Schema		- defines the schema of the JSON response body
+
+
+@Schema
+ > The annotation may be used to define a Schema for a set of elements of the OpenAPI spec, and/or to define additional properties for the schema.  > It is applicable e.g. to parameters, schema classes (aka "models"), properties of such models, request and response content, header.
+ > arguments:
+	implementation: Class	- defines the Java class that schema is based on
+
+
+@RequestBody
+ > The annotation may be used on a method parameter to define it as the Request Body of the operation, and/or to define additional properties for such request body.
+ > arguments:
+	content: @Content	- defines the Content of the RequestBody
+
+
+
+EXAMPLE:
+@Configuration
+public class RouterConfig {
+
+    @Autowired
+    private CustomerHandler customerHandler;
+
+    @Autowired
+    private CustomerStreamHandler customerStreamHandler;
+
+
+    @Bean
+    @RouterOperations(value = {
+            @RouterOperation(
+                    path = "/router/customers",
+                    beanClass = CustomerHandler.class,
+                    produces = {
+                            MediaType.APPLICATION_JSON_VALUE
+                    },
+                    beanMethod = "loadCustomers",
+                    method = RequestMethod.GET,
+                    operation = @Operation(
+                            operationId = "loadCustomers",
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "Successful customer fetching",
+                                            content = @Content(
+                                                    array = @ArraySchema(
+                                                            schema = @Schema(
+                                                                    implementation = Customer.class
+                                                            )
+                                                    )
+                                            )
+                                    )
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/router/customers/{id}",
+                    beanClass = CustomerHandler.class,
+                    produces = {
+                            MediaType.APPLICATION_JSON_VALUE
+                    },
+                    beanMethod = "findCustomer",
+                    method = RequestMethod.GET,
+                    operation = @Operation(
+                            operationId = "findCustomer",
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "Successful found customer with specified id",
+                                            content = @Content(
+                                                    schema = @Schema(
+                                                            implementation = Customer.class
+                                                    )
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "404",
+                                            description = "No customer found using specified id"
+                                    ),
+                            },
+                            parameters = {
+                                    @Parameter(
+                                            in = ParameterIn.PATH,
+                                            name = "id"
+                                    )
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/router/customers",
+                    beanClass = CustomerHandler.class,
+                    produces = {
+                            MediaType.APPLICATION_JSON_VALUE
+                    },
+                    beanMethod = "saveCustomer",
+                    method = RequestMethod.POST,
+                    operation = @Operation(
+                            operationId = "saveCustomer",
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "201",
+                                            description = "Successful saved customer",
+                                            content = @Content(
+                                                    schema = @Schema(
+                                                            implementation = Customer.class
+                                                    )
+                                            )
+                                    )
+                            },
+                            requestBody = @RequestBody(
+                                    content = @Content(
+                                            schema = @Schema(
+                                                    implementation = Customer.class
+                                            )
+                                    )
+                            )
+                    )
+            )
+    })
+    public RouterFunction<ServerResponse> routerFunction() {
+        return RouterFunctions.route()
+                .GET("/router/customers", customerHandler::loadCustomers)
+                .GET("/router/customers/stream", customerStreamHandler::getCustomers)
+                .GET("/router/customers/{id}", customerHandler::findCustomer)
+                .POST("/router/customers", customerHandler::saveCustomer)
+                .build();
+    }
+}
+	

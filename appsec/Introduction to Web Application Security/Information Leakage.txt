@@ -1,0 +1,412 @@
+Information Leakage
+
+Contents
+I. AppSec tutorials - Information Leakage
+01. Welcome
+02. Introduction
+03. Objectives
+04. Module outline
+
+II. Information Leakage Overview
+05. Introduction
+06. Impacts of information leakage
+07. Scenario introduction
+
+III. Information Leakage - Example
+08. Introduction
+09. Types of Information Leakage
+10. Example
+11. Remediation
+
+IV. Conclusion
+12. Best practices
+13. Problem identification
+14. Examining the vulnerable code
+15. Resolution
+
+V. Summary 
+16. Module summary
+
+
+
+
+
+
+
+
+
+
+I. AppSec tutorials - Information Leakage
+01. Welcome
+02. Introduction
+
+Information leakage
+ > a type of application security vulnerability that involves unintended disclosure of confidential information to users or malicious agents
+ 	- the leak confidential information can aid malicious agents in performing attacks
+
+
+
+
+
+
+
+
+
+
+
+03. Objectives
+
+Objectives
+1. Describe the information leakage vulnerabilities
+2. Identify sample code that contains information leakage vulnerabilities
+3. List methods to eliminate the vulnerability
+
+
+
+
+
+
+
+
+
+04. Module outline
+
+Module outline
+Section 1: Information Leakage Overview
+Section 2: Information Leakage Overview - Example
+Section 3: Conclusion
+
+
+
+
+
+
+
+
+II. Information Leakage Overview
+05. Introduction
+
+Information leakage
+ > also known as "Information disclosure"
+ > occurs when sensitive information is exposed to someone who is not authorized
+
+The severity of an information leakage depends upon:
+ > The type of sensitive information that was leaked
+ > The impact that the information leakage will have on a person or organization
+
+Types of Sensitive information that can be leaked
+Private Data
+ > includes any personal information about the user, such as:
+	1. address
+	2. telephone number
+	3. social security number
+	4. passport number
+	5. financial information
+	6. health records
+
+System Data
+ > includes any information about the system, such as:
+	1. operating system version
+	2. installed application versions 
+	3. installed database versions
+	4. operating system updates
+	5. web servers installed
+
+Business Data
+ > involves any financial data of an organization like
+	1. employee data
+	2. business secrets	
+	3. intellectual property data
+
+Network Data
+ > includes any information about
+	1. network status and configuration
+	2. firewall status
+	3. ports open
+	4. ports closed
+
+Product Data
+ > includes any information about the product such as the product code
+
+Metadata
+ > includes any information used to describe data, like
+	1. connection logs
+	2. log messages
+	3. message headers
+	4. local user who created a document
+	5. software used to create an image
+
+
+
+
+
+
+
+06. Impacts of information leakage
+
+Impacts
+1. Misconuct and exploitation of the web applications
+2. Targeted spear phishing attacks using leaking user/personal infos
+3. Organization financial and legal impacts where in
+	> penalties by the government if the information leakage involves citizens' sensitive data
+
+
+
+
+
+
+
+
+
+
+07. Scenario introduction
+
+Scenario 
+ > Johns team are task on auditing the application for information leakage
+
+
+
+
+
+
+
+
+
+III. Information Leakage - Example
+08. Introduction
+
+In this section, we will:
+1. Explore situations that lead to sensitive information leaking from an application
+2. Identify examples of information leakage and remediation approaches
+
+
+
+
+
+
+
+09. Types of Information Leakage
+
+Types of Information leakage
+ > note: 2 and 3 are caused by vulnerable code in the application
+
+1. Unintentional leakage
+2. Explicit insertion of sensitive information
+3. Indirect insertion of sensitive information
+
+
+Unintentional leakage
+ > most of the information leakage incidents are unintentionally caused.
+ > common reasons for information leakage
+	1. uncontrolled errors
+	2. failure to implement security in application design
+	3. human error
+ > if the sensitive information is made accessible to unauthorized agents, it becomes a case of unintentional information leakage
+ > ex: Logs file may contain Credit card numbers 
+
+
+Explicit insertion of sensitive information
+ > sensitive information in the code is manipulated by users with malicious intent
+	- ex: information, such as connection information to databases or URL details of external services can be misused
+ > access details of external services can be added as comments in HTML files, by developers
+ > failure to remove the comments when publishing can leak the sensitive access details
+
+
+Indirect insertion of sensitive information
+ > sensitive information is inserted into the application resource by means of an existent vulnerability or error in the application code
+ 	- ex: a web script error can leak information about the complete system path of the application
+
+
+
+
+
+
+10. Example
+
+Java code example
+ > in this example, the code LOGS the credit card information
+
+public String getCreditCardNnumber (String username) {
+  String ccn = null;
+  String expiryDate = null;
+  String query = null;
+  if (isAuthorizedUser(username)){
+    query = "SELECT ccn, expiryDate FROM userCreditCardDetails WHERE userName = ?";
+    DatabaseManager dbManager = new DatabaseManager();
+    Connection conn = dbManager.getConnection();
+    PreparedStatement stmt = conn.prepareStatement(query);
+    stmt.setString(1, username);
+    ResultSet queryResultSet = stmt.executeQuery();
+    ccn = (String) queryResult.getString(1);  
+    expiryDate = (String) queryResult.getString(2);
+    Logger.getLogger(CreditCardManager.class.getName())
+	  .log(Level.INFO, "Username: " + username + ", CCN: " + ccn); // BAD, EXPOSES CREDIT CARD INFO
+    if (new SimpleDateFormat("MM/yyyy").parse(expiryDate)).before(new Date())) {
+      Logger.getLogger(CreditCardManager.class.getName())
+      	    .log(Level.EEOR, "Username: " + username + ", CCN: " + ccn + " is expired on " + expiryDate);  // ALSO BAD
+    }
+  }
+  return ccn;
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+11. Remediation
+
+Remediation
+ > information leakage can be remediated by
+	1. NOT Logging the sensitive information like credit card details
+
+
+
+
+
+
+
+IV. Conclusion
+12. Best practices
+
+Best practices for Information Leakage PREVENTION
+1. Compartmentalization
+2. Handling error messages
+3. Data classification and storage
+4. Encryption
+
+
+Compartmentalization
+ > Compartmentalization
+	- is the practice of creating compartments, where a piece of data is treated as senstive
+ 	- limits the access of information on a need-to-know basis
+ 	- prevents information leakage
+ > Best practices to avoid information leakage using compartmentalization
+	1. Compartmentalize the system by drawing trust boundaries
+	2. Restrict sensitive data within trust boundaries
+	3. Enfore privilege separation
+	4. Use the principle of least privilege
+
+
+
+Handling error messages
+ > Handle error message carefully
+ > Best practices include
+	1. Error messages must not divulge too much information
+	2. Never reveal methods used to determine errors
+	3. Use log messages to track errors in detail
+	4. Never record password in any form
+	5. Avoid inconsistent messages that give out details
+
+
+Data classification and storage
+ > Data classification and proper storage is important to prevent information leakage.
+ > Best practices
+	1. Classify data (either processed data, stored data, or transimitted data)
+ 	2. Identify senstive data
+	3. Apply controls
+	4. Avoid senstive data storage
+	5. Discard data using PCI DSS compliant tokenization or truncation
+	6. Use strong key derivation function for password hashing such as Argon2, bcrypt, scrypt
+
+
+Encryption
+ > encryption prevents information leakage
+ > Best practices includes:
+	1. Encrypt stored sensitive data
+	2. Encrypt data in transit
+	3. Use store directives to enforce encryption
+	4. Use standard and up-to-date algorithms for encryption
+	5. Ensure proper key management
+	6. Implement access control and auditing for stored data to prevent unauthorized access
+
+
+
+
+
+
+13. Problem identification
+
+Problem identification
+ > Johns team reviewed log files to check for sensitive information
+ > these includes
+	1. error messages
+	2. meta data
+	3. page titles
+ > in their audit, they identified code that returns a login attempt status message when user logs in the application
+
+// CODE
+string userName = Request.Form("userName");
+string password = Request.Form("password");
+if(IsValidUsername(userName) == true) {
+  if(IsValidPassword(userName, password) == true) {
+    return "Login successful";
+  } else {
+    return "Incorrect password";
+  }
+} else {
+  return "Unknown user";
+}
+
+
+
+
+
+
+
+14. Examining the vulnerable code
+
+
+Examining the vulnerable code
+ > they determined that the code return TOO MUCH information
+ > the attacker can determine if a specific username belongs to someone
+	- and if they do, their only problem will be the password guessing
+
+
+
+
+
+
+
+
+
+15. Resolution
+
+Resolution
+ > John's team removed the multiple messages that helped distinguish whether the attempt failure was due to incorrect username or password
+
+// CODE
+string userName = Request.Form("userName");
+string password = Request.Form("password");
+if(IsValidUsername(userName) == true && 
+  IsValidPassword(userName, password == true) {
+    return "Login successful";
+  } else {
+    return "Login failed";
+  }
+
+
+
+
+V. Summary 
+16. Module summary
+
+Module Summary
+1. Information leakage is the unintended exposure of sensitive information to someone who is not authorized to access that information
+2. The severity of an information leakage vulnerability depends upon the type of sensitive information that was leaked, and the impact that it will have on a person or organization
+3. Information leakage can occur through different means:
+	> Unintentional leakage
+	> Explicit insertion of sensitive information in code
+	> Indirect insertion of sensitive information in code
+4. Information leakage can have serious legal as well as financial impacts
+5. Information leakage can be prevented by:
+	> Implementing proper compartmentalization in an application
+	> Handling error message carefully
+	> Proper data classification and storage

@@ -1,0 +1,42 @@
+08 Key characteristics of On Premises Data Centers
+
+
+SOURCE:
+https://docs.microsoft.com/en-us/azure/architecture/guide/
+
+
+Characteristics
+1. Monolithic apps
+	> typically in On Prem Data Centers, it tends to have Monolithic apps
+2. Designed for predictable scalability
+	> with On Prem, you will need to have an application that can handle predictable scalability
+	> they would assume that there will be certain amount of scalability needed, and they try to predict it and build the app based on it
+	> anything beyond that, they will find a way of handling traffic by not serving, but by trying to keep the application running
+	> application in this case are built to handle predictable amount of scalability
+3. Relational database
+	> On Prem data center typically have a "monolithic" database
+	> RDBMS are typically monolith, running in one server, to serve as one source of truth
+	> If you have one monolithic app, it is more logical to also have one monolithic database to handle its data related logic
+4. Synchronized processing
+	> this means that we can easily predict the order of the operation or the sequence of the processes
+	> ex: for e-commerce, these happens;
+		- user used card, app validates the card
+		- service makes a charge
+		- charge returns successfully
+		- user place an order
+		- order returns successfully
+		- service returns an order invoice
+		- service sends email of the invoice
+5. Design to avoid failures (MTBF)
+	> design to make the MTBF as large as possible
+	> MTBF refers to "Mean Time Between Failure"
+		- refers to the mean value of all the duration between all failure instances
+6. Occasional large updates
+	> updates are done in batches and in longer frequency (monthly, bi-monthly, etc)
+	> these updates are typically large in size
+7. Manual management
+	> hardware and the deployment would be management manually, typically have separate person or team to do this
+8. Snowflake servers
+	> this refers to the servers that are very unique
+	> they have certain characteristic that are necessary for the application to work
+	> this typically causes the migration of the services to another server some problem since they need to replicate these snowflake servers to make sure the apps inside it runs correctly

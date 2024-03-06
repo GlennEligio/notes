@@ -1,0 +1,5 @@
+33 Audience Q&A on creating reactive Stream
+
+NOTE:
+1. If delayElements() is not added, the elements will be emitted ASAP
+	> this may confuse some people that Reactive streams work like normal Stream since theres no Publisher/Subscriber involve in a normal Streams

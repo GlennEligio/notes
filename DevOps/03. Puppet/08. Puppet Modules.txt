@@ -1,0 +1,118 @@
+08. Puppet Modules
+
+
+Puppet Modules
+	> In Puppet, a module can be defined as a collection of resource, classes, files, definition and templates
+	> Puppet supports easy re-distribution of modules, which is very helpful in modularity of code as one can write a specific module and can use it multiple times with very few simple code changes
+
+
+
+Puppet Forge
+	> website where users can get modules created by either 
+	> website for ready made solutions 
+	> contains puppet modules for easy installation
+	> link is 
+		
+		https://forge.puppet.com/
+
+	> CLI command for installing one of the modules from Puppet Forge
+
+		puppet module install <moduleAuthor>-<moduleName> --version <version number>
+
+	> ex: puppet module install puppetlabs-apache --version 7.0.0
+
+
+
+Creating Puppet Module Offline in Local Machine
+	> we can also create our own Puppet Module as well
+	> to do so, we can use the command
+
+		puppet module generate <authorname>-<modulename>
+	
+	> ex: author name is glenn, module is appleModule
+			
+		puppet module generate glenn-appleModule
+
+
+
+
+Module Directory Structure
+	> Puppet module have the following subdirectory
+
+data/
+	> Contains data files specifying parameter defaults.
+
+examples/
+	> Contains examples showing how to declare the module's classes and defined types.
+		init.pp: The main class of the module.
+		example.pp: Provide examples for major use cases.
+
+facts.d/
+	> Contains external facts, which are an alternative to Ruby-based custom facts. These are synced to all agent nodes, so they can submit values for those facts to the Puppet master.
+
+files/
+	> Contains static files, which managed nodes can download.
+
+functions/
+	> Contains custom functions written in the Puppet language.
+
+lib/
+	> Contains plug-ins, such as custom facts and custom resource types. These are used by both the Puppet master and the Puppet agent, and they are synced to all agent nodes in the environment on each Puppet run.
+
+facter/
+	> Contains custom facts, written in Ruby.
+
+puppet/
+	> Contains custom functions, resource types, and resource providers:
+		puppet/functions/: 		Contains functions written in Ruby for the modern Puppet::Functions API.
+		puppet/parser/functions/: 	Contains functions written in Ruby for the legacy Puppet::Parser::Functions API.
+		puppet/provider/: 		Contains custom resource providers written in the Puppet language.
+		puppet/type/: 			Contains custom resource types written in the Puppet language.
+
+locales/
+	> Contains files relating to module localization into languages other than English.
+
+manifests/
+	> Contains all of the manifests in the module.
+	> init.pp
+		- The init.pp class, if used, is the main class of the module. This class's name must match the module's name.
+	> other_class.pp
+		- Classes and defined types are named with the namespace of the module and the name of the class or defined type. 		- For example, this class is named my_module::other_class.
+
+implementation/
+	> You can group related classes and defined types in subdirectories of the manifests/ directory. 
+	> The name of this subdirectory is reflected in the names of the classes and types it contains. 
+	> Classes and defined types are named with the namespace of the module, any subdirectories, and the name of the class or defined type.
+		implementation/my_defined_type.pp: 	This defined type is named my_module::implementation::my_defined_type.
+		implementation/class.pp: 		This defined type is named my_module::implementation::class.
+
+readmes/
+	> The module's README localized into languages other than English.
+
+spec/
+	> Contains spec tests for any plug-ins in the lib directory.
+
+tasks/
+	> Contains Puppet tasks, which can be written in any programming language that can be read by the target node.
+
+templates/
+	> Contains templates, which the module's manifests can use to generate content or variable values.
+		component.erb 	- A manifest can render this template with template('my_module/component.erb').
+		component.epp	- A manifest can render this template with epp('my_module/component.epp').
+
+types/
+Contains resource type aliases.
+
+
+
+
+Invoking a Module
+	> when trying to use a module, we will use the "include" keyword followed by the module name
+		ex: include 'appleModule'
+	> what this will invoke is the init.pp inside the manifest/ directory of module called
+	> example below will invoke the init.pp of the manifest/ directory of the appleModule Puppet module
+
+EX:
+node default {
+	include 'appleModule'
+}

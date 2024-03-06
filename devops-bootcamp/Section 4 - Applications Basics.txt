@@ -1,0 +1,1057 @@
+Section 4 - Applications Basics
+
+21. Introduction
+
+Introduction:
+I. Who is this for?
+ > Non-developers
+II. Different types of programming language (includes but not limited to)
+ > Python
+ > NodeJS
+ > Java
+III. Building and Deploying applications
+IV. Troubleshooting Applications
+V. Labs
+
+
+Programming types:
+1. Compiled
+	> programming languages that need to be compiled first after being written/developed, before being executed
+	> ex: Java, C, C++
+2. Interpreted
+	> programming languages that can be executed as is after developing them
+	> ex: python, nodeJS, Ruby
+	
+	
+Compiled programming languages
+ > programming languages that need to be compiled first after being written/developed, before being executed
+ > ex: Java, C, C++
+ > steps needed to executed programs written in a compiled language incldues
+	1. Develop Source code
+	2. Compile the source code
+	3. Run the compiled source code
+ > ex: For java source code, we will need to 
+	1. Write the source code, typically ends with .java file extension
+	
+EX:
+// MyClass.java
+public class MyClass {
+	public static void main (String[] args) {
+		System.out.println("Hello World");
+	}
+}
+
+	2. Using javac command, we will compile the .java file
+		- $ javac MyClass.java
+		- should create a file with same name but different extension (MyClass.class)
+	3. Run the .class file using java command
+		- $ java MyClass
+		- should output "Hello World"
+		
+		
+Interpreted programming language
+ > programming languages that can be executed as is after developing them
+ > ex: python, nodeJS, Ruby
+ > steps needed to execute programs written in an interpreted language includes
+	1. Develop Source code
+	2. Run
+ > ex: For python source code, we will need to 
+	1. Write the source code
+	
+EX:
+// main.py
+def print_message():
+	print("Hello Worlds")
+	
+if __name__ == '__main__':
+	print_message()
+
+	2. Using python command, run the python file
+		- $ python main.py
+		- should output 'Hello World'
+		
+		
+Code, Bytecode, and Machine code
+Code
+ > this is the human readable source code that developers works on
+Bytecode
+ > intermediary between the Code and Machine code
+ > Output of the programming language's Compiler, and is used by the same language's Interpreter in a VM environment to create the machine code
+ > These bytecode is different to the source code in terms of the content and the file extensions in most cases
+ > Compilers of each programming languages first compile the source code into a bytecode
+ 
+Machine code
+ > the only format the machine can understand
+ > composed of 1's and 0's
+	
+History of building application from Code to Machine code
+ > back in the early days, in order to build application that will work in specific system, we will need to compile the same application on that kind of system
+ > this results in different build of applications for different system in order to run the said application on them
+ > Nowadays, the modern compilers DO NOT compile the code directly into machine code. Instead it is first converted to an intermediate form called byte code
+ > Then these bytecode will then be used by the programming language's interpreter in an environment called virtual machine
+	- ex: JVM (Java), Python VM (Python)
+	- not to be confused with virtual machines in the infrastructure space
+ > These VMs is just a virtual computing environment inside which the bytecode is executed to be converted into the machine code
+
+
+
+Packages/Modules/Libraries
+ > Packages are code that can be reused, and is typically shared to the community
+ > Based on the programming language you use, they may be refered to as Modules or Libraries as well
+ > These packages is used to help work with either
+	- File systems
+	- Perform math operations
+	- Interact with Operating System
+	- Develop Web applications
+	- Implementing security, network, etc
+ > These packages use these packages in their code as dependencies, and so these dependencies must be available for the applications to run
+ > These dependencies are handled by different tools for different programming languages such as
+	- NPM for NodeJS
+	- PIPP for Python
+ 
+
+
+
+NOTES:
+1. As a DevOps, our only concern with regards to programming languages is how we will build, test, and deploy the applications written on them.
+2. In the world of DevOps, understanding the basics of package management can help you better understand build processed and aid in troubleshooting issues that may arise due to dependency errors.
+
+
+
+
+
+
+22. Java - Introduction
+
+Java programming language
+ > Free
+ > Open-source
+ > Huge community behind it
+ 
+Java in different work environment
+ > in our work environment, we might find a lot of application dependent on different versions of Java, and it is not unlikely to see a lot of organizations stuck at version 8
+ > Version 9 introducted changes taht made many popular tools and libraries incompatible at the time
+ > So these, along with some of the changes in licensing terms, resulting in many applications being stuck at Java 8
+ 
+ 
+Installing Java
+1, Use wget command to download the compressed file for java binaries.
+	> you can get the link in the Oracle website
+	> $ wget https://download.java.net....
+2. Extract the content of compressed file
+	> $ tar -xvf openjdk-13.0.2_linux-x64_bin.tar.gz
+3. Add the content of compressed file inside specific folder
+	> ex: /opt/jdk-13/bin/java
+4. Check if the java command works
+	> $ jdk-13.0.2/bin/java -version
+
+
+Java Development Kit (JDK)
+ > set of tools that will help us develop, build, and run Java applications on a system
+ > we can just normally write java code using any text editors, but in order to do complex things like debugging and documentations we will need tools provided by JDK
+ > for Development, we have
+	a. jdb
+		- simple command-line debugger for Java classes
+	b. javadoc
+		- command-line tool for extracting special comments (called doc comments) from java source files and generating an easy-to-use HTML file tree containing them.
+ > for Building, we have
+	a. javac
+		- command-line tool for compiling source code into byte code
+	b. jar
+		- helps archive the code and related libraries into a single jar file
+ > for Running, we have
+	a. JRE - Java Runtime Environment
+		- the only component we need to run a Java application on any system
+		- before Java 9, JDK and JRE can be downloaded, and installed separately
+		- from Java 9 onwards, they are now packaged together into a single Java development kit
+	b. java
+		- command-line tool, or loader that is used to run the application
+ > these commands are available in the 'bin' directory of the installation directory of Java
+
+NOTE:
+1. For Java version 8 and lower, the naming convention of the version is 1.X.X like 1.8.0_242. For newer version, it is just refer to as the version number itself, x.x.x like 13.0.2
+
+
+
+
+
+23. Labs - Java Introduction
+
+Q1: What is full form of JDK?
+A: Java Development Kit
+
+Q2: What version of Java currently installed in the system?
+S: Use 'java -version' command
+
+Q3: Which tool is used for documenting your app with JDK?
+A: javadoc
+
+Q4: Which tool is used for compiling your app with JDK?
+A: javac
+
+Q5: Which tool is used for debugging your app with JDK?
+A: jdb
+
+Q6: Which component was not part of JDK before version 9 of Java but became part of it from version 9 onwards?
+A: JRE
+
+Q7: Help us install java 20 inside /opt directory on app01 server.
+S:
+1. Connnect to app01 server using ssh
+	$ ssh app01
+2. Go to /opt directory
+	$ cd /opt
+3. Install wget first using yum
+	$ sudo yum install wget
+4. Download JDK 20 using wget. Make sure you download JDK for correct OS
+	$ sudo wget https://download.oracle.com/java/20/archive/jdk-20.0.2_linux-x64_bin.tar.gz
+5. Extract the contents of the compressed JDK file
+	$ sudo tar -xvf jdk-20.0.2_linux-x64_bin.tar.gz
+6. Check if the java command is runnable
+	$ jdk-20.0.2/bin/java -version
+	
+Q8: We need to set java binary path in environment PATH variable to use java binaries. So that you can simply run java instead of the full path.
+Once done, verify that you can invoke java simply by running java command.
+S: 
+1. Edit the PATH environment variable	
+	$ PATH=$PATH:/opt/jdk-20.0.2/bin
+2. Confirm if java is accesible without specifying its directory
+	$ java -version
+
+
+
+
+
+24. Java - Build & Packaging
+
+COMPILING JAVA APP
+Recap:
+Compiling a Java programming
+1. Develop source code
+2. Compile the .java file using 'javac'
+	$ javac MyClass.java
+3. Execute the class using the loader 'java' command
+	$ java MyClass
+	
+Source code to Machine code process
+1. Source code is compiled to Byte code using Compiler
+	> this is what happens when we use 'javac' command
+2. Byte code is interpreted by the Intepreter and executed inside the Java Virtual Machine, where it will output the Machine code
+	> happens when we execute 'java CLASSNAME' command
+
+Java Virtual Machine
+ > VM that Java Interpreter uses in order to interpret the Byte code 
+ created by the Compiler into the Machine code
+ > with this, 
+	1. we can run any Java application on any operating system
+	2. allows us to compile the code once, and write it anywhere
+	
+	
+PACKAGING JAVA APP
+ > as of now, we only compile and intepret the Source code of a single Java file, but typically in a large project there can be more than one Java file
+	- these Java files may be dependent on each other, or may have dependency on the external libraries
+ > on packaging Java, we may use JAR or WAR
+
+Java Archive (JAR)
+ > helps compress and combine multiple Java class files and dependent libraries and assets into a single distributable package
+ 
+Web Archive (WAR)
+ > if, in case of a web application, there may be other files such as static files and images that may be part of the application
+ 
+ 
+Creating a JAR file
+ > to create a JAR file, we can use the 'jar' command
+	- for this command, we will need to provide the following
+		a. JAR output file name
+		b. list of .class files that we want to include
+ > EX: 
+	$ jar cf MyApp.jar MyClass.class Service1.class Service2.class
+ > when this file is created, it automatically generates a MANIFEST file within the package at the path "META-INF/MANIFEST.MF"
+
+
+META-INF/MANIFEST.MF file
+ > contains information about the files packaged in the jar file and any other metadata regarding the application
+ > once such information is the entrypoint of our application
+	- entrypoint is one of the .class file inside the jar file that will be executed/start when someone tries to run this packaged version of the application
+	
+EX:
+// META-INF/MANIFEST
+Manifest-Version: 1.0
+Created-By: 1.8.0_242 (Private Build)
+Main-Class: MyClass
+ 
+ 
+Running a JAR file
+ > after creating the jar file, we can run the said jar file using the 'java' command with a '-jar' option with the jar file name passed
+ > ex: 
+	$ java -jar MyApp.jar
+
+
+
+DOCUMENTING JAVA APP
+ > in order to generate documentation of the code, we can use the 'javadoc' command
+ > this command takes the output directory and the source code file, where it will generate an HTML file similar to a Java documentation
+ > ex:
+	$ javadoc -d doc MyClass.java
+	
+	
+Build Process
+ > as of now, the build process includes
+	1. Develop
+	2. Compile
+		> ex: javac MyClass.java
+	3. Package
+		> ex: jar cf MyClass.jar
+	4. Document
+		> ex: javadoc MyClass.jar
+ > as the number of developer grow larger, the more harder it is to work on the same application, where for each changes we will need to do the build processes individually by executing each of the commands specified above
+ > to help us automate these process, we can use Build tools
+ 
+ 
+Build tools
+ > helps us automate these processes
+ > examples includes:
+	- Maven
+	- Gradle
+	- Ant
+ > these tools use configuration files where you can specify the steps that you want the build tool to automate
+ > these tools will automatically execute these steps in that particualr order that you have defined
+
+EX: ANT 
+ > for ANT, it uses an XML configuration file in order to specify the build processes to be executed
+ > in order to use the XML configuration file to build, use the 'ant' command, it will default on executing target with name 'main'
+	$ ant
+ > in order to execute only specific sections of the XML configuration files, specify the target names
+	$ any compile jar
+
+XML configuration file
+<?xml version="1.0"?>
+<project name="Ant" default="main" basedir=".">
+	<!-- Compiles the java code (including the usage of library for JUnit) -->
+	<!-- corresponds to 'javac MyClass.java' command -->
+	<target name="compile">
+		<javac srcdir="/app/src" destdir="/app/build">
+		</javac>
+	</target>
+	<!-- corresponds to 'javadoc MyClass.java' -->
+	<!-- Create Javadoc -->
+	<target name="docs" depends="compile">
+		<javadoc packagenames="src" sourcepath="/app/src" destdir="/app/docs">
+			<!-- Define which files / directory should get included, we include all -->
+			<fileset dir="/app/src">
+				<include name="*"/>
+			</fileset>
+		</javadoc>
+	</target>
+	<!-- Creates the deployable jar file -->
+	<!-- Corresponds to 'jar cf MyClass.jar' -->
+	<target name="jar" depends="compile">
+		<jar basedir="/app/build" destfile="/app/dist/MyClass.jar">
+			<manifest>
+				<attribute name="Main-Class" value="MyClass" />
+			</manifest>
+		</jar>
+	</target>
+	<!-- target with name 'main' is the entrypoint -->
+	<!-- the depends specifies the dependencies of the target -->
+	<target name="main" depends="compile, jar, docs">
+		<description>Main target</description>
+	</target>
+</project>
+
+
+EX: Maven
+ > for Maven, it uses a 'pom.xml' file to define the build configuration
+ > to run specific build process step in Maven, you need to use 'maven' command and pass the process step you want
+	- we can specify more than one step, and based on their order will their execution step be ordered
+ > ex:
+	$ mvn clean install
+		- used to execute the 'clean' and 'install' steps
+
+EX: Gradle
+ > for Gradle, it uses 'build.gradle' to dfine the build configuration
+ > to build, use the 'gradle' command and pass the specific step to execute
+ > ex:
+	$ gradle build
+	$ gradle run
+
+
+Summary - Java Build processes
+ > JAVA
+ > Java Runtime Environment
+ > Java Development Kit
+ > Compiling a Java application
+ > Packaging a given application to JARs
+ > What are Build Tools
+
+
+
+
+
+25. Labs - Java - JARs
+
+Q1: Which java version is installed on host01 server?
+S: Use 'java -version' command
+
+Q2: We have created MyClass.java file inside /opt/app directory. View it if you like using the command cat MyClass.java. Please compile it.
+S:
+1. Go to /opt/app
+	$ cd /opt/app
+2. Print out content of MyClass.java first to see if its a valid java file
+	$ cat MyClass.java
+3. Use 'javac' to compile it
+	$ javac MyClass.java
+	
+Q3: What is the new file created by the java compiler?
+A: /opt/app/MyClass.class
+
+Q4: Run the compiled application and identify which among the below does it print.
+S: Use 'java' command and pass the class name (ex: java MyClass)
+
+Q5: Generate documentation for the MyClass.java source code into the /opt/app/doc directory.
+S:
+1. Use javadoc command, where you specify the output directory (doc) and the source code to create documentation of
+	$ javadoc -d doc MyClass.java
+
+
+
+
+
+26. Labs - Java - Build & Packaging
+
+Q1: Install the Apache Ant build tool on host01 server.
+S:
+1. Install ant using yum
+	$ sudo yum install ant
+	
+Q2: Check the ANT build configuration file /opt/ant/build.xml on host01 server. If you run ant docs command, where will the generated html docs be stored?
+S:
+1. Go to /opt/ant directory
+	$ cd /opt/ant
+2. View the build.xml file
+	$ cat build.xml
+3. Check the 'destdir' property of the 'javadoc' inside 'target' with name=docs
+	<javadoc packagenames="src" sourcepath="/opt/ant/src" destdir="/opt/ant/docs">
+
+Q3: Check the ANT build configuration file /opt/ant/build.xml on host01 server. If you run the ant jar command, where will the target jar file be stored?
+S: Check the 'destfile' property of the 'jar' inside 'target' with name=jar
+	<jar basedir="/opt/ant/build" destfile="/opt/ant/dist/MyClass.jar" >
+
+
+Q4: Compile and generate jar package using ant. You can ignore the warnings which are generated by the ant command.
+S: Use 'ant' command where the build.xml is located
+
+
+Q5: Run ant to carry out all steps specified in the build configuration file /opt/ant/build.xml. Confirm jar run output
+S: You can either use 'ant', since all steps specified in build.xml is included in 'main' target. You can also specify all the targets or steps you want to run like compile, docs, jar, run.
+Either use one of the following:
+	$ ant
+	$ ant compile docs jar run
+	
+	
+Q6: What is output when you run target java with ant in previous step?
+A: Hello Kodekloud
+
+
+Q7: Install the maven build automation tool on the host01 server.
+S: Use yum to install maven
+	$ sudo yum install maven
+
+Q8: We have downloaded an application named my-app to the directory - /opt/maven/. Please check /opt/maven/my-app/pom.xml on host01 server for maven. What is artifactId for main app when you build maven package?
+do 'cd /opt/maven/my-app/' then 'tree' to explore the directory structure for the application.
+S: 
+1. Go to /opt/maven/my-app directory
+	$ cd /opt/maven/my-app
+2. Print out content of pom.xml
+	$ cat pom.xml
+3. Check the project.artifactId value
+	> my-app
+	
+
+Q9: Please compile and package the application inside /opt/maven/my-app/ with maven on host01 server.
+S:
+0. Remember to use sudo please
+1. Go to directory where pom.xml is located
+	$ cd /opt/maven/my-app
+2. Use the 'mvn' command to compile and package the maven java application
+	$ sudo mvn compile package
+
+
+Q10: What is output for main app when you run /opt/maven/my-app/target/my-app-1.0-SNAPSHOT.jar created with maven package?
+S: Use 'java -cp JARFILE CLASSPATH' command on the output jar
+	$ java -cp /opt/maven/my-app/target/my-app-1.0-SNAPSHOT.jar com.mycompany.app.App
+
+
+NOTE:
+1. 'java -jar' command is only used if there is a META-INF/MANIFEST file inside the file. If it is not present, use 'java -cp' command and pass the fully qualified package name of the class to be used as entry point
+	> java -cp /opt/maven/my-app/target/my-app-1.0-SNAPSHOT.jar com.mycompany.app.App
+
+
+
+
+
+
+
+27. NodeJS - Introduction
+
+Javascript
+ > programming language used in NodeJS applications
+ > pivotal on making the websites to be more intelligent and interactive, like making calculators, fun animations, games, graphs, running predictions on the web, running mathematics calculations
+ > paved the way for different client side frameworks like jQuery, AngularJS, ReactJS, EmberJS, BackboneJS, etc
+	- all of these are client-side technologies, which means that they would eventually run on client's or user's system, e.g. laptops
+
+NodeJS - Javascript for server side application
+ > Node.js is a server side JavaScript environment that can be used to develop application such as Web servers using Javascript`
+ > main points of the Node.js includes:
+	- Free
+	- Open source
+	- Cross platform compatible
+ > Important feature that distinguishes Node.js from others is its ability to handle a large number of CONCURRENT connections by implementing a NON-BLOCKING IO model
+ 
+ 
+Installing Node.js
+ > to install Node.js, follow the instruction in their documentation website
+	- download: https://nodejs.org/en/download
+	- install: https://nodejs.org/en/learn/getting-started/how-to-install-nodejs
+ > Node.js is available on all different flavors of Linux
+
+EX: Install Node.js in CentOS
+1. Add the repository below to have the NodeJS be available to rpm
+	$ curl -sL https://rpm.nodesource.com/setup_13.x | bash -
+2. Download NodeJS using yum
+	$ yum install nodejs
+3. Test if the NodeJS is successfully installed
+	$ node -v
+	
+	
+NodeJS Commands
+
+1. node -v
+	> used to print out the NodeJS version installed
+
+2. node FILENAME
+	> used to execute a specific javascript file
+	> ex:
+		$ node add.js
+		
+// add.js
+// Returns addition of two numbers
+let add = function (a,b) {
+	return a+b;
+};
+
+const a = 10, b = 5;
+console.log("Addition: " + add(a,b));
+
+// output
+Addition: 15
+
+
+
+
+
+28. Labs - NodeJS - Introduction
+
+Q1: Do we need to pay license fee to install NodeJS
+A: No
+
+Q2: What is not a feature of NodeJS?
+A: Client side java script
+
+Q3: Help us install NodeJS 14 on host01 server!
+S: 
+1. Add additional repository in the rpm to pull nodejs from
+	$ sudo curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
+2. Use yum install command
+	$ sudo yum install nodejs
+	
+Q4: Which exact version of NodeJS is currently installed?
+S: Use 'node -v' command
+
+Q5: Run /home/add.js. What is the output of the code?
+S:
+// add.js
+// Returns addition of two numbers
+let add = function (a, b) {
+  return a+b;
+};
+
+const a = 10, b = 5;
+console.log("Addition : "+ add(a,b));
+
+A: Addition : 15
+
+
+
+
+
+29. Node JS - NPM
+
+Node Package Manager (NPM)
+ > NPM allows developers to develop new REUSABLE packages or modules and share them on the public repository
+	- Other developers can then download and use these on their projects
+	- As of now,there are thousands of packages available in the repository today
+ > NodeJS supports large number of packages or libraries that is developed by either the core team, or contributed by the community
+ > These could be packages for:
+	- working with files
+	- hosting web servers
+	- interacting with databases
+	- implementing security
+	- and many more
+ > these packages are available at a public repository at npmjs.com
+ 
+NPM commands
+ > helps you interact with npm repository
+ > automatically included when you install nodejs
+ 
+1. npm -v
+ > prints out the npm cli version
+ > can be different with node cli version
+
+2. npm search PACKAGENAME
+ > used to search for specific package in npm
+ > included in the search result are the 
+	- DESCRIPTION, and the 
+	- package AUTHOR
+	- Date
+	- Latest version
+ > ex:
+	$ npm search file
+	
+3. npm install PACKAGENAME@VERSION
+ > install the specific npm package
+ > if version is not specified, it will get the latest version
+ > the installed package will be located in the 'node_modules/package_name' in the current working directory
+ > adding a '-g' option will install the package in GLOBAL DIRECTORY
+	- this package will then be available throughout the system
+ > ex:
+	$ npm install file
+		- node_modules folder with 'file' folder inside will be created
+
+4. node -e "console.log(module.paths)"
+ > prints out the source paths where the package can be pulled from the system
+ 
+		
+Typical directory of node_modules
+node_modules
+ > packagename
+ > file
+	> LICENSE
+	> Readme.md
+	> package.json
+	> lib (source code of package)
+	
+	
+package.json
+ > similar to pom.xml of Maven
+ > contains the metadata for that package such as its:
+	- name
+	- version
+	- author
+	- git repository
+ > useful file in case you are troubleshooting issues with dependency errors
+ 
+ 
+Using the installed package in a Javascript file
+ > in order to use package inside a JS file, we will need to use the require() method from nodeJS
+	- this method takes the package name as input string
+	
+EX:
+// app.js
+var file = require("file");
+file.mkdirs("/tmp/dir1");
+
+
+Source paths for the package location
+ > in npm, there are two types of source paths where we can fetch the packages
+	1. local directory
+	2. global directory
+ > local directory is the 'node_modules' folder of the current working directory
+	- typically, we see this in root directory of the nodejs application that we are working on
+ > global directory is the directory where the packages are installed if we specify that we want to install it GLOBALLY
+	- to install a package globally, we just need to add '-g' flag
+	- then anywhere in the system, we can use the said package
+ > to print out the possible source paths the packages can be fetch, use the command below
+	$ node -e "console.log(module.paths)"
+ 
+
+Two types of modules
+1. Built in modules
+	> installed automatically when Nodejs runtime is installed
+	> these are located under /usr/lib/node_modules/npm/node_modules/ for linux systems
+2. External modules
+	> needs to be installed separately from nodejs using npm search and install commands
+	> these are located under /usr/lib/node_modules
+
+
+Common Built in Modules
+fs		to handle filesystem
+http	to host an http server
+os		to work with the operating system
+events	to handle events
+tls		to implement TLS and SSL
+url		to parse URL Strings
+
+
+Common External Modules
+express		fast, unopinionated, minimalist, web framework
+react		to create user interface
+debug		to debug applications
+async		to work with asynchronous JS
+lodash		to work with arrays, objects, string, etc
+
+
+
+Application Dependencies
+ > an application or package can have a set of dependencies and scripts associated with it
+	- these are recorded in the pacjage.json file
+ > when developers build an application, they create this file in the root of the project
+ > package.json file contains name and version of the application, as previously discussed, and alongside them is a list of dependencies
+ > these dependencies are packages or modules that this application requires
+	- the packages also has their version defined
+	- installing different or unsupported dependencies can cause applications to not work, so it is important that these versions are defined properly
+ > note that the packages defined as dependency of your application may have their own package.json with their own dependencies
+
+
+
+NOTES:
+1. In deploying Nodejs application, one problem DevOps encounter is with regarding to the dependency errors, unable to find libraries, or mismatching versions.
+2. NPM commands are automatically installed when you install Nodejs
+
+
+
+
+
+30. Labs - Node JS - NPM
+
+Q1: What is the npm version preinstalled in host01 server?
+S: Use 'npm -v' command
+
+Q2: Who is author of file package for npm?
+S: Use 'npm search PACKAGENAME', and 
+
+Q3: Install NodeJS file package with npm inside /home/thor/ directory.
+S:
+1. Go to /home/thor directory
+	$ cd /home/thor
+2. Install 'file' using npm install
+	$ npm install file
+
+Q4: What is the path for package.json for file package installed in previous step?
+S: Since we didnt install file in global directory, it is located in $pwd/node_modules/file/package.json
+
+Q5: Install file module globally with npm.
+S: Use 'npm install' command with '-g' flag added
+
+Q6: Where did we install file package in previous step with global option?
+S: Since we installed it globally, it will be located in '/usr/lib/node_modules/' directory
+
+Q7: Download nodejs application from github in /home/thor/ on host01 server?
+Git repo URL for nodejs : https://github.com/contentful/the-example-app.nodejs
+S: 
+1. Go to /home/thor directory
+	$ cd /home/thor
+2. Clone the repository using git clone command
+	> if git is not installed, use yum to install it
+	$ git clone https://github.com/contentful/the-example-app.nodejs
+
+Q8: What is the dependency for helmet version in /home/thor/the-example-app.nodejs/package.json on host01 server?
+S:
+1. Print out the /home/thor/the-example-app.nodejs/package.json
+	$ cat /home/thor/the-example-app.nodejs/package.json
+2. Check the version of the helmet dependency
+
+
+
+
+
+31. Python - Introduction
+
+Python
+ > Python is a free and open source, cross-platform compatible programming language as we discussed before
+ > Once the application is developed, Python requires the interpreter to run the application
+ 
+Python version
+ > there are two groups of versions for Python
+	a. Python2 - (2000-2010)
+	b. Python3 - (2008 to Present)
+ > Python3 introduced considerable changes with respect to improvements and fixes from Python2
+	- programs written in Python2 required a lot of changes to be made to run in Python3 since Python3 DID NOT GUARANTEE backward compatibility with its predencessor
+	- this means that Python2 apps must be carefully migrated or ported to Python3
+ > Application written in one version must be run in the Interpreter corresponding to that version, e.g. Python2 app must be run in Python2 interpreter
+ > Python3 also introduced a whole set of new features which paved the way to support modern technologies such as machine learning, data science, and artificial intelligence
+ 
+ 
+Installing Python
+ > some OS comes pre-installed with python
+ > in case the Linux does not have python, you can use the yum command to install it
+	$ yum install python2
+	$ yum install python36
+		- install python version 3.6
+		
+		
+Entering Python interpreter
+ > to use Python, specifically Python commands, you need to be inside the interpreter
+ > to go inside it, use either the 'python2' or 'python3' command, based on the version you are using
+	$ python2
+	$ python3
+ > to exit the interpreter, type 'exit'
+	$ exit
+	
+	
+Checking Python version
+ > to check for the version, use 'python -V' command
+	$ python2 -V
+	$ python3 -V
+
+
+Running Python script
+ > to run Python script, use the 'python2' or 'python3' command, following by the script filename to run
+	$ python2 main.py
+	
+// main.py
+def print_message():
+	print("Hello World")
+	
+if __name__ == '__main__':
+	print_message()
+
+
+
+
+
+32. Labs - Python - Introduction
+
+Q1: Which of the below is not a Python feature?
+A: Commercial
+
+Q2: Which python versions are currently installed on host01 server?
+S: Use 'python2 -V' and 'python-3 -V' commands
+
+Q3:Install python3.6 in host01 server. We removed python3. You can confirm by running python3 -V
+S: Use yum install command
+	$ sudo yum install python36
+
+Q4: We have created /home/thor/main.py. What will be output when you run it with python2?
+S: 
+1. Go to /home/thor dir	
+	$ cd /home/thor
+2. Use python2 command to execute the main.py script
+	$ python2 main.py
+
+
+Q5: What will be output when you run /home/thor/main.py with python3?
+S:
+1. Go to /home/thor dir	
+	$ cd /home/thor
+2. Use python2 command to execute the main.py script
+	$ python3 main.py
+
+
+
+
+
+
+33. Python - PIP
+
+PIP
+ > Python Package Manager
+ > when Python is installed, it also installs PIP automatically
+ > PIP also have separate versions based on the Python you've installed (Python3 or Python2)
+
+
+Checking PIP version
+ > to check PIP version, use either the pip3 or pip2 command, then add '-V' flag
+ > these commands will print out the PIP version, alongside the Python version where it is from
+	- ex: pip 9.0.3 from /usr/lib/python2,7/sites-packages (python 2.7)
+ > ex:
+	$ pip2 -V
+	$ pip3 -V
+	$ pip -V
+	
+	
+Installing package using PIP
+ > to install a package using PIP, use the 'pip install' command, and pass the package name you want to install
+ > ex:
+	$ pip install flask
+	
+	
+Directory structure of Python
+ > separate paths are dedicated for 32bit and 64bit versions of the packages installed
+ > then inside each of these paths, different version of Python is present
+ > inside each version of Python, site-packages is present where packages are located
+ > ex: 64bit version of Flask for Python2 will be located in /usr/lib64/python2.7/site-packages/Flask-1.1.1.dist-info
+ 
+usr
+	- lib
+		- python2.7
+			- site-packages
+		- python3.6
+			- site-packages
+	- lib64
+		- python2.7
+			- site-packages
+				- Flask-1.1.1.dist-info
+		- python3.6
+			- site-packages
+			
+			
+Checking package information
+ > to check, use 'pip show', then the package name
+ > these info includes name, version, author, site package dir, etc
+ > ex: 
+	$ pip show flask
+ > sample output:
+	Name: Flask
+	Version: 1.1.1
+	Summary: A simple framework for building complex web applications
+	Home-page: https://palletsprojects.com/p/flask/
+	Author: Armin Ronacher
+	Author-email: armin,ronacher@active-4.com
+	License: BSD-3-Clause
+	Location: /usr/lib64/python2.7/site-packages
+	Requires: Werkzeug, click, Jinja2, itsdangerous
+	
+	
+Checking package source paths used
+ > to check the source paths where packages are being fetch, use the command below:
+	$ python2 -c "import sys; print(sys.path)"
+ > you can use this command when troubleshooting issues related to missing packages
+	
+
+Importing Python package into the source code
+ > to import, use the 'from PACKAGE import' syntax
+ 
+EX: // main.py
+from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+	return 'Hello, World'
+	
+	
+Requirements
+ > Requirements is a txt file where you can specify the versions of the packages that you need to install
+	- similar to package.json file of NodeJS
+ > this is an alternative of executing multiple 'pip install' commands
+ > inside are the package name, with version of them specified
+	- if no version specified, it will install the latest stable version of that package
+ > to install all packages specified in the requirements.txt, use 'pip install', add '-r' flag and pass the .txt file
+ 
+ 
+Sample text file: requirements.txt
+Flask==0.10.1
+Jinja2==2.7.3
+MarkupSafe==0.23
+Werkzeug==0.9.6
+requests==2.3.0
+gunicorn==18.0
+ 
+ 
+Upgrade/Uninstall packages
+ > to upgrade, use 'pip install', provide package name, then add '--upgrade' flag
+	$ pip install flask --upgrade
+ > to uninstall, use 'pip uninstall', and provide package name
+	$ pip uninstall flask
+ 
+ 
+ 
+Commands
+pip2 -V
+pip3 -V
+pip -V
+ > shows PIP version
+ 
+pip install PACKAGENAME
+pip install PACKAGENAME1 PACKAGENAME2 PACKAGENAME3
+ > install specific package or multiple package at once
+ 
+pip show PACKAGENAME
+ > outputs the package informations
+ 
+pip install -r TEXT_FILE_WITH_PACKAGES
+ > install packages defined in the text file
+ > ex: pip install -r requirements.txt
+ 
+pip install PACKAGENAME --upgrade
+ > used to upgrade the package to the latest version
+ 
+pip uninstall PACKAGENAME
+ > used to uninstall a package
+ 
+	
+	
+Other Package Manager
+1. easy_install
+	> original way of installing Python packages
+	> a set of tools called 'setuptools' are used to package Python code into zipped format called 'eggs'
+	> the easy_install package manager can then be used to search, find, and install these packages
+	> 'eggs' is similar to 'jars' in Java
+	> to use 'eggs', you can use 'easy_install install' command, and pass the egg name
+		$ easy_install install 
+	> alternatively, you can just include the 'egg' in one of the source paths where the packages are being searched. With this, theres no need to unpackage it
+		$ python2 -c "import sys; print(sys.path)"
+2. wheels
+	> another way of install packages
+	> uses 'setuptools' as well
+	> for this, you will need to unpackage them using 'pip install', and passing the .whl file
+		$ pip install app.whl
+	
+	
+NOTE:
+1. PIP version can be different from the version of Python installed
+	> ex: pip 9.0.3 for python 3.6
+2. Flask is a popular web framework for Python and it help you develop web applications
+3. It is a best practice to specify the versions of packages used in a Pyhton application
+	> the reason is that if we are just fetching the latest stable version, this version might be incompatible with the rest of the packages, breaking the app in the process
+
+
+
+
+
+34. Labs - Python - PIP
+
+Q1: Which python version is used by pip on host01 server?
+S: Use 'pip -V' command. and check the python version
+
+Q2: Which version of pip is currently installed on host01 server?
+S: Use 'pip -V' command, and check the pip version
+
+Q3: Install flask app with pip in host01 server
+S:
+1. Use pip install to install flask
+	$ sudo pip install flask
+	
+Q4: Where will be flask app directory created with previous sudo pip install flask command?
+S: Use 'pip show' command, and take note of Location info
+	$ pip show flask
+	
+Q5: Which package is not installed on host01 server?
+S: Use 'pip list' command to list all install python packages
+
+Q6: We have created requirements file /home/thor/requirements.txt.Install python packages with versions specified in /home/thor/requirements.txt?
+S: 
+1. Go to the /home/thor directory
+	$ cd /home/thor
+2. Use 'pip uninstall -r' and pass the requirements.txt file to remove the packages specified
+	$ sudo pip uninstall -r requirements.txt -y
+3. Use 'pip install -r' and pass the requirements.txt file to install the packages specified
+	$ sudo pip install -r requirements.txt
+4. Validate using 'pip list'
+	$ pip list
+	
+Q7: What is version of gunicorn package installed in previous step? Check /home/thor/requirements.txt version requirements for python packages and confirm it match with installed package
+S: 
+1. Check package installed in system, and the one specified in requirements.txt
+	$ cat /home/thor/requirements.txt
+	$ pip list
+	
+Q8: Upgrade version of gunicorn package installed in previous step
+S: Use 'pip install PACKAGE --upgrade'
+	$ pip install gunicorn --upgrade
+	
+Q9: Uninstall gunicorn package
+S: Use 'pip uninstall' command
+	$ sudo pip uninstall gunicorn -y

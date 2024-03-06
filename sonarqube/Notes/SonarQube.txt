@@ -1,0 +1,263 @@
+SonarQube
+
+Contents
+I. Software Testing
+II. Dynamic and Static Testing
+III. Static Code Analysis
+IV. What is SonarQube?
+V. Features of SonarQube
+VI. SonarQube installation
+
+SonarQube
+	> a Continuous Inspection Tool
+
+
+I. Software Testing
+
+Software Testing
+	> Software testing is a part of software development lifecycle
+	> Its aim is to ensure that the code to be deployed is of high quality with no bugs and no logical errors
+	> Involves a Developer and a Tester
+		- Developer creates Program and sends it to Tester
+		- Tester do rigorous testing to the program and sends back errors to the Developer
+		- Developer receives the errors and fix it
+		- Developer sends to again to Tester
+	> On average, 30% of the development time is spent of Testing
+	> Decreases the Maintenance cost spent on the Application
+		- due to better maintainability of the said Application
+	> Provides Securability of the Application
+
+
+Software Testing Classifications
+1. Testing type:
+	a. Manual
+		> Tester write and run the Test cases by himself
+	b. Automatic
+		> Tester write scripts that are standardized and is ran in the application
+2. Testing methods:
+	a. Static
+		> Tester examines the source code BEFORE IT IS EXECUTED / RUN
+		> Used to expose errors before running the application
+	b. Dynamic
+		> Tester examines the behavior of the application WHILE RUNNING
+3. Testing approaches
+	a. Black Box
+		> Tester does not know the internal structure of the application
+	b. White Box
+		> Tester does know the internal structure of the application
+	c. Gray Box
+		> middle ground between the Black box and White box
+4. Testing levels
+	a. Unit Testing
+		> testing individual components
+		> Unit can be 
+			- specific piece of functionality
+			- a part of program
+		> Help verify internal logic
+	b. Integration Testing
+		> Testing components groups
+		> Test how each of the components Integrations in System works
+	c. System Testing
+		> Testing the integrated system
+		> All components of software is tested
+		> Verify technical, business, functional aspects of software
+	d. Acceptance testing
+		> also called User Acceptance Testing (UAT)
+		> whole system is tested, whether it fits the requirements of the client
+
+
+
+Static Testing
+	> It is a method of debugging by examining source code before program is run
+		- i.e. test the code without actually executing it
+	> It does so by analyzing the code agains a pre-set of coding rules and ensure that it conforms to the guidelines
+	> The cycle includes:
+		1. Developer writes code
+		2. Static testing tool examines the code and informs Dev about error in code
+		3. Developer fixes the error
+
+
+Static Code Analysis
+	> There are many tools which help ins tatic testing and providing us with an analysis for better comprehension
+	> Some IDEs can do basic Static Code Analysis, but having a tool dedicated for it will give us better information
+	> These Static Code Analysis examines the code while we are writing it
+	> Process includes:
+		1. Developer writes the code
+		2. Static testing tool examines the code while it is being written
+		3. Static testing tool creates an analysis of the code, represents it visually, and show it to the Developer
+		4. Developer uses the information to better the code
+
+
+
+Reasons To Use Static Code Analysis
+1. Find erros earlier in development
+	> It helps us find error way earlier in development before it goes into production
+	> They are cheap and easy to fix
+2. Detects OVERCOMPLEXITY in code (refractoring/simplification)
+	> It helps detect if the code is written in a very complicated matter even though it can be written very easily
+3. Find Security Errors
+	> It helps pick up security errors, which basically means it helps the source code be more secure when it is deployed
+4. Enforces Best Coding Practices
+	> Devs may forget to follow best practices specific to a coding language	
+	> Static Code Analysis can help us in solving this issue
+5. Automated & Integrates in Jenkins
+	> It can be a waste of time to regularly ask the testing software to test the code
+	> Therefore, to solve such problem, we can integrate the static testing tool with Jenkins (or any DevOps tool)
+		- i.e. SonarQube + Jenkins
+6. Can create project specific rules
+	> They allow us to write project specific rules
+	> We can customize these rules for each specific project too
+
+
+Example of Static Testing Tools
+1. SonarQube
+2. Coverity
+3. Pycharm
+
+
+
+Technical Debt
+	> It directly translates as the implied costs for ADDITIONAL REWORK that can occur if at an early stage, an easy but not efficient solution is chosen
+	> In the future, the easy code may restrict scalability
+	> In some Static Code Analysis Tool, it can calculate how much Technical Debt a source code have
+
+EX:
+Developer A, in order to deploy the solution faster, opted to not doing inspection of the code. Later down the line when scaling the solution, Dev A needs to do the inspection of the code which will incur additional work. This additional work is referred to as Technical Debt
+
+
+
+
+SonarQube
+	> it is an open source static testing analysis software
+	> it is used by developers to manage source code quality and consistency
+	> some of the code quality checks are:
+		1. Potential bugs
+		2. Code defects to design inefficiencies
+		3. Code duplication
+		4. Lack of test coverage
+		5. Excess complexity
+
+
+
+Features of SonarQube
+1. It can work with 25 DIFFERENT languages
+	- Java, .NET, JS, COBOL, php, Python, C++, Ruby, Kotlin, Scala
+2. Can fix Tricky Issues like
+	a. Detect Bugs
+		> SonarQube can detect tricky bugs or can raise issues on pieces of code that it thinks is faulty
+	b. Code Smells
+		> Code smells are the characteristics of a code that indicates that there might be a problem caused by the code in the future
+		> But smells arent necessarily bad, sometimes they are how a functionality works and theres nothing that can be done about it
+	c. Security Vulnerability
+		> SonarQube can detect security issues that a code may face
+		> e.g. If a developer forgets to close an open SQL database OR if important details like username and password have been directly written in the code
+	d. Activate Rules Needed
+		> You can create and maintain different sets of rules that are specific to particular projects,
+		> These are known as QUALITY PROFILES
+	e. Execution Path
+		> Whenver there is Data flow in your program, and theres a lot of involvement between the different Modules, SonarQube can figure out if there are any tricky bugs in these execution paths
+3. Enhanced Workflow (Ensure Better CI/CD)
+	a. Automated Code Analysis
+		> Keeps working in the background from the development phase itself, monitoring and identifying errors, code smells, and technical debt
+	b. Get access through Webhooks & API
+		> To initiate tests, we do NOT need to come to SonarQube directly, we can do that through an API call
+	c. Integrate with Version Control Softwares
+		> It can be directly integrated with your choice of version control software
+			- e.g. GitHub
+	d. Analyze branches and Decorate pull request
+		> It gives us a branch level analysis
+		> It doesn't just analyze the master branch, but also analyzes the other branches, identifying any errors
+4. Built-in metholodogy
+	a. Discover memory leaks
+		> It can show the memory leak in your application, if the application has a tendency to fail or go out of memory
+		> This generally will happen slowly over a period of time
+	b. Good visualizer
+		> It has a good way of visualizing information about the source code
+		> It gives us simple overviews of the overall health of the code
+		> SonarQube can create visual reports based on the source code and it will be presented in the dashboard
+	c. Enforces a quality gate
+		> It can enfore a quality gate
+		> Developers can tell SonarQube, based on your requirements and practices, what code is wrong and what is correct
+	d. Digs into issues
+		> If it shows that there is a problem, SonarQube allows you to go and directly check it out from the summary report or from one code file to another
+		> In the Dashboard, when you click the error shown, it will directly navigate you to the said line of code
+	e. Plugins for IDEs 
+		> SONARLINT is a plugin that we can install in some IDEs
+		> SonarLine helps SonarQube to integrate itself with an IDE
+			- This means theres no need to install the whole SonarQube package
+
+
+
+SonarQube installation
+1. Install Docker and pull SonarQube image
+	> docker image pull sonarqube:latest
+2. Setup SonarQube on the Browser
+	> docker container run -d --name sonarqube -p 9000:9000 sonarqube:latest
+	> go to localhost:9000
+	> use the default username and password to login
+		- admin
+		- admin
+	> you will be prompted to change default password
+3. Download Sample Code and Analyze it on Sonar
+
+
+
+
+SonarQube Hands-On
+1. Install Git and clone the sample project from the given link
+	> yum install -y git (or apt if you use Ubuntu)
+	> git clone https://github.com/gouthamchilakala/PetClinic.git
+2. Install Java and Maven
+	> reason why Java is needed is because it is one of dependencies of Maven
+	> Install Java
+		apt install java-1.8.0-openjdk-devel
+	> go to Apache Maven website and copy the download like for apache maven (the .tar.gz file)
+	> go inside the server and download the Maven installer using wget (for Linux based servers)
+		wget https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz
+	> extract the file downloaded using tar command
+		tar apache-maven-3.8.5-bin.tar.gz
+	> check if mvn is working
+		cd apache-maven-3.8.5-bin.tar.gz
+		cd bin/
+		mvn --version
+	> export the path directory of mvn executable in PATH environment variable
+		export PATH=$PATH:/opt/apache-maven-3.6.2/bin/
+3. Configure sonar-project.properties and connect Maven to SonarQube 
+	> sonar-project.properties is used to configure the metadata of the SonarQube
+EX:
+# Required metadata
+sonar.projectKey=item-service
+sonar.projectName=item-service
+sonar.projectVersion=1.0
+
+# Comma-separated paths to directories with sources (required)
+sonar.sources=src
+
+# Language
+sonar.language=java
+
+# Enconding of the source files
+sonar.sourceEncoding=UTF-8
+
+4. Compile and Build the sample file using the sonar code from browser
+
+
+
+
+Add Projects in SonarQube
+1. Go to Projects tab
+2. Choose Manually
+	> setup the Project's Display name and Project key
+3. Choose Locally if you want to analyze local source code
+	> Provide/Generate a token
+		- here, you will pass the name of token, and after giving it a name, it will show you the generated token
+		- this will be used to identify you when an analysis is performed
+		- glenn: d8d01076a49af73df473d5135c29da49b776e8fc
+	> Run analysis on your project
+		- choose the best description of the build	
+		- it will show you the instruction for executing Scanner for the specific build type
+		- for Maven, change mvn to mvnw
+
+mvnw clean verify sonar:sonar -Dsonar.projectKey=item-service -Dsonar.host.url=http://localhost:9000 -Dsonar.login=d8d01076a49af73df473d5135c29da49b776e8fc
+4. Check the informations of source code back to SonarQube website
+	localhost:9000

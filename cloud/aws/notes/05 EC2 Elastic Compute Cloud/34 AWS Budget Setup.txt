@@ -1,0 +1,63 @@
+34 AWS Budget Setup
+
+
+Enable IAM Users to manage Billing and Cost Management Dashboard
+1. Login to Root account
+2. Click the Root account dropdown at top right, then click Account
+3. At the "Account" homepage, scroll down and look for "IAM User and Role Access to Billing Information". Then click the "Edit"
+4. Check the "Activate IAM Access", and update
+
+
+Going to Billing Dashboard
+1. Click the Root account dropdown at top right, then click "Billing Dashboard"
+
+
+Checking the AWS resource consumption
+1. Go to Billing Dashboard
+2. Go to Billing -> Bills
+3. Here, we can see all the AWS services charges, and also check the cost we incurred in different billing periods
+
+
+
+Check our AWS Free Tier usage
+1. Go to Billing Dashboard
+2. Go to Free Tier section
+
+
+
+Budgets
+ > AWS Budgets allows you to create budgets, forecast spend, and take action on your costs and usage from a single location.
+
+
+Creating Budgets
+1. Go to Billing Dashboard > Cost Management > Budgets
+2. Create a Budget
+3. When creating a budget, we can either
+	> use a template (simplified)
+	> custom budget setup
+4. Pick Customize for now	
+	> if one of the templates fits your need in the future, pick them
+5. Select "Cost budget" as budget type
+	> this will make it so that we will be budgeting based on the cost of resources
+6. In Budget setup, pass the following
+	> Budget name
+	> Monthly period
+	> Recurring badget
+	> Fixed budgeting method
+	> Budgeted amount
+	> All AWS services for Budget scope
+7. Configure Alert Threshold and actions to take. Here, we can specify information about alert threshold like
+	> Threshold
+	> If we trigger the threshold on Actual or Forecasted spend
+	> The email where we will send the notification
+8. We can also specify the actions that this Alert thresholds will do when they are triggered
+	> for now, we will just want the notification
+
+
+
+
+NOTE:
+1. By default, IAM users do not have access to the Billing and Cost management Dashboard. To fix this, we will need to login to root account
+2. We should learn how to look at the Bills. This will help us check if there are abnormalities with our AWS resources consumption. We can also see how much we are consuming
+3. In AWS Billing Free Tier page, we can see all the free tier services and our actual comsumption of them
+4. Budgets are created in order to track the actual and forecast spend, get notifications when it triggers, and take actions based on it

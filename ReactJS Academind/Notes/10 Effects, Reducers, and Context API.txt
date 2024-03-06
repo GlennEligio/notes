@@ -1,0 +1,1079 @@
+10 Effects, Reducers, and Context API
+
+
+001 Module Introduction
+1. Working with (Side) Effects
+2. Managing more Complex State with Reducers
+3. Managing App-Wide or Component-Wide State with Context
+
+
+
+
+002 What are Side Effects & Introducing useEffect
+
+Components' Main Job
+ > Main Job: Render UI & React to User Input
+ > Components' tasks are:
+	- Evaluate & Render JSX
+	- Manage State & Props
+	- React to (User) Events & Input
+	- Re-evaluate Component upon State & Prop Changes
+	- Prop Changes
+ > all of these are "baked into" React via the "tools" are features covered in this course
+	- i.e. useState() Hook, Props etc
+
+
+Side Effects
+ > are anything else outside Component's main job
+ > these includes:
+	- Store Data in Browser Storage
+	- Send Http Requests to Backend Servers
+	- Set & Manage Timers
+	- Data/Form Validation (side effect of User's input)
+ > these tasks must happen OUTSIDE of the normal component evaluation and render cycle 
+	- this is because some of these task might BLOCK/DELAY rendering (e.g. Http requests)
+
+
+useEffect() hooks
+ > functional hook responsible for handling Side Effects
+ > this hook contains a function/logic to run, and array of variables that will serve as dependencies
+	- the function/logic will only execute if any of the dependency variable CHANGES
+ > this hook needs two parameter inputs
+	- function/logic to execute as Side Effect
+	- dependency array, which consist of variables to monitor for changes
+
+SYNTAX:
+useEffect(() => { ... }, [ dependencies ])
+
+EX:
+const [users, setUsers] = useState([]);
+
+useEffect(() => {
+  // some logic to fetch user list through http request
+  const newUsers = fetch();
+  setUsers(newUsers);
+}, [])
+
+
+
+
+
+
+
+003 Using the useEffect() hook
+
+useEffect() hook usage
+ > doing side effect behavior (e.g. data fetching)
+ > these side effects are done AFTER Component renders
+
+Types of useEffect() configuration
+1. No dependency array
+	> this is where we only have function as parameter in useEffect
+	> this will make the useEffect() behavior like a function defined inside Component
+	> with this, the useEffect() logic will run every Component render
+2. Empty dependency array	
+	> we have dependency array parameter, but its empty
+	> this will make the useEffect() run ONCE after Component renders after it is mounted
+3. Populated dependency array
+	> this is where we have dependency array parameter, and its not empty
+	> will run ONCE after Component renders, then will run again if one of the dependency variables updates value
+
+EX:
+In this example, we are using useEffect() hook to check the login information in localStorage.
+This useEffect also only run once after Component render since it has empty dependency array.
+
+  useEffect(() => {
+    const storedUserLoggedInInformation = localStorage.getItem("isLoggedIn");
+    if (storedUserLoggedInInformation === "1") {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+
+NOTE:
+1. All variables/function we used inside the useEffect() function input should be added inside the dependency array
+	- we can omit adding the Setter method of useState() since they do not change
+2. We can have MORE THAN ONE useEffect() in a Component
+
+
+
+
+
+
+004 useEffect & Dependencies
+
+useEffect & Dependencies
+ > to make our useEffect react to changes in Component variable/function, we can add the variables/functions in dependency array of useEffect
+
+EX:
+ > In this example, we can see the useEffect being used to create a Form/Data Validation as Side effect whenever enteredEmail and enteredPassword changes.
+ > In essence, the form/data validation useEffect provides is a Side Effect of User input due to
+	- enteredEmail/enteredPassword changes and updates in response to User Input/Keystroke
+	- useEffect runs due to enteredEmail and enteredPassword being updated
+
+  useEffect(() => {
+    setFormIsValid(
+      enteredEmail.includes("@") && enteredPassword.trim().length > 6
+    );
+  }, [enteredEmail, enteredPassword]);
+
+
+NOTE:
+1. Data/Form validation of State also counts as Side Effect
+	> Side Effect of User Input
+
+
+
+
+
+
+005 What to add & not to add as useEffect Dependencies
+
+DO NOT ADD
+1. State Updating Function (Setter method)
+	> React guarantees that those functions never change
+	> Hence, you dont need to add them as dependency (you could, but it doesnt do anything)
+2. Built in APIs or functions
+	> includes functions and features built-into the browser, and hence available globally
+		- ex: fetch(), localStorage, setTimeout(), etc
+	> These browser APIs/global function are not related to React component render cycle and they also never change
+3. Variables/Function defined OUTSIDE of your Components
+	> includes helper functions defined in separate files
+	> these variables/functions also are not created inside of a Component function and hence, changing them wont affect your Components
+
+
+EX:
+import { useEffect, useState } from 'react';
+
+let myTimer;
+
+const MyComponent = (props) => {
+  const [timerIsActive, setTimerIsActive] = useState(false);
+
+  const { timerDuration } = props; // using destructuring to pull out specific props values
+
+  useEffect(() => {
+    if (!timerIsActive) {
+      setTimerIsActive(true);
+      myTimer = setTimeout(() => {
+        setTimerIsActive(false);
+      }, timerDuration);
+    }
+  }, [timerIsActive, timerDuration]);
+};
+
+
+In this example:
+ > timerIsActive is added as a dependency because it's component state that may change when the component changes (e.g. because the state was updated)
+ > timerDuration is added as a dependency because it's a prop value of that component - so it may change if a parent component changes that value (causing this MyComponent component to re-render as well)
+ > setTimerIsActive is NOT added as a dependency because it's that exception: State updating functions could be added but don't have to be added since React guarantees that the functions themselves never change
+ > myTimer is NOT added as a dependency because it's not a component-internal variable (i.e. not some state or a prop value) - it's defined outside of the component and changing it (no matter where) wouldn't cause the component to be re-evaluated
+ > setTimeout is NOT added as a dependency because it's a built-in API (built-into the browser) - it's independent from React and your components, it doesn't change
+
+
+
+
+
+
+006 Using the useEffect Cleanup Function
+
+useEffect's Cleanup Function
+ > this refers to the function that is run to cleanup previous Side Effect execution data before a new Side effect is executed
+ > the Cleanup Function will be run before every Side effect execution EXCEPT for the very first Side Effect
+	- the very first Side Effect happens when we load the Component/React app for the first time
+ 	- this is because theres is nothing to Cleanup for the first Side Effect
+
+Creating useEffect Cleanup Function
+ > to define a useEffect's Cleanup Function, we must return a function inside the useEffect's function input parameter
+ > inside this Cleanup Function, we typically cleanup variables and functions that we used in the useEffect's function
+
+SYNTAX:
+useEffect(() => {
+  // side effect logic
+
+  return () => {
+    // cleanup logic
+  }
+}, [ dependencies ])
+
+
+EX:
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      console.log("Check form validity");
+      setFormIsValid(
+        enteredEmail.includes("@") && enteredPassword.trim().length > 6
+      );
+    }, 500);
+
+    return () => {
+      console.log("CLEANUP");
+      clearTimeout(identifier);
+    };
+  }, [enteredEmail, enteredPassword]);
+
+
+What this useEffect do is that 
+1. If enteredEmail or enteredPassword changes, after 500ms delay, it will check for the form values validity
+2. If a new Side Effect is to be executed, it will clear the setTimeout() function is Side Effect, which essentially means that it immediately TERMINATES the logic to be run
+
+What this means is that
+1. If the Side Effect (the form valisdation in setTimeout) is still not executed (due to 500ms delay), and a new Side Effect is to be executed, the cleanUp function will be executed (which TERMINATES the previous setTimeout of previous SideEffect)
+2. If we trigger Side Effect before the 500ms delay, it will immediately TERMINATES the previous form validation SideEffect and start a new one
+
+
+
+
+
+
+
+007 useEffect Summary
+
+useEffect() hook usage
+ > doing side effect behavior (e.g. data fetching, form validation after user input, etc)
+ > these side effects are done AFTER Component renders
+
+Types of useEffect() configuration
+1. No dependency array
+	> this is where we only have function as parameter in useEffect
+	> this will make the useEffect() behavior like a function defined inside Component
+	> with this, the useEffect() logic will run every Component render
+2. Empty dependency array	
+	> we have dependency array parameter, but its empty
+	> this will make the useEffect() run ONCE after Component renders after it is mounted for the first time
+	> will not run after every Component rerenders
+3. Populated dependency array
+	> this is where we have dependency array parameter, and its not empty
+	> will run ONCE after Component renders, then will run again if one of the dependency variables updates value
+
+
+useEffect's Cleanup Function
+ > this refers to the function that is run to cleanup previous Side Effect execution data before a new Side effect is executed
+ > the Cleanup Function will be run before every Side effect execution EXCEPT for the very first Side Effect
+	- the very first Side Effect happens when we load the Component/React app for the first time
+ 	- this is because theres is nothing to Cleanup for the first Side Effect
+ > to create a Cleanup function in useEffect, RETURN a function inside useEffect's function input
+ > the Cleanup Function also run AFTER Component unmounts
+
+
+
+
+
+
+
+
+008 Introducing useReducers & Reducers in General
+
+When to use useReducer instead of useState
+1. Managing more complex state
+	> ex: these complex state may got multiple states, multiuple ways of changing it, or dependencies to other states
+	> in this case, useState() then often becomes hard or error-prone to use
+		- its easy to write bad, inefficient or buggy code in such scenarios	
+
+NOTE:
+1. useState will still be used in majority of cases
+2. Weigh in on whether using useReducer will solve your problem when managing the States
+
+
+EX:
+States to manage:
+
+  const [enteredEmail, setEnteredEmail] = useState("");
+  const [emailIsValid, setEmailIsValid] = useState();
+  const [enteredPassword, setEnteredPassword] = useState("");
+  const [passwordIsValid, setPasswordIsValid] = useState();
+  const [formIsValid, setFormIsValid] = useState(false);
+
+
+Function that uses State update function:
+
+  const emailChangeHandler = (event) => {
+    setEnteredEmail(event.target.value);
+
+    setFormIsValid(
+      event.target.value.includes("@") && enteredPassword.trim().length > 6
+    );
+  };
+
+
+Code Explanation:
+In this example, in setFormIsValid() call inside emailChangeHandler() function, 
+
+Problem:
+1. We are not sure if the enteredPassword value comes from the latest snapshot. Remember earlier that States' values are updated in schedule. This means that if we update the enteredPassword, then we update the formIsValid also using the enteredPassword in the same Render cycle, the enteredPassword setFormIsValid() receives will be the old value.
+2. We also can not access the latest value of enteredPassword in setFormIsValid using function input, since we can only receive the formIsValid value from there.
+
+Solution
+1. Group these States into one large State
+	> with this, we can solve the problem of States not having access to other State's latest snapshot
+2. Use the useReducers
+
+
+
+
+
+
+
+
+009 Using the useReducer() hook
+
+useReducer
+ > used to State, as as useState
+ > big difference is that, when we modify the State, instead of passing the new value, we instead "dispatch an action"
+	- the action that we pass is an Object, which typically includes
+		a. which type of action is being dispatched
+		b. payload / value / data attached to the said action
+	- the action (that is dispatch) is then evaluated by a reducer function, which is then used to modify the State
+
+SYNTAX:
+const [state, dispatchFn] = useReducer(reducerFn, initialState, initFn);
+
+state
+ > the state snapshot used in the component re-render / re-evaluation cycle
+
+dispatchFn
+ > a function that can be used to dispatch a new action
+ > i.e. trigger an update of the state
+ > takes an Object that is then passed as 2nd parameter of reducerFn
+ > ex: dispatchFn({ type: 'NEW_ITEM', val: item})
+
+reducerFn
+ > a function with syntax of
+	(prevState, action) => newState
+ > prevState refers to the State snapshot before we update it
+ > action refers to the Object that we passed as input to the dispatchFn
+ > newState refers to the new, updated State that SHOULD BE RETURNED
+ > a function that is triggered AUTOMATICALLY once an action is dispatch (via disptachFn()) 
+ 	- it receives the latest state snapshot and SHOULD RETURN the new, updated state
+
+initialState
+ > value that we pass here will be the initial value of State
+
+initFn
+ > function to set the initial state programmatically
+
+
+
+
+
+010 useReducer & useEffect
+
+useReducer & useEffect
+ > we can also use the useReducer States as dependencies of useEffect
+ > if we need to just add a property of Reducer State in useEffect, we can either
+	a. pass the property value through Reducer State
+	b. destructure the Reducer State, and then pass the variable into the dependencies
+
+EX:
+A. Passing the property of Reducer State in dependency of useState
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      console.log("Check form validity");
+      setFormIsValid(emailIsValid && passwordIsValid);
+    }, 500);
+
+    return () => {
+      console.log("CLEANUP");
+      clearTimeout(identifier);
+    };
+  }, [emailState.isValid, emailState.isValid]);
+
+
+
+B. Destructure Reducer State properties, then pass it to the dependencies
+
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      console.log("Check form validity");
+      setFormIsValid(emailIsValid && passwordIsValid);
+    }, 500);
+
+    return () => {
+      console.log("CLEANUP");
+      clearTimeout(identifier);
+    };
+  }, [emailIsValid, passwordIsValid]);
+
+
+
+NOTE:
+1. In Object destructuring, we can provide an alias to a property
+	> typically when doing Object destructuring, we use an alias with the same name as the property
+		
+EX:
+In this example, the emailState Object is being destructured.
+The value of isValid property of emailState is then passed to the "emailIsValid" alias
+
+emailState = {value: "", isValid: false};
+const { isValid: emailIsValid } = emailState;
+console.log(emailIsValid); // false
+
+
+
+
+
+
+012 useReducer vs useState
+
+useState vs useReducer
+ > Generally, youll know when you need useReducer
+	- ex: when using useState becomes cumbersome or youre getting a lot of bugs / unintended behaviors
+
+useState
+ > main state management tool
+ > greate for independent pieces of state / data
+ > greate if state updates are easy and limited to a few kinds of updates
+
+useReducer
+ > great if you need "more power"
+ > should be considered if you have related pieces of state / data
+ > can be helpful if you have more complex state updates
+
+
+
+
+
+
+
+013 Introducing React Context (Context API)
+
+PROBLEM:
+1. Passing data/functions through Props in different Components can be cumbersome
+	> in this case, the data/functions are passed through the Props of Component tree
+	> in small applications, this is fine and not wrong
+	> but for big applications, things can get more complex
+		- especially if these Components doesnt have forward/direct parent-child relationship
+		- also, some Component may not even need or manage these data/function
+
+SOLUTION:
+1. React Context API
+	> provides a Component-wide, "behind-the-scenes" State Storage
+
+
+
+
+
+
+
+
+
+014 Using the React Context API
+
+React Context API
+	> provides a Component-wide, "behind-the-scenes" State Storage
+
+React.createContext( initValue )
+	> used to create Context
+	> we can define initial value for the Context by passing data in the method
+	> returns an Object that we will use to CONTAIN a Component
+	> ex: const AuthContext = React.createContext({ isLoggedIn: false });
+
+NOTE:
+1. We can have MULTIPLE Context for multiple global State in the app
+
+Creating a React Context
+1. Create a folder in src folder called "store"
+	> contains the Context by convention
+2. Create a JS file using kebab-case
+	> kebab-case is used for descriptive names
+	> by convention again
+	> end it with "-Context"
+	> ex: auth-context.js
+3. Inside auth-context, import 'react' library
+4. Call createContext() from the 'react' import and assign it to a const variable
+5. Pass an object in the createContext() that will serve as initial value/data of the Context
+6. Export the const variable that holds the createContext() result
+
+EX:
+src/store/auth-context.js
+
+import React from "react";
+
+const AuthContext = React.createContext({ isLoggedIn: false});
+
+export default AuthContext;
+
+
+
+Using Context in Components
+1. By Providing a Context
+	> with this, we can OVERRIDE the default initial value of Context that we defined with we created it
+		- defining new value for Context is REQUIRED
+	> we can do this by using Provider from the Context import
+2. By Consuming a Context
+	> with this, we can access the values in the Context
+	> for this, we will use the Consumer from the Context import
+
+
+1. By Providing a Context (Context.Provider)
+	> to provide Context to a Component, we will wrap the whole JSX to a <Context.Provider>
+	> to define the value that we will define the "value" prop and pass data to it
+	> with this, all Component nested inside <Context.Provider> and the Component inside the Components themselves is provided with a Context 
+
+EX:
+Inside App.js
+  return (
+    <AuthContext.Provider value={{ isLoggedIn: false }}>
+      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
+      <main>
+        {!isLoggedIn && <Login onLogin={loginHandler} />}
+        {isLoggedIn && <Home onLogout={logoutHandler} />}
+      </main>
+    </AuthContext.Provider>
+  );
+
+Here, the MainHeader, Login, and Home Component are now provided with Context and can consume it
+
+
+
+2. By Consuming a Context
+	> to consume a Context and its data, we will need to use <Context.Consumer>
+	> inside the <Context.Consume>, we will inject an anonymous function
+		- this function will have one parameter, which is the data stored in the Context
+		- inside this function, we will need to return a JSX code
+		- inside the JSX code, we can use the Context data parameter
+
+EX: inside Navigation Component
+  return (
+    <AuthContext.Consumer>
+      {(ctx) => {
+        return (
+          <nav className={classes.nav}>
+            <ul>
+              {ctx.isLoggedIn && (
+                <li>
+                  <a href="/">Users</a>
+                </li>
+              )}
+              {ctx.isLoggedIn && (
+                <li>
+                  <a href="/">Admin</a>
+                </li>
+              )}
+              {ctx.isLoggedIn && (
+                <li>
+                  <button onClick={props.onLogout}>Logout</button>
+                </li>
+              )}
+            </ul>
+          </nav>
+        );
+      }}
+    </AuthContext.Consumer>
+
+
+
+Updating data inside Context
+ > to do this, we will need to use the Context.Provider component
+ > then, we will have its "value" property be dynamically changed
+	- ex: have it binded in the Component's State where it is defined
+ > we can then use the State modifying data to modify the State binded which will also modify the Context.Provider value
+
+EX:
+<AuthContext.Provider value={{ isLoggedIn: isLoggedIn }}>
+
+
+
+
+
+
+
+
+015 useContext hook to tap into Context value
+
+useContext hook	
+ > replaces the use of Context.Consumer
+ > built in functional hook of React
+ > used to access a Context value
+ > takes a Context input and returns the Context data/value
+
+Usage:
+1. Import useContext from 'react'
+2. Import the Context as well
+3. Call the useContext() 
+	> pass the Context import to the function
+	> ex: useContext(AuthContext)
+4. Assign the result of useContext() call in a const variable
+	> this will serve as the Context's data
+5. We can now access the Context data through the const var
+
+
+EX:
+const Navigation = (props) => {
+  const ctx = useContext(AuthContext);
+
+  return (
+    <nav className={classes.nav}>
+      <ul>
+        {ctx.isLoggedIn && (
+          <li>
+            <a href="/">Users</a>
+          </li>
+        )}
+        {ctx.isLoggedIn && (
+          <li>
+            <a href="/">Admin</a>
+          </li>
+        )}
+        {ctx.isLoggedIn && (
+          <li>
+            <button onClick={props.onLogout}>Logout</button>
+          </li>
+        )}
+      </ul>
+    </nav>
+  );
+};
+
+
+
+
+
+
+
+
+
+016 Making Context Dynamic
+
+Making Context Dynamic
+ > to make the Context value dynamic earlier, we
+	- bind Context value to a Component's State
+	- used the State's modifying function to modify the State and the Context value with it
+ > but, with Context, we can also add function as Context value properties
+ 	- and with this, we can pass modifying function of State to the Context
+
+EX:
+Inside App.js, adding logoutHandler as property of Context data
+
+  const logoutHandler = () => {
+    setIsLoggedIn(false);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{ isLoggedIn: isLoggedIn, onLogout: logoutHandler }}
+    >
+      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
+      <main>
+        {!isLoggedIn && <Login onLogin={loginHandler} />}
+        {isLoggedIn && <Home onLogout={logoutHandler} />}
+      </main>
+    </AuthContext.Provider>
+  );
+
+
+Using function prop of Context data
+          <li>
+            <button onClick={ctx.onLogout}>Logout</button>
+          </li>
+
+
+When to use props vs Context
+props
+ > used in most cases
+ > mechanism to configure Component and make them reusable
+Context
+ > used to avoid long prop chains
+ > typically used in Component that have very specific purpose
+
+
+TIPS:
+1. All properties inside the initial values set in createContext() will be SHOWN in IDE auto-completion suggestion when we use the result of useContext()
+	> example below, the onLogout from "ctx" will be suggested in IDE
+
+EX:
+const AuthContext = React.createContext({
+  isLoggedIn: false,
+  onLogout: () => {},
+});
+
+Inside Navigation Component
+const ctx = useContext(AuthContext);
+<button onClick={ctx.onLogout}>Logout</button>
+
+
+
+
+
+
+
+
+
+017 Building & Using a Custom Context Provider Component
+
+Building & Using a Custom Context Provider Component
+ > when we create a Custom Component with Context Provider inside, we will have SEPARATION
+ > this means that managing Context value will be separated from the Components that only manages Rendering views to User
+
+Building Custom Context Provider Component
+1. Inside the context.js file (auth-context.js), create a Component
+	> add props parameter to the Component
+2. Inside the Component, create the States that we will bind to the Context value
+3. Also, create the functions that we will use to modify the State (which will also modify the State)
+5. In the return value of Component, 
+	> use the <Context.Provider>
+ 	> define the value property of the Context.Provider
+	> nest the props.children inside Context.Provider
+6. Export the Component
+
+EX:
+// auth-context.js
+import React, { useState, useEffect } from "react";
+
+const AuthContext = React.createContext({
+  isLoggedIn: false,
+  onLogout: () => {},
+  onLogin: (email, password) => {},
+});
+
+export const AuthContextProvider = (props) => {
+  const [isLoggedIn, setIsLoggedIn] = useState;
+
+  useEffect(() => {
+    const storedUserLoggedInInformation = localStorage.getItem("isLoggedIn");
+    if (storedUserLoggedInInformation === "1") {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const loginHandler = (email, password) => {
+    // We should of course check email and password
+    // But it's just a dummy/ demo anyways
+    localStorage.setItem("isLoggedIn", "1");
+    setIsLoggedIn(true);
+  };
+
+  const logoutHandler = () => {
+    setIsLoggedIn(false);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: isLoggedIn,
+        onLogout: logoutHandler,
+        onLogin: loginHandler,
+      }}
+    >
+      {props.children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthContext;
+
+
+Using the Custom Context Provider Component
+1. Nest inside the Custom Context Provider Component that Component where you want to provide the Context
+	> in example below, all of the Component inside the "AuthContextProvider" can now access the Context value
+		- this includes the App.js
+
+EX:
+// index.js
+ReactDOM.render(
+  <AuthContextProvider>
+    <App />
+  </AuthContextProvider>,
+  document.getElementById("root")
+);
+
+// App.js
+function App() {
+  const ctx = useContext(AuthContext);
+
+  return (
+    <>
+      <MainHeader isAuthenticated={ctx.isLoggedIn} onLogout={ctx.onLogout} />
+      <main>
+        {!ctx.isLoggedIn && <Login />}
+        {ctx.isLoggedIn && <Home />}
+      </main>
+    </>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+
+
+018 React Context Limitation, props vs Context
+
+props vs Context
+props	
+ > Component Configuration
+ > makes the Component reusable
+Context	
+ > State management
+
+Context Limitations
+1. React Context is NOT optimized for high frequency changes
+2. React Context shouldn't be used to replace ALL component communications and props
+	- Component should still be configurable via props and short "prop chains" might not need any replacement
+
+
+
+
+
+
+
+019 Learning the Rules of Hooks
+
+Rules of Hooks
+1. Only call React Hooks in React function
+ 	> React Component Functions
+	> Custom Hook
+2. Only call React Hooks at the Top levels
+	> Dont call them in nested functions
+	> Dont call them in any block statement (callbacks, async functions, etc)
+
+Extra rule in useEffect() hook
+ > ALWAYS add everything you refer to inside of useEffect() as a dependency!
+
+
+
+
+
+
+
+021 Diving into Forward Refs
+
+React.forwardRef( Component )
+ > takes a Component as argument
+ > returns a Component as well
+ > used to make a React Component's properties and function accesible using ref property
+	- by default, "ref" is only supported in basic HTML elements (div, h, p, input) and not React Components
+	- if we try to use "ref" in a Function Components, it will give us an error
+ > to be able to use React.forwardRef(), we would also need to use useImperativeHandle() hook
+
+useImperativeHandle( ref, createHandle, [dependencies] ) 
+ > functional hook in React
+ > used to  customizes the instance value (in this case, the Component instance) that is exposed to parent components when using ref. 
+ > takes three arguments
+	1. ref
+		- this will come from the 2nd argument of Functional Component
+		- refers to the useRef() variable in Parent Component that is binded in the Component
+		- serves as a connection between the Parent Component's useRef value and the Component where the ref is binded
+		- also, this will give us access to the useRef() variable in Parent Component inside Child Component
+		- ex: const Input = (props, ref) => {}
+	2. createHandle
+		- takes a function	
+		- the function must return an Object literal
+		- this Object literal's property-value refers to
+			-> property will be the external identifier of internal data/function of Component for its Parent Component
+			-> value refers to the internal data/function of Component to expose
+	3. dependencies
+		- similar to dependencies in useEffect() hook
+		- OPTIONAL
+ > NOTE: As always, imperative code using refs should be avoided in most cases.
+
+
+Usage of forwardRef() and useImperativeHandle()
+Creating useRef in the Parent Component
+1. Create a const variable to hold useRef() hook result
+2. Pass the const variable to the "ref" property of the Component
+
+Configuring the forwardRef and useImperativeHandle() hook in the Child Component with ref
+1. Add 2nd argument in the Functional Component
+	> "ref"
+	> will allows us to establish the connection between the Child Component and its Parent Component whose useRef is binded to the Child Component itself
+2. Import useImperativeHandle from 'react'
+3. Call useImperativeHandle() inside Child Component
+4. Pass the following inside the useImperativeHandle() hook
+	> "ref" parameter in Child Functional Component
+	> a function that returns an Object literal used to map internal data/function to names/indentifier used for external use
+6. Use the React.forwardRef() method to assign value to const that we are exposing in Child Component
+	> inside the forwardRef(), pass the previous Component value
+
+Accessing Child Component internal function/data
+1. Same as normal useRef(), we will access it through the current property
+2. Then inside current property, we will use the external name/identifier we used to map the internal function/data of Component
+
+
+EX:
+1. In Parent Component (Login), we can see that
+	> we defined useRef that we binded to the Child Component
+	> in submitHandler, we can see that we accessed the internal function "activate" of Input Component through its external identifier "activate"
+	> we also defined "ref" property to the <Input> inside JSX
+2. In Child Component (Input), we can see that
+	> we added "ref" to establish connection between parent and child component
+	> defined the useImperativeHandler() argument where
+		- we mapped activate function to "activate" identifier
+	> we also nest all the Component value inside the React.forwardRef()
+
+Parent Component where useRef is defined and binded to a Child Component
+// Login.js
+
+const emailReducer = (state, action) => {
+  switch (action.type) {
+    case "USER_INPUT":
+      return { value: action.val, isValid: action.val.includes("@") };
+    case "INPUT_BLUR":
+      return { value: state.value, isValid: state.value.includes("@") };
+    default:
+      return { value: "", isValid: false };
+  }
+};
+
+const passwordReducer = (state, action) => {
+  switch (action.type) {
+    case "USER_INPUT":
+      return { value: action.val, isValid: action.val.trim().length > 6 };
+    case "INPUT_BLUR":
+      return { value: state.value, isValid: state.value.trim().length > 6 };
+    default:
+      return { value: "", isValid: false };
+  }
+};
+
+const Login = () => {
+  const authCtx = useContext(AuthContext);
+  // const [enteredEmail, setEnteredEmail] = useState("");
+  // const [emailIsValid, setEmailIsValid] = useState();
+  // const [enteredPassword, setEnteredPassword] = useState("");
+  // const [passwordIsValid, setPasswordIsValid] = useState();
+  const [formIsValid, setFormIsValid] = useState(false);
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
+
+  const [emailState, dispatchEmail] = useReducer(emailReducer, {
+    value: "",
+    isValid: undefined,
+  });
+  const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
+    value: "",
+    isValid: undefined,
+  });
+
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      console.log("Check form validity");
+      setFormIsValid(emailIsValid && passwordIsValid);
+    }, 500);
+
+    return () => {
+      console.log("CLEANUP");
+      clearTimeout(identifier);
+    };
+  }, [emailIsValid, passwordIsValid]);
+
+  const emailChangeHandler = (event) => {
+    dispatchEmail({ type: "USER_INPUT", val: event.target.value });
+
+    // setFormIsValid(
+    //   event.target.value.includes("@") && passwordState.value.trim().length > 6
+    // );
+  };
+
+  const passwordChangeHandler = (event) => {
+    dispatchPassword({ type: "USER_INPUT", val: event.target.value });
+
+    // setFormIsValid(
+    //   emailState.value.includes("@") && event.target.value.trim().length > 6
+    // );
+  };
+
+  const validateEmailHandler = () => {
+    dispatchEmail({ type: "INPUT_BLUR" });
+  };
+
+  const validatePasswordHandler = () => {
+    dispatchPassword({ type: "INPUT_BLUR" });
+  };
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    if (formIsValid) {
+      authCtx.onLogin(emailState.value, passwordState.value);
+    } else if (!emailState.isValid) {
+      emailInputRef.current.activate();
+    } else if (!passwordState.isValid) {
+      passwordInputRef.current.activate();
+    }
+  };
+
+  return (
+    <Card className={classes.login}>
+      <form onSubmit={submitHandler}>
+        <Input
+          id={"email"}
+          ref={emailInputRef}
+          isValid={emailState.isValid}
+          label={"E-mail"}
+          type={"email"}
+          value={emailState.value}
+          onChange={emailChangeHandler}
+          onBlur={validateEmailHandler}
+        />
+        <Input
+          id={"password"}
+          ref={passwordInputRef}
+          isValid={passwordState.isValid}
+          label={"Password"}
+          type={"password"}
+          value={passwordState.value}
+          onChange={passwordChangeHandler}
+          onBlur={validatePasswordHandler}
+        />
+        <div className={classes.actions}>
+          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+            Login
+          </Button>
+        </div>
+      </form>
+    </Card>
+  );
+};
+
+export default Login;
+
+
+
+Child Component
+// Input.js
+const Input = React.forwardRef((props, ref) => {
+  const inputRef = useRef();
+
+  const activate = () => {
+    inputRef.current.focus();
+  };
+
+  useImperativeHandle(ref, () => {
+    return {
+      activate: activate,
+    };
+  });
+
+  return (
+    <div
+      className={`${classes.control} ${
+        props.isValid === false ? classes.invalid : ""
+      }`}
+    >
+      <label htmlFor={props.id}>{props.label}</label>
+      <input
+        ref={inputRef}
+        type={props.type}
+        id={props.id}
+        value={props.value}
+        onChange={props.onChange}
+        onBlur={props.onBlur}
+      />
+    </div>
+  );
+});
+
+export default Input;
+
+

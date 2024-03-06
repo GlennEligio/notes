@@ -1,0 +1,10 @@
+02. Idempotency
+
+
+Idempotency
+	> Idempotency is the ability to repeatedly apply a manifest to guarantee a desired resource state on a system, with the same results every time
+	> in Puppet's case, there will be two scenario
+		1. If Resource is ALREADY is desired state
+			= in this case, Puppet will perform NO ACTION
+		2. If a given Resource is NOT is the desired state
+			= Puppet takes whatever action necessary to put the resource into desired state

@@ -1,0 +1,23 @@
+49 EC2 Summary
+
+EC2 Section - Summary
+
+EC2 Instance
+ > composed of
+	- AMI (OS)
+	- Instance Size (CPU + RAM)
+	- Storage
+	- Security groups
+	- EC2 User Data
+Security Groups
+ > Firewall attached to the EC2 instance
+EC2 User Data
+ > Script launched at the first start of an instance
+SSH
+ > Secure Shell
+ > we used this to start a terminal into our EC2 Instances (port 22)
+EC2 Instance Role
+ > links to IAM Roles
+ > provides permissions to the AWS CLI installed inside EC2 instance
+Purchasing Options
+ > includes On-Demand, Spot, Reserved (Standard + Convertible + Scheduled), Dedicated Host, Dedicated Instance

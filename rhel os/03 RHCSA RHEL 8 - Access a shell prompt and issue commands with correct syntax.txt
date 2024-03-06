@@ -1,0 +1,82 @@
+03 RHCSA RHEL 8 - Access a shell prompt and issue commands with correct syntax
+
+BASH (Bourne Again SHell)
+ > Shell version used in the RHEL8
+
+
+Commands
+pwd
+ > stands for print working directory
+ > prints the current directory the command line is
+
+
+df [options]
+ > disk free
+ > used to display the amount of available disk space for file systems on which the invoking user has appropriate read access
+ > options include
+	-k 	user 1024-byte units
+	-P 	use standard, portable, output format
+	-h 	Display in more easily human readable units such as KB, MB, GB or TB
+ 
+NOTE:
+1. Filesystem mounted in root directory ("/") contains all the directory for User's home ("/home/$user"), and the typical Linux directory structure ("/etc" , "/bin")
+
+
+clear
+ > clears the terminal
+
+
+cd [directory]
+ > change directory of the terminal to the specified directory
+ > ex: cd /home/jglenn
+
+
+ls [options] [directory] 
+ > list all the files and folders in the specified directory
+ > if no directory is passed, it will be the pwd by default
+ > options include
+	-l	list the file and folder in more informations (permission, name, date created, size)
+	-h	makes the file size column to use human readable format like KB MB GB
+	-r 	reverse the sorting of the output files
+	-a	list all file INCLUDING HIDDEN files
+	-t 	display the modification time
+
+NOTE:
+1. File permissions is divided into three target (user-group-others)
+	> ex: with drwxr-xr-x
+		- the user have read write execute permission	
+		- all users with same group as the owner have read and execute permission
+		- other users outside the group have read and execute permission as well
+
+
+man [command]
+ > shows the manual for a specific command
+ > also list all the options and its uses
+ > ex: man ls
+
+
+info [command]
+ > shows more indepth information about the application behind the command
+ > ex: info ls
+
+
+touch [filename]
+ > used to create a new file
+ > ex: touch /home/jglenn/Downloads/test.txt
+
+
+rm [filename]
+ > used to remove a file/folder
+ > can use wild card characters to widen the file selection for removal
+ > ex: rm test.txt
+
+
+cp [sourcefile] [destfile]
+ > used to copy a file or folder into the destination file or folder
+ > ex: cp test.txt test2.txt
+
+
+mv [sourcefile] [destfile]
+ > used to move a file or folder into the destination file or folder
+ > deletes the source file
+ > ex: cp test.txt test3.txt

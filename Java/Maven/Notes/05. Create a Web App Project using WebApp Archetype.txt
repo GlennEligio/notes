@@ -1,0 +1,39 @@
+05. Create a Web App Project using WebApp Archetype
+
+
+I. Creating a Web app
+
+
+1. Create a Maven Project
+	> use Maven's webapp archetype
+
+
+2. Add the missing dependency
+	> currently, we are missing the javax.servlet dependency in Java Build path
+	> with this, we are getting an error in the default index.jsp page in project
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+3. In case you get an error that states
+	> Could not initialize class org.apache.maven.plugin.war.util.WebappStructureSerializer
+	> add these inside the <build> of pom.xml
+
+      <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.3.1</version>
+        </plugin>
+    </plugins>
+
+
+
+4. Configure the tomcat server to use
+
+5. Run the jsp page

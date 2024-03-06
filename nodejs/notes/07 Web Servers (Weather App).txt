@@ -1,0 +1,613 @@
+07 Web Servers (Weather App)
+
+Content:
+43 Hello Express!
+44 Serving up HTML and JSON
+45 Serving up Static Assets
+46 Serving up CSS, JS, Images, and More
+47 Dynamic Pages with Templating
+48 Customizing the Views Directory
+49 Advanced Templating
+50 404 Pages
+51 Styling the Application: Part 1
+52 Styling the Application: Part 2
+
+
+
+
+
+
+
+
+
+
+43 Hello Express!
+
+Express
+ > fast, unopinionated, minimalist web framework for Node.js
+ > help developers create webservers to serve html pages, or json data
+ > website: https://expressjs.com
+
+Method/Object used
+app
+ > return value of the top level function exported by express
+ > const app = express()
+ > we will use this to configure the server and setup endpoint by calling some of its functions
+
+app functions
+1. get(path: string, requestHandler: (req: Request, res: Response) => {})
+	> used to create a GET endpoint
+	> takes two input
+		- path of endpoint
+		- requestHandler, which takes two arguments, Request and Response, which we can use to check/modify either of them
+2. listen(port: number, callbackFn: () => {})
+	> used to start the Express server and define the port it will be listening to in the machine it is running
+	> we can also pass a callback function to execute when the Express Server starts
+
+Response function
+res.send(data: Buffer | string | object | boolean | array)
+ > used to specify what the response will send back
+ > we can either pass 
+	- a buffer with bytes inside
+	- string, object, boolean, or array
+	
+
+Managing the project file structure
+1. Create src
+	> this will contain all the source code
+2. Inside src folder, add app.js
+	> app.js will serve as the entrypoint of the node project 
+
+
+Installing the Express
+ > we can do this by using the npm command	
+	- npm install express
+
+Using Express
+I. Importing Express
+II. Defining Endpoint
+III. Configuring the server
+
+Using Express
+1. Import the express package in a .js file using require()
+	> const express = require('express')
+2. Call the functon return by the require('express')
+	> const app = express()
+	> express() is the top level function exported by express module
+
+Defining endpoints
+1. Call get() to the result of express()
+2. Pass two arguments to the app.get()
+	> path of endpoint
+		- relative path to the base url
+	> requestHandler callback function
+		- takes two arguments, the Request and Response object
+		- we can use this to either check the request receive and/or modify the response to be sent back
+
+Configuring the server
+1. Call listen() of the express() result
+	> app.listen() takes two inputs
+		a. port to listen to
+		b. callback function to execute when the webserver starts
+			- takes no argument
+
+EX:
+const express = require("express");
+const app = express();
+
+app.get("", (req, res) => {
+  res.send("Hello express");
+});
+
+app.listen(3000, () => {
+  console.log("Server is up on port 3000");
+});
+
+
+Accessing the Server
+1. Go to the browser
+2. Enter the following url, "localhost:3000/"
+	> localhost -> the current ip address
+	> 3000 -> the port we defined earlier
+	> together, the localhost and 3000 is the base url
+	> "/" is the relative path we define the app.get() earlier
+
+
+ 
+
+
+
+
+
+
+
+
+
+44 Serving up HTML and JSON
+
+Serving up HTML
+ > we can serve HTML in our GET endpoint by passing a string which resembles an HTML body in the response body
+
+EX:
+app.get("", (req, res) => {
+  res.send("<h1>Weather</h1>");
+});
+
+
+Serving up JSON/Array
+ > we can serve HTML in out endpoint by passing an object or Array itself in the response body
+ > Express will automatically stringify any object that we pass as response body
+
+EX:
+app.get("/help", (req, res) => {
+  res.send({
+    name: "Andrew",
+    age: 27,
+  });
+});
+
+or
+
+app.get("/help", (req, res) => {
+  res.send([
+    {
+        name: "Andrew"
+    },
+    {
+        name: "Sonia"
+    }
+  ]);
+});
+
+
+NOTE:
+1. If two routes/endpoints matches the request path's, the first route/endpoint method will receive the said request
+
+EX:
+In example below, both the Route method 1 and 2 matches the Request originalUrl. But since Route 1 is defined first, it will be the one who will receive the request
+
+Request original url	-> /accounts/me
+
+// Route 1
+app.get("/accounts/me", (req, res, next) => {})
+
+// Route 2
+app.get("/accounts/:id", (req, res, next) => {})
+
+
+
+
+
+
+
+
+
+
+45 Serving up Static Assets
+
+Function/Objects used
+app.use()
+ > used to configure the Express Server
+
+express.static()
+ > used to define the directory where the static assets are located
+ > takes a string that points to the path
+
+path.join()
+ > method from Path Core Module
+ > used to join two file path
+
+
+Serving up Static Assets
+ > in a webserver, we typically serve static assets (static html, images, etc)
+ > with this in mind, we would have to setup storage for these assets and process on how to fetch these
+
+Project Structure of Static Assets
+ > all static assets are contained in the "public" folder
+	- same level as the "src" folder
+ > anything that is inside the public folder is serve up by the Express server
+
+index.html
+ > special file inside public folder
+ > serve up as default page when we access the root url/path of the Express Server
+ > this will OVERRIDE the GET endpoint that serves the root url/path
+
+Making Express server serve the static assets
+ > in order for the Express server to serve the static assets, we must POINT WHERE the static assets are located
+ 	- to do this, we can use the "__dirname" and '__filename' alongside the Path Core Module join() function
+ > we then call the app.use() to configure the Express server
+ > inside app.use(), we will pass the express.static() with the path that points to the public directory
+
+EX:
+const express = require("express");
+const path = require("path");
+const app = express();
+
+const publicDirectory = path.join(__dirname, "../public");
+app.use(express.static(publicDirectory));
+
+
+Accessing the static files in Express
+ > in the browser, we can use the base url + the filename in static assets folder
+ > ex: localhost:3000/index.html, localhost:3000/json.txt
+
+
+
+
+
+
+
+
+
+
+
+46 Serving up CSS, JS, Images, and More
+
+Serving up CSS, JS, Images, and More
+ > serving these file will be the same as the serving the HTML files
+	- like the HTML file, we can access these files suing
+ > typically, we will store them in folder inside "public" based on their categories
+	- "public/css" to contain css folders
+	- "public/img" to contain images
+ 	- "public/js" to contain js files
+ > these files can also be accessed and used by the HTML files itself	
+	- if we are accessing them inside HTML file, we will use absolute path string to do so
+	- absolute path string starts with "/"
+	- in this case, the absolute path starts with public folder
+	- ex: <img src="/img/beth.jpg">
+
+Static file project structure
+public
+│   about.html
+│   help.html
+│   index.html
+│
+├───css
+│       styles.css
+│
+├───img
+│       beth.jpg
+│
+└───js
+        app.js
+
+
+EX:
+// Inside index.html's <head>
+<script src="/js/app.js"></script>
+
+// Inside help.html <head>
+<link rel="stylesheet" href="/css/styles.css" />
+
+// Inside about.html <body>
+<img src="/img/beth.jpg" />
+
+
+
+
+
+
+
+
+
+
+
+47 Dynamic Pages with Templating
+
+Function/Object used
+
+app.set(setting: any, val: any)
+ > used to set the Express setting to the value given
+
+Template Engine
+ > used to setup dynamic webpages using Express
+ 	- allows us to render dynamic pages instead of static ones
+	- with this, we can create reusable pages/markups that we can use throughout the server
+ > example of this is Handlerbars
+
+Packages that we will take a look at
+1. handlebars
+	> Handlebars.js is a logicless templating languages that keep the view and the code separated like we all know they should be.
+2. hbs
+	> Express.js view engine for handlebars.js
+	> uses handlebars behind the scene
+	> the one that we will use
+
+Setting up hbs as Express templating engine
+1. Install hbs in node project
+	> npm install hbs
+2. Specify to the Express that we want to use "hbs" as templating engine
+	> app.set("view engine", "hbs");
+	> "view engine" must the exact both in spelling and capitalization
+
+Creating the templates/view to use
+ > when using "hbs", it will expect the templates to be located in "views" folder
+ > inside the "view" folder, create files with extension ".hbs"
+
+.hbs files
+ > the same as HTML file in terms of structure
+ > but inside, the .hbs files, we can take advantage of the template syntax
+
+Project Structure with .hbs files
+workspace
+ > src
+ > public
+ > views
+	- index.hbs
+
+Rendering Handlebars
+ > to render a Handlebar, we will need to use the render() of the response argument of endpoint callback
+ > then inside the render(), we will pass the name of the .hbs file
+	- no need to add ".hbs" file in the string argument
+ > render() looks for the .hbs file with same name in the "views" folder
+	- it then inject/process the template, then converts it back to an html file to render
+ > NOTE: By default, it will look for the "views" folder inside the directory where you executed the "nodemon app.js"
+	- this means that if we have "views" folder outside src, and we execute "nodemon" command while we are in "src" folder, it will instead look for ".hbs" files inside "src/views"
+	- to fix this, we can set the "views" path location setting of Express using the Path Core Module and the __dirname
+
+EX:
+app.set("views", path.join(__dirname, "../views")); // set the "views" folder location of Express
+app.set("view engine", "hbs");
+app.get("", (req, res) => {
+  res.render("index");
+});
+
+
+Injecting a "model" for the template to use
+ > right now, we are still doing a static rendering
+ > to make our template "dynamic", we will need to add "model" object alongside the template
+ > inside the template, it can ACCESS the model object properties to use them inside to either populate or display them in html
+ > to pass a "model" object, we will need to pass an object to the SECOND argument of res.render()
+
+Using the model object inside template
+ > to use the model object, we will need to use this syntax:
+	- {{modelProp}}
+ > first, create two curly braces, nested on one another. then pass the model object property you want to use inside
+
+EX:
+// app.js
+app.get("", (req, res) => {
+  res.render("index", {
+    title: "Weather App",
+    name: "Glenn",
+  });
+});
+
+// inside index.hbs
+<html lang="en">
+  <head>
+  </head>
+  <body>
+    <h1>{{title}}</h1>
+    <h1>{{name}}</h1>
+  </body>
+</html>
+
+NOTE:
+1. Root directory of the files that hbs template access to (CSS, JS, images) will be the same as to the html files inside the public
+	> the root directory will STILL BE the "public" folder
+
+
+
+
+
+
+
+
+
+
+
+48 Customizing the Views Directory
+
+Customizing the Views Directory
+ > like the static files directory, we can also specify the locations of the views/templates 
+ > we can do this by using the app.set(), passing two arguments
+	1. "views"
+	2. path directory of the folder where hbs files are located
+
+EX:
+const app = express();
+
+// Setup paths for Express config
+const publicDirectory = path.join(__dirname, "../public");
+const viewDirectory = path.join(__dirname, "../templates");
+
+// Setup handlebars engine and views location
+app.set("views", viewDirectory);
+app.set("view engine", "hbs");
+
+// Setup static directory to serve
+app.use(express.static(publicDirectory));
+
+
+
+
+
+
+
+
+
+
+
+48.1 Documentation
+
+Documentation page
+ > https://expressjs.com/en/4x/api.html
+
+Documentation content
+1. express()
+	> the top level function Express module exports
+2. Application
+	> refers to the result of express() call
+3. Request
+	> refers to the first parameter of the callback function we pass in some Application functions (i.e. app.get())
+4. Response
+	> refers to the second parameter of the callback function we pass in some Application functions (i.e. app.get())
+5. Router
+
+
+
+
+
+
+
+
+
+
+
+49 Advanced Templating
+
+Advanced Templating
+ > in this section, we will talk about "Partials"
+
+Partials
+ > as the name suggest, allows us to create a litle template
+	- can be seen as small components that will be REUSED throughout our site (i.e. header, footer, nav)
+ > inside hbs file partials, it contain an incomplete HTML page
+	- they typically only contain the HTML markup that the partials will render
+	- ex: for header, the .hbs partial will only contain <header> element with HTML elements to display inside
+
+Project Structure for Partials and Views
+ > partial .hbs files are typically contained in separate folder as the Views
+
+templates
+├───partials
+│       footer.hbs
+│       header.hbs
+│
+└───views
+        about.hbs
+        help.hbs
+        index.hbs
+
+Setting up HBS for Partials
+1. Register the Partials directory to HBS
+2. Create hbs files
+
+Register the Partials directory to HBS
+ > to register the Partials directory to HBS, we will need to do the following
+	1. Import hbs in the app.js
+	2. Setup the partial's path directory using Path Core Module
+	3. Call the registerPartials() of the imported hbs object, then pass the partial path directory
+
+Ex:
+const hbs = require("hbs");
+const partialsPath = path.join(__dirname, "../templates/partials");
+hbs.registerPartials(partialsPath);
+
+
+Creating Partial .hbs file
+ > inside the Partials, we only write a necessary markup that the Partial will render
+
+EX: 
+// header.hbs
+<header>
+  <h1>Static Header .hbs text</h1>
+</header>
+
+
+Using Partials inside an hbs file
+ > to use/render a partial inside another .hbs file, we will use the following syntax:
+	- {{>partialName}}
+
+EX:
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    {{>header}}
+    <h1>Help</h1>
+    <h1>{{helpText}}</h1>
+  </body> 
+</html>
+
+
+Accessing model object in the Partial
+ > Partial that are nested in the View will also have access to the View's Model
+
+EX:
+// about.hbs
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    {{>header}}
+    <img src="/img/beth.jpg" />
+    <h1>Created by {{name}}</h1>
+  </body>
+</html>
+
+//header.hbs
+<header>
+  <h1>{{title}}</h1>
+</header>
+
+
+NOTE:
+1. By default, nodemon will ONLY RESTART when .js files are modified and saved
+	> to add .hbs extension to the watchlist, add new option to the nodemon command
+	> nodemon src/app.js -e js,hbs
+		-> -e stands for extension, and the "js,hbs" are the extensions to watch
+	> note that it will only have these files in the directory and its subdirectory where we executed the nodemon
+		- this means that if we execute nodemon inside "src" folder, it will just watch the .js and .hbs files inside "src" folder and its subfolders
+
+
+
+
+
+
+
+
+
+
+
+50 404 Pages
+
+404 Page
+ > to setup a 404 NOT FOUND page, we will create an endpoint AFTER the defined endpoints which matches to all paths
+	- we will define this last since Express does its path matching from TOP TO BOTTOM
+	- meaning, it will first check if the request's path matches the TOPMOST endpoint, 
+		-> if it doesnt match, it will go to the next endpoint below and check the path
+	- if there is not match to the endpoints with defined paths, it will be accepted by the endpoint at the end with path "*"
+ > "*" is a wildcard the MATCHES to all string
+
+EX:
+// URL: http://localhost:3000/qweqwe
+
+// endpoint
+app.get("*", (req, res) => {
+  res.send("404 page");
+});
+
+
+Using wildcards to match subpaths
+ > with wildcards, we can also match all request within a specific subpaths
+ > ex: Endpoint with path "/help/*" will match to all path that starts with "/help/" like "/help/article", "/help/data"
+
+EX:
+app.get("/help/*", (req, res) => {
+  res.send("Help article not found");
+});
+
+
+
+
+
+
+
+
+
+
+
+51 Styling the Application: Part 1
+52 Styling the Application: Part 2
+
+NOTE:
+1. Setting up icon in page tab
+	> add <link> with following property
+		- rel to "icon"
+		- href to the path location of image
+
+<link rel="icon" href="/img/weather.png">

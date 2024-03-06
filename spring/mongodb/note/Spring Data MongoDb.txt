@@ -1,0 +1,80 @@
+Spring Boot Tutorial - Building a REST API with MongoDB
+
+01 Creating the Project
+
+1. Open Spring initialzr
+2. Select the following as dependencies
+	> Spring Web
+	> Spring Data MongoDB
+	> Lombok - Optional
+
+
+
+
+
+
+
+
+
+
+
+02 Setting up MongoDB (and MongoExpress)
+
+MongoDB
+ > is a no-sql database that stores data as JSON format called Documents
+
+MongoExpress
+ > is an interactive lightweight Web-Based Administrative Tool to effectively manage MongoDB Databases
+ > serves a the GUI that we can use to check the MongoDB
+
+Setting up MongoDB and MongoExpress
+ > note: if you already have MongoDB and a GUI available you can skip this part. Just make sure to provide the mongodb credential in Springboot app
+1. Make sure the Docker is running
+2. Create a file name docker-compose.yaml file
+3. Enter the yaml text present below
+4. In the directory where the docker-compose.yml file is present, use the command below
+	> docker compose -f docker-compose.yml up -d
+5. Check localhost:8081 in your current device to check the Mongo Express running
+6. To shutdown the mongodb and MongoExpress, use the same command but instead of "up", use "down"
+
+docker-compose.yml file content
+version: "3.8"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      - data:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+volumes:
+  data: {}
+
+networks:
+  default:
+    name: mongodb_network
+
+
+
+
+
+
+
+
+
+
+
+03 Setting up Spring Boot to connect to the mongodb

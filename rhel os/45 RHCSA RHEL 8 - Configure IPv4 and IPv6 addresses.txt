@@ -1,0 +1,153 @@
+45 RHCSA RHEL 8 - Configure IPv4 and IPv6 addresses
+
+
+IP Address
+ > An Internet Protocol (IP) address is an individual address for a host on a network. 
+ > When using the internet your IP address is assigned to you by your Internet Service Provider (ISP).
+
+NAT
+ > Network Address Transaction
+ > When using the device within your home network you will be assigned a local IP address by your router and then the router uses Network Address Translation (NAT) to translate your local address to your ISP provided address for use on the internet.
+
+
+Two types of IP Address
+ > IPv4 and IPv6
+ > IPv4 is widely used, but will fully replaced by IPv6 soon, but migration is a massive task
+
+
+Gateway Address and Broadcast Address
+ > All networks will have a gateway address and a broadcast address
+	- gateway address is a router or switch that can redirect traffic intended for other networks
+	- broadcast address is the address we use to send messages to multiple hosts on the same network for special types of requests
+
+ 
+IPv4
+ > This IP addressing scheme is a 32 bit address (being 32 1s or 0s) using decimal numbers, split into 4 octets.
+ > Within these classes there are ranges assigned for private use of which we have included below. 
+	- The subnet mask defines how large the network is, for example the network is 10.0.0.0 and the subnet mask is 255.0.0.0, the maximum value of an IP address is 255 so for the 10. octet it is masking, all of the other octets are able to go to their maximum values. 
+	- So the IP address range is: 10.0.0.0 – 10.255.255.255, we can use any address in between e.g. 10.1.4.200. 
+ > The CIDR is a way of expressing the subnet mask in short form, 
+	- for example we can express the below class C network as 192.168.0.0/16.
+ > The good thing is once you have the hang of Subnet Masks and CIDR it is again used in IPv6 so it’s not something you will have to learn again. 
+
+
+IPv6
+ > The addressing used in IPv6 is 128 bit and uses hexadecimal numbers, therefore has a much larger address space. 
+	- This was due to IPv4 being too small for modern needs and now pretty much all of the IPs have been used. 
+ > IPv6 addresses are classless and therefore we have no class designation, however some prefixes (same as CIDR) are reserved for specific uses.
+ > IPv6 uses the same gateway, but doesn’t have any broadcast address, it’s as the protocol is more modern and no longer needs this functionaility.
+
+
+Configuring an IPv6 Address
+ > Using the same method as above to manage the connection, the only difference is when you come to configure the actual IP addressing.
+
+
+
+PREREQUISITE:
+1. In the VM Setting, go to Network
+2. Configure the Adapter 2, which should be attached to Host-only, and enable Network Adapter
+
+
+Checking connections and devices that we are connected
+1. Check connections
+	$ nmcli connections show
+2. Check devices
+	$ nmcli device show
+
+Adding connection
+1. Add connection to a new device
+	$ nmcli connection add con-name eth0 ifname enp0s8 type ethernet ip4 10.0.2.16/24 gw4 10.0.2.2
+2. Check the connection created and the device we connected to
+	$ nmcli connection show eth0
+	$ nmcli device status enp0s8
+3. Turn off and on the connection
+	$ nmcli connection down eth0
+	$ nmcli connection up eth0
+4. Check the connection again
+	$ nmcli connection show eth0
+5. Modify connection properties of eth0
+	$ nmcli connection modify eth0 ipv4.address 10.0.2.15/24
+	$ nmcli connection modify eth0 ipv4.gateway 10.0.2.2
+	$ nmcli connection modify eth0 ipv4.method manual
+6. Check if the changes reflected
+	$ ip addr
+		- then check the ipv4 added of "enp0s8" again
+7. Delete the eth0 connection
+	$ nmcli connection delete eth0
+7. Create a new ipv6 connection of the eth0
+	$ nmcli connection add con-name eth0 ifname enp0s8 type ethernet ip6 2006:ac81::1105/64 gw6 2006:ac81::1101
+8. Check if the ipv6 connection is added in eth0
+	$ ip addr
+		- then check the ip addresses on the device we connected to which is "enp0s8"
+9. Modify ipv6 properties of eth0
+	$ nmcli connection modify eth0 ipv6.addresses 2006:ac81::1106/64
+	$ nmcli connection modify eth0 ipv6.gateway 2006:ac81::1102
+	$ nmcli connection modify eth0 ipv6.method manual
+10. Check if changes reflected
+	$ ip addr		then check the ifname we connected to "enp0s8"
+
+
+
+Commands
+ip
+ > show/manipulate routing, network devices, interface and tunnels
+ > synopsis:
+	ip [OPTIONS] OBJECT {COMMAND | help}
+ > ex:
+	$ ip addr
+		- list all ip address the system is connected to
+
+
+nmcli
+ > command-line tool for controlling NetworkManager
+ > synopsis:
+	nmcli [OPTIONS...] {help | general | networking | radio | connection  | device | agent | monitor} [COMMAND] [ARGUMENTS...]
+ > below are the example commands that we can use
+
+
+nmcli connection commands:
+nmcli connection show
+ > used to list all current connections in the system
+
+nmcli connection add [COMMAND ARGS]...
+ > used to create a connection
+ > commands include	
+	con-name	define the connection name
+	ifname 	interface name
+	type		defines the type of connection
+ > ex:
+	$ nmcli connection add con-name eth0 ifname enp0s8 type ethernet ip4 10.0.2.16/24 gw4 10.0.2.2
+		- creates a connection "eth0" with interface name "enp0s8" (the device) and type "ethernet" with ipv4 ip address of "10.0.2.16/24" and gateway ipv4 of "10.0.2.2"
+	$ nmcli connection add con-name eth0 ifname enp0s8 type ethernet ip6 2006:ac81::1105/64 gw6 2006:ac81::1101
+		- similar to command above, but with different property and value like "ip6" and "gw6" which corresponds IPv6 ip address
+
+
+nmcli connection {delete | up | down} CONNAME
+ > used to up, down, or delete a connection
+ > ex:
+	$ nmcli delete enp0s3
+	$ nmcli down eth0
+	$ nmcli up eth0
+
+nmcli connection modify CONNAME ipv4.PROPERTY VALUE
+nmcli connection modify CONNAME ipv6.PROPERTY VALUE
+ > configures the ipv4 or ipv6 properties of the connection specified with the value given
+ > adding plus sign, in front of property will ADD the value instead of overwrite the current one
+	$ nmcli connection modify eth0 +ipv4.address 10.0.2.15/24
+ > ex:
+	$ nmcli connection modify eth0 ipv4.address 10.0.2.15/24
+	$ nmcli connection modify eth0 ipv4.gateway 10.0.2.2
+	$ nmcli connection modify eth0 ipv4.method manual
+
+
+nmcli device commands
+nmcli device show DEVICE 
+ > show the device's alongside their informations
+ > if no device name specified, it will show all the devices
+ > ex:
+	$ nmcli device show enp0s8
+
+nmcli device status
+ > shows all the device statuses
+ > ex:
+	$ nmcli device status

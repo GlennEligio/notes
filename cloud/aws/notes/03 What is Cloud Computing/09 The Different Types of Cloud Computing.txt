@@ -1,0 +1,70 @@
+09 The Different Types of Cloud Computing
+
+
+Type of Cloud Computing
+1. Infrastructure as a Service (IaaS)
+	> provide building blocks for cloud IT
+ 	> provide networking, computers, data storage space
+	> highest level of flexibility
+	> easy parallel with traditional on-premises IT
+2. Platform as a Service (PaaS)
+	> removes the need for your organization to manage the underlying infrastructure
+	> focus on the deployment and management of your applications
+3. Software as a Service (SaaS)
+	> completed product that is run and managed by the service provider
+
+
+Things managed by each type of Computing
+ > NOTE: things that are not present in Cloud computing type but present in on-premises means that it is managed by the Cloud providers themselves
+
+Onpremises (EVERYTHING)
+ > Applications
+ > Data 
+ > Runtime
+ > Middleware
+ > O/S
+ > Virtualization
+ > Servers
+ > Storage
+ > Networking
+
+Infrastructure as a Service (IaaS)
+ > Applications 
+ > Data
+ > Runtime
+ > Middleware
+ > O/S
+
+Platform as a Service (PaaS)
+ > Application
+ > Data
+
+Software as a Service
+ > everything is managed by Cloud Provider 
+
+
+
+Example of Cloud Computing Types
+Infrastructure as a Service
+ > Amazon EC2 (on AWS)
+ > GCP, Azure, Rackspace, Digital Ocean, Linode
+Platform as a Service
+ > Elastic Beanstalk (on AWS)
+ > Heroku, Google App Engine (GCP), Windows Azure (Microsoft)
+Software as a Service
+ > Many AWS services (ex: Rekognition for Machine Learning)
+ > Google Apps (Gmail), Dropbox, Zoom
+
+
+
+
+Pricing of the Cloud - Quick Overview
+ > AWS has 3 pricing fundamentals, following the pay-as-you-go pricing model
+
+Compute
+ > pay for the compute time
+Storage
+ > pay for the data stored in the Cloud
+Data Transfer
+ > pay for data transferred OUT of the Cloud
+ > data transfer IN the Cloud is FREE

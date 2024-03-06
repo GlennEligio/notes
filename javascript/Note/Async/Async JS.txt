@@ -1,0 +1,203 @@
+Async JS
+
+Important terms:
+Callback functions
+	> A callback is a function passed as an argument to another function
+	> This technique allows a function to call another function
+	> A callback function can run after another function has finished
+	> Use cases includes:
+		a. chaining Asynchronous function
+			- there will be cases where one function needs to wait for another function to finish before it can run	
+
+EX:
+function secondFunction(param1) {
+	// some logic of secondFunction
+}
+
+function firstFunction(param1, callBackFunction) {
+	// some logic of firstFunction
+	callBackFunction();
+}
+
+firstFunction(arg1, secondFunction);
+
+	> In example above, the secondFunction serves as a Callback to the firstFunction
+	> This means that only after the firstFunction finishes its logic will its callBackFunction paramater (in this case, the secondFunction) will run
+	> Also, we only called the firstFunction to do this chain of function invocation
+
+
+
+
+
+Asynchronous Functions
+	> functions running in parellel with other functions are called Asynchronous
+	> example of these are
+		a. setTimeout(Callback fn, Number delay, Arg1, Arg2, ...)	
+			- executes the Callback function after a cetain delay
+		b. setInterval(Callback fn, Number interval, Arg1, Arg2, ...)
+			- executes the Callback function for every specified interval time
+
+
+
+
+
+Promises
+	> A JavaScript Promise object contains both the 
+		1. producing code; and
+		2. calls to the consuming code
+	> "Producing code" is code that can take some time
+		- ex: External API call
+	> "Consuming code" is code that must wait for the result
+	> Promise object takes a Callback function as parameter
+		- this Callback function have two parameters
+			1. resolve(Object result)
+				-> you will call this when you want to resolve the Promise 
+				-> when you call this, it means the Promise is successfully fulfilled
+			2. reject(Object error)
+				-> you will call this when you want to reject the Promise
+				-> when you call this, it means that Promise was not successfully fulfilled
+		- we typically create a check to determine if we will call either resolve() or reject()
+		- we can also pass values in either resolve() or reject()
+			-> this value can then be access and used by the function chained next to it
+			-> to access value passed on resolve(), we will use then()
+			-> to access value passed on reject(), we will use catch()
+
+
+Promise.then(Callback fn)
+	> then() is used to chain functions or Promises
+	> then() is called when the previous Promise is successfully resolved
+	> functions chained to a Promise using then() can access value passed in the resolve() of the previos Promise
+
+
+Promise.catch(Callback fn)
+	> catch() is used to chain functions or Promises
+	> catch() is called when the previous Promise is rejected (NOT successfully resolved)
+	> functions chained to a Promise using catch() can access value passed in the reject() of the previous Promise
+
+
+SYNTAX:
+let myPromise = new Promise(function(resolve, reject) {
+// "Producing Code" (May take some time)
+
+  resolve(); // when successful
+  reject();  // when error
+});
+
+// "Consuming Code" (Must wait for a fulfilled Promise)
+myPromise.then(
+  function(value) { /* code if successful */ },
+  function(error) { /* code if some error */ }
+);
+
+
+EX:
+function createPost(){
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const error = false;
+
+      if (!error) {
+        resolve("Promise successfully resolved");
+      } else {
+        reject("Error: Something went wrong");
+      }
+    }, 2000);
+  });
+}
+
+createPost()
+  .then((result) => console.log(result))
+  .catch((error) => console.log(error));
+
+	> In example above, we created a function createPost() that returns a Promise
+	> The Promise that is return is configured so that
+		a. If !error is true, Promise is resolved with result value of "Promise successfully resolved"
+		b. If !error is false, Promise is rejected with result value of "Error: Something went wrong"
+	> We then called the createPost(), and chained a then() and catch()
+		- these then() and catch() accessed and uses the result value of the resolve() and reject() of the Promise respectively
+
+
+
+Promise.all(Promise[] promises)
+	> method that takes an Array of Promises
+	> we can then chain functions or Promises to the result of all() using then() and/or catch()
+		-> these functions/Promises will only start when ALL the Promises in the all() is fulfilled (resolved/rejected)
+		-> these means that if one of the Promise is promises parameter takes 2 seconds to be fulfilled, it will take 2 seconds as well for the chained function/Promises to be executed/started
+	> also, functions/Promises chained next to this Promise.all() can access the result values of resolve() or reject()
+		-> this will be in form of Array of result values
+
+
+EX:
+// List of Promises
+const promise1 = Promise.resolve("Hello World");
+const promise2 = 10;
+const promise3 = new Promise((resolve, reject) =>
+  setTimeout(resolve, 2000, "Goodbye")
+);
+
+// Promise.all() to perform multiple Promises at once
+Promise.all([promise1, promise2, promise3]).then((values) =>
+  console.log(values)
+);
+
+	
+
+async / await keyword
+	> async and await is used to do asynchronous functions	
+	> async keyword is added in the function signature
+		- this makes a function return a Promise
+	> await keyword is added inside the async function
+		- await makes a function wait for a Promise 
+	> we can treat async keyword as the one creating separate thread to execute the function
+	> we can treat await keyword as some sort of countdownlatch to await for the result before opening the latch itself
+
+SYNTAX:
+async function functionName(){
+	const promise = await new Promise((resolve, reject) => {
+		// logics
+	})
+}
+
+EX 1:
+function createPost(post) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      posts.push(post);
+
+      const error = false;
+
+      if (!error) {
+        resolve("Promise successfully resolved");
+      } else {
+        reject("Error: Something went wrong");
+      }
+    }, 2000);
+  });
+}
+
+// Async / Await
+async function init() {
+  await createPost({ title: "Post Three", body: "This is post three" });
+
+  getPosts();
+}
+
+init();
+
+
+
+EX 2:
+// Async / Await / Fetch
+async function fetchUsers() {
+  const rest = await fetch("http://jsonplaceholder.typicode.com/users");
+
+  const data = await rest.json();
+
+  console.log(data);
+}
+
+fetchUsers();
+ 
+
+
+

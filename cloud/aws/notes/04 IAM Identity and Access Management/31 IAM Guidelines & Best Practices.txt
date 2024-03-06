@@ -1,0 +1,15 @@
+31 IAM Guidelines & Best Practices
+
+
+IAM Guidelines & Best Practices
+1. Do not use the ROOT account except for AWS account setup
+2. Create IAM user for those that want to access your AWS account
+	> do not give them your Root credentials
+3. Assign users to groups, and assign permissions to groups
+	> this helps with the permission management, since its easy to manage them at group-level
+4. Create a strong password policy
+5. Use and enforce the use of Multi Factor Authentication (MFA)
+6. Create and user Roles for giving permissions to AWS services
+7. Use Access Keys for Programmatic Access of AWS (through CLI or SDK)
+8. Audit permissions of your account with the IAM Credentials Report
+9. Never share IAM users & Access Keys

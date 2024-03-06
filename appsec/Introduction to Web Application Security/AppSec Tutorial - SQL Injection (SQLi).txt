@@ -1,0 +1,439 @@
+AppSec Tutorial - SQL Injection (SQLi)
+
+Contents:
+I. AppSec Tutorials - SQL Injection
+01. Welcome
+02. Introduction
+03. Objectives
+04. Module outline
+II. Overview of SQL Injection Attacks
+05. Basics of SQL Injection attack
+06. Impacts of SQL injection
+07. Scenario: SQL injection flaw
+08. Problem encountered
+III. SQL injection: Examples and Prevention
+09. Java code example
+10. C# code example 
+11. Prevention mechanism 
+	> Use prepared statements
+	> Use store procedures
+	> Perform allowlist input validator
+	> Escape user input
+12. Practice least privilege
+IV. Conclusion
+13. Best practices
+14. Problem identification
+15. Resolution
+V. Sumarry 
+16. Module summary
+
+
+
+
+
+
+
+
+
+
+I. AppSec Tutorials - SQL Injection
+01. Welcome
+02. Introduction
+
+SQL injection
+ > one of the most widely exploited application vulnerabilities
+ > SQL injection permits attackers to execute malicious SQL statements against the back-end database, exposing sensitive application data
+ > if an application processes user input data without validating or encoding the information when forming a SQL query, the application is likely vulnerable to SQL injection attacks
+
+In this module, we will learn more about
+1. SQL injection vulnerabilities
+2. Techniques to prevent SQL injection vulnerabilities
+
+
+
+
+
+
+
+
+
+03. Objectives
+
+After completing this module, you should be able to:
+1. Describe the SQL injection vulnerabilitiy
+2. Identify sample code that contains the SQL injection
+3. List methods to eliminate the vulnerability
+
+
+
+
+
+
+
+
+04. Module outline
+
+Module Outline
+Section 1: Overview of SQL Injection attacks
+Section 2: SQL injection: Example and Prevention
+Section 3: Conclusion
+
+
+
+
+
+
+
+
+II. Overview of SQL Injection Attacks
+05. Basics of SQL Injection attack
+
+SQL injections
+ > SQL vulnerabilities occurs if unsanitized data is used in SQL queries
+ > processing raw data as part of SQL query in this way is extremly dangerous
+
+Steps of SQL injection
+1. Attackers insert malicious data into the intended SQL query
+2. The corrupt query is submitted as input to the application
+3. The malicious command is then constructed by the application and submitted to the database
+
+SQL injection exploit can
+1. Execute administration operations on the database
+2. Recover the content of a given file or table
+3. Issue commands to the operating system
+
+
+
+
+
+
+
+
+
+
+06. Impacts of SQL injection
+
+Impacts of SQL Injection
+
+Confidentiality
+ > SQL injection attack can compromise confidentiality of data
+ > Data can be stolen, modified, or deleted
+ > Primary data targets are:
+	1. User credentials
+	2. Transaction records
+	3. Personally identifiable information (PII)
+
+Authentication
+ > If the authentication feature of a web application is vulnerable to SQL injection attacks, the attacker could
+	1. Bypass authentication controls
+	2. Gain access to someone else's login
+	3. Gain access to private data
+
+Authorization
+ > Authorization information and controls stored in a SQL database face the threat of being compromised
+ > Attackers can manipulate the stored authorization data resulting in:
+	1. Broken authorization controls
+	2. Elevation of privilege
+	3. Data leakage
+
+Integrity
+ > A SQL injection attack can compromise the integrity of an application and stored data
+ > Using SQL injection, attackers can:
+	1. Run queries agains your database
+	2. Access sensitive information
+	3. Manipulate or delete data
+
+
+
+
+
+
+
+
+
+07. Scenario: SQL injection flaw
+
+SQL injection flaw
+
+EX:
+In this code, the user input is DIRECTLY used to the SQL query. Without sanitizing and scrutinizing the input, we are exposing ourselves to SQL injection.
+
+String query = "SELECT FROM StudentEnrollments WHERE StudentID =" + request.getParameter("studentID");
+try {
+  Statement statement = connection.createStatement();
+  ResultSet results = statement.executeQuery(query);
+}
+
+
+
+
+
+
+
+
+
+08. Problem encountered
+
+Problem encountered
+ > John's team discovered that sensitive SQL queries are being executed along with this query
+
+
+
+
+
+
+
+
+III. SQL injection: Examples and Prevention
+09. Java code example
+
+Java Code Example
+ > uses JDBC's ResultSet and Statement and JEE's ServletRequest
+
+String firstname = req.getParameter("firstname");
+String lastname = req.getParameter("lastname");
+// FIXME: do your own validation TO detect attacks
+String query = "SELECT id, firstname, lastname FROM authors WHERE firstname='" + firstname + "' AND lastname ='" + lastname + "'";
+try {
+  Statement stmt = connection.createStatement(query);
+  ResultSet results = stmt.executeQuery();
+} 
+
+
+Non-malicious input
+firstname='ther; lastname=davis
+
+Resulting query
+SELECT id, firstname, lastname FROM authors WHERE firstname = 'es'ther' AND lastname='davis'
+
+SQL error
+Incorrect syntax near es' as the database tried to execute es
+
+
+
+
+
+
+
+
+
+10. C# code example 
+
+C#
+
+string userName = ctx.getAuthenticatedUserName();
+string query = "SELECT * FROM items WHERE owner = '" + username + "' AND itemname ='" + ItemName.Text + "'";
+sda = new SqlDataAdapter(query, conn);
+DataTable dt = new DataTable();
+sda.File(dt);
+
+
+Malicious input
+owner=zach;itemname=name' OR 'a'='a
+
+Resulting Query
+SELECT * FROM items
+WHERE owner = 'zach'
+AND itemname = 'name' OR 'a'='a';
+
+Simplified Query
+SELECT * FROM items;
+
+
+
+
+
+
+
+
+
+11. Prevention mechanism 
+
+Prevention mechanism
+ > Use prepared statements
+ > Use store procedures
+ > Perform allowlist input validator
+ > Escape user input
+
+
+USER PREPARED STATEMENTS
+Pros of prepared statements
+1. Parameterized queries ensure that SQL code is predefined - parameters are passed in the query later
+2. The use of prepared statements ensures that an attacker cannot change the intent of a query
+
+Ex:
+// Here, we are converting the whole input into ONE STRING
+userID = Johnson' OR '1'='1
+pstmt.setString(userID);  // it will inject "Johnson' OR '1'='1"
+
+
+
+
+USE STORED PROCEDURE
+ > Stored procedure programming constructs have the same effect as using parameterized queries
+ > A stored procedure can contain parameters and a body that build a SQL statement
+ > Avoid generating dynamic SQL within a stored procedure
+	- any parmeter that contains malicious data will be concatenated with the dynamic SQL query, and lead to SQL injection vulnerabilities
+ > Use proper input validation and sanitization to generate dynamic SQL within a stored procedure
+
+Example: Stored Procedure
+// Stored procedure using addition but NO VALIDATION
+CREATE PROC [CoursesByUser] (@name nvarchar(200))
+AS 
+EXEC ('SELECT * FROM UserCourse WHERE UserName='' + @name + ''')
+GO
+
+// Non-malicious use
+DECLARE @name nvarchar(200)
+SET @name = 'User 1'
+EXEC [CoursesByUser] @name
+GO
+// resulting query
+SELECT * FROM UserCourse WHERE UserName = 'User 1'
+
+// Malicious use
+DECLARE @name nvarchar(200)
+SET @name - 'Some Name''; GRANT CONTROL TO [Malicious User]; PRINT ''Game over! This system is no longer yours!'' -- Malicious User now can control the database!!!'
+EXEC [CoursesByUser] @name
+GO
+// resulting query
+SELECT * FROM UserCourse WHERE UserName = 'Some Name'';
+GRANT CONTROL TO [Malicious User];
+PRINT ''Game over! This system is no longer yours!'' 
+-- Malicious User not can control the database!!!'
+
+Prevention: Stored Procedure
+ > AVOID the use of dynamic SQL inside stored procedure
+ > This stored procedure will be the same as parameterized queries, and will NOT ALLOW SQL injection, since the @name parameter will only be treated as a value for the field
+
+// treating @name as parameter
+CREATE PROC [CoursesByUser] (@name nvarchar(10)) 
+AS 
+SELECT * FROM UserCourse WHERE UserName = @name
+GO
+
+// if you still want to dynamic SQL inside stored procedure
+// you essentially create a stored procedure inside a stored procedure
+CREATE PROC [CoursesByUser] (@name nvarchar(10))
+AS
+SELECT * FROM UserCourse WHERE UserName = @name
+GO
+CREATE PROC [CourseByUser] (@name nvarchar(10))
+AS 
+  DECLARE @cmd nvarchar(MAX)
+  DECLARE @parameters nvarchar(MAX)
+  SET @cmd = 'SELECT * FROM UserCourse WHERE UserName = @name'
+  SET @parameters = '@name nvarchar(10)'
+  EXEC sp_execturesql @cmd, @parameters, @name = @name
+GO
+
+
+
+PERFORM ALLOWLIST INPUT
+ > Use allowlist input validation, or redesign the query when it is not possible to parameterize all components of SQL queries
+ > Map parameter values to a legal table or column names to make sure unvalidated user input is not added to the query
+ 	- Ensures that it is safe to convert user input into a non-string before it is appended to a query
+ > Input validation is a secondary defense even when using bind variables
+
+
+
+ESCAPE USER INPUT
+ > Should be your last opetion when no other mitigation technique is available
+ > Is a weaker defense mechanism than input validation, prepared statements, or properly coded stored procedures agains SQL injection attacks
+ > Is applied just before inserting user input in a query
+ > Replaces any special characters and neutralize malicious inputs
+ > Is used only when changing the code to implement input validation, or implementing a prepared statement consumes too much time or effort
+ > Prevents SQL injection attacks
+
+
+
+
+
+
+
+
+
+12. Practice least privilege
+
+Practice least privilege
+ > This means the permissions given to users and other systems must be restricted to the minimum access required to do their job, and no more
+ > Practice the principle of least privilege to limit the impact of SQL injections
+ > Principle of least privilege
+ 	- Only the required level of access permission is granted to users based on their roles and responsiblities
+ 	- ex: if your account does not have the persmission to drop a table, it will not be able to do so, even if the drop command is injected into the SQL server
+	- Restrict attackers from modifying or destroying the data
+	- Limit the read and view permissions in the SQL server
+
+
+
+
+
+
+
+
+
+IV. Conclusion
+13. Best practices
+
+Best practices suggessted by OWASP
+1. Use prepared statements with parameterized queries
+2. Build SQL prepared statements that take parameter input, and execute parameterized queries
+3. Map parameter values to the legal table or column names
+4. Use input validation even when using bind variables
+5. Make sure of escaping user input only when it is not possible to use parameterized queries or stored procedures
+6. Give least privileges to every account
+
+
+
+
+
+
+
+
+14. Problem identification
+
+Problem found
+1. Student ID is VULNERABLE to SQL injection
+
+
+
+
+
+
+
+
+
+15. Resolution
+
+Resolution
+ > the student id input data is now used as parameter instead of concatenating it to the SQL query
+
+
+
+Fixed Code
+String studentID = request.getParameter("studentID");
+String query = "SELECT FROM StudentEnrollments WHERE StudentCode = ?";
+try {
+  PreparedStatement pstmt = connection.prepareStatement(query);
+  pstmt.setString(1, studentID);
+  ResultSet results = pstmt.executeQuery();
+}
+
+
+
+V. Sumarry 
+16. Module summary
+
+Module Summary
+1. SQL injection vulnerabilities occur due to coding erros
+2. A SQL injection vulnerability lets an attacker send commands to the database to get or modify data
+3. A successful SQL attack can have a negative technical impact on the following areas.
+	> Confidentiality
+	> Authentication
+	> Authorization
+	> Integrity
+4. Developers should use prepared statements with variable binding or parameterized queries
+5. Stored procedure programming constructs have the same effect as the use of parameterized queries, if coded properly
+6. Map parameter values to the legal table or column names, to make sure unvalidated user input is not added to the query
+7. While a valid remediation method, the escape user input method should be your last option
+8. You should give the least privileges to every database account to ensure minimum damage results from a SQL injection attack

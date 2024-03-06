@@ -1,0 +1,121 @@
+29. Getting Started with Helms
+
+
+SOURCE:
+https://tanzu.vmware.com/developer/guides/helm-what-is/
+https://tanzu.vmware.com/developer/guides/helm-gs/
+
+PREREQ:
+1. Have access to a Kubernetes Cluster (Cloud or Local)
+
+
+Helm
+	> "package manager" for Kubernetes
+	> Helm is the best way to find, share and use software built for kubernetes
+	> Helm is a tool to help you define, install, and upgrade applications running on Kubernetes. 
+	> At its most basic, Helm is a templating engine that creates Kubernetes manifests. 
+		- What makes Helm more than that is it can upgrade and scale applications as well
+
+
+
+Installing Helm
+	> following instruction here 
+		- https://helm.sh/docs/intro/install/
+	> for Windows
+		1. Download the executable
+			- https://get.helm.sh/helm-v3.8.1-windows-amd64.zip
+		2. Extract the content
+		3. Run the exe file in the cmd
+			- use "start [filename.exe]" command
+			- ex: start helm.exe
+	> for Windows with Chocolatey installed
+		1. in cmd use "choco install kubernetes-helm" command
+			- be sure to run cmd as Administrator
+	> check if Helm installation is successful
+		1. use "helm version" command
+
+
+
+Initial Helm Setup
+1. Connect to a chart repository and update it
+	> You’re going to need a chart to deploy with Helm, so the easiest thing is to connect to a chart repository with the helm repo command.
+	> Command: helm repo add <repo-name> <repo-url>
+
+$ helm repo add bitnami https://charts.bitnami.com/bitnami
+"bitnami" has been added to your repositories
+$ helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "bitnami" chart repository
+Update Complete. ⎈Happy Helming!⎈
+
+
+
+Deploy a Chart (Create a Release)
+1. Use the command "helm install"
+	> helm install <release-name> <chart-name>
+	> this command outputs the informations related to Release like
+		- Release name
+		- Chart name
+		- Chart version
+		- Namespace
+		- NOTES:
+			-> Typically Chart creator's notes to the users when using the Chart itself
+	> ex: helm install my-app bitnami/nginx
+		- in this case, we created a release named "my-app" that runs bitnami/nginx Chart
+
+$ helm install my-app bitnami/nginx
+NAME: my-app
+LAST DEPLOYED: Thu Apr  7 16:29:50 2022
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+CHART NAME: nginx
+CHART VERSION: 10.0.0
+APP VERSION: 1.21.6
+
+** Please be patient while the chart is being deployed **
+
+NGINX can be accessed through the following DNS name from within your cluster:
+
+    my-app-nginx.default.svc.cluster.local (port 80)
+
+To access NGINX from outside the cluster, follow the steps below:
+
+1. Get the NGINX URL by running these commands:
+
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        Watch the status with: 'kubectl get svc --namespace default -w my-app-nginx'
+
+    export SERVICE_PORT=$(kubectl get --namespace default -o jsonpath="{.spec.ports[0].port}" services my-app-nginx)
+    export SERVICE_IP=$(kubectl get svc --namespace default my-app-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    echo "http://${SERVICE_IP}:${SERVICE_PORT}"
+
+		
+
+List all Releases deployed
+1. Use command "helm list"
+	> helm list
+	> shows information like
+		- name
+		- namespace
+		- revisions
+		- updated date
+		- status
+		- chart used
+		- app version
+
+OUTPUT:
+NAME    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+my-app  default         1               2022-04-07 16:29:50.1201391 +0800 CST   deployed        nginx-10.0.0    1.21.6
+
+
+Uninstall a Release
+1. Use "helm uninstall <release-name>"
+	> helm uninstall <release-name>
+
+$ helm uninstall my-app
+release "my-app" uninstalled
+
+ 

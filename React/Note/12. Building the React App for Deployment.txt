@@ -1,0 +1,17 @@
+12. Building the React App for Deployment
+
+
+Building the React App for Deployment
+	> to build the React App, use the command in root directory
+		npm run build
+	
+
+Running the built React App
+	> to run a built React app, you will need a static server
+	> one of these static server is Serve node package module
+		- to install Serve, we can use the command
+			npm install -g serve
+	> to run a React app, use the command in the location of build folder
+		serve -s build -p <TCP PORT>
+		serve -s build -p 8000
+	> we can now access the React app in localhost:8000 (or the tcp port you assigned in serve command)

@@ -1,0 +1,298 @@
+Section 26: Services
+
+142. Services - NodePort
+
+Services
+ > Services is a kubernetes resources that helps us connect application together with other applications or users
+ > Services acts as an interface which can essentially group the Pods so that it can redirect specific request to those group of pods
+ > Essentially, Services enable LOOSE COUPLING between microservices in our application
+
+
+Example scenario: K8s cluster with FE, BE, and DataSource
+ > for example, we may have a group of Pods serving a frontend to users, and other group for running backend processes, and other group connecting to an external datasource
+ > it is Services that enable connectivity between these groups of Pods
+ > Services enable the front end application to be made available to end users, it helps communication between backend and front end pods and helps in establishing connectivity to an external datasource 
+
+
+Example Services use case: Exposing group of Pods via Node's port
+Scenario:
+1. We have a K8s node running at IP 192.168.1.2
+2. Inside the node, we have a cluster running with private internal IP 10.244.0.0
+3. Inside the cluster. we have a pod running with assign ip address 10.244.0.2
+4. Now we have another laptop running at IP 192.168.1.10 that is outside the K8s node mentioned in #1, and we want to connect to the pod mention in #3
+
+Problem
+1. External laptop can not directly communicate to the Pod's IP address since they are in different network
+
+Solutions:
+1. SSH tunnel from laptop to k8s node, then access the Pod
+	> with this, we can now access the application hosted by the Pod inside the k8s node
+	> if the node has a GUI, we can even use a browser to visit the Pod application
+	> the main issue in this solution is that we are accessing the app hosted by pod INTERNALLY
+2. Use Service to expose the Pod externally
+	> one of the use case of Service is to map a port in the Node's ip address to the port of the Pods to groups/selects
+	> this means that the Service will listen to a specific port of Node's IP (e.g. 30008), and if a request comes in, it will forward it to a specific port of the group of pods it selects (e.g. 80)
+	> essentially, it is similar to port mapping on Docker
+		NODE_IP:NODE_PORT => POD_IPs:TARGET_PORT
+		192.168.1.2:30008 => 10.244.0.2:80
+	> this type of Service (that listens to Node's port) is called a NodePort Service
+	
+	
+Types of Services
+1. NodePort
+	> NodePort services exposes internal Pods via a port in the K8s node
+2. ClusterIP
+	> ClusterIP service creates a virtual IP inside the cluster to enable communication between different services, such as a set of FE servers to a set of BE servers
+3. LoadBalancer
+	> LoadBalancer service provisions a load balancer for our application in supported cloud providers
+	> example of this is to distribute load across the web server in your front end tier
+	
+	
+NodePort Service
+ > NodePort service can help us by mapping a port on the K8s node to a port on the Pod
+ > When setting up a NodePort service, we will need to provide the following
+	a. Target port
+		- this will be the port of one or more selected Pod where the request will be forwarded
+		- ex: port 80 of Pod with IP 10.244.0.2
+	b. Port
+		- this refers to the actual Port the Service uses on its own Cluster Ip
+		- ex: port 80 of Service with Cluster IP 10.106.1.12
+	c. NodePort
+		- this refers to the Port of the K8s node where the Service listens for request
+		- node ports can only be in a valid range, which by default is from 30000-32767
+		- ex: port 30008 of Node with IP 192.168.1.12
+		
+NodePort Service YAML Definition
+ > similar to other K8s resource, we would need the apiVersion, kind, metadata, and spec
+	- apiVersion is v1
+	- kind is Service
+	- for metadata, we would need to provide 'name' field under it
+ > for spec, we would need the following: spec.type, spec.ports[] where each object is composed of fields targetPort, port, and nodePort, and spec.selector
+	a. spec.type 
+		- refers to the type of Service used
+		- in case of NodePort, it will be NodePort
+	b. spec.ports[] contains the port mappings done by this service
+		- objects under spec.ports[] must have 'port' field
+		- based on different service type, we might provide targetPort, and nodePort
+		- if targetPort is not provide, it is assumed to be the SAME as the 'port'
+		- if no nodePort is given for a NodePort service, it will use a free port in the valid range between 30000-32767
+	c. spec.selector
+		- in order to determine the Pods where the Services will forward the request, it uses the spec.selector field
+		- in spec.selector field, any Pods whose 'metadata.labels' fields matches any of the 'spec.selector' of the Service will be included
+ > with the example scenario above (Exposing group of Pods via Node's port) and the yaml definition file below, we can now access the pod externally via Node's IP
+	- EX: curl http://192.168.1.2:30008
+ > the Service can also handle request forwarding to MORE THAN ONE Pods
+	- this is typically the case, where an application is hosted in multiple Pods for high availability
+	- as long as these Pods's labels matches the Service's selector, they will be candidate for the request the Service forwards
+		
+		
+# services.definition.yml
+apiVersion: v1
+kind: Service
+metadata:
+	name: myapp-service
+spec:
+	type: NodePort
+	ports:
+	-	targetPort: 80
+		port: 80
+		nodePort: 30008
+	selector:
+		app: myapp
+		type: front-end
+
+# pod-definition.yml
+apiVersion: v1
+kind: Pod
+metadata:
+	name: myapp-pod
+	labels:
+		app: myapp
+		type: front-end
+spec:		
+	containers:
+	-	name: nginx-containersg
+		image: nginx
+		
+		
+Commands
+kubectl create -f SERVICE_DEFINITION_YAML_FILE
+ > used to create a Service object using a yaml definition file
+ > ex:
+	kubectl create -f service-definition.yml
+	
+kubectl get services
+ > used to list all the services available
+ > in the log output, the following is printed: NAME, TYPE, CLUSTER-IP, EXTERNAL-IP, PORT(S) AGE
+	- NAME is the name of the service (metadata.name)
+	- TYPE is the type of the service (spec.type)
+	- CLUSTER-IP is the cluster ip created for the service
+	- PORT(S) is the port mapping done by the service
+	- AGE is how long the service has been there
+		
+NOTES:
+1. Service is in fact like a virtual server inside the node 
+	> inside the Cluster, Service has its own IP address and that IP address is called the Cluster IP of the Service
+2. When creating a Service, Kubernetes automatically creates a sevice that spans ACROSS ALL THE NODES in the cluster, and maps the target port to the same node port on all the nodes in the cluster
+	> this way, you can access your application using the IP of any node in the cluster and using the same port number (e.g. 30008)
+	> ex:
+		Node 1,2,3 have IPs 192.168.1.2, 192.168.1.3, 192.168.1.4
+		We can use these ip address alongside port 30008 to access the FE pods
+	
+
+
+
+
+143. Demo - Services
+
+Commands
+minikube service SERVICE_NAME --url
+ > prints out urls where we can access the Service
+ > ex:
+	minikube service myapp-service --url
+
+NOTES:
+1. For a NodePort, we would need to know the ip address of any worker node in the K8s cluster to access the Pods handled by it
+
+
+
+144. Services - ClusterIP
+
+Service (cont.)
+ > Service serves as an interface for the connections of the Pods. Essentially, instead of Pods interacting and communicating INDIVIDUALLY, we can create Services to group these Pods, and the Pods will use the Service to communicate to specific Group of Pods
+ > As an examples, lets say we have a set of Pods for front-end, back-end, and redis
+	- since the IP address of the Pods changes from time to time, it is not recommended to HARDCODE the IP addresses used for communicating to individual Pods (ex: FE -> BE)
+	- instead, we can create a Service to group pods under front-end, back-end, and redis. And when a Pod of specific group wants to communicate to Pod of another group, they will just interact with the Service, and it will handle/forward the request to one of the Pods`of that specific group
+ > ex						(random)
+	FE_POD1 -> BE_SERVICE ----------> BE_POD1 || BE_POD2 || BE_POD3
+ > each Service get an IP address and NAME assigned to it inside the Cluster
+	- the Name should be the one used by other Pods to access the Service
+	- ex: if Service has IP 10.8.10.2 and NAME 'front-end', the Pods will use either 'front-end:80' or 10.8.10.2:80 when communicating with this Service
+
+
+ClusterIP Service
+ > ClusterIP services are services used for communication of Pods internally within the Cluster
+ > this is the default type of Service if no 'spec.type' is specified
+ > in order to create a ClusterIP Service, we would need to do the following.
+	1. Create a Service object, and for its spec.type, it would be 'Cluster'
+	2. Then for spec.ports[], we would need to provide the 'port' as it is mandatory. For targetPort, we can provide it as well but if no value is provided, it will assume the same value as the 'port'
+	3. We will then be using 'spec.selector' to link the Pods to this Service
+	
+# service-definition.yml
+apiVersion: v1
+kind: Service
+metadata:
+	name: back-end
+spec:
+	type: ClusterIP
+	ports:
+	-	targetPort: 80
+		port: 80
+	selector:
+		app: myapp
+		type: back-end
+		
+# pod-definition.yml
+apiVersion: v1
+kind: Pod
+metadata:
+	name: myapp-pod
+	labels:
+		app: myapp
+		type: front-end
+spec:		
+	containers:
+	-	name: nginx-containersg
+		image: nginx
+
+
+
+
+145. Services - Load balancer
+
+Scenario: Exposing two applications - Voting App and Result App
+ > as of now, with the knowledge of NodePort Services, we could create NodePort Service to expose these two apps
+	- with this, we can access the applications using multiple IP addresses, based on how many Nodes the cluster have
+ > but in this case, the end user wants to access the Voting app and Result app in one single URL for each of them (e.g. example-vote.com and example-result.com)
+ > one way to do this is to create an external load balancer via a new VM for loadbalancer purpose, and install and configure it a suitable loadbalancer on it like HAProxy, or NGINX, etc
+	- then we will configure the load balancer to route traffic to the underlying Nodes
+	- but this external load balancer setup and then maintaining and managing that can be a tedious tasks
+ > another way of solving the issue is to LEVERAGE the native load balancer of the cloud platform
+	- this assumes we are on a supported cloud platform like Google Cloud, AWS, or Azure
+	- Kubernetes has support for integrating with the native load balancers of certain cloud providers and configuring that for us
+	- all we need to do is the following
+		1. create a Service for the pods to expose (e.g. Voting app and Result app frontend)
+		2. Set the type to 'LoadBalancer'
+		3. For the port mappings, provide the targetPort, port, and nodePort
+	- In an unsupported environment like VirtualBox, or any other environment, then it would have THE SAME effect as setting it to NodePort where the services are exposed on a high end port of the Nodes. There, it just won't do any kind of external load balancer configuration
+
+
+
+
+
+
+146. Labs: Services - File
+
+Q1: How many Services exist on the system?
+In the current(default) namespace
+S: Use 'kubectl get services -n=default'
+A: 1 - the default ClusterIP 'kubernetes'
+
+Q2: That is a default service created by Kubernetes at launch
+
+Q3: What is the type of the default kubernetes service?
+A: ClusterIP
+
+Q4: What is the targetPort configured ont he kubernetes service?
+S: Use 'kubectl describe service kubernetes'
+A: 6443/TCP
+
+Q5: How many labels are configured on the 'kubernetes' service?
+S: Use 'kubectl describe service kubernetes'
+A: 2 (component=apiserver, and provider=kubernetes)
+
+Q6: How many Endpoints are attached on the 'kubernetes' service?
+S: Use 'kubectl describe service kubernetes'
+A: 1 (192.32.250.6:6443)
+
+Q7: How many Deployment exist on the system now?
+In the current (default) namespace
+S: Use 'kubectl get deployments -n=default'
+A: 1
+
+Q8: What is the image used to create the pods in the deployment?
+S: Use 'kubectl describe deployment DEPLOYMENT_NAME'
+A: kodekloud/simple-webapp:red
+
+Q9: Are you able to access the Web App UI?
+Try to access the Web Application UI using the tab 'simple-webapp-ui' above the terminal
+A: NO
+
+Q10: Create a new service to access the web application using the 'service-definition-1.yaml' file
+Name: webapp-service
+Type: NodePort
+targetPort: 8080
+port: 8080
+nodePort: 30080
+selector:
+	name: simple-webapp
+S: Write the service definition yaml file, then use 'kubectl create -f'
+	
+# service-definition-1.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+  namespace: default
+spec:
+  ports:
+  - nodePort: 30080
+    port: 8080
+    targetPort: 8080 
+  selector:
+    name: simple-webapp
+  type: NodePort
+  
+kubectl create -f service-definition-1.yaml
+
+Q11: Access the web application using the tab 'simple-webaoo-ui' above the terminal window

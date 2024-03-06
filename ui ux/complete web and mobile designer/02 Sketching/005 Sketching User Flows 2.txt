@@ -1,0 +1,34 @@
+005 Sketching User Flows 2
+
+GOAL: Screen flow
+
+Screen flow
+ > more focused on the user's action through a specific flow
+ > it could be a specific sequence of screens or it could be a journey that branches
+
+STEPS: User searching for product user flow
+1. Search page frame
+	> contains search bar, and some home buttons at the bottom bar
+2. Result search frame/page
+	> contains the search bar as well, and the list of the search result items
+	> search result item may be present in a card format, where theres a thumbnail at the left and information text at right
+	> information include name, price, ratings, etc
+3. Product description frame
+	> contains the following
+		- product image, enlarged (can be a carousel)
+		- product name, price, rating
+		- product options like colors
+		- additional description
+		- button for adding to cart
+4. Cart page
+	> contains the list of items
+	> also with regards to page hierarchy, we should put most used buttons in the easy access area (back button should be sticky button)
+
+
+Alternate Route
+1. Home page
+	> in this page, we may display products that might navigate the user directly to the item description page
+
+
+NOTE:
+1. We must take account of ALL USER FLOW when it comes to building user journeys  

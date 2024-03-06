@@ -1,0 +1,75 @@
+06. SonarQube installation
+
+SonarQube installation
+1. Install Docker and pull SonarQube image
+	> docker image pull sonarqube:latest
+2. Setup SonarQube on the Browser
+	> docker container run -d --name sonarqube -p 9000:9000 sonarqube:latest
+	> go to localhost:9000
+	> use the default username and password to login
+		- admin
+		- admin
+	> you will be prompted to change default password
+3. Download Sample Code and Analyze it on Sonar
+
+
+
+
+SonarQube Hands-On
+1. Install Git and clone the sample project from the given link
+	> yum install -y git (or apt if you use Ubuntu)
+	> git clone https://github.com/gouthamchilakala/PetClinic.git
+2. Install Java and Maven
+	> reason why Java is needed is because it is one of dependencies of Maven
+	> Install Java
+		apt install java-1.8.0-openjdk-devel
+	> go to Apache Maven website and copy the download like for apache maven (the .tar.gz file)
+	> go inside the server and download the Maven installer using wget (for Linux based servers)
+		wget https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz
+	> extract the file downloaded using tar command
+		tar apache-maven-3.8.5-bin.tar.gz
+	> check if mvn is working
+		cd apache-maven-3.8.5-bin.tar.gz
+		cd bin/
+		mvn --version
+	> export the path directory of mvn executable in PATH environment variable
+		export PATH=$PATH:/opt/apache-maven-3.6.2/bin/
+3. Configure sonar-project.properties and connect Maven to SonarQube 
+	> sonar-project.properties is used to configure the metadata of the SonarQube
+EX:
+# Required metadata
+sonar.projectKey=item-service
+sonar.projectName=item-service
+sonar.projectVersion=1.0
+
+# Comma-separated paths to directories with sources (required)
+sonar.sources=src
+
+# Language
+sonar.language=java
+
+# Enconding of the source files
+sonar.sourceEncoding=UTF-8
+
+4. Compile and Build the sample file using the sonar code from browser
+
+
+
+
+Add Projects in SonarQube
+1. Go to Projects tab
+2. Choose Manually
+	> setup the Project's Display name and Project key
+3. Choose Locally if you want to analyze local source code
+	> Provide/Generate a token
+		- here, you will pass the name of token, and after giving it a name, it will show you the generated token
+		- this will be used to identify you when an analysis is performed
+		- glenn: d8d01076a49af73df473d5135c29da49b776e8fc
+	> Run analysis on your project
+		- choose the best description of the build	
+		- it will show you the instruction for executing Scanner for the specific build type
+		- for Maven, change mvn to mvnw
+
+mvnw clean verify sonar:sonar -Dsonar.projectKey=item-service -Dsonar.host.url=http://localhost:9000 -Dsonar.login=d8d01076a49af73df473d5135c29da49b776e8fc
+4. Check the informations of source code back to SonarQube website
+	localhost:9000

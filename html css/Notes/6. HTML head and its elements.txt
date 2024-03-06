@@ -1,0 +1,168 @@
+HTML <head> element
+
+Head <head>
+	> head element is a container for metadata (data about data)
+	> placed between the <html> tag and the <body> tag
+	
+HTML metadata
+	> data about the HTML document
+	> is not displayed in the webpage
+	> typcally define the following
+		- document title
+		- character set
+		- styles
+		- links
+		- scripts
+		- other meta information
+	> the following tags describe the metadata
+		- <title>, <style>, <meta>, <link>, <script>, <base>
+
+
+<title> Element
+	> takes a text-only value
+	> defines the title in the browser toolbar
+	> provides a title for the page when it is added to favorites
+	> displays a title for the pages in search engine results
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A Meaningful Page Title</title>
+</head>
+<body>
+
+The content of the document......
+
+</body>
+</html>
+
+
+
+HTML <style> element
+	> used to define the style information for a single HTML page
+
+EX:
+
+<style>
+  body {background-color: powderblue;}
+  h1 {color: red;}
+  p {color: blue;}
+</style>
+
+	> this will make
+		- body content's background-color to powderblue
+		- h1 color to red
+		- p color to blue
+
+
+
+
+HTML <link> element
+	> defines the relationship between the current document and an external resource 
+	> is most often used to link to external style sheets
+
+EX:
+
+	<link rel="stylesheet" href="mystyle.css">
+
+	> this will look at the mystyle.css and apply the settings in the file to the webpage
+
+
+
+HTML <meta> element
+	> typically used to specify the character set, page description, keywords, author of the document, and viewport settings
+	> the metadata will NOT be displayed on the page, but are used by browsers (to know how to display content or reload page), by search engines (for keywords), and other web services
+	> metadata have the following attributes
+		a. charset	- defines the character sets in browser
+		b. name		- defines the "type" of meta data
+				- this includes description, keywords, author, viewport, etc
+		c. content	- defines the characteristic of the metadata "type"
+
+EX:
+
+<meta charset="UTF-8">								Define the character set used
+<meta name="description" content="Free Web tutorials">				Define a description of your web page 
+<meta name="keywords" content="HTML, CSS, JavaScript">				Define keywords for search engines
+<meta name="author" content="John Doe">						Define the author of a page
+<meta http-equiv="refresh" content="30">					Refresh document every 30 seconds
+<meta name="viewport" content="width=device-width, initial-scale=1.0">		Setting the viewport to make your website look good on all devices
+
+
+
+
+Viewport
+	> user's visible area of a web page
+	> varies from devices to devices
+	> smaller on mobile phone than on a computer screen
+	> because of this, we should take this into account when designing the webpage
+
+EX:
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		 the name="viewport" 
+
+	>defines that the metadata is related to viewport
+
+		content="width=device-width, initial-scale=1.0"
+
+	>defines that the webpage's width will be equal to device's width and the initial scale will be 1.0
+
+
+
+
+
+HTML <script> element
+	> used to define client-side JavaScript
+	> JavaScript is used to write back-end functions for the webpage
+
+EX:
+
+<script>
+function myFunction() {
+  document.getElementById("demo").innerHTML = "Hello JavaScript!";
+}
+</script>
+
+	> this JavaScript writes "Hello JavaScript!" into an HTML element with id="demo"
+
+
+
+
+HTML <base> element
+	> specifies the base URL and/or target for all relative URLs in a page
+	> <base> tag must have either an href or a target attribute present, or both
+	> there can only be one SINGLE <base> element in a document
+
+EX: 
+
+<head>
+<base href="https://www.w3schools.com/" target="_blank">
+</head>
+
+<body>
+<img src="images/stickman.gif" width="24" height="39" alt="Stickman">
+<a href="tags/tag_base.asp">HTML base Tag</a>
+</body>
+
+	> with this, the src of the img element will be have the href of the base added before it
+
+		"https://www.w3schools.com/images/stickman.gif"
+
+	> also, in the href of linktag, the base href will be added before its href
+
+		"https://www.w3schools.com/tags/tag_base.asp"
+
+	> as for the target of the href, even if theres no target specified in the linktag, the target of the base element will be its target attribute
+
+
+SUMMARY 
+
+The <head> element is a container for metadata (data about data)
+The <head> element is placed between the <html> tag and the <body> tag
+The <title> element is required and it defines the title of the document
+The <style> element is used to define style information for a single document
+The <link> tag is most often used to link to external style sheets
+The <meta> element is typically used to specify the character set, page description, keywords, author of the document, and viewport settings
+The <script> element is used to define client-side JavaScripts
+The <base> element specifies the base URL and/or target for all relative URLs in a page

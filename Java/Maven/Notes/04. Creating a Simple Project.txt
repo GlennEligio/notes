@@ -1,0 +1,49 @@
+04. Creating a Simple Project
+
+GOAL:
+1. Learn about Eclipse's support for Maven
+2. Create a simple Maven Project with Eclipse
+3. Explore the generated files and directories
+4. Run our App
+5. Update the Java version settings
+
+
+ECLIPSE AND MAVEN
+	> most recent versions of Ecliupse have built-in support for Maven
+		- uses the m2eclipse plugin
+	> with the m2eclipse plugic, theres NO NEED to download/install Maven separately
+	> can create Maven projects, add dependencies all inside of Eclipse
+
+
+HOW TO CHECK IF m2eclipse PLUGIN IS INSTALLED
+1. Help > Install new software
+2. Press the link in "What is already installed?" text
+3. Search m2e, the result must include these two
+	a. m2e - Maven Integration for Eclipse
+	b. m2e-wtp - Maven Integration for WTP
+
+
+CREATING A MAVEN PROJECT IN ECLIPSE
+1. New > Maven project
+	- click Others and search for Maven project in case you cant see it
+2. Next
+3. Search for quickstart archetype of Maven 
+4. Define the GAV of the project
+
+
+
+Change Java JDK version to use in Maven project
+1. add <maven.compiler.target> and <maven.compiler.source> element inside <properties> of pom.xml
+2. pass the Java version number you want to use
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
+
+3. update the project with pom.xml
+	> right click the pom.xml
+	> choose Maven, then Update Project
+	> click finish
+	> check the JRE System Library for changes

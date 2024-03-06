@@ -1,0 +1,50 @@
+75 S3 Hands On
+
+
+Creating an S3 Bucket
+1. Search for S3 service
+2. Go to S3 Dashboard > Buckets
+3. Click 'Create Bucket'
+4. In General configuration
+	> pass a unique name ('glenneligio-ccp-2020-v2')
+	> selet the AWS Region closest to you
+	> leave other settings by default
+	> create the Bucket
+
+
+Creating Folder inside S3 Bucket
+1. Select a Bucket in S3 Bucket dashboard
+2. Click 'Create folder'
+3. Specify a name
+
+
+
+Uploading files inside S3 Bucket/Folder
+1. Go to S3 Bucket
+2. Select one of the Folder where you will upload the file
+	> you can also upload files at the root directory of S3 Bucket
+3. Click 'Upload'
+4. Click 'Add files' or drag the file itself
+5. Review the configuration like Destination, Permission, properties, etc
+6. Upload the file(s) or folder(s) by clicking 'Upload'
+
+
+
+Accessing the Objects
+1. Click the Object you want to access
+2. Go to Properties tab, and click the Object URL
+	> you should be greeted with Access Denied XML if you set the Bucket as private earlier
+3. Click the 'Open' button in Object
+	> you should be able to access the Object
+	> you can also see that the URL is different, si nce this URL is a presigned URL, which contains necessary authentication info to access the Object
+
+
+
+Deleting File/Folder in S3 Bucket
+1. Create a folder in Bucket named 'dummy-folder'
+2. Delete that folder
+
+
+
+NOTES:
+1. Delete action in a folder is recursive, which means all files and subfolders of the folder will be deleted as well

@@ -1,0 +1,63 @@
+MicroService Architecture
+
+Use cases:
+1. Increased load/traffic in application
+
+Problem:
+1. Scalability of Monolithic application is not efficient
+	> starting a big Monolithic application is slow
+	> only specific portion of the said application is needed to be scaled up (increase replica/instance number)
+
+Solution
+1. Microservice architecture
+
+
+
+Microservice Architecture
+
+Advantages
+1. Redundant
+	> an backup instance is available incase the current one fails
+2. Failover Tolerance
+	> more tolerant with failovers due to sliced up application/service
+3. Separated responsibilities
+	> services are split by the features
+	> with these, we can do a separated scaling when only a specific service is needed to be scaled up/down
+	
+Disadvantages
+1. Duplications
+	> applications/services are duplicated to be a backup
+	> can be a waste of resources
+2. Stateless
+	> IP may change and the Microservice architecture must be able to cope with this
+3. Multiple calls for a single request
+	> multiple request is made inside the Microservice architecture per Single request from Client
+	> INCREASED Response time
+
+
+
+Technologies to use
+1. Java
+2. Spring Boot
+3. Spring Cloud
+4. Docker
+5. Kubernetes
+
+
+Which microservices?
+1. backend-user
+	> public service
+	> serves as the entrypoint for all private services
+2. service-books
+3. service-prices
+4. service-orders
+5. service-emails
+
+
+
+Which design patterns?
+1. Single Sign On (SSO)
+2. Circuit Breaker
+3. Producer / Consumer
+4. Service Discovery
+5. Distributed Config

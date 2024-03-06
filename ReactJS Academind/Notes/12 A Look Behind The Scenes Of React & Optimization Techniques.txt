@@ -1,0 +1,317 @@
+12 A Look Behind The Scenes Of React & Optimization Techniques
+
+001 Module Introduction
+
+Module Content
+1. How Does React Work Behind The Scenes?
+2. Understanding the Virtual DOM & DOM Updates
+3. Understanding State & State Updates
+
+
+
+
+002 How Does React Work
+
+React
+ > "A JavaScript library for building user interfaces"
+ > React is all about the "Components"
+	- used to compose and effectively updates user interfaces
+ > React itself DOES NOT KNOW the web (or the browser in the end)
+	- it only knows how to work with Components
+	- but it doesnt care whether those components contain HTML element or fictional elements
+ > just a library for managing Components, and its States
+	- also determines how the Components needs to be updates
+	- and the differences between the new Component State to its previous State
+ > works with ReactDOM by passing the Component updates/differences to updates the Real DOM
+
+ReactDOM
+ > Interface to the web
+ > needs to bring real HTML elements to the screen
+ > responsible for bringing something onto the screen which the user is able to see
+ > React library passes the Component and the differences/updates of Components itself to the interface its working with (in this case, the ReactDOM)
+
+Component
+ > React embraces this "Component" concept
+ > composed of three parts
+	1. Props
+		- Data from parent component
+		- allows the Components to be configurable
+		- enables parent-child component communication
+	2. State
+		- Internal data
+	3. Context
+		- Component-wide data
+ > whenever these three changes, the Components get UPDATED by React
+	- the React then checks if the Component now wants to draw something new onto the screen or update values in the screen UI
+	- if this is the case, React will let the ReactDOM know about it, and ReactDOM will work to update the RealDOM to based on the Component update
+
+
+React and Virtual DOM
+ > React uses a concept called Virtual DOM
+ > In Virtual DOM, it 
+	- determines how the Component tree (and the Components sub-tree, which is the JSX code) currently looks like and; 
+	- what it should look like (based on the updates in Components props, states, and context) 
+ > ReactDOM then receives the differences (i.e. required changes) and then manipulates the real DOM
+	- the process of matching/syncing the VirtualDOM and Real DOM by ReactDOM is called "Reconciliation"
+
+
+Re-Evaluating Compnents !== Re-Rendering the DOM
+ > just because a Component is re-evaluated doesnt mean the Real DOM corresponding to it is re-rendered
+ > Components:
+	- Re-evaluated whenever props, state, or context changes
+	- React executes component functions
+ > Real DOM:
+	- Changes to the real DOM are only made for DIFFERENCES BETWEEN EVALUATION
+	- ex: if in Component re-evaluation only results in adding one element, only that specific change will be rendered in the Real DOM
+
+Virtual DOM Diffing
+ > process of determining differences between two snapshots (of Virtual DOM)
+	- the difference is then passed to React DOM to update the Real DOM
+ > React uses this process in order to update Real DOM in a more efficient way
+	- doing this instead of reaching out to Real DOM and manipulating it (which is pretty EXPENSIVE from a performance perspective)
+
+
+
+
+
+003 Component Updates in Action
+
+Components Updates
+ > Components only updates if one of the following part of Component is updated
+	1. Props
+	2. State
+	3. Context
+ > When a Component updates, the following will be triggered
+	1. Virtual DOM Diffing with React
+	2. Reconciliation of Virtual DOM and Real DOM with ReactDOM
+ 
+Seeing Component Update and Real DOM update in action
+ > earlier, we said that ReactDOM only updates the specific part of Real DOM that corresponds with the changes/differences sent by React
+ > in the browser, we can see which part of the Real DOM updates
+	- the elements in question will be highlighted when it gets updated
+
+
+
+
+
+004 Child Component Re-evaluation
+
+Child Component Re-evaluation
+ > if Parent Component re-evaluates, the Child Component ALSO RE-EVALUATE
+	- this is because when a Component re-evaluate, it executes everything inside the return JSX code value
+	- inside this JSX code is also where we create instace of the Child Component, hence them being re-evaluated as well
+ > therefore, even if the Child Component DOESNT DEPEND in Parent Component (in case where no Props is passed), the Child Component will still be re-evaluated
+	- this will result performance waste where we re-evaluated the Component even if NOTHING CHANGES
+
+
+
+
+
+005 React.memo() to Prevent Unnecessary Re-evaluation
+
+React.memo()
+ > used to prevent unnecessary re-evaluation
+ > React.memo() takes a Functional Component as input argument
+ > this function does two things
+	1. Cache the values to monitor 
+		- in this case, the Component's props values
+	2. Checks/Compares the cached Component props and current Component props
+ > if the Components props changes (cached value != current value), the Functional Component is then executed (re-evaluated)
+
+
+Using React.memo() 
+ > when exporting the Component, instead of exporting the Functional Component itself, wrap it inside React.memo()
+
+EX:
+import React from "react";
+import MyParagraph from "./MyParagraph";
+
+const DemoOutput = (props) => {
+  console.log("DemoOutput RUNNING");
+  return <MyParagraph>{props.show ? "This is new" : ""}</MyParagraph>;
+};
+
+export default React.memo(DemoOutput);
+
+
+
+When to use React.memo()
+ > there are several factors to determine when to use React.memo() like
+	1. Number of Child Components
+	2. Size of Component tree
+	3. Amount of Props the Component have (since it will be cached)
+ > the most important point when using React.memo() is that you are TRADING one to the other 
+	- the performance cost of reevaluating the Component
+	- the performance cost of comparing the Component props (React.memo())
+
+NOTES:
+1. Takes account of Objects on props of Component when using React.memo()
+  	> React.memo() uses strict equality when comparing cache and current props values
+	> And then Objects are compared using strict equality, even if their properties are the same, it will still result in false
+	> Primitive data type (string, number, boolean) props dont have this problem
+
+
+
+
+
+
+006 useCallback() to Prevent Function Re-creation (Cache Function)
+
+Problem:
+ > Earlier, we had a problem with Button re-evaluating due to one of its props being a function
+	- reason is that two functions (or Objects in general), even if they have the same method body / properties, will always return FALSE when compared using strict equality
+	- Object will only returns TRUE when they point to the SAME MEMORY ADDRESS
+
+Solution
+React's useCallback() hook
+
+useCallback() hook
+ > used to "store","cache", or "save" a function
+ > React will cache the function object somewhere in the memory, therefore having the function in a SINGLE MEMORY ADDRESS
+ > therefore, whenever we call/use the function cache using useCallback(), it will ALWAYS point to the same memory address
+ > if one of the variables inside dependency array changes, it will re-execute the useCallback function
+
+SYNTAX:
+ > takes two input arguments
+	1. function to store
+	2. dependency array
+ > returns a function
+
+const functionVariable = useCallback(callbackFn, [dependencyArray])
+
+EX:
+  const toggleParagraphHandler = useCallback(() => {
+    setShowParagraph((prevShowParagraph) => !prevShowParagraph);
+  }, []);
+
+
+
+
+
+007 useCallback() and its Dependencies
+
+PROBLEM:
+1. useCallback function input uses the old value of the variable that is defined inside
+
+SOLUTION
+1. Adding the variable inside the dependency array of useCallback()
+	> with this, the useCallback will be created again but now with an updated value of the variable
+
+EX:
+  const toggleParagraphHandler = useCallback(() => {
+    if (allowToggle) {
+      setShowParagraph((prevShowParagraph) => !prevShowParagraph);
+    }
+  }, [allowToggle]);
+
+NOTE:
+1. Function are closures
+	> these means that they close over the values that are available in their environment
+ 	> for example, if a function uses a variable outside its scope, it will create a SNAPSHOT VALUE of that variable to be used inside
+
+
+
+
+
+009 A Closer Look At State & Components
+
+Components States
+ > when Components are first created, the States defined alongside it is also created
+ > the States are then stored and managed by the React itself
+ > then, for each subsequent re-evaluation of the Components / Application, the State will not be recreated again
+	- this time, React will assign the stored States to the Component where they belong
+ > also work similarly with Reducers or any State management tools
+
+
+
+
+
+010 Understanding State Scheduling & Batching
+
+State Scheduling
+ > a process where State updating process is "scheduled"
+ > this means that when we use State updating function, the State value is not updated immediately
+ > instead, the update get scheduled and be updated on the Component's NEXT RE-EVALUATION / RE-RENDER
+
+EX:
+In example below, let say the previous State "bookName" value is "Old Book Title". 
+In the code below, we updated the State "bookName" value to "New Book Title", then immediately log the bookName State which gives us the old value.
+The reason for this is that the State update process is still being scheduled. Only after a re-render will the State value be updated.
+
+
+const logBook = () => {
+  setBookName("New Book Title");
+  console.log(bookName); // "Old Book Title"
+}
+
+
+State Batching
+ > a process where multiple State update function call (in synchronous order) of different State will be scheduled IN BATCH
+	- synchronous means they are not in "then" function calls
+ > this means that only after ONE RE-RENDER, these multiple State will be updated, hence being updated IN BATCH
+
+EX:
+In example below, both the username and password State will be updated in a single batch. This means that they are BOTH UPDATED after the next re-render
+
+const updateUser = () => {
+  setUsername("User");
+  setPassword("Password");
+}
+
+NOTE:
+1. React guarantees you the ORDER of the State changes
+2. React reserved of actually postponing that state change.
+	> there may be more important task to do like reacting to the user input than changing some text on the screen
+
+
+
+
+
+011 Optimizing with useMemo()
+
+useMemo() 
+ > functional hook by React
+ > used to store/cache/save the RESULT of a function
+ > SIMILAR SYNTAX as the useCallback() but instead of a function, it stored the RESULT
+
+Syntax:
+ > takes two arguments
+	1. function that returns the result to store
+	2. dependency array
+ > returns the value of the function input
+
+const memoVar = useMemo(resultFn, [dependencies])
+
+EX:
+In example below, the array result of the props.items.sort() will be cache. Then only if the props.items value is changed will the useMemo function be executed again
+
+const sortedArrays = useMemo(() => { 
+  props.items.sort((a,b) => a-b)
+}, [props.items])
+
+
+Usage
+1. Optimize the process to get a function result
+	> with useMemo, we can avoid executing a function repeatedly if the expected output is just the same
+2. Similarly to useCallback, to store an Object or Array for passing props to Child Components
+	> earlier, we used the useCallback() hook to cache a function to pass in the Child Components
+	> this way, whenever we re-evaluate the Parent Component that contains the useCallback(), its Child Components will be not re-evaluated again
+
+EX:
+In example below, we prevented the DemoItemList Component to be re-evaluated when itemList in Parent component changes with
+1. useMemo usage in Array that we pass as props to DemoItemList
+2. React.memo() in the DemoItemList
+
+We also optimized how to show sorted item list in DemoItemList using the useMemo() hook
+
+// Inside Parent Component
+const itemList = useMemo(() => [5,3,2,4,1], []);
+
+// Inside Parent Component JSX where we instance of Child Component is created
+<DemoItemList itemList=itemList/>
+
+
+// Inside Child Component (DemoItemList)
+const sortedItems = useMemo(() => props.itemList.sort((a,b) => a-b), []);
+
+export const React.memo(DemoItemList);

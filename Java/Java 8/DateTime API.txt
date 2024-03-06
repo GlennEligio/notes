@@ -1,0 +1,139 @@
+DATE AND TIME API
+
+Limitations of Date Time API BEFORE Java 8
+1. Not thread safe
+	> java.util.Date is not thread safe, thus developers have to deal with concurrency issue while using date
+	> now, DateTime API is immutable and does not have setter methods
+
+INSTEAD OF
+
+Customer customer = new Customer();
+Date d = customer.getCreationDate();
+d.setTime(0L);
+
+We will need a defensive copy:
+public class Customer{
+	private Date creationDate;
+	public Date getCreationDate(){
+		return new Date(this.creationDate,getTime());	
+	}	
+}
+
+
+2. Not up to mark with regards to performance
+3. Not convenient to use
+	> Default date starts from 1900, months start from 1, and day starts from 0
+	> this results in no uniformity
+
+EX:
+	Calender cal = Calendar.getInstance()
+	// Sets Calendar to May 14, 2014
+	cal.set(2014,4,14) 
+
+4. Difficult time zone handling
+
+
+
+NEW PACKAGES IN DATE TIME API
+1. Instant (java.time.Instant)
+	> Instant is a point in timeline
+	> IMMUTABLE object
+
+EX:	
+	Instant i = Instant.now();
+	// Outputs 2020-07-32T15:02:48.635Z
+
+	> Z indicates the time is Coordinated Universal Time (or UTC)
+	> Instant.MIN give an output of 1 billion years ago
+	> Instant.MAX gives an output of Dec 31 of year 1,000,000,000
+
+
+
+2. Duration
+	> period of TIME between two Instant object
+	> methods:
+		Duration 	between(Instance i1, Instant i2)	returns the time based difference
+
+EX:
+		Instant i1 = Instant.now();
+		Instant i2 = Instant.now();
+		Duration d = Duration.between(i1, i2);
+		d.getNano();
+
+
+
+3. LocalDate
+	> returns the date WITHOUT a timezone in it
+	> 1999-04-24
+   Period
+	> represents the difference in amount of time using DATE-BASED VALUES in ISO-8601 period formats
+		- PnYnMnD and PnW
+	
+EX:
+		LocalDate currentDate = LocalDate.now();
+		LocalDate birthDay = LocalDate.of(1999, 4, 24);
+		Period p = Period.between(birthDay, currentDate);
+		System.out.println("My age is: " + p.getYears());
+
+NOTE:
+Period deals with DATE BASED amount of time
+Duration deals with TIME BASED amount of time
+
+
+
+4. LocalTime 
+	> print time without timezone in ISO-8601 format
+	> hh:mm:ss.nnnn -> 12:24:36.0001
+   LocalDateTime
+	> prints time and date without timezone in ISO-8601 format
+	> just a combination of LocalDate and LocalTime
+	> 1999-04-24 12:24:36.0001
+
+EX:
+		LocalTime currentTime = LocalTime.now();
+		System.out.println("Current time" + currentTime);
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		System.out.println("Current Date and Time: " + currentDateTime);
+		LocalDateTime birthDateTime = LocalDateTime.of(1999, 4, 24, 12, 24, 36);
+		System.out.println("My birth date and time is: " + birthDateTime);
+
+
+
+
+5. DateTimeFormatter
+	> Formatter for printing and parsing date-time objects.
+	> theres 3 different implementations of DateTimeFormatter
+		a. Using predefined constants, such as ISO_LOCAL_DATE
+		b. Using pattern letters, such as uuuu-MMM-dd
+		c. Using localized styles, such as long or medium
+	> for more information, visit
+		- https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+
+EX: 
+		DateTimeFormatter dtFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+		LocalDateTime lDt = LocalDateTime.of(1999, 4, 24, 12, 24);
+		System.out.println("Birthday without DateTimeFormatter: " + lDt);
+		System.out.println("Birthday with DateTimeFormatter: " + lDt.format(dtFormat));
+
+
+6. Year
+	> represents a particular year
+	
+EX:
+		Year y = Year.now();
+		System.out.println("Is the current year a leap year? " + y.isLeap());
+
+
+
+7. ZoneId 
+	> time-zone ID
+	> for Manila, its "Asia/Manila", which is UTC+8
+   ZonedDateTime
+	> A date-time with a time-zone in the ISO-8601 calender system
+	> immutable representation of a date-time with a time-zone
+	> ex: 2007-12-03T10:15:30+01:00 Europe/Paris.
+
+EX: 
+		ZoneId ph = ZoneId.of("Asia/Manila");
+		ZonedDateTime zDt = ZonedDateTime.now(ph);
+		System.out.println("Time in Ph is: " + zDt);

@@ -1,0 +1,72 @@
+28. Using GlobalFilter to add Logging Filter in Spring Cloud Gateway
+
+
+Classes / Interfaces used
+
+GlobalFilter	
+	> Contract for interception-style, chained processing of Web requests that may be used to implement cross-cutting, application-agnostic requirements such as security, timeouts,and others.
+	> needs to implement filter() method
+
+Mono<Void> 	filter (ServerWebExchange exchange, GatewayFilterChain chain)
+			> works in similar way  to the doFilter() of Filter interface of Java EE
+				- ServerWebExchange being the ServletRequest and ServerResponse in Filter
+				- GatewayFilterChain being the FilterChain equivalent in Filter
+			> for us to return a Mono<Void>, we must call filter() of GatewayFilterChain parameter
+
+
+ServerWebExchange
+	> Contract for an HTTP request-response interaction. Provides access to the HTTPrequest and response and also exposes additional server-side processingrelated properties and features such as request attributes.
+	> have the following methods
+
+ServletHttpRequest 	getRequest()
+ServletHttpResponse	getResponse()
+Mono<WebSession>	getSession()
+
+
+GatewayFilterChain
+	> Contract to allow a WebFilter to delegate to the next in the chain.
+	> have a method inside called filter()
+
+Mono<Void>	filter (ServerWebExchange exchange)
+			> Delegate to the next WebFilter in the chain.
+	 		> @param exchange the current server exchange
+			> @return Mono<Void> to indicate when request handling is complete
+
+
+
+Adding Logging Filter in API Gateway
+1. Create an implementation of GlobalFilter
+	> create a class
+	> implement GlobalFilter
+	> override the filter() abstract method
+2. Add @Component to the Class
+	> needed so that the Gateway can discovery the GlobalFilter implementation
+3. Add Logger in the Class
+	> use org.slf4j.Logger and org.slf4j.LoggerFactory for logging
+4. Add logic to the filter() method
+	> log the Request URI path by calling getRequest().getPath() of ServerWebExchange
+5. Return the result of filter() call of GatewayFilterChain parameter
+	> pass the ServerWebExchange parameter to the filter()
+
+
+LoggingFilter Class
+
+@Component
+public class LoggingFilter implements GlobalFilter{
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Override
+	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+		logger.info("Path of the request -> {}", exchange.getRequest().getPath());
+		return chain.filter(exchange);
+	}
+
+}
+
+
+CONSOLE LOGS
+
+2021-12-24 16:55:41.797  INFO 13180 --- [ctor-http-nio-2] c.g.m.apigateway.filter.LoggingFilter    : Path of the request -> /currency-conversion-feign/from/EUR/to/INR/quantity/10
+2021-12-24 16:55:45.565  INFO 13180 --- [ctor-http-nio-2] c.g.m.apigateway.filter.LoggingFilter    : Path of the request -> /currency-conversion-feign/from/EUR/to/INR/quantity/10
+2021-12-24 16:56:05.002  INFO 13180 --- [ctor-http-nio-2] c.g.m.apigateway.filter.LoggingFilter    : Path of the request -> /currency-conversion-feign/from/USD/to/INR/quantity/5

@@ -1,0 +1,116 @@
+Run and Connect to SQL Server in Docker
+
+Tools needed
+1. Docker Desktop
+2. [Optional] VS Code Editor
+3. [Optional] SQL Server "Tools"
+4. [Prerequisite] 
+
+
+
+
+
+1. Open the VS Code Editor
+	> must have Docker plugin installed inside
+	> make sure the Docker application instance is running in the background
+
+
+
+2. Open the Terminal and type this line in the Terminal
+
+	docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=TEST_PASS' -e 'MSSQL_PID=Express' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest-linux
+
+	> this will create/build a image and container with following properties
+
+		1) -e ‘ACCEPT_EULA=Y’
+			The “-e” flag is essentially an “Environment Flag”, which allows us to, (again not surprisingly), configure the 			Container Environment. In this particular case, we are specifying that we accept the End User Licensing Agreement, 				(EULA), for SQL Server by passing in a ‘Y’ value.
+
+		2) -e 'SA_PASSWORD=TEST_PASS'
+			Another Environment Flag, this time we are setting up the Server Administrator, (SA), account for SQL Server. The 			SA account is, (as the name suggests), the local SQL Server Admin account – so be careful!
+
+			GOTCHA! You’ll need to provide a SA password that adheres to the SA Password Policy, otherwise the SQL Server 			instance will fail to run, (you’ll get a GUID returned, as the Container does run briefly, but will subsequently 			stop if a weak password is provided!).
+
+		3) -e 'MSSQL_PID=Express'
+			Our final Environment flag, this one specifies the “flavour” of SQL Server, in this instance we’re passing in 			‘Express’ as we only require the free version. Other possible values are detailed here.
+
+		4) -p 1433:1433
+			This is our “Port Mapping” flag, it maps the Containers “internal” port to an externally facing port on our local 			machine. Without this, we could not connect into our SQL Server Container instance. Here we are mapping the 			internal port 1433 to an external port of 1433, (note we could choose any unused “external” port).
+
+		5) -d mcr.microsoft.com/mssql/server:2019-latest
+			The ‘-d’ flag tells Docker to run our Container in “detached mode”, so it kind of runs in the “background”, 			therefore we’ll get a prompt back at our command line.
+
+			The last part of this command is just the name of the image we want followed by the version we want, (image name 			and version are separated by a colon ‘:’).
+
+
+
+3. Check the Terminal and Images and Containers tab of the Docker plugin for the result of the build
+	> in Terminal, we should see a GUID result that corresponds to the Docker Image created
+
+	GUID result: cbbabbcb361882a6434ca7d861ac70645381aa991be2b0d1ea3eb49b5e0bc213
+
+	> in Images and Containers, we should see that a new item in both of the tabs are added
+	
+
+
+
+4. Connect to the SQL Server instance inside the Docker Container we are running
+	> open the MSSMS
+	> assuming we have the Container running that have the SQL Server inside, connect to it using MSSMS
+	> to connect to the SQL Server instance inside the Docker container using the SA account and Port we specified
+		Server name: localhost, <TCP port>
+		Login: sa
+		Password: <SA password>
+	> so in our case it will be
+		Server name: localhost, 1433
+		Login: sa
+
+
+
+5. Create a Database inside the SQL Server instance of Docker container
+	> name it Test
+
+
+
+
+6. Check the running Containers inside the VS Code by typing
+	> docker ps
+
+
+7. Attach our VS Code Command Line Interface to the Command line of our running container
+	> inside the CLI (Terminal) of the VS Code, type the following
+
+	docker exec -it cbbabbcb3618 /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'ShuntJG01?'
+
+	> Let’s just quickly step through the components of the command we just issued
+		
+		1. docker exec -it <Container ID>
+			The exec command allows us to “run a command in a running container”, we can then supply a number of options to 			this, in our case we have supplied ‘-it’. This means we can run commands “interactively”, which would be required 			if we’re issuing SQL commands etc.
+
+		2. /opt/mssql-tools/bin/sqlcmd
+			This is the command we are actually running as part of the docker exec command. In this case it’s ‘sqlcmd’ which 			is the interactive SQL Command Line for SQL Server.
+
+			Again the beauty of “attaching” like this, is that you don’t need this tool set installed on your local machine, 			(in the next section I take you through connecting to the container if you do have local SQL tools installed).
+
+		3. -S localhost -U sa -P ShuntJG01?
+
+			This is probably pretty obvious, but for completeness:
+
+			-S is the server
+			-U is the User ID
+			-P is the password
+				= if password contains a $ symbol, encapsulate the password string in single quotes
+	
+			These are actually arguments required of ‘sqlcmd’,  they allow us to authenticate and use the sqlcmd tool.
+
+
+
+
+8. Send out SQL commands from the VS Code CLI that is "attached" to the CLI of the Container 
+	> if we successfully attached to the CLI of the Container, we should see a 1> in the VS Code CLI
+	> this means 1st line of the SQL CLI
+	> send our the follwing SQL commands in the VS CODE CLI
+
+		1> select name from sys.sysdatabases;
+		2> go
+	
+	> the GO executes all the SQL commands before it

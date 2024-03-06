@@ -1,0 +1,14 @@
+06.07. Utilities - Overflow
+
+VIII. Overflow
+1. Overflow
+	> used to configure the overflow property of an element
+
+NOTATION:
+overflow-{values}
+
+Values
+auto
+hidden
+visible
+scroll

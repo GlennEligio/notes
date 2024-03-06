@@ -1,0 +1,82 @@
+31. Running Prometheus and Grafana in K8s
+
+SOURCE:
+https://tanzu.vmware.com/developer/guides/observability-prometheus-grafana-p1/
+
+
+PREREQUISITE:
+1. Have access to a Kubernetes Cluster
+2. Have Helm installed
+3. Added repo where we will fetch Chart for Prometheus
+
+I. Installing Prometheus
+II. Installing Grafana
+III. Visualizing Prometheus Data in Grafana
+
+
+
+I. Installing Prometheus
+1. Add repo where we will fetch Prometheus and update
+	- bitnami (https://charts.bitnami.com/bitnami)
+	- stable (https://charts.helm.sh/stable)
+
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo update
+
+2. Install the Prometheus Chart from repo
+
+	helm install prometheus bitnami/kube-prometheus
+
+
+3. Port forward the Service of Prometheus Helm Chart to expose it
+	> we can also change the settings of the specific Service that we are port-forwarding, but for now, lets just use "kubectl port-forward" command
+	> make sure to have separate CLI window for this
+
+	kubectl port-forward --namespace default svc/prometheus-kube-prometheus-prometheus 9090:9090
+
+
+
+
+II. Installing Grafana
+
+1. Install Grafana Helm chart
+
+	helm install grafana bitnami/grafana
+
+2. Expose the grafana svc
+	> create another CLI window for this
+
+	kubectl port-forward svc/grafana 8080:3000 &
+	
+	
+2. Fetch the credentials to be able to login to Grafana Front end
+	> Default username is "admin"
+	> For password, execute the command below
+
+	echo "Password: $(kubectl get secret grafana-admin --namespace default -o jsonpath="{.data.GF_SECURITY_ADMIN_PASSWORD}" | base64 --decode)"
+
+	> or just do the command below, and base64 decode the output manually
+		kubectl get secret grafana-admin --namespace default -o jsonpath="{.data.GF_SECURITY_ADMIN_PASSWORD}"
+
+
+
+
+III. Visualizing Prometheus Data in Grafana
+1. Add a Data Source for the Grafana
+	> Click the cogwheel icon on the left hand side
+	> Choose "Data Sources", followed by "Add data source"
+	> Choose Prometheus
+		- Grafana have long list of data sources that it knows how to talk to automatically
+	> Pass in the URL section the url where we can access the Prometheus Service that we exposed earlier
+		- http://prometheus-kube-prometheus-prometheus.default.svc.cluster.local:9090
+	> Click Save and Test
+II. Add a Dashboard in the Grafana
+	> Click the four squares icon to go to Dashboards section
+	> Click Import
+	> Pass an ID of Grafana Dashboard to use
+		- for now, use the ID 10000
+	> Choose the Data Source for the Dashboard
+	> Import the Dashboard
+		- You should be greeted with a Dashboard in Grafana now
+	
+	

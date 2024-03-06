@@ -1,0 +1,136 @@
+23. useReducer() hook
+
+
+useReducer() hook
+	> structure of creating this hook is similar to the React Redux
+	> have the following components
+		1. Actions
+			-> essentially actions that we dispatch to modify the State
+		2. State
+			-> not to be confused with useState()
+			-> similar to the States in Redux Store
+		3. Reducer
+			-> contains the logic to be executed based on the Action dispatched
+	> same as React Redux where we send "dispatch" actions, and based on the Action received by the Reducer, it will do a modification in the State, changing the current one
+
+
+
+SYNTAX:
+I. USING useReducer() in the Functional Component
+
+const [state, dispatch] = useReducer(reducer, { stateVar1: value1, stateVar2: value2});
+
+reducer
+	> refers to the reducer function that will do modifications in State based on the Action dispatched
+{ stateVar1: value1, stateVar2: value2}
+	> initial value of the State
+	> we can pass anything, but typically we use an Object literal
+state
+	> refers to the State that Reducer stores and modifies
+dispatch
+	> method that we call in order to dispatch Actions in order to update the State
+
+
+
+II. CREATING reducer FUNCTION
+	> reducer function have two parameter
+		1. state
+			-> refers to the CURRENT State
+		2. action
+			-> refers to the Object passed when we called the dispatch()
+	> what we return in this function will be the MODIFIED/NEW State
+
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "increment":
+      return { count: state.count + 1 };
+    case "decrement":
+      return { count: state.count - 1 };
+    case "reset":
+      return { count: 0 };
+    default:
+      return state;
+  }
+}
+
+
+state
+	> refers to the current state
+action
+	> refers to the object we passed as input is dispatch() method
+	> the object we typically send have two properties
+		1. type, which refers to the type of actions to be done
+		2. payload, which refers to the data we will use to update the State
+return { count: state.count + 1}
+	> any values that we return in this function will be the NEW STATE
+
+
+
+III. Dispatching Actions to modify Reducer States
+	> in example below, we can see the dispatch() being called
+	> in each call, we pass an object with property of "type"
+	> this object will then be passed into the reducer function as the "action" parameter
+	> and based on the "type" property of the action, we will do something to update the state
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  return (
+    <>
+      <button onClick={() => dispatch({ type: ACTION.DECREMENT })}>-</button>
+      <span>{state.count}</span>
+      <button onClick={() => dispatch({ type: ACTION.INCREMENT })}>+</button>
+      <button onClick={() => dispatch({ type: ACTION.RESET })}>RESET</button>
+    </>
+  );
+}
+
+
+
+IV. Creating Object to represent the "type" values 
+	> in practice, we dont use hardcoded values in the dispatch() method calls and reducer switch cases
+	> for this, we create VARIABLES to hold the hardcoded values, and these variables will then be used
+
+
+EX:
+import React, { useReducer } from "react";
+
+const ACTION = {
+  INCREMENT: "increment",
+  DECREMENT: "decrement",
+  RESET: "reset",
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case ACTION.INCREMENT:
+      return { count: state.count + 1 };
+    case ACTION.DECREMENT:
+      return { count: state.count - 1 };
+    case ACTION.RESET:
+      return { count: 0 };
+    default:
+      return state;
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  return (
+    <>
+      <button onClick={() => dispatch({ type: ACTION.DECREMENT })}>-</button>
+      <span>{state.count}</span>
+      <button onClick={() => dispatch({ type: ACTION.INCREMENT })}>+</button>
+      <button onClick={() => dispatch({ type: ACTION.RESET })}>RESET</button>
+    </>
+  );
+}
+
+export default App;
+
+
+
+
+

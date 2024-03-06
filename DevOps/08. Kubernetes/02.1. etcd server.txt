@@ -1,0 +1,111 @@
+2.1 etcd Server
+
+
+ectd
+	> a consistent and highly-available key value stored used as Kubernetes' backing store for all cluster information/data
+	> an open source distributed key-value store used to hold and manage the critical information that distributed systems needs to keep running
+	> Kubernetes uses etcd to store all its like:
+		- configuration data
+		- state
+		- metadata
+	> stores data in KEY-VALUE PAIR
+
+
+INSTALLTING etcdctl package
+
+   sudo apt -y install wget
+   export RELEASE="3.3.13"
+   wget https://github.com/etcd-io/etcd/releases/download/v${RELEASE}/etcd-v${RELEASE}-linux-amd64.tar.gz
+   tar xvf etcd-v${RELEASE}-linux-amd64.tar.gz
+   cd etcd-v${RELEASE}-linux-amd64
+   sudo mv etcd etcdctl /usr/local/bin
+   etcd --version
+   etcdctl --version
+
+
+
+Check etcd pod description
+	> using "kubectl describe pod" command, we can see the etcd property of the "etcd-kmaster" pod
+
+kubectl describe pod etcd-kmaster -n kube-system
+
+
+
+
+Fetch all keys in etcd server
+	> we can use the "etcdctl get" command to fetch the keys
+	> "/" means that we will fetch ALL KEYS
+
+ETCDCTL_API=3 etcdctl --endpoints=https://172.31.8.197:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --key=/etc/kubernetes/pki/etcd/server.key --cert=/etc/kubernetes/pki/etcd/server.crt get / --prefix --keys-only
+
+
+
+Putting a Key in the etcd db
+
+ETCDCTL_API=3 etcdctl --endpoints=https://172.31.8.197:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --key=/etc/kubernetes/pki/etcd/server.key --cert=/etc/kubernetes/pki/etcd/server.crt put name raman
+
+
+Fetching a key value for specific data from etcd server
+
+ETCDCTL_API=3 etcdctl --endpoints=https://172.31.8.197:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --key=/etc/kubernetes/pki/etcd/server.key --cert=/etc/kubernetes/pki/etcd/server.crt get name
+
+
+
+
+Backup and Restore etcd server
+	> since etcd server stored data related to Cluster, we can use this to backup and restore the Cluster too
+		- similar to Swarm folder of Docker Swarm mode
+	> steps include
+		1. Create a data snapshot
+		2. Copy the snapshot to a PVC
+		3. Restore the snapshot in a new cluster
+
+
+Backup etcd server
+
+1. Creating a data snapshot for Backup
+	> we can use "etcdctl snapshot save" command to create a snapshot
+	> we will also have to pass the name of the file that will be the snapshot
+		- in example below, the "snapshot.db" will be the backup
+
+ETCDCTL_API=3 etcdctl snapshot save snapshot.db  --cacert=/etc/kubernetes/pki/etcd/ca.crt --key=/etc/kubernetes/pki/etcd/server.key --cert=/etc/kubernetes/pki/etcd/server.crt
+
+
+2. Check the backup 
+	> we can use "etcdctl snapshot status" to check the status of snapshot data
+
+ETCDCTL_API=3 etcdctl --write-out=table snapshot status snapshot.db
+
+
+3. Copy the backup files in some folder
+	>/etc/kubernetes/pki is where snapshot files are stored
+
+  mkdir backup
+  cd backup/
+  cp -r /etc/kubernetes/pki .
+
+
+
+
+
+Restore etcd server
+
+1. Reset the cluster first
+
+	kubeadm reset -f
+
+
+2. Copy the folder we created earlier into the /etc/kubernetes folder
+	
+	cd backup
+	cp -r pki  /etc/kubernetes
+	cd ..
+
+3. Using "etcdctl snapshot restore" command, restore the etcd server data
+	
+	ETCDCTL_API=3 etcdctl snapshot restore snapshot.db
+
+4. Move the data created into the correct folder
+
+	mv default.etcd/member /var/lib/etcd/
+

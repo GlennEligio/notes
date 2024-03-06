@@ -1,0 +1,26 @@
+04.1 Static Pods
+
+
+Static Pods
+	> Static Pods are managed directly by the kubelet daemon on a specific node, without the API server observing them
+	> Unlike Pods that are managed by control plane (ex: a Deployment), the kubelet watches each static Pod (and restart it if it fails)
+	> Static Pods are always bound to one Kubelet on a specific node
+	> The kubelet automatically tries to create a mirror Pod on the K8s API server for each static Pod
+		- This means that the Posd running on a Node are visible on the API server, but cannot be controlled from there
+	> The Pod names will be suffixed with the node host name with a leading hypen
+		- ex: nginx-asda2123asd-node1
+
+Creating Static Pod
+1. Adhoc command
+	kubectl run <POD NAME> --image <IMAGE>
+2. Manifest file
+	> kind must be "Pod"
+  # Create a yaml file with below definition ( it is just an example)
+    apiVersion: v1
+    kind: Pod
+    metadata:
+     name: pod1
+    spec:
+      containers:
+      - name: c1
+        image: nginx

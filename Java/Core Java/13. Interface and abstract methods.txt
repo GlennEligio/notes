@@ -1,0 +1,192 @@
+Interface and Abstract methods
+includes:
+1. InterfaceClass
+> how to implement in a javaclass
+> syntax
+> function of interface class
+2. Abstract method
+
+Main class
+
+package com.glenneligio.interfaceandabstractclasses;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+
+        /*
+            to define and declare an interfaceClass in main method, the syntax is
+
+            Syntax:
+            interfaceClass interfaceClassName =  new javaClass(argument);
+
+            the javaClass used in the javaClass that where you used the
+            "implement" keyword on the interfaceClass
+         */
+        CarInterface carInterface = new ElectricCar("Tesla");
+
+        carInterface.start();
+        carInterface.move(245);
+
+        CarInterface fossilCarInterface = new FossilFuelCar("Mercedes");
+        fossilCarInterface.start();
+        fossilCarInterface.move(300);
+
+        List<String> name =  new ArrayList<>();
+        //example of interface syntax
+        /*
+            1. List -> interface
+            2. name -> interfaceInstanceName
+            3. ArrayList -> class that implements List methods
+
+            line 109 and 110 at documentation of ArrayList at which the implementation of List
+            interface happens
+
+            109.    public class ArrayList<E> extends AbstractList<E>
+            110.    implements List<E>, RandomAccess, Cloneable, java.io.Serializable
+
+            to see the documentation of ArrayList, hold down CRTL key then click
+            the ArrayList keyword.
+         */
+
+
+    }
+}
+
+CarInterface class
+
+package com.glenneligio.interfaceandabstractclasses;
+
+public interface CarInterface {
+    /*
+        Interface
+        Works like a contract between different part of your application
+        This means that even if you define it using different classes that
+        implements the said interfaceClass, all of them will have the same structure
+        as the interfaceClass.
+
+        Example of interfaceClass
+        1. Callback interface
+            -> useful when you created event listeners like click listener
+            -> useful when you want to make communication between two different
+            threads
+     */
+    //abstract method example
+    /*
+        abstract methods are declared inside interface class
+        syntax:
+        dataTypeReturn methodName(dataType argumentName);
+
+        why no accessModifier? because they are public by default
+        
+        abstract methods doesn't have method body here in interfaceClass,
+        instead it is defined in a separate javaClass using override keyword
+
+     */
+    void start();
+    void move(int speed);
+
+}
+
+ElectricCar class
+
+package com.glenneligio.interfaceandabstractclasses;
+
+public class ElectricCar implements CarInterface{
+
+    /*
+        for a javaClass to override interfaceClass methods, which
+        in turns have javaClass be able to define the abstract method body
+        the "implements" keywords is used just like the "extends" keyword
+        in parent and child classes in two javaClasses
+
+        Syntax:
+        accessModifier class javaClassName implements interfaceClassName{}
+
+     */
+
+    //some instance field
+    private String name;
+
+    //constructor of java class
+    public ElectricCar(String name) {
+        this.name = name;
+    }
+
+    //getters and setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    //abstract methods of interfaceClass that javaClass overrides
+    @Override
+    public void start() {
+        /*
+        this keyword returns a string value which contains the address of
+        the class
+        packageName.className@memoryAddress
+         */
+
+        System.out.println(this);
+        System.out.println("Electricity flow started");
+    }
+
+    @Override
+    public void move(int speed) {
+        System.out.println(this.getName() + " is moving at " + speed + " mph");
+    }
+}
+
+FossilFuelCar class
+package com.glenneligio.interfaceandabstractclasses;
+
+public class FossilFuelCar implements CarInterface, TestInterface{
+    /*
+        you can implement two or more interfaceClass in a javaClass
+        Syntax:
+        accessModifier class javaClassName implement interfaceName1, interfaceName2{}
+     */
+
+    private String name;
+
+    @Override
+    public void printName(String name) {
+
+    }
+
+    public FossilFuelCar(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void start() {
+        System.out.println("Explosion in cylinder caused the engine to start");
+    }
+
+    @Override
+    public void move(int speed) {
+        System.out.println(this.getName() + " car is moving at " + speed + " mph.");
+    }
+}
+
+TestInterface class
+package com.glenneligio.interfaceandabstractclasses;
+
+public interface TestInterface {
+    void printName(String name);
+}
+

@@ -1,0 +1,135 @@
+53 RHCSA RHEL 8 - Configure firewall settings using firewall-cmd/firewalld
+
+
+GOALS:
+1. Enable ip forwarding
+2. Use firewall-config GUI
+
+
+Relevant files/directory
+/etc/sysctl.conf
+ > contains command set where we can actually apply rules around the kernel parameters
+
+
+Packages used
+firewall-config
+ > provides a GUI for us to configure the firewall settings
+ > Configuration is dividing into two
+	1. Runtime
+		- all changes only exist in runtime, when server reboots, all changes done will be reverted
+		- good for troubleshooting
+	2. Permanent
+		- all changes persist after reboot
+ > to reload the firewalld to apply changes, click
+	- Options -> Reload Firewalld
+ > to make the Runtime changes to be Permanent,
+	- Options -> Runtime to Permanent
+
+
+Ip forwarding
+ > with ip forwarding enabled, the system can act as a ROUTER
+ > with this, it can do tasks like masquerading
+	- Masquerading is where we "hide" the entirety of a network (ex: home's private network)
+	- We can then set specific rules so that, based on the request received from router, we can forward it to specific ip address and port within the local/private network
+	- Example of this is the router at home, where it masquerades the private network of home, and with NAT, it can forward the request received to correct device in the local/private network
+ > to enable the ip forwarding, we need to edit the file /etc/sysctl.conf and add the following in a new line
+	net.ipv4.ip_forward=1
+ > this will enable the ip forwarding in next boot, but to apply it immediately, use the command
+	$ sysctl -p	apply changes
+	$ sysctl -a	list all kernel config, use grep to filter
+
+
+
+Using Firewall Config GUI
+1. Enable ip forwarding in the system
+	$ vi /etc/sysctl.conf
+	> add net.ipv4.ip_forwarding=1 in new line
+2. Apply changes and check if it takes effect
+	$ sysctl -p
+	$ sysctl -a | net.ipv4.ip_forward=1
+3. Install "firewall-config" package
+	$ dnf install firewall-config
+4. Open RHEL8 VM GUI
+5. Login as root
+6. Press Activities, and in search bar, type Firewall	
+	> select the Firewall app
+
+
+
+Firewall Configuration GUI
+ > Inside the GUI, we can do the following
+	1. Configure Zones and its properties like
+		- Services
+		- Ports
+		- Source Ports
+		- Masquerading
+		- Port Forwarding
+		- ICMP Filter
+		- Rich Rules
+		- Interfaces
+		- Sources
+	2. Configure Services alongside its
+		- Ports and Protocol
+		- Source Port	
+		- Modules
+		- Destination
+	3. Define IP Set to either
+		- Blacklist or Whitelist a set of ip address and ports
+ > We also have options when doing firewall configuration changes which includes
+	1. Setting the Configuration changes we are applied from Runtime to Permanent
+		- this can be done in the "Configuration" dropdown/combobox
+		- some changes in Firewalld can only be done while in the Permanent state
+ > in the Firewall Configuration "Option" tab, we can do 
+	1. Reload Firewalld
+		- applies the changes we have done
+		- mostly used when we do Firewall config changes while in Runtime
+	2. Change Zones of Connections
+	3. Change Default Zone
+	4. Change Log Denied
+		- preferred to be set in "All"
+	5. Configure Automatic Helper Assignment
+	6. Panic Mode
+		- this will drop all incoming and outgoing packets
+		- useful for emergencies like hacking or breach attacks
+	7. Runtime To Permanent
+		- sets all configuration changes we have applied in Runtime with "Relaod Firewalld" to the Permanent
+		- when done so, the firewall config changes persist on reboot
+	
+
+
+Creating changes in firewall configuration
+1. For testing, use Configuration: Runtime
+2. For permanent changes, use the Configuration: Permanent
+	- some changes can only be done in Permanent
+3. To apply changes, go to Options, then Reload Firewalld
+4. To apply changes done in Runtime to Permanent, go to Options, then Runtime to Permanent
+
+
+
+Setting up firewall for ip forwarding
+1. Go to the Firewall zone to configure
+2. Go to Masquerading tab
+	> click the Masquerade zone checkbox
+3. Go to Port Forwarding
+	> define the Source's port to listen to and the Destination ip and port of the packet to redirect
+	> also, check the "Forward to another port" if you want to forward the packet in different port than the Source
+4. Go to Sources
+	> define the Sources where the firewall only accepts data packets to
+	> if within local, we can add our local ip address 
+	> ex: 192.168.0.0/24
+
+
+
+
+Commands
+sysctl
+ > configure kernel parameter at runtime
+ > synopsis:
+	sysctl [options] [variable=[value]] [...]
+ 	sysctl -p [file or regexp] [...]
+ > ex:
+	$ sysctl -p
+		- apply changes done in the sysctl.conf to the kernel
+	$ sysctl -a
+		- list all kernel parameters
+  	

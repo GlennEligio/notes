@@ -1,0 +1,11 @@
+Spring Boot Tutorials Course Outline
+
+1. Spring and Spring Boot Framework
+2. REST API using Spring Boot Framework
+3. Logging function
+4. Configuration data in config files
+5. Exception handling 
+6. Unit Testing in all layers using JUnit and Mokito
+	> Repository, Service, Controller
+7. Implement Metric for monitoring in Spring Boot application
+8. Deployment of Spring Boot application

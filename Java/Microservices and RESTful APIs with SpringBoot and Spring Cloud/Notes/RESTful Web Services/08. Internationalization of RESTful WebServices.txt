@@ -1,0 +1,86 @@
+08. Internationalization of RESTful WebServices
+
+
+Internationalization
+	> way for a system or application to behave for different Locales / Localization
+
+Classes and Interface involved
+
+Locale
+	> A Locale object represents a specific geographical, political, or cultural region. 
+	> An operation that requires a Locale to perform its task is called locale-sensitive and uses the Locale to tailor information for the user. For example, displaying a number is a locale-sensitive operation— the number should be formatted according to the customs and conventions of the user's native country, region, or culture
+	> to create a Locale, we can use its constructor 
+		Locale(String code)
+	> this code can be fetched from BCP 47 (IETF BCP 47, "Tags for Identifying Languages")
+		ex: "en" (English), "ja" (Japanese), "kok" (Konkani)
+
+EX: 
+// for French locale
+Locale locale = new Locale("fr");
+
+
+LocaleResolver
+	> Interface for web-based locale resolution strategies that allows for both locale resolution via the request and locale modification via request and response.
+	> This interface allows for implementations based on request, session, cookies, etc. 
+	> The DEFAULT implementation is AcceptHeaderLocaleResolver, simply using the request's locale provided by the respective HTTP header.
+	> when creating @Bean, use localeResolver() method name
+	> set the Default Locale to Locale.US
+
+MessageSource
+	> Strategy interface for resolving messages, with support for the parameterization and internationalization of such messages.
+	> Spring provides two out-of-the-box implementions for production
+		1. ResourceBundleMessageSource: built on top of the standard ResourceBundle, sharing its limitations.
+			- this is what we will use
+		2. ReloadableResourceBundleMessageSource: highly configurable, in particular with respect to reloading message definitions.
+	> have method called setBasename()
+
+setBasename(String locale)
+	> takes a String parameter
+	> Set a single basename, following the basic ResourceBundle conventionof not specifying file extension or language codes. The resource locationformat is up to the specific MessageSource implementation. 
+	> Regular and XMl properties files are supported: e.g. "messages" will finda "messages.properties", "messages_en.properties" etc arrangement as wellas "messages.xml", "messages_en.xml" etc.
+
+
+SessionLocaleResolver
+	> LocaleResolver implementation that uses a locale attribute in the user's session in case of a custom setting, with a fallback to the specified default locale or the request's accept-header locale.
+
+
+
+Usage of LocalResolver and MessageSource
+1. Create @Bean for LocaleResolver and MessageSource
+	> for LocaleResolver, use SessionLocaleResolver and set the default Locale to US
+	> for MessageSource
+2. Create messages.properties in the src/main/resources
+	- for other locales, add -xx after messages (e.g. messages-fr.properties for French localization)
+3. Define data inside the properties files
+	- data must have the SAME NAME on all properties files but DIFFERENT VALUES
+4. Fetch the Accept-Language Header value of the Request
+	- assign it to a Locale object
+5. Fetch a value on the properties file in src/main/resources using the Locale parameter and the data name
+	- use getMessage() of MessageSource bean
+
+
+@Bean inside @SpringBootApplication
+
+	@Bean
+	public SessionLocaleResolver localeResolver() {
+		SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+		localeResolver.setDefaultLocale(Locale.US);
+		return localeResolver;
+	}
+	
+	@Bean
+	public ResourceBundleMessageSource messageSource() {
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename("messages");
+		return messageSource;
+	}
+
+
+API Endpoint that uses Internalization
+
+	// send a Good Morning based on the Accept-Language header
+	@GetMapping("/hello-world-internationalized")
+	public String goodMorning(@RequestHeader(name = "Accept-Language", required = false) Locale locale) {
+		return messageSrouce.getMessage("good.morning.message", null, locale);
+	}
+	

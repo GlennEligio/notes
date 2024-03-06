@@ -1,0 +1,994 @@
+Use Azure DevOps to Test, Build and Deploy an API
+
+Topics:
+1. What is a CI/CD Pipeline
+2. What is "Azure DevOps" (and alternatives)
+3. How to connect Github and Azure to Azure DevOps
+4. How to configure Azure DevOps pipelines
+5. How to continuously deploy to Azure
+
+
+Tools needed:
+1. VS Code Text Editor
+2. .Net Core SDK
+3. Postman or web browser for testing api
+4. Github, Azure & Azure DevOps Accounts
+5. (Optional) Unit Testing (XUnit), Git, .Net Core & Azure
+
+
+
+What is CI/CD?
+
+	Continuous Integrations -> Continuous Delivery -> Continuous Deployment
+
+CI - Continuous Integrations
+
+	CI is the process of taking any code changes from 1 or more developers working on the same piece of software, and merging those changes back into the main code “branch” by building and testing that code. As the name would suggest this process is continuous, triggered usually when developers “check-in” code changes to the code repository.
+
+	The whole point of CI is to ensure that the main, (or master), code branch remains healthy throughout the build activity, and that any new changes introduced by the multiple developers working on the code don’t conflict and break the build.
+
+
+
+CD - Continuous Delivery
+
+	Well, if you think of Continuous Delivery as an extension of Continuous Integration it’s the process of automating the release process. It ensures that you can deploy software changes frequently and at the press of a button. Continuous Delivery stops just short of automatically pushing changes into production though, that’s where Continuous Deployment comes in…
+
+
+
+Continuous Deployment
+	
+	Continuous deployment goes further than Continuous Delivery, in that code changes will make their way through to production without any human intervention, (assuming there are no failures in the CI/CD pipeline, e.g. failing tests).
+
+
+
+What is Azure DevOps?
+
+	Azure DevOps is cloud-based collection of tools that allow development teams to build and release software. It was previously called “Visual Studio Online”, and if you are familiar with the on-premise “Team Foundation Server Solution”, it’s basically that, but in the cloud… (an over-simplification – I know!)
+
+
+
+Alternatives to Azure DevOps
+1. Jenkins
+2. Bamboo
+3. Team City
+4. Werker
+5. Circle CI
+
+
+
+What is GitHub?
+
+	GitHub is Cloud Git Solution
+
+
+
+What is azure-pipelines.yml?
+	
+	Contains the steps that are executed in our build pipeline
+
+
+
+Triggers of Build pipeline
+	> events that will make the pipeline be executed
+	> this is a part of the Continuous Integration step where changes in source code is modified automatically into the main code
+	> example of this event is the modification of code
+
+
+
+
+I. Creating the Solution project
+	> create webapi
+	> create xunit
+	> create sln file
+	> add webapi and xunit to sln
+	> add webapi as reference to xunit
+	> use xunit to test the webapi
+
+
+1. Create a folder that will contain the Solution project
+
+2. Inside solution folder, create another folder for the following
+	a. Source code
+	b. Test unit
+
+INSIDE our solution folder
+	> src
+	> test
+ 
+
+3. Check if the folders we made is present
+	> in terminal
+		= ls if linux
+		= dir if microsoft
+
+
+
+4. Create a new webapi inside src folder
+	> type in terminal
+		= dotnet new webapi -n <ProjectName>
+		= we will name it SimpleAPI
+
+
+5. Change directory to the webapi project and build
+	> cd SimpleAPI
+	> dotnet build
+
+
+
+6. Back to the solution folder, create a new xunit project inside the test folder
+	> cd ..
+	> cd ..
+	> dotnet new xunit -n SimpleAPI.Test
+		= standard naming convention of xunit test files is ProjectName with .Test postfix
+
+
+
+7. Change directory to the xunit project folder and test it
+	> cd Sim*
+	> dotnet test
+		= you should see the test result in terminal with 1 pass and 0 failure
+
+
+
+
+8. Change directory to solution folder and create a new Solution file
+	> when in the solution folder, type the following in terminal
+		= dotnet new sln --name SimpleAPISln
+
+
+
+
+9. Associate both our "child" projects to our solution file
+	> we do this by calling the solution file using sln, then passing th csproj files of both xunit and webapi using add command
+	> type the following in the terminal
+
+		dotnet sln <SLN_FILE> add <PROJECT_FILE>
+	
+	> in our case, we will type this in terminal
+
+		dotnet sln SimpleAPISln.sln add src/SimpleAPI/SimpleAPI.csproj test/SimpleAPI.Test/SimpleAPI.Test.csproj
+
+	> this should be the result of the command
+
+		Project `src\SimpleAPI\SimpleAPI.csproj` added to the solution.
+		Project `test\SimpleAPI.Test\SimpleAPI.Test.csproj` added to the solution.
+
+
+
+10. Add a reference of our webapi csproj file to the xunit csproj file
+	> to add a reference of a csproj file to another csproj file, type the following in terminal
+
+		dotnet add <Target_Proj_File> reference <Reference_Prof_File>
+
+	> in our case, it will be
+
+		dotnet add test/SimpleAPI.Test/SimpleAPI.Test.csproj reference src/SimpleAPI/SimpleAPI.csproj
+
+	> we should see this in terminal
+
+		Reference `..\..\src\SimpleAPI\SimpleAPI.csproj` added to the project.
+
+	> and this inside the xunit csproj file
+
+		<ItemGroup>
+    			<ProjectReference Include="..\..\src\SimpleAPI\SimpleAPI.csproj" />
+  		</ItemGroup>
+
+		
+
+
+11. Open that Solution folder (SimpleAPISln) that contains both src, test, and SimpleAPISln.sln
+
+
+
+
+12. Build the main Solution folder
+	> dotnet build
+	> this will build both the webapi and the xunit in src and test folder respectively
+
+
+
+13. Test the webapi
+	> open the webapi folder
+	> dotnet run to run it
+	> send a request using Postman or WebBrowser and check if its working
+	
+		https://localhost:5001/WeatherForecast
+
+
+
+14. Open the Solution folder again in VS Code
+
+
+
+15. Edit the webapi project
+	> remove the Constructor, ILogger<> field member and its usage in Controller class
+		= reason is that when we create an instance of this Controller class, we dont want to have any parameter to be passed
+	> inside the Controller class of the webapi, add this method
+	> we will use this method to "test" the api using xunit project
+		= the method inside xunit project will expect a specific value from one of the endpoints of api
+
+NEW Controller class
+
+    [ApiController]
+    [Route("[controller]")]
+    public class WeatherForecastController : ControllerBase
+    {
+        private static readonly string[] Summaries = new[]
+        {
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
+
+        [HttpGet]
+        public IEnumerable<WeatherForecast> Get()
+        {
+            var rng = new Random();
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = DateTime.Now.AddDays(index),
+                TemperatureC = rng.Next(-20, 55),
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            })
+            .ToArray();
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<string> Get(int id)
+        {
+            return "John Glenn Eligo";
+        }
+    }
+
+
+
+
+15. Edit the xunit project
+	> open the UnitTest1.cs
+		= typically, you would want to create a new Class for Testing but for now, lets scaffold the UnitTest1.cs
+	> make a reference to the Controller class of the webapi by adding the namespace of the class on the using directive
+	> inside UnitTest1, do the following:
+		a. Add the Controller class as field member of UnitTest1 class
+		b. Add a method with following properties
+			> name that corresponds to the value that we are expecting
+				= in our case, we will name it GetReturnsMyName
+			> [Fact] annotation
+			> inside method body, 
+				>> create a variable that will hold the Get() result of the Controller class
+					= we will pass any int to the Get() since we will try to call the Get() with int param
+				>> assert whether the variable value is equal to a specific data using Assert.Equal()
+					= Assert.Equal() needs two args
+						-> expected value
+							=> we will change this to test the xunit functionality
+						-> actual value
+							=> pass the Value properties of the variable we made earlier (variable.Value)
+
+INSIDE UnitTest1.cs as namespace in using directives
+
+	using SimpleAPI.Controllers;
+
+
+INSIDE UnitTest1.cs as part of UnitTest1 class method body
+
+        WeatherForecastController controller = new WeatherForecastController();
+
+        [Fact]
+        public void GetReturnsMyName(){
+            var result = controller.Get(1);
+            Assert.Equal("John Glenn Eligio", result.Value);
+        }
+
+
+
+
+16. Go to the the xunit file directory and test it
+	> assuming you are in SimpleAPI.Test folder, type this is terminal
+		= dotnet test
+	> if we didnt ran into an error due to missing package, skip #17
+
+
+17. Copy the PackageReference from webapi to xunit
+	> when we called a route endpoint in xunit from webapi using the Controller instance, and that endpoint uses a Package that is available in webapi and not in xunit, we will get an error.
+	> to solve this, copy the packages that we need from the webapi to the xunit csproj
+
+
+
+18. Execute the Xunit project file
+	> configure it so that the expected result and actual result is the same
+		= change the return value of the Get() endpoint and the expected value arg of Assert.Equal()
+	> assuming the xunit proj works correctly, we should get the following
+		a. Result of error and the stacktrace of error (assuming theres a failed test)
+		b. Overall result of the test
+
+IN CONSOLE LOGS:
+
+	Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 8 ms - SimpleAPI.Test.dll (net5.0)
+
+
+
+19. Change the xunit and webapi so that we will fail the test
+	> configure it so that the expected result and actual result is different
+		= change the return value of the Get() endpoint and the expected value arg of Assert.Equal()
+	> assuming the xunit proj works correctly, we should get the following
+		a. Result of error and the stacktrace of error (assuming theres a failed test)
+		b. Overall result of the test
+
+IN CONSOLE LOGS:
+
+[xUnit.net 00:00:00.76]     SimpleAPI.Test.UnitTest1.GetReturnsMyName [FAIL]
+  Failed SimpleAPI.Test.UnitTest1.GetReturnsMyName [3 ms]
+  Error Message:
+   Assert.Equal() Failure
+          ↓ (pos 0)
+Expected: John Glenn Eligio
+Actual:   Codename Asero
+          ↑ (pos 0)
+  Stack Trace:
+     at SimpleAPI.Test.UnitTest1.GetReturnsMyName() in D:\Study\programming\.NETCore\.NET_DEPLOY_AZUREDEVOPS\SimpleAPISln\test\SimpleAPI.Test\UnitTest1.cs:line 14
+
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 34 ms - SimpleAPI.Test.dll (net5.0)
+
+
+
+
+II. Use Git and GitHub for Version Control Solution
+	> create a local git
+	> add and commit our files into it
+	> create repo in github account
+	> push the files from local git to the github
+
+20. Check Git version
+	> to check Git version type this in terminal
+
+		git --version
+
+
+
+21. Initialize the Git in the Project folder
+	> to initialize the project folder into adding and commiting to Git, type this in terminal
+
+		git init
+
+
+
+22. Check status of the project folder
+	> to check the status of the project folder in Git repo type this in terminal
+
+		git status
+
+	> this will show whether the files/folder in project is either
+		a. new file that is not addded in source repo
+		b. modified file
+
+
+
+23. Use gitignore file to ignore some of the files/folder in the Project folder
+	> create a file in the root folder named
+	
+		.gitignore
+
+	> this will make some files/folder be ignore when we are adding or commiting in our git repo
+
+INSIDE .gitignore
+
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+
+# Visual Studio Code
+.vscode
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio 2015
+.vs/
+
+
+
+
+24. Add everything inside the root folder in the git repo
+	> to add something in git repo, type the following in the terminal
+
+		git add <File/Folder path>
+
+	> if we add everything, place a dot (.) for the file/folder path
+	> so in our case, we will insert 
+
+		git add .
+
+
+
+
+25. Commit everything we have in git repo
+	> to commit we have in git repo, type this in terminal
+
+		git commit
+
+	> we can add message to our commit action in order to describe the commit purpose
+	> to add message, add a -m <Message> after the git commit
+	> so in our case, we will type
+
+		git commit -m "Initial Commit"
+
+	
+
+
+26. Create a repository in your GitHub account
+	> name it SimpleAPI
+	> choose PUBLIC VISIBILITY
+
+
+
+27. Add the github link of our SimpleAPI repository to the local git in our system
+	> to add an external/remote git to our local git, type
+
+		git remote add origin <https github repository link>
+
+	> and our github repo link of SimpleAPI is https://github.com/GlennEligio/SimpleAPI.git
+	> so we will enter the following
+
+		git remote add origin https://github.com/GlennEligio/SimpleAPI.git
+
+
+
+
+28. Define the location in github repo where we will push the files in our local git
+	> we define it by typing the following line in terminal
+
+		git branch -M main
+
+
+29. Push the files in our local git into the remote git repo origins that we added 
+	> to push the files/folder from our local git to the remote origins we added, we type
+
+		git push -u origin main
+
+	> you may need to authenticate your GitHub account in order to push files into our GitHub repo
+	> check the GitHub repo SimpleAPI if we pushed in the files into it
+
+
+
+III. Use Azure DevOps for Build Pipeline and Deploy
+
+
+30. Login into your AzureDevOps account
+
+
+31. Create a new project
+	> give it a name
+	> choose PUBLIC VISIBILITY
+		= the visibility of the Azure DevOps project should be the same as the visibility of the GitHub repository that we will use
+
+
+
+32. Create a new Pipeline
+	> at the right dashboard
+		>> Pipelines > Pipelines > Create pipelines 
+	> In Connect section, choose GitHub as source code 
+		= this will prompt you to link your GitHub account to AzureDevOps
+	> In Select section, select the SimpleAPI repository
+		= it may prompt you to install Azure Pipelines to the GitHub repository
+		= approve it
+	> In Configure section, choose ASP.NET Core
+	> In Review section, add this as the azure-pipelines.yml file
+
+
+azure-pipelines.yml
+
+	# ASP.NET Core (.NET Framework)
+	# Build and test ASP.NET Core projects targeting the full .NET Framework.
+	# Add steps that publish symbols, save build artifacts, and more:
+	# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+	trigger:
+	- main
+
+	pool:
+	  vmImage: 'windows-latest'
+
+	variables:
+	  buildConfiguration: 'Release'
+
+	steps:
+	- script: dotnet build --configuration $(buildConfiguration)
+	  displayName: 'dotnet build $(buildConfiguration)'
+
+
+	> This pipeline process will result to a yml file named azure-pipeline 
+		= this yml file contains the steps necessary in order to build/test our webapi
+
+
+
+
+33. Save and run the build pipeline
+	> choose "Commit directly to the main branch"
+
+
+34. Observe the steps the Job made in order to build our solution project from GitHub
+
+
+
+	In this case, we MANUALLY triggered the execution of the build pipeline by running it. In the Continuous Integration step, that changes on the main code should AUTOMATICALLY trigger the build pipeline. We will showcase this later.
+
+
+
+35. Check the GitHub SimpleAPI repo
+	> we can see that a yml file named azure-pipelines is made
+
+
+
+
+
+Test the Continuous Integration Aspect of Build Pipeline
+
+
+36. Modify the StartUp.cs file
+	> remove the app.UseHttpsRedirection() line in the StartUp class body
+
+
+37. Check status of git repo
+	> git status
+	> we will see that StartUp.cs is modified
+
+
+
+38. Add everything into the local git repo
+	> this will override all the files in it, including the modified StartUp.cs
+
+
+
+39. Commit the changes to our local git repo
+	> type this in the Terminal
+
+		git commit -m "Removed https redirection"
+
+
+
+40. Push the commit changes back to the remote origin we added (GitHub repo)
+	> type this in the Terminal
+
+		git push origin main
+
+	> this will push the commit to our remote origin repo
+	> BUT if our source code in remote origin and local git is DIFFERENT, we will get an error
+
+
+
+41. Pull the source code from remote origin repo
+	> we need to do this in order to MERGE the remote origin repo to our local git repo
+	> to do this, type in Terminal
+		
+		git pull
+
+	> also, if we observe our local git repo, we can see that the azure-pipeline.yml file is added from our remote origin repo
+
+
+
+
+42. Push our newly modified local git repo into the remote origin repo once again
+	> git push origin main
+	> and because one of the triggers in our Build pipeline in the Continuous Integration of our Source Code, this modification (where we merged our local git repo to the GitHub repo) should trigger a Build pipeline execution
+	> the title of the Trigger event should be like this
+
+		Merge branch 'main' of https://github.com/GlennEligio/SimpleAPI
+
+
+
+	Right now, all our Pipeline doing is just Building the application. And in itself is useless without the Testing and Running of application.
+
+
+
+43. Add Test task into our step item in azure-pipelines.yml file
+	> add this item inside the steps: body of azure-pipelines.yml file
+
+NEW steps: body of azure-pipelines.yml
+
+steps:
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*Test/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(buildConfiguration)'
+
+
+
+
+44. Save the project
+
+
+45. Check status of local git repo
+	> use git status command
+	> azure-pipelines.yml file should be indicated as modified with red foreground
+
+
+46. Add the newly modified solution project to our local git repo
+	> use git add . command
+	> this will override the files in our local git repo, including the old azure-pipelines.yml file
+
+
+47. Check status again
+	> this time, the yml file should be indicated as green. ready to be commited
+
+
+
+48. Commit the changes we made in our local git repo
+	> use git commit -m "Updated YAML file to run tests" command
+
+
+
+49. Push the commit we made from our local git repo to the remote origins we added (GitHub)
+	> use git push origin main command to do this
+
+
+
+50. Go to GitHub to see the changes
+	> all the files that what modified before we do the commit should have the message we passed in commit action
+	> this include the YAML file we modified (whose content should been modified)
+
+
+
+51. Check the Pipeline in Azure Dev Ops
+	> the Pipeline execution should be triggered due to the modifications we made
+
+
+52. Compare the Test result from our VS Code locally to our Test result from AzureDevOps pipeline
+	> in the AzureDevOps pipeline job, we should see another step named DotNetCLI	
+		= this task test the webapi first before building
+	> if we look at the DotNetCLI, we should see the same output as the Test we made in Local machine
+	> inside the DotNetCLI, we can see the Published Test Run link where we can see the Test result visually
+
+		Published Test Run : https://dev.azure.com/glenneligio/Simple%20API/_TestManagement/Runs?runId=4&_a=runCharts
+
+
+
+	In this case, that webapi passed the Test of xunit project. But now, we will have the webapi intentionally FAIL the test. We do this by changing either the return value of endpoint, or the expected value of the Assert.Equal() of [Fact] method of xunit.
+
+
+
+
+53. Change the return value of the Get(int id) endpoint of our webapi
+	> configure the application so that the Get(int id) endpoint test will fail
+
+INSIDE THE CONTROLLER CLASS
+
+        [HttpGet("{id}")]
+        public ActionResult<string> Get(int id)
+        {
+            return "Codename Zaido";
+        }
+
+INSIDE THE TEST CLASS
+
+        [Fact]
+        public void GetReturnsMyName(){
+            var result = controller.Get(1);
+            Assert.Equal("Codename Asero", result.Value);
+        }
+
+
+
+
+54. Test the Solution project locally
+	> save all
+	> go to xunit project directory
+	> test the solution proj using dotnet test command
+	> we should fail one test in the result
+
+
+
+55. Check local git status
+	> it should show that test class in our xunit project has failed
+
+
+
+56. Add our modified project to our local git repo
+	> this will override our files in our local git repo
+	> be sure that you are in the solutions project directory
+	> to do this, enter the following in terminal
+
+		git add .
+
+
+
+57. Commit our changes to our local git repo
+	> this will save the changes in our local git repo
+	> to do this, enter the line in the terminal
+
+		git commit -m "Broken Unit test :("
+
+
+
+
+58. Push the commit changes to our remote origin git repo (GitHub)
+	> lets push our modified local git repo (with Broken test unit) into our GitHub repo
+	> to do this, enter the line in terminal
+
+		git push origin main
+
+
+
+59. Check our Pipeline in AzureDevOps
+	> since we have Continuous Integration with our GitHub repo, the modification we made in our GitHub repo SHOULD TRIGGER the Pipeline execution
+	> this will trigger another RUN to our pipeline with message corresponding to the message flag we passed on our git commit command
+
+
+
+60. Check result of our Simple API Pipeline in AzureDevOps
+	> since we failed our xunit project test locally, we should also fail the test here in the AzureDevOps pipeline
+	> we should see the DotNetCoreCLI Task fail and have a red x mark in the Jobs of SimpleAPI pipeline 
+
+
+
+	Now, we will change it back again to a fixed unit test.
+
+
+61. Modify the solution project
+	> change the return value of route endpoint of Controller class AND the expected value of Assert.Equal() of Fact method so that they are the same again
+
+
+
+
+62. Check result of xunit test locally
+	> this should pass the test
+
+
+
+
+63. Add, Commit, and Push the modified solution project (with fixed unit test) to the GitHub repo
+	> save all the solution project first
+	> git add .
+	> git commit -m "Fixed unit test"
+	> git push origin main
+
+
+
+
+	Now, we will move to the PACKAGING STEP of our AzureDevOps pipelines. We will do this by adding another task into our azure-pipelines.yml file.
+
+
+
+
+64. Create another task item inside the steps: of the azure-pipelines.yml file 
+	> this will be responsible for publishing our solution project
+	> add this task inside our steps: in azure-pipelines.yml
+
+INSIDE AZURE-PIPELINES.YML FILE
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+  inputs:
+    command: publish
+    publishWebProject: false
+    projects: 'src/SimpleAPI/SimpleAPI.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+
+
+	> this is composed of the following
+		a. Task
+			> defines the runtime necessary to run the commands, also the command list that can be used
+		b. displayName
+			> Name showed in the Job Task list
+		c. inputs
+			> defines a set of parameters that builds the command that we will run
+		d. command
+			> command that we will use
+		e. publishWebProject
+			> property that defines whether we are publishing a webproject or not, in our case we dont
+		f. projects
+			> defines the projects (using the csproj file) that we will publish
+		g. arguments
+			> flags that we will passed alongside the command
+		h. zipAfterPublish
+			> defines whether we will zip the solution project after publishing
+
+
+
+
+
+65. Create another task for publish artifacts of our solution project
+	> this task will take all the files in the $(Build.ArtifactStagingDirectory) and uploads them
+	> add this task inside the steps of azure-pipelines.yml
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'SimpleAPI'
+
+	> this is composed of the following:
+		a. task
+			> defines the task
+		b. inputs:
+			> defines parameters of the task input
+		c. targetPath
+			> path of the artifact
+		d. artifactName:
+			> the name of the artifact
+
+
+
+
+66. Add, Commit, and Push to our GitHub repo (which will then trigger the CI of Pipeline)
+	> save all
+	> git add .
+	> git commit -m 'Updated Azure Pipelines to package build'
+	> git push origin main
+
+
+
+
+67. Observe the changes in GitHub repo
+
+
+
+68. Observe the Trigger event that happened in Simple API pipeline
+
+
+
+69. Check result of the Publish of webapi task and Push artifact task
+	> in the dotnet publish Task 
+		= we can see the .dll made with the publish command
+	> in the PublishPipelineArtifact task
+		= we can see the artifact properties that we made
+		= here is the example
+
+			Content upload statistics:
+			Total Content: 2.7 MB
+			Physical Content Uploaded: 1.4 MB
+			Logical Content Uploaded: 1.4 MB
+			Compression Saved: 0.0 bytes
+			Deduplication Saved: 1.4 MB
+			Number of Chunks Uploaded: 22
+			Total Number of Chunks: 64
+	
+	> also, if we look at the Job main step, we can see the link where we can check the Pipeline Artifact that we just made
+
+
+
+	
+	We will now move into the RELEASE step of our Pipeline. In the video, Les Jackson used Azure Active Directory's API App for the Deployment Agent. But since we are poor and we dont have a credit card to identification purposes of AAD, we will use Heroku which provide same functionality as API App of AAD.
+
+	Our Release Pipeline will consist of the following Task
+		a. Install Docker CLI
+		b. Install Heroku CLI
+		c. Login our DockerHub account that contains the Docker image that we will deploy
+		d. Pull the Docker Image
+		e. Logout our DockerHub
+		f. Login to our Heroku Container Registry using Heroku email and API key
+		g. Tag the Docker image we pull using the Heroku app container registry
+		h. Push the Image to the Heroku app container registry
+		i. Release the Docker image inside the Container Registry
+
+
+	Also, remember to use Ubuntu OS image for the virtual machine of our Agent since we are using Linux OS for the Docker Image. And we can only install Heroku CLI in PowerShell in Ubuntu OS.
+
+
+
+70. Go to Release Section of our Pipeline
+	> Right menu -> Pipeline -> Release
+
+
+71. Create a New release pipeline
+
+
+72. Select Empty Job for now in Stage 1
+	> this selection of Job template prompt is automatic, for now select empty job
+
+
+73. Add our simpleapi Docker Image as the Artifact
+	> with this, whenever the simpleapi version changes, we can use Continuous Deployment to Release the app
+	> choose the Latest verion
+
+74. Create a new app in Heroku
+	> glenneligio-simpleapi
+
+
+75. Get our API key of our account
+	> can be found under account settings on Heroku
+	> we will need it whenever we login and deploy to Heroku using Powershell in Azure Dev Ops
+	> c9ca8814-c45c-41f7-b660-f54946382d0e
+
+
+
+77. Add our Heroku API key as one of the Release Pipeline variables in Azure Dev Ops
+	> name the variable HEROKU_API_KEY
+	> pass the Heroku Api key as the variable's value
+	> make the value secret by pressing the lock key beside the value's textbox
+		= this will make the variable value not shown in the logs
+
+
+
+	We will now configure the task inside our Agent job
+
+
+78. Set Agent Specification of Agent Job to Ubuntu 16+
+	> 16 is minimum version necessary to install Heroku CLI
+
+
+78. Add Install Docker CLI Task tempate
+
+79. Login to our DockerHub account
+	> can use either the Docker Login tempate in Add Task or	
+	> type the following line in powershell
+
+		docker login -u <DockerHubId> -p <DockerHubPass>
+
+
+80. Pull the Docker Image that we will release
+	> in powershell, type this line
+
+		docker pull <DockerHubId>/<DockerImage>:<DockerTag or DockerImage version>
+
+	> in our case, it will be
+
+		docker pull shuntjg/simpleapi:Latest
+
+
+
+81. Logout of DockerHub account
+	> we can use the Docker Logout Task template or type or
+	> use PowerShell to logout by typing
+
+		docker logout
+
+
+82. Login to the Docker Registry of our Heroku app
+	> in the PowerShell, type the following
+
+		docker login --username=<HerokuId> --password=<Heroku_auth_login_key> registry.heroku.com
+
+	> in our case, since we added the Heroku Auth Login in in our Variable with name HEROKU_API_KEY, we will use
+
+		docker login --username=shuntjg --password=$(HEROKU_API_KEY) registry.heroku.com
+
+
+
+83. Give a new Tag to our Pulled Image and Push it to our Heroku App Container Registry
+	> for giving new tag, we will use the following template in PowerShell
+
+		docker tag <image> registry.heroku.com/<app>/<process-type>
+
+	> for pushing to container registry, we will use this template
+
+		docker push registry.heroku.com/<app>/<process-type>
+
+	> so in our case, we will use this,
+	
+		docker tag shuntjg/simpleapi:62 registry.heroku.com/glenneligio-simpleapi/web
+		docker push registry.heroku.com/glenneligio-simpleapi/web
+
+
+
+84. Release the Docker Image inside our Container Registry for consumption
+	> to release an image, we will use this template
+
+		heroku container:release web -a <HerokuAppName>
+
+	> in our case, it will be
+
+		heroku container:release web -a glenneligio-simpleapi
+	

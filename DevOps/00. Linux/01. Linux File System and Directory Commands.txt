@@ -1,0 +1,44 @@
+Linux 
+
+Linux File System Features
+	> In Linux, the file system creates a tree structure
+	> All the files are arranged as tree and its branches
+		- The topmost directory are call the "root" directory (/)
+	> All other directory in Linux can be accessed from the root directory
+
+
+Root directory (/)
+	> composed of the following branches
+
+/bin/	- contains essential user command binaries
+/boot/	- static files of the boot loader
+/dev/	- device files
+/etc/ 	- host-specific system configuration
+/home/	- user home directories (ex: user "student" will have /home/student folder for itself)
+/lib/	- essential shared libraries 
+/media/	- mount point for removable media
+/mnt/	- mount point for a temporarily mounted filesystems
+/opt/	- add on application software packages
+/sbin/	- system binaries
+/srv/	- data for services provided by this system
+/tmp/	- temporary files
+/usr/	- multi-user utilities and application
+		= all user can access this branch
+/var/	- variable files
+/root/	- home directory for the "root" user
+/proc/	- virtual filesystem documenting kerney and process status as text files
+		
+
+
+BASIC DIRECTORY COMMANDS
+
+mkdir <folder-name>
+	> used to make/create directory
+cd <directory-path>
+	> used to change directory to specified path
+	> passing ".." will navigate to parent directory
+pwd 
+	> display current directory
+rmdir <directory-name>
+	> used to remove a directory
+	> the directory MUST BE EMPTY for command to work

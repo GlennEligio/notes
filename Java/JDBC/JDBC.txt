@@ -1,0 +1,291 @@
+JDBC
+
+Topics
+1. Introduction of Advance Java
+2. Introduction of J2EE and JDBC
+3. JDBC Fundamentals
+4. Steps to create Application
+5. JDBC Driver Types
+6. JDBC Connections
+7. JDBC Statements
+
+
+Different Editions of Java
+
+J2SE
+	> Java 2 Standard Edition
+	> used for developing desktop applications, forms the core/base API
+		ex: applets
+	> helpful for client side standalone applications
+
+J2EE
+	> Java 2 Enterprise Edition
+	> used for applications which run on servers
+		- ex: websites
+	> includes
+		- Servlets, Java Server Pages, Java ServerFaces
+
+J2ME
+	> Java 2 Micro Edition
+	> Runs on resource constrained devices (small scale devices) like cellphone
+		- ex: games
+
+
+Java 2 Enterprise Edition
+	> a playform independent, Java Centric environment for developing, building, and deploying Web-based applications online
+
+
+Why J2EE?
+	> simplifies the complexity of building n-tier Applications
+	> Standardizes an API between components and application server container
+	> J2EE application server and container provide the framework services
+
+
+
+JDBC
+ 	> a standard Java API for database-independent connectivity between the Java programming language and a wide range of databases
+	> have the following steps
+		1. Connection
+		2. Create SQL
+		3. Execute SQL
+		4. Viewing
+
+
+JDBC Architecture
+	> consist of the following parts
+		1. JDBC API
+		2. JDBC Driver API
+ 
+
+Steps to create a JDBC Application
+	1. Import the packages
+	2. Register Driver & Open Connection
+	3. Execite a Query
+	4. Extract data from result set
+	5. Clean up the environment
+
+
+JDBC Driver 
+	> implement a defined interface in the JDBC API for interacting with the database server
+	> using JDBC Driver
+		- open connection
+		- send queries to modify database
+		- receive result set
+
+Types of JDBC Driver
+	1. JDBC ODBC Bridge
+	2. JDBC Native API
+	3. JDBC NOT pure
+	4. 100% Pure Java
+
+JDBC ODBC Bridge
+	> called type 1 driver
+	> not recommended for Deployment purposes
+	> for experimental uses only
+
+JDBC Native API
+	> type 2 driver
+	> JDBC API calls are converted into C or C++ api calls
+	> provided by the Database vendors
+	> used in the same manner as the type 1 driver
+	> vendor-specific driver must be installed in every client machine
+	> changing database means we also change the native api
+
+JDBC NOT pure
+	> type 3 driver
+	> uses three tire approach is used to access database
+	> JDBC Driver uses standard network sockets to communicate with the middleware application server
+	> the socket information is then translated by the middleware into call format and then forwarded to database
+	> flexible since no code needed in client side
+	> useful when Java Application communicate with different databases
+
+
+100% Pure Java
+	> type 4 driver
+	> pure java based driver
+	> highest performance based driver
+	> no need to install special software for both client and server
+	> in these days, database vendor typically provide type 4 drivers
+
+
+
+JDBC Connections Steps
+	1. Import JDBC Packages
+	2. Register JDBC Driver
+	3. DB URL Formation
+	4. Create connection object
+	5. Close connection
+ 
+
+Importing JDBC Packages
+
+	import java.sql;	
+	import java.math;
+
+
+
+Register JDBC Driver
+
+Approach I - Class.forName()
+
+try{
+	Class.forName("oracle.jdbc.driver.OracleDriver");
+}
+catch(ClassNotFoundException ex){
+	System.out.println("Error: unable to load driver class!");
+	System.exit(1);
+}
+
+Approach II - DriverManager.registerDriver()
+
+try{
+	Driver myDriver = new oracle.jdbc.driver.OracleDriver();
+	DriverManager.registerDriver(myDriver);
+}
+catch(ClassNotFoundException ex){
+	System.out.println("Error: unable to load driver class!");
+	System.exit(1);
+}
+
+
+
+DB URL Formation
+	
+	getConnection(String url)
+	getConnection(String url, Properties prop)
+	getConnection(String url, String user, String password)
+
+Create connection object
+	> using database url with username and password
+	> using only a database url
+	> using a database url and a properties object
+
+Close connection
+	> to ensure that a connection is closed, you could provide a 'finally' block in your code
+
+		conn.close()
+
+
+JDBC Statements
+	> Interfaces
+		- Statement
+			> for static sql queries	
+			> cant accept parameters
+		- Prepared Statement
+			> plan to use the sql statement MANY times
+			> accepts input parameters at runtime
+		- Callable Statement
+			> used to access the database's Stored Procedures
+			> can also accept runtime input parameters
+
+
+DriverManager	
+	> acts as an interface between user and drivers
+
+getConnection()
+	> used to create connection to the database
+	> will return a Connection object
+	> forms of method
+
+		getConnection(String url)
+		getConnection(String url, Properties prop)
+		getConnection(String url, String user, String password)
+
+
+
+Database URL structure
+
+	jdbc:mysql://localhost:3306/db
+
+	jbdc 		jdbc protocol
+	mysql		jdbc driver
+	localhost	server name or ip of sql database
+	3306		tcp port of the database
+	db		database name
+
+
+
+Connection
+	> interface represents a session in the database
+	> to create Connection
+	
+		Connection conn = DriverManager.getConnection();
+
+	> methods:
+	
+		Statement		createStatement()		returns a Statement object
+		PreparedStatement	createPreparedStatement()	returns a PreparedStatment
+		CallableStatement	createCallableStatement()	returns a CallableStatement
+		void			commit()			saves the changes made since the previous commit/rollback permanently
+		void			close()				closes the Connection and releases the JDBC resources immediately
+		DatabaseMetaData	getMetaData()			returns metaData of the Database we are connected
+
+
+Statement
+	> interface that provides methods to execute queries with the database
+	> a factory (class the creates another class) of the ResultSet
+	> to create a Statement
+
+		Statement stmt = conn.createStatement();
+
+	> methods:
+		ResultSet	executeQuery(String sql)	used to execute SELECT queries
+								returns a ResultSet which is the table result of the SELECT query
+		int 		executeUpdate(String sql)	used to execute DML queries (Insert, Update, Delete)
+								returns the number of rows affected by the DML query
+		boolean		execute(String sql)		used to execute queries that returns multiple values
+								returns true if the query is successfully done
+		void 		close()				closes the ResultSet and release the resources used
+
+
+
+ResultSet
+	> entirely dependent on Statement and Connection Object
+	> a virtual table that represents the data that is sent back by the SQL query we sent
+	> in the table, theres a "Cursor" that points to a specific row
+	> at the start, it point to the row before the first row
+	> to create a ResultSet
+
+		ResultSet rs = stmt.executeQuery(String sql);
+
+	> have the following methods
+		boolean			close()			closes the ResultSet and releases the resources used for it
+		boolean 		next()			moves the "cursor" to the next row
+								will move Cursor on first row when called the first time
+								returns True if the theres still next row
+		boolean			previous()		moves the cursor one time backward
+								returns True if the theres still next row
+		boolean			first()			moves the cursor at the first row of ResultSet
+		last()						move the cursor at the last row of ResultSet
+		getRow()					returns what row the Cursor is
+		Type 			get<Type>(int n)	returns the data of a specific dataType in nth column
+								x: getInt(1)
+		Type			get<Type>(string name)	returns the data of a specific dataType in with name as columnName
+								ex: getInt("id")
+		ResultSetMetaData	getMetaData()		returns the metadata of the Table we are in 
+
+
+
+PreparedStatement
+	> subinterface of Statement that accepts input at runtime	
+	> inside the String parameter of PreparedStatement's methods, there will be "?" that will represent the inputs
+	> ex: String sql = "DELETE FROM tableName WHERE id = ? AND name = ?"
+	> we can add a String in runtime that will replace question marks
+	> to create one
+	
+		PreparedStatement pstmt = conn.createPreparedStatement(String sql);
+
+	> methods
+		ex: PreparedStatement pstmt = conn.createPreparedStatement("DELETE FROM tableName WHERE id = ? AND name = ?");
+
+		Previous Statement methods >> execute(String sql), executeUpdate(String sql), executeQuery(String sql), close()
+
+		void 	set<Type>(int paramIndex, Type value)	set the value of ? at paramIndex with the value given
+
+SOME OF THE VARIATIONS:
+		void	setInt(int paramIndex, int value)		ex: at example above, the paramIndex of first ? is 1, so we will call
+										> pstmt.setInt(1, 2)
+		void 	setString(int paramindex, String value)		ex: at example above, the paramIndex of second ? is 2, so we will call
+										> pstmt.setString(2, "John")	
+								
+		

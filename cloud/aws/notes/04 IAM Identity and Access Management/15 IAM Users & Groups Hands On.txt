@@ -1,0 +1,59 @@
+15 IAM Users & Groups Hands On
+
+IAM Dashboard
+Creating User
+1. Go to Access management -> Users
+2. Click Add Users
+3. Set the username
+4. Choose Password for AWS Credential type
+5. Choose custom password, then write the password
+6. Uncheck the require password reset since we will be the only one to create this
+
+
+Creating Group
+1. After creating user, you will be redirected to creating group
+2. Pass the group name "admin"
+3. Assign a policy named "AdministratorAccess" with type JobFunction
+
+
+Creating Tag
+ > Tags are key value pairs we add to a User
+ > this is helpful for keeping track of numbers of user
+ > ex: Department tags, Team tag, Level tag, etc
+ > UserA with Department tag of value "Engineering"
+
+
+Finishing User creation
+1. After creating the User, you can have an option to download a file csv which contains
+	> username
+	> password
+	> access key
+	> secret access key
+	> console login link
+2. We can also send an email for login instruction to specific email address
+
+
+
+
+Changing AWS Account alias
+ > by default, the AWS Account ID (12 digit random string) is the AWS Account alias
+ > we can change this by going to IAM Dashboard, and in the right side, we can see the Account Alias and the option to create a new one (besides the default account id value)
+ > once change, we can use the Sign in URL for IAM users below the Account Alias, which typically is in format
+	"https:://<ACCOUNT_ALIAS>.signin.aws.amazon.com/console"
+
+
+
+Logging in as IAM User
+1. Use the Sign in URL for IAM users which can be seen in IAM dashboard
+2. By default, we will see the Account Alias, and we will only need to provide the IAM User username and password
+3. When logged in, we will be seeing at the top right our IAM username and the Account alias
+
+
+
+NOTES:
+1. IAM in a Global service
+2. Use root account is bad practice. Instead create another account that we will make into an Administrator account
+	> this Admin account will have all permission root account have
+	> unless we need to, we will avoid using root account
+3. Policies are attached to a Group. All users under that group will receive the permission passed to a Group via Policy
+4. Downloading CSV of new Users is important if the password used is auto-generated

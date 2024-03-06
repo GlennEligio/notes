@@ -1,0 +1,23 @@
+05 Why Agile?
+
+Assumptions behind Predictive Model (ex: Waterfall)
+1. We can predict the requiments accurately. It won't change much
+	> if we predict requirement incorrectly, this will propagate down the line
+	> in practice, they see that the customer/clients requirements changes from time to time, or that the market has shifted
+2. Translation is going to be perfect
+	> we assume that going from each stages like requirements -> design -> implementation will be smooth sailing
+	> and the further down we find issue in the predictive model, the more costly the change is
+
+
+Solutions provided by the different models created
+1. Reduce the learning cycle by:
+	- deliverying in short iterations
+	- adapt based on what you learn
+2. Keep the cost of change down by:
+	- following engineering rigor
+	- encouraging close collaboration among team members
+
+
+Agile Manifesto
+ > created in 2001 by group of software visionaries
+ > not a specific model/process but a mindset

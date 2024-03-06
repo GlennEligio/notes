@@ -1,0 +1,186 @@
+09. Deployment
+
+
+Deployment
+	> provides declarative updates for Pods in ReplicaSets
+	> in Deployment, you describe a DESIRED STATE, and the Deployment Controller changes the actual state to the desired state at a CONTROLLED RATE
+	> you can define Deployments to create a new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments
+	> in Deployment, we can define the Rolling Update strategy, which includes
+		1. Amount of Pods to be downed for Rolling updates
+	> Blue / Green process
+		- blue process is where Client access an old version
+		- green process is where Client access a new version
+	> 0 downtime
+		- with Deployment, we can have a zero downtime system
+		- how it is achieve with Rolling update strategy
+		- if in Rolling update strategy, we define the unavaiable pod by one, the Rolling update will be done to each pod ONE BY ONE
+		- with this, Client can still access other Pods with older version which other Pods are being updated
+
+
+
+Deployment vs ReplicaSet
+	> we can see Deployment as "wrapper" for ReplicaSet
+	> with Deployment, we can 
+		- update PodTemplateSpec and have the option to RECORD it
+		- see the Rollout status when updating the PodTemplateSpec
+		- undo the Rollout update done in PodTemplateSpec
+		- see the amount of revisions done in PodTemplateSpec
+		- define the Rolling Update Strategy, which includes
+			a. maxUnavailable
+				- max unavailable pod when updating
+			b. maxSurge
+				- max amount of Pod created when updating to compensate for downed Pods (due to updates)
+				- ex: if we have 10 pods, and we have 20% unavailable and 10% surge
+					= 2 pods will be unavailable and 1 Pods will be created to compensate
+
+
+Uses Cases of Deployment
+1. Create a Deployment to ROLLOUT a ReplicaSet
+2. Declare the new State of the Pods (Rollout update)
+3. Rollback to an earlier Deployment revision
+4. Scale up the Deployment to facilitate more load
+5. Applying multiple fixes to the PodTemplateSpec
+	- with Deployment, we can pause the Pods for fixing and resume again to start new rollout
+6. Check status of Deployment
+	- used as an indicator of rollout status
+7. Cleaning up older ReplicaSets
+				
+
+
+
+Creating Deployment
+	> we can create a Deployment through Manifest file and invoking "kubectl create -f <MANIFEST FILE>"
+
+
+
+
+Deployment Manifest Guide
+	> similar when creating ReplicaSet, but with new fields in the Deployment Spec
+	> ReplicaSet spec fields include
+		1. Pod Template (.spec.template)
+		2. Selector (.spec.selector)
+
+
+Deployment Specs
+1. Strategy (.spec.strategy)
+	> specifies the strategy used to replace old Pods by new ones
+	> can either by
+		a. Recreate (.spec.strategy.type=Recreate)
+			- all existing Pods (old) are killed before new ones are created
+		b. RollingUpdate (.spec.strategy.type=RollingUpdate)
+			- update of Pods are done GRADUALLY
+			- here, we can two fields again	
+				1. maxSurge (.spec.strategy.rollingUpdate.maxSurge)
+					- max pods created to compensate for downed Pods (that are currently updating)
+				2. maxUnavaiable (.spec.strategy.rollingUpdate.maxUnavailable)
+					- max unavailable pod when updating
+			- these fields can have either an absolute value or percentage value (e.g. 2, 1, 25%)
+2. Revision History Limit (.spec.revisionHistoryLimit)
+	> defines the number of old ReplicaSets to retain to allow rollback
+	> by default, 10 OLD ReplicaSets will be kept
+
+
+
+
+EX: Manifest for creating Deployment
+# nginx-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  labels:
+    app: nginx-app
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+  strategy:
+      type: RollingUpdate
+      rollingUpdate
+        maxSurge: 2
+        maxUnavailable: 3
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: nginx-app
+
+
+	> In this Manifest file, we create a Deployment with following properties
+		1. Replica Pods to be created is 3
+		2. PodTemplateSpecs are:
+			- label: "app=nginx-app"
+			- container:
+				= name is "nginx-container"
+				= runs "nginx" image
+				= exposes port 80
+		3. Selector matches only Pods with label "app=nginx-app"
+		4. Strategy in Updating Pods is "RollingUpdate"
+			- max Pod to be unavailable for update is 3
+			- max Pod to be created to compensate for downed Pod is 2
+		5. Max revision to be stored for rollback is 5
+
+
+
+COMMANDS
+Create Deployment
+kubectl create -f <MANIFEST FILE>
+	> create a Deployment using a Manifest file
+
+Display Deployment
+kubectl get all
+	> display all K8s resources (Deployment, Pods, Services, Volumes, ReplicaSet, etc)
+
+kubectl get deploy <NAME>
+	> display deployment of specified name
+	> not passing a NAME will display ALL deployments
+
+kubectl describe deploy <NAME>
+	> display all information of a specific Deployment
+
+
+
+
+Update Deployment Manifest file
+kubectl edit deploy <NAME>
+	> opens up the specified deployment's manifest to edit
+
+kubectl set image deploy <DEPLOY NAME> <CONTAINER NAME>=<IMAGE>
+	> update the Docker Image used in a specific Container inside Deployment
+	> "--record" command flag specifies that this update/revision will be recorded in revision history
+
+
+
+
+Rollout/Rollback related commands
+kubectl rollout status deployment <DEPLOYMENT NAME>
+	> check the rollout status of the deployment
+
+kubectl rollout history deployment <NAME>
+	> check the rollout revision history of a specific deployment
+	
+kubectl rollout undo deployment <NAME>
+	> do a rollback to previous stable revision
+
+
+
+Scaling Deployment Up or Down
+kubectl scale deployment <NAME> --replicas=<INTEGER>
+	> scale the replica Pods of Deployment specified by a certain amount
+
+
+
+Delete Deployment
+kubectl delete -f <MANIFEST FILE>
+	> delete a K8s resource (in this case, a Deployment) using a Manifest file
+
+kubectl delete deploy <NAME>
+	> delete a Deployment with specified name
+

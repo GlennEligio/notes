@@ -1,0 +1,32 @@
+06 RHCSA RHEL 8 - Access remote systems using SSH
+
+Commands
+whereis FILE
+ > used to find files that matches the FILE specified and their directories
+ > ex: whereis ssh
+
+which SERVICE
+ > used to find which directory the service is located
+
+ssh USER@IPADDRESS
+ssh USER@FQDN
+ > used to connect to the SSH server
+ > needs to pass the username in SSH server plus either the ip address or fully qualified domain name of server
+
+
+Access remote systems using SSH
+1. Check if SSH is present
+	> $ whereis ssh
+	> $ which ssh
+		- output where the ssh is installed
+2. Connect to SSH server
+	> $ ssh username@fqdn
+ 	> $ ssh username@ipaddress
+	> pass the needed credentials, if successful, you will be greeted with SSH Banner
+4. Optional: Exit the SSH server
+	> $ exit
+
+
+Using ssh alongside "tee"
+ > with "tee" and output redirection, we can log all the messages that is sent when we connect to remote servers using SSH
+ > ex: ssh jglenn@10.0.2.15 | tee ssh-output.log

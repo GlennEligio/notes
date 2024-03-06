@@ -1,0 +1,85 @@
+16. Configuring Spring Boot Microservice inside Kubernetes
+
+
+Changes made
+1. Remove dependencies/feature related to Service Discovery 
+	> these includes Eureka Service/Client
+		- @EnableEurekaServer in the main java
+		- dependencies defined in the pom.xml
+			a. Eureka Server and Client
+		- configuration props in application.properties
+	> many Orchestration Tool (e.g. K8s) provide this feature by default
+		- in K8s, we can define Services which we can use to expose the applications to each other
+2. Remove dependencies/feature related to storing Configurations
+	> these include the Config Server from Spring Cloud
+		- dependencies defined in the pom.xml
+			a. Spring Cloud Starter Config
+		- configuration props in application.properties
+	> K8s provides a way for us to store Configurations and use them inside the application running
+		- in K8s, we can create ConfigMaps and Secret to store configuration properties
+		- ConfigMaps are exposed while Secret are encrypted
+
+
+		<!-- CHANGE-KUBERNETES --> 
+		<!--<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+ -->
+
+
+3. Remove dependencies/feature related to tracing and logging request
+	> these include the Spring Cloud Sleuth Zipkin and Spring Rabbit
+		- dependencies defined in the pom.xml
+			a. Spring Cloud Starter Config
+		- configuration props in application.properties
+	> K8s provides other options for logging and tracing
+
+
+		<!-- CHANGE-KUBERNETES -->
+		<!--<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+		</dependency>
+ -->	
+
+
+
+4. Exposed the endpoints of Spring Boot Actuator
+	> specifically the health probes, which are
+		- livenessState
+		- readinessState
+	> we will need to do this since K8s needs to know if the application inside Pod is live and/or ready
+
+## CHANGE-KUBERNETES
+management.endpoint.health.probes.enabled=true
+management.health.livenessState.enabled=true
+management.health.readinessState.enabled=true
+
+
+5. Change the @FeignClient annotation parameter
+	> since we removed the Eureka Services Discovery in favor of K8s Service, we will need to configure the @FeignClient
+	> instead of just passing the name of the Service, we will also need to define the absolute URL of the Service the @FeignClient wants to access
+	> we can either
+		a. hard code the name of the Service of which the application that Feign Client access is under
+		b. inject the name of the Service in @FeignClient through Environment variable, and define the said Env var in the yaml file of K8s resource
+			- preferred choice, in order to avoid recreating Docker images just because change Service name
+
+//CHANGE-KUBERNETES
+@FeignClient(name = "currency-exchange", url = "${CURRENCY_EXCHANGE_SERVICE_HOST:http://localhost}:8000")
+//@FeignClient(name = "currency-exchange")
+public interface CurrencyExchangeProxy {}
+
+	> in 2nd @FeignClient, we only defined the name of Service
+	> in 1st and new @FeignClient, we injected the "CURRENCY_EXCHANGE_SERVICE_HOST" environment variable into the url parameter of @FeignClient
+		- this CURRENCY_EXCHANGE_SERVICE_HOST will refer to the service that runs the CurrencyExchange app ("http://currency-exchange")
+		- if the said environment variable doesnt exist, it will take the value "http://localhost"

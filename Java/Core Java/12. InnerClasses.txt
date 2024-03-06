@@ -1,0 +1,38 @@
+Inner Class
+includes
+1. innerClass
+-> syntax
+-> uses
+-> example
+
+package com.glenneligio.innerclass;
+
+public class TestClass {
+
+    /*
+        Why use innerClasses?
+        1. Easier for eyes to follow
+        2. Can have private access modifier in class (can only be used in innerClasses)
+        3. Possible to have static innerClass, which works the same way as
+            static fields and static methods.
+        4.
+     */
+
+    //there parentClass fields can be accessed inside the innerClasses
+    private int age;
+    private String color;
+
+    //inner class, a class inside a class
+    private class TestInnerClass{
+        private String name;
+
+        public TestInnerClass(String name) {
+            this.name = name;
+        }
+
+        //example of method of innerClass which use its parentClass fields
+        private void printAge(){
+            System.out.println("Age: " + age);
+        }
+    }
+}

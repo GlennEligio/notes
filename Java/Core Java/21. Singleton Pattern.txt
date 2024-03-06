@@ -1,0 +1,115 @@
+Singleton Pattern
+
+Main class
+
+package com.glenneligio.singletonpattern;
+
+public class Main {
+    /*
+        Singleton pattern
+        > when we want to make sure that we have only one instance
+            of some class in an entire application
+
+        Cases where you want to use singleton pattern
+        1. When you use database
+
+        Steps to do singleton pattern
+        1. Declare a static field of the kind of the Class
+        2. Create a getInstance method with the Class as return type
+           which is "static" and "synchronized"
+        3. Create an if-else statement inside the getInstance method,
+           which checks if the instance of the Class is null or not
+            > if null, first time you are calling the getInstance method
+                    >> which if true, you will create new instance of the Class
+                    >> the return the instance of Class;
+            > else, if not null, return the current instance of the Class
+     */
+    public static void main(String[] args) {
+
+        //since getInstance method is static, we do not need an instance to call the method
+        //we can use the object itself only to call the method
+
+        Database database = Database.getInstance("db_music");
+
+        /*
+            toString method of any class,
+            > available to any java class
+            > by default will return the address of the class
+            result will show:
+            packageName.ClassName.memoryAddress
+            > just like any other method, can be overwritten to change the
+                behavior of the method
+         */
+
+        System.out.println(database.toString());
+
+        /*
+            to restrict other to create instances of the Object using its constructor,
+            you can set the accessModifier of the constructor to private
+
+            now if you call the constructor to create an instance of the object,
+            an error will occur
+
+            Database testDataBase = new Database("db_movies");
+
+            others can also create an instance of the Object asynchronously using multiple
+            threads, to make the object threadsafe, you can use the "synchronized" keyword
+         */
+    }
+}
+
+
+Database class
+
+package com.glenneligio.singletonpattern;
+
+public class Database {
+
+    private String name;
+     /*
+        declare new field with Class that its in as dataType,
+        and static keyword since you want to only have one instance
+        ** be sure to use the Class that is inside the package
+     */
+    private static Database instance;
+
+    //create getter method, with return type as the Class itself
+
+    /*
+        method function
+        > when function is called, will create instance of the Class
+        > since if instance is null (no value), will return a Class dataType
+        > then if not null, will also return a Class dataType
+        > this, in turn, will make sure an instance of Class dataType will be made
+     */
+
+    // synchronized ----> make sure that no more than one thread can call the method
+
+    public static synchronized Database getInstance(String name){
+        if (null ==  instance){
+            instance = new Database(name);
+            return instance;
+        } else {
+            return instance;
+        }
+    }
+
+    private Database(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        String text = "Database class\n " +
+                "Name: " + this.name;
+        return text;
+    }
+}

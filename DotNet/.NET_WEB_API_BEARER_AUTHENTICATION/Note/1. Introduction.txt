@@ -1,0 +1,31 @@
+.NET CORE API Bearer Authentication
+
+What will be discussed
+1. Bearer Authentication scheme & JSON Web Tokens
+2. How to use Azue Active Directory (AAD), to secure an API
+3. The code required to secure your API endpoints
+4. How to write a client app to authenticate and access our API
+
+Tools needed
+1. NET Core SDK 3.1
+2. Text Editor (VS Code)
+3. Azure Account
+4. Postman client
+
+
+Architecture of Authentication Use-Case includes
+1. Azure Active Directory
+	> serves as the indentity and access management layer
+	> allows client to securely acquire token
+2. .NET Core Console "Daemon" Client
+	> will acquire Token from the AAD
+	> after getting the Token, will then add it in the Http Get request headers and send the request to Weather API
+3. Weather API
+	> default API installed in the Web Api template of .NET
+	> we will configure one of its method so that it will require an authorization 
+
+
+
+
+ 
+

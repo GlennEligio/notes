@@ -1,0 +1,17 @@
+Day 16 Chat
+
+<wcf:rest var="rating" url="store/{storeId}/rating/{productId}">
+		<wcf:var name="storeId" value="${WCParam.storeId}" />
+		<wcf:var name="productId" value="${WCParam.product_id}" />		
+	</wcf:rest>
+    
+    <c:set var="ratingStars" value="${rating.rating}"/>   
+    
+    Rating from Rest Call: <br/>
+    Product Id:<c:out value="${rating.product_id}"/> <br/>
+    Rating Stars:<c:out value="${ratingStars}"/> <br/>
+    RatingId: <c:out value="${rating.ratingId}"/>
+	
+	
+	
+	

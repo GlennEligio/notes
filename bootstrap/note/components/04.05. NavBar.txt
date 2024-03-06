@@ -1,0 +1,177 @@
+04.05. NavBar
+
+~~~~~ COMPONENT - NAVBAR ~~~~~~
+Navbar on Bootstrap
+	> responsive by default where if Navbar's width is less than the total width of Navbar item, it will collapse and be expandable
+		-> Expandable content is where you can expand a content/menu using some button (i.e. hamburger icon)
+
+How Navbar works
+	> Navbars require a wrapping .navbar with .navbar-expand-{breakpoint} for responsive collapsing and color scheme classes
+	> Navbars and their contents are FLUID by default. 
+		-> Change the container to limit their horizontal width in different ways (ex: define .container inside .navbar)
+	> Use spacing and flex utility classes for controlling spacing and alignment within navbars
+	> Use <nav> element for defining .navbar wrapping element
+		-> if using div, add role="navigation" to every navbar
+	> Indicate the current item by using aria-current="page" for the current page or aria-current="true" for the current item in a set.
+
+
+Supported content
+.navbar-brand 	
+	> for your company, product, or project name.
+.navbar-nav 	
+	> for a full-height and lightweight navigation (including support for dropdowns).
+.navbar-toggler 	
+	> for use with our collapse plugin and other navigation toggling behaviors.
+Flex and spacing utilities for any form controls and actions.
+.navbar-text 
+	> for adding vertically centered strings of text.
+.collapse.navbar-collapse 
+	> for grouping and hiding navbar contents by a parent breakpoint.
+Add an optional .navbar-scroll to set a max-height and scroll expanded navbar content.
+
+
+Class usage hierachy
+.navbar
+	.navbar-brand
+	.navbar-toggler
+	.navbar-collapse .collapse			> used together in single element
+		.navbar-nav
+			.nav-item			> can be omitted if we opt to div .navbar-nav
+				.navbar-link
+
+
+Creating Navbar
+1. Create a nav element
+2. Add "navbar" class
+
+
+Adding Responsiveness to Navbar
+	> by default, Navbar collapses at xl breakpoint
+	> to define the collapse breakpoint, add .navbar-expand-{breakpoint} class in .navbar
+
+NOTATION:
+.navbar-expand-{breakpoint}
+
+
+Defining Width of Navbar
+	> we can modify the width of Navbar by defining the width of element inside it
+1. Add a div element inside the .navbar
+2. Add .container or .container-fluid class
+
+
+Supported content
+1. Brand
+	> .navbar-brand class
+	> for your company, product, or project name
+	> stands out the most in the Navbar
+		- ex: Fb logo in Facebook Navbar
+	> we can nest several contents in .navbar-brand element like
+		a. Text
+		b. Image
+		c. Text and Image
+
+EX: .navbar-brand with image
+        <a class="navbar-brand" href="#">
+          <img
+            src="https://mdbootstrap.com/img/Marketing/mdb-press-pack/mdb-dark.jpg"
+            alt=""
+            width="50px"
+            height="35px"
+          />
+        </a>
+
+
+
+2. Nav
+	> to create a Nav inside the Navbar, we will need to
+		a. Wrap the list with element 	
+			-> .collapse and .navbar-collapse class
+			-> id that matches the data-bs-target value of .navbar-toggler button
+
+EX:
+In .navbar-toggler
+data-bs-target="#navbarSupportedContent"
+In .div that serves as wrapper
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+		b. Inside the wrapper, create the following
+			-> div with .navbar-nav class
+			-> add .nav-link to each link element inside the div
+			-> OPTIONAL: add disabled attribute to disable link element
+
+
+3. Forms
+	> Immediate child elements of .navbar use flex layout and will default to justify-content: space-between. 
+	> Use additional flex utilities as needed to adjust this behavior.
+
+
+4. Text
+	> .navbar-text class
+	> this class adjust vertical alignment and horizontal spacing for strings of text
+
+
+Color schemes
+	> we can modify the background color of the Navbar with utility classes
+	> as for text color, Bootstrap offers two classes for dark and light backgrounds
+		-> .navbar-light for light backgrounds
+		-> .navbar-dark for dark backgrounds
+
+
+Placement
+	> we can define the placement of the Navbar with the following classes
+	> these class are added in .navbar element
+
+.default
+	> when we scroll past the Navbar, Navbar STAYS IN PLACE
+.fixed-top
+	> when we scroll past the Navbar, the Navbar STAYS AND BE FIXED AT TOP of viewport
+.fixed-bottom
+	> when we scroll past the Navbar, the Navbar STAYS AND BE FIXED AT TOP of viewport 
+
+
+
+Customizing the Position of Navbar Brand and Toggler
+	> we can customize the position of Brand and Toggler when in collapsed form by changing the markup arrangement
+
+1. No navbar brand when collapse
+	> to do this, put the .navbar-brand inside the div that will collapse
+
+2. Left navbar-brand, right .navbar-toggler
+	> define the .navbar-brand first before the .navbar-toggler
+
+3. Right navbar-brand, left .navbar toggler
+	> define the button for .navbar-toggler first before the Brand
+
+
+
+Using Collapse plugin for External content
+	> we can use the collapse plugin as long as
+		1. Button for .navbar-toggler is nested inside nav class
+		2. Toggler's data-bs-target is same as the Collapse element's id
+		3. Element to expand must have .collapse class to have it collapse initially
+		4. The collapsed element and navbar must be wrap in an element (div)
+
+EX:
+    <div class="container my-5">
+      <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark p-4">
+          <h5 class="text-white h4">Collapsed content</h5>
+          <span class="text-muted">Toggleable via the navbar brand.</span>
+        </div>
+      </div>
+      <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarToggleExternalContent"
+            aria-controls="navbarToggleExternalContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </nav>
+    </div>

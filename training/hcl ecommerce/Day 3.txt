@@ -1,0 +1,120 @@
+Day 3
+
+Website Documentation for HCL Commerce:
+https://help.hcltechsw.com/commerce/9.1.0/getting_started/tasks/tgs_overview_getting_started.html
+
+
+WebSphere Commerce features: Cross-channel
+NOTES:
+1. Call Center refers to the
+
+
+WCS V9 Architecture
+NOTES:
+1. Setting up WCS V9 is more easier than WCS V8 in the cloud. The initial setup will be slower but the suceeding setup will be much faster
+2. Since each components are loosely coupled, we can easily deploy them using Docker
+2. Study Cloud, Docker, Kubernetes, Pods, etc
+
+
+New in V9 of HCL Commerce
+NOTES:
+1. V9 provides new tool for building and deployment of HCL Commerce components
+2. V9 also steers toward distributed system, where each components are looesly coupled. With this, we can do horizontal scaling easily which make it more cloud native
+3. Uses JAX-RS with Spring
+4. HCL recommended one Transaction server and one Utility server. 
+5. We may also use React as an alternative to Store's JSP and widgets based solution
+6. Dojo have little community behind it so it is harder to use than jQuery
+7. Minified JS (single line, no spaces) is used to make page loading faster
+8. We can use third party Order system app using Generic External Order system integration to have other people handle the Ordering system
+9. We can also integrate Payment service provider to the HCL Commerce through payment tokenization
+10. As we can see, we can integrate many third party services through web services or REST apis
+
+015
+NOTES:
+1. Apply Pay on the Web integration is added back in Version 8
+2. 
+
+
+016
+NOTES:
+1. New stores are Emerald and Sapphire Stores, each corresponding for B2B and B2C ecommerce model
+
+
+017
+NOTES:
+1. Cloud native are applications that have been created with cloud deployment in mind
+
+
+018
+NOTES:
+1. Catalog is similar to a brochure of the products of organization
+2. Frameworks of HCL commerces refers to the features available in HCL Commerce
+3. Calculation framework is used to calculate prices of each order
+
+
+
+019
+NOTES:
+1. Web server will be the entrypoint of the users
+2. We developers will be interacting with RAD
+	> we can deploy changes done in RAD to either WebSphere Liberty server or WebSphere Application server
+3. HCL Commerce transaction servers
+4. Any customization of the backend servers will be residing with HCL Commerce transacton server
+5. Developer will have their own development database
+6. In V9, we still need to have 1 to 1 mapping between unqiue WebSphere application server of a company and its Database
+	> cant have google and yahoo webpshere app to a single database
+7. Request from any channel (Mobile, Web, Kiosk) will enter HCL Commerce transaction server
+
+
+
+020
+NOTES:
+1. BOD is not supported in V9 nowadays. Name-value pair are more commonly used
+
+
+
+022
+NOTES:
+1. Optimistic locking allows the isolation level in database transactions to be lowered from "repeatable read" to "read committed". With this, Transaction feature is added and made to be concurrent
+
+
+
+023
+NOTES:
+1. Service layer is used to separate logic for Presentation and Business
+2. Database schema contains 600 tables
+
+
+
+030
+NOTES:
+1. Task commands have access policies to define which can execute specific Tasks
+
+
+
+032
+NOTES:
+1. Controller commands returns view name to specify which View to display. It can also not return a view, for example downloading a file
+
+
+
+033
+NOTES:
+1. PvC adapter is for phone. Program 
+
+
+037
+NOTES:
+1. Dynacache is responsible for caching products to the customer. This is to ensure that the users will have the most searched product at the least amount of time
+2. Business logic facade invoke the appropriate Controller or Task command
+3. Action forward uses the Global Forward file in order to determine which View the Request Processor will redirect the Action
+
+
+038
+NOTES:
+1. xC container can not connect to the Database
+
+
+Questions
+1. How to scale Application server up? Since you told us that we can only have 1 to 1 mapping to Application server to Database
+2. Can you show us how flow of the process with regards to Actions by navigating us through the code?

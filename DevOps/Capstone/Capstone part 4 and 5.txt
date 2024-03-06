@@ -1,0 +1,49 @@
+Capstone part 4 and 5
+
+Creating TestJob
+1. Create a Dummy Job
+	> "TestJob"
+	> use Freestyle Project template
+	> in the Post-build Actions section, add a post-build action
+		- Choose Email Notification
+		- enter the email of the recipient
+	> Save
+
+
+
+
+Setting up Email Notification Configuration
+2. Go to Email Notification Settings of Jenkins
+	> Dashboard > Manage Jenkins > Configure System > Email Notification Section
+	> for email notification using gmail, fill up informations with
+		a. SMTP server = smtp.gmail.com	
+		b. Check "Use SMTP Authentication"
+		c. Username = username of gmail account to be used for sending email
+		d. Password =  password of the same gmail account
+		e. Check "Use SSL"
+		f. STMP Port = 465
+	> Save
+3. Turn off Two step verification in the gmail account you used
+	https://support.google.com/accounts/answer/1064203?hl=en
+4. Turn on the "Allow Less Secure App" settings in gmail account
+	https://myaccount.google.com/lesssecureapps
+
+
+
+
+Configure Pipeline
+5. Go to DockerJob	
+	> in the Post-build Actions section, add a post-build action
+		- Choose Build other projects
+		- Enter TestJob name
+	> Save
+
+
+
+
+Test the Pipeline and Email Notification
+6. Create a change in BankingMicroservice github repo
+	> edit App.java
+	> commit and push the change
+7. Check the MavenJob, DockerJob, and TestJob build history
+8. Check inbox of the email you set in TestJob's email notification

@@ -1,0 +1,146 @@
+  ObjectMapper for JSON Serialization/Deserialization
+
+Jackson
+	> a powerful and efficient Java library that handles the serialization and deserialization of Java objects and their JSON representations
+	> widely used libraries for this task
+	> runs under the hood of many other framework
+		-> ex: Spring Framework default library for serialization/deserialization is Jackson
+
+
+Installing Jackson
+	> the dependency below installs two libraries
+		1. jackson-annotations
+		2. jackson-core
+	
+Dependency
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.13.1</version>
+</dependency>
+
+
+Classes used
+1. ObjectMapper
+	> used to serialization/deserialization of POJO and JSON string
+2. JsonNode
+	> used to read the JSON tree model from a String
+	> only allows reading of JSON tree model using get(String key)
+		-> for mutator method access, must use Subclasses like ObjectNode or ArrayNode
+	> can be created using ObjectMapper.readTree(String content) method
+3. ObjectNode
+	> extends to JsonNode class
+	> unlike JsonNode, ObjectNode allows modification of JSON tree model using methods like put(String key, Object value)
+
+
+
+
+
+ObjectMapper
+	> class found in "com.fasterxml.jackson.databind" package
+	> can serialize and deserialize two types of objects:
+		1. Plain Old Java Objects (POJOs)
+		2. General-purpose JSON Tree Models
+	> for POJO to JSON, you will only need the Object to create JSON
+	> for JSON to POJO, you will need the JSON string and the Class reference to map the JSON values to
+
+
+Constructors of ObjectMapper
+1. ObjectMapper()	
+	> default constructor
+	> construct the default JsonFactory as necessary
+	> use SerializerProvider as its SerializerProvider and BeanSerializerFactory as its SerializerFactory
+2. ObjectMapper(JsonFactory jf)
+	> Constructs instance that uses specified JsonFactory for constructing necessary JsonParsers and/or JsonGenerators.
+3. ObjectMapper(JsonFactory jf, DefaultSerializerProvider sp, DefaultDeserializationContext dc)
+	> Constructs instance that uses specified JsonFactory for constructing necessary JsonParsers and/or JsonGenerators, and uses given providers for accessing serializers and deserializers.
+4. ObjectMapper(ObjectMapper src)
+	> protected constructor
+	> Copy-constructor, mostly used to support copy().
+
+
+Features of ObjectMapper
+1. Thead-safe
+2. Serves as a factory for more advanced ObjectReader and ObjectWriter classes
+3. JsonParser and JsonGenerator objects will be used by the mapper to implement the actual reading and writing of JSON
+
+
+
+Methods of ObjectMapper class
+
+writeValue(JsonGenerator g, Object value)
+writeValue(File resultFile, Object value)
+writeValue(OutputStream out, Object value)
+	> used to write the Object value's serialized output (JSON) into some destination
+	> throws several Exceptions
+		- IOException,
+               	- JsonGenerationException,
+               	- JsonMappingException
+
+String writeValueAsString(Object o)
+	> converts the specified Object input into a JSON String
+
+<T> T readValue(String content, Class<T> valueType)
+	> read the JSON string and maps it into a Class of specified type
+		-> we can also provide different source for String like byte array, InputStream, JsonParser, etc
+	> returns a Class of type T whose field values comes from the JSON string
+	> ex: readValue(empJson, Employee.class) will return an instance of Employee Class
+
+JsonNode readTree(String content)
+	> converts a JSON string into JsonNode
+
+
+
+
+JsonNode
+	> Base class for all JSON nodes, which form the basis of JSON Tree Model that Jackson implements
+	> most accessor ("getters") are included in this base class
+	> for mutators ("setters", etc), must use subclasses like Object Node and ArrayNode
+	> JsonNode object can be created using readTree(String content) of ObjectMapper class
+
+Methods
+get(String fieldName)
+	> method for accessing value of the specified field of an object node
+
+
+
+
+ObjectNode
+	> subclass of JsonNode
+	> with this Class, most mutators can be access to modify or mutate the Json tree model
+
+Methods
+put(String fieldName, Object value)
+	> adds another field into the JSON Tree model
+
+toString()
+toPrettyString()
+	> converts the JSON tree model ObjectNode have into a String
+	> toPrettyString() adds indentation and newLines to prettify the JSON String
+
+
+
+EX:
+Converting Object into JSON
+
+ObjectMapper mapper = new ObjectMapper();
+Employee emp = new Employee(1, "John", "CEO");
+String empJson = mapper.writeValueAsString(emp)
+
+
+
+Converting JSON into Object
+ObjectMapper mapper = new ObjectMapper();
+String empJson = "{\"id\":1,\"name\":\"John\":\"position\":\"CEO\"}"
+Employee emp = mapper.readValue(empJson, Employee.class)
+
+
+
+Add field into the JSON tree model
+ObjectMapper mapper = new ObjectMapper();
+String empJson = "{\"id\":1,\"name\":\"John\":\"position\":\"CEO\"}"
+ObjectNode node = mapper.readTree(empJson);
+node.put("address", "New Delhi India")
+
+

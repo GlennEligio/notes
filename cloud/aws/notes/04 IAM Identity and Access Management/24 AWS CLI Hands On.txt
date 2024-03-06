@@ -1,0 +1,38 @@
+24 AWS CLI Hands On
+
+
+Creating Access Key for AWS CLI
+1. Login using the admin user, not the root
+2. Go to Security Credentials at the dropdown
+3. Go to "Access keys" section and create access key
+4. Select CLI and click Next
+5. Specify a description (optional)
+6. After this, you will be navigate to a Page where you can see the Access Key ID and Secret access key. This will also be the only time you can view or download the secret access key
+
+
+Using Access key for AWS CLI
+1. Enter "aws configure" in the CMD
+2. Enter the Access Key ID, Secret Access Key, and the Region code of region closest to you
+3. Now, use the "aws iam list-users" command to see the list of users 
+
+
+EX:
+C:\Users\glenn>aws configure
+AWS Access Key ID [None]: AWS_RANDOM_ACCESS_KEY
+AWS Secret Access Key [None]: AWS_SECRET_ACCESS_KEY
+Default region name [None]: ap-southeast-1
+Default output format [None]:
+
+C:\Users\glenn>aws iam list-users
+{
+    "Users": [
+        {
+            "Path": "/",
+            "UserName": "aws-glenneligio",
+            "UserId": "RANDOM_USER_ID",
+            "Arn": "arn:aws:iam::515473787988:user/aws-glenneligio",
+            "CreateDate": "2023-01-10T09:26:14+00:00",
+            "PasswordLastUsed": "2023-01-11T03:54:56+00:00"
+        }
+    ]
+}

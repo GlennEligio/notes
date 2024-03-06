@@ -1,0 +1,195 @@
+Day 18
+
+E-Spots / E-Marketing spots
+	> space reserved for specific marketing purpose in front page
+	> can be either
+		1. Content, such as advertisements
+		2. Category (ex: Valentine related catalog groups)
+		3. Specific product display
+		
+		
+	
+emsName
+	> specifies the name of the e-marketing spot that will be displayed by the widget
+	
+NOTE:
+1. Business people work with Staging Environment, where they put different Content.
+2. Staging is a replica of the Production, where business owners can use it to add content there and check if it satisfy their need
+
+
+CheckoutTopESpotDisplay.jspf
+CheckoutBottomESpotDisplay.jspf
+	> responsible for E-marketing spot display
+	> the emsName value is responsible for what content to display in the said e-marketing spots
+	> located in crs-web/WebContent/AuroraStorefrontAssetStore/Snippets/ReusableObjects
+	
+	
+	
+AuroraESite vs AuroraStorefrontAssetStore
+	> AuroraESite refers to the Store site while the AuroraStorefrontAssetStore refers to the assets used in the Storefront
+	> A Store site need to subscribe to a StorefrontAssetStore and CatalogAssetStore
+	> StorefrontAssetStore and CatalogAssetStore can be 'shared' by one or more Store sites
+	
+	
+Web Activities
+	> wraps around all the Marketing content like E-Marketing spots, Content spots, Category spot
+	> we can configure Activities by specifying
+		1. The date in which the activity
+		2. Customer segment which the activity is visible
+			- Who are in all
+			- Who are not in any
+			- Who are 
+	
+	
+Customer Segments
+	> subset of the Users/Shoppers
+	> ex: customer segment for women age 30 above
+	
+	
+NOTES:
+1. Default content of the E-Marketing Spot will be displayed regardless of the Customer Segment
+2. In order to make a specific content for E-Marketing Spot display based on a condition (ex: Customer segment), we SHOULD NOT add the said content in the default content of the E-Marketing spot.
+
+
+
+SEARCH RULES:
+https://help.hcltechsw.com/commerce/9.0.0/management-center/tasks/tsbsearchsupert.html
+
+Search Rules
+	> rules to specifies the outcome/order of the search result
+	> we can specify different actions to do like
+		1. Add or Replace Search Criteria
+	> uses for creating Search Rules includes:
+		1. redirecting user's search result
+	
+Add or Replace Search Criteria
+	> we can specify the following in this page
+		1. Matching rules
+		2. Search terms to be replaced
+		3. Action to do (add or replace)
+		4. Search term to replace
+	
+NOTES:
+1. Make sure the Search rule have been ACTIVATED
+2. Make sure the Search rule have high priority
+	
+	
+PRESENTATION NOTES:
+1. Incomplete 02
+
+
+Price rules:
+https://help.hcltechsw.com/commerce/9.0.0/management-center/concepts/cpipricerules.html
+
+Price
+	> composed of the two prices
+		1. Offer price
+		2. List price
+	> we can modify these prices based on our need and also have it applied for specific products
+		- ex: catalog Group specific sales only
+		- ex: Seasonal sales
+		
+Price Rule
+	> can be divided into two
+		1. Offer price rule
+		2. List price rule
+	> with Price rule, we can specify, based on conditions, which prices should be used for each catalog entries
+	> AuroraESite and AuroraStorefrontAssetStore contains List and Offer price rules
+	
+NOTES:
+1. Price list are DATALOADED, instead of created them for each catalog entry
+
+
+
+
+Catalog Filtering:
+https://help.hcltechsw.com/commerce/9.0.0/admin/concepts/cpncatalogfiltering_dup.html
+
+
+
+Error when logging in
+
+[9/3/23 9:50:45:008 IST] 0000006e CommerceSrvr  A com.ibm.commerce.member.facade.server.commands.LTPAAuthenticationServiceCmdImpl validateParameters The command cannot be completed because the parameter "LTPAToken" was not specified.
+[9/3/23 9:50:45:009 IST] 0000006e ExtendedInfo  I   CWXFR9010I: Extended information : [componentId=com.ibm.commerce.member] 
+[9/3/23 9:50:45:014 IST] 0000006e BusinessObjec I com.ibm.commerce.foundation.client.facade.bod.servlet.spring.BusinessObjectDocumentController getFailedForward(HttpServletRequest,HttpServletResponse,AbstractBusinessObjectDocumentException) 2160: The command cannot be completed because the parameter "LTPAToken" was not specified.
+
+
+
+
+
+Calculation Framework
+CALMETHOD
+	> contains information about Calculation method
+	
+Calculation process
+1. When an item is added in the Cart, it will call OrderCalculateCmd
+2. In the Calusageid, there are different values, from -1 to -7
+	> these can be seen in the CALUSAGE table
+	> these are	
+		-1 Discount
+		-2 Shipping
+		-3 Sales Tax
+		-4 Shipping Tax
+		-5 Coupon
+		-6 Surcharge
+		-7 Shipping Adjustment
+		-8 Installment adjustment
+		-9 Surcharge Tax
+3. OrderCalculateCmd will call several TaskCommand to do the following calculation for each CALUSAGE
+
+STANDCALUSAGE
+Extending a specific TaskCommand in the CalculationFramework
+1. Create a new TaskCommand that extends to the TaskCommand we want to modify
+2. Register the extended TaskCommand in the CALMETHOD
+
+
+notes:
+1. One CalUsage corresponds to one CalculationMethod, and one CalculationMethod corresponds to One TaskCommand.
+2. 
+
+
+STENCALUSG
+ > table that contains mapping for the Calusageid and the CalMethods to execute
+ 
+ 
+ 
+Advance topics tomorrow: Day 19
+Tax calculation and CALMETHOD
+Invoke external webservice using WCS out of the box
+	
+	
+ECException
+	> parent exception provided by WCS
+	> extended by the following classes
+		- ECApplicationException
+		- ECSystemException
+	
+ECApplicationException
+	> logic errors
+	
+	
+Logger instead of System.out
+	> systemout is performance instensive
+	> log4j can be used as logger
+	> logger are configurable, and it writes the logs in the file instead of console
+	> logger also optimized the writing and reading of the log files
+	> System.out logs are contain in 
+	- C:/WCDE_V9/wasprofile/logs/server1/SystemOut.log
+	
+System.out logging
+	> log files are limited to 1mb size
+	> System.out and System.err log files are located under C:/WCDE_V9/wasprofile/logs/server1/SystemOut.log and SystemErr.log
+	
+	
+Logger logging
+	> log files are located in the *.l
+	
+Logger level
+	> ALL, CONFIG, FINE, FINER, FINEST, INFO, OFF, SERVERE, WARNING
+	
+WAS Console
+	> Server tab -> WebSphere Commerce Test Server, right click -> Administration -> Run Administration console
+	> Troubleshooting -> Logs and trace
+	
+Changing file size limit of logs
+	> Troubleshooting, Logs and trace, server1, Diagnostic trace service

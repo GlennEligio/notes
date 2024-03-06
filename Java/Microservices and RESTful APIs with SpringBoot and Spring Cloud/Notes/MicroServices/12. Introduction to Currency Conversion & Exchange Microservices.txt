@@ -1,0 +1,38 @@
+12. Introduction to Currency Conversion & Exchange Microservices
+
+Currency Exchange Microservice
+	> responsble for providing CONVERSION RATES of currency
+	> have a database where it can look up for conversion rates
+
+URL:
+http://localhost:8000/currency-exchange/from/USR/to/INR
+
+JSON response
+{
+    "id":10001,
+    "from":"USD",
+    "to":"INR",
+    "conversionMultiple":65.00,
+    "environment":"8000 instance-id"
+}
+
+
+Currency Conversion Microservice
+	> responsible for providing a CONVERSION VALUE of given amount of currency
+	> calls the Currency Exchange Microservice to get the conversion rate
+
+URL:
+http://localhost:8100/currency-exchange/from/USR/to/INR/quantity/10
+
+JSON response
+{
+    "id":10001,
+    "from":"USD",
+    "to":"INR",
+    "conversionMultiple":65.00,
+    "quality":10,
+    "totalCalculatedAmount":650.00,
+    "environment":"8000 instance-id"
+}
+
+

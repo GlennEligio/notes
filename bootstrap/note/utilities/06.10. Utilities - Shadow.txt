@@ -1,0 +1,15 @@
+06.10. Utilities - Shadow
+
+X. Shadow
+1. Shadow
+	> add or remove shadows to elements
+	> we can specify how much shadow an element have
+
+NOTATION:
+shadow-{value}
+	> not passing a value will result in regular shadow (sm < reg < lg)
+
+Values
+none
+sm
+lg

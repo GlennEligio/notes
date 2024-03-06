@@ -1,0 +1,366 @@
+13 Sorting, Pagination, and Filtering (Task App)
+
+Contents:
+118 Working with Timestamps
+119 Filtering Data
+120 Paginating Data
+121 Sorting Data
+
+
+
+
+
+
+
+118 Working with Timestamps
+
+Function/Objects used
+
+timestamp: boolean
+ > a property in the SchemaOptions
+ > by default, it is set to false
+ > when set to TRUE, will add two new Field to the Document
+	1. createdAt: Date
+		- defines when the Document is created
+		- date is written in ISO instant format
+		- ex: 2011-12-03T10:15:30Z
+	2. updatedAt: Date
+		- defines when the Document is LAST UPDATED
+		- date is written in ISO instant format
+
+GOAL:
+1. Add timestamp to the SchemaOption, which will add "createdAt" and "updatedAt" Fields to the User and Task Documents
+
+EX:
+// Task Schema
+const taskSchema = new mongoose.Schema(
+  {
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+  },
+  { timestamps: true }
+);
+
+
+// User Schema
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Email is invalid");
+        }
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 7,
+      validate(value) {
+        if (value.includes("password")) {
+          throw new Error(`Password can not include "password"`);
+        }
+        return true;
+      },
+    },
+    age: {
+      type: Number,
+      default: 0,
+      validate(value) {
+        if (value < 0) {
+          throw new Error("Age must be a positive number");
+        }
+        return true;
+      },
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    id: false,
+    timestamps: true,
+  }
+);
+
+userSchema.virtual("tasks", {
+  ref: "Task",
+  localField: "_id",
+  foreignField: "owner",
+});
+
+
+
+
+
+
+
+
+
+119 Filtering Data
+
+Function/Objects used
+match: {[name: string]: value}
+ > a property to the options parameter of the Model.populate() method
+ > similar syntax to the query object of Model find methods
+ > used to "filter" the Models that will be populating the local Document Field
+ > mostly used for the properties that will be populated by an array/list of Models (1-N relationship)
+	- ex: Order's "items" Field which is populated with Item
+	- here, we can use the match to filter which Items will be included
+
+EX:
+In this example, we will populate the User model instance "tasks" virtual Field with Tasks whose "completed" field is true
+
+await req.user.populate({
+  path: "tasks",
+  match: {
+    completed: true
+  }
+})
+
+
+
+GOAL:
+1. Add the current User's "_id" to the Task automatically when we create one
+2. Filter the Tasks of the current User return by the GET /tasks by "completed" property either by using
+	> Task.find()
+		- here, we will filter the Task by the "owner" field
+		- we can add another Fields to be used for filtering by adding properties to query argument
+	> user.populate()
+		- here, we will populate the "tasks" virtual properties of the current User and using the "match" in options to filter it
+
+EX:
+// POST /tasks
+router.post("/tasks", auth, async (req, res) => {
+  const task = new Task(req.body);
+  task.owner = req.user._id;
+  try {
+    await task.save();
+    res.status(201).send(task);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// versions of GET /tasks
+router.get("/tasks", auth, async (req, res) => {
+  const query = {
+    owner: req.user._id,
+  };
+
+  if (req.query.completed) {
+    query.completed = req.query.completed === "true";
+  }
+
+  console.log(req.query);
+
+  try {
+    const tasks = await Task.find(query);
+    res.send(tasks);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+
+router.get("/tasks", auth, async (req, res) => {
+  const match = {
+    owner: req.user._id,
+  };
+
+  if (req.query.completed) {
+    match.completed = req.query.completed === "true";
+  }
+
+  try {
+    await req.user.populate({ path: "tasks", match });
+    res.send(req.user.tasks);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+120 Paginating Data
+
+Function/Objects used
+options: object
+ > a property we can add to the object that we pass to the Model.populate()
+ > this is in the same level as the "match" and "path" properties
+ > this option property takes an object whose properties define the population process
+ > option's property includes
+	1. limit: number
+		- defines the limit of the Model that will populate the Local Document Field array
+	2. skip: number
+		- defines the number of Model to be skipped when populated the Local Document Field array
+ > NOTE: if any of these two in not defined, they will be IGNORED by Mongoose
+
+EX:
+In this options object, the Mongoose will fetch the next three Model after the three skipped Models, which is the 4th, 5th, and 6th
+
+options: {
+  limit: 3,
+  skip: 3
+}
+
+
+
+Pagination
+ > a technique for serving data by "Pages"
+	- Pages refers to a portion of the whole list of data
+	- like a Page in a book, each of the Page have properties like
+		1. Page number
+		2. Page size
+ > used to serve just a portion of the whole list of data in order to not overload the Page
+
+Pagination in Mongoose/MongoDB
+ > in Mongoose, we have the "limit" and "skip"
+ 	- limit is synonymous with the Page size
+	- skip is derived from the Page number
+		-> dividing the limit to skip then adding ONE will return the Page number
+		-> this will return the Page number IF we start with Page 1
+		-> not adding will return Page number for 0th index Pages
+
+GOAL:
+1. Add pagination to GET /tasks result by using option.limit and option.skip in user.populate()
+
+
+EX:
+// GET /tasks
+router.get("/tasks", auth, async (req, res) => {
+  const match = {
+    owner: req.user._id,
+  };
+
+  if (req.query.completed) {
+    match.completed = req.query.completed === "true";
+  }
+
+  try {
+    await req.user.populate({
+      path: "tasks",
+      match,
+      options: {
+        limit: req.query.limit,
+        skip: req.query.skip,
+      },
+    });
+    res.send(req.user.tasks);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+
+
+
+
+
+
+
+
+
+121 Sorting Data
+
+Function/Object used
+sort: {[name: string]: -1 | 1}
+ > another property we can add in the "options" property to the object we pass in the Model.populate()
+ > the object we pass in the "sort" contains properties which corresponds to the Model's field that we are trying to populate
+ > we can only pass TWO values to these properties, which defines if the sorting is DESCENDING or ASCENDING
+	- -1 for descending
+	- 1 for ascending
+
+EX:
+options: {
+  sort: {
+    createdAt: -1
+  }
+}
+
+
+GOAL:
+1. Add a feature to GET /tasks endpoint to take a query "sortBy" which takes a string with syntaxx
+	> field:{asc|desc}
+	> ex: localhost:3000/tasks?sortBy=createdAt:desc
+2. Use the sortBy query to sort the Task Models that we populate to the User's "tasks" virtual property
+
+
+EX:
+// GET /tasks?completed=true
+// GET /tasks?limit=2&skip=3
+// GET /tasks?sortBy=createdAt:desc
+router.get("/tasks", auth, async (req, res) => {
+  const match = {};
+  const sort = {};
+
+  if (req.query.completed) {
+    match.completed = req.query.completed === "true";
+  }
+
+  if (req.query.sortBy) {
+    const parts = req.query.sortBy.split(":");
+    sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
+  }
+
+  try {
+    await req.user.populate({
+      path: "tasks",
+      match,
+      options: {
+        limit: req.query.limit,
+        skip: req.query.skip,
+        sort,
+      },
+    });
+    res.send(req.user.tasks);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,162 @@
+Day 9 Spring
+
+Spring Cloud Config Server
+	> Spring Cloud Config is Spring's client/server approach for storing and serving distributed CONFIGURATIONS across multiple applications and environments.
+	> This configuration store is ideally versioned under Git version control and can be modified at application RUNTIME.
+
+
+Hystrix
+	> The Hystrix framework library helps to control the interaction between services by providing fault tolerance and latency tolerance. 
+	> It improves overall resilience of the system by isolating the failing services and stopping the cascading effect of failures.
+
+
+
+I. CONFIGURING SPRING CLOUD CONFIG SERVER
+
+1. Create Spring Boot project in Spring Initialzr
+	> name AccConfigServer
+	> Config Server dependency
+
+
+2. Create configserverdemo repository in github
+
+3. Inside repo, create a application.properties
+
+4. Inside the application.properties, add the following
+
+gateway.ip=172.20.0.191
+token.expiration_time=864000
+token.secret=SAMPLE_TOKEN_SECRET
+login.url.path=/users/login
+
+
+5. Inside AccConfigServer, 
+	- add these inside application.properties
+
+spring.application.name=appconfigserver
+server.port=8012
+spring.profiles.active=git
+spring.cloud.config.server.git.uri=https://github.com/GlennEligio/configserverdemo
+spring.cloud.config.server.git.username=glenneligio@gmail.com
+spring.cloud.config.server.password=CONFIG_SERVER_PASSWRD
+spring.cloud.config.server.git.default-label=main
+spring.cloud.config.server.git.clone-on-start=true
+
+
+	- add @EnableConfigServer in the @SpringBootApplication Main App
+
+
+
+6. In postman, call
+	> localhost:8012/appconfigserver/git
+	> GET http method
+	> we should get an output like this
+
+
+{
+    "name": "myappconfigserver",
+    "profiles": [
+        "git"
+    ],
+    "label": null,
+    "version": "e04b9859044c5484baba8bf846e1a479fa735632",
+    "state": null,
+    "propertySources": [
+        {
+            "name": "https://github.com/GlennEligio/configserverdemo/file:C:\\Users\\glenn\\AppData\\Local\\Temp\\config-repo-5390138915566384439\\application.properties",
+            "source": {
+                "gateway.ip": "192.168.254.254",
+                "token.expiration_time": "864000",
+                "token.secret": "SAMPLE_TOKEN_SECRET",
+                "login.url.path": "/users/login"
+            }
+        }
+    ]
+}
+
+
+
+
+7. Create source folder under root project folder
+	> give it any name
+
+
+
+8. Copy the application.properties from src/main/resources to the source folder we made
+
+
+
+9. Copy the contents of application.properties inside Github repo to the application.properties of source folder
+
+
+10. Move the source folder to the src/main/resources
+
+
+
+11. Add these following lines to the application.properties of src/main/resources
+	> change spring.profiles.active to native
+
+
+spring.profiles.active=native
+spring.cloud.config.server.native.search-locations=classpath:/myres
+
+
+12. In postman, call
+	> localhost:8012/appconfigserver/native
+	> GET http method
+	> we should get an output like this
+
+
+{
+    "name": "myappconfigserver",
+    "profiles": [
+        "native"
+    ],
+    "label": null,
+    "version": null,
+    "state": null,
+    "propertySources": [
+        {
+            "name": "class path resource [myres/application.properties]",
+            "source": {
+                "gateway.ip": "192.168.254.150",
+                "token.expiration_time": "864000",
+                "token.secret": "SAMPLE_TOKEN_SECRET",
+                "login.url.path": "/users/login"
+            }
+        }
+    ]
+}
+
+
+
+
+II. CONFIGURING HYSTERIX
+	> use SpringMSClient	
+
+1. Add Hysterix dependencies
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+    <version>2.2.9.RELEASE</version>
+</dependency>
+
+
+
+2. In the Main App of SpringBootApplication
+	> add @EnableHystrix 
+
+
+3. In the AppDelegate
+	> add a method inside AppDelegate
+		- return type String
+		- return a error message
+	> add @HystrixCommand() to the method that uses RestTemplate
+		- pass the method that we made that returns a error message
+
+4. Run the SpringBootApplication
+
+
+5. Call the Controller route method that 
+

@@ -1,0 +1,835 @@
+Bash Scripting Course
+
+Contents
+01 Introduction - Creating a Shell Script
+02 Using Input and Output and Returning Results
+03 Working with Environment Variables
+04 Passing and Using Arguments in Shell Scripts
+05 Using Input and Output Redirection
+06 Controlling and Manipulating Running Scripts
+07 Working with Built-in Variables
+08 Using and Manipulating Variables
+09 Applying Advanced Variables Manipulations
+10 Formatting Variable Output
+11 Creating and Using Functions
+12 Using Parameters and Return Codes in Functions
+13 Exercise: Creating Bash Scripts
+14 Take test
+
+
+
+
+
+
+
+
+
+
+
+
+01 Introduction - Creating a Shell Script
+
+Linux variables
+PATH
+ > refers to the directories where it will search the executable/scripts to use given a specified command
+SHELL
+ > refers to the directory of Shell being used in OS
+0
+ > refers to the Shell name being used
+
+
+Linux commands used
+echo $Variable
+echo "SomeRandomString"
+ > used to either print a variable or a string
+ > ex: echo $SHELL 
+	- will print shell that is being used
+
+
+chmod ((+ | -)(r | w | x)) filename
+ > stands for change mode
+ > used to add permissions to a file
+ > ex: chmod +x script.js 
+	- will add execute permission to all user group to the "script.js" file
+
+
+variable=variable<somerandomstring>
+ > used to edit/change the variable value
+ > ex: PATH=$PATH:/scripts/
+
+
+Shell
+ > intepreter of the bash scripts
+ > with this, we can access all the commands available in Shell like echo, mkdir, etc
+ > Shell syntax used will depend on the
+	1. OS used
+	2. Version of Shell 
+
+
+Knowing which Shell is being used in OS/CLI
+ > to check for the Shell being used, we can either print the variables
+	1. SHELL - directory where Shell is located
+	2. 0 -  the name of the Shell
+ > ex: echo $SHELL and echo $0
+
+
+BASH
+ > stands for Bourne Again Shell
+ > a version of Shell
+
+
+Shell scripts
+ > Shell scripts file have no mandatory SYNTAX
+ > Though theres a convention where we typically use ".sh" extension for Shell scripts
+
+
+Writing Shell script
+1. Start by denote which Shell that it applies to
+	> we do this by typing the Shebang (#!), then followed by the directory where the Shell is located (the SHELL variable)
+	> ex: #!/bin/bash
+2. To comment, we will need to use the pound symbol (#)
+3. Then we can start invoking Linux built in commands like echo, mkdir, ls, etc
+
+EX:
+#!/bin/bash
+# Some random comment
+clear
+echo "Hello World!"
+
+
+Executing the Shell script
+ > to execute the Shell script, we will to specify the location of the script itself
+	- ex: ./script.sh
+ > just passing the script filename when you are in the same directory will cause an error
+	- ex: script.sh 
+	- will throw error
+ 
+
+Executing the Shell script ANYWHERE
+ > to execute Shell script anywhere, we will need to add the parent directory of the Shell script to the PATH variable
+ > to do so, we will edit the PATH variable to add the said directory
+ > ex: PATH=$PATH:/scripts/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+02 Using Input and Output and Returning Results
+
+Bash builtin commands used
+read
+ > used to read the contents of a line into a variable
+
+
+Using Input and Output and Returning Results
+ > to add input and output functionality with the bash script, we can use the "read" and "echo" commands
+ > with read, we can make the script prompt and read its output
+
+EX:
+ > this script will prompt the user to enter the gear id of the project to fetch
+ > it will then print the said gear id
+
+#!/bin/bash
+clear
+echo
+
+# Continue after reading 6 characters
+read -n 6 -p "Enter the gear id: " gear_id
+
+echo
+echo "Retrieving source code for Project " $gear_id
+echo
+
+
+
+
+
+
+
+
+
+
+
+03 Working with Environment Variables
+
+Linux command
+env
+ > used to print the Environment variables presend in the Linux server
+
+pwd
+ > returns the public working directory where we are currently
+
+declare
+ > used to declare a new environment variable in the system
+
+
+
+Environment variables
+ > Listing all environment variables
+ > Using environment variable in echo command
+ > Creating environment variables
+ > Reassigning environment variable value
+ > Setting environment variables at startup
+ > Checking if environment variable exist and do something if it doesnt
+ > Checking environment variable character length
+ > Displaying environment variable only after a specific character
+
+Listing all environment variables
+ > to list all environment variables present in the system, use the "env" command
+ > ex: env
+
+Using environment variable in echo command
+ > to use the environment variables in echo command, use the syntax below
+ > SYNTAX: ${envname}
+ > EX: echo ${HOME}
+	> print HOME env var
+
+
+Creating environment variable
+ > to create an environment variable, we will need to either
+	1. use the declare command with following syntax
+	2. straight up assign a value to unexisting env var
+		- with this, the System will just create the unexisting env var
+ > SYNTAX: declare: declare [-aAfFgiIlnrtux] [-p] [name[=value] ...]
+ > EX: declare -i vmid=2323
+	- creates an INTEGER env var with name "vmid" with value 2323
+ > EX: declare -r vmid=2323
+	- same as above but the environment will be a readonly
+
+
+Reassigning environment variable value
+ > to reassign new value to environment variable value, we will use the syntax
+ > SYNTAX: envvarname=newvalue
+ > NOTE: you can assign value of different type to the environment variable (i.e. no string value to integer env var)
+ > NOTE: you cant assign value to a readonly environment variable
+ > EX: vmid=1232
+
+
+Removing an environment variable
+ > to remove an environment variable, we will use the "unset" command
+ > SYNTAX: unset envname
+ > EX: unset vmid
+
+
+Adding Environment variables at startup
+ > to configure this, we will need to edit the ".bashrc" file in the HOME directory
+ > this .bashrc file is executed when we start the ubuntu OS
+ > inside, we will just add new lines to create an environment variable
+ > EX: startupEnvVar=value
+	- when added at the end of .bashrc, this will be executed at startup, hence creating the environment variable
+
+
+Checking if environment variable exist and do something if it doesnt
+ > to do this, we can use "echo" command and add expression inside it
+ > ex: echo ${fakeVar-"Default text"}
+	- if fakeVar exist, the fakeVar value will be used
+	- else the default text is used
+
+
+Checking environment variable character length
+ > to do this, we will use the "echo" command, then inside the expression, we will use the pound sign
+ > when pound sign is used in a variable, it will return the character length of it
+ > ex: echo ${#PATH}
+
+
+Displaying environment variable only after a specific character
+ > to do so, we will use the expression below
+ > SYNTAX: variable#*delimiter
+ > EX: echo ${rovar#*i} if rovar=Halifax
+	- this will display all characters after the "i", which will be "fax"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+04 Passing and Using Arguments in Shell Scripts
+
+Bash keywords used
+if, fi
+ > used to enclose an if statement
+
+test
+ > used to define the condition to meet in order to execute commands inside then
+
+then
+ > to define the commands to execute
+
+exit
+ > used to exit the Bash Script
+
+
+
+Arguments in Shell scripts
+ > we can add Arguments in Shell script, which can be used inside the script itself
+ > these arguments are space separated
+	- ex: args.sh user1 file1
+ > this makes our Shell script MODULAR and REUSABLE
+
+
+Accessing arguments
+ > to access arguments, we will use the syntax $N
+ > SYNTAX: $N
+	- where N is the 1st index variable
+ > EX: $1 will be the first variable passed
+
+
+Creating Conditional Statements in Bash script
+ > to create a conditional statement in Bash, we will need two things
+	1. "if" and "fi" to enclose an if statement
+	2. "test" to create the condition to check
+	3. "then" to define the action to do when said test is PASSED
+
+
+EX:
+ > this script will be used for displaying all the files that belong to specific user under a specific folder
+
+#!/bin/bash
+if test "$1" = ""
+        then
+                echo "You must supply a username"
+                exit
+fi
+
+if test "$2" = ""
+        then
+                echo "You nust supply a file system search starting point"
+                exit
+fi
+
+clear
+echo
+echo "Please wait, seeking files owned by " $1
+echo
+find $2 -user $1
+
+
+
+
+
+
+
+
+
+
+
+05 Using Input and Output Redirection
+
+Input Redirection
+ > process of bringing in something and providing it as an input to a UNIX / Linux command
+ > uses the less than symbol (<) symbol where in
+	- left expression will be the desination of the output
+	- right expression will be the output to redirect
+ > SYNTAX:
+	commandReceiver < output
+
+
+Output Redirection
+ > process of taking the result of a UNIX or Linux command and directing it somewhere - to a printer or to a file in the file system
+ > uses the greater than symbol (>) or vertical slash (|) where in
+	- left expression will be the output to redirect
+	- right expression will be destination of output
+ > SYNTAX:
+	output > commandReceiver
+	output | commandReceiver
+
+
+Multiple Redirection command
+ > in case of multiple redirection, the expression will be evaluated from left to right
+
+
+EX:
+Input Redirection
+sort < cities.txt
+ > sort command receives cities.txt as input
+ > this sorts the cities.txt content alphabetically
+
+grep -i "t" < cities.txt
+ > this shows the line in cities.txt that contains "t" case insensitive
+
+find / -user ubuntu 2> /dev/null
+ > the "2" in the find command catches all the error
+ > which then is dumped to /dev/null, hence suppressing those messages
+
+
+Output Redirection
+cat cities.txt > /dev/stdout
+ > feeds the cat command output to the /dev/stdout, which will print the cities.txt content
+
+find /datafiles/ -size +8000c > /largefiles.txt
+ > finds files inside /datafiles/ folder with size larger than 8000 characters, then writes the output in the largefiles.txt in root directory
+
+find /home -user ubuntu | tee userfile.txt
+ > outputs the "find" command output in screen, then passes the output to be written in userfile.txt
+
+
+Input and Output Redirection
+sort < cities.txt > sortedcities.txt
+ > first expression to be evaluated is the sort < cities.txt
+ > then the output will be fed to sortedcities.txt to be written out
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+06 Controlling and Manipulating Running Scripts
+
+Controlling and Manipulating Running Scripts
+ > sometimes, when we run process, we want to either of the actions to it like
+	- pause	
+	- resume
+	- stop
+	- kill
+
+
+Controls for an active Script/Command
+ > CTRL + S for pause
+ > CTRL + Q for resume
+ > CTRL + Z for delegating the foreground process to background
+ > we can demonstrate it by executing "find /"
+
+
+Adding a Script/Command to the background
+ > to add a script or command in the background, we can add ampersand (&) at the end
+ > ex: cat /dev/random > /dev/null &
+
+
+Jobs
+ > all the commands/scripts that we executed in background will have a Job assigned to them
+ > we can control these job by either starting, stopping, or killing them entirely
+ > to see all the jobs active, use the command "job"
+
+
+Bring a Job in the foreground
+ > to bring a job to the foreground, we will use the "fg" command, then passing the job_spec, which is different from PID
+ > if no job_spec is passed, it will bring the most recent job added in
+
+
+Killing/Stopping a Job
+ > to stop a job, we can either 
+	1. use its job_spec or PID using the "kill" command\
+	2. bring it to foreground and use CTRL + C
+ > either
+	kill %[job_spec]
+	kill PID
+
+
+Disowning a Job
+ > when we disown a Job, we are dettaching this Job to the specific user's Shell and into the root Shell
+ > this means that the Job will persist even if we logout/close the user Shell
+ > to disown a job, we will use
+	- disown -h $[job_spec]
+	- disown -h [PID]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+07 Working with Built-in Variables
+
+Built-in variables in Shell
+ > can be accessed as well inside the bash scritps
+
+?
+ > defines the exit status code of the LAST executed command
+ > 0 for most of time for successful command
+
+
+
+Built-in variables inside a Bash script
+
+0
+ > the name of the script being ran
+ > by default, the 0th argument of the script is the name of script itself, the next argument ($1) will be the first argument passed
+ > if we execute machine_stats.sh and inside it print the 0 variable, it will print "machine_stats.sh"
+
+#
+ > the number of arguments passed in the script
+
+
+EX:
+#!/bin/bash
+clear
+echo "Computer name:" $HOSTNAME
+echo "Currently logged in user:" $USER
+echo "Name of the script:" $0
+echo "Number of parameters passed to this script:" $#
+echo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+08 Using and Manipulating Variables
+
+Using Variables
+ > to use a variable (environment, built-in, input variables), we will use the syntax where we use dollar sign, followed by the variable name
+ > SYNTAX:
+	$variableName
+
+Injecting expression and using its output
+ > to inject an expression and use its output, we will need to enclose the expression inside back ticks (`)
+ > SYNTAX:
+	`expression`
+
+
+EX:
+#!/bin/bash
+clear
+echo
+read -p "Enter city name:" cityname
+echo "Computer:" $HOSTNAME >> $HOSTNAME"_stats.txt"
+echo "City:" $cityname
+echo "Linux version info:" `uname -a` >> $HOSTNAME"_stats.txt"
+echo "Shell version:" $BASH_VERSION >> $HOSTNAME"_stats.txt"
+clear
+echo
+echo $HOSTNAME"_stats.txt file written successfully."
+echo
+
+
+
+
+
+
+
+
+
+
+09 Applying Advanced Variables Manipulations
+
+Applying Advanced Variables Manipulations
+1. Defining Scope of Shell Script variables for Child Script(s)
+2. Defining Scope of Function variables
+
+Function
+1. Creating a function
+2. Executing a function
+
+
+Scope of Shell Script variables
+ > by default, variables defined in shell script is only availabe within the script itself
+ 	- this means that the Child Scripts executed inside a Script will have NO ACCESS to the variables of its Parent script
+ > to make a variable accessible to the Child shells, we will need to use the "export" keyword
+ > SYNTAX:
+	export variableName
+ > EX:
+	servername="prod1"	
+	export servername
+
+
+Scope of Shell's Function variables
+ > by default, all variables defined inside a function is accessible to outside of the function itself
+ > to make a function variable locally scoped (only available inside the function), we will need to use the "declare" keyword
+ > SYNTAX:
+	declare varName=varValue
+ > EX:
+	declare costcenter="Toronto"
+
+
+Creating a function
+ > to create a function, we will use the following syntax
+ > SYNTAX:
+	fnName() {
+	  // logic and commands
+	}
+ > EX:
+	write() {
+	  echo "Hello world"
+  	}	
+
+
+Executing a function
+ > to execute a function, we will need to type the function name as if its a command
+ > ex: 
+	func1() {
+	}
+	func2() {
+	  func1
+  	}
+
+
+// call_export.sh and export_var.sh - Parent and Child scripts
+servername="prod"
+export servername
+
+./export_var.sh
+
+#export_var.sh
+clear
+echo
+echo "The server name is "$servername
+echo
+
+
+
+// scope.sh - Script with function and locally scope variable
+#!/bin/bash
+func1()
+{
+        #declare sets the variable scope to local within the function
+        declare costcenter="Toronto"
+        #costcenter="Toronto"
+}
+
+func2()
+{
+        func1
+        echo "Cost center is" $costcenter
+}
+
+func2
+
+
+
+
+
+
+
+
+
+
+
+10 Formatting Variable Output
+
+Escaping input
+ > in bash shell, there are special characters that have special use
+	ex: "" for strings, $ for fetching variables
+
+Evaluating expression output and inject output in string
+ > in bash shell, we can inject an expression and use its output anywhere, like in an "echo" command
+ > to do this, we will need to enclose the expression in backticks (``)
+ 	- ex: dateVar=`date +'%Y-%m-%d'`
+
+Using "printf" command to print messages
+ > while "echo" can be useful in most scenarios, "printf" is more customizable and can be configured to fit the need
+ > with "printf", we can create format/template to the string output, in which we can inject arguments into
+ 	- ex: printf "%s\n" $costcenter
+	- this will inject the $costcenter into the %s, hence printing "Toronto" with linefeed at the end
+
+"printf" format string syntax and specifiers
+ > with printf format string, we can add format specifiers to define the type of arguments to be passed
+ > the arguments will be injected based on the order they are added
+	- ex: printf "%s, %s, %s\n" one two three
+	- output: one two three
+ > we can also use different specified and add options to them in order to configure the argument passed
+	- ex: printf "%.3s\n" $cost
+		-> this will print the FIRST three characters of the number
+	- output: 123
+ > for more information about the printf format string, specifiers, options, etc. visit this page
+	- https://www.geeksforgeeks.org/printf-command-in-linux-with-examples/
+
+
+
+
+
+
+
+
+
+
+
+11 Creating, Using, and "Exporting" Functions
+
+Creating Functions
+ > to create a function, we will need to use the "function" keyword inside the Bash shell script, with the follwing syntax
+ > SYNTAX:
+	function name() {
+	  // function logic
+ 	}
+ > ex:
+	function 
+
+
+Using functions
+ > to use a function, we will need to use the function name as if its a command
+ > SYNTAX:
+	functionName
+
+
+"Exporting" Functions
+ > to export a function, we will use the "dot sourcing"
+ > "dot sourcing" makes it so that all the variables and functions created inside the Bash script that we executed STICK AROUND
+	- this means we can access and use the variables and function outside the Bash script
+ > to do this, we will add a dot, then space, then the Bash shell script to execute
+ > ex: . ./func_lib1.sh
+
+
+EX:
+// func_lib1.sh - used to print network config
+  GNU nano 6.2                                                           func_lib1.sh
+function userinfo()
+{
+        echo "Current user:" $USER
+        echo "User home directory path:" $HOME
+}
+
+function ipinfo(){
+        IP_VAR=`ifconfig eth0 | grep "inet " | tr -s " " ":" | \
+        cut -f3 -d ":"`
+
+        DGW_VAR=`ip route show | grep "default" | tr -s " " ":" | \
+        cut -f3 -d ":"`
+
+        echo "IP ADDRESS:" $IP_VAR
+        echo "DEFAULT GATEWAY:" $DGW_VAR
+        cat /etc/resolv.conf | grep "nameserver" | grep -v "#"
+}
+
+userinfo
+ipinfo
+
+
+
+// CONSOLE LOG
+Current user: root
+User home directory path: /root
+IP ADDRESS: 172.31.18.158
+DEFAULT GATEWAY: 172.31.16.1
+nameserver 127.0.0.53
+
+
+
+
+
+
+
+
+
+
+12 Using Parameters and Return Codes in Functions
+
+Using Parameters in Functions
+ > using parameters to the functions is similar to the Scripts
+ 	- SYNTAX: $N, where N is the Nth argument passed
+	- $0 returns the function name
+ > in the same way, passing an argument to function is similar to passing one in Scritps
+	- where you add the arguments after the function name
+	- SYNTAX: fnName arg1 arg2 arg3
+
+Returns in Function
+ > in order for us to return something from a function, we will need to use the "return" keyword
+	- note that we can return anything, from integer to strings
+ > SYNTAX: return value
+
+Return Codes in Function
+ > by default, the function will return a code if we dont explicit returned something 
+ > this return code can differ based on how the function terminated (successful, unsuccessful, etc)
+ > this return code ranges from 0-255
+
+
+EX:
+// func_args.sh
+function get_salestax ()
+{
+        if test "$1" = ""
+        then
+                echo "You must supply a full expense amount."
+                return
+        else
+                echo "Full expense amount:" $1
+                nontax_amount=`echo "$1/1.15" | bc`
+                tax_amount=`echo "$1-$nontax_amount" | bc`
+                echo "Non tax amount:" $nontax_amount
+                echo "Tax amount:" $tax_amount
+
+                # Running echo $? after the script returns the tax amount
+                return $tax_amount
+        fi
+        echo "Operation completed successfully"
+}
+
+
+
+
+
+
+
+
+
+13 Exercise: Creating Bash Scripts
+
+GOAL:
+1. Create a function in a file named func.sh
+ 	> name the function user_input
+	> the function should ask the user for a cost center
+	> the cost center variable should be available in the calling script
+2. Create a calling script called call.sh that
+	> Calls func.sh
+	> Calls the user_input function
+	> Displays the cost center entered by the user
+
+// func.sh
+function user_input
+{
+        read -p "Please enter the cost center: " costcenter
+        if test "$costcenter" = ""
+        then
+                echo "Enter a cost center..."
+                return
+}
+
+
+
+// call.sh
+#!/bin/bash
+. ./func.sh
+user_input
+echo "The cost center is: "$costcenter
+
+
+
+
+
+
+
+
+
+
+
+
+14 Take test

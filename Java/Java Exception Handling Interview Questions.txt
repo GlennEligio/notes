@@ -1,0 +1,449 @@
+Java Exception Handling Interview Questions and Answer
+
+01 Why is Exception Handling important?
+1. In order to give friendly message/prompt to the users
+	> you do not want a windows blue screen. When something does wrong and an exception occurs, it would be great to let user know that something went wrong and tech support has been notified.
+	> Additional thing we can do is to give the user a unique exception identifier and information on how to reach the tech support
+2. Enough information for the Support Team/Support Developer to debug the problem
+	> when writing code, always think about what information would I need to debug a problem in this piece of code. Make sure that information is made available, mostly in the logs, if there are exceptions
+	> It would be great to tie the information with the unique exception identifier given to the user
+
+
+
+
+
+02 What design pattern is used to implement Exception handling features in most languages?
+
+Chain of Responsibility Pattern
+ > defined as 'a way of passing a request between a chain of objects'
+ > when an exception is thrown from a method with no exception handling, it is thrown to the calling method. If there is no exception handling in that method too, it is further thrown up to its calling method and so on. This happends until an appropriate exception handler is found
+ > Ex: Loan or Leave Approval Process. When a load approval is needed, it first goes to clerk. If he cannot handle it (large amount), it goes to his manager and so on until it is approved or rejected
+
+Code example:
+/*
+ * str.toString() of method2 will throw NullPointerException
+ * since theres no exception handling method2, it will be assigned to method1
+ * and since theres no exception handling in method1, it will be passed 
+ * to main method
+*/
+public static void main(String[] args) {
+  method1();
+}
+
+public static void method1() {
+  method2();
+}
+
+public static void method2() {
+  String str = null;
+  str.toString(); 
+}
+
+Program Output:
+Exception in thread "main" java.lang.NullPointerException at
+com.rithus.exceptionhandling.ExceptionHandlingExample1.method2(ExceptionHandlingExample1.java:1
+5)
+at
+com.rithus.exceptionhandling.ExceptionHandlingExample1.method1(ExceptionHandlingExample1.java:1
+0)
+at com.rithus.exceptionhandling.ExceptionHandlingExample1.main(ExceptionHandlingExample1.java:6)
+
+
+
+
+
+
+
+03 What is the need for finally block?
+
+finally
+ > a block used alongside try and catch blocks
+ > codes inside finally block are executed REGARDLESS of whether theres an exception thrown in try block or not
+ > we use finally block in order to do cleanups of Objects that we are finished using
+ > a good use case for this is to close any connection that you used, example includes database connection, tcp connections, etc
+
+EX
+With no finally, the connection will not be closed since str.toString() will throw an exception, hence not reacing the close() call. But with finally, regards of what happens in try block, we will be able to close the connection
+
+// NO finally
+private static void method2() {
+  try {
+    Connection connection = new Connection();
+    connection.open();
+
+    // LOGIC
+    String str = null;
+    str.toString();
+  
+    connection.close();
+  } catch (Exception e) {
+    // NOT PRINTING EXCEPTION TRACE - BAD PRACTICE
+    System.out.println("Exception Handled - Method 2");
+  }
+}
+
+
+// WITH finally
+private static void method2() {
+  try {
+    Connection connection = new Connection();
+    connection.open();
+
+    // LOGIC
+    String str = null;
+    str.toString();
+  
+    connection.close();
+  } catch (Exception e) {
+    // NOT PRINTING EXCEPTION TRACE - BAD PRACTICE
+    System.out.println("Exception Handled - Method 2");
+  } finally {
+    connection.close();
+  }
+}
+
+
+
+
+
+
+03 In what scenarios is code in finally not executed?
+
+Code in finally is NOT executed only in two situations
+1. Exception is thrown in finally
+2. JVM Crashes in between (for example, System.exit())
+
+
+
+
+
+04 Will finally be executed in the program below?
+
+ANSWER: Yes, it will still be executed regards of whether theres a return statement in try-catch block or not
+
+// CODE
+private static void method2() {
+  Connection connection = new Connection();
+  connection.open();
+  try {
+    // LOGIC
+    String str = null;
+    str.toString();
+    return;
+  } catch (Exception e) {
+    // NOT PRINTING EXCEPTION TRACE - BAD PRACTICE
+    System.out.println("Exception Handled - Method 2");
+    return;
+  } finally {
+    connection.close();
+  }
+}
+
+
+
+
+
+05 Is try without a catch is allowed
+
+ANSWER: Yes it is. Though there will be no exception handling in this case
+
+// CODE
+private static void method2() {
+  Connection connection = new Connection();
+  connection.open();
+  try {
+    // LOGIC
+    String str = null;
+    str.toString();
+    return;
+  } finally {
+    connection.close();
+  }
+}
+
+// OUTPUT
+Connection Opened
+Connection Closed
+Exception in thread "main" java.lang.NullPointerException at
+com.rithus.exceptionhandling.ExceptionHandlingExample1.method2(ExceptionHandlingExample1.java:3
+3) at
+com.rithus.exceptionhandling.ExceptionHandlingExample1.method1(ExceptionHandlingExample1.java:2
+2) at
+com.rithus.exceptionhandling.ExceptionHandlingExample1.main(ExceptionHandlingExample1.java:17)
+
+
+
+
+
+06 Is try without catch and finally allowed?
+
+ANSWER: No, it will give compilation error
+
+// CODE
+private static void method2() {
+  Connection connection = new Connection();
+  connection.open();
+  try {
+    // LOGIC
+    String str = null;
+    str.toString();
+    return;
+  }
+}
+
+
+
+
+
+
+07 Can you explain the hierarchy of Exception Handling classes?
+
+NOTE:
+1. Throwable is the highest level of Error Handling classes
+
+Predefined classes
+class Error extends Throwable{}
+class Exception extends Throwable{}
+class RuntimeException extends Exception{}
+
+// Programmer defined classes
+class CheckedException1 extends Exception{}
+class CheckedException2 extends CheckedException1{}
+
+class UnCheckedException extends RuntimeException{}
+class UnCheckedException2 extends UnCheckedException{}
+
+
+
+
+
+08 What is the difference between Error and Exception?
+
+Error
+ > used in situation when there is nothing a programmer can do about an error
+ > ex: StackOverflowError, OutOfMemoryError
+
+Exception
+ > used when a programmer can handle the exception
+
+
+Un-Checked Exception
+ > RuntimeException and classes that extend RuntimeException are called unchecked exceptions
+ > Subclasses of subclasses of RuntimeException are also included
+ > ex: RuntimeException, UnCheckedException and UnCheckException
+
+Checked Exception
+ > Other Excetpion Classes (which does not extend to RuntimeException and its subclasses) are called checked exceptions
+ > ex: Exception (except RuntimeException), CheckedException1, CheckException200000000000000000000000000000000000000000000000000
+
+
+
+
+
+
+09 How do you throw an exception from a method?
+
+ANSWER:
+ > use 'throw' keyword and pass an instance of an Exception
+
+EX:
+class AmountAdder {
+  static Amount addAmounts(Amount amount1, Amount 2) {
+    if(!amount1.currency.equals(amount2.currency) {
+      throw new RuntimeException("Currencies don't match");
+    }
+    return new Amount(amount1.currency, amount1.amount + amount2.amount)
+  }
+}
+
+
+
+
+
+
+10 What happends when you throw a CheckedException?
+
+ANSWER: The CheckedException throws a Compiler error
+
+EX:
+class AmountAdder {
+  static Amount addAmounts(Amount amount1, Amount 2) {
+    if(!amount1.currency.equals(amount2.currency) {
+      // COMPILER ERROR! Unhandled exception type
+      throw new Exception("Currencies don't match");
+    }
+    return new Amount(amount1.currency, amount1.amount + amount2.amount)
+  }
+}
+
+
+
+
+
+11 What are the options you have to eliminate compilation errors when handling checked exceptions?
+
+ANSWER:
+Option 1: Declaring that a method would throw an exception
+ > we do this by adding 'throws ExceptionClass' at the end of method argument definition
+ > but, this would make it so that the calling method of this method will need to handle the Exception to be thrown
+
+Option 2: Handling the CheckedException with a try catch block
+ > with this, the method itself will be the one doing the exception handling
+
+
+EX: Option 1
+class AmountAdder {
+  static Amount addAmounts(Amount amount1, Amount 2) throws Exception {
+    if(!amount1.currency.equals(amount2.currency) {
+      throw new Exception("Currencies don't match");
+    }
+    return new Amount(amount1.currency, amount1.amount + amount2.amount)
+  }
+}
+
+public static void main(String[] args) {
+  try {
+    AmountAdder.addAmounts(amount1, amount2); 
+  } catch (Exception e) {
+    // EXCEPTION HANDLING LOGIC
+  }
+}
+
+
+EX: Option 2
+class AmountAdder {
+  static Amount addAmounts(Amount amount1, Amount 2) throws Exception {
+    try {    
+      if(!amount1.currency.equals(amount2.currency) {
+        throw new Exception("Currencies don't match");
+      }      
+      return new Amount(amount1.currency, amount1.amount + amount2.amount) 
+    } catch (Exception e) {
+      // EXCEPTION HANDLING LOGIC
+    }
+  }
+}
+
+
+
+
+
+
+12 How do you create a Custom Exception
+
+ANSWER:
+Option 1: Extending the class to RuntimeException (creates unchecked exception) 
+Option 2: Extending the class to Exception that is not RuntimeException or its subclass (creates checkedException)
+
+EX:
+// CheckedException
+// Needs to be handled like a Checked Exception when thrown/used
+class CurrenciesDoNotMatchException extends Exception {}
+
+// UncheckedException
+// Handled like an UncheckedException
+class CurrenciesDoNotMatchException extends RuntimeException {}
+
+
+
+
+
+
+13 What is the output of the program below?
+
+ANSWER:
+Compilation Error
+ > specific Exception catch block should be before the catch block for a Generic Exception
+ > in this example, the CurrenciesDoNotMatchException should be before Exception since the latter is more specific than the Exception class
+
+
+CODE:
+class AmountAdder {
+  static Amount addAmounts(Amount amount1, Amount 2) throws Exception {
+    try {    
+      if(!amount1.currency.equals(amount2.currency) {
+        throw new Exception("Currencies don't match");
+      }      
+      return new Amount(amount1.currency, amount1.amount + amount2.amount) 
+    } catch (Exception e) {
+      System.out.println("Handled Exception");
+    } catch (CurrenciesDoNotMatchException e) {
+      System.out.println("Handled CurrenciesDoNotMatchException");
+    }
+  }
+}
+
+
+
+
+
+14 How do you handle multiple exception types with same exception handling block?
+
+ANSWER:
+ > This is a new feature in Java  7
+ > You do this by using the OR symbol (|) to separate the exceptions within the same catch block
+
+EX:
+try {
+ ...
+} catch (IOException | SQLException ex) {
+ ...
+} 
+
+
+
+
+
+15 Can you explain about try with resources
+
+ANSWER:
+ > its another way of writing a try block, where you can define the resources which will be automatically released once the try block ends
+ > with this, we do not need to create a separate finally block
+
+EX:
+try (BufferedReader br = new BufferedReader(new FileReader('FILE_PATH')))
+{
+  String line;
+  while ((line = br.readLine()) != null) {
+    System.out.println(line);
+  } 
+} catch (IOException e) {
+  e.printStackTrace();
+}
+
+
+
+
+
+16 How does try with resources work?
+
+ANSWER:
+ > try-with-resources is availabe to any class that implements the 'AutoCloseable' interface.
+ > all resource defines must implement this 
+ > example includes
+	- Socket (java.net)
+	- BufferedReader (java.io)
+	- Connection (java.sql)
+
+public interface AutoCloseable {
+  void close() throws Exception
+}
+
+
+
+
+
+17 Can you explain a few Exception Handling Best Practices?
+
+ANSWER:
+1. Never Hide Exceptions
+ 	> At least log them. printStackTrace() method prints the entire stack trace when an exception occurs. If you handle an exception, it is always a good practice to log the trace
+2. Do not use exception handling for flow control in a program
+ 	> They have a significant performance impact
+3. Think about the user
+ 	> What does the user want to see if there is an exception?
+4. Think about the calling method
+ 	> Can the calling method do something about the exception being thrown? If not, create unchecked exceptions. For example, Spring Framework chooses to make most of the jdbc exceptions as unchecked exceptions because, in most cases, there is nothing that a caller of the method can do about a jdbc exception
+5. Have a global exception handling
+	> ex: with Spring AOP, we can create cross cutting functionality to handle exceptions thrown in the methods it watches/handles
+

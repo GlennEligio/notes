@@ -1,0 +1,41 @@
+06.04. Utilties - Display
+
+IV. Display
+1. Display
+	> define the display property of the element
+
+NOTATION
+.d-{value} for xs
+.d-{breakpoint}-{value} for sm, md, lg, xl, and xxl
+
+Values
+    none
+    inline
+    inline-block
+    block
+    grid
+    table
+    table-cell
+    table-row
+    flex
+    inline-flex
+
+
+
+2. Display on print
+	> we can also define if the element will be shown when Printing
+
+NOTATION
+.d-print-{value}
+
+Values
+    none
+    inline
+    inline-block
+    block
+    grid
+    table
+    table-cell
+    table-row
+    flex
+    inline-flex

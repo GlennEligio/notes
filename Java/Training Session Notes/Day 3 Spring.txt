@@ -1,0 +1,214 @@
+Day 3
+
+Spring MVC
+	> composed of:
+		Model 		-> for data
+		View		-> for presentation
+		Controller	-> for mediator
+	> Uses a combination of servlet + jsp
+	> also uses java bean class for dependencies
+
+Types of MVC
+1. MVC-1
+	> 3 tier architecture
+2. MVC-2
+	> N-tier architecture (front controller servlet)
+
+
+Why use SpringBoot for Spring MVC
+1. It offers the ready project structure (maven based)
+2. It gives all the necessary lib
+3. It gives server ready environment
+4. It require very less configuration
+
+
+
+1. Create Controller Class
+	> add @Controller to the class that will handle request
+
+2. Define method that will be handling the request
+	> adding @RequestMapping to the method
+		- add path="relative-url-path" and method=RequestMethod[]
+			= path will define the text that will be appended to base-url to access the said method
+			= method it defines which VERBS of Http request it can take
+
+3. Add @ResponseBody to the method
+	> tell the method to add its output in response body instead of query parameters
+
+4. Add these in the application.properties file the following line
+
+	spring.mvc.view.prefix=/WEB-INF/pages
+	spring.mvc.view.suffix=.jsp
+
+	> behind the scene, when we return a String in one of the @Controller's method, it will PREPEND the prefix and APPEND the suffix
+	> then the resulting String will be APPENDED to the base-url, which will then result in a url	
+	> this resulting Url will then be used by @Controller to navigate you to another page
+	> ex: if we return "login", the resulting url will be 
+
+		localhost:8080/WEB-INF/pages/login.jsp
+
+	> this means it will navigate you to login.jsp page that is located in src/main/webapp/WEB-INF/pages/
+	
+
+	spring.mvc.view.prefix=/WEB-INF/pages
+	spring.mvc.view.suffix=.jsp
+
+
+@Annotations
+
+@Controller
+	> added to a Class
+	> makes the Class to handle the request that is coming from SpringBoot's Tomcat Server
+	> its base url is https://ip-address:tcpport
+	> by default its https://localhost:8080
+	> modify the behavior of the methods with @RequestMapping inside the @Controller class
+		- using the String return value of the method, it will navigate the user into different jsp file
+
+@RequestMapping
+	> added to a method
+	> maps the method to a relative url path in base-url
+	> annotation takes two parameters
+		a. path=""
+			- defines the url path of the method to SpringBoot server
+			- ex: path="/login" will make the @RequestMapping method be accessible by calling localhost:8080/login
+		b. method=RequestMethod[]
+			- defines what Http Method request it is suppose to receive
+			- takes a RequestMethod Enum value which includes
+				= GET, DELETE, POST, PUT, etc
+
+@ResponseBody
+	> added to the method of @Controller
+	> Annotation that indicates a method return value should be bound to the web response body. Supported for annotated handler methods.
+		- this changes the behavior of the method wherein instead of redirect you to another jsp, it will it send a response to the client whose web response body is the return value
+
+
+@RequestParam(String param-name)
+	> added in the @Controller's method parameter 
+	> only applicable to method whose @RequestMapping's method is POST
+	> fetches the request parameters value based on the name passed to it
+	> takes ONE parameter
+		- String paramName
+			= defines the name of the request parameter to be fetch
+
+@RestController
+	> added in Class
+	> same as @Controllers but it adds a @ResponseBody to the methods inside it
+		- this means that for those that
+	> typically used to hold RequestHandlers or Routes that is
+		- POST, PUT, DELETE http methods
+
+@GetMapping(String relativeUrlPath)
+	> added in a method of @Controller or @RestController
+	> replaces the @RequestMapping of methods with RequestMethod.GET
+	> typically added in the Route method that "redirects" you to another jsp 
+	> we need to pass a String that will serve as relative url path
+	> we can add {variableName} in the relativeUrlPath and pass the value by adding @PathVariable in method parameter
+
+@PathVariable
+	> added in one of the parameter
+
+@PostMapping(String relativeUrlPath)
+	> added in a method of @RestController
+	> replaces the @RequestMapping and @ResponseBody with RequestMethod.POST
+	> typically added in the Route method that receives PUT, POST, DELETE Http methods
+	> we need to pass a String that will serve as relative url path of the said Route
+
+@ModelAttribute
+	> used to fetch a Model attribute that we received from <form:form> of SpringFramework JSTL
+	> it will fetch a Model attribute that matches the type of the Parameter it is added
+		- ex: if the parameter is of type User, it will fetch the ModelAttribute that is of type User
+
+
+Classes
+
+Model
+	> Java-5-specific interface that defines a holder for model attributes.
+	> Primarily designed for adding attributes to the model.
+	> Allows for accessing the overall model as a {@code java.util.Map}.
+	> used as CONTAINER for the <form> data
+	> using this, we can "map" the input of the form in login.jsp to its Model output
+	> we add this as a Parameter to the Route method
+	> this Model parameter will then serve as the Output of the JSP that we called after the @Controller method
+
+METHODS of Model object
+
+addAttribute(String attributeName, Object attribute)
+	> used to add an Attribute to the Model
+	> need to pass 
+		- a String that will be used to refer to the said attribute
+		- an Object that will be used as value of the object
+	> in JSP, to access this attribute, we will use this syntax
+
+		${modelAttributeName}
+
+
+
+Using Model and SpringFramework JSTL to inject the form's input to a Model's attribute
+1. In Route that will send user to a JSP with Form, add a Model parameter
+2. Inside the method, add an attribute to the said Model and pass 
+	- String id to fetch the attribute
+	- the Object that we want to inject values with
+		= use an Empty constructor to create the said Object
+3. In the form, use the SpringFramework JSTL for forms
+4. Use the form of SF JSTL and do the following
+	- add specify the method parameter of form
+	- add modelAttribute and pass the "id" of attribute we added earlier
+
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+	> taglib to fetch the JSTL of Spring Framework 
+	> Renders an HTML 'form' tag and exposes a binding path to inner tags for binding.
+		- what this means is that we can bind the inputs of the SpringFramework JSTL form to the specified "modelAttribute" of the said form
+
+INSIDE @Controller class
+
+	@GetMapping("/registration")
+	public String registration(Model model) {
+		model.addAttribute("usr", new User());
+		return "registration";
+	}
+
+	@PostMapping("/registration")
+	public String registerUser(@ModelAttribute User user) {
+		service.registerUser(user);
+		return "Register success";
+	}
+
+
+EX:
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
+<form:form method="post" modelAttribute="usr">
+Username:<form:input path="uname"/>
+<br>
+Password:<form:password path="pass"/>
+<br>
+Email:<form:input path="email"/>
+<br>
+City:<form:input path="city"/>
+<br>
+<button>Register</button>
+</form:form>
+
+	> in this example, we added a Model object inside the login() with @GetMapping
+	> then we added an attribute to the Model object using addAttribute()
+		- we passed the attribute String id and the Object that we want to inject properties to
+	> we are then redirected to the login.jsp by the login() @GetMapping
+	> in the login.jsp, using the form of SpringFramework JSTL, we "mapped" or "injected" the values that we passed in the inputs
+		- in the form:form, we will add modelAttribute="" and pass the String id we added in GET login() earlier
+		- then we will use form:input in order to inject values to the modelAttribute's value's properties
+			= in this case, we will inject values to the new User object that we passed as value of modelAttribute
+			= the path="" value should match the User's attribute for it to be mapped properly
+	> add method="" attribute to form:form and pass "post"
+	> when we submit the form:form, we will then pass the Model object and its attributes (now modified) to the POST "/login"
+		- reason for this is that when we dont specify the action="", we will send the form back to the same page
+		- and since we are in /login, we will get send back to /login again, this time with POST method
+	> in the POST login method, we will catch this modelAttribute by using @ModelAttribute
+		- since the ModelAttribute that we will fetch is of type User, we will assign the @ModelAttribute to a User parameter
+	> we can then use this User parameter (with properties injected using the form:input) to do something
+
+
+
+
+
+
+

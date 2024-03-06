@@ -1,0 +1,44 @@
+Transaction Control Language (TCL) Commands
+	> used to handle transactions in the database
+
+For us to demonstrate TCL Commands, lets first create a sample table
+
+CREATE TABLE TCLSample (StudentID int, StudentName varchar(8000), Marks int);
+INSERT INTO TCLSample VALUES('1', 'Rohit', 23);
+INSERT INTO TCLSample VALUES('2', 'Suhana', 48);
+INSERT INTO TCLSample VALUES('3', 'Ashish', 23);
+INSERT INTO TCLSample VALUES('4', 'Prerna', 23);
+
+
+Lets start a transaction. When starting a TRANSACTION, its a good practice to encapsulate a TRANSACTION using a TRY-CATCH block. With this, our syntax will be:
+
+SYNTAX:
+
+BEGIN TRY
+BEGIN TRANSACTION
+(queries)
+COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+(queries)
+END CATCH
+
+Here, we will first execute the queries inside the TRY block, which includes the TRANSACTION queries. But if theres an error that occured inside the TRY block, the queries inside the CATCH block will run.
+
+BEGIN TRY
+BEGIN TRANSACTION
+INSERT INTO TCLSample VALUES (5, 'Avanash', 56);
+UPDATE TCLSample SET StudentName = 'Akash' WHERE StudentID = '5';
+UPDATE TCLSample SET Marks = '67' WHERE StudentID = '5';
+COMMIT TRANSACTION
+PRINT 'Transaction Completed'
+END TRY
+BEGIN CATCH
+ROLLBACK TRANSACTION
+PRINT 'Unsuccessful Transaction'
+END CATCH
+
+If we run this, if we got no error, it will print 'Transaction Completed' and when we look at the TCLSample, we can see that changes in table.
+
+Now, suppose we change the Marks value that we will UPDATE in TRANSACTION from 67 to 67/0. If we run again, we will encounter an error (Arithmetic Exception), and with this we will trigger the CATCH block and run the queries inside it. If we look at the Messages, we will see the PRINT queries inside the CATCH block is executed.
+

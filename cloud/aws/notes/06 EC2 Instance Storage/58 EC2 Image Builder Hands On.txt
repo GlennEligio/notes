@@ -1,0 +1,107 @@
+58 EC2 Image Builder Hands On
+
+Creating an EC2 Image Builder Pipeline
+1. Search for EC2 Image Builder Service
+2. Click 'Image pipelines' section
+3. Click 'Create Image pipeline'
+4. Inside theres 5 steps to do, which is
+	> Specify pipeline details
+	> Choose recipe
+	> Define infrastructure configuration
+	> Define distribution settings
+	> Review
+
+
+Specify pipeline details
+1. Provide the pipeline name
+	> MyDemoPipeline
+2. For Build schedule, choose Manual, since we will be running this only once
+
+
+Choose recipe
+1. Create a new recipe, since we dont have one right now
+2. For Output type, choose Amazon Machine Image (AMI)
+3. Specify the recipe name
+	> MyDemoRecipe
+4. For Base Image section (refers to the AMI to build)
+	> choose "Select managed images"
+	> then for Image OS, use Amazon Linux
+	> for image origin, use Quick start
+	> for image name, use Amazon Linux 2 x86
+		- this should match the architecture of the EC2 instance's architecture
+5. For Components, choose build components that you want to apply to the AMI
+	> choose 'amazon-corretto-11-headless' (for java) and 'aws-cli-version-2-linux' (for aws cli)
+6. We will skip the test components to be used for Base image, select none and go to next step
+
+
+
+Define infrastructure configuration
+1. In General Section
+	> Name can be anything
+		- MyDemoInfra
+	> create an IAM Role with name 				-'EC2InstanceProfileForImageBuilder' 
+	> attach the following Policies to the IAM Role
+		- EC2InstanceProfileForImageBuilder
+		- EC2InstanceProfileForImageBuilderContainerBuilds
+		- AmazonSSMManagedInstanceCore
+	> pass the newly created IAM Role to the General Section
+2. In AWS infrastructure section
+	> choose t2.micro for Instance type (FREE TIER and matches the Image architecture that we will build)
+
+
+
+Define distribution settings
+1. In Distribution settings
+	> choose the 'Create distribution settings using service defaults'
+
+
+
+Review
+1. Review the Pipeline
+2. Create the Pipeline
+
+
+
+Running the Pipeline
+1. Click the Image pipeline dashboard
+2. Check if the newly created pipeline exist
+3. Select the pipeline > Actions > Run the pipeline
+4. Check the EC2 instances
+	> there should be a new EC2 Instance that is used for building the EC2 Image
+	> check its Tags to see more information
+5. Wait for the AMI image to be built
+	> you can check it in the AMI section of the EC2 dashboard
+
+
+
+Testing the new EC2 Image (AMI)
+1. Create an EC2 instance, same config as before but using the AMI image built earlier as the instance image. Open SSH port
+2. Connect to its terminal using SSH
+3. Check if the build components is applied properly
+	> check if java is installed using 'java --version' command
+	> check if aws-cli is installed using 'aws --version' command
+
+
+
+Cleaning up
+1. Pipeline will not start since it is ran manually
+2. Builder and Tester EC2 instance created earlier are AUTOMATICALLY deleted
+3. Delete the EC2 instance created through the newly built AMI
+4. Deregister the newly built AMI
+5. Delete all the Snapshot created by the EC2 Build Pipeline
+
+
+
+
+NOTE:
+1. The duration of the pipeline process depends on the type of Instance used to Build and Test the EC2 Image
+2. The architecture of the EC2 image to build SHOULD MATCH the architecture of the EC2 instances used to build and test it
+	> if not, you will encounter errors in the pipeline
+	> in case of free tier, t2.micro uses x86 architecture
+3. Image owner typically provide Build components to be able for the User to customise their Images. But Users can also create their own Build components
+4. We can specify the ORDER of the Build components addition to the Base image
+5. For Builder and Tester EC2 Instances, they MUST have a EC2 Instance Roles which includes the following Policies	
+	> EC2InstanceProfileForImageBuilder
+	> EC2InstanceProfileForImageBuilderContainerBuilds
+	> AmazonSSMManagedInstanceCore
+6. We can distribute the resulting IAM by defining it in the distribution settings of pipeline

@@ -1,0 +1,772 @@
+Javascript Crash Course
+
+What is JavaScript
+	> High level, interpreted programming language
+		- high level as in lots of Abstraction
+		- interpreted where theres NO NEED FOR COMPILER to run a Javascript file
+	> Conforms to the ECMAScript specification
+	> Multi-paradigm
+		- programs can be written in many ways (OOP, Functional)
+	> Runs on the client/browser as well as on the server (with Node.js)
+
+
+Why learn JavaScript
+1. It is the programming language of the browser
+2. Build very interactive user interfaces with frameworks like React
+3. Used in building very fast server side and full stack application
+4. Used in mobile development (React Native, NativeScript, Ionic)
+5. Used in desktop application development (Electron JS)
+
+
+Topics to discuss
+1, Variables and Data Types
+2. Arrays
+3. Object Literals
+4. Methods for string, arrays, object, etc
+5. Loops - for, while, for...of, forEach, map
+6. Conditionals (if, ternary & switch)
+7. Functions (normal and arrow)
+8. OOP (prototypes and classes)
+9. DOM Selection
+10. DOM manipulation
+11. Events
+12. Basic Form Validation
+
+
+Further Learning
+1. Fetch API & Ajax 
+	- used for sending HTTP request to backend api
+
+
+
+Tools used
+1. VS Code for text editor
+2. Live Server extension in VSCode
+
+
+
+I. Adding Javascript in HTML
+
+Two ways of adding Javascript in HTML document
+1. Using <script> tags inside <body> and insert the Javascript code
+2. Use external Javascript file and insert <script> tag with src attribute pointing to external JS file
+
+
+
+II. Debugging in Javascript
+
+console
+	> variable used to access Console window
+	> with this, we can send messages
+	> have following methods
+		- log(String s)
+		- warn(String s)
+		- error(String s)
+
+console.log(Object o)
+	> sends a log message in the Console window
+
+
+
+
+III. Variables
+
+Initializing Variable
+	> we can use the following keyword to create variables
+		a. var
+			- used to create global scope variables
+		b. let
+			- used to make block level scope
+			- MUTABLE, variable can be reassigned to another value again
+		c. const
+			- used to make block level scope
+			- IMMUTABLE, meaning variable can NOT be reassign to another value again
+	> var is typically avoided since global variable may messed up the program
+	> let and const are added in ES6 (EcmaScript 6) update
+		- with this keywords, garbage collection of variables are easier to do
+	> prefer using "const" UNLESS you are sure that you will REASSIGN the variable's value, in which case, use "let"
+
+
+
+IV. Datatypes
+
+Primitive Datatypes
+	> data is directly assigned to memory (not a resource)
+	> includes the following
+		a. String
+		b. Numbers
+		c. Boolean
+		d. null
+		e. undefined
+		f. Symbol
+	> we can use typeof to check datatype of a variable
+		- ex: console.log(typeof name)
+
+
+String 
+	> datatype that represents text, characters, and Strings
+	> in String datatype, we can do CONCATENATION
+		- concatenation is where we combine two or more String to form new String
+	> to do concatenation, we can do it in two ways
+		a. Use plus signs to concatenate Strings
+		b. Use ES6 Template String to combine Strings
+			- we can insert Strings and Object into the Strings with this
+			- the syntax will be
+				= Whole string is nested in back ticks (`String`)
+				= Objects to insert must be of syntax ${Object}
+
+EX:
+const name = "John";
+const age = 30;
+
+// Concatenation
+console.log("My name is " + name + " and I am  " + age);
+// Template String
+console.log(`My name is  ${name} and I am ${age}`);
+
+
+
+String methods and properties
+
+String.length
+	> returns the character length of a String
+String.toUpperCase()
+	> returns the String in UPPERCASE
+String.toLowerCase()
+	> returns the String in lowercase
+String.substring(number startIndex, number endIndex)
+	> returns a substring of the String based on the startIndex and endIndex of its Characters
+String.split(String separator)
+	> splits the String based on the String separator
+	> returns the result String parts into a String array
+	> passing empty String ("") will break the String into Character array
+
+
+
+V. Arrays
+
+
+Arrays
+	> variables that holds multiple values
+	> we can create arrays in two ways
+		a. using Array constructor
+		b. using square brackets []
+	> Javascript arrays are ZERO BASED
+		- starts at zero index 
+		- means that accessing first element, we will use 0th index
+
+EX:
+// Using Array constructor
+const numbers = new Array(1, 2, 3, 4, 5);
+// Using square brackets
+const fruits = ["apples", "pears", "oranges"];
+
+
+Adding element in array
+	> to add new element into the array, we acn do the following
+		a. define the value for the next element
+			- with this, we can add element in any indeces
+			- but if we add element who's index in greater than the array size, all index space between the new element will be empty
+				= ex: array has size of 2, and we add element at index 5
+				= now, elements are index 2,3,4 will be empty
+		b. use push() and unshift() method and pass the new element value
+
+
+
+METHODS OF ARRAY
+
+push(Object elementValue)
+	> method of array 
+	> used to add element at the end of the array
+
+unshift(Object value)
+	> method of array
+	> used to add element at the start of the array
+
+pop()
+	> removes the last value of array
+	> returns the last value of array
+
+isArray(Object o)	
+	> STATIC method of Array class
+	> checks if the Object passed 
+	> return boolean value
+
+indexOf(Object o)
+	> returns the index of the Object in an Array, if the Object is inside array
+	> if object is not in the Array, indexOf() returns -1
+
+includes(Object o)
+	> returns a boolean value based on whether the Object in included in the Array or not
+
+concat(Array array)
+	> concats the array input at the end of the Array
+
+filter(predicate function())
+	> filter the Array based on the condition set inside the predicate function
+
+map(callbackFn function())
+	> maps the array items by either modifying them or transforming them into a new Object
+
+
+
+
+VI. Object literals
+
+Object literals
+	> Object literals in Javascript are variables whose values are composed of SET OF KEY VALUE PAIRS
+	> value passed into Object literals are similar to JSON strings in format
+	> to access one of the key value pairs, we can use the dot operator (.)
+	> to add new property in Object, we can use dot operator, and assign a value to new property
+
+EX:
+// Creating Object literals
+const person = {
+  firstName: "John",
+  lastName: "Doe",
+  age: 30,
+  hobbies: ["music", "movies", "sports"],
+  address: {
+    street: "50 main st",
+    city: "Boston",
+    state: "MA",
+  },
+};
+
+// Accessing one of properties of person Object
+console.log(person.hobbies[1]);
+
+// Adding new properties into an Object literal
+person.email = "jd@mail.com";
+
+console.log(person.email);
+
+
+
+VII. JSON
+
+JSON
+	> stands for JavaScript Object Notation
+	> a format used to create values for Javascript Object literals
+	> format that is widely used on transferring complex object into Strings to be sent on the fly
+
+JSON
+	> a class in Javascript
+	> we can use this to apply changes to a String or Object
+		a. Serialize/Stringify
+		b. Deserialize/Parse	
+	> this class have methods
+		a. stringify(Object o)
+			= converts a Javascript object into a JSON string
+		b. parse(String s)
+			= parse a JSON string into a Javascript object
+
+EX:
+const todos = [
+  {
+    id: 1,
+    text: "Take out trash",
+    isCompleted: true,
+  },
+  {
+    id: 2,
+    text: "Meeting with boss",
+    isCompleted: true,
+  },
+  {
+    id: 3,
+    text: "Dentist appt",
+    isCompleted: false,
+  },
+];
+
+// Convert todos variable to JSON string
+const JsonString = JSON.stringify(todos);
+// Convers the JSON string back to Javascript object
+const todosNew = JSON.parse(JsonString);
+
+console.log(JsonString);
+console.log(todosNew);
+
+
+
+
+VIII. Loops
+
+Loops
+	> used to do a function in repetitions
+	> we have two generic solutions
+		a. For loops
+		b. While loops
+	> we also have a loop specially made for iterating through an array
+		b. For of loops
+
+EX:
+// Loops
+
+// For
+for (let i = 0; i <= 10; i++) {
+  console.log(`For loop number: ${i}`);
+}
+
+// While
+let i = 0;
+while (i < 10) {
+  console.log(`While loop number: ${i}`);
+  i++;
+}
+
+const todos = [
+  {
+    id: 1,
+    text: "Take out trash",
+    isCompleted: true,
+  },
+  {
+    id: 2,
+    text: "Meeting with boss",
+    isCompleted: true,
+  },
+  {
+    id: 3,
+    text: "Dentist appt",
+    isCompleted: false,
+  },
+];
+
+// For ... of
+for (let todo of todos) {
+  console.log(todo);
+}
+
+
+
+
+IX. Higher order array methods
+	
+Higher order array methods
+	> methods used to iterate, manipulate, or create new array based on a source array
+	> these methods TAKES function as parameter
+		- these functions defines what we will do to each of the elements inside array
+	> each of these methods have the item as parameter
+	> some of these Higher order array methods are
+		a. forEach(consumer function(item))
+			> just iterates to all the items in the array
+			> the function have access to the items in array
+		b. filter(predicate function(item))
+			> filters the array
+			> takes a function that contains a condition for an item to pass through the filter
+				- returns a boolean value
+				- if it fails, will not be included in resulting array
+		c. map(callbackFn function(item))
+			> creates a new array based on source array
+			> takes a function that contains how the items from source array will be mapped to an item to new array
+				- returns an object
+
+EX:
+const todos = [
+  {
+    id: 1,
+    text: "Take out trash",
+    isCompleted: true,
+  },
+  {
+    id: 2,
+    text: "Meeting with boss",
+    isCompleted: true,
+  },
+  {
+    id: 3,
+    text: "Dentist appt",
+    isCompleted: false,
+  },
+];
+
+// forEach
+todos.forEach((todo) => {
+  console.log(todo.text);
+});
+
+// map, returns an array
+const text = todos.map((todo) => todo.text);
+console.log(text);
+
+// filter
+const filteredArray = todos.filter((todo) => todo.isCompleted);
+console.log(filteredArray);
+
+// filter + map
+const filteredText = todos
+  .filter((todo) => todo.isCompleted)
+  .map((todo) => todo.text);
+console.log(filteredText);
+
+
+
+
+
+X. Conditional operators
+
+Greater than (>)
+Less than (<)
+Equals operand (==)
+Greater than or equal (>=)
+Less than or equal (<=)
+
+Strict equal operands (===)
+	> used to compare variables or values
+	> unlike equal operand (==), String equal also checks the DATATYPE of the values being compared
+		- if same value but different datatype, will return false
+
+EX:
+// Strict equal operand
+
+const x = 20;
+
+if (x === 10) {
+  console.log("x is 10");
+} else if (x > 10) {
+  console.log("x is greater than 10");
+} else {
+  console.log("x is less than 10");
+}
+
+
+AND operator (&&)
+	> checks if two conditions are BOTH true
+	> if BOTH true, returns true. else return false
+
+OR operator (||)
+	> check if at least ONE condition is true
+	> if at least ONE condition is true, returns true
+	> else, return false
+
+EX:
+const x = 20;
+const y = 10;
+
+if (x > 10 && y > 5) {
+  console.log("x is greater than 10 AND y is greater than 5");
+} 
+if (x < 10 || y == 10) {
+  console.log("x is less than 10 OR y is equal to 10");
+}
+
+
+Switch
+	> used to compare a single variable to different values
+	> more efficient that if-else in cases where we use single variable for multiple cases
+	> composes of 
+		- variable
+		- multiple cases
+		- default case
+
+EX:
+// Switch
+switch (x) {
+  case 20:
+    console.log("x is 20");
+  case 10:
+    console.log("x is 10");
+}
+
+
+
+
+XI. Functions
+
+Function
+	> defines a specific behavior
+	> composed of
+		a. method name
+			- defines the name to used when calling the function
+		b. parameters
+			- defines the inputs of function
+			- we can define a default value for these input parameter
+				= if we pass arguments to method call, it will OVERRIDE the default values
+			- OPTIONAL to add parameters
+			- MANDATORY to pass arguments when function needs parameters
+		c. logic
+			- defines the behavior of the function
+			- typically uses the parameter input and change it to something
+		d. return value
+			- defines the return value of the function
+			- typically derived from input parameters
+	
+EX:
+// Functions
+
+// Function for adding number
+function addNum12(num1 = 1, num2 = 2) {
+  return num1 + num2;
+}
+
+console.log(addNum12(5, 10));
+
+
+
+
+XII. Arrow functions
+
+Arrow Function
+	> used to declare a function as a variable
+	> typically used when we need to pass a function as variable in some method's parameter (like Array.filter())
+	> if logic is one-line, we can OMIT the curly braces
+
+EX:
+// Arrow function equivalent
+const addNum = (num1 = 1, num2 = 2) => num1 + num2;
+
+console.log(addNum(5, 10));
+
+
+
+XIII. OOP using Prototypes (pre-ES6)
+
+Constructor Function
+	> a function with properties attached into it
+	> we can then use this function to instantiate Prototypes
+	> to assign values to its properties, we can pass them as arguments and inside the Constructor function, assign them to each properties
+	> to assign values to an Prototype properties in Constructor function, we will use the keyword "this"
+	> to instantiate a Prototype using Constructor function, we will use the keyword "new"
+
+
+Prototype
+	> All JavaScript objects inherit properties and methods from a prototype.
+	> contains the Constructor that is used to instantiate an Object
+	> We can use this to add new Properties to an Object
+		- we cant typically add Properties in Object created from Constructor function unlike Object literals
+
+EX:
+// OOP Prototype
+
+// Constructor function
+function Person(firstName, lastName, dob) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.dob = new Date(dob);
+}
+
+// Adding new properties using prototype of Constructor Function
+Person.prototype.getFullName = function () {
+  return `${this.firstName} ${this.lastName}`;
+};
+Person.prototype.getBirthYear = function () {
+  return this.dob.getFullYear();
+};
+
+// Instantiate object
+const person1 = new Person("John", "Doe", "2-2-2222");
+const person2 = new Person("Gael", "Abrax", "1-1-1222");
+
+console.log(person1.getBirthYear());
+console.log(person2.getFullName());
+
+
+
+
+XIV. OOP ES6+
+
+Class
+	> used to define the template for Object instantiation
+	> present in most of programming languages
+	> syntatic sugar
+		- does same thing as Prototypes but written in different manner
+	> Classes composed of
+		a. Constructor function
+			- uses "constructor" keyword
+		b. Properties and Methods
+
+
+EX:
+
+class Person {
+  constructor(firstName, lastName, dob) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.dob = new Date(dob);
+  }
+
+  getBirthYear() {
+    return this.dob.getFullYear();
+  }
+
+  getFullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+
+
+
+
+XX. DOM Selection
+
+DOM
+	> Document Object Model
+	> like a tree structure of the whole Document (e.g. html tags)
+
+
+DOM Objects
+1. window
+	> represents the browser's window
+	> all global Javascript object, functions, and variables automatically become members of the window object
+		- Global variables are properties of window object
+			= ex: innerHeight, innerWidth
+		- Global function are methods of window object includes but not limited to
+			a. alert()	- for alerting user
+			b. prompt()	- for prompting user for input
+			c. confirm()	- for comfirming to use to do an action
+			d. setTimeout()	- for executing a function after a certain period of time
+	> since window belongs to the very top level, we can omit the use of "window." when calling its variables and functions.
+		- ex: 	window.alert("Alert")	-> 	alert("Alert")
+			window.innerHeight	-> 	innerHeight
+	> to see all variables and functions of "window" DOM object, print the object itself
+		- console.log(window)
+
+
+
+2. document
+	> The document object represents your web page.
+	> If you want to access any element in an HTML page, you always start with accessing the document object
+		- for selecting, we can either do a 
+			a. Single element selection
+			b. Multiple element selection
+	> this DOM object have the following variables and functions
+		
+document functions
+getElementById(String id)
+	> used to fetch an HTML element using its ID
+
+querySelector(String query)
+	> used to fetch an HTML element using a query
+	> since it only fetch a SINGLE html element, it will fetch the FIRST element that matches
+	> this query string can take either
+		1. className		('.className')		ex: document.querySelector('.btn')
+		2. html tag name	('tagName')		ex: document.querySelector('h1')
+		3. element id		('#id')			ex: document.querySelector('#form')
+
+querySelectorAll(String query)
+	> used to select all elements the matches the String query search
+	> query string can be 
+		- class name ('.className')		ex: document.querySelectorAll('.item')
+		- html tag name ('elementName')		ex: document.querySelectorAll('h1')
+		- id ('#id')				ex: document.querySelectorAll('#my-form')
+	> will result in a NodeList object
+		- similar to Array object
+		- can perform Array methods
+	> preferred over getElementsByTagName() and getElementsByTagName()
+
+getElementsByClassName(String className)
+	> used to fetch all elements that matches the className
+	> String input argument syntax is
+		- 'className'
+		- ex: document.getElementsByClassName('item')
+	> output of the function is HTMLCollection
+		- HTMLCollection is not Array
+		- Cant perform Array method
+		- Must convert to Array manually
+
+getElementsByTagName(String tagName)
+	> used to fetch all elements that matches the html tag name
+	> String input argument syntax is
+		- 'tagName'
+		- ex: document.getElementsByTagName('h1')
+	> output of the function is HTMLCollection
+		- HTMLCollection is not Array
+		- Cant perform Array method
+		- Must convert to Array manually
+
+Element functions and properties
+textContent
+	> returns the text content of all element the property is called
+	> we can use this to change the text content of an element by assigning a new value
+		- ex: ul.firstElementChild.textContent = "Hello";
+
+innerText
+	> returns the text content of all element (except <script> and <style>) the property is called
+	> will not return the text of element that is HIDDEN with CSS
+	> we can use this to change the text of element by assigning new value
+		- ex: ul.children[1].innerText = "Brad";
+
+innerHTML
+	> similar to innerText and textContent, BUT we can pass html as well
+	> used to add an html element inside which will be rendered as well
+		- ex: ul.lastElementChild.innerHTML = "<h1>Hello</h1>";
+
+style.<CSS Prop>
+	> used to add/modify style of an element
+	> to add/modify a CSS property of an element, assign a value to the said CSS prop	
+		- ex: 	const btn = document.querySelector(".btn");
+			btn.style.background = "red";
+
+classList
+	> used to show the classes present in the element
+	> we can add class in the element using this by calling the add()
+		- ex: document.querySelector("body").classList.add("bg-dark");
+	
+
+EVENTS
+addEventListener(String event, Function event)
+	> method of an HTML element
+	> used to add an eventListener to the said HTML	
+	> this method takes two arguments
+		1. String event
+			- refers to the event that it will listen to
+			- ex: 'click' 'mouseover' 'hover'
+		2. Function event
+			- refers to the action that will be triggered if said event happened
+			- this function have 1 parameter called event
+	> event parameter have several properties and functions like
+		a. preventDefault()
+			- method
+			- prevent the default behavior of the event when it happens
+			- ex: when form button is click, by default, it will refresh the page
+		b. target
+			- property
+			- refers to the HTML element that triggered the event
+			- we can then use typical element function and properties to the target
+
+EX: Button's onClickListener
+const btn = document.querySelector(".btn");
+
+btn.addEventListener("click", (e) => {
+  e.preventDefault();
+  console.log(e.target);
+  document.querySelector("#my-form").style.background = "#ccc";
+  document.querySelector("body").classList.add("bg-dark");
+  document.querySelector(".items").lastElementChild.innerHTML =
+    "<h1>Hello</h1>";
+});
+
+
+EX: Form's onSubmitListener
+// Initialize the Form input elements
+const myForm = document.querySelector("#my-form");
+const nameInput = document.querySelector("#name");
+const emailInput = document.querySelector("#email");
+const msg = document.querySelector(".msg");
+const userList = document.querySelector("#users");
+
+// Add eventListener to the form's submit event
+myForm.addEventListener("submit", onSubmit);
+
+function onSubmit(e) {
+  e.preventDefault();
+  if (nameInput.value === "" || emailInput.value === "") {
+    msg.classList.add("error");
+    msg.innerHTML = "Please enter all fields";
+
+    setTimeout(() => msg.remove(), 3000);
+  } else {
+    const li = document.createElement("li");
+    li.appendChild(
+      document.createTextNode(`${nameInput.value} : ${emailInput.value}`)
+    );
+
+    userList.appendChild(li);
+
+    // Clear fields
+    nameInput.value = "";
+    emailInput.value = "";
+  }
+}

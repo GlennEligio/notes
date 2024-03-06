@@ -1,0 +1,364 @@
+List
+	> Java List is an interface that extends the Collection and contains ordered collection of elements including duplicate values. 
+	> implementations include
+		ArrayList
+		LinkedList
+		Vector
+
+ArrayList
+	> implementation of List Interface where the elements can be DYNAMICALLY added or removed from the list
+	> the size of the list is increased dynamically if the elements are added more than the initial size
+	> to create an ArrayList, you can use either
+
+For undefined Object type
+	- can add ANY type of Object
+
+		ArrayList object = new ArrayList();
+
+For defined Object type
+	- can only add ONE specific type of Object
+
+		ArrayList<DataType> list = new ArrayList<DataType>();
+
+	> METHODS
+		Object[] 	toArray()
+		boolean 	add(Collection c)
+		int 		lastIndexOf(Object o)
+		void 		add(int index, Object element)
+		Object 		clone()
+		void 		clear()
+		void 		trimToSize()
+		boolean		set(int index, Object element)
+		boolean 	remove(int index)
+		boolean 	contains(Object o) 
+	
+LinkedList
+	> sequence of links which contains items
+	> each link contains a connection to another link
+	> to create a LinkedList, use
+
+		LinkedList object = new LinkedList();
+
+	> there are two types of Linked List
+		a. Singly Linked List
+			- each node in this list stores the data of the node and a point or reference to the NEXT node in the list
+		b. Doubly LinkedList
+			- Doubly Linked list has TWO references: 
+				= one to the NEXT node
+				= another to the PREVIOUS node
+	> METHODS:
+		int 		indexOf(Object element)
+		boolean 	add(Object c)
+		void 		addFirst(Object o)
+		int 		size()
+		boolean 	contains(Object o)
+		boolean 	remove(Object o)
+		void 		addLast(Object o)
+		void 		add(int index, Object element)
+		int 		lastIndexOf(Object element)
+
+
+Vector
+	> Vectors are similar to arrays, where the elements of the vector object can be accessed via an index into the vector
+	> Vector implements a dyncamic array and is not limited to a specific size 
+	> Difference between Vector and ArrayList is that Vector is SYNCHRONIZED
+	> Synchronized means it is Thread-safe (can only accessed by one thread at a time)
+	> to create a Vector object, use
+
+		Vector object = new Vector(size, increment)
+
+	> METHODS:
+		int 		indexOf(Object element)
+		boolean 	add(Object c)
+		void 		clear()
+		int 		size()
+		boolean 	remove(Object o)
+		boolean 	contains(Object element)
+		void 		add(int index, Object element)
+		int 		lastIndexOf(Object element)
+
+
+
+I. List Interface Implementation Demonstration
+
+1. Create a project
+
+2. Create a class
+	> name ListDemo
+	> package can be whatever you want
+	> add main()
+
+INSIDE ListDemo.java
+
+package co.johnglenn;
+
+public class ListDemo {
+	public static void main(String[] args) {
+
+	}
+}
+
+
+3. Import java.util.ArrayList
+
+
+4. Create an instance of ArrayList
+	> import java.util.ArrayList
+	> type is String
+	> name list1 
+
+5. Create another instance of ArrayList
+	> no specific type
+	> name is list2
+
+6. Add the following Strings in the list1
+	> "John", "Jennie", "Jim", "Jack", "John", "Joe" 
+
+INSIDE main()
+
+		ArrayList<String> list1 = new ArrayList<String>();
+		ArrayList list2 = new ArrayList();
+		
+		list1.add("John");
+		list1.add("Jennie");
+		list1.add("Jim");
+		list1.add("Jack");
+		list1.add("John");
+		list1.add("Joe");
+
+
+7. Create a Student class
+	> int roll and String name field members
+
+INSIDE ListDemo.java
+
+class Student{
+	int roll;
+	String name;
+}
+
+
+8. Add the following items in list2
+	> "John", 10, 2.2, 'A'
+	> instance of Student object s1 with following properties
+		- roll is 101
+		- name is "Mike"
+
+INSIDE main()
+
+		Student s1 = new Student();
+		s1.roll = 101;
+		s1.name = "Mike";
+		
+		list2.add("John");
+		list2.add(10);
+		list2.add(2.2);
+		list2.add('A');
+		list2.add(s1);
+
+
+9. Print the list1 and list2
+
+INSIDE main()
+
+		System.out.println("List 1: " + list1);
+		System.out.println("List 2: " + list2);
+		
+
+10. Execute main()
+	> as we can see, both the list1 and list2 elements got printed out in the console
+	> we can also notice that the sequence of the elements in console is the SAME SEQUENCE as to how we added them
+
+IN THE CONSOLE
+
+List 1: [John, Jennie, Jim, Jack, John, Joe]
+List 2: [John, 10, 2.2, A, co.johnglenneligio.Student@15db9742]
+
+
+
+11. Get the String at index 2 of list1
+	> assign the result in a String variable
+	> print it out the variable
+
+
+12. Get the Object at index 2 of list2
+	> assign the result in an Object variable
+	> print out the Object variable
+
+INSIDE main()
+
+		String name = list1.get(2);
+		System.out.println("Name: " + name);
+		
+		Object o = list2.get(2);
+		System.out.println("o: " + o);
+
+
+13. Execute main()
+	> as we can see, both of the statement printout the 2nd index of list1 and list2
+
+IN THE CONSOLE
+
+List 1: [John, Jennie, Jim, Jack, John, Joe]
+List 2: [John, 10, 2.2, A, co.johnglenneligio.Student@15db9742]
+Name: Jim
+o: 2.2
+
+
+
+14. Update the 2nd index of the list1
+	> set the value to "Fionna" using set()
+	> print out the newly modified list 
+		- we can see that the index 2 is now "Fionna" instead of "Jim"
+
+INSIDE main()
+
+		list1.set(2, "Fionna");
+		System.out.println("List 1: " + list1);
+
+IN OUR CONSOLE
+
+List 1: [John, Jennie, Jim, Jack, John, Joe]
+List 2: [John, 10, 2.2, A, co.johnglenneligio.Student@15db9742]
+Name: Jim
+o: 2.2
+List 1: [John, Jennie, Fionna, Jack, John, Joe]
+
+
+
+15. Remove the 2nd index of the list1
+	> print out the new list1
+		- we can see that Fionna is gone
+
+INSIDE main()
+
+		list1.remove(2);
+		System.out.println("List 1: " + list1);
+
+IN THE CONSOLE
+
+List 1: [John, Jennie, Jim, Jack, John, Joe]
+List 2: [John, 10, 2.2, A, co.johnglenneligio.Student@15db9742]
+Name: Jim
+o: 2.2
+List 1: [John, Jennie, Fionna, Jack, John, Joe]
+List 1: [John, Jennie, Jack, John, Joe]
+
+
+
+16. Clear the list1
+	> use list1.clear()
+	> printout list1
+ 
+INSIDE main()
+
+	list1.clear();
+
+
+
+17. Check if list1 contains "John"
+	> create an if statement
+		- if list1 contains "John", print "John is in the list"
+		- use contains() and pass "John"
+	> check the console
+		- we can see that the statement is printed out
+
+INSIDE main()
+
+		if(list1.contains("John")){
+			System.out.println("John is in the list");
+		}
+
+IN CONSOLE
+
+List 1: [John, Jennie, Jim, Jack, John, Joe]
+List 2: [John, 10, 2.2, A, co.johnglenneligio.Student@15db9742]
+Name: Jim
+o: 2.2
+List 1: [John, Jennie, Fionna, Jack, John, Joe]
+List 1: [John, Jennie, Jack, John, Joe]
+John is in the list
+
+
+
+18. Iterate all the elements inside the List using Foreach loop
+	> use for each loop and print out each String inside list1
+
+INSIDE main()
+
+		System.out.println("=== Iterating with Enhanced For loop");
+		for(String str : list1){
+			System.out.println(str);
+		}
+		System.out.println("======");
+
+CONSOLE
+
+=== Iterating with Enhanced For loop
+John
+Jennie
+Jack
+John
+Joe
+======
+
+
+
+19. Iterate through list1 using For loop
+	> iterator i is 0
+	> condition is i < list1.size()
+	> i++
+	> to print the element, use get() and pass the iterator
+
+INSIDE main()
+
+		System.out.println("=== Iterating with For loop");
+		for(int i = 0; i < list1.size(); i++){
+			System.out.println(list1.get(i));
+		}
+		System.out.println("======");
+
+
+
+20. Iterate the list1 using Iterator and its method, next() and hasNext()
+	> import java.util.Iterator;
+	> create an Iterator<String> object and assign its value to list1.iterator()
+		- set name of Iterator<String> to itr
+	> create a while loop, and set condition of it to hasNext()
+		- hasNext() will return true if theres an element next to the current element we are in
+	> inside the while loop, do the following
+		- create a String variable and assign it the value of itr.next()
+		- printout the value of String variable
+		- if value of String is "Jack" (which means the current element is "Jack"), remove it using itr.remove()
+	> print out the list1 again after the while loop
+	> in console, we can see that new list1 has no Jack in it
+
+INSIDE main()
+
+		System.out.println("=== Iterating using Iterator ====");
+		Iterator<String> itr = list1.iterator();
+		while(itr.hasNext()){
+			String str = itr.next();
+			System.out.println(str);
+			if(str.equals("Jack")){
+				itr.remove();
+			}
+		}
+		System.out.println("======");
+		
+		System.out.println("New List 1: " + list1);
+
+CONSOLE
+
+=== Iterating using Iterator ====
+John
+Jennie
+Jack
+John
+Joe
+======
+New List 1: [John, Jennie, John, Joe]
+
+
+
+

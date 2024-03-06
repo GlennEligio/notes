@@ -1,0 +1,50 @@
+16 Working with Mongo and audience Q&A
+
+Mono<T>
+ > A Reactive Streams Publisher with basic rx operators that emits at most one item via the onNext signal then terminates with an onComplete signal (successful Mono, with or without value), or only emits a single onError signal (failed Mono).
+ > Most Mono implementations are expected to immediately call Subscriber.onComplete() after having called Subscriber#onNext(T). Mono.never() is an outlier: it doesn't emit any signal, which is not technically forbidden although not terribly useful outside of tests. 
+ > On the other hand, a combination of onNext and onError is explicitly forbidden.
+
+Methods of Mono<T> 
+Mono.subscribe()
+Mono.subscribe(Consumer<? super T> consumer)
+ > add a subscription to the Mono, in which the Consumer functional interface will be executed once the Mono completed
+
+Mono.toFuture(): CompletableFuture<T>
+ > Transform this Mono into a CompletableFuture completing on onNext or onComplete and failing on onError.
+ > we can then use the Future.join() to get the Mono element emitted
+ > not recommended since it is blocking
+
+Mono.block(): T
+ > Subscribe to this Mono and block indefinitely until a next signal is received. 
+ > Returns that value, or null if the Mono completes empty. In case the Mono errors, the original exception is thrown (wrapped in a RuntimeException if it was a checked exception)
+ > Note that each block() will trigger a new subscription: in other words, the result might miss signal from hot publishers.
+ > not recommended since it is blocking
+
+
+EX:
+public class Exercise4 {
+
+    public static void main(String[] args) throws IOException {
+
+        // Use ReactiveSources.intNumberMono()
+
+        // Print the value from intNumberMono when it emits
+        ReactiveSources.intNumberMono().subscribe(System.out::println);
+
+        // Get the value from the Mono into an integer variable
+        int number = ReactiveSources.intNumberMono().block();
+        System.out.println("Fetched the integer from Mono: " + number);
+
+        System.out.println("Press a key to end");
+        System.in.read();
+    }
+
+}
+
+
+
+
+NOTES:
+1. Mono can return anything, from primitive datatype, Collection or even a Mono
+ 	> not recommended to do Mono of Mono, but if needed, use flatMap

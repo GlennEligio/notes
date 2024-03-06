@@ -1,0 +1,231 @@
+Section 1. Introduction
+1. Introduction
+
+DevOps Pre-Requisites
+1. Java, NodeJS, Python
+	> will be used to create applications
+	> these applications will then be used throughout our DevOps training
+2. Git
+	> center of DevOps pipeline
+	> version control
+3. Containers
+4. Docker
+5. Kubernetes
+6. YAML
+	> used in Kubernetes for configuration
+7. Microservices Architecture
+8. Ansible and Terraform
+	> automation tools
+
+
+NOTES:
+1. IT and DevOps
+ > used to serve applications to the end users
+ 
+ 
+ 
+2. DevOps Tools
+
+
+Steps to share and expose your application to the end user/consumer
+1. Purchase/rent a machine, whether its a physical or virtual machine, that will host the application
+2. Configure the said machine to have the necessary runtime and packages/dependencies in order to run the application correctly
+	> at this point, you now have a 'development' and 'production' environment
+	> development is where you do the development and testing, while the production is where you deploy the application for the end user to use
+3. Expose the machine to be accessible to the internet
+	> typically for virtual machines, they will have IP address assigned to it to be used for accessing it
+4. Purchase a domain to use in order to identify your application/service
+	> this way, you will not need to share an ip address to the end user and instead give out a human readable address (ex: http://triptomars.com)
+
+
+Current workflow at this point (stages)
+1. Develop
+	> in the development environment, we will do the changes in the source code in order to add feature, fix bugs, refractoring, etc
+	> we typically use IDE here like IntelliJ, Eclipse, VSCode, etc
+2. Build
+	> in this stage, we 'build' our application in to an executable or binary file format
+	> there are several tools that we can use in order to build our application into these format like Python setup tools, Maven, Gradle, etc
+	> also, we usually have a build script that invokes these tools to build the application
+3. Deploy
+	> once built, the executable is moved to a production environment (ex: VM in Cloud), and run in production
+	
+	
+Version control tools (ex: Git)
+ > after deploying your application, users may request more feature. at this point, you may inquire more developers in order to help you add the requested features
+ > with this, you and your fellow developers will be working on the same codebase, same file, same class, etc. And with this, they are bound to have conflicts with the changes the developers made with each other
+ > This is where version control tools like Git and SVN comes into play. With these tools, it will help all developers to work on the same application at the same time and collaborate efficiently
+ > With all developers having Git installed on their development machine, they can easily pull the latest changes from the central hub done by other developers in order to avoid conflicts early on, and push their changes in order for other developers to receive them as well
+ > The central hub is a cloud based platform that serves as a central location for all code
+ > Git is the underlying technology and GitHub is the publicly hosted git-based central repository of code where you can configure project, organizations, users and define different access for different users
+	- similar platforms are GitLab and Bitbucket
+
+
+Git vs GitHub
+ > Git is the command line tool or the underlying technology that enables versioning of code and collaboration between multiple developers
+ > GitHub is the git-based, publicly accessible repository of code where you push your code to and it has a web interface where you invite new developers, manage your project, manage issues with your project, add documentation to your code, etc
+ 
+ 
+Changes to the current workflow to be done
+1. Build stage (dedicating a machine solely for building the application)
+	> previously since we are only using our laptop to build our application and deploy the output in the production
+	> but since we are working with several developers, the code in each developer's laptop may not have the latest changes
+	> with a dedicated machine for building the application, we can ensure that each time we build the application, it will fetch the latest changes first, and do the build operation
+2. Test stage (machine dedicated for testing the build output)
+	> before we deploy the changes into the production environment, we may want to test these changes in a dedicated environment, either via manual testing or automated testing
+	> this means that we will be deploying the application in separate environment for testing
+	> after confirming that the build output passes the tests, we will then manually deploy the said build output in the production environment
+	
+	
+New workflow
+1. You and other developers will create changes in the source code and push them in a central hub. You guys can also pull the latest changes in the same hub as well
+2. When its time for building the application, it will be done in a dedicated machine for building the app
+3. Then the build output will be deployed in an environment specifically for testing the changes done
+4. Lastly, when the build passes the test, it will be manually deployed in the production environment
+
+
+Problem
+1. At this point, we are doing things manually, from building the application, to deploying it on test environment, and deploying it lastly in production environment for the end user
+2. With the increase of manual work, there's a chance that human error will happen. Also these process takes time to be finished from end to end
+
+Solution: CI/CD Pipeline and tools
+
+
+
+CI/CD Pipeline
+ > stands for Continuous Integration / Continuous Delivery/Deployment
+ > tools to be used to automate these manual task and build a pipeline includes
+	- Jenkins
+	- Github actions
+	- Gitlab CI/CD
+ > with one of these tools configured, 
+	1. every time code is pushed, it is AUTOMATICALLY pulled from the GitHub repository to the build server
+	2. then it is built and moved automatically to the test server
+	3. after it is tested automatically in test server, it will then be moved and deployed automatically to the production server
+ > This allows changes, features, and bug fixes to move FASTER through the pipeline and be deployed more often with LESSER manual effort, ultimately enabling you and your team to resolve issues quicker
+ > With Git, GitHub, and CI/CD pipeline in place, we have enabled our team to make changes to our application and get them to production servers seamlessly
+ 
+ 
+Problem #2: Dependencies and libraries/packages management on the machines
+ > as we talked earlier, these dependencies, libraries, or packages may includes
+	- configurations in the machines
+	- runtimes needed to run the application
+ > this needs to be configured the EXACT SAME WAY on the servers
+ > if a new packages is required, this needs to be MANUALLY installed and configured on ALL the servers that this code runs
+	- this results in another manual work being done
+ > if you miss our configuring one of these packages with the right version in the right way, it will lead to the software not working and resulting in unexpected outcomes on different systems
+ 
+Solution: Containers
+ > Containers helps package the application and its dependencies into an IMAGE that can then be run on any system without worrying about dependencies
+ > So now during the build, you build a container image with the application and its dependencies packaged into it, and all other systems can now simple run a container from that image without worrying about installing and configuring libraries and dependencies
+ > example technology that enales working with container is Docker
+ 
+
+Docker
+ > with Docker, the developer can create a Docker file which specifies what the dependencies are,
+	- $ vi Dockerfile
+ > that Docker file can be used during the build stage to build an image
+	- $ docker build
+ > that image can then be run on any server using a simple Docker run command
+	- $ docker run
+	
+	
+Containers functionality
+ > major functionality of a container is that it enables ISOLATION between processes, so each container is an isolated instance and this allows us to run multiple containers, each having its own separate instance of the application on the same server
+ 
+ 
+ 
+Problem #3: Scaling the application up or down to handle increase load, and ensuring availability of application in case one container goes down
+ > as of now, in order to handle changing loads, we need to spin up additional machine, where each of them will create instance of the application in container
+ > with this in mind, we need to ensure the elasti
+ 
+Solution: Container orchestration platforms
+ > example of this is Kubernetes
+ > container orchestration platforms helps declare how containers should be deployed and ensure that it is always run in the same way as declared
+ > it can help AUTO-SCALE containers as well as the underlying infrastructure based on need and manage resources on the underlying servers to ensure OPTIMAL RESOURCE UTILIZATION
+ 
+ 
+Problem #4: Configuring the provisioned server the exact same way
+ > as of now, we are manually configuring each of the servers/machines that we are using in the cluster. this includes:
+	- having right resources assigned to it
+	- right version of operating system
+	- correct storage attached to them
+	- correct kernel settings or other software that needs to be preconfigure on it, such as the Docker runtime or the necessary Kubernetes packages
+ > this is going to be one big challenge if you have to click through the Cloud platform's GUI each time a server needs to be provisioned. 
+	- this can take a lot of time, and can lead to human errors in misconfiguring insfrastructure, resulting in having to rebuild the entire server 
+	
+Solution: TerraForm 
+ > TerraForm automates the provisioning and configuration of server IRRESPECTIVE of what cloud platform they are on, and it ensures that the servers configured are always in the same state
+ > if someone manually changes the configuration on these servers and not through TerraForm, it changes it back to make sure that the state defined is preserved (reconfigured)
+ > the state is defined by configuring a TerraForm manifest file that looks like a code
+	- this is the reason why its called as INFRASTRUCTURE AS CODE (IaC)
+ > All of the infrastructure configuration, including the virtual machines, the storage buckets, the VPC, etc. is now stored in the form of code and is stored in source code repositories
+	- that way, it can be considered at as any other code and be tracked
+ > If changes are needed, then make the changes to the code and run the TerraForm apply command
+	- $ terraform apply
+	
+
+Problem #5: Automation of configuration of the servers provisioned
+ > As of now, we automated the infrastructure provisioning side, but we still need to configure the provisioned servers/machines
+ 
+Solution: Ansible
+ > Ansible can be used to automate the configuration of these servers
+ > While TerraForm is more of an infrastructure provisioning tool, Ansible is an automation tool that helps configure these infrastructure once provisioned
+ > NOTE: There are many areas both TerraForm and Ansible overlap
+	- both of these tools can provision infrastructure and automate software configuration on them, but each has its own benefits in different areas
+	- so while Terraform is used mostly for PROVISIONING INFRASTRUCTURE, Ansible is used for POST CONFIGURATION ACTIVITIES suck as installing the software and configuring them on those servers
+ > Similar to TerraForm, Ansible uses code to configure servers, and are called ANSIBLE PLAYBOOKS
+ > This code also goes to the source code repository on GitHub
+ 
+ 
+
+Problem #6: Monitoring metrics like resource consumptions (ex: CPU%, MEM), processes and their consumption as well
+ > after provisioning the servers, we will need to be able to monitor their resource consumption and the processes happening inside
+ > this is to be able to take preventive measures on the issues detected early on
+ 
+Solution: Prometheus
+ > Prometheus collects information or metrics from the different servers and stores it CENTRALLY
+
+
+
+Problem #7: Visualization of the metrics collected
+
+Solution: Grafana
+ > Grafana is used to visualize the metrics collected by the Prometheus
+ > It helps the user make sense our of the data/metrics, by visualizing them into charts and graphs
+ 
+
+
+Current situation
+ > with these tools set up, all of the steps necessary to create an application for the end users are streamline
+ > this includes
+	1. Code
+		- creating the application from an idea
+	2. Build
+		- build the application into a executable format
+	3. Test
+		- test the application
+	4. Release
+		- release the output of the current application for deployment
+	5. Deploy
+		- deploy the application for the end users to use
+	6. Operate
+		- operate the machines where our application is being hosted
+	7. Monitor
+		- monitor metrics and data in case any abnormalities is being shown
+	8. Feedback
+		- taking feedbacks and coming up with new ideas and implementing those ideas
+		- we will then go back to the Code step where we use the feedback to create changes in source code
+	
+ 
+ 
+DevOps
+ > DevOps is a combination of people, processes, and tools that work together in going from an idea to execution and delivering high quality software consistently
+ 
+ 
+ 
+ 
+3. Support
+
+Support
+ > Join our Slack channel for support and discussions
+ > Slack Group URL: https://kodekloud.com/pages/community

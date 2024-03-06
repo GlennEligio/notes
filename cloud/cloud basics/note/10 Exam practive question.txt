@@ -1,0 +1,28 @@
+10 Exam practive question
+
+Example AWS Certified Cloud Practitioner exam
+
+1. Why would a company decide to use AWS over an on-premises data center? (Select all that apply)
+a. Highly available infrastracture
+b. Elastic resources based on demand
+c. No upfront cost
+d. Cost-effective
+
+My answer: 
+All, since most of the choice are benefit of using Cloud service (like AWS) over On-premises.
+For highly available infrastructure, AWS provide specific service for us to create like Servers, Loadbalancers, Databases, etc, compare to on-premise data centers where you will need to build it from scratch.
+Elastic resources based on demand is also a feature in AWS. Example of this is the EC2 server, where you can configure its resources used like CPU, RAM, Drive storage size, etc.
+No upfront cost for AWS since they will charge you at the end of the quotation date BASED on the services and resources used.
+Cost-effective since you can dynamically change the amount of resources you use compare to on-premises data center`
+ 
+
+
+Actual answer:
+1. Highly available infrastracture:
+	> correct since in AWS, everything is provisioned on demand, which includes the infrastructures
+2. Elastic resource based on demand
+	> correct since in AWS, you can easily scale up and down the resources you use on demand
+3. No upfront cost
+	> correct since in onprem, you need to procure the hardwares to use
+4. Cost-effective
+	> debatable, Cloud promises this but its high debated topic

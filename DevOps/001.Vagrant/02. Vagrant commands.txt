@@ -1,0 +1,8 @@
+02. Vagrant commands
+
+vagrant --version
+	> check the version of vagrant installed
+vagrant init <vagrant-vm-image>
+	> initializes the .vagrant file that contains configuration for creating the VM image to be run
+vagrant up
+	> runs the VM image created by vagrant init on a Hypervisor (e.g. VirtualBox)

@@ -1,0 +1,66 @@
+Section 19 - Docker Registry
+
+114. Docker Registry
+
+Docker registry
+ > this is where docker images are stored
+ > there are two types of Docker registries
+	a. Public registries
+	b. Private registries
+ > Public registries are registries where the image can be accessed externally (ex: dockerhub)
+ > Private registries on the other hand are registries where the image can only be access internally
+ 
+ 
+Image name parts
+ > image names follows a specific syntax
+	DOCKER_REGISTRY_ADDRESS/USER_OR_ACCOUNT_NAME/IMAGE_OR_REPOSITORY:TAG
+ > DOCKER_REGISTRY_ADDRESS is the address of the Docker registry where the docker image is supposed to be pulled
+	- if not provided, it will use 'docker.io' as default
+ > USER_OR_ACCOUNT_NAME can be either the DockerHub account, or the Organization name
+	- if not provided, it will use the same value as the image or repository name
+ > IMAGE_OR_REPOSITORY is the image or repository name of the docker image
+ > TAG can be seen as the version of image
+ > in case either the docker registry or user/account name is not provided, it will use the default value which is 'docker.io' and the image name respectively
+	- ex:
+		$ docker run nginx	# this is the same as the commands below
+		$ docker run nginx/nginx 
+		$ docker run docker.io/nginx/nginx
+
+
+Public Docker Registries
+ > there are a lot of public docker registries out there
+ > the most popular one is the DockerHub with address 'docker.io', which is the default docker registry address used
+ > other public registries includes:
+	- Google registry (gcr.io)
+	
+	
+Private Docker Registries
+ > for application/images that is supposed to be for private/internal use only, we have an option to use private Docker Registries
+ > for these registries, we would need to login to the Docker registry in order to use images inside them
+ > in addition, to use images hosted inside private docker registries, we would need to specify the docker registry address in the docker image to pass in the docker commands
+	- ex:
+		docker login private-registry.io
+		docker run private-registry.io/apps/internal-app
+ > to create a Private Docker Registry, there are options, which includes but not limited to
+	a. use private docker registries provided by Cloud providers like GCP, AWS, or Azure
+	b. deploy/run our own private docker registry
+	
+	
+Deploying Private Registry
+ > if we choose to deploy our own private registry, we would need to use the Docker Registry
+ > Docker Registry is itself another application, and is available as a docker image
+ > The name of the said image is 'registry', and exposes the API in port 5000
+ > ex: deploying private docker registry and adding custom image in it by tagging it with private docker registry address and pushing it
+	$ docker run -d -p 5000 --name registry registry:2
+	$ docker image tag my-image localhost:5000/my-image
+	$ docker push localhost:5000/my-image
+	$ docker pull localhost:5000/my-image
+	$ docker pull 192.168.56.100:5000/my-image
+	
+
+Commands
+docker image tag CUSTOM_IMAGE_NAME PRIVATE_DOCKER_REGISTRY/IMAGE_REPOSITORY
+ > docker image tag is used to 'retag' a custom image with another tag
+ > ex: retagging 'my-image' to include the private docker registry in the image name
+	$ docker image tag my-image localhost:5000/my-image
+

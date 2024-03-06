@@ -1,0 +1,82 @@
+10. DaemonSet
+
+
+DaemonSet
+	> ensures that all (or some) Nodes run a copy of a Pod.
+	> As nodes are added to cluster, Pods are added to them
+	> As nodes are removed from the cluster, those Pods are garbage collected
+	> Deleting a DaemonSet will clean up the Pods it create
+
+DaemonSet Use cases
+1. Running a cluster storage daemon on every node
+2. Running a logs collection daemon on every node
+3. Running a Node monitoring daemon on every node
+
+
+DaemonSet usage
+1. ONE DaemonSet per type of daemon, covering all Nodes
+2. MULTIPLE DaemonSet per type of daemon, but with different flags and/or different memory and cpu request for different hardware types
+
+
+
+DaemonSet Manifest Guide
+	> same as ReplicaSet, but kind is set to DaemonSet
+	> inside the Manifest file, it must have
+		1. kind = DaemonSet
+		2. metadata.name have value as well
+		3. spec.template to define the PodTemplateSpec
+			- content of .spec.template is similar to .spec of a Static Pod
+			- contents include
+				a. .spec.template.metadata.name for Pod name
+				b. .spec.template.metadata.label for Pod labels
+				c. .spec.template.spec.containers for defining ContainerSpec
+		4. spec.selector to define the criteria to determine the Pods to monitor
+
+
+EX: Manifest file for DaemonSet
+# fluentd-ds-allnodes.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-ds
+spec:
+  template:
+    metadata:
+      labels:
+        name: fluentd
+    spec:
+      containers:
+      - name: fluentd
+        image: gcr.io/google-containers/fluentd-elasticsearch:1.20
+  selector:
+    matchLabels:
+      name: fluentd
+
+
+	> In this Manifest file, we created a DaemonSet K8s resource
+	> This DaemonSet have the following properties
+		1. PodTemplateSpec where in:
+			a. label includes "name=fluentd"
+			b. runs a Container with name "fluentd" and image from "fluentd-elasticsearch"
+		2. Selector where in:
+			a. Pod criteria where Pod must have label equals to fluentd
+
+
+
+Commands
+Creating DaemonSet
+kubectl create -f <MANIFEST FILE>
+	> used to create a K8s resource (in this case, a DaemonSet) using manifest file
+
+Display DaemonSet
+kubectl get ds <NAME...>
+	> display information of one or more DaemonSet
+	> not pass a Name will show ALL DaemonSet
+
+kubectl describe ds <NAME>
+	> display full information of a specific DaemonSet
+
+
+Delete DaemonSet
+kubectl delete ds <NAME...>
+	> used to delete one or more DaemonSet

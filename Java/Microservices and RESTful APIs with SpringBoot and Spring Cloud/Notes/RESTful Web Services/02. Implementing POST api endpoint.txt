@@ -1,0 +1,23 @@
+IMPLEMENTING POST API ENDPOINTS
+
+1. Use 201 Created as Response Status code
+
+EX:
+	// input - details of user
+	// output - CREATED & return the created URI
+	@PostMapping("/users")
+	public ResponseEntity<Object> createUser(@RequestBody User user) {
+		// fetch the saved User for its Id
+		User savedUser = service.save(user);
+		
+		// build URI for Location header 
+		// note: context path refers to base-url, which consist of
+		// 1. protocol, 2. ip address, 3. tcp port
+		URI location = ServletUriComponentsBuilder
+				.fromCurrentContextPath()
+				.path("/users/{id}")
+				.buildAndExpand(savedUser.getId()).toUri();
+		
+		// return a ResponseEntity with 201 Created and pass the Location URI
+		return ResponseEntity.created(location).build();
+	}

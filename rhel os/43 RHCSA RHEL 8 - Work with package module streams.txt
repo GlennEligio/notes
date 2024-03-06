@@ -1,0 +1,47 @@
+43 RHCSA RHEL 8 - Work with package module streams
+
+Package Module Streams
+ > Modules allow you to install specific Modules allow you to install specific versions of a application, a good example of this would be the PHP application. 
+ > The PHP application is available in the modules stream with multiple versions and editions, this allows you to select and install the specific version that is required.
+
+
+Installing specific Stream/Profile/Version of a Module
+ > to install a specific module, use the syntax below
+	$ dnf module install MODULE:STREAM:VERSION/PROFILE
+ > though in practice, we typically omit the version and just use the stream and profile
+	$ dnf module install MODULE:STREAM/PROFILE
+ > ex:
+	$ dnf module install php:7.3/minimal
+
+
+
+Commands
+dnf module list
+ > list all the modules available alongside their informations like
+	- name, stream, profiles, and summary
+ > options with [d] are the default values if they are not specified
+	- ex: for "gimp" module, the profiles are common[d], deval
+	- this means if we dont specify the profile to use, it will default to common
+
+
+dnf module install MODULE
+ > used to install a module, which will include everything like different versions/streams/profile
+ > sypnosis:
+	$ dnf module install MODULE:STREAM:VERSION/PROFILE
+	$ dnf module install MODULE
+	$ dnf module install MODULE:STREAM/PROFILE 			- widely used
+ > ex:
+	$ dnf module install php
+
+
+dnf module remove MODULE
+ > removes the module in the system
+ > ex:
+	$ dnf module remove php
+
+
+dnf module reset MODULE
+ > Reset module state so it's no longer enabled or disabled.  
+ > Consequently, all  installed  profiles  will  be removed and only RPMs from the default stream will be available in the package set.
+ > EX:
+	$ dnf module reset php

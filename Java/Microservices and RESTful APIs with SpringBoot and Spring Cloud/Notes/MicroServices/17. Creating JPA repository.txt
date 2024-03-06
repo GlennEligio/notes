@@ -1,0 +1,20 @@
+17. Creating JPA repository
+
+
+Classes / Interface used
+
+JpaRepository<T, ID>
+	> a @NoRepositoryBean
+	> JPA specific extension of org.springframework.data.repository.Repository
+		- Central repository marker interface. Captures the domain type to manage as well as the domain type's id type. Generalpurpose is to hold type information as well as being able to discover interfaces that extend this one duringclasspath scanning for easy Spring bean creation. 
+
+
+
+Creating JpaRepository
+1. Create interface
+2. Extend interface to JpaRepository<T, ID>
+	- for T, pass the class that represents the Entity
+	- for ID, pass the dataType of the ID of the Entity
+3. Add custom query by creating abstract methods inside it
+4. Inject the interface to the Controller
+5. Use the abstract method to execute the custom query

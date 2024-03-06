@@ -1,0 +1,272 @@
+23. CSS part 14 - Transform/Transition/Animation
+
+includes
+transform CSS property
+transform values
+	- translate()
+	- rotate()
+	- scale()
+	- skew()
+transition (change over time)
+animation CSS property (change over time with points)
+
+
+I.
+transform
+	> CSS property used to make changes to an element
+	> we can either
+		a. translate()
+			- move the element in x or y axis
+		b. rotate()
+			- rotate element from 0 to 360deg
+		c. scale()
+			- scale the element up or down
+		d. skew()
+			- slant the element by certain degrees
+	> as we can see, the value we pass on transform: are functions
+
+1. translate()
+	> moves element in x, y, or z axis, or combination of 3
+	> have variations like
+		- translate(), translate3d(), translateX(), translateY(), translateZ()
+		- NOTE: translate() takes two values, first represents X axis translate, second value to Y axis translate
+	> we can pass values on the function like
+		- px, vw, vh, em, rem
+		- % 
+			= for % case, it will base the value to the dimension of element itself
+			= ex: if element is 200px by 200px, translateX(50%) will move the element to the right by 100px (200px * 50%)
+	> passing positive value will move element to RIGHT or DOWN (depending on what axis it moves)
+	> passing NEGATIVE value will move element to LEFT or UP (depending on what axis it moves)
+
+
+
+2. scale()
+	> scales the element relative to its OWN DIMENSION
+	> we can use the following functions
+		- scale(), scale3d(), scaleX(), scaleY(), scaleZ()
+		- NOTE: For scale(), it takes two values
+			= first value represents X-axis transform
+			= second value represents Y-axis transform
+	> this will take NON NEGATIVE VALUES	
+		- 0 < n < 1 values will scale down the size of the element
+		- n > 1 will scale up the size of the element
+		- n = 1  will do nothing to the element	
+	> scaling will happen to BOTH DIRECTION of the tranform axis
+		- for scaleX(), both left and right side will be affected
+
+
+3. rotate()
+	> it will rotate the element with respect to a certain axis
+	> can use the following variations like
+		- rotate(), rotateZ(), rotateX(), rotateY(), rotate3d()
+		- NOTE: rotate() is shorthand for rotateZ()
+	> takes degrees value (xxdeg)
+		- ex: rotateZ(45deg) 
+	> we will OFTEN USE the rotateZ() in cases 
+	> giving 0deg or 360deg to rotateX, rotateY, and rotateZ will do nothing
+	> giving 90deg or 180deg to rotateX and rotateY will make them disappear
+
+
+
+4. skew()
+	> make the element SLANTED by certain degree in specific axis
+	> can use variations like
+		- skew(), skewX(), skewY()
+		- NOTE: skew() is shorthand
+				= first value represents X axis skew
+				= second value represents Y axis skew
+	> can give values from 0 to 360deg
+
+
+
+
+
+II.
+transition
+	> responsible for creating transition changes to an element over some period of time
+	> animation but with only two event points
+	> can use variation of giving transitions
+	> we can define different CSS properties to customise transition like
+		- transition-property
+		- transition-duration
+		- transition-delay
+		- transition-timing-function
+	> we also have a shorthand for transition: CSS properties 
+
+1. transition-property + transition-duration
+	> here, we define which 
+		1. property will be subjected to a transitional change and 
+		2. how long will the transition duration is
+	> typically used in conjunction with pseudo-class selector for specific state change (e.g. hover, onclick, etc.)
+	> transition-property defines the CSS properties that will have TRANSITION CHANGE
+		- we can pass multiple CSS properties name here
+	> transition-duration defines the duration of transition to happen
+		- we can pass multiple duration values here
+		- each of the duration will affect a specific property in transition-property of the same index
+	> in example below, 
+		- transition of prop1 will happen in time1 duration
+		- transition of prop2 will happen in time2 duration
+		- transition of prop3 will happen in time3 duration
+
+SYNTAX:
+selector {
+	transition-property: prop1, prop2, prop3;
+	transition-duration: time1, time2, time3;
+}
+
+
+
+2. transition-delay
+	> CSS properties to define the duration of time DELAY before the transition of properties occurs
+	> takes time values (xs for second, 4s; xm for minute, 2m)
+	> in example below, transition will have delay of time4 before it starts
+SYNTAX:
+selector {
+	transition-property: prop1, prop2, prop3;
+	transition-duration: time1, time2, time3;
+	transition-delay: time4;
+}
+
+
+3. transition-timing-function
+	> specifies the speed curve of the transition effect
+	> can have values like
+		a. ease
+			- default value
+			- transition effect will be slow-start, then fast, then end slowly
+		b. linear
+			- same speed from start to end
+		c. ease-in
+			- slow start
+		d. ease-out
+			- slow end
+		e. ease-in-out
+			- slow start and end
+	> in example below, the transition will have speed curve of curve1
+SYNTAX:
+selector {
+	transition-property: prop1;
+	transition-duration: time1;
+	transition-delay: time1;
+	transition-timing-function: curve1;
+}
+
+
+SHORTHAND for transtion
+
+SYNTAX:
+For multiple properties
+selector {
+	transition: 	prop1 duration1 curve1 delay1, 
+			prop2 duration2 curve2 delay2, 
+			prop3 duration3 curve3 delay3;
+}
+
+All property transition application
+selector {
+	transition: all duration curve delay;
+}
+
+
+
+
+
+
+III.
+animation
+	> css property used to create transitional changes to an element
+	> can have two or MORE points of transitions
+	> to define these points, we will use 
+		-@keyframe query
+	> CSS properties that is related to animations are
+		- animation-name
+		- animation-duration
+		- animation-iteration-count
+		- animation-fill-mode
+	> NOTE: We must define THE FIRST three CSS property for the animation to work
+	> we will also talk about SHORTHAND for the animation
+
+
+1. @keyframe query
+	> used to define the CSS properties to apply for each point of the animation
+	> inside the query, we will define animation keypoints (using percentage %)
+	> these keypoints then contain CSS properties to apply
+
+SYNTAX:
+@keyframes identifier {
+  x% {
+    /* CSS properties */
+  }
+  x2% {
+    /* CSS properties */
+  }
+  x3% {
+    /* CSS properties */
+  }
+  x4% {
+    /* CSS properties */
+  }
+}
+
+
+
+2. animation-name
+	> CSS property to define which @keyframe animation we will use
+	> we will pass the identifier name of the @keyframe query
+
+EX:
+.animation {
+  background: blue;
+  animation-name: move;
+}
+
+
+3. animation-duration
+	> defines how long the animation will take
+	> we can pass time values here
+EX:
+.animation {
+  background: blue;
+  animation-name: move;
+  animation-duration: 10s;
+}
+
+
+4. animation-iteration-count
+	> defines how many times we will play the animation
+	> we can pass
+		a. number values
+			- animation will play for a specified amount of times
+		b. infinite
+			- animation will play forever
+EX:
+.animation {
+  background: blue;
+  animation-name: move;
+  animation-duration: 10s;
+  animation-iteration-count: ;
+}
+
+
+5. animation-fill-mode
+	> defines what will happen to element after or outside the animation
+	> can have values like
+		a. none
+			- default value
+			- animation will not apply any styles to the element before or after it is executing
+		b. forwards
+			- the element will retain the style values that is set by the last keyframe
+		c. backwards
+			- the element will get teh style values that is set by the first keyframe
+			- it will retain this during the animation-delay period
+		d. both
+			- animation will follow the rules for both forward and backwards, extending the animation properties in both directions
+
+
+
+SHORTHAND for animation properties
+
+animation: animation-name animation-duration animation-iteration-count
+
+
+

@@ -1,0 +1,349 @@
+WCS V9 Search
+
+Search
+	> HCL Commerce Search uses a number of specialized terms.
+	> A concise list of most commonly used terms is provided to get you started
+	
+Introduction to Search terminology
+	> Search terms usually refer to one of three different conceptual components of the product, which can be either:
+		1. the index
+		2. the runtime engine that processes requests
+		3. the system architecture itself
+	> The most commonly used terms for each components are provided in thsi topic
+	
+Index terms
+	> this index is a large flat table that contains data fields that are optimized for search performance.
+	> Search query strings are compared with entries in the index, and positive results are returned to the customer
+	
+
+Row/Document
+	> A set of data that describes a particular catalog object.
+	> For example, each row or document in the CatalogEntry core corresponds to a specific catalog entry
+	
+Field
+	> Rows or documents in the core are composed of fields, which hold specific information about the catalog objects
+	> For example, the name field is used to hold the name information for the category in a row (or document) from the CatalogGroup core
+	
+Core
+	> A Solr index that contains Solr documents for a specific purpose
+	> Some of the commonly used cores are:
+		1. CatalogEntry core, which is used to store data about the catalog entries in catalog
+		2. CatalogGroup core, which is used to store data about the categories in the catalog.
+		3. Unstructured core is used to store attachment data for catalog entries in the catalog (images, PDF files, and other attachments)
+		4. Inventory core is used to store inventory data for the catalog entries in the catalog
+		5. Price code is used to store price data for the catalog entries in the catalog
+		
+Index
+	> The index is composed of all of the search cores that are associated to a master catalog.
+	> Common indexes includes:
+		- MC_10001 is an index that contains a CatalogEntry, CatalogGroup, and Unstructured core
+		- MC_10101 is an index that contains a CatalogEntry, CatalogGroup, Unstructured, and Inventory core
+		
+Full indexing
+	> Rebuilding the entire index from scratch by using the build index RESTful call
+	> We can also get the status of the build index job using RESTful call
+	
+Delta indexing
+	> Updating the current index with the changes that are captured in TI_DELTA_CATENTRY using the build index RESTful API
+	
+Crawler
+	> Commerce utility for crawling unmanaged content for indexing into unstructured index (ex: HTML files)
+	
+Extension index
+	> A core that extends the CatalogEntry core to store specific data for the catalog entrie
+		- For example, the Inventory index extends the CatalogEntry core to store inventory information for each Catalog Entry. 
+	> Since this information is separated into different core, you can rebuild this small core often and quickly. This core allows you to keep Inventory counts up-to-date
+	
+	
+	
+	
+SOLR RUNTIME
+	> The Search runtime consists of the Solr application and associated HCL Commerce utilities and processes
+	
+Deep search sequencing
+	> Sorting products for category navigation by using the product's sequence value, and the sequence value of its parent category
+		- ex: 
+			Electronics Catalog Group - 1.0
+			Computer - 2.0
+			Apparel	- 2.0
+			Dress - 3.0
+		- in this case, the Computer will be first than Dress catalog entry since 
+			1. Electronics have higher sequence value than Apparel (Parent category)
+			2. Computer have higher sequence than Dress (Product)
+			
+Shallow sequencing
+	> Sorting products for category navigation by using the product's sequence value only
+	> This would mean that two catalog entry of different parent group may be in the same place
+	
+Search profile
+	> Abstraction of a specific search scenario, which is defined in wc-search.xml 
+		- wc.search.xml file is located under search-config-exl/src/runtime/config/com.ibm.commerce.search/wc-search.xml
+	> The search profile contains the fields that are being searched, expression providers, query preprocessor and postprocessors to use, and other relevant information.
+	> For example, searching for products and retrieving a specific category returns different information and require searching for different data
+	> In such case, you should be using different search profiles for these scenarios. 
+		- IBM_findCategoryByIdentifier is a search profile that can be used to retrieve category information based on specific catgroup_id.
+		- IBM_findProductsBySearchTerm profile is used to retrieve information based on a search term
+	
+EX: wc-search.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<_config:search-config
+	xmlns:_config="http://www.ibm.com/xmlns/prod/commerce/foundation/config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.ibm.com/xmlns/prod/commerce/foundation/config ../xsd/wc-search.xsd ">
+
+	<_config:server name="BasicConfiguration">
+		<_config:embedded />
+	</_config:server>
+	
+	<!-- for ratings reviews custom -->
+	<_config:profile name="IBM_findProductsBySearchTerm" indexName="CatalogEntry">
+	  <_config:query>  
+	    <_config:postprocessor 
+	    classname="com.ibm.commerce.foundation.server.services.rest.search.postprocessor.solr.SolrRESTSearchCatalogEntryViewUserDataQueryPostprocessor" />  
+	  </_config:query>   
+	  <_config:result>           
+	    <_config:field name="customerRanking_display"/>
+	  </_config:result>            
+	</_config:profile>
+	<!-- for ratings reviews custom -->
+</_config:search-config>
+			
+			
+Expression provider
+	> User to modify the control parameters available for the search request
+	> For example, if you want to override the sort that is being used for the search request, you can use an expression provider to modify the _wcf.search.sort control parameter.
+	> Expression provires allows modifications to control parameter values before they are read by query preprocessors and added to the query
+	
+Query preprocessor
+	> used to modify the query before it is processed by HCL Commerce Search
+		- For example, if you want to filter on catalog entries that have manufacturer name, you can use a query preprocessor to add a query parameter like fq=mfName:*
+	> We can also use control parameters that are provided for the search request to add data to the query
+		- For instance, to add a sort parameter based on the value in the _wcf.search.sort control parameter
+		
+Query postprocessor
+	> Used to modify the query results before it is returned as the search response
+	> A query postprocessor can be used to add products to the search response based on a particular condition
+		- For instance, if a specific manufacturer esists in the search results
+		
+Autosuggest
+	> Type ahead function used in the search bar to complete your currently typed phrase with possible matches
+		- For example, "shir" can match on "shirt", which will be suggested and shown in search result suggestion
+		
+Spellcheck
+	> Used when a search returns 0 (or only a few depending on your configuration) to figure out what was the intended search was.
+		- EX: Searching for "cofe" returns 0 results, but the spell check function suspects that you meant to search for "coffee" (which has many more matches). The result is returned in the "Did you mean..." section of the page.
+		
+Facets
+	> filters for reducing the search results to make them more relevant to user's expectation.
+		- ex: a size facet can be used to display only those search results that are available in a particular size
+		
+Descriptive attribute
+	> Used to describe a catalog entry	
+		- ex: you can assign a t-shirt a descriptive attribute like material, with a value of cotton
+	> Can be used as a facet if the attribute is considered facetable
+	
+Defining attribute	
+	> Used to define a characteristic for a catalog entry
+		- ex: you can assign a t-shirt a defining attribute like size, with a value of "Large"
+	> can be used as a facet if the attribute is considered facetable\
+	
+Search rule
+	> used to influence the ordering or content of a search based on specific triggers
+		- ex: if a user searches for coffee, you can boost the relevancy of products that are made by manufacturer "Coffee King"
+		
+Search term association
+	> used to modify or add search terms in the search query, or redirect the user to a specific page
+	> Synonyms are used to add words to the search phrase (if X is searched for, also search for Y)
+	> Replacements are used to replace words in the search phrase (if X is searched for, instead search for Y)
+	> Landing Pages are used to direct the user to a specific page if a specific search term is in the search phrase (if X is searched for, redirect the user to page Y)
+		- done typically if there's only one search result
+		
+		
+		
+Solr Architecture
+	> the architecture of the search product includes the major pieces of integrated software and hardware.
+	> Architecture includes 
+		1. the servers, 
+		2. data pipes that connects them, and 
+		3. the communication protocols they use
+		
+REST-based search
+	> search request are sent to the Search server as a REST URL
+	> Most of the search scenario is processed on the Search server itself, and the search results are returned as a JSON response
+	
+Data Environment
+	> A network infrastructure dedicated for hosting the Version 9.1 Data Services
+	> Each environment is typically restricted to one stage of release lifecycle, such as development, quality assurance, staging, production
+	> When data is promoted from a lower staging environment to a higher production environment, this involves moving data from the staging data environment to the production data environment
+
+Data Platform
+	> A Platform as a Service (PaaS) concept where infrastructure such as servers, storage, networking, along with the middleware Data Services, are all integrated together as one single platform.
+	> It supports the complete web application:
+		- building
+		- testing
+		- deploying
+		- managing
+		- updating
+		
+Data Services
+	> A collection of microservices that wraps around Elasticsearch, NiFi, and Zookeeper to provide an integrated technology solution
+	> The services allow business data to be governed, accessed, and delivered to end users, data applications or other technologies for strategic business purposes
+	
+
+	
+CUSTOMIZING Solr SOLUTION
+	> In keeping with HCL's commitment to current and open standards, HCL Commerce Search uses Apache Lucene as the basis of its Search framework
+		- Lucene powers the Apache Solr search engine and the Elasticsearch search engine
+		- The indexing pipeline is more open, flexible and scalable, and is tightly integrated with the data services
+		- Using the underlying dataflow technology and architecture, you can easily customize the pipelines.
+		- This open-standards approach considerably eases the process of integrating Search with existing and third-party applications
+	> HCL Commerce Search uses a multi-channel, container-based system for search and merchandising
+	
+	
+HCL Commerce Search architecture	
+	> composed of the following components and subcomponents
+		1. Multi-channel search solution		
+			- Web
+			- Mobile
+			- Field sales
+			- Kiosk
+			- Call center
+		2. Commerce Search
+			- Application Interfaces
+			- Commerce search framework
+			- Transaction data
+			- Managed content
+			- Search engine
+			- Search index
+			- Search content aggregation
+		3. Commerce application and features
+			- Management Center
+			- Rational Application Developer
+			- WebSphere Liberty Server administration
+			
+Multi-channel search solution
+	> guided navigation, landing, search result pages with dynamic merchandising content
+	> keyword search, type-ahead auto suggest menu, search result terms suggestions
+	> Page templates, page layout, user interface widgets
+	
+Application Interfaces
+	> uses REST for interfacing to external system
+	
+Commerce search framework
+	> consist of the following components	
+		1. Catalog navigation
+		2. Faceted navigation
+		3. Keyword (advanced) search
+		4. Business rules
+		5. Business rules
+		6. B2B contract prices and entitlement
+		7. Relevancy configurations
+		8. Store preview
+		9. Workspace
+		10. Extended Sites
+		
+Transaction data
+	> sends Search rules (dynammic) to the Commerce Search Framework
+	> consist of the following
+		1. Customer profiles, segments
+		2. Shopping cart content, order history
+		
+Managed content
+	> sends Search rules (static) to the Commerce search framework
+	> Catalog taxonomy, product attributes
+	> Catalog filter and entitlement
+	> Marketing, promotions
+	> Prices
+	
+Search engine
+	> responsible for the following
+		1. Stemming, Spell correction, Wildcard searching, Thesaurus, Filtering, Sorting and paging
+		2. Relevancy, Result grouping, Highlighted snippets, Multi-select facets
+		3. Administration tooling, Caching, Index replication
+		
+Search index
+	> responsible for the following	
+		1. Multiple languages
+		2. Index schema management
+		3. Index verification (health check)
+		4. Extension index
+		5. Workspace, staging, scheduling
+		
+Search content aggregation
+	> responsible for the following
+		1. RDBS, CSV, XML crawler (catalog, external content)
+		2. File crawler (document, digitial content)
+		3. Web crawler (site content)
+		
+Management Center
+	> responsible for the following 
+		1. Catalog management
+		2. Search term management
+		3. Facet management
+		4. Product sequencing
+		5. Landing pages
+		6. Search rules
+		7. User profiles management
+		8. Marketing and promotions
+		9. Rule-based sales categories
+		10. SEO management
+		11. Analytics
+		
+Rational Application Developer
+	> composed of the following
+		1. Commerce and Search API
+		2. Development and unit test
+		
+WebSphere Liberty Server administration
+	> composed of the following
+		1. DynaCache, eXtremeScale
+		2. Cache Monitor
+		3. Performance tuning
+		
+		
+	
+HOW SOLR WORKS?
+	> At the front end, HCL Commerce Search interacts with users and other components of the store environment by using HTTP REST requests.
+	> On the server, it merges the speed of relational databases with the flexibility of unstructured XML.
+	> As queries come in, they are transformed into XML documents, whose content is compared against a detailed index by the Apache Solr engine
+	
+The Solr search server
+	> The search server consist of 
+		1. a set of REST services, 
+		2. a search runtime framework and 
+		3. a set of HCL Commerce foundation services that also provides access to production databases
+	> The search runtime engine includes the search expression providers and expression processor
+	> All of these services run together in a compact container
+	> With the exception of index preprocessing, all Ssearch-related functions take place inside the container
+	
+	
+EX:							 
+Frontend --- Request --> REST services ---Request---> Expression provider --- Expression ----> Expression processor --- run against ---> Index
+	
+	
+REST services
+	> The search interface uses REST to convert the incoming request into a specific resource call, for instance a ProductView call. The resulting expression is handled off to the expression procesor, where more business logic will be applied
+	
+Expression providers
+	> Depending on the search profile of the request, various business components might get involved, such as Markting for search-based merchandising rules, or Contracts for entitlement
+	> Each business component can contribute a portion of the search expression through its own expression provider.
+	> Each contribution is combined with the main search expression that is generated by the REST services. The resulting search expression is run by the search processor
+	
+Expression processor
+	> The expression processor uses the Solr engine to run the search against the index, and captures the result for post-processing and final response.
+	
+Search Index
+	> the search index is the key to the system's power
+	> This index is a large flat table that contains data fields that are optimized for search performance.
+		- Each field consist of a 
+			1. name, 
+			2. its content, and 
+			3. metadata that tells HCL Commerce Search how to handle the content
+		- Typically, fields can contain Boolean values, numbers, or strings. A field is flexible, so you can define your own type in the system's schema file
+	> Catalog items must be in the index to be searchable. 
+		- Therefore, before Search is deployed, an indexing step is required. 
+		- The index can be updated at regular intervals or as needed during the operation of the store (via Scheduler). 
+		- During this indexing step, Solr collects, parses, and files catalog data from the store to facilitate fast and accurate retrieval of information
+		
+Index External Data in HCL Commerce					https://help.hcltechsw.com/commerce/9.1.0/tutorials/tutorial/tsd_search2_intro.html
+	

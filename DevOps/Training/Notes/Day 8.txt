@@ -1,0 +1,516 @@
+Day 8
+
+Cluster
+	> collection of computers/node that are connected to each other (in common network)
+	> Nodes can be VM, Physical server, etc
+	> In a Cluster, there are two types of Nodes
+		1. Master node (MANDATORY)
+		2. Worker node
+	> in a cluster, there must be ONE Master server (a node itself)
+	> Master server has COMPLETE cluster information which includes
+		- how many nodes in a cluster
+		- information of each nodes (ram, memory, workload, cpu, etc)
+		- availability of nodes 
+	> Master server stores these cluster information in either Database (MySQL) or a File database
+	> Containers inside a Worker node is NOT INCLUDED in the Cluster Master Node manages
+	> Single system (VM or Physical server) can be a cluster as long as theres a Master Node inside it
+
+
+
+
+CONTAINER ORCHESTRATION
+	> management of Containter which are created by Docker Swarm Service
+	> Cluster solution
+
+
+
+Docker Swarm
+	> A Docker Swarm is a group of either physical or virtual machines that are running the Docker application and that has been configured to join together in a cluster.
+	> Docker swarm is a container orchestration tool, meaning that it allows the user to manage multiple containers deployed across multiple host machines
+	> in Docker Swarm Service, we can define the DESIRED state of the Containers in Cluster
+	> these states include
+		- Whether a Container should be UP
+		- Whether a specific number of replica of Container is running
+			= process of Cluster making copies of Worker node is called REPLICATION
+
+
+TERMS TO REMEMBER IN CLUSTER
+Redundancy
+	> Redundancy is the duplication of critical components or functions of a system with the intention of increasing reliability of the system, usually in the form of a backup or fail-safe, or to improve actual system performance, such as in the case of GNSS receivers, or multi-threaded computer processing.
+
+High Availability
+	> having high availability of components
+	> having backup in case of components being down
+
+Load Balancing
+	> distribution of load on the Cluster
+
+
+
+Docker Swarm components
+1. Manager nodes
+	> one of these Manager Nodes is a Leader Node
+	> Leader node copy the cluster information to other Manage node
+	> Manager nodes follow the Raft consensus Algorithm
+2. Worker nodes
+
+
+Orchestration - Docker Swarm	
+	> Management of container which are created
+	> Out of all Manager nodes, there will be a Leader node
+	> Leader node copy the cluster information to other manager node
+	> Manager nodes follow Raft consensus Algorithm
+	> Odd number of Manager nodes in a cluster and <=7
+		- reason for Odd number is that one must be a Leader
+	> Fault tolerance (n-1)/2
+		- n refers to the number of nodes
+
+
+TLS uses
+	> Master create Tokens for worker nodes
+	> Worker node joins with Token (stores the Token)
+		- Worker will use the Token for authentication on Cluster
+
+
+
+STEPS (http://www.devopsworld.co.in/p/docker-swarm-setup-worker-and-manager.html)
+1. Connect all Ubuntu Server 1,2,3
+2. In all UbuntuServer
+	apt update && apt install docker.io -y
+3. In Node 1
+	docker swarm init
+4. In Node 2,3, Connect the Node 2 3 by using the docker command output of docker swarm init
+	docker swarm join --token RANDOM_DOCKER_SWARM_TOKEN 172.31.21.104:2377
+5. In Node 1, To check the Docker Swarm nodes information use
+	docker node ls
+6. In Node 2,3, To leave in Docker Swarm cluster, use
+	docker swarm leave
+7. In Node 1, to remove a Node, use
+	docker node rm <hostname or id>
+8. In Node 1, to create a join-token for a worker node, use
+	> NOTE: only Manager/Leader nodes can the command below
+	docker swarm join-token worker
+9. In Node 1, to create a join-token for a manager/leader node, use
+	docker swarm join-token manager
+10. In Node 1, to FORCEFULLY remove a running Node, use
+	docker rm -f <hostname or id>
+11. In Node 1, to promote a Worker Node into Manager node, use
+	> NOTE: you can promote more than ONE worker node by adding additional hostname (separated by space)
+	docker node promote <hostname or id> 
+12. In Node 1, to see information of nodes, use
+	docker info
+13. In Node 1, to demote a Manager Node into Worker node, use
+	docker node demote <hostname or id>
+
+NODE 1 COMMAND HISTORY
+2  docker swarm init
+    3  docker node ls
+    4  docker node rm node2
+    5  docker node ls
+    6  docker swarm join-token worker
+    7  docker node ls
+    8  docker swarm join-token manager
+    9  docker node ls
+   10  docker node rm node2
+   11  docker node rm -f node2
+   12  docker node ls
+   13  docker node promote node2 node3
+   14  docker node ls
+   15  docker info
+   16  docker node demote node2
+   17  docker node demote node3
+   18  docker node ls
+
+
+OVERLAY NETWORK
+Ingress Overlay Network layer
+	> create a Load balance in each system
+
+Ingress Overlay network
+	> only available in Docker Swarm
+	> available in Cluster level
+
+
+Docker Swarm - Docker Visualizer
+1. Run command below to open Docker Visuaziler
+	docker service create  --name=viz --publish=8080:8080/tcp  --constraint=node.role==manager --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer
+2. Access Docker Visualizer website by either
+	a. go to browser of Local Machine and type <Ubuntu 1 Public IP>:8080
+		- ex: http://3.110.139.143:8080/
+	b. go inside Ubuntu desktop machine GUI, go to browser, and type localhost:8080
+
+
+Docker Swarm - Service
+
+STEPS
+1. Create a Docker Service
+	> this will be in Cluster Level
+	docker service create --name webservice --publish 80:80 -d nginx
+2. Check Docker Services running in swarm
+	docker service ls
+3. Check information of a specific Service
+	docker service ps <service name>
+	docker service ps webservice
+4. Scale webservice by three
+	> by default, webservice replicas/instances will be distributed to three ubuntu servers
+	docker service scale webservice=3
+5. Create a Docker Service "webservice" globally
+	> with "--global" flag, a single "webservice" will run each of Docker Swarm node
+	> if we remove a "webservice" in Docker Node, Docker Service will REGENERATE/HEAL that "webservice"
+	> also, you cant do a docker service scale command to a global service
+	docker service create --name webservice --mode=global --publish 80:80 -d nginx
+6. Create "webservice" Docker Service only in Manager nodes
+	> to create this constraint, we can use the "--constraint" flag
+		= ex: we can define the node.role to define the Node where a Service will run
+	 docker service create --name webservice -d --constraint="node.role==manager" --publish=80:80 nginx
+7. Run "webservice" Docker Service ONLY in Worker nodes
+	 docker service create --name webservice -d --constraint="node.role==worker" --publish=80:80 nginx
+
+
+
+Docker Node Labels
+	> we can update the Node Labels using "docker node update" command
+		- we will pass these labels as KEY VALUE PAIRS
+	> we can also create a constraint when running Docker Service using the Node Labels
+1. Add label to node2
+	docker node update --label-add="env=prod" node2
+2. Run a "webservice" Docker Service in Node whose label "env" is equal to prod
+	docker service create --name webservice -d --constraint="node.labels.env==prod" --publish 80:80 nginx
+
+
+UPDATING Docker Node
+docker node update [OPTIONS] [node name]
+
+Options:
+      --availability string   Availability of the node ("active"|"pause"|"drain")
+      --label-add list        Add or update a node label (key=value)
+      --label-rm list         Remove a node label if exists
+      --role string           Role of the node ("worker"|"manager")
+
+
+
+DOCKER SERVICE UPDATE AND ROLLBACK
+1. Create a Docker service "redis" with following properties
+	> name "redis"
+	> container replicas 5
+	> update delay of 10s
+	> uses redis:3.0.6 docker image
+
+	docker service create --name redis --replicas 5 --update-delay 10s redis:3.0.6
+
+2. Update the "redis" service
+	> change the Docker Image redis version to 3.0.7
+	> observe the "redis" container running on Node
+		- they should have their Image update in 10s
+
+	docker service update redis --image redis:3.0.7
+
+3. Check the Docker image of "redis" service
+	> it should be 3.0.7 now instead of 3.0.6 earlier
+		
+	docker service ps
+
+4. Update the "redis" service with invalid image
+
+	docker service update redis --image redis:21
+
+5. Check status of redis service
+	> the images of redis must be updates, and only 4/5 is running
+
+6. Rollback the redis service to previous state
+	> this will rollback to previous stable state
+
+	docker service rollback redis
+
+7. Check the redis service status again
+
+	docker service ps
+
+
+
+DOCKER STACK
+
+Docker Stack
+	> collection of Services
+	> works in Cluster level
+
+CREATE Docker Stack
+
+1. Create a yaml file
+	vi stack.yaml
+2. Copy this content inside
+
+version: '3.3'
+
+
+
+services:
+
+   db:
+
+     image: mysql:5.7
+
+     volumes:
+
+       - db_data:/var/lib/mysql
+
+     restart: always
+
+     environment:
+
+       MYSQL_ROOT_PASSWORD: somewordpress
+
+       MYSQL_DATABASE: wordpress
+
+       MYSQL_USER: wordpress
+
+       MYSQL_PASSWORD: wordpress
+
+
+
+   wordpress:
+
+     depends_on:
+
+       - db
+
+     image: wordpress:latest
+
+     ports:
+
+       - "8000:80"
+
+     restart: always
+
+     environment:
+
+       WORDPRESS_DB_HOST: db:3306
+
+       WORDPRESS_DB_USER: wordpress
+
+       WORDPRESS_DB_PASSWORD: wordpress
+
+       WORDPRESS_DB_NAME: wordpress
+
+volumes:
+
+
+    db_data: {}
+
+
+3. Check for Docker Stack command
+	docker stack --help
+
+4. Deploy a Docker stack using stack.yaml file with name of "mystack"
+	> if we take a look at the output, three things are created
+		a. network mystack_default
+		b. two services mystack_wordpress and mystack_db
+
+	docker stack deploy -c stack.yaml mystack
+
+5. Check the Docker Stacks available
+	> should show one stack with 2 services running
+
+	docker stack ls
+
+6. Check services of the "mystack" Docker Stack
+	> should show two services, wordpress and db
+	
+	docker stack services mystack
+
+7. Check the mystack_db and mystack_wordpress services
+	docker service ps mystack_db
+	docker service ps mystack_wordpress
+
+8. Check the Docker network list
+	> we should see the mystack_default there
+
+	docker network ls
+
+9. Remove the "mystack" Docker stack
+
+	docker stack rm mystack
+
+
+
+
+Docker Swarm - Backup and Restore
+
+Create a backup of the Docker Swarm component
+1. Stop the docker first
+	systemctl stop docker
+2. Create a compressed .tar file of the swarm folder of /var/lib/docker with name "swarm.tar.gz"
+	cd /var/lib/docker
+	tar -zcvf swarm.tar.gz swarm/
+3. Remove the swarm folder
+	rm -ifr swarm/
+4. Start the docker again
+	systemctl start docker
+5. Check the nodes in Docker Swarm (this should be empty)
+	docker node ls
+
+Restore the Swarm component using the backup
+	> to restore Swarm properly, swarm/ folder in /var/lib/docker SHOULD BE PRESENT BEFORE STARTING DOCKER
+1. Stop Docker for now
+	systemctl stop docker
+2. Extract the contents of .tar.gz file backup
+	tar -xvzf swarm.tar.gz
+3. Start the Docker again
+	systemctl start docker
+4. Check the nodes of Swarm again (this time, there should be Nodes present)
+	docker node ls
+
+
+
+Kubernetes - K8s
+	> Cluster which:
+		- have Master Node (which manages the cluster and Worker Nodes)
+		- 
+	> variation of this includes
+		a. minikube
+			- for small clusters
+			- for unit testing small nodes
+		b. bare metal
+			- kubeadm
+		c. KOPS	
+			- AWS solution
+		d. EKS
+			- elastic kubernetes service
+		a. AKS
+	> one of Google Products
+	> CNCF
+		- Cloud Native Computing Foundation
+	> Pod is the basic unit in Kubernetes
+		- equivalent of Docker Container in Docker Swarm
+		- can wrap or contain one or more Docker Container
+	> Pod network layer
+		- can be created using Kubernetes native tools or third party tools
+		- third party tools include Calico, Flannel, Weave
+		- like Docker Network, it will have CIDR 
+			= all the Pods are Subnet IPs of this Pod Network
+
+EX:
+POD NETWORK LAYER 192.168.0.0/16
+	> POD1 (192.168.0.13)
+		> nginx Container (Port 80 of Container is mapped to Port 80 of Pod1)
+	> POD2 (192.168.0.14)
+
+
+
+STEPS
+1, Run the following commands in the Windows Powershell (As administration)
+	> this will download the minikube executable file
+
+New-Item -Path 'c:\' -Name 'minikube' -ItemType Directory -Force
+Invoke-WebRequest -OutFile 'c:\minikube\minikube.exe' -Uri 'https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe' -UseBasicParsing
+
+
+2. Add the binary in to your path
+
+$oldPath = [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::Machine)
+if ($oldPath.Split(';') -inotcontains 'C:\minikube'){ `
+  [Environment]::SetEnvironmentVariable('Path', $('{0};C:\minikube' -f $oldPath), [EnvironmentVariableTarget]::Machine) `
+}
+
+3. Start the minikube cluster
+	> cmd as administration
+
+minikube start
+
+
+4. Remove minikube
+	> cmd as admin
+
+minikube delete
+
+
+Kubernetes Advantages
+	> Kubernetes can scale without increasing your Ops team
+	> Whether testing locally or running a global enterprise, Kubernetes flexibility grows with you to deliver yout applications consistently and easily no matter how complex your need is
+	> Kubernetes is OPEN SOURCE giving you the freedom to take advantages
+
+
+
+Kubernetes Architecture
+1. Master Node
+	> all request are processed by Master Node
+	> composed of the following
+
+a. API Server
+	> takes all request from User either through
+		- CLI commands (kubectl)
+		- Dashboard or GUI
+	> after processing the request, it will talk to other components of Control Plane like
+		- Key Value Store / ETCD
+		- Scheduler
+		- Control Manager
+b. ETCD server
+	> stores the Cluster information
+	> similar to the Database
+	> stores data in KEY VALUE PAIR
+
+c. Scheduler
+	> schedule Pod to a particular Worker Node or Network
+
+d. Control Manager
+	> controls which Node a Pod will be placed
+	> check for the Node affinity of the Pod
+	> Node affinity	
+		- refers to the Constraints the Node must be to have affinity to a specific Pod
+		- similar to the "--constraint" flag of the Docker Service
+	> also check if the current state of the Cluster is the same as the desired state
+		- if not, it will take action
+
+
+
+2. Worker Node
+	> runs the Containers
+	> composed of the following
+
+a. Kubelet
+	> takes the specification of desired state of the Pods of specific Worker Node
+
+b. Kube Proxy
+	> takes care of Network Policy
+	> these policies includes
+		- how Pods is accessed internally and externally
+
+c. Container Runtime
+	> the container runtime is the software that is resposnbiel for running containers
+
+
+
+INSTALLTION ON K8S IN UBUNTU
+IN ALL UBUNTU SERVER
+sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+
+EOF
+
+sudo apt-get update
+
+apt install -qq -y kubeadm=1.21.0-00 kubelet=1.21.0-00 kubectl=1.21.0-00
+
+sudo apt-mark hold kubelet kubeadm kubectl
+
+
+
+ON MASTER SERVER ONLY
+1.  kubeadm init --apiserver-advertise-address=<<Master ServerIP>> --pod-network-cidr=192.168.0.0/16
+		> pass MasterServer private ip
+
+2.  mkdir -p $HOME/.kube
+
+3.  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+4.  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+CHECK NODES IN K8S CLUSTER (in Master Server)
+
+kubectl get nodes

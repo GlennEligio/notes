@@ -1,0 +1,85 @@
+Section 1 - Apache Nifi Introduction
+
+
+I. Course introduction
+
+II. What is a Data Flow, Data pipeline, and ETL
+
+Data Flow
+ > refers to the moving data/content from Source to Destination
+ > Data can be either of the following
+	- CSV
+	- JSON
+	- XML
+	- HTTP data
+	- Image
+	- Videos
+	- Telemetry
+	- data
+	- etc
+
+
+Data Pipeline
+ > movement and transformation of data/content from Source to Destination
+ > transformation of data is done along the way
+ > difference between the Data Pipeline to the Data flow is the intermediate transformation of data from source to destination along the way
+ 
+ 
+ETL
+ > ETL stands for Extract, Transform, Load
+ > refers to the moment of transformation of data from source to destination
+ >  difference between the Data Pipeline and ETL is that
+	- Data Pipeline, generic term which can be used to refer to the data moment happening in stream and batch fashion
+	- ETL, refers to the data moment and transformation that happens in batch files
+	
+	
+	
+	
+III. Why should we use Framework for data flow?
+
+Problem:
+How to solve the issue with regards to the following?
+	1. Extract data from source
+	2. Transform the data we got from source
+	3. Load the transformed data to its destination
+
+
+4 V's: Challenges we have to face when solving the problem above
+
+1. Volume
+	> refers to the vast amounts of data generated every second
+2. Velocity
+	> refers to the speed at which new data is generated and the speed at which data movies
+3. Variety
+	> refers to the different types of data that is generated and that we can now use
+4. Veracity
+	> refers to the messiness or trustworthiness of the data
+	
+	
+	
+Considerations to take when solving the problem earlier:
+1. Support for multiple data formats
+	> these includes CSV, JSON, Plaintext, Images, Videos
+2. Support for various types of sources and destinations
+	> includes FTP, HTTP, SQL databases, NoSQL databases, Search engines, Cache server
+3. Scalable and Reliable for large volume and high-velocity data
+	> in the current digital era, the size of the data produced is enormous. its not just the size of the data but also the speed at which it is produced
+	> this means that the program should have HIGH THROUGHPUT and LOW LATENCY
+4. You should also consider Data Cleansing and Data Validation logics
+	> also the accuracy and the noise of the incoming data is taken into account in the design of the solution
+	
+	
+Apache NiFi - framework for the solution to the problem above
+ > a robust open-source Data ingestion and Distribution framework and more
+
+
+
+
+
+
+IV. What is Apache NiFi?
+
+Apache NiFi
+ > Apache NiFi supports powerful and scalable directed graphs of data routing, transformation, and system mediation logic
+ > NiFi was built to automate the flow of data between systems. It can propagate any data content from any source to any destination
+ 

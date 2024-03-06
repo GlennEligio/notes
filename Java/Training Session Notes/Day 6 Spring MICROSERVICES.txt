@@ -1,0 +1,108 @@
+Day 6 MicroService
+
+MicroServices Architecture
+	> System architecture that is composed of different Microservices
+
+MicroService
+	> a basic unit of the Architecture
+	> have its own Front-end, Back-end, and Database
+
+
+Remove headers in loadAll MSEmp
+
+MSClient
+	> delete all package exception controller rest
+	> add new package called com.delegate
+	> create new class AppDelegate
+	> inside AppDelegate class
+		> create RestTemplate field
+		> add loadAll()
+			- String return, no param
+			- inside
+				= create String variable
+
+
+
+Decoupling Front-end to Back-end of a Monolithic system
+1. All database-fetching and jsp-redirecting Route method should be separated
+2. For database-fetching Route methods (back-end)
+	- REST API structure using @RestController
+3. For jsp-redirecting Route method
+	- @Controller
+	- to call or fetch result from its back-end, use RestTemplate
+
+
+RestTemplate
+	> used to send request and receive response to a REST API
+	> have the following methods to send request
+	> Synchronous client to perform HTTP requests, exposing a simple, template method API over underlying HTTP client libraries such as the JDK HttpURLConnection, Apache HttpComponents, and others.
+	> The RestTemplate offers templates for common scenarios by HTTP method, in addition to the generalized exchange and execute methods that support of less frequent cases.
+
+
+
+Creating REST API Call using RestTemplate object methods
+
+<T> ResponseEntity<T>	exchange(RequestEntity<?> entity, 
+				Class<T> responseType)
+	> Execute the request specified in the given RequestEntity and return the response as ResponseEntity.
+	> takes a RequestEntity which defines
+		- URI
+		- HttpMethod
+		- HttpRequest body and headers
+	> takes Class<T> which defines the Class of the expected responseType
+	> retu
+
+
+<T> ResponseEntity<T>	exchange(URI url, 
+				HttpMethod method, 
+				HttpEntity<?> requestEntity, 
+				ParameterizedTypeReference<T> responseType)
+	> Execute the HTTP method to the given URI template, writing the given request entity to the request, and returns the response as ResponseEntity.
+	> takes the following parameters 
+		- URI
+			= represents the URL of request http call
+		- HttpMethod
+			= represents the HttpMethod used
+		- HttpEntity<?>
+			= represents the request body and the request headers
+		- ParameterizedTypeReference<T>
+			= expected structure of the Response body
+		- returns a ResponseEntity<T>
+
+
+
+Getting contents of Response using ResponseEntity<T> object methods
+
+T getBody()
+	> returns the body of the ResponseEntity with Class T
+
+
+
+
+
+PROJECT
+
+2 days
+Users ->Pro1
+
+VIEW, controller,service,dao and entity   -> DB
+CRUD
+
+1 day
+accounts -> pro2
+
+controller,service,dao and entity   -> DB
+CRUD
+
+
+1 day
+transactions ->pro3
+controller,service,dao and entity   -> DB
+CRUD
+
+2 days
+intigrations
+
+	
+	
+

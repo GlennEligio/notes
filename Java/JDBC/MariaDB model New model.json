@@ -1,0 +1,655 @@
+{
+    "modelName": "New model",
+    "collections": [
+        {
+            "collectionName": "user",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "username",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "mode": "varchar",
+                    "length": 50,
+                    "subtype": "string",
+                    "alternateKey": false,
+                    "childType": "char",
+                    "type": "string",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "code": "username",
+                    "required": true,
+                    "GUID": "79988370-38bf-11ec-bc41-5793ff289b88",
+                    "primaryKeyOptions": {
+                        "GUID": "94c09200-38bf-11ec-bc41-5793ff289b88"
+                    },
+                    "error": {},
+                    "relationshipType": "Foreign Key",
+                    "foreignCollection": "da48ab60-38be-11ec-bc41-5793ff289b88",
+                    "foreignField": [
+                        "da48ab60-38be-11ec-bc41-5793ff289b88",
+                        "7b852650-38c1-11ec-bc41-5793ff289b88"
+                    ],
+                    "parentRelationship": "f4ec1940-38c1-11ec-bc41-5793ff289b88"
+                },
+                {
+                    "name": "password",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "mode": "varchar",
+                    "length": 50,
+                    "subtype": "string",
+                    "alternateKey": false,
+                    "childType": "char",
+                    "type": "string",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "a2c4acb0-38bf-11ec-bc41-5793ff289b88",
+                    "code": "password",
+                    "characterSet": "utf8mb4",
+                    "required": true,
+                    "compressed": false,
+                    "error": {
+                        "name": false,
+                        "code": false
+                    }
+                },
+                {
+                    "name": "creation_date",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "mode": "date",
+                    "scale": 7,
+                    "alternateKey": false,
+                    "childType": "datetime",
+                    "type": "string",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "db587840-38bf-11ec-bc41-5793ff289b88",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "number_of_accounts",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "int",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "f6a3c640-38bf-11ec-bc41-5793ff289b88",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "total_balance",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "bigint",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "42435cf0-38c0-11ec-bc41-5793ff289b88",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": true,
+                    "unique": true,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "int",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "c9a3bc30-38c0-11ec-bc41-5793ff289b88",
+                    "autoincrement": true,
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "contact_number",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "mode": "varchar",
+                    "subtype": "string",
+                    "alternateKey": false,
+                    "childType": "char",
+                    "type": "string",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "e48b8d70-38c0-11ec-bc41-5793ff289b88",
+                    "length": 20,
+                    "required": true,
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "d0bbe800-38be-11ec-bc41-5793ff289b88"
+            },
+            "isActivated": true,
+            "memory_optimized": false,
+            "collectionUsers": [],
+            "GUID": "d0b99e10-38be-11ec-bc41-5793ff289b88",
+            "bucketId": "c1624f70-38be-11ec-bc41-5793ff289b88",
+            "ifNotExist": true
+        },
+        {
+            "collectionName": "account_details",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "account_number",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": true,
+                    "unique": true,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "bigint",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "17074a00-38c1-11ec-bc41-5793ff289b88",
+                    "required": true,
+                    "autoincrement": true,
+                    "error": {},
+                    "uniqueKeyOptions": [
+                        {
+                            "GUID": "7279c7f0-38c1-11ec-bc41-5793ff289b88"
+                        }
+                    ],
+                    "childRelationships": [
+                        "d454c960-38c2-11ec-bc41-5793ff289b88",
+                        "d75733f0-38c2-11ec-bc41-5793ff289b88"
+                    ]
+                },
+                {
+                    "name": "username",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "mode": "varchar",
+                    "length": 50,
+                    "subtype": "string",
+                    "alternateKey": false,
+                    "childType": "char",
+                    "type": "string",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "7b852650-38c1-11ec-bc41-5793ff289b88",
+                    "childRelationships": [
+                        "f4ec1940-38c1-11ec-bc41-5793ff289b88"
+                    ],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "account_balance",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "bigint",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "d26af030-38c1-11ec-bc41-5793ff289b88",
+                    "required": true,
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "da4ace40-38be-11ec-bc41-5793ff289b88"
+            },
+            "isActivated": true,
+            "memory_optimized": false,
+            "collectionUsers": [],
+            "GUID": "da48ab60-38be-11ec-bc41-5793ff289b88",
+            "bucketId": "c1624f70-38be-11ec-bc41-5793ff289b88"
+        },
+        {
+            "collectionName": "transactions",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "transaction_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": true,
+                    "unique": true,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "bigint",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "088afca0-38c2-11ec-bc41-5793ff289b88",
+                    "autoincrement": true,
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "from_account",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "bigint",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "35a8ab60-38c2-11ec-bc41-5793ff289b88",
+                    "autoincrement": false,
+                    "required": true,
+                    "error": {},
+                    "relationshipType": "Foreign Key",
+                    "foreignCollection": "da48ab60-38be-11ec-bc41-5793ff289b88",
+                    "foreignField": [
+                        "da48ab60-38be-11ec-bc41-5793ff289b88",
+                        "17074a00-38c1-11ec-bc41-5793ff289b88"
+                    ],
+                    "parentRelationship": "d454c960-38c2-11ec-bc41-5793ff289b88"
+                },
+                {
+                    "name": "New column",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "bigint",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "563fb7b0-38c2-11ec-bc41-5793ff289b88",
+                    "required": true,
+                    "error": {},
+                    "relationshipType": "Foreign Key",
+                    "foreignCollection": "da48ab60-38be-11ec-bc41-5793ff289b88",
+                    "foreignField": [
+                        "da48ab60-38be-11ec-bc41-5793ff289b88",
+                        "17074a00-38c1-11ec-bc41-5793ff289b88"
+                    ],
+                    "parentRelationship": "d75733f0-38c2-11ec-bc41-5793ff289b88"
+                },
+                {
+                    "name": "amount",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "signed": true,
+                    "primaryKey": false,
+                    "unique": false,
+                    "exclusiveMinimum": false,
+                    "exclusiveMaximum": false,
+                    "mode": "bigint",
+                    "alternateKey": false,
+                    "childType": "numeric",
+                    "type": "numeric",
+                    "compositeKey": [
+                        "compositePrimaryKey",
+                        "compositeUniqueKey"
+                    ],
+                    "compositePrimaryKey": false,
+                    "compositeUniqueKey": false,
+                    "GUID": "725ed070-38c2-11ec-bc41-5793ff289b88",
+                    "required": true,
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "e4216be0-38be-11ec-bc41-5793ff289b88"
+            },
+            "isActivated": true,
+            "memory_optimized": false,
+            "collectionUsers": [],
+            "GUID": "e41ed3d0-38be-11ec-bc41-5793ff289b88",
+            "bucketId": "c1624f70-38be-11ec-bc41-5793ff289b88"
+        }
+    ],
+    "buckets": [
+        {
+            "name": "bank",
+            "type": "bucket",
+            "collectionIds": [
+                "d0b99e10-38be-11ec-bc41-5793ff289b88",
+                "da48ab60-38be-11ec-bc41-5793ff289b88",
+                "e41ed3d0-38be-11ec-bc41-5793ff289b88"
+            ],
+            "backgroundColor": {
+                "r": 216,
+                "g": 0,
+                "b": 115,
+                "a": 1
+            },
+            "show": true,
+            "isActivated": true,
+            "indexes": [],
+            "ifNotExist": true,
+            "GUID": "c1624f70-38be-11ec-bc41-5793ff289b88"
+        }
+    ],
+    "views": [],
+    "relationships": [
+        {
+            "name": "fk account_details.username_id to user.username",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "da48ab60-38be-11ec-bc41-5793ff289b88",
+                    "7b852650-38c1-11ec-bc41-5793ff289b88"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "d0b99e10-38be-11ec-bc41-5793ff289b88",
+                    "79988370-38bf-11ec-bc41-5793ff289b88"
+                ]
+            ],
+            "childCardinality": "1",
+            "parentCollection": "da48ab60-38be-11ec-bc41-5793ff289b88",
+            "childCollection": "d0b99e10-38be-11ec-bc41-5793ff289b88",
+            "GUID": "f4ec1940-38c1-11ec-bc41-5793ff289b88"
+        },
+        {
+            "name": "fk account_details.account_number to transactions.from_account",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "da48ab60-38be-11ec-bc41-5793ff289b88",
+                    "17074a00-38c1-11ec-bc41-5793ff289b88"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "e41ed3d0-38be-11ec-bc41-5793ff289b88",
+                    "35a8ab60-38c2-11ec-bc41-5793ff289b88"
+                ]
+            ],
+            "childCardinality": "1",
+            "parentCollection": "da48ab60-38be-11ec-bc41-5793ff289b88",
+            "childCollection": "e41ed3d0-38be-11ec-bc41-5793ff289b88",
+            "GUID": "d454c960-38c2-11ec-bc41-5793ff289b88"
+        },
+        {
+            "name": "fk account_details.account_number to transactions.New column",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "da48ab60-38be-11ec-bc41-5793ff289b88",
+                    "17074a00-38c1-11ec-bc41-5793ff289b88"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "e41ed3d0-38be-11ec-bc41-5793ff289b88",
+                    "563fb7b0-38c2-11ec-bc41-5793ff289b88"
+                ]
+            ],
+            "childCardinality": "1",
+            "parentCollection": "da48ab60-38be-11ec-bc41-5793ff289b88",
+            "childCollection": "e41ed3d0-38be-11ec-bc41-5793ff289b88",
+            "GUID": "d75733f0-38c2-11ec-bc41-5793ff289b88"
+        }
+    ],
+    "users": [],
+    "diagramViews": [],
+    "idToNameHashTable": {
+        "c1624f70-38be-11ec-bc41-5793ff289b88": "bank",
+        "d0b99e10-38be-11ec-bc41-5793ff289b88": "user",
+        "da48ab60-38be-11ec-bc41-5793ff289b88": "account_details",
+        "e41ed3d0-38be-11ec-bc41-5793ff289b88": "transactions",
+        "db587840-38bf-11ec-bc41-5793ff289b88": "creation_date",
+        "f6a3c640-38bf-11ec-bc41-5793ff289b88": "number_of_accounts",
+        "42435cf0-38c0-11ec-bc41-5793ff289b88": "total_balance",
+        "79988370-38bf-11ec-bc41-5793ff289b88": "username",
+        "a2c4acb0-38bf-11ec-bc41-5793ff289b88": "password",
+        "c9a3bc30-38c0-11ec-bc41-5793ff289b88": "id",
+        "e48b8d70-38c0-11ec-bc41-5793ff289b88": "contact_number",
+        "17074a00-38c1-11ec-bc41-5793ff289b88": "account_number",
+        "7b852650-38c1-11ec-bc41-5793ff289b88": "username",
+        "d26af030-38c1-11ec-bc41-5793ff289b88": "account_balance",
+        "f4ec1940-38c1-11ec-bc41-5793ff289b88": "fk account_details.username_id to user.username",
+        "088afca0-38c2-11ec-bc41-5793ff289b88": "transaction_id",
+        "563fb7b0-38c2-11ec-bc41-5793ff289b88": "New column",
+        "725ed070-38c2-11ec-bc41-5793ff289b88": "amount",
+        "35a8ab60-38c2-11ec-bc41-5793ff289b88": "from_account",
+        "d454c960-38c2-11ec-bc41-5793ff289b88": "fk account_details.account_number to transactions.from_account",
+        "d75733f0-38c2-11ec-bc41-5793ff289b88": "fk account_details.account_number to transactions.New column"
+    },
+    "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "bc6c5241-38be-11ec-bc41-5793ff289b88"
+    },
+    "polyglotDefinitions": {
+        "type": "polyglotDefinitions",
+        "properties": [],
+        "GUID": "bc6c5243-38be-11ec-bc41-5793ff289b88"
+    },
+    "externalDefinitions": {
+        "type": "externalDefinitions",
+        "properties": [],
+        "GUID": "bc6c5242-38be-11ec-bc41-5793ff289b88"
+    },
+    "sources": [],
+    "decorativeSymbols": [],
+    "dbVersion": "v10.x",
+    "dbVendor": "MariaDB",
+    "appTarget": "MariaDB",
+    "creationTS": "2021-10-29T13:47:19.780Z",
+    "GUID": "bc6c5240-38be-11ec-bc41-5793ff289b88",
+    "isLineageEnabled": false,
+    "lastModifTS": "2021-10-29T14:16:56.336Z",
+    "persistenceSchemaVersion": "5",
+    "isCreatedByPlugin": true,
+    "pluginInformation": {
+        "pluginName": "MariaDB",
+        "pluginVersion": "0.1.11",
+        "pluginEngineVersion": "1.0.0"
+    },
+    "applicationInformation": {
+        "version": "5.2.3"
+    },
+    "settings": {
+        "centralPane": {
+            "dbLevel": {
+                "erd": [
+                    {
+                        "GUID": "d0b99e10-38be-11ec-bc41-5793ff289b88",
+                        "x": 81.33333333333334,
+                        "y": 218.00000000000003,
+                        "width": 284,
+                        "height": 159,
+                        "color": {
+                            "hsl": {
+                                "h": 120,
+                                "s": 1,
+                                "l": 0.27058823529411763,
+                                "a": 1
+                            },
+                            "hex": "#008a00",
+                            "rgb": {
+                                "r": 0,
+                                "g": 138,
+                                "b": 0,
+                                "a": 1
+                            },
+                            "hsv": {
+                                "h": 120,
+                                "s": 1,
+                                "v": 0.5411764705882353,
+                                "a": 1
+                            },
+                            "oldHue": 206.57142857142858,
+                            "source": "hex"
+                        }
+                    },
+                    {
+                        "GUID": "da48ab60-38be-11ec-bc41-5793ff289b88",
+                        "x": 456.3333333333331,
+                        "y": 394.6666666666664,
+                        "width": 263,
+                        "height": 87,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "e41ed3d0-38be-11ec-bc41-5793ff289b88",
+                        "x": 132.33333333333334,
+                        "y": 480,
+                        "width": 214,
+                        "height": 105,
+                        "color": {}
+                    }
+                ],
+                "buckets": [
+                    {
+                        "x": 41.33333333333334,
+                        "y": 178.00000000000003,
+                        "GUID": "c1624f70-38be-11ec-bc41-5793ff289b88"
+                    }
+                ],
+                "collapsedNodes": [],
+                "activeRelationship": "",
+                "activeRelationshipFields": {
+                    "childField": [],
+                    "parentField": []
+                },
+                "selectedCollections": [],
+                "displayColorPicker": false,
+                "graphView": {
+                    "erd": [],
+                    "buckets": [],
+                    "decorativeSymbols": [],
+                    "forceLayout": true,
+                    "defaultLinkLength": 300
+                },
+                "diagramViews": [],
+                "decorativeSymbols": [],
+                "nestedCollectionsLayout": "horizontal",
+                "options": []
+            },
+            "collectionLevel": {},
+            "changed": false
+        },
+        "dtDiagram": {
+            "collapsedNodes": [],
+            "shouldDistributeCollections": false
+        }
+    }
+}

@@ -1,0 +1,28 @@
+29. Implement Circuit Breaker pattern function using Resilience4j
+
+
+Resilience4j
+	> a Circuit Breaker Framework
+	> a lightweight, easy-to-use fault tolerance library inspired by Netflix Hystrix
+		- difference is this one is designed for Java 8 and functional programming
+
+Dependency
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-spring-boot2</artifactId>
+		</dependency>
+
+Why implement Circuit Breaker pattern
+	> to be able to send a fallback response when a service is down
+	> to reduce load
+	> to be able to retry request in case of temporary failures
+	> to be able to implement rate limiting	
+
+
+Dependency needed for Circuit Breaker pattern
+1. Spring Boot Starter Actuator
+2. Spring Boot Starter AOP
+3. Resilience4j Spring Boot 2
+
+
+	

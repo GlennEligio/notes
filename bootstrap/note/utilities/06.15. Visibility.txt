@@ -1,0 +1,9 @@
+06.15. Visibility
+
+XV. Visibility
+1. Visibility
+	> defines the visibility of the element
+	> can either be 
+		-> "visible"
+		-> "invisible"
+

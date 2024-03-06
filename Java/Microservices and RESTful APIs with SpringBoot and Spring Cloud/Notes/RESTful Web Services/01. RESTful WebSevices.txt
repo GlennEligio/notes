@@ -1,0 +1,104 @@
+04. RESTful Web Services
+
+
+REST
+	> is a style of software architecture for distributed hypermedia systems
+	> make best use of HTTP
+		- HTTP methods
+		- HTTP status codes
+	> have a key abstraction for data called "resources"
+		- Resource have
+			a. URI to fetch/update/delete/create resources
+			b. Representation
+				- XML
+				- HTML
+				- JSON
+
+
+EX:
+# RESTful Web Services
+
+Social Media Application
+
+Entities
+User, Post
+	> user can have many Posts (One to Many)
+
+Endpoints for User			URI				Example
+- Retrieve all User			- GET /users			
+- Create a User				- POST /users
+- Retrieve one User			- GET /users/{id}		/users/1
+- Delete a User				- DELETE /users/{id}		/users/1
+
+Endpoints for Posts
+- Retrieve all posts for a User		- GET /users/{id}/posts
+- Create a posts for a User		- POST /users/{id}/posts
+- Retrieve details of a post		- GET /users/{id}/posts/{post_id}
+
+
+
+FAQ:
+
+1. What is dispatcher servlet?
+2. Who is configuring dispatcher servlet?
+	> Spring Boot
+	> How it does is 
+		- it creates DispatcherServletAutoConfiguration
+		- this AutoConfig uses org.springframework.web.servlet.Dispatcher servlet in classpath
+			= came from spring-mvc inside spring-boot-starter-web dependency
+3. What does dispatcher servlet do?
+	> dispatches the Request (specifically ServletRequest) to the specific JSP (or html using Thymeleaf)
+	> follows a pattern called "Front Controller", where Dispatcher Servlet is the front controller
+	> uses Internal View Resolver to determine
+4. How does the HelloWorldBean object get converted to JSON?
+	> if the API endpoint is in @RestController or inside @Controller where method have @ResponseBody, the return value will be converted using HttpMessageConverter
+		- in this case, it uses JacksonConverter with Jackson2ObjectMapperBuilderCustomizerConfiguration of SpringBoot
+5. Who is configuring the error mapping
+	> ErrorMappingAutoConfiguration
+
+
+To see the logs for auto configuration process of Spring Boot
+	> set logging level of org.springframework to DEBUG
+	> inside application.properties
+		logging.level.org.springframework = DEBUG
+
+IMPORTANT AutoConfigurations of Spring Boot
+
+DispatcherServlerAutoConfiguration
+	> configures the DispatcherServlet
+	> need DispatcherServlet from spring-mvc	
+		- spring-mvc is included in spring-boot-starter-web
+
+ErrorMvcAutoConfigurations
+	> configures the 
+		- BasicErrorController
+		- DefaultErrorViewResolver
+		- WhitelabelErrorViewConfiguration 
+
+HttpMessageConvertersAutoConfiguration
+	> converts the Http contents of Request or Response into either JSON or XML (SOAP)
+	> uses JacksonAutoConfiguration alongside to do convertion
+
+JacksonAutoConfiguration and 
+Jackson20bjectMappingBuilderCustomizerConfiguration
+	> does the conversion from JSON to beans and beans to JSON
+	
+
+
+PASSING DATA TO THE API ENDPOINTS
+1. Http Request Body
+	> used for Object data
+	> use @RequestBody annotation
+2. Path variable
+	> uses @PathVariable to fetch data
+3. Query/Request parameters
+	> use @RequestParam variable
+
+
+SPRING JACKSON SERIALIZATION
+	
+1. Configuring Serialization of Date object
+
+spring.jackson.serialization.write-dates-as-timestamps
+	> takes true or false
+

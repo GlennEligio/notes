@@ -1,0 +1,33 @@
+03. Linux list file command
+
+ls <directory-path>
+	> used to show contents of the directory path specified
+	> not passing a directory path will show content in CURRENT DIRECTORY
+	> adding "-l" flag will show the files/folders in LONG LIST format (more details shown)
+		ls -l
+	> adding "-a" flag will include hidden files in file/folder to show
+		ls -a
+	> adding "-s" flag will sort the files/folder by size
+		ls -s
+	> adding "-R" will list files recursively
+		- this means it will show not only the files/folder in specified directory, but also the contents of sub-directories
+		ls -R
+
+Long list format
+	> in this format, not only the filename is shown but also
+		- file type
+		- file permission
+		- number of hard links to the file
+		- owner of the file
+		- file group
+		- size of the file
+		- when the file was lost modified
+		- name of file and its location
+
+
+Combining command flag
+	> the command flags can be combined in a single command
+
+EX:
+ls -la 		will display current directory in long list and will include hidden files
+ls -ls		will display current directory in long list and sort by size

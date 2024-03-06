@@ -1,0 +1,75 @@
+98 RDS Deployments Options
+
+RDS Deployments: 
+ > theres three types of RDS deployments
+	1. Read Replicas, 
+	2. Multi-AZ
+	3. Multi-Region (Read replicas)
+
+
+Read Replicas
+ > Scale the read workload of your DB
+	- with this, we can DISTRIBUTE the read workload to all replicas
+ > Can create up to 5 Read Replicas 
+ > Data is only written to the main DB
+
+EX:
+
+Amazon RDS -------------> Amazon RDS -----------> Amazon RDS
+(Read			(Main)			(Read Replica)
+Replica)
+	|			|^			|
+	| read		  read 	|| write		| read
+	v			v|			v
+	--------------------------------------------------
+	|			Applications (s)	|
+	-------------------------------------------------
+
+
+
+Multi-AZ:
+ > Failover in case of AZ outage (high availability)
+ > Data is only read/written to the main database
+ > Can only have 1 other AZ as failover
+
+EX:
+		Replication cross AZ
+Amazon RDS	------------------------> 	Amazon RDS
+(Main)						(Failover DB)
+	^ |						^
+	| |						|
+	| V						|
+------------------					|
+| Application(s) | <------------------------------------|
+------------------		Failover in case of issue 
+				with Main DB
+
+
+
+Multi-Region (Read Replicas)
+ > Application(s) can read Replicas in different Region
+	- but the Write operation is only done in Main RDS
+ > Disaster recovery in case of region issue
+ > Local performance for global reads (less latency since nearer RDS)
+ > Replication cost (associated with network transfers of data between regions)
+
+
+us-east-2		read
+Amazon RDS 	-------------------> 	Application (s)
+(Read Replica)	  |----------------<
+^		  |	write	
+| replication	  |		
+|		  |
+|	----------|
+|	|	  		
+eu-west-1		read		
+Amazon RDS	------------------->	Application (s)
+(Main)		<-------------------
+|	|		write
+| 	|---------|
+|		  |
+| replication	  |
+v		  |	write
+ap-southeast-2	  |-----------------<
+Amazon RDS	-------------------->	Application (s)
+(Read Replica)		read

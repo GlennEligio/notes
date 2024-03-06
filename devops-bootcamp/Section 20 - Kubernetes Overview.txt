@@ -1,0 +1,282 @@
+Section 20 - Kubernetes Overview
+
+115. Introduction
+
+K8s for beginners - Introduction
+
+Course Structure
+1. Lecture
+2. Demos
+	> Setting up test environments to get started with K8s
+3. Quiz
+	> optional quiz to test our knowledge after each lecture 
+4. Coding Exercises
+	> developing YAML files to help writing k8s config files
+5. Tips and Tricks
+6. Assignments
+7. Q&A
+
+Who is this course for?
+ > Developers
+ > System Admins
+ > Managers
+ > For absolute beginners in k8s
+
+Lab environments
+ > Local
+ > AWS/GCP
+ > Play-with-k8s
+ 
+Objects
+1. Kubernetes Overview
+2. Containers - Docker
+3. Container Orchestration
+4. Demo - Setup Kubernetes
+5. Kubernetes Concepts - PODs | ReplicaSets | Deployment | Services
+6. Networking in Kubernetes
+7. Kubernetes Management - Kubectl
+8. Kubernetes Definition Files - YAML
+9. Kubernetes on Cloud - AWS/GCP
+
+
+
+116. Containers Overview
+
+kubernetes (or k8s)
+ > built by Google based on their experience running containers in production
+ > it is now an OPEN SOURCE project and is arguably one of the best and most popular container orchestration technology out there
+ > to understand k8s, we must understand two things, CONTAINERS and ORCHESTRATION
+
+
+Containers
+Why do you need containers?
+1. Avoiding the 'Matrix from Hell' situation
+	> Matrix from Hell is a situation where we need to check the compatibility of all the tech stack used in the system to the libraries versions, dependencies version, OS version, and even hardware infrastructure
+	> this compatibility issue can be hard to deal with the more services we need to check the compability to the things mentioned before
+2. Shorter setup time
+	> especially useful when there's a new developers joining in
+	> since setting up services thru containers means that developers do not need to execute complicated commands in order to make the services work
+3. Easier setting up environments
+	> setting up environments (EX: DEV/TEST/PROD) using containers means that we only need to specify ALL of the steps to execute ONCE (via Docker image's Dockerfile)
+	> after configuring the Dockerfile, we can easily conjure whatever service the Dockerfile represents
+
+
+'Containerizing' applications
+ > when an application or service is containerized, each of them will be running in isolation
+ > this means that they will have their own libraries and dependencies to use, and it will not have an effect to the libraries and dependencies of the other containers
+ 
+ 
+Containers
+ > Containers are completely isolated environments
+ > Containers can have their own processes, network interfaces, mounts, etc
+	- This isolation is achieved using namespaces
+ > Containers do utilize the OS kernel of the Docker Host, which means that all containers share the same OS kernel
+ 
+ 
+Operating System recap
+ > Operating Systems consist of two components, the OS Kernel and a set of Softwares
+ > OS kernel is responsible for communicating and handle hardware like the CPU, Memory, Storages, etc
+ > Set of software may consist of software responsible for User Interface, drivers, developer tools, compilers, file managers, etc
+ > For OS of different flavors (Ubuntu, Debian, RhelOS, CentOS, etc), they utilize the same underlying OS Kernel. The only thing that differs between them are the set of OS softwares on them
+ 
+ 
+Sharing the Kernel - Docker containers
+ > Docker can run any number of container on a specific host machine, as long as the OS software used in the said container matches the OS kernel of the host machine
+	- ex: Linux host machine can run Docker containers running Ubuntu OS, RhelOS, CentOS but not Windows OS
+ > All of these Containers might have different OS software based on the OS inside, but they will utilize/share the same OS Kernel, the one on the host machine
+
+
+Hypervisor and Docker
+ > unlike Hypervisor, Docker is not meant to run different OS in the same hardware
+ > the main purpose of Docker is to CONTAINERIZE application/services, and run them
+ 
+
+Containers vs Virtual Machines 
+ > each Containers contains the Application, libraries, dependencies, set of OS software
+ > each Virtual machines contains the application, libraries, dependencies, set of OS software, as well as the OS kernel
+ > comparing the usage of Containers vs Virtual Machines
+	- Utilization: VMs will have higher utilization of hardware resources since there will be multiple OS and Kernels running
+	- Size: Containers will have lower size usage compared to VMs since the OS Kernel it is utilizing the the host machine's OS Kernel. Compare to VMs where each VM will have their own 
+	- Boot up speed: Since containers are lightweight, they will have faster boot up time compared to VMs
+	- Isolation: VMs have might higher level of isolation since they do not share OS kernels, and they can run different types of OS that utilizes different OS kernels
+ 
+Containers layers
+Hardware Infrastructure
+ > OS
+  > Docker
+   > Container 1
+	> Application
+	> Libraries
+	> Dependencies
+   > Container 2
+	> Application	
+	> Libraries
+	> Dependencies
+
+Virtual machine layering
+Hardware Infrastructure
+ > OS
+  > Hypervisor
+   > VM 1
+    > Application
+	> Libraries
+	> Dependencies
+	> OS
+   > VM 2
+    > Application
+	> Libraries
+	> Dependencies
+	> OS
+	
+	
+Using Docker
+ > when we want to deploy a service or application using Docker, we can easily do so using 'docker run' commands and passing the docker image use
+ > ex:
+	docker run ansible
+	docker run mongodb
+	docker run redis
+	docker run nodejs
+	docker run nodejs
+	docker run nodejs
+ > for deploying multiple instance of application, we may want to use loadbalancers to handle load on each instances
+ 
+ 
+Containers vs Images
+ > Docker image can be seen as either a Package, a Template, or a Plan
+	- inside a Docker image are steps that will be executed within the Docker container in order to set it up to the desired state
+ > Docker container can be seen as an instance of a Docker image
+	- we can create one or more docker containers given a specific image
+	- each of these Docker containers are isolated from each other, where each of them have their own processes, network, mounts, etc
+	
+	
+Container advantages
+1. Easier deployment of application
+	> traditionally, when deploying an application, there will be multiple steps necessary just to do so. This means that the Ops team will have a hard time deploying the application since only the developers might be familiar with setting it up
+	> with Docker, or specifically Docker image, Dev and Ops can discuss how a specific application needs to be setup, inside a Docker container that is
+  
+ 
+ 
+NOTES:
+1. Containers are not new on Docker.
+	> Containers existed way before docker, with LXC, LXD, LXCFS
+	> Docker utilizes LXC containers
+	> since LXC, LXD, LXCFS are very low level, they are very hard to configure. Docker provides a high level tool for containers and providing high level functionalities
+
+
+
+
+
+117. Container Orchestration
+
+Container Orchestration
+ > Container Orchestration is the process of managing/orchestrating containers in terms of automatically deploying, scaling up and down, load balancing them.
+ 
+Orchestration Technologies
+1. Docker Swarm
+	> provided by Docker
+	> easy to setup and get started but lacks more advanced feature required for the complex systems and architectures
+2. kubernetes
+	> provided by Google
+	> one of the most popular open source project in github
+	> supported by many Cloud providers like AWS, Azure, GCP, etc
+	> most popular option for Container orchestration
+	> difficult to setup and get started, but provide a lot of options to customize deployments and supports deployments of complex architectures
+3. MESOS
+	> provided by Apache
+	> hard to setup and get started, but provided multiple advanced features
+	
+	
+kubernetes Advantages
+1. High availability of the application/services	
+	> with kubernetes, we can setup the Containers so that when it is not responding or working properly (can be monitored via liveness probes setup), kubernetes can quickly take it down and restart it again
+	> also, when number of current instance of application is not equal to the desired number, the kubernetes can easily spin up new instances
+2. Easy load balancing setup
+	> in kubernetes, we can easily balance the loads between multiple instances of application
+	> using monitoring tools, we can easily check if the containers' cpu or memory of the application exceeds the maximum setup or minimum
+	> if so, kubernetes can easily spin up or destroy instances to match the current load in the system
+
+
+
+
+118. Kubernetes Architecture
+
+K8s architecture terminologies
+1. Nodes
+	> Nodes are machines, either physical or virtual machine, where kubernetes is installed
+	> Nodes can be either a Worker or Master node
+	> Worker nodes is where the containers will be created or launched
+	> Also referred to as 'Minions' in the past, so you might see this two used interchangably
+	> typically in K8s cluster, there will be more than one node, so that in case one goes down, the other can back it up
+2. Cluster
+	> Cluster is a set of nodes grouped together
+	> It is recommeded to have more than one node in a cluster to ensure availability, in case one node goes down
+	> Multiple nodes also helps with sharing load as well
+3. Master
+	> Master node is responsible for managing the cluster, which includes:
+		- storing information/state of cluster
+		- monitoring the nodes in the cluster
+		- making sure the desired state of cluster is met (ex: if one worker node fails, we will move the containers to another worker node)
+	> similar to Worker node, Master node is installed with kubernetes
+	> this Master node is configured as such, to be the one managing the cluster
+	> Master node is also responsible for the orchestration of the containers on the worker nodes
+	
+	
+Kubernetes components
+1. API server
+2. etcd service
+3. kubelet service
+4. Container runtime
+5. Controller
+6. Scheduler
+
+API server
+ > acts as the frontend for kubernetes
+ > the users, management devices, command line interfaces all talk to the API server to interact with the kubernetes cluster
+ 
+etcd
+ > etcd keystore is a distributed, reliable key-value store used by kubernetes to store all data used to manage the cluster
+ > etcd is responsible for storing all the information of the cluster in ALL Nodes within the cluster, in a distributed manner
+ > etcd is also responsible for implementing locks within the cluster to ensure that there will be no conflicts between the masters
+ 
+scheduler
+ > Scheduler is responsible for distributing work or containers across multiple nodes
+ > It looks for newly created containers, and assigns them to the worker nodes
+ 
+Controller
+ > Controller is the brain behind orchestration
+ > They are responsible for noticing and responding when nodes, containers, or endpoints goes down
+ > Controllers also make decisions to bring up new container in such cases
+ 
+Container runtime
+ > Container runtime is the underlying software that is used to run containers
+ > In our case, it happens to be Docker, but there are other options as well like rkt, or CRI-O
+ 
+kubelet
+ > kubelet is the agent that runs on each node in the cluster
+ > the agent is responsible fopr making sure that the containers are running on the nodes as expected
+ 
+ 
+Master vs Worker nodes
+ > For Master nodes, these components are included within
+	a. kube-apiserver
+	b. etcd
+		- stores all the information gathered in key-value store
+		- based on popular etcd framework
+	c. controller
+	d. scheduler
+ > For Worker nodes, these components are included within
+	a. Container runtime
+	b. kubelet agent
+ > The kube-apiserver in Master and kubelet in Worker node communicate with each other
+	- kubelet provides health information of the worker node to the master, and carry out actions requested by the master on the worker nodes
+
+
+kubectl
+ > kubectl is a command line utility used to 
+	a. deploy and manage applications on a kubernetes cluster
+	b. to get cluster information
+	c. to get the status of other nodes in the cluster,
+	d. to manage many other things
+ > 'kubectl run' command is used to deploy an application on the cluster
+ > 'kubectl cluster-info' command is used to view information about the cluster-info
+ > 'kubectl get nodes' command is used to list all the nodes in the cluster

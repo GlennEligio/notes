@@ -1,0 +1,235 @@
+Linux commands
+
+
+echo $Variable
+echo "SomeRandomString"
+echo ${expression}
+ > used to either print a variable or a string
+ 	> ex: echo $SHELL 
+		- will print shell that is being used
+ > we can also add expression to evaluate by using ${} syntax
+ 	> ex: echo ${fakevar-"This is alt text"}
+		- this will do the following
+		- check if fakevar exist and have a value
+		- if it exist, print the fakevar
+		- else, print the "This is alt text "
+
+
+
+chmod [+ | -][r | w | x] filename
+ > stands for change mode
+ > used to add permissions to a file
+ > ex: chmod +x script.js 
+	- will add execute permission to all user group to the "script.js" file
+
+
+
+read
+ > used to read the contents of a line into a variable
+ > we can add several options to customize this command
+
+    Options:
+      -a array  assign the words read to sequential indices of the array variable ARRAY, starting at zero
+      -d delim  continue until the first character of DELIM is read, rather than newline
+      -e        use Readline to obtain the line
+      -i text   use TEXT as the initial text for Readline
+      -n nchars return after reading NCHARS characters rather than waiting for a newline, but honor a delimiter if fewer than NCHARS characters are read before the delimiter
+      -N nchars return only after reading exactly NCHARS characters, unless EOF is encountered or read times out, ignoring any delimiter
+      -p prompt output the string PROMPT without a trailing newline before attempting to read
+      -r        do not allow backslashes to escape any characters
+      -s        do not echo input coming from a terminal
+      -t timeout        time out and return failure if a complete line of input is not read within TIMEOUT seconds.  The value of the
+                TMOUT variable is the default timeout.  TIMEOUT may be a fractional number.  If TIMEOUT is 0, read returns
+                immediately, without trying to read any data, returning success only if input is available on the specified
+                file descriptor.  The exit status is greater than 128 if the timeout is exceeded
+      -u fd     read from file descriptor FD instead of the standard input
+
+
+
+
+env
+ > used to print the Environment variables presend in the Linux server
+
+
+
+pwd
+ > returns the public working directory where we are currently
+
+
+
+declare: declare [-aAfFgiIlnrtux] [-p] [name[=value] ...]
+ > used to create an environment variable
+ > we can add several options like
+	
+    Options:
+      -f        restrict action or display to function names and definitions
+      -F        restrict display to function names only (plus line number and
+                source file when debugging)
+      -g        create global variables when used in a shell function; otherwise
+                ignored
+      -I        if creating a local variable, inherit the attributes and value
+                of a variable with the same name at a previous scope
+      -p        display the attributes and value of each NAME
+
+    Options which set attributes:
+      -a        to make NAMEs indexed arrays (if supported)
+      -A        to make NAMEs associative arrays (if supported)
+      -i        to make NAMEs have the `integer' attribute
+      -l        to convert the value of each NAME to lower case on assignment
+      -n        make NAME a reference to the variable named by its value
+      -r        to make NAMEs readonly
+      -t        to make NAMEs have the `trace' attribute
+      -u        to convert the value of each NAME to upper case on assignment
+      -x        to make NAMEs export
+
+
+
+grep
+ > used for search content in an output and displaying them
+ > we can add several options like
+	-i	- makes the search case-insensitive
+ > EX: env | grep -i home
+	- display all lines in env output that contains "home"
+
+
+
+unset 
+ > used to remove an environment variables
+ > SYNTAX: unset [name]
+ > EX: unset vmid
+	- removes vmid environment variable
+
+
+
+ls [directory]
+ > used to display the files in the directory
+	- if no directory is passed, will default in the current directory
+ > we can add several options like
+	-a 	- display ALL files, including hidden ones
+	-l	- display files in more details, like permissions, date, etc
+
+
+
+find [directory]
+ > used to find all files that matches the directory pattern passed
+ > recursive by nature
+ > we can add several options like
+	-user	- display all directory that belongs to the said user
+ > ex: find ubuntu /home
+	- search all files under "ubuntu" user with "/home" in directory
+
+
+/dev/stdout
+ > the file used to print something in the console
+ > stands for standard output
+ > default output redirection of the "cat" command
+
+
+/dev/null
+ > the file where we want to dump all the null values
+ > typically used to suppress warning and errors in an output
+	- ex: find / -user user1 2> /dev/null
+	- "2" catches all errors and dump them in /dev/null
+
+
+jobs
+ > display all the active jobs in shell
+ > all the command that we execute will have a job created and assigned for it
+ > contains all information about the job like
+	1. Job number
+	2. PID
+	3. command that is responsible for the job 
+ > job with (+) then to Job number is the most recent job added followed by the job with (-)
+	- if we execute "fg" or foreground command, the one that will be brought back to foreground is the most recent job
+ > we can add several options like
+	-l	-list all details with regards to jobs
+
+
+fg %[job_spec]
+fg [PID]
+ > used to bring a background process into the foreground
+ > we can either use the job_spec or PID of the job to bring it to fb
+ > if no PID or jobspec is passed, it will bring the most recent job added in background back to foreground
+
+
+kill $[job_spec]
+kill [PID]
+ > used to kill/terminate a process/job
+ > to use in background process/job, it must be running and not in stop mode
+
+
+disown $[job_spec]
+disown [PID]
+ > used to disown the user to the job itself, hence dettaching the job to user shell lifecycle
+
+
+printf
+ > used to print a message using a format and a set of arguments
+ > used the format, we will inject the said arguments
+ > SYNTAX:
+	printf: printf [-v var] format [arguments]
+ 
+
+bc
+ > command is used for command line calculator. 
+ > It is similar to basic calculator by using which we can do basic mathematical calculations. 
+ > takes a string input which represents an operation, and returns the result
+ > SYNTAX:
+	bc [ -hlwsqv ] [long-options] [ file ... ] 
+ > OPTIONS:
+	-h, {- -help } : Print the usage and exit 
+	-i, {- -interactive } : Force interactive mode 
+	-l, {- -mathlib } : Define the standard math library 
+	-w, {- -warn } : Give warnings for extensions to POSIX bc 
+	-s, {- -standard } : Process exactly the POSIX bc language 
+	-q, {- -quiet } : Do not print the normal GNU bc welcome 
+	-v, {- -version } : Print the version number and copyright and quit 
+ > USAGE
+	1. with output redirection
+		Input : $ echo "12+5" | bc
+		Output : 17
+ 	2. for base conversion
+		Input : bc << "obase=2;192"
+			- obase refers to output base
+		Output: 1100000
+
+
+test
+ > used to create a condition to check
+ > we can use several condition operators like
+	=	for equality
+	-gt	for greater than check
+	-lt	for less than check
+ > SYNTAX:
+	test EXPRESSION
+ > ex:
+	test $USER = "root"
+	test vmid -gt 0
+
+
+
+cp
+ > used for copying content of one file to another
+ > SYNTAX:
+	cp sourcefile destinationfile
+ > EX:
+	cp oldCode.txt newCode.txt
+
+
+rm
+ > used to remove a file or directory
+ > SYNTAX:
+	rm [options] [directory | file]
+ > OPTIONS:
+	-r	recursively delete all file, which will include subdirectories and its files
+ > EX:
+	rm -r /locations
+
+
+expr
+ > used to evaluate expression
+ > SYNTAX:
+	expr EXPRESSION
+	expr OPTION
+ > EX:
+	

@@ -1,0 +1,203 @@
+WCS V9 ElasticSearch
+
+Search
+	> HCL Commerce Search uses a number of specialized terms.
+	> A concise list of the most commonly used terms is provided to get you started
+	
+Introduction to Search terminology
+	> Search terms usually refer to one of the three different conceptual components of the product
+		1. the index
+		2. the runtime engine that processes requests
+		3. the system architecture itself
+	> the most commonly used terms for each component are provided in this topic
+	
+Index terms
+	> this index is a large flat table that contains data fields that are optimized for search performance.
+	> Search query strings are compared with entries in the index, and positive results are return to the customer
+	
+Row/Document
+	> A set of data that describes a particualr catalog object.
+	> For example, each row or document in the CatalogEntry Core corresponds to a specific catalog entry
+	
+Field
+	> Rows or documents in the core composed of field , which hold specific information about the catalog object,
+	> For example, the "name" field is used to hold the name information for the category in a row (or document) from the CatalogGroup core
+	
+Core
+	> A Solr index that contains Solr documents for a specific purpose.
+	> Some of the commonly used cores are:
+		1. CatalogEntry core is used to store data about the catalog entries in the catalog
+		2. CatalogCgroup core is used to store data about the categories in the catalog.
+		3. Unstructured core is used to store attachment data for catalog entries in the catalog (images, PDF files, and other attachments)
+		4. Inventory core is used tos tore inventory data for the catalog entries in the catalog
+		5. Price core is used to store price data for the catalog entries in the catalog
+		
+Index
+	> The Index is composed of all of the search cores that are associated to a master catalog. Common indexes include:
+		1. MC_10001 is an index that contains a CatalogEntry, CatalogGroup, and Unstructured core
+		2. MC_10101 is an index that contains a CatalogEntry, CatalogGroup, Unstructured, and Inventory core
+		
+Full indexing
+	> Rebuilding the entire index from scratch by using buildIndex RESTful call
+	
+Delta indexing
+	> Updating the current index with the changes that are captured in TI_DELTA_CATENTRY using the buildIndex RESTful API
+	
+Crawler
+	> Commerce utility for crawling unmanaged content for indexing into the unstructured index (ex: HTML files)
+	
+Extension index
+	> A core that extends the CatalogEntry core to store specific data for the catalog entries
+	> For example, the Inventory index extends the CatalogEntry core to store inventory information for each catalog entry. 
+		- Since this information is separated into a different core, you can rebuild this small core often and quickly.
+		- This core allows you to keep inventory counts up-to-date
+		
+
+
+Elastic Search
+ElasticSearch
+	> A search technology that HCL Commerce Search makes use of to perform search based navigation and merchandising at the storefront
+	
+Apache NiFi
+	> A dataflow technology that HCL Commerce Search uses as its indexing pipeline for extracting, transforming, and loading business/catalog data into ElasticSearch
+
+Apache Zookeeper
+	> A key-value store technology that HCL Commerce Search uses for managing custom configurations
+	
+	
+Elasticsearch history in HCL Commerce
+	> The HCL Commerce Search service introduced in Version 9.1 provides you with improved scaling, simpler administration, and enhanced security. This architecture includes Elasticsearch as preferred Version 9.1 Search microservice.
+	> HCL Commerce Version 9.1's search system is backwards-compatible with Version 9.0's. You can still use your Apache Solr as it remains a part of HCL Commerce Version 9.1
+	> The search API remains the same regardless of whether you are using Solr or Elasticsearch, which means that most cusomters will be able to switch to Elasticsearch with no impact on the storefront
+	> NOTE: If you have previously customized the indexing configuration or templates, or the Search runtime, then you may need to migrate your customizations
+	
+
+Solr vs Elasticsearch
+	> Solr runs as a traditional monolithic application within a dedicated Search container. This architecture provides both stability and scalability.
+	> In contrast, HCL Commerce Search with Elasticsearch consists of several Data microservices, each of which runs in its own container. Each has its own responsiblity. These microservices retain backwards compatibility with your Commerce Transaction server, Storefront, and Xc customizations. 
+	> In addition, they provide 
+		- Natural Language Processing (NLP) with Stanford CoreNLP.
+		- The NLP system improves search relevance, with models provides for English, Spanish, French, German, Arabic, and Chinese
+		- Most CoreNLP language models are capable of the following Performing tokenization, Lemmatization, Part-of-speech tagging, Name-entity-recognization, Sentence splitting, Sentiment analysis. They can perform grammatical analysis with constituency, dependency parsing, and co-reference 
+		- An additional NLP processor has been added to provide additional Matchmaking capabilities such as finding similar colors or measurements, and automatic measurement conversion
+		- This is fully integrated with Elasticsearch as default core search technology
+		- Enhanced multilingual support with over 30 built-in language specific analyzer for text analysis such as tokenization, stemming, stop words
+		- Dynamic index shards allow more nodes to be dynamically added and rebalance data automatically across cluster with zero downtime
+		- Hot-swapping of newly-built indexes using index aliases. Re-indexing has minimal impact on your live index cluster
+		- Fast incremental snapshots, which allow you to backup at frequent intervals.
+		- Data ingestion through indexing pipelines in Apache Nifi
+		- The HCL Commerce search service fully supports multitier marketing and features near-realtime updates
+		- Kubernetes-ready deployment interface
+		- Seamless service upgrade and version control. Seamless service container upgrade allows new features and bug fixes to be delivered continuously through recurring service packs
+	
+	
+ElasticSearch - Data Environment
+	> consist of the following
+		1. Gateway
+		2. Ingest service
+		3. Query service
+		4. Apache nifi
+		5. Elasticsearch
+		6. Apache Zookeeper
+		7. Apache Nifi registry
+		8. Redis
+
+Data Environment process flow
+1. Request goes to the Gateway
+2. Gateway redirects the request in either Ingest or Query service
+3. Ingest interacts with the Apache NiFi, and it sends back a response
+4. Query service interacts with the Elasticsearch
+5. Query service may also interact with Zookeeper using Redis for Elasticsearch configurations
+6. Zookeeper interacts with Apache NiFi registry for Elasticsearch configurations
+
+
+THE INGEST SERVICE
+The Ingest service
+	> This microservice manages the WRITE operations. 
+	> It performs the essential Extraction, Transformation, and Loading (ETL) operations o business data that make them available to the search index.
+	> The business logic behind the index lifecycle, which previously resided in the Transaction server, now is managed here separately
+	> In Ingest service uses an indexing pipeline that runs on Apache NiFi. 
+		- It uses customizable connectors that allow you to completely control how your data is indexed, without requiring you to write a single line of code.
+		- Each connector is a processor that does some particular manipulation to the data as it is passed along the pipeline
+		- By stringing different connectors together, you enable different kinds of indexing pipeline logic
+	> There are one NiFi cluster per environment, shared between Authoring and Live/Production enviroment. 
+	> NiFi cluster consists of NiFi nodes
+	
+Ingest service and its interactions with other components
+	> this diagram is composed of the following components/sub-components
+		1. Ingest service
+			a. Connector
+				- FTP
+				- TCP
+				- UDP
+				- Image
+				- JSON
+				- XML
+			b. Mapping/Processing
+			c. Scheduler
+		2. Data source
+			- IBM DB2
+			- SFTP
+			- External files
+		3. Elasticsearch
+	
+Process flow for Ingest service
+1.1 Data sources pushes business data to the Ingest service through its different Connectors available
+1.2 Scheduler in the Ingest service is used to pull the business data from data sources
+2. Ingest service, using Apache NiFi's indexing pipelines to map/process the business data
+3. Ingest service sends the output of index pipeline to the Elasticsearch
+	
+
+THE QUERY SERVICE
+The Query service
+	> The Query service builds the search expressions and then hands the expression to Elasticsearch
+	> It also takes the query results and translates them back into a form that can be used by the storefront. The storefront does not need to know that the response was generated by Elasticsearch rather than Solr
+		
+
+APACHE NiFi
+	> NiFi is the indexing pipeline used by the Ingest service
+	> It uses connectors to bring in raw data and convert it into a form that can be used by Elasticsearch. You can use the default NiFi connectors for known data types, or define your own so that NiFi can bring in custom data types.
+	> NiFi runs in its own container and is fully extensible
+	
+
+Search server with Elasticsearch - WCS V9.1
+	> The Query service and search profile determine the best way to handle the search query. Elasticsearch uses its high-performance engine to run the search, and then the response is filtered back through the search profile before being handed back to the storefront.
+	> Using the search profile to filter the response means that the storefront does not need to know that it is interfacing with Elasticsearch instead of Solr
+	> The index can be built as a separate persistent volume. Elasticsearch's distributed index paradigm allows it to be built and updated on a continuous basis, and remains intanct enven if the other Docker containers are taken down.
+	
+
+OTHER SERVICES - DATA PLATFORM
+	> these services also run internally to the Data Platform, meaning that their APIs are not exposed directly to the outside worlds.
+	> Access to them is through the NGINX gateway
+	> these are
+		1. Redix
+		2. Zookeeper
+
+Redis
+	> Redis is used as the message bus for distributing change events as well as cache invalidation events
+	
+Zookeeper
+	> ZooKeeper is used to store your default and custom configurations, connector descriptors along with custom properties and extensions. It starts with your search profile and Ingest profile already present
+	> When the microservice containers start, they boot into a preset, stable configuration. At runtime, each microservice polls ZooKeeper for any custom configurations it may also have stored. It will automatically override default behaviours such as query replies, and load custom applications such as new NiFi connectors
+	
+	
+	
+Customizing the Elasticsearch-based search solution
+	> The Elasticsearch Search solution is one component of a unified data environment. This environment is designed as a generic data-management system. The environment includes serveral major components, including
+		1. Gateway	
+		2. Data services
+		3. ZooKeeper configuration management system
+	> The Redis gateway and ZOoKeeper/Registry support the data services. It is the data services that control Search behavior, so you customize Search by extending the Ingest data-uploading subsystem or the Elasticsearch-based Query subsystem.
+	> There are four main ways you can do this, as outlined below. In addition, you can develop migration and continuous-delivery strategies based on templates and examples provided by HCL
+		1. Adding new Ingest connectors
+		2. Adding new Ingest processors
+		3. Modifying or adding Ingest data flows
+		4. Migrating and deploying your extensions
+	
+Sources and Links
+Customization process
+https://help.hcltechsw.com/commerce/9.1.0/search/concepts/ConfigureSearchResults.html
+https://help.hcltechsw.com/commerce/9.1.0/search/concepts/C_CICDModel.html
+https://help.hcltechsw.com/commerce/9.1.0/tutorials/tutorial/tsd_searchprofiles1.html
+https://help.hcltechsw.com/commerce/9.1.0/search/tasks/elasticsearch_migrate.html
+

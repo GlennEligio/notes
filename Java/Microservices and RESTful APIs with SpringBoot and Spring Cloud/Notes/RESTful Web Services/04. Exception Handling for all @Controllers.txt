@@ -1,0 +1,132 @@
+IMPLEMENTING GENERIC EXCEPTION HANDLING FOR ALL RESOURCES/CONTROLLER
+
+For creating ErrorResponse for general exception handling, it must have
+	- timestamp
+	- message
+		= reason as to why error happen
+	- details
+		= typically url of request sent
+
+CLASSES USED
+
+ResponseEntityExceptionHandler
+	> A convenient base class for @ControllerAdvice classes that wish to provide centralized exception handling across all @RequestMapping methods through @ExceptionHandler methods. 
+	> This base class provides an @ExceptionHandler method for handling internal Spring MVC exceptions. This method returns a ResponseEntity for writing to the response with a message converter, in contrast to DefaultHandlerExceptionResolver which returns a ModelAndView. 
+
+WebRequest
+	> Generic interface for a web request. Mainly intended for generic webrequest interceptors, giving them access to general request metadata,not for actual handling of the request.
+
+
+
+ANNOTATIONS USED
+
+@ControllerAdvice
+	> Specialization of @Component for classes that declare @ExceptionHandler, @InitBinder, or @ModelAttribute methods to be shared across MULTIPLE @Controller classes. 
+
+
+@ExceptionHandler
+	> Annotation for handling exceptions in specific handler classes and/or handler methods.
+
+
+@InitBinder
+	> Annotation that identifies methods which initialize the WebDataBinder which will be used for populating command and form object arguments of annotated handler methods.
+	> used for pre-processing Request information and data
+
+
+@RestControllerAdvice
+	> A convenience annotation that is itself annotated with @ControllerAdvice and @ResponseBody. 
+	> used for @ControllerAdvice whose @ExceptionHandler classes returns a ResponseEntity
+
+
+
+1. Create a class to represent the Response body
+	> name it ExceptionResponse
+	> must have the following properties
+		- Date timestamp
+		- String message
+		- String details
+
+2. Create a class
+	> name it CustomResponseEntityExceptionHandler
+	> must extends to ResponseEntityExceptionHandler	
+	> must have @RestControllerAdvice
+
+3. Create a method
+	> name it handleAllExceptions()
+	> add @ExceptionHandler() and pass Exception.class
+		- this method will handle all Exceptions not covered by other methods
+	> have the following property
+		- public access, final modifier, 
+		- ResponseEntity<Object> return type, 
+		- Exception and WebRequest parameter
+	> inside the method
+		- create an instance of ExceptionResponse class
+		- for its constructor pass the following
+			= new Date() for timestamp
+			= message attribute of Exception parameter for message
+			= description of WebRequest for details (pass false to getter to not include user specific details)
+		- return a new ResponseEntity and pass the following for its constructor
+			= ExceptionResponse instance
+			= HttpStatus.INTERNAL_SERVER_ERROR
+
+4. Create new method
+	> name it handleUserNotFoundException()
+		- this is for handling UserNotFoundException errors
+	> add @ExceptionHandler() and pass UserNotFoundException.class
+		- this method will handle all Exceptions not covered by other methods
+	> have the following property
+		- public access, final modifier, 
+		- ResponseEntity<Object> return type, 
+		- Exception and WebRequest parameter
+	> same method body as the handleAllException() except
+		- ResponseEntity have HttpStatus.NOT_FOUND attribute
+
+
+ExceptionResponse Class
+	> @AllArgsConstructor
+
+public class ExceptionResponse {
+
+	private Date timestamp;
+	private String message;
+	private String details;
+
+}
+
+
+CustomResponseEntityExceptionHandler class
+
+@RestControllerAdvice
+public class CustomResponseEntityExceptionHandler 
+extends ResponseEntityExceptionHandler{
+
+	@ExceptionHandler(value = Exception.class)
+	public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request){
+		
+		ExceptionResponse exceptionResponse = 
+				new ExceptionResponse(new Date(), 
+										ex.getMessage(), 
+										request.getDescription(false));
+		
+		return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(value = UserNotFoundException.class)
+	public final ResponseEntity<Object> handleUserNotFoundException(Exception ex, WebRequest request){
+		
+		ExceptionResponse exceptionResponse = 
+				new ExceptionResponse(new Date(), 
+										ex.getMessage(), 
+										request.getDescription(false));
+		
+		return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+	}
+}
+
+
+Response body
+{
+    "timestamp": "2021-12-18T13:01:02.892+00:00",
+    "message": "id-500",
+    "details": "uri=/users/500"
+}

@@ -1,0 +1,394 @@
+Docker 
+
+Topics to discuss:
+1. The challenges of deployment
+2. How docker works and why you should use it
+3. How to turn your REST API into a docker image
+4. How to run your REST API as docker container
+
+
+Requirements necessary in order to run our REST API in Production environment
+1. Runtime program 
+	> in order to run the application
+2. SDK tools
+	> in order to build the application
+3. Operating System
+	> in order to host the application
+4. REST API itself
+5. DB Requirements
+
+
+
+Things to consider when preparing for deployment
+1. Prepare a box
+	> can be either Physical machine or virtual machine
+	> Linux or Windows, pick the correct OS version
+		= this will affect all the commands that you can issue into the machine itself
+		= Linux commands in Linux machine, Windows commands in Windows machine
+
+2. How to take the files to the production machine?
+3. What if DB requires different version of OS or dependencies?
+4. What if we want to move to a new version of .NET?
+5. How do we quickly start the REST API on the machine?
+6. What if one instance is not enough to handle the load?
+
+
+
+Docker Containerization steps
+
+1. Dockerfile creation	
+	> Dockerfile defines how the environment of Docker Image / Container needs to be built
+		a. Operating system
+		b. Runtimes
+		c. Dependencies
+		d. Where to place the files
+		e. How to start the REST API
+
+2. Docker Image creation
+	> using the Dockerfile (instruction) and Docker engine, a Docker Image will be built
+	> each Docker Image will have a Tag
+	> Tag can be seen as "version" of the said Docker Image
+
+3. Pushing Docker Image in Container Registry
+	> Container Registry contains all Docker Image
+	> If a Docker Image inside it is PUBLIC, they can be pulled by others for consumption
+
+4. Pulling the Docker Image from Container Registry to the Production Environment machine
+	> when the Docker Image is pulled into the Production Environment, it will be transform into a Docker Container
+	> Docker Container acts as an executable version of the Docker Image
+	> also, the Production Environment machine MUST HAVE Docker engine in order to run the Docker Image as Docker Container
+
+
+INCLUDE:
+
+.dockerignore
+	> includes all the file directory in the .NET app that will not be included in the Docker image when we build it
+
+
+Benefits of Docker
+1. Efficient resource usage
+	> Caching happens for each LAYER of instruction
+2. Fast start
+	> because of caching, it will be able to creating the LAYER of instruction more easily
+3. Isolation
+	> each of the Docker Container are isolated from one another
+4. Runs anywhere
+	> as long as the machine has Docker engine, it can run a Docker Container
+5. Scalability
+	> can spawn multiple instances of Docker image as container
+
+
+
+
+I. Configure REST API
+	> remove the https redirection (or atleast, have https redirection only available in development environment)
+	
+
+1. Add the app.UseHttpsRedirection() to be inside the env.IsDevelopment() check
+	> this is because when ASP.NET is running in Docker container, it switches from Development to Production	
+	> so when we add the HttpsRedirection in IsDevelopment(), it will not work when .NET REST API is running in Docker container
+
+INSIDE the Configure() of StartUp class
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalog v1"));
+                app.UseHttpsRedirection();
+            }
+
+
+
+
+II. Implementing Docker
+	> add Docker Extension
+	> add Dockerfile using Command Palette
+
+
+2. Add Docker Extension
+	> search Docker in the Extension panel
+
+
+
+3. Using Command Palette, create/add a Dockerfile in Workspace
+	> Command Palatte can be found in View section
+	> then choose the following options
+		- Command:					Docker: Add Dockerfile into Workspace
+		- Application Platform: 			.NET: ASP.NET Core
+		- OS of Docker Container: 			Linux
+		- Ports of Docker container to be Exposed: 	80
+		- Include optional Docker compose: 		NO
+
+	> the generated Dockerfile should contain this lines
+
+INSIDE Dockerfile
+
+1	FROM mcr.microsoft.com/dotnet/aspnet:5.0-focal AS base
+2	WORKDIR /app
+3	EXPOSE 80
+4
+5 	ENV ASPNETCORE_URLS=http://+:80
+6
+7	FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
+8	WORKDIR /src
+9	COPY ["Catalog.csproj", "./"]
+10	RUN dotnet restore "Catalog.csproj"
+11	COPY . .
+12	WORKDIR "/src/."
+13	RUN dotnet build "Catalog.csproj" -c Release -o /app/build
+14
+15	FROM build AS publish
+16	RUN dotnet publish "Catalog.csproj" -c Release -o /app/publish
+17	
+18	FROM base AS final
+19	WORKDIR /app
+20	COPY --from=publish /app/publish .
+21	ENTRYPOINT ["dotnet", "Catalog.dll"]
+
+
+EXPLANATION
+
+1 	We will be building our image using .NET ASPNET 5.0 Docker Image
+	Also, we will name this layer/stage as "base"
+2	Work directory will be set as /app. Everything that will happen will be located here
+3 	Expose port 80 of the Docker Container
+
+
+7	We will using dotnet.sdk:5.0 Docker Image
+	Also, we will name this layer/stage as "build"
+8 	Set working directory as /src
+9	Copy the "Catalog.csproj" into "./" (root directory of the current location, which is the WORKDIR /src)
+10	Run a dotnet restore "Catalog.csproj" in order to restore the dependencies we used
+11	Copy all the files in the root directory of .NET REST API, into the root directory of WORKDIR specified (/src)
+12	Set the WORKDIR into "/src/."
+13	Build our .NET REST API using the Catalog.csproj, 
+	Also set Configuration flag to "Release", and Output location to "/app/build"
+
+
+15	We will be using the Docker Image used FROM "build layer" (which is the .NET 5.0 SDK) and setting this layer/stage as "publish"
+16	Publish our .NET App  using "Catalog.csproj" file
+	Also, set Configuration flag to "Release", and Output location flag to "/app/publish "
+
+
+18 	Use the Docker Image FROM "base" stage and we will name this as "final" stage
+19	Set working directory to "/app"
+20 	Copy FROM "publish" stage all the files from its "/app/publish" into the root directory of the "final stage" (/app) 
+21	We define our ENTRYPOINT, which defines how we start our REST API (by executing dotnet command using Catalog.dll file)
+		> Catalog.dll file is the result of the publish command
+
+
+
+
+4. Modify the Dockerfile
+	> goal is to remove the "build" command of the .NET app as "publish" command does "build" command with additional stuff
+	> do the following
+		a. Remove the 2nd WORKDIR as well as 2nd RUN commands in "build stage"
+		b. Remove the "publish" stage	
+		c. Transfer the RUN command in "publish" stage into the "build" stage
+		d. Change the location where we copy stuff in "final stage" from "publish" to "build"
+
+FROM THIS:
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
+WORKDIR /src
+COPY ["Catalog.csproj", "./"]
+RUN dotnet restore "Catalog.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "Catalog.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Catalog.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Catalog.dll"]
+
+
+
+TO THIS:
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
+WORKDIR /src
+COPY ["Catalog.csproj", "./"]
+RUN dotnet restore "Catalog.csproj"
+COPY . .
+RUN dotnet publish "Catalog.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "Catalog.dll"]
+
+
+
+
+5. Build the Docker Image
+	> to build a Docker Image, type the following in terminal
+
+		docker build -t <DockerImageName>:<Tag> <FileDirectory>
+
+	> in our case, it will be
+
+		docker build -t catalog:v1 .
+
+	> dot (.) signifies root directory folder
+
+
+
+
+
+
+III. Connect the .NET REST API Docker Image to the MongoDB Docker Image
+	> we do this (in localbox) by creating a Docker Network where the two Docker Images can connect
+
+
+5. Create a Docker Network
+	> to create a Docker Network, type this
+
+		docker network create <NetworkName>
+
+	> in our case, we will type
+	
+		docker network create net5tutorial
+
+
+
+
+6. Check the Docker Network
+	> docker network ls
+
+
+
+
+7. Stop the MongoDb Docker container if its still running
+	> docker stop mongo
+
+
+
+8. Create and run the MongoDb Docker container once again and connect it to Docker network
+	> to connect a Docker container, add this flag when running a Docker container
+
+		--network=<DockerNetworkName>
+
+	> in our case, we will add a new flag in MongoDb Docker Container
+
+		--network=net5tutorial
+
+IN THE TERMINAL
+
+docker run -d --rm --name mongo -p 27017:27017 -v mongodbdata:/data/db -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=Pass#word1 --network=net5tutorial mongo
+
+
+
+
+9. Run our .NET App Docker Image as Docker container
+	> to run our .NET App Docker Image as container, we will type the following
+
+		docker run -it --rm -p <LocalMachinePort>:<ContainerPort> -e MongoDbSettings:Host=<MongoDbImageName> -e MongoDbSettings:Password=<MongoDbPassword> --network=<DockerNetworkName> <.NETAppImageName>
+
+	> in our case, 
+		- Local Machine Port 		= 8080
+		- Container Port 		= 80
+		- MongoDbImageName 		=  mongo
+			> from our .NET Container, we can not access MongoDb container using localhost, for this we will use its name since its also connected to the same network
+		- MongoDbPassword		= Pass#word1
+			> we cant also access the UserSecrets of Local machine from Docker container
+		- DockerNetworkName		= net5tutorial
+		- .NETAppImageName		= catalog:v1
+
+	> so the command we will type is
+
+		docker run -it --rm -p 8080:80 -e MongoDbSettings:Host=mongo -e MongoDbSettings:Password=Pass#word1 --network=net5tutorial catalog:v1
+
+
+
+
+
+10. Test the application
+	> after running our .NET App Docker Image as container, we should be able to connect to the .NET REST Api and have the REST API connect to the MongoDb
+	> call the route endpoints of the .NET REST API using localhost and the port of it that we exposed for the .NET REST API container
+
+		Base route: http://localhost:8080/
+
+		EX: http://localhost:8080/items
+
+
+	As we can see, the .NET REST api is running and is able to connect to the MongoDb container as well.
+
+
+
+
+
+IV. Pushing our Docker Image to our Docker Hub repository
+	> retagging
+	> pushing
+
+
+11. Retag our .NET REST API Docker Image to the corresponding tag we want
+	> since we will push this to our DockerHub, we will want to tag it with following format
+
+		<dockerhubid>/<dockerimagename>:<version>
+
+	> and to retag an DockerImage, we will do it in following format
+
+		docker tag <InitialDockerTag> <NewDockerTag>
+
+	> so in our case, it will be
+
+		docker tag catalog:v1 shuntjg/catalog:v1
+
+
+
+
+12. Push the new retagged Docker Image to our Docker Hub repo
+	> to push a Docker Image to a Repository, use push command
+
+		docker push <DockerTag>
+
+	> so in our case, it will be 
+
+		docker push shuntjg/catalog:v1
+
+	> if we check our Docker Hub repository, we will see the Docker Image
+
+
+
+
+
+13. Remove the Docker Image in our Docker Image list
+	> to remove a Docker Image, use the rmi command
+
+		docker rmi <DockerImageName>
+
+	> so in our case, it will be
+
+		docker rmi catalog:v1
+		docker rmi shuntjg/catalog:v1
+
+	> to check Docker Image list, type
+
+		docker image ls
+
+
+
+
+V. Pulling our Docker Image in Docker Hub
+	> logout, no docker credentials
+	> pull from dockerhub
+
+14. Logout our Docker Account
+	> use logout command
+
+		docker logout
+
+
+15. Pull the catalog:v1 DockerImage from our DockerHub repo
+	> if we create a Docker Container whose Docker Image is not located in local Docker Image list, it WILL PULL from the DockerHub repo
+	> this is if the Docker Image is publicly available
+
+IN THE TERMINAL
+
+docker run -it --rm -p 8080:80 -e MongoDbSettings:Host=mongo -e MongoDbSettings:Password=Pass#word1 --network=net5tutorial catalog:v1

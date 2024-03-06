@@ -1,0 +1,14 @@
+11. Introduction to Distributed Tracing
+
+Problems with Microservices
+1. Complex call chain
+2. Debugging problems
+2. Tracing request across microservices
+
+Solution
+Distributed Tracing
+	> in Distributed Tracing, all the microservices all send ALL information out to a SINGLE Distributed Tracing Server
+	> The Distributed Tracing Server will then store everything to a Database
+		- this database can be either in-memory or a real Database
+	> The Distributed Tracing Server will provide you an INTERFACE which allows you to trace the request across multiple microservices
+	> Example of Distributed Tracing Server is Zipkin

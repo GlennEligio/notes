@@ -1,0 +1,178 @@
+Section 12 - Systems Administration with Jenkins
+
+78. Administering Jenkins
+
+Administering Jenkins
+ > any servers that host any application or service like Jenkins needs to be administered
+ > administering Jenkins, or any application in that matter, can be divided into several aspect
+	1. Backup
+	2. Restore
+	3. Monitor
+	4. Scale
+	5. Manage
+	
+Backup
+ > we need to think about backing up that server and backing up specific files and folder that are NECESSARY for Jenkins to run
+ 
+Restore
+ > we need to think about our Restore strategy
+ > A backup is only as good as the Restore policy. 
+	- We could have a million backups in the world, but if you can't restore it properly, those backups really don't mean much
+	
+Monitor
+ > because its Jenkins is an application running and hosted on a system, we need to think about how to monitor Jenkins
+ > if we have monitoring setup in the system where Jenkins is running, we can easily diagnose the error if something goes wrong
+ 
+Scale
+ > a system is only as good as how it can Scale
+ > for example, lets say you are running two Jenkins servers and you need to scale up to three or four due to the load, we need to understand how to do that because it's pretty easy in a large organization to need to scale up those ervers
+	- these depends on how many people are hitting those servers and how many jobs in the pipelines they are running
+
+Manage
+ > we need to fully understand how to manage Jenkins
+ > Jenkins isn't one of those platforms that you can just put up and walk away and not touch it for ten years
+ > you have to actually manage it because 
+	- there is a system underneath
+	- there are updates to be done
+	- there are patches that need to be done
+ 
+
+
+
+79. Backup and restoring Jenkins
+
+Types of backups for Jenkins (or any system in general)
+1. Full backups
+2. Snapshots
+3. Decremental backups
+
+
+Important bit of what to backup for Jenkins
+1. $JENKINS_HOME
+	> JENKINS_HOME env variable is where all Jenkins-based installations store configurations, build logs, and artifacts
+	> inside the JENKINS_HOME, there are two important files
+		a. Configuration files (config.xml)
+			- contains the configuraion of Jenkins, what Jenkins look like, how the Jenkins is set up inside of the system or environment
+		b. ./jobs directory
+			- contains all of our pipeline
+			- we need to make sure these bad boys are backed up or else you could literally lose every single CI/CD pipellines, every worked that have been done
+			
+			
+
+
+
+80. Backup Jenkins
+
+SOURCE
+https://www.jenkins.io/doc/book/system-administration/backing-up/
+
+
+Backup Jenkins
+ > there are several ways to backup Jenkins
+	a. One-off script to back up Jenkins
+	b. Filesystem snapshots
+	c. Plugins
+	
+Filesystem snapshots
+ > note that snapshots aren't real backups, so its not recommended for long term solution
+ > its good for a daily kind of backup, instead of an incremental route
+	
+Plugins
+ > available in Jenkins
+ > note that only 'thinBackup' Plugin for open source plugins is currently being maintained
+ 
+One-off script to backup Jenkins
+ > we can also use scripts to backup specific files necessary to restore Jenkins in a specific state
+ > example of this is https://github.com/sue445/jenkins-backup-script
+ 
+ 
+Example: Plugins for backing up Jenkins
+ > in this case, we will be using ThinBackup
+ 
+Installing ThinBackup
+1. Open Jenkins
+2. Go to Plugins and search ThinBackup
+3. Install the plugin
+
+Configuring the ThinBackup plugin
+1. Go to Manage Jenkins tab
+2. Look for 'ThinBackup' section
+	> it should be present if you've installed it
+3. Go to settings
+4. Specify the Backup directory
+	> MANDATORY, backup will not work if this is not specified
+	> ex: /home/jenkins/jenkins-backup
+5, In the server where Jenkins is, create the directory where backup will be stored
+	$ mkdir -p /home/jenkins/jenkins-backup
+6. Change permission to this directory
+	$ sudo chmod 777 /home/jenkins/jenkins-backup
+7. Save settings of ThinBackup
+
+Create backup
+1. Go to ThinBackup
+2. Create backup for the Jenkins
+3. Check the backup directory
+	> ex: FULL-2023-11-26_13-16
+
+	
+NOTE:
+1. 'jenkins' user MUST HAVE permission to write on the backup directory specified
+2. Also, backup directory MUST BE VISIBLE to the 'jenkins' user
+	> ex: /home/jenkins/jenkins-backup, or /tmp (not recommended)
+3. If no backup is created, check the logs in Manage Jenkins -> System logs
+
+
+
+
+81. Restore Jenkins
+
+Restoring Jenkins
+ > restoring Jenkins server using ThinBackup is as easy as the backing it up
+ > for this, click the Restore in ThinBackup menu
+	- then specify the date of the Jenkins backup state to restore
+	
+Steps: Restoring Jenkins
+1. Create additional backup	
+	> in the backup settings, select all options except 'Additional files'
+	> check if backups are created in the backup directory
+2. Click Restore in ThinBackup
+	> select the backup to use, then click Restore
+	
+NOTE:
+1. Make sure to restart Jenkins after restoring the backup
+
+
+
+
+
+
+82. Backup and Restore Jenkins - Notes
+
+Q1: Jenkins server is already installed and it's running on port 8085. You can access the same using Jenkins button on the top bar. Login into the Jenkins server using below given credentials:
+	Username: admin
+	Password: Adm!n321
+Notes:
+1. You might need to restart Jenkins service after installing some plugins or after making some configuration changes etc. In such case please make sure Jenkins service is back up before you submit your solution.
+2. Please make a note of Jenkins credentials given above.
+
+
+Q2: Under which location Jenkins store its data primarily?
+A: $JENKINS_HOME
+
+Q3: Which of the following is the main configuration file of Jenkins?
+A: config.xml
+
+Q4: While backing up Jenkins server, which of the following directories is the most crucial to backup?
+A: Jenkins home directory
+
+Q5: Install the ThinBackup Jenkins plugin.
+
+Q6: Backup Jenkins (including plugins) under /var/lib/jenkins/jenkins_backup directory using thinBackup plugin.
+S:
+1. Create the backup directory
+	$ mkdir -p /var/lib/jenkins/jenkins_backup
+2. In the Jenkins, setup the ThinBackup to use the directory as backup directory. Save the settings
+3. Create a backup
+
+Q7: Using ThinBackup plugin, restore the Jenkins backup (including plugins) you just took in the previous question.
+Make sure to restart the Jenkins service after restoring the backup.

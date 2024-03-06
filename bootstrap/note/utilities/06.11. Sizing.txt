@@ -1,0 +1,33 @@
+06.11. Sizing
+
+XI. Sizing
+1. Sizing relative to parent
+	> we can define the size of an element relative to its parent by using
+
+NOTATION:
+{property}-{size}
+
+Property
+w	width
+mw	max-height
+h	height
+mh	max-height
+
+Size
+0-100	percentage of parent size
+
+
+2. Sizing relative to viewport
+	> we can also define a size of an element relative to viewport's size
+
+NOTATION:
+{property}-{size}
+
+Property
+vw 	viewport width
+vh	viewport height
+min-vw	minimum width
+min-vh	minimum height
+
+Size
+0-100	percentage of Viewport

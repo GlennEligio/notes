@@ -1,0 +1,65 @@
+EXCEPTION HANDLING
+
+THROW 
+	> this clause is used to raise an exception and transfers the execution to a CATCH block of a TRY....CATCH construct
+	> ErrorNumber must be between 50000 to 2147483647
+
+SYNTAX:
+
+	THROW [ { ErrorNumber | @localvariable },
+		{ Message | @localvariable },
+		{ State | @localvariable} ]
+	[;]
+
+
+
+TRY-CATCH BLOCK
+	> used to implement exception handling in Transact-SQL. A group of statements can be enclosed in the TRY block. 
+	> In case an error occurs in the TRY block, control is passed to another group of statements that are enclosed in a CATCH block
+
+SYNTAX:
+
+	BEGIN TRY
+		{ SQLStatement | StatementBlock }
+	END TRY
+	BEGIN CATCH
+		[ {SQLStatement | StatementBlock} ]
+	END CATCH
+	[;]
+
+
+EXAMPLES:
+
+THROW query:
+
+	THROW 51022, 'Record does not exist.', 1;
+
+Messages:
+
+	Msg 51022, Level 16, State 1, Line 55
+	Record does not exist.
+	
+
+TRY-CATCH query:
+
+	BEGIN TRY
+	SELECT PhoneNumber+StudentName FROM StudentsInfo;
+	END TRY
+	BEGIN CATCH
+	PRINT 'Not possible'
+	END CATCH
+
+Result:
+	*No table result*
+
+Message:
+
+(0 rows affected)
+Not possible
+
+
+
+	
+
+
+

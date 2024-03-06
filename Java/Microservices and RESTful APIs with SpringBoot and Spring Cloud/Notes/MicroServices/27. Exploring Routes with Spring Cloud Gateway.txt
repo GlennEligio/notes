@@ -1,0 +1,132 @@
+27. Exploring Routes with Spring Cloud Gateway
+
+Spring Cloud Gateway
+	> simple, yet effective way to route to APIs
+	> provide cross cutting concerns
+		- security
+		- monitoring metrics
+	> build on top of Spring WebFlux (Reactive Approach)
+	> features:
+		- match routes on any request attribute
+		- define Predicates and Filters
+		- Integrates with Spring Cloud Discovery Client (Load Balancing)
+		- Path Rewriting
+
+
+Spring Cloud Gateway important sections
+1. Route
+	> defines the logic on how we will HANDLE a specific Request
+2. Predicate
+	> defines the CRITERIA needed on a Request to know which Route it will go through
+	> example of this criteria are 
+		- URI pattern 
+		- Metadata
+		- method used (POST, PUT, DELETE, GET)
+		- Header
+		- Query parameter
+3. Filters
+	> defines the logics on how we will MODIFY the Request on a Route
+		- ex: Add metadata on request (header, param), log the request
+
+
+Classes / Interfaces to use
+
+Route
+	> represents a path for a Request to be redirected
+	> have the following properties
+		- String id
+		- URI uri	
+		- int order
+		- AsyncPredicate<ServerWebExchange> predicate
+			= defines the Http request-response interaction
+		- List<GatewayFilter> gatewayFilters
+		- Map<String, Object> metadata
+			= contains metadata like Headers, Params, etc
+	> contains its own Builder class inside it
+
+RouteLocator
+	> class used to locate which Route a Request should be redirected
+	> to create a RouteLocator, we will need its Builder class
+
+RouteLocatorBuilder
+	> builder class for RouteLocator
+	> inside the Builder class contains a List of Buildable of type Route
+	> have the following methods
+
+Builder 	routes()
+			> create a new Builder object
+Builder		route(Function<PredicateSpec, Buildable<Route>> fn)
+			> create a new Route to add in RouteLocator
+			> inside this method, we can define the Route object using the PredicateSpec input of Function parameter
+			> the Function parameter will then return a Buildable<Route> object from the builder method we call in PredicateSpec input
+RouteLocator	build()
+			> builds and returns a RouteLocator
+
+
+Class<?> extends URISpec methods
+	> these classes includes PredicateSpec, BooleanSpec, GatewayFilterSpec
+	> each of these classes have method that 
+		a. checks if Request meets the criteria needed to go to a speficic Route
+		b. modifies the Request that goes through the Route
+	> here are the following methods to call inside to PredicateSpec input of Function Parameter of route() of RouteLocatorBuilder
+
+BooleanSpec		path(String... pattern)
+				> takes a String VarArgs
+				> this defines which Request this Route will redirect
+					- what it does is it looks of the Request's URI matches the URI string pattern passed
+URISpec			filters(Functional<GatewayFilterSpec, URISpec> fn)
+				> takes a Function parameter	
+				> we can use the GatewaySpec input and call its methods to add filter function to Routes
+				> it then returns a URISpec using a modified GatewayFilterSpec
+Buildable<Route>	uri(String uri)
+				> sets the URI for the Route
+GatewayFilterSpec	addRequestHeader(String headerName, String headerValue)
+				> adds a RequestHeader to the Request that goes through the Route
+				> called inside filters() to the GatewayFilterSpec
+GatewayFilterSpec	addRequestParam(String name, String value)
+				> adds a parameter to the Request that goes through the Route
+				> called inside filters() to the GatewayFilterSpec
+GatewayFilterSpec	rewriteUrl(String... urlPattern, String rewriteUrl)
+				> changes a substring of request url that matches the urlPattern into the rewriteUrl
+				> called inside filters()
+
+
+URISpec
+	> class used to add URI to a Route object
+
+PredicateSpec
+	> extends to URISpec
+	> class that contains Predicate fucntions to apply to a URI Route
+
+GatewayFilterSpec
+	> extends to URISpec
+	> class that contains methods to apply specific Filters to Routes
+
+BooleanSpec
+	> extends to URISpec
+	> spec used to apply logical operators
+
+
+EXAMPLE:
+ApiGatewayConfiguration class
+
+@Configuration
+public class ApiGatewayConfiguration {
+
+	@Bean
+	public RouteLocator gatewayRouter(RouteLocatorBuilder builder) {
+		return builder
+				.routes()
+						.route(p -> p.path("/get")
+									.filters(f -> f.addRequestHeader("ExampleHeaderName", "HeaderValue")
+													.addRequestParameter("ExampleParamName", "ParamValue"))
+									.uri("http://httpbin.org"))
+						.route(p -> p.path("/currency-exchange/**")
+								 	.uri("lb://currency-exchange"))
+						.route(p -> p.path("/currency-conversion/**")
+								.uri("lb://currency-conversion"))
+						.route(p -> p.path("/currency-conversion-feign/**")
+								.uri("lb://currency-conversion"))
+				.build();
+	}
+}

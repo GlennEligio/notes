@@ -1,0 +1,484 @@
+Git Branching
+
+Git Branching
+	> process of the source code "branching" into different paths due to differences in contents
+	> its called branching because as time goes on, the source code paths starts to look like a tree
+	> each of the "branch" is independent to one another
+		- this means that branch 1 has no idea what changes branch 2 made in the source code
+
+
+Types of Git branches
+	1. Master branch
+	2. Feature branch
+	3. Hotfix branch
+
+
+TIP:
+	
+1. When switch to new branch, type a unique char string in the branch name and press TAB
+	> this will make the CLI autofill the rest of the branch name
+
+Pull request, PR
+	> request to have the code pulled (fetched + merged) into another branch
+	> for example, we may want to code from feature branch be pulled to the main branch
+	> after PR, people can see the code, comment on it and ask for some changes
+	> once the PR is merged, you may want to delete the feature/hotfix branch in both the Github repo and local git repo
+
+Merging practice in local git
+	> typically, we dont want to merge the feature/hotfix branch that we are working on to our main/master branch
+	> this is because the main/master may get updated while we are working in a feature branch
+	> for this reason, we want to avoid merging the feature branch to main branch to lessen the conflict when we pull updated main branch from the remote repository
+
+Merge conflicts
+	> there are multiple ways on fixing merge conflict
+		a. interfaces like Github
+		b. fixing in terminal
+		c. fixing it directly in the code
+
+
+
+I. Git Branching Demonstration
+	> dont forget to change back the directory in CLI from demo-repo2 to demo-repo
+
+1. See the branches we have in local git repo right now
+	> to see the branches, use the command
+
+		git branch
+
+	> right now, we have this
+
+		* main
+
+	> the * symbol denotes what branch we are in right now
+
+
+
+2. Create a new branch in our local git repository
+	> to create new branch, use the following command
+
+		git checkout -b <branch-name>
+			
+	> git checkout is what we use to switch branches, but if we want to make a new branch AND switch to it, we add -b flag alongside the name of the branch
+	> so in our case, it will be
+
+		git checkout -b feature-readme-instruction
+
+	> we will get a message in console like this
+
+		Switched to a new branch 'feature-readme-instruction'
+
+	> and if we look at the branch, we will see that we've switch from master to the new branch
+
+		* feature-readme-instruction
+		  main
+
+
+
+
+3. Use git checkout to switch back to master and again to go back to new branch
+	> to go to main branch, use
+
+		git checkout main
+
+	> to go back to new branch again using git checkout
+	
+		git checkout feature-readme-instructions
+
+
+
+
+II. Branch independence demonstration
+
+4. Modify the README.md file
+	> add these lines inside the README.md file
+
+## Local Development
+
+1. Open index.html in your browser
+
+	> save the changes
+		- if we look at the file explorer, we will see an M beside the README.md file
+
+
+ 
+5. Add the changes we have made in the local git repo
+	> use git add to add the changes we've made
+
+		git add README.md
+
+
+
+6. Commit the changes we have made in feature-readme-instruction branch
+
+		git commit -m "updated readme"
+
+
+
+7. Switch back to main branch
+	> use git checkout to switch to main branch
+	> now, if we take a look at the README.md, we can see that the changes we have made in other branch is removed
+
+
+
+
+III. Branch merging demonstration
+
+8. Before we merge, lets check the differences between the two branches 
+	> to check for branch differences, use the command
+
+		git diff <branch-to-compare>
+
+	> this will check the differences between the branch we specified in git diff and our current branch
+	> the message in console should look like this
+
+diff --git a/README.md b/README.md
+index a0ee969..a561d0f 100644
+--- a/README.md
++++ b/README.md
+@@ -4,8 +4,4 @@ Some description!
+
+ ## SUB HEADER
+
+-Watch tutorial on Youtube!
+-
+-## Local Development
+-
+-1. Open index.html in your browser
+\ No newline at end of file
+	
+
+
+
+
+9. Switch the feature-readme-instruction branch and push it
+	> right now, we can merge the branches in the local git
+	> but typically, we will do the following instead:
+		- push the feature branch in the github
+		- set-up a pull request for others to check (merge conflicts, wrong code, etc.)
+		- the owner of the repo will then accept the pull request and merge it to the main branch
+	> to switch to the feature branch, use git checkout
+
+		git checkout feature-readme-instruction
+
+
+
+
+10. Push the feature branch into the repository  
+	> since we dont have a feature branch in the Github repository, when we first push a branch to it, it will automatically create a new branch
+	> to push a new branch into the Github repository, use the following command
+
+		git push -u origin feature-readme-instruction
+
+	> this will do the following
+		- create new branch that corresponds to the branch name in local git
+		- set the new branch as default branch to push
+		- push the branch commits to new repository in Github
+
+	> we will get an output like this
+
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 398 bytes | 398.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+remote: 
+remote: Create a pull request for 'feature-readme-instruction' on GitHub by visiting:
+remote:      https://github.com/GlennEligio/demo-repo/pull/new/feature-readme-instruction
+remote:
+To https://github.com/GlennEligio/demo-repo.git
+ * [new branch]      feature-readme-instruction -> feature-readme-instruction
+Branch 'feature-readme-instruction' set up to track remote branch 'feature-readme-instruction' from 'origin'.
+
+	> as we can see, it give us an instruction to do a pull request for the branch that we made
+	> also, it says that we made a new branch in Github repository
+
+
+
+
+11. Go to Github page and go to demo-repo Github repository
+	> if we take a look at the repo, we can see the feature branch that we pushed into the demo-repo repository
+	> theres also a Compare & pull request option
+
+
+
+12. Open the pull request
+	> in the pull request page, we can see the following
+		a. base branch to pull code to and compare branch to pull code from
+			- arrow denotes where the codes will be merge to
+		b. mergeability of the two branches
+		c. Pull request title
+			- for now, set it to "updated readme"
+		d. Pull request description
+			- Added section about local development to the README.md
+	> create the Pull request
+
+
+
+
+13. Check the Pull request page
+	> now that we have created the Pull request, we will be brought to a new page
+	> this new page contains the following
+		a. Converstation tab where people can comment on the pull request
+		b. Commits to see the commits made in the Feature branch
+		c. Files that have been modified in pull request
+			- we can see the changes in code (git diff) for each file
+
+
+
+14. Merge the pull request
+	> click the Merge pull request
+	> confirm the merge
+	> now if we take a look at the main branch, we can see the changes that the merge pull request has added
+
+
+
+15. Pull the changes that has taken effect in Github main branch (due to merge pull request) to our local main branch
+	> to pull the changes in Github main branch to our local main branch, use the command
+
+		git pull origin main
+
+	> or incase we have main as the upstream
+
+		git pull
+
+	> the output should look like this
+
+remote: Enumerating objects: 1, done.
+remote: Counting objects: 100% (1/1), done.
+remote: Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (1/1), 646 bytes | 161.00 KiB/s, done.
+From https://github.com/GlennEligio/demo-repo
+   48c4318..3892262  main       -> origin/main
+Updating 48c4318..3892262
+Fast-forward
+ README.md | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+	> and if take at look at the code in main branch, we can see the new code that was made by merge pull request
+
+
+
+16. Delete the local feature branch in local git
+	> to delete a branch, use the command
+
+		git branch -d <branch-name>
+
+	> in our case, it will be
+
+		git branch -d feature-readme-instruction
+
+	> we should get a message like this
+
+	Deleted branch feature-readme-instruction (was cca785e).
+
+
+
+
+IV. Merge conflict demonstration
+
+17. Create new branch in local git repo
+	> use git checkout -b
+	> name it quick-test
+
+		git checkout -b quick-test
+
+
+18. Modify the index.html file in the quick-test branch
+	> add <p>world</p> in the 2nd line of index.html file
+
+INSIDE index.html file
+
+<div>Hello</div>
+<p>world</p>
+
+
+
+19. Check the status of the quick-test branch
+	> use git status
+
+On branch quick-test
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   index.html
+
+
+
+
+20. Check the changes we made in the files of quick-test branch
+	> by using git diff and not specifying a branch, it will check the changes in the files in the branch itself
+	> in this case, we will check the code changes in the files of quick-test branch
+
+diff --git a/index.html b/index.html
+index 85be96f..d7ea4af 100644
+--- a/index.html
++++ b/index.html
+@@ -1 +1,2 @@
+-<div>Hello</div>
+\ No newline at end of file
++<div>Hello</div>
++<p>world</p>
+\ No newline at end of file
+
+
+
+21. Add and commits the modified index.html file
+	> to do the add + commit action at one command, use
+
+		git commit -am "message"
+
+	> -am flag adds and commits the modified files in the local git repo
+	> -am flag doesnt affect the newly created files
+
+
+
+22. Go back to the main branch
+	> use git checkout main command
+
+
+
+23. Edit the index.html file inside the main branch
+	> add <p>there</p> in the same line as the one in quick-test branch
+
+INSIDE index.html file
+
+<div>Hello</div>
+<p>there</p>
+
+
+
+24. Change branch to quick-test
+	> use git checkout quick-test
+	> if we do this, we will get this message
+
+error: Your local changes to the following files would be overwritten by checkout:
+        index.html
+Please commit your changes or stash them before you switch branches.
+Aborting
+	
+	> either we commit the changes first to save it to main branch, or stash the changes
+
+
+
+25. Add and commit the changes we made in the main branch
+	> use git commit -am to do this
+
+		git commit -am "added there"
+
+
+
+26. Checkout to the quick-test
+	> use git checkout quick-test
+
+
+
+27. Check difference between main branch and quick-test branch
+	> use git diff main to do this
+
+		git diff main
+
+	> we should get an output like this
+
+diff --git a/index.html b/index.html
+index d4cddce..d7ea4af 100644
+--- a/index.html
++++ b/index.html
+@@ -1,2 +1,2 @@
+ <div>Hello</div>
+-<p>there</p>
+\ No newline at end of file
++<p>world</p>
+\ No newline at end of file
+
+
+
+
+28. Merge the commits from quick-test to the main branch
+	> use git merge <feature-branch> to do this, assuming you are in main branch
+
+		git merge main
+
+	> since the master and quick-test branch have commits in the same line (line 2 in index.html), there will be a merge conflict
+	> the output should look like this
+
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.
+
+	> and we should see in index.html file this
+
+<<<<<<< HEAD
+<p>world</p>
+=======
+<p>there</p>
+>>>>>>> main
+
+	> HEAD represent the Current change we have in the branch we are in
+	> the main represent the Incoming change we will receive from merge command
+	> the equal signs separates the commit changes
+
+
+
+
+29. Fix the merge conflict	
+	> remove the <<<<<HEAD and >>>>>> master lines
+	> move the <p>world</p> and <p>there</p> in the correct lines
+
+BEFORE:
+
+<div>Hello</div>
+<<<<<<< HEAD
+<p>world</p>
+=======
+<p>there</p>
+>>>>>>> main
+
+
+AFTER:
+
+<div>Hello</div>
+<p>world</p>
+<p>there</p>
+
+
+
+30. Check status of the git repo
+	> use git status
+	> message shown in console
+
+On branch quick-test
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+        both modified:   index.html
+
+	> as we can see, both the main and quick-test branches are modified
+
+
+
+31. Check difference 
+	> use the git diff to see the changes before and after the merge conflict fix
+
+diff --cc index.html
+index d7ea4af,d4cddce..0000000
+--- a/index.html
++++ b/index.html
+@@@ -1,2 -1,2 +1,3 @@@
+  <div>Hello</div>
+- <p>world</p>
+ -<p>there</p>
+++<p>world</p>
+++<p>there</p>
+
+
+
+
+32. Commit the changes we have made in quick-test branch due to merging with master
+	> use git commit -am "message"
+		
+		git commit -am "updated with master"
+

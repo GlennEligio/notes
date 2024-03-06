@@ -1,0 +1,198 @@
+15 Sending Emails, Environment Variables, and Production MongoDB Database
+
+Contents:
+131 Exploring SendGrid
+132 Sending Welcome and Cancelation Emails
+133 Environment Variables
+134 Creating a Production MongoDB Database
+135 Heroku Deployment
+
+
+
+
+133 Environment Variables
+
+Environment Variables
+ > variables that is accessible inside an application on different environments (dev, prod, qa, etc.)
+
+
+Why Environment Variables?
+1. Security
+ 	> there are sensitive data that we dont want to be HARDCODED in the source code
+	> these includes
+		1. API keys
+		2. Database credentials
+		3. Secret keys
+		4. Account credentials
+
+
+Accessing Environment Variables 
+ > we can access these environment variables through "process.env"
+ > process.env returns an object whose key:value pairs refers to the available Environment Variables
+
+
+Adding Environment Variables
+ > for Production environment, the server service where we deploy the Application typically provides a method for us to add these Environment variables
+ > for Dev environment, we want to use another npm module to load the environment variables from a specific folder/file
+
+
+env-cmd
+ > A simple node program for executing commands using an environment from an env file.
+ > to install
+	- npm install env-cmd
+	- adding "--save-dev" flag is common since we only need this in dev environment
+
+
+Using env-cmd module
+1. Creating file to hold the .env files
+	> create a folder to hold ALL .env file (ex. config)
+		- with this, we can just add this folder in the .gitignore easily to not expose them in git repo
+	> inside .env file, add the environment variables in this syntax NAME:VALUE
+		- for multiple environment variables, add them in the next line
+2. Providing/Adding environment variables from .env files to the application's environment
+	> using the CLI command "env-cmd" gives us, we can add environment variables from .env files using the command
+		- env-cmd -f <env-file-location>
+		- "-f" flag is used to denote the location of .env file
+	> we can then use the normal node or nodemon CLI command after this
+		- ex: env-cmd -f ./config/dev.env nodemon src/index.js
+
+EX:
+// inside config/dev.env
+PORT=TEST_PORT
+JWT_SECRET=thisisasecretkey
+MONGODB_URL=mongodb://127.0.0.1:27017/task-manager-api
+
+// inside .gitignore
+config/
+
+// inside source code
+mongoose.connect(process.env.MONGODB_URL, {
+  useNewUrlParser: true,
+});
+const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+// inside scripts of package.json
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js"
+  },
+
+
+NOTE:
+1. Adding/Providing environment variables through env-cmd module only happen ONCE whenever we fire up the app
+	- to update the environment variables, we will need to restart the app
+
+
+
+
+
+
+
+
+
+
+134 Creating a Production MongoDB Database
+
+MongoDB Atlas
+ > MongoDB Atlas is a fully-managed cloud database that handles all the complexity of deploying, managing, and healing your deployments on the cloud service provider of your choice (AWS , Azure, and GCP). 
+ > MongoDB Atlas is the best way to deploy, run, and scale MongoDB in the cloud.
+
+Creating MongoDB database with MongoDB Atlas
+1. Create new project
+2. Create a database in the Atlas tab
+	> choose the Shared option
+	> for Cloud Provider & Region, choose anything as long as its free
+	> for Cluster Tier, choose M0 Sandbox
+	> for Additional Settings and Cluster Name, dont touch anything
+3. Setup the Authentication Security of MongoDB database
+	> choose username and password
+		- root:ShuntJG01?
+4. Setup Connection Security of MongoDB
+	> for allowed IP address, put 0.0.0.0/0 to allow EVERYTHING
+
+
+Connecting to the MongoDB Atlas
+1. Press Connect in the created Cluster
+2. Choose the MongoDB Compass
+	> a GUI for MongoDB similar to Studio3T
+	> difference between MongoDB Compass and Studio3T is that Compass can connect to the MongoDB Atlas
+3. Create a new Connection in MongoDB Compass
+	> use the connections string present in the MongoDB Atlas website
+	> replace the <password> with the real password
+		- make sure the password is URL encoded in case it contains special characters (ex: ShuntJG01 -> ShuntJG01%3F)
+	> SCHEME://USERNAME:PASSWORD@HOST/DBNAME
+	> NOTE: We can also use the "Advance Connection" when connecting and in there, we dont need to URL encode the password
+		- Hostname: REMOTE_MONGODB_IP
+		- Username: REMOTE_MONGODB_USERNAME
+		- Password: REMOTE_MONGODB_PASSWORD
+
+
+
+
+
+
+
+
+
+135 Heroku Deployment
+
+Function/Object/Command used
+heroku config
+ > shows all config variables / environment variables
+
+heroku config:set key1:value1 key2:value2
+ > used to create one or more key:value pairs in the Heroku app config variables
+ > we can add more than one by separating each key:value pairs with space
+ > any existing config var with same name will be OVERWRITTEN
+
+heroku config:unset key1 key2
+ > used to remove one or more key:value pair using the key name
+ > we can unset two or more config vars by passing more than one key, separated by space
+
+heroku config:edit
+ > used to INTERACTIVELY edit the config vars
+ > must have "pico" text editor in the system
+
+Heroku Deployment
+ > to deploy something to Heroku, we want to push a project into our personal Heroku git repo
+
+Deploying Task Manager App in Heroku
+0. Create .gitignore and add config/ and node_modules/
+1. Create a local git repo
+	> git init
+	> git add .
+	> git commit -m "Initial Commit"
+2. Create github repo and push local git repo into the Github repo
+	> git remote add origin <github-repo-link>
+	> git push origin master
+3. Create Heroku app
+	> heroku login
+	> heroku create <app-name>
+		- app name must be unique in all Heroku app
+4. Setup the environment variables in the Heroku app
+	> heroku config:set key1=value1 
+	> pass the key=value pairs needed inside
+		- jwt, sendgrid api key, mongodb ATLAS url
+	> change the database name that we will use in the MongoDB Atlas url
+5. Push the local git repo to the Heroku remote git repo
+	> remote git repo is automatically added to the local git config when we use "heroku create"
+		- git push heroku master
+6. Test the app
+
+EX:
+// heroku config
+JWT_SECRET:  thisisasecretkey
+MONGODB_URL: SCHEME://USER:PASSWORD@HOST/DATABASE?retryWrites=true
+	
+
+Using the Task Manager app in Heroku
+1. In postman, change the url env var to the url provided by the Heroku
+	> ex: https://glenneligio-task-manager-api.herokuapp.com
+	> make sure there is NO TRAILING SLASH
+2. Send several request, where we add stuff to the MongoDB like create user,task,avatar
+3. Check the MongoDB Atlas content using the MongoDB Compass
+
+
+
+
+

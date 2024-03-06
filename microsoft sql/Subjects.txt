@@ -1,0 +1,7 @@
+SubjectsID	StudentID	SubjectName
+11		1		Maths
+2		3		Physics
+3		6		Chemistry
+5		4		Religion
+4		8		Science
+8		9		PhysEd

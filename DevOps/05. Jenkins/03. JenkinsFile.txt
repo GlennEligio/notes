@@ -1,0 +1,130 @@
+03. JenkinsFile
+
+What is Jenkinsfile?
+	> A Jenkinsfile is a text file that stores the ENTIRE WORKFLOW as code and it can be checked into a SCM (Software Configuration Management) on your local system
+	> This enables the developers to access, edit and check the code at all times
+	> The Jenskins file is written using the Groovy Domain Specific Language (DSL, same as Ansible yaml playbooks) and it can be created through a text/groovy editor or through the configuration page of Jenkins instance (Pipeline section)
+	> It is written based on two syntaxes, namely:
+		1. Declarative pipeline syntax
+		2. Scripted pipeline syntax
+	> Declarative pipeline is a relatively new feature that supports the pipeline as code concept (the Jenkinsfile)
+		- this way, the pipeline code is easier to read and write
+		- the code is written in a Jenkinsfile which can be check into a source control management system such as Git
+
+
+
+Pipeline concepts
+
+1. Pipeline
+	> this is a user defined block which contains all the processes such as
+		- build
+		- test
+		- deploy
+		- etc
+	> it is a collection of all the stages in a Jenkinsfile
+	> All the stages and steps are defined which this block
+	> basically a KEY BLOCK for a declarative pipeline syntax
+
+pipeline {
+
+}
+
+
+2. Node
+	> a node is a machine that executes an entier workflow
+	> a key part of the scripted pipeline
+
+node {
+
+}
+
+
+COMMON MANDATORY SECTIONS of Declarative and Scripted pipelines
+	> some of these includes stages, agent, and steps
+
+1. Agent
+	> refers to the one that EXECUTES Pipelines
+	> An agent is a directive that can run multiple builds with only one instance of Jenkins
+	> This feature helps to distribute the workload to different agents and execute several projects within a single Jenkins instance
+	> It instructs Jenkins to ALLOCATE AN EXECUTOR for the builds
+	> A single agent can be specified for an entire pipeline or a specific agents can be allotted to execute each stage within a pipeline
+	> parameters or values used for "agents" are
+		a. Any
+			- runs the pipeline/stage on any available agent
+		b. None
+			- applied at the root of the pipeline
+			- indicates that theres no global agent for the entire pipeline
+				= this means each stage must specify its own agent
+		c. Label
+			- executes the pipeline/stage on the labelled agent
+		d. Docker
+			- this parameter uses docker container as an execution environment for the pipeline or a specific stage
+			- In the below example, Docker is used to pull an ubuntu images
+			- The Ubuntu images can now be used as an execution environment to run multiple commands
+
+ANY
+pipeline {
+	agent: Any
+}
+
+DOCKER
+pipeline {
+    agent {
+        docker {
+            image 'ubuntu'
+        }
+    }
+}
+
+
+
+
+2. Stages
+	> this block contains all the work that needs to be carried out
+	> The work is specified in the form of stages
+	> There can be MORE THAN ONE stage within this directive
+		- Each stage performs a specific tasks	
+	> We can also set the name of the stages inside the parenthesis ()
+	> In the example below, we have multiple stages for each specific task
+
+
+pipeline {
+    agent any
+    stages {
+        stage ('Build') {
+            ...
+        }
+        stage ('Test') {
+            ...
+        }
+        stage ('QA') {
+            ...
+        }
+        stage ('Deploy') {
+            ...
+        }
+        stage ('Monitor') {
+            ...
+        }
+    }
+}
+
+
+3. Steps
+	> nested inside Stage block
+	> A series of steps can be defined within a stage block
+	> These steps are carried out in SEQUENCE when stage is executed
+	> There must be at least ONE step within a steps directrive
+	> in example below, we used an echo command. This command is executed as a part of 'Build' stage
+
+pipeline {
+    agent any
+    stages {
+        stage ('Build') {
+            steps {
+                echo 'Running build phase...'
+            }
+        }
+    }
+}
+

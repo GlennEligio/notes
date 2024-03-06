@@ -1,0 +1,27 @@
+10. ReplicaSets
+
+ReplicaSet
+	> a resource in K8s
+	> ReplicaSet ensures that a specified number of pod replicas are running at any given time.
+		- from "kubectl explain replicaset"
+	> makes sure that a specific number of Pod is running at all times
+		- means that DESIRED STATE is equal CURRENT STATE 
+	> in ReplicaSet, we will define the DESIRED STATE
+		- in this case, the Desired state refers to the MINIMUM amount of Pods that must be running in Cluster
+	
+EX:  
+We define a ReplicaSet where in its desired state is 3 Pod A running. If its currently have 3 Pod A running and we kill one of the Pod A, what will happen is ReplicaSet will create another instance of Pod A to ensure that Desired State is equal to Current State
+
+
+
+Commands
+Creating ReplicaSet
+kubectl apply -f <filename>
+	> for ReplicaSet defines inside a yaml file
+kubectl create replicaset --image=<ImageName>
+	> for ReplicaSet based on an image
+
+Scaling ReplicaSet
+kubectl scale replicaset <replicaSetName> --replicas=<INTEGER>
+	> scale the replicaset up/down based on the INTEGER passed in --replicas
+	> change the desired state to the value passed

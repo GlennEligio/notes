@@ -1,0 +1,25 @@
+20. Docker Swarm - Backup and Restore
+
+Create a backup of the Docker Swarm component
+1. Stop the docker first
+	systemctl stop docker
+2. Create a compressed .tar file of the swarm folder of /var/lib/docker with name "swarm.tar.gz"
+	cd /var/lib/docker
+	tar -zcvf swarm.tar.gz swarm/
+3. Remove the swarm folder
+	rm -ifr swarm/
+4. Start the docker again
+	systemctl start docker
+5. Check the nodes in Docker Swarm (this should be empty)
+	docker node ls
+
+Restore the Swarm component using the backup
+	> to restore Swarm properly, swarm/ folder in /var/lib/docker SHOULD BE PRESENT BEFORE STARTING DOCKER
+1. Stop Docker for now
+	systemctl stop docker
+2. Extract the contents of .tar.gz file backup
+	tar -xvzf swarm.tar.gz
+3. Start the Docker again
+	systemctl start docker
+4. Check the nodes of Swarm again (this time, there should be Nodes present)
+	docker node ls

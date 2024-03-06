@@ -1,0 +1,892 @@
+TWELVE FACTOR APP
+
+Contents:
+01 Introduction
+02 Background
+03 Factor 1: Codebase
+04 Factor 2: Dependencies
+05 Factor 3: Configs
+06 Factor 4: Backing Services
+07 Factor 5: Build release run
+08 Factor 6: Processes
+09 Factor 7: Port Bindings
+10 Factor 8: Concurrency
+11 Factor 9: Disposability
+12 Factor 10: Environment parity
+13 Factor 11: Logging
+14 Factor 12: Admin Processes
+15 Conclusion
+
+
+
+
+
+01 Introduction
+
+The Twelve Factor App
+ > series of guidelines of how to build an application in the right way so that its well optimized for deployment and management in the cloud 
+ > best place to start with beginning your architecting journey
+
+Scenarios where having essential knowledge as an architect is needed
+ > System design interviews
+ > Getting involved in architecture decisions
+ > Getting promoted to an architect role
+
+
+Problems faced when Architecting a modern cloud application
+1. Large and complex
+	> large scope
+	> availability and reliability requirements
+2. Many subjective choices to make
+	> no right or wrong decisions to make
+3. Tradeoffs to each choices to make
+
+
+Twelve factors
+ > Objective rules and guidelines for architecting cloud apps
+ > Rulebook to have in your mind
+ > Checklist to evaluate designs
+ > Forms a good Vocabulary in design discussions
+
+
+Course Structure
+ > Examine each factor
+ > Explain the rationale
+ > Understand the recommendation
+ > Example of good/bad choices
+ > Benefits
+ 
+
+
+
+
+02 Background
+
+Twelve-Factor App background
+ > website: https://12factor.net/
+ > originally meant for providing guidelines for development, operation, and scaling of hundreds of thousands of apps deployed in Heroku
+ > some of the factors mention are created specifically for Heroku deployment
+
+
+
+
+
+
+03 Factor 1: Codebase
+
+Codebase
+ > One codebase per app
+
+Rationale
+ > Large organization have multiple applications
+ > Large organization have large codebases
+
+Codebase Characteristics
+ > Source code available CENTRALLY
+ > this Source code is in a SOURCE CONTROL SYSTEM
+	- ex: Git with a central server, SVN
+
+What is an App?
+ > A single running instance
+ > This instance can be run in any environment (DEV, UAT, PROD)
+
+Explanation on example below
+ > With EX#1, theres one-to-one mapping between codebase and app instance, this results in
+	- separation of handling application source code, where we can assign different team to handle individual app repos
+ > With EX#2, theres many-to-one mapping between codebases and app instance, this will result in a
+	- not easily reproducable build
+	- tying the state of the repositories together
+		-> ex: need to match and get exact versions of each
+ > With EX#3, theres one-to-many mapping between codebases and app instance. This repository is referred to as MONO REPO
+	- example of companies that uses this is Google
+	- this might result in multiple teams working on the same app, which make it harder for developers to change the source code in the mono repo
+	- also, since this mono repo will be huge, the managing cost will be huge as well
+ > With EX#4, theres a shared code/library that is used by different application repositories
+	- this is bad because the library shared is not in a repository, so tracking the correct versions to use for each application that uses it is difficult
+
+
+EX1: 1 codebase to 1 app instance
+
+Repository	instance	Deploy envs
+Codebase -----------------------|-> PROD
+				|-> STAGING
+				|-> DEV
+
+EX2: N codebase to 1 app instance
+Repo1
+Codebase 1 -----| 		instance
+		|-> Build ----------------------> Deploy envs
+Repo2		|
+Codebase 2 -----|
+
+EX3: 1 codebase to 2 app instance
+
+Repo
+Codebase -------|--> App instance #1
+		|--> App instance #2
+
+EX4: 1 codebase + shared library to 1 app instance
+Repo + Shared lib -> Deployed app
+
+
+Main Concepts for the Application build/releases
+1. Immutable release
+	> once we do a build artifact, this will not change anymore
+	> we might get a new build artifact later, but the previous release will be not changed anymore
+2. Repeatable builds
+	> each release/builds should be repeatable
+	> for example, if we release a build with bugs, we should be able to repeat the said build in order to examine it
+
+
+
+
+
+04 Factor 2: Dependencies
+
+Dependencies: Explicitly declare and isolate dependencies
+
+Rationale
+ > Every apps requires dependencies for a deploy
+ > This includes:
+	- External libraries
+	- Internal libraries
+	- Runtimes (ex: JRE, Node runtime)
+	- Operating Systems
+ > Different apps might need different things
+
+
+Two principles
+ > both of this principle should be met
+1. Dependency declaration
+2. Dependency isolation
+
+
+Dependency declaraction
+ > Explicitly declared dependencies
+ > App declares what dependency it needs
+ > Typically have Dependency manifest, which is a file where all dependencies are declared (ex: pom.xml, package.json)
+ > Also includes tool to fetch from the manifest (ex: Maven, Gradle , npm)
+
+
+Dependency isolation
+ > App uses only the dependencies it declares
+	- dependencies it didn't declare should not be needed
+ > No implicit dependencies "leak in"
+ > This refers to dependencies that the app is unknowingly using
+	- ex: system dependencies
+ > Containerization technology helps us to implement dependency isolation
+	- ex: With Docker, you can specify the exact system environment your application will run. 
+	- So this eliminates OS and Runtimes dependencies
+
+
+Examples and violations
+1. Installing a WAR with pom.xml into a container
+	> dependency declaration is met with pom.xml
+	> dependency isolation is not met due to WAR file implicitly needing a Servlet container (ex: Tomcat)
+2. Installing a Node CLI script
+	> dependency declaration is met with package.json
+	> dependency isolation is not met due to Node CLI needing a Node runtime installed in machine
+3. Running a Docker image with the app bundled
+	> dependency declaration is met with Docker image (specifies OS and Runtimes) and the app bundled (assumming it have dependency declaration inside like pom.xml for a Maven project)
+	> dependency isolation is met by Docker image, where it make sure that besides a Docker daemon, no other implicit dependency is needed to run the app contained inside it
+
+
+Benefits
+1. Consistent builds across environments
+2. Repeatable deploys on a specific environment
+3. Easier to troubleshoot issues (same everywhere)
+4. Easy to deploy to new env (no pre-setup needed)
+5. Easy dev setup
+
+
+NOTE:
+1. Repeatable and consistent build is needed since in Cloud, it is easy and fast to create instances of application
+2. With WARs and JARs, people are switching from WAR files to JAR files
+	> with WAR files, theres an implicit depedency to a Servlet container
+	> but with JAR files, they make it so that theres a built-in bundled servlet container inside which will run the servlet output of the Jar file. This is present in Spring Boot which includes Tomcat as its default bundled servlet container
+	> this JAR file configuration eliminates the implicit dependency to the Servlet container
+
+
+
+
+
+
+05 Factor 3: Configs
+
+Config: Store config in the environment
+
+Rationale
+ > App consist of logic and constants (data)
+ > Typically, Config constants are bun dled in the code
+ 	- as a result, whenever we change config (ex: database url), we will need to rebundle the application again
+ > This Config-bundled code does not scale in multi-server cloud environment
+
+
+What is config?
+ > Config varies between deploys (prod, staging)
+ > Config also varies across time of application run
+
+
+Example of Configs
+ > URLs, connection strings, hostnames
+ > Service config (memcached, thread pool)
+ > Secret keys, API tokens
+
+
+Factor recommends
+ > Strict separation of configs from the code
+
+
+Quote related to Config separation to code
+ > "Treat configuration, credentials, and code as volatile substances that explode when combine"
+	- from "Beyond the Twelve-Factor App" book by Kevin Hoffman, published by O'Reilly Media, Inc.
+
+
+Two questions:
+1. What is considered config?
+2. Where should they go?
+
+
+Config types:
+1. Security constants
+ > examples includes
+	- Private API keys	
+	- Connection strings 
+	- Credentials
+ > a good way to see this is with the "What if I open-source this?"
+	- we will clearly see which part of source code should not be seen by the general public
+2. Environment dependent constants
+ > examples include:
+	- Service URLs (dev vs staging vs prod)
+		-> ex: URL of backend api in the frontend app
+	- Environment dependent parameters (covers most of configs)
+		-> ex: Server port of backend api
+ > GOAL: To make Immutable builds
+3. Application service config that isn't env dependent
+ > Examples include:
+	- Thread counts
+	- Dependency injection config 	
+
+
+Config locations:
+1. Environment variables
+	> ex: in Heroku, we can specify environment variables which will be injected in the application's environment
+2. Separate solution
+	> ex: Zookeeper, Spring Cloud Config
+	> in Spring Cloud Config, 
+		- separate instance for storing configs
+		- API based for fetching/serving configs
+		- Git backed, which we can monitor changes 
+	
+
+
+
+
+06 Factor 4: Backing Services
+
+Backing Services: Treat backing services as attached resources
+
+Rationale:
+ > Cloud apps have several dependant services
+ > Microservices have other service dependencies
+ > Service types includes:
+	- databases
+	- messaging
+	- caches
+	- etc.
+ > These services dependencies are not statics
+
+
+Treat backing services as attached resources
+ > Think of an external dependency as a resource
+ > Typically, we think dependency as either external or internal
+ 	- with external service dependency (ex: Google Map API). we think about this a little differently since its not within our control
+	- as for the internal service dependenct (ex: local database server), we think little about it since we can easily change it if we need to
+ > Twelve factor states that we should treat both external and internal service dependencies as both external dependencies, which is not static and can change anytime without our knowledge
+
+
+Loose coupling
+ > "Anything can change" mindset
+	- when we move to cloud, we must have mindset where anything can change, break, fail, shutdown, etc
+ > Code doesn't couple to anything
+	- ex: no hardcoded service urls in source code or configs
+ > Allows for dynamic plugging/changing/unplugging
+ > Hence allows for scalong/elasticity
+
+
+Requirements:
+1. The way to find resources still has to be EXTERNALIZED
+	> example of doing this is through Configs, Service Discovery, or Dependency injection
+
+Configs
+ > we can put service dependency information (ex: api urls, db connection urls) in the config. This way, we can easily configure the app when its service dependencies changes
+
+Service Discovery
+ > we can register this services in a Service discovery and map them with a specific name. This way, other services don't need to know the exact url of their service dependencies
+
+Dependency Injection
+ > App declares the services it depends/needs, and the cloud environment will "inject" it
+
+
+Benefits
+1. Loose coupling
+2. Ability to add/remove services
+3. Possible to change without redeploying the app
+	
+
+
+
+
+
+07 Factor 5: Build release run
+
+Build, release, run: Strictly separate build and run stages
+
+Rationale:
+ > Code to deploy is a constant process (patches, updates, fixes)
+ > Source control is a single source of truth for code
+ > Prod as single source of truth?
+	- not possible, since there may be more than one instance in PROD in Cloud
+
+
+Example: Patching in PROD directly and manually for Log4J vulnerability
+1. Solution
+ 	> if theres an issue with the application, someone may directly connect to the instance (SSH), apply the fix (editing War file), and restart the Servlet container server (Tomcat)
+2. Problem
+	> what if theres multiple instances to fix. How can we ensure that we fix all instances where the application is hosted
+	> How can we ensure that all instances are fixed in the same way
+	> How can we ensure that the fix will stay if we redeploy the application again
+
+
+Stages of Application:
+1. Build stage
+	> Input: source code
+	> Output: Executable bundle
+	> Bundle should be immutable and environment agnostic file
+		- immutable means nobody should mutate/change it
+		- environment agnostic means not environment dependent and environment aware (same bundle passed to different environment)
+	> ex: Java source code -> .jar file 
+2. Release stage
+	> Input: Build and Config
+	> Output: Release for a given environment
+	> Config is the environment dependent (ex: different Configs for PROD, DEV, UAT)
+3. Run stage
+	> Input: Release
+	> Output: A running process
+
+
+Main Idea: 
+ > One-directional flow from code to release
+ > below is a digram where the stages of application can be seen
+ > if we want to change something in the App instance, we will do it in the source code, which is run the build, release, and run stages
+
+Diagram:
+Source code ---------->	Build ----|---> Release -------> App instance
+				  |
+			Configs --|
+
+
+Benefits
+1. Repeatable builds
+2. Changes are guaranteed to propagate and stay
+	> changes in source code propagate to the app instances in run stage
+3. Build numbers to ensure state/rollback
+	> with this, we can perform versioning to our builds, which makes it easier to manage
+4. No missed changes. Everything is in source control
+5. Less burden on "Run" phase. Can be done by cloud/ops
+	> no need to depend on people doing the "Run" phase (Ops)
+	> ex: asking for access in PROD servers to change something in PROD app instances, which make the Dev and Ops person both needed
+
+
+
+
+
+
+
+08 Factor 6: Processes
+
+Processes: Execute the app as one or more stateless processes
+
+Rationale:
+ > On-prem developers are used to using resources on machines
+ 	- we assume that state of the machine on which the application is running. This includes:
+		1. machine contains specific files
+		2. machine is connected to a specific network
+
+Problem: Cloud reality
+1. There are multiple machines that host the application instance
+2. Machines get added and removed from time to time
+3. We cannot assume there's something in the machine before app instance is ran
+4. We cannot assume there will be something after the app instance is ran
+
+
+Factor's main idea: Stateless processes
+
+Stateless processes
+1. Processes that does NOT assume/persist to disk
+	> it does not assume that theres a state before the process runs
+	> it does not assume that it will save data after the process runs
+2. Processes that are for "Transactional" usage
+	> it follows one transaction per use (request -> process -> response)
+	> the process can assume/persist state within a single transaction
+	> the next transactions will not assume/persist anything from previous transations. The next request may
+		a. never come
+		b. happen on different machine
+		c. happen on different data center
+		d. happen on different version of app instance
+3. Processes that uses 'Share-nothing' pattern	
+	> each Transaction in the Stateless process does not share anything from each other
+
+
+
+Saving State 
+ > in this case, we will use SEPARATE BACKING SERVICE
+ > this will be separate from the Stateless service itself
+ > example includes
+	1. BLOB storage for long term persistence (EX: S3 in AWS)
+	2. Cache services for short-term storage/caching (EX: Redis)
+
+
+Examples of States stored by Apps
+1. Web server sessions (sticky sessions)
+	> data that is for each unique session
+	> this data spans throughout multiple transactions (request - response)
+	> before, we 'stick' as user in a specific machine, based on where the sticky session is created
+		-> ex: user1 created sticky session with machine1, loadbalancer will maintain session of user1 to the machine1
+2. Pre-caching in-memory
+	> here, we pre-cache certain state/data that will be used in a transaction
+	> ex: pre-caching country codes, which we fetch from a database
+		-> this breaks the factor because we are pre-caching state to a request that may never come
+		-> if we are doing this caching eagerly where we pre-cache the data whenever we assume request will come, then it will be bad for performance since the request may never come 
+
+
+Caching in-memory
+ > as a bonus performance optimization - not bad
+ > prefetching everything first - BAD!
+	- with this, we assume that the request will come
+	- and based on the amount of data that we will prefetch, it might introducte performance issues
+
+
+
+
+
+
+
+09 Factor 7: Port Bindings
+
+Port Binding: Export services via port binding
+
+Rationale:
+ > Port binding can be confusing often, mostly happen with legacy apps
+
+
+Problem
+1. Port overlapping
+ 	> ports of applications may overlap, which will make the one of the two apps inaccessible. Example is when App1 and App2 uses Port 8080, one of them can only use the port.
+2. Port micromanagement
+	> we often need to micromanage ports in a machine to ensure that Application will have their own port assign to them
+
+
+Recommendation
+1. Try for one app per servlet container
+	> Servlet container refers to Tomcat, JBoss, etc 
+	> For SpringBoot app, this is always the case since each app have their own bundled servlet container
+2. Environment specific port binding
+	> refers to method of injecting environment variable to App to specify which port it will listen to
+	> ex: In SpringBoot app, we can use the "server.port" property to define which port SpringBoot will listen to. We can also inject environment variable to this property
+3. Cloud configurable ports
+	> refers to the method of configuring ports used by apps through Cloud
+	> ex: ConfigMaps in K8s, which provides Environment variables to Pods instances. Pods instances, which host app instances, can then read the environment variables.
+4. With these, we can have the ability to change ports without changing the code
+
+
+EX:	
+	Env vars
+Cloud	--------------> App instance
+(port config)		(Uses env vars to set port properties)
+
+
+
+Benefit
+1. Any service can be a backing service
+	> since we can now call specific services via ports, we can easily use them as a backing service to another service
+2. The flexibility is powerful
+	> allows for service discovery using configurations
+	> we can invoke services via ports
+3. Avoids possible clashes/errors
+	> comes with removing the use of static ports and preferring configurable port mappings
+	> ex: port overlapping
+
+
+
+
+
+10 Factor 8: Concurrency
+
+Concurrency: Scale out via the process model
+
+Rationale:
+ > Processes need to scale up or down (elastic)
+ > Resource usage can be unpredictable (can go high or low)
+ > Old model is to bump up hardware resources (CPU/RAM) to handle higher load (Vertical scaling)
+ > New model is to create more process instance to handle higher load (Horizontal scaling)
+ > For Horizontal scaling, we need to build apps in the right way to allow this scaling
+
+
+UNIX process philosophy 
+ > Individual discrete processes/utilities 
+ > Does one thing well
+ > This philosophy is important when creating applications that allows horizontal scaling
+
+
+Recommendation
+1. Scale out using the process model
+2. Scale horizontally/not vertically
+
+
+EX:
+Workload diversity (process types) vs Scale (running processes)
+Web -  2 instances
+Worker - 4 instances
+Clock - 1 instance
+
+In this case, there are three types of processes, doing only one specific tasks. Their instance amount is dependent on the amount of load on that tasks. This means that Clock process have least amount of load and Worker have most amount of load. With this model, if theres a specific tasks that have changed loads, we can just scale specific apps up or down based on the current load
+
+
+Web apps
+ > app that uses process model
+ > a process is executed per transaction
+ > allows to handle multiple transactions
+
+
+Problem
+1. Need to handle state
+2. Stateless processes can be scaled like crazy
+	> but they cant handle state because of this
+3. Need to handle shared database / state updates
+
+
+Solution: 
+1. Build for
+	- Disposable processes
+	- Stateless processes
+	- Share-nothing processes 
+2. For handling shared state, we will use a backing service like a database
+
+
+NOTE:
+1. Stateless processes are built for Concurrency
+
+
+
+
+
+11 Factor 9: Disposability
+
+Disposability: Maximize robustness with fast startup and graceful shutdown
+
+Rationale:
+ > Legacy apps would start once and run "forever"
+ > This does not happen in the cloud
+ > Instead, startup and shutdown is very common and frequent
+	- this is due to the elastic nature of the cloud
+	- startup and shutdown happens when we scale an application up or down horizontally	
+
+
+Recommendations:
+1. App infrastructure is ephemeral
+	> ephemeral where the infrastructure last only for a short time and may change
+2. Apps lifetime is ephemeral
+	> ephemeral where the app last only a short time since apps startup and shutdown in cloud due to elastic nature
+3. Optimal startup - start rapidly
+	> we can relate the pre-caching here by doing eager-fetching, where it may case affect the startup time 	
+4. Optimal shutdown - shutdown gracefully
+
+
+High traffic scale out
+ > New instances are created when load is high
+ > Time taken by new instances affect user performance
+	
+Example of Startup problem
+1. Applications that uses interpreted programming language
+	> typically, we dont see apps written in interpreted language in the microservice architecture
+	> the reason is that interpreted languages have a problem with regards to startup speed
+	> example of this programming language is Python
+
+
+Optimizing start up speed, things to watch out for:
+1. Choosing right Framework
+2. Initialization work
+	> some framework may have issues with regards to initialization which may affect the startup speed
+3. Long running "startup" effort
+	> this includes pre-warming the caches
+4. Externalize them to backing services
+	> if we need to store caches to be fetch later, we can externalize them in a backing service like Redis
+5. Lazy is the key! No eager "front loading"
+	> avoids the long startup time
+
+
+Optimizing shutdown
+1. Graceful shutdown
+	> overall state of the application is not corrupted when you shut it down
+	> this include:
+		- incomplete database records	
+		- not handling cache properly 
+	> shutdown the app so that people don't even know it existed in the first place
+2. Robust against "sudden" termination
+	> try to make the app shutdown as gracefully as you can in the case of sudden or instant termination
+
+
+NOTE:
+1. Shutdown speed is not that important as having a graceful shutdown
+
+
+
+
+
+12 Factor 10: Environment parity
+
+Environment parity: Keep DEV, STAGING, and PROD as similar as possible
+
+Rationale:
+1. Envs are meant to be copies of the same thing
+2. Some env (DEV, STAGING) serves as an early access to the final result (PROD)
+3. Too much of a gap between envs means lost signals/opportunity
+	> ex: if theres a feature only available in STAGING and PROD but not in DEV, the developers might not catch it and patch it before it goes live
+
+
+Common situations
+1. It's been a while since we've deployed to X
+	> implies that we can't deploy in X environment, therefore X env is useless
+2. Staging uses different DB/drivers than prod
+	> introduces gaps between STAGING and PROD 
+3. "We don't test in X environment because it isn't accurate"
+	> because of inaccuracies and gaps, the X environment will be useless
+	> any test done of X env may be useless since it does not reflect the real and final environemt of application
+
+
+Recommendation
+ > Reduce / Minimize / Eliminate differences between these environments
+
+
+The Gap areas identified
+1. Time gap
+2. Personnel gap
+3. Tools gap
+
+Time gap
+ > refers to how long it takes to move across environments 
+ > ex: DEV -> STAGING -> PROD
+ > during this time gap, there might be new things that will be introduce on previous stages, which may introduce environment parity
+
+Personnel gap
+ > refers to the gap or difference between the people working on different stages
+ > Ops may introduce something in STAGING and PROD to fix the issue, which may not be coordinated with Developers in DEV
+ > ex: Developers write code (DEV), Ops deploy it (STAGING, PROD)
+
+Tools gap
+ > Different tech stack / tools / libraries across environments
+ > ex: DEV may use MySQL and PROD use Oracle, since Oracle db needs license to use and MySQL is free
+
+
+Recommendation to these Gap areas
+1. Time gap	
+	> use CI/CD process
+	> make Automated pipelines
+	> if possible, implement one-click Prod deploy, wherein if used, it should automatically setup environment in machine, install the app and run it	
+	> time between deploys should be hours
+2. Personnel gap
+	> Don't have manual processes!
+		- reduces the human intervention in STAGING
+	> Automated deployments
+		- reduces the human intervention in PROD
+	> Repeatable predictable deploys
+	> Factors controlled right in the source
+		- this ensures that the single source of truth is in DEV, which should make it so that it limits the problems and fixes in the source code
+3. Resource gap
+	> Setup full PROD infra on all envs (DEV, STAGING, PROD)
+		- Tricky to do before, but much easier this days
+		- May be costly to do, but the benefit overweighs the cost
+		- Prefer using Open source software to reduce cost
+		- With this setup, we can ensure that the results in DEV will reflect correctly in STAGING and PROD
+	> Use Containerization like Docker to setup environments
+
+
+Benefits:
+1. Reduces "It works in this env" issues
+	> reduces flakiness between each environments
+2. Confidence in test environments
+3. Can catch issues easily
+4. Can fix/patch issues easily
+
+
+Risk
+1. Any commit can go to PROD
+	> to fix this, we need to make all commits "PROD-ready"
+	> one way to do so is to setup test suites on the application wherein if all the test suites is passed, it ensures a PROD-ready build
+
+
+NOTES:
+1. To implement CI/CD properly, we should have a good test suites to ensure that the build is correct if the test suites passes
+
+
+
+
+
+
+13 Factor 11: Logging
+
+Logs: Treat logs as event streams
+
+Rationale:
+ > Every app needs to log
+ > Every developer needs to read logs
+ > Common practice - log config in app
+ > Rolling logs, log output etc
+ > Ex: Log4J config
+
+
+Recommendation:
+1. App should NEVER be concerned about how logs are written. 	
+	> this includes:
+		- how the logs are cycled
+		- where the log files are
+		- how often logs are rotated
+2. App should just write the logs (in stdout and stderr) and not worry about anything else
+
+
+Why not make App worry about logging config?
+1. In Cloud, the app cannot assume:
+	a. Disk location
+	b. Log size - disk space allocated to logs
+	c. Rollover time - in Cloud, you dont have control as to when a process start or finish
+2. The assumptions that you need to make logging work does not work typically in Cloud
+
+
+Log needs:
+1. Should be non-functional requirements, which includes
+	- Log aggregation
+	- Log storage
+	- Log processing
+	- Log accessing
+
+
+What technologies to use for Logging in Cloud?
+1. ELK stack (ElasticSearch, Logstash, Kibana)
+2. Splunk (or other services)
+
+
+Benefits
+1. Log becomes a separate service/concern.
+	> This helps in elastic scalability as you can scale the logs independently when needed.
+	> And logging service will not affect the other services/apps as well
+
+
+
+
+
+
+14 Factor 12: Admin Processes
+
+Admin processes: Run admin tasks as one-off processes
+ 
+
+What's an admin process?
+1. Custom analytics jobs
+2. Database jobs
+	> clean up, batch process
+3. Custom REPL scripts
+	> REPL = Read Evaluate Print Loop
+
+
+Actual Factor: Don't run admin processes
+
+New recommendation:
+1. Don't use REPL as admin!
+2. Any data migrations need to be its own Cloud Native process
+3. Use Cloud enabled processes like Cloud functions or Lambdas to run
+4. Think of these processes as backing services.
+
+
+NOTE:
+1. This factor related to Admin processes is kinda outdated nowadays. The 12 Factor actually recommends not running admin processes
+ 
+
+
+
+
+
+15 Conclusion
+
+Recap
+01 Codebase
+ > one codebase per app
+ > one codebase tracked in revision control
+
+02 Dependencies
+ > explicitly declare and isolate dependencies
+ > dependency declaration and dependency isolation
+
+03 Config
+ > store config in the environment
+ > separate config from the code
+ > config, credentials, and source code should not be mixed together
+
+04 Backing services
+ > treat backing services as attached resources
+ > dont assume that some services are present
+	- in Cloud, the services may not be present
+
+05 Build,release,run
+ > strictly separate build and run stages
+ > one directional direction
+
+06 Processes
+ > Execute the app as one or more stateless processes
+ > Dont assume some state is present, and also dont assume that you will persist state for other transaction to use
+ > Share nothing model
+
+07 Port binding
+ > Export services via port binding
+ > Create cloud configuration for port binding to different services
+ > Dont try to micromanage ports
+
+08 Concurrency
+ > Scale out via the process model
+ > Instead of vertical scaling where we improve hardware, do horizontal scaling where you create additional instance of process
+
+09 Disposability
+ > Maximize robustness with fast startup and graceful shutdown
+ > In Cloud, processes may start and stop based on the load due to the elastic nature
+
+10 Dev/prod parity
+ > Always keep development, staging, and production environment as similar as possible
+ > This ensures that theres no gap (time, people, tool gaps) to each environment and changes made in one environment will have the same effect to the other environments
+
+11 Logs
+ > treat logs as event streams
+ > dont have the apps be concern on log configurations like log file directory, log aggregation
+ > let the app just dump logs and have separate service (ex: ELK) take care of the logging configuration/features
+
+12 Admin processes
+ > Run admin/management tasks as one-off processes
+ > Use separate service for running these admin processes like AWS Lambda
+
+
+Twelve Factors
+1. Old but very much valid
+2. Influenced various tech advancements today
+	> example is Container technology, to make apps Cloud native
+3. Remember the essence of these factors
+
+
+
+Revisit the factors when:
+1. you are starting to work on a new architecture
+2. system design interview prep
+3. before design discussion
+
+
+Whats next?
+1. Some more advancements that Twelve Factor app doesn't capture
+2. Watch Cloud Native course

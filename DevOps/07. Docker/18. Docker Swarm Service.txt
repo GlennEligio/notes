@@ -1,0 +1,116 @@
+18. Docker Swarm - Service
+
+
+
+Service
+	> A service is a description of a DESIRED STATE
+	> to deploy an application image when Docker Engine is in swarm mode, you need to create a Service
+	> a service is the image for a microservice within the context of some larger application
+	> in a Service, we can define its properties like
+		1. Docker image to run
+		2. Commands to execute inside running Containers
+		3. Port where the Swarm makes the service available outisde swarm (PORT MAPPING)
+		4. An Overlay network for the service to connect to other services in the swarm
+		5. CPU and memory limits and reservation		
+		6. A Rolling update policy
+		7. Number of replicas of the images to run in the swarm
+
+
+Services, Tasks, and Containers
+
+Service deployment process
+1. Create a service by using docker service create.
+2. The request goes to a Docker manager node.
+3. The Docker manager node schedules the service to run on particular nodes.
+4. Each service can start multiple tasks.
+5. Each task has a life cycle, with states like NEW, PENDING, and COMPLETE.
+
+EX:
+If we deploy a Service definition which includes running 3 replica of Container with nginx image, the Swarm manager schedules the service and create three replica Task (since we define we will have three replica of Container). It then sends these Task in available Nodes in the Swarm.
+
+
+
+
+Container
+	> a container is an isolated process
+	> in the Swarm mode model, each Task invokes exactly one Container
+		- a Task is analogous to a "slot" where the scheduler places a container
+	> once the Container is live, the scheduler recognizes that the task is in running mode
+		- if the container fails health checks or terminates, the task terminates
+
+
+
+Task
+	> a Task is the atomic unit of scheduling within a Swarm
+	> Tasks are execution units that run once to completion.
+	> When a task stops, it isn’t executed again, but a new task may take its place.
+	> When you declare a desired service state by creating or updating a Service, the Orchestrator realizes the changed Desired State by scheduling Task.
+  	> A Task is a one-directional mechanism.
+		- One-directional wherein the change in state happens in one-direction
+		- If a Task fails or crash, Orchestrator REMOVES the taask and its container and then creates a new Task to replace it according to the desired state specified by the Service
+
+
+
+
+Process of Service deployment
+1. User sends request to the CLI, which will then be process by Swarm manager with following components
+	a. API which accepts command and creates Service object
+	b. Orchestrator does a reconciliation loop that creates Tasks for Service objects
+	c. Allocater  allocates ip address to the Task
+	d. Dispatcher assignes tasks to nodes
+	e. Scheduler instructs a Worker node to run a Task
+
+2. Swarm Manager then sends Tasks to the Worker node to work one. Worker have the following components
+	a. Executor which executes tasks assigned to worker node
+	b. Worker which connects to dispatcher to check for assigned Task and creates the Container
+
+
+
+
+COMMANDS FOR Docker Swarm Server
+
+docker service --help
+	> used to see more information regarding "docker service" command
+
+docker service create [OPTIONS] <IMAGE> [COMMAND] [ARG...]
+	> used to create a Service to run in Docker Swarm with Container running the specified Image
+	> we can also define a Command that will be ran inside container when Service is created
+	> most of the flag options we have is similar to the flags in "docker container run" command
+	> command flags include
+	> "--name" 		refers to the name of Service
+	> "-d" 			makes the Service's container in dettached mode
+	> "-p"			defines the Ports to be exposed in Service
+	> "--replicas" 		defines the number of replica Task to be created
+	> "--update-delay"	defines the time delay before the Task is removed and replaced when creating/updating Service
+	> "--mode"		refers to the Service mode
+					> replicated service runs as many tasks as specified
+					> global service runs on each active node in the swarm
+	> "--constraint"	refers to the Cons
+
+
+docker service inspect <NAME>
+	> inspects a specific Service
+
+docker service logs <NAME>
+	> outputs the logs created by the Service
+
+docker service ps
+	> list all Task of one or more Services 
+
+docker service scale SERVICE=REPLICAS [SERVICE=REPLICAS...]
+	> scales up or down a specific Service passed in the "SERVICE"
+	> REPLICAS are integers
+	> ex: docker service scale dbapp=3
+
+docker service rm <NAME>
+	> removes a specific Service
+
+docker service ls
+	> list all Services 
+
+docker service update [OPTIONS] SERVICE
+	> used to update a Service properties
+	> command flags for options is similar to the docker service create command
+
+docker service rollback SERVICE
+	> used to rollback the update done in a specific Service

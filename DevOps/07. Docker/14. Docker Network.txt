@@ -1,0 +1,129 @@
+14. Docker Networking
+
+Basic Networking with Docker
+	> Networks can be configured to provide complete isolation for contianers, which enable building web application that work together securely
+	> by default, Docker creates three networks automatically on installations
+		1. bridge
+		2. none
+		3. host
+
+Specifying Network of a Docker Container to run
+docker container run --net=<NETWORK> <IMAGE>
+	> used to specify the network to use for specific Container
+
+docker disconnect <NETWORK> <CONTIANER NAME OR ID>
+	> used to disconnect a Container on specific network
+
+docker connect <NETWORK> <CONTAINER NAME OR ID>
+	> used to connect a Container on specific network
+
+
+Types of Docker Network Drivers
+1. bridge
+	> network will create a subnet and gateway for "bridge" networks
+	> running a container using docker run will add the Containers inside this network
+		- container will be allocated a subnet ip of this netowrk
+	> containers inside this type of network can communicate with each other using the private ip allocated to them
+	> support PORT MAPPINGS and "docker run --link" for communication between containers on the docker0
+		- not recommended
+	> Containers inside the 
+
+EX:
+my_network Docket Network
+subnet address/cidr = 172.168.0.0/16
+gateway = 172.168.0.1
+
+If a Docker container connects to this network, it will be given an subnet ip between 172.168.0.2 - 172.168.255.255 (or 172.168.255.254 if we have Broadcast address as well)
+Also, this Docker Network can have up to 2^16-2 or 65534 subnet ips that it can provide to Docker Containers
+
+
+
+2. none
+	> This offers a container-specific network stack that lacks a network interface. This container only has a local loopback interface (i.e., no external network interface).
+	> using "ifconfig" inside the container will only show the loopback address
+
+
+
+3. host
+	> This enables a container to attach to your host’s network (meaning the configuration inside the container matches the configuration outside the container).
+	> This means the Docker container will connect to the same network the Host machine is connected
+	> doing "ifconfig" inside Container or doing "docker inspect" to the network will show same config as the Host network config
+
+
+
+
+COMMANDS FOR DOCKER NETWORKS
+
+docker network --help
+	> shows all informations regarding the docker network command
+
+Usage:  docker network COMMAND
+
+Manage networks
+
+Commands:
+  connect     Connect a container to a network
+  create      Create a network
+  disconnect  Disconnect a container from a network
+  inspect     Display detailed information on one or more networks
+  ls          List networks
+  prune       Remove all unused networks
+  rm          Remove one or more networks
+
+
+
+docker network ls
+	> list all Docker Network
+
+docker network inspect <NAME>
+	> inspect a specific Docker Network
+
+Example output:
+$ docker network inspect my_isolated_brige_network
+[
+    {
+        "Name": "my_isolated_bridge_network",
+        "Id": "3b7e1ad19ee8bec9628b18f9f3691adecd2ea3395ec248f8fa57a2ec85aa71c1",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1/16"
+                }
+            ]
+        },
+        "Internal": false,
+        "Containers": {
+            "b4ba8821a2fa3d602ebf2ff114b4dc4a9dbc178784dad340e78210a1318b717b": {
+                "Name": "my_psql_db",
+                "EndpointID": "4434c2c253afed44898aa6204a1ddd9b758ee66f7b5951d93ca2fc6dd610463c",
+                "MacAddress": "02:42:ac:12:00:02",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {}
+    }
+]
+
+
+
+docker network create [OPTIONS] <NAME>
+	> create a Docker Network with specified name
+	> we can add several flags to configure the network at start like
+	> "-d" or "--driver" will specify the Driver to manage the Network (default "bridge")
+		- ex: -d bridge
+	> "--gateway" will specify the gateway ip of the network
+		- ex: --gateway=172.168.0.1
+	> "--subnet" will specify the subnet in subnet/cidr format
+		- ex: --subnet=172.168.0.0/16
+
+docker network disconnect <network-name> <container name>
+docker network connect <network-name> <container name>	
+	> used to disconnect/connect a docker container into a specific network driver type

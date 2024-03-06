@@ -1,0 +1,76 @@
+30 Error handling in reactive programming
+
+Error
+ > it is a terminal event
+ > original sequence does not continue anymore when this is fired
+ > calls the 'onError' method of the Subscriber which receives the Throwable that was thrown
+
+
+Flux methods used
+1. Flux<T> doOnError(Consumer <? super Throwable > onError)
+	> Add behavior (side-effect) triggered when the Flux completes with an error
+2. Flux<T> onErrorContinue(BiConsumer <Throwable ,Object > errorConsumer)
+	> Let compatible operators upstream recover from errors by dropping the incriminating element from the sequence and continuing with subsequent elements. 
+	> The recovered error and associated value are notified via the provided BiConsumer. 
+	> Alternatively, throwing from that biconsumer will propagate the thrown exception downstream in place of the original error, which is added as a suppressed exception to the new one
+3. Flux<T> onErrorResume(Function <? super Throwable ,? extends Publisher <? extends T>> fallback
+	> Subscribe to a returned fallback publisher when any error occurs, using a function to choose the fallback depending on the error.
+
+
+
+Handling Errors in Reactive programming
+1. Add doOnError() in the method chain call
+	> takes a Consumer which receives the Throwable thrown
+	> mostly used for adding side-effect when error happens like logging
+	> will not stop any error-handling operators to be called after it
+		- this mean the hookOnError() of the Subscriber will still be called
+2. Add a Consumer input in the subscribe() call or defining hookOnError of Subscriber implementation
+	> similar to the doOnError input
+	> used as the final fallback when an error happens
+3. Adding onErrorContinue() in the Flux method chain call
+	> takes a BiConsumer, which receives the Throwable and the Item emitted
+	> as the name suggest, the Subscriber will continue requesting to Flux even if a Throwable is thrown
+4. Using onErrorResume() in the Flux method chain calls
+	> takes a Function, which receives the Throwable thrown and MUST return a new Publisher (Flux)
+	> when an Exception is thrown, it will change the Flux to use for subsequent operators chained after it
+
+
+
+NOTES:
+1. Stopping the Subscriber from requesting item to Flux when error happens is the DEFAULT BEHAVIOR
+	> we can change this by either
+		- using onErrorContinue()
+		- calling request() inside hookOnError() of Subscriber Implementation
+
+
+Examples:
+// Exercise8.java
+public class Exercise8 {
+
+
+    public static void main(String[] args) throws IOException {
+
+        // Use ReactiveSources.intNumbersFluxWithException()
+        // NOTE: Uncomment all exception the one Flux that you want to test
+
+        // Print values from intNumbersFluxWithException and print a message when error happens
+        ReactiveSources.intNumbersFluxWithException()
+                .doOnError(err -> System.out.println("Error happened: " + err.getMessage()))
+                .subscribe(num -> System.out.println(num),
+                        err -> System.out.println(err.getMessage()));
+
+        // Print values from intNumbersFluxWithException and continue on errors
+        ReactiveSources.intNumbersFluxWithException()
+                .onErrorContinue((err, item) -> System.out.println("Error happened! Item is " + item));
+
+        // Print values from intNumbersFluxWithException and when errors
+        // happen, replace with a fallback sequence of -1 and -2
+        ReactiveSources.intNumbersFluxWithException()
+                .onErrorResume(err -> Flux.just(-1, -2))
+                .subscribe(n -> System.out.println(n));
+
+        System.out.println("Press a key to end");
+        System.in.read();
+    }
+
+}

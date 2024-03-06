@@ -1,0 +1,403 @@
+Design Patterns
+
+Design Patterns
+ > divided into three categories
+	1. Creational
+		- Singleton
+		- Prototype
+		- Builder
+		- Factory
+	2. Structural
+		- Facade
+		- Proxy
+	3. Behavioral
+		- Iterator
+		- Observer
+		- Mediator
+		- State
+ > Creational patterns, which describes how objects are created
+ > Structural patterns describes how objects relates to each other
+ > Behavioral patterns describes how objects communicate with each other
+ 
+ 
+Creational Patterns
+1. Singleton pattern
+	> singleton pattern is used to create singleton objects
+	> Singleton objects are type of objects that can only be instantiated once 
+	> To do the Singleton pattern, we will need to do the following:
+		- create a Class
+		- create a static field member of the same type as the Class
+			-> this will be used to contain the Singleton object
+		- create a private empty Constructor
+			-> needs to do so since the empty Constructor is an implicit public method
+		- create a static method
+			-> returns an object with the same type as the Class
+			-> inside the method, we will do the following
+				a. check if the static Singleton field is present/not null
+				b. if null, assign value to the static Singleton field and return it
+				c. return static Singleton field
+EX:
+main.ts
+
+class Settings {
+	// holds Singleton object
+	static instance: Settings;
+	public readonly mode = 'dark';
+	
+	// prevent new with private constructor
+	private constructor() {
+	
+	}
+	
+	// static method for creating Singleton object
+	static getInstance(): Settings {
+		if (!Settings.instance) {
+			Settings.instance = new Settings();
+		}
+		return Settings.instance;
+	}
+}
+
+
+
+2. Prototype pattern
+	> Prototype is a fancy word for "Clone"
+	> alternative way of implementing Inheritance
+	> unlike Class Inheritance where we need to create another blueprint class from the parent Class, Prototype only needs the object that we want to 'clone'
+	> using the Prototype object, we can create/clone it, and add additional properties/methods
+	> this creates a FLAT PROTOTYPE CHAIN that makes it much easier to share functionalities/properties to objects, especially to dynamic languages like JavaScript
+	> in Typescript, we can use the Object.create() in order to 'clone' an object with additional properties/methods
+		- if we log the clone object, it will only print the added fields/methods
+		- if we execute a method in clone object, it will look up to the prototype chain, until it reaches the root, until it finds a match
+	> in JavaScript classes, "prototype" field refers to its constructor
+		- we can use this to add additional functionalities to the classes
+		- not the best practice
+		
+EX:
+const zombie = {
+	eatBrains() {
+		return 'yum brain';
+	}
+}
+
+const chad = Object.create(zombie, {name: {value: 'chad'}});
+
+console.log(chad) // {name: 'chad'}
+chad.eatBrains(); // 'yum brain'
+	
+// gets the prototype of an object
+// not the best practice
+chad.__proto__;
+
+// best practice
+Object.getPrototypeOf(chad);
+
+
+// OOB Class of JS
+// Not best practice
+Array.prototype.bad = function() {
+	console.log('im bad');
+}
+
+
+
+3. Builder pattern
+	> with Builder pattern, we can create Objects STEP BY STEP using methods
+		- unlike traditional Object creation using constructor where we need to specify all the properties in the argument
+	> to implement builder pattern, we need to do the following:
+		- create methods to build/modify the Object
+		- inside the method, return the instance of the object (ex: this)
+
+EX:
+class HotDog {
+	constructor() {}
+	
+	addKetchup() {
+		this.ketchup = true;
+		return this;
+	}
+	
+	addMustard() {
+		this.mustard = true;
+		return this;
+	}
+	
+	addKraut() {
+		this.kraut = true;
+	}
+}
+
+const myLunch = new HotDog('gluten free');
+myLunch.addKetchup()
+		.addMustard()
+		.addKraut();
+		
+		
+		
+		
+4. Factory pattern
+	> instead of using the "new" keyword to create an Object, you will make a class and method to do it for you
+	
+EX:
+class IOSButton {}
+class AndroidButton {}
+
+// Without Factory
+const button1 = os === 'ios' ? new IOSButton() : new AndroidButton();
+const button1 = os === 'ios' ? new IOSButton() : new AndroidButton();
+
+// With Factory
+class ButtonFactory {
+	createButton(os: String): IOSButton | AndroidButton {
+		if(os === 'ios') {
+			return new IOSButton();
+		} else {
+			return new AndroidButton();
+		}
+	}
+}
+
+const factory = new ButtonFactory();
+const btn1 = factory.createButton(os);
+
+	
+	
+	
+	
+	
+Structural Patterns
+1. Facade
+	> facade is basically an API to hide low level details to consumers in your codebase
+	> almost every package that we install (ex: for javascript projects) can be considered a facade
+	> with example below, we can see that with Facade, we are able to hide all the complexity with configuring the PlumbingSystem and ElectricalSystem using the methods in the House class
+	
+EX:
+// Facade
+
+class PlumbingSystem {
+	// low level access to plumbing system
+	setPressure(v: number){}
+	turnOn() {}
+	turnOff() {}
+}
+
+class ElectricalSystem {
+	// low level access to electrical system
+	setVoltage(v: number) {}
+	turnOn() {}
+	turnOff() {}
+}
+
+class House {
+	private plumbing = new PlumbingSystem();
+	private electrical = new ElectricalSystem();
+	
+	public turnOnSystems() {
+		this.electrical.setVoltage(120);
+		this.electrical.turnOn();
+		this.plumbing.setPressure(500);
+		this.plumbing.turnOn();
+	}
+	
+	public shutDown() {
+		this.plumbing.turnOff();
+		this.electrical.turnOff();
+	}
+}
+
+const client = new House();
+client.turnOnSystems();
+client.shutDown();
+
+
+
+
+
+2. Proxy
+	> fancy word for Substitute
+	> in programming context, we can replace the target object with a Proxy
+	> used for very large object that is expensive to duplicate in memory
+	> a good case study with the Proxy pattern is the "Reactivity System" by VueJS.
+		- in VueJS, the framework needs to intercept some data, and update the UI based on the actions done to the object itself
+		- here, we can create a new Proxy, which will need two things
+			a. the Object to proxy
+			b. the handlers for overriding the methods (ex: GET, SET)
+
+
+
+EX:
+// object to proxy
+const original = { name: 'jeff'};
+// here, we intercept the GET and SET methods
+const reactive = new Proxy(original, {
+	get(target, key) {
+		console.log('Tracking: ', key);
+		return target[key];
+	},
+	set(target, key, value) {
+		console.log('updating UI...');
+	},
+});
+
+// this will trigger the side effetct handlers defined earlier
+reactive.name; // logs 'tracking name'
+reactive.name = 'bob'; // logs 'updating UI...'
+
+
+
+
+
+3. Iterator pattern
+	> allows you to traverse through a collection of object
+	> modern languages already provide abstractions for the iterator pattern like the for loop
+	> it is a pull based system, where it pull objects from a collection
+	
+EX:
+// Iterator
+const cart = ['apple', 'banana', 'orange'];
+for (const item of cart) {
+	console.log(item);
+}
+
+
+
+
+Behavioral pattern
+1. Observer pattern
+	> push based system, where it pushes/broadcast to all things subscribe to it
+	> allows the objects (client) to "subscribe" to events that are BROADCASTED by another objects (server)
+	> one to many relationship
+	> this pattern is used all over the place like in app development like Firebase
+		- Firebase is a storage service
+		- When data changes in it, it will broadcast the change to all clients subscribe to it
+		- Client can then use the broadcast to update the data it handles
+	> we can think of this as a loop, that is iterated through the dimension of time instead of the quantity of the item
+	
+
+// EX: Typescript using rxJs
+
+import { Subject } from 'rxjs';
+
+const news = new Subject();
+
+// Subscribers
+const tv1 = news.subscribe(v => console.log(v + 'via Den TV'));
+const tv2 = news.subscribe(v => console.log(v + 'via Batcave TV'));
+const tv3 = news.subscribe(v => console.log(v + 'via Airport TV'));
+
+// Broadcasts
+news.next('Breaking news: ');
+news.next('The war is over');
+
+
+
+
+2. Mediator pattern
+	> mediator is like a middleman or broker
+	> they are used in order for the objects to mediate/communicate each other
+		- without the mediator, the objects will need to communicate with each other, which is hard
+	> many-to-many relationship
+	> we can make an analogy of aircrafts, runways, and air traffic controller towers
+		- without the towers, the aircrafts will need to communicate with all the other aircrafts in order to make sure that the runway that they will be using is free
+		- air control towers makes it easy to manage the aircrafts and the runways
+	> example of this is the "Middleware" in the expressJs system
+		- Middleware sits in the middle by intercepting requests and transform them into the proper format
+		- they provide a separation of concern and eliminates code duplication
+		
+		
+EX: Typescript
+class Airplane {
+	land() {}
+}
+
+class Runway {
+	clear: boolean;
+}
+
+class Tower {
+	clearForLanding(runway: Runway, plane: Airplane) {
+		if (runway.clear) {
+			console.log(`Plane ${plane} is clear for landing`);
+		}
+	}
+}
+
+const runway25A = new Runway();
+const runway25B = new Runway();
+const runway7 = new Runway();
+const a = new Airplane();
+const b = new Airplane();
+const c = new Airplane();
+
+
+
+
+3. State
+	> State are the properties of an Object
+	> Object will behave differently based on finite number of states
+	> without using State, most likely we will be creating a method in the object's Class with a switch statement inside to handle different State value and their effect
+		- this will switch statements is a lot harder to scale out
+	> for implementing State, its best to create a SEPARATE Class to handle the State, and their behavior
+		- this way, when we add the said class as State in another Class, that said Class will just need to call the specific behavior (method) of the said State class
+		
+		
+EX: Typescript, without using State class
+class Human {
+	think(mood) {
+		switch (mood) {
+			case 'happy':
+				return 'I am happy :)';
+			case 'sad':
+				return 'I am sad :(';
+			default:
+				return 'I am neutral :|';
+		}
+	}
+}
+
+
+// With State classes
+interface State {
+	think(): string;
+}
+
+class HappyState implements State {
+	think() {
+		return 'I am happy :)';
+	}
+}
+
+class SadState implements State {
+	think() {
+		return 'I am sad :(';
+	}
+}
+
+class NeutralState implements State {
+	think() {
+		return 'I am neutral :|';
+	}
+}
+
+class Human {
+	state: State;
+	
+	constructor() {
+		this.state = new HappyState();
+	}
+	
+	think() {
+		return this.state.think();
+	}
+	
+	changeState(state) {
+		this.state = state;
+	}
+}
+
+
+
+
+NOTES/TIPS:
+1. Lean on to the built-in features of the language you are using before implementing the Design patterns
+	> ex: in Typescript/Javascript, objects are passed by reference. Meaning, we can have global objects that everyone can access to and since they are passed by reference, everyone will only access one instance. Using Singleton pattern here will be redundant

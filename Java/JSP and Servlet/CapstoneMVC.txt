@@ -1,0 +1,27 @@
+Register Account
+Register html -> RegisterSuccess jsp
+
+Login Account
+Login html -> UserDetails java -> UserDetails jsp
+
+See Account Details
+UserDetails jsp -> AccountDetails java -> AccountDetails jsp
+
+Register Account
+UserDetails -> RegisterAccount jsp -> RegisterAccountResult jsp -> AccountDetails
+
+UpdateUserDetails
+UserDetails jsp -> UpdateUserDetails java -> UpdateUserSuccess jsp
+
+UpdateAccountDetails
+AccountDetails jsp -> UpdateAccountDetails java -> UpdateAccountSuccess jsp
+
+CreateTransaction
+AccountDetails jsp -> Transaction jsp -> ProccessTransaction java -> TransactionSuccess jsp
+
+CheckTransactionHistory
+AccountDetails jsp -> TransactionHistory java -> Transactions jsp
+
+
+
+

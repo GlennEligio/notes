@@ -1,0 +1,44 @@
+transaction table
+transaction id
+transaction type
+
+Self transfer
+	> if both from and to account is in list of account
+Deposit
+	> if to account is present but from is null
+Withdraw
+	> if from account is present but to is null
+Send
+	> if from account is in list of account
+Receive
+	> if to account is in list of account 
+account(s) 
+	> may be 1 or 2 col span
+amount
+
+
+
+				Integer to = t.getToAccount().getAccountNumber();
+				Integer from = t.getFromAccount().getAccountNumber();
+				if (accountIds.contains(to)
+						&& accountIds.contains(from)) {
+					t.setTransactionType("Self transfer");
+					t.setAccountUsed(from);
+					t.setAccountTarget(to);
+				} else if (accountIds.contains(to) && null == t.getFromAccount()) {
+					t.setTransactionType("Deposit");
+					t.setAccountUsed(to);
+					t.setAccountTarget(from);
+				} else if (accountIds.contains(from) && null==t.getToAccount()) {
+					t.setTransactionType("Withdraw");
+					t.setAccountUsed(from);
+					t.setAccountTarget(to);
+				} else if (accountIds.contains(from) && !accountIds.contains(to)) {
+					t.setTransactionType("Send");
+					t.setAccountUsed(from);
+					t.setAccountTarget(to);
+				} else if (accountIds.contains(to) && !accountIds.contains(from)) {
+					t.setTransactionType("Receive");
+					t.setAccountUsed(to);
+					t.setAccountTarget(from);
+				}

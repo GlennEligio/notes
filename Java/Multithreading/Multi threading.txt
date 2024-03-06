@@ -1,0 +1,889 @@
+Java Multithreading
+
+Topics For Today's Discussion
+1. What is a Java Thread?
+2. Thread Lifecycle
+3. Creating a Thread
+4. Main Thread
+5. Multi Threading
+6. Thread Pool
+
+
+What is a Java Thread?
+	> Thread is a lightweight sub process
+	> It is a smallest independent unit of a program
+	> Contains a separate path of execution
+	> Every Java program contains at least one thread
+		- by default, we have Main thread
+	> A thread is created & controlled by the java.lang.Thread class
+	> execute code in SEQUENTIAL order
+
+
+Thread Lifecycle
+	> a Java Thread can lie only in one of the shown states at any point of time
+
+State
+1. New
+	> Thread is created
+	> A new thread begins its life cycle in this state & remains here until the program starts the thread.
+	> Also known as a born thread
+
+2. Runnable
+	> Runnable is submitted in the Thread
+	> Once a newly born thread starts, the thread comes under runnable state
+	> A thread stays in this state is until its executing its task
+
+3. Running
+	> Thread is executing a code
+	> In this state, a thread starts executing by entering run() method and the yield() method can send them to go back to the Runnable state
+
+4. Waiting
+	> Thread enter a state of inactivity
+	> state of Thread where it is either sleeping or blocked, waiting to execute code
+	> A thread enters this state when it is temporarily in an inactive state
+		- i.e. it is still alive but is not eligible to run
+	> it is can be in waiting, sleeping, or blocked state
+
+5. Terminated
+	> Thread is done executing all the code in run()
+	> Will be garbage collected
+	> A runnable thread enters the terminated state when it completes its task or otherwise terminates
+
+
+EX: Music playing
+
+New		Music is selected
+Runnable	Music is played
+Running		Music is playing
+Waiting		Music is paused, or user is scrolling
+Terminated	Music is finished playing
+
+
+Why make a Thread?
+	> we created Thread in order to not load the Main Thread
+	> Main Thread is typically reserved for User Interface for them to interact with Application
+	> having a long running task (which typically blocks the thread) on Main Thread will prevent user from using the App
+	> we can also run codes CONCURRENTLY
+	
+
+Creating A Thread
+	> A thread in Java can be created using two ways
+		a. Thread class
+			- Create a Thread class
+			- Override run()
+			- Create object of the class
+			- Invoke start() method to execute the custome thread's run()
+		b. Runnable Interface
+			- Create a Thread class implementing Runnable interface
+			- Override run() method
+			- Create object of the class
+			- Invoke start() method using the object
+
+
+Thread Class VS Runnable Interface approach
+	 > BEST approach is the Runnable Interface
+
+Thread class
+	> A class extending Thread class CANNOT extend to any other class
+	> Thread class is extended only if there is a need of overrideing other methods of it
+	> Enable tight coupling
+
+Runnable Interface
+	> Along with Runnable interface, a class CAN implement any other interface
+	> Runnable is implemented only if theres a need of special run method
+	< Enables loose coupling
+
+
+Java Main Thread
+	> Main Thread is the most important thread of a Java Program
+	> It is executed whenever a Java program starts
+	> Every program must contain this thread for its execution to take place
+	> Java main Thread is needed because of the following reasons
+		1. From this, other "child" threads are spawned
+		2. It must be the last thread to finish execution
+			- i.e. when the main thread stops, program terminates
+
+
+Java Main Thread Hierarchy
+> means start()
+
+JVM
+	> Main Thread
+		> Child Thread A
+			> Child Thread C
+		> Chile Thread B
+	> Other Daemon Threads
+
+
+
+Daemon Threads
+	> threads that are running CONCURRENTLY with the Main Thread
+	> to set a Thread object into a Daemon thread, use
+
+		threadInstance.setDaemon(Boolean isDaemon);
+
+	> pass true if you want to make it a daemon thread
+
+
+
+
+Multi Threading In Java
+
+MultiThreading
+	> is the ability of a program to run two or more threads concurrently, where each thread can handle a different task at the same time, making optimal use of the available resources
+
+
+
+Thread.sleep(long miliseconds)
+	> used to put a thread into sleep
+	> while "sleeping", thread halt on executing
+
+
+
+Synchronization of Multiple Threads
+
+Why Synchronization?
+	> IMPORTANT when Threads are working on the SAME SINGLE INSTANCE of an object
+		- i.e. Database objects
+
+Methods:
+1. Use threadInstance.join()
+	> this will make the it so the Thread that called will first execute its code first before anyone can do theirs
+	
+EX:
+	Thread a = new Thread;
+	Thread b = new Thread;
+	a.start();
+	a.join();
+	b.start();
+
+	> with this, Thread a will first finish its task before b can do theirs
+
+
+2. Using synchronized modifier in a method()
+	> this will make sure that only one instance of that method will be running at any given time
+	> this keyword will put a "lock" everytime the method body is called
+	> only when the method body is done executing will the "lock" in method be released
+
+EX:
+
+	synchronized void printDocuments(int numOfCopies, String docName){
+		for(int i=1; i<=numOfCopies; i++){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(">> Printing " + docName + " " + i);
+		}
+	}
+
+
+3. Using synchronized (Object o) {}
+	> we will put the codes that we want to be done SYNCHRONOUSLY inside the braces
+	> this will make it so that when we call the method, it will put a "lock" in the Object we passed in it
+	> only when the method body is done executing will the "lock" in Object be released
+
+EX:
+
+		synchronized (pRef){
+			pRef.printDocuments(10, "JohnGlennProfile.pdf");
+		}
+
+
+
+
+Thread pool
+	> Java thread pool manages the pool of worker threads and contains a queue that keep the task waiting to get executed
+
+
+THREAD METHOD
+	> create Thread
+	> join()
+		- make it so that only after that Thread finish will the other Thread can start their stuff
+	> sleep()
+		- make the current Thread "sleep"
+	> wait()	
+	> notify()
+	> setDaemon()
+		- set the Thread into a Daemon Thread
+		- Daemon Thread runs alongside Main Thread
+
+
+I. Synchronized execution demonstration
+
+1. Create a new project
+	> ThreadDemo
+
+2. Create a new Class
+	> App name
+	> add main()
+
+3. Inside the main(), do the following
+	> print something to tell user that Application has started
+	> use forloop to print Document #n 10 times
+	> print something to tell user that Application has ended
+
+INSIDE main()
+
+	public static void main(String[] args) {
+		//Job 1
+		System.out.println("===== Application has started =======");
+		
+		//Job 2
+		for(int document = 10; document > 0; document--){
+			System.out.println("Printing document #" + document);
+		}
+		
+		//Job 3
+		System.out.println("====- Application has stopped =======");
+	}
+
+
+4. Execute the main()
+	> we can see that the code is executed sequentially
+
+OUTPUT
+
+===== Application has started =======
+Printing document #10 Printer 1
+Printing document #9 Printer 1
+Printing document #8 Printer 1
+Printing document #7 Printer 1
+Printing document #6 Printer 1
+Printing document #5 Printer 1
+Printing document #4 Printer 1
+Printing document #3 Printer 1
+Printing document #2 Printer 1
+Printing document #1 Printer 1
+====- Application has stopped =======
+
+
+5. Create a new class inside App.java
+	> name MyTask
+	> have a method called executeTask()
+	> inside executeTask()
+		- do the same thing as the for loop in main()
+		- this time add "Printer 2" at the end of the println()
+		- also, add "Printer 1" at the forloop in main()
+
+MyTask class
+
+	class MyTask{
+		void executeTask(){
+			for(int doc = 10; doc > 0; doc--){
+				System.out.println("Printing document #" + doc + " Printer 2");
+			}
+		}
+	}
+
+Inside main()
+
+		for(int doc = 10; doc > 0; doc--){
+			System.out.println("Printing document #" + doc + " Printer 1");
+		}
+
+
+6. Create instance of MyTask class inside main()
+	- between Job 1 and Job 2
+
+
+7. Call executeTask() of the MyTask instance 
+
+INSIDE main()
+
+		//Job 2
+		MyTask task = new MyTask();
+		task.executeTask();
+		
+
+8. Execute the main()
+	> we can see that Printer 1 is started doing its task ONLY  after Printer 2 is done
+
+OUTPUT
+
+===== Application has started =======
+Printing document #10 Printer 2
+Printing document #9 Printer 2
+Printing document #8 Printer 2
+Printing document #7 Printer 2
+Printing document #6 Printer 2
+Printing document #5 Printer 2
+Printing document #4 Printer 2
+Printing document #3 Printer 2
+Printing document #2 Printer 2
+Printing document #1 Printer 2
+Printing document #10 Printer 1
+Printing document #9 Printer 1
+Printing document #8 Printer 1
+Printing document #7 Printer 1
+Printing document #6 Printer 1
+Printing document #5 Printer 1
+Printing document #4 Printer 1
+Printing document #3 Printer 1
+Printing document #2 Printer 1
+Printing document #1 Printer 1
+====- Application has stopped =======
+
+
+
+
+II. Asynchronous execution demonstration using Method A: Extend to Thread class
+
+9. Extend MyTask to Thread class
+
+10. Change method name of executeTask() to run()
+
+11. Add @Override annotation to the run()
+	> also, change the access modifier to public
+
+INSIDE App.java
+
+// MyTask IS-A Thread
+class MyTask extends Thread{
+	@Override
+	public void run(){
+		for(int doc = 10; doc > 0; doc--){
+			System.out.println("Printing document #" + doc + " Printer 2");
+		}
+	}
+}
+
+
+12. Call start() of MyTask
+	> comment out the executeTask() call
+
+INSIDE main()
+
+		//Job 2
+		MyTask task = new MyTask();
+		//task.executeTask();
+		task.start(); // start shall internally execute run()
+
+
+13. Execute main()
+	> we can see that the Printer 1 executes its task even before Printer 2 has done its task
+	> with this, we can say that Main Thread and MyTask thread is running CONCURRENTLY
+
+OUTPUT
+
+===== Application has started =======
+Printing document #10 Printer 1
+Printing document #9 Printer 1
+Printing document #8 Printer 1
+Printing document #10 Printer 2
+Printing document #9 Printer 2
+Printing document #7 Printer 1
+Printing document #8 Printer 2
+Printing document #7 Printer 2
+Printing document #6 Printer 2
+Printing document #5 Printer 2
+Printing document #4 Printer 2
+Printing document #3 Printer 2
+Printing document #2 Printer 2
+Printing document #1 Printer 2
+Printing document #6 Printer 1
+Printing document #5 Printer 1
+Printing document #4 Printer 1
+Printing document #3 Printer 1
+Printing document #2 Printer 1
+Printing document #1 Printer 1
+====- Application has stopped =======
+
+
+
+III. Method B: Implement Runnable interface and pass to a Thread instance
+
+14. Create a new class
+	> call it CA
+	> have it no method body
+
+15. Change the MyTask class
+	> extend it to CA class
+	> have it implement Runnable interface
+
+INSIDE App.java
+
+// class MyTask extends CA, implements Runnable
+class MyTask extends CA implements Runnable{
+	@Override
+	public void run(){
+		for(int doc = 10; doc > 0; doc--){
+			System.out.println("Printing document #" + doc + " Printer 2");
+		}
+	}
+}
+
+
+16. Comment out the Job 2
+
+17. Modify main()
+	> create new Runnable instance
+		- assign it a value of new MyTask instance
+	> create a new Thread	
+		- assign it a value of new Thread instance with the Runnable passed to it
+	> call start() of Thread object	
+
+INSIDE main() before Job 3
+
+		Runnable r = new MyTask();
+		Thread task = new Thread(r);
+		task.start();
+		
+
+18. Execute main()
+	> we can see that both Method A and Method B have the same behavior
+	> that is, Printer A and Printer B is executing CONCURRENTLY
+
+OUTPUT
+
+===== Application has started =======
+Printing document #10 Printer 1
+Printing document #9 Printer 1
+Printing document #8 Printer 1
+Printing document #7 Printer 1
+Printing document #6 Printer 1
+Printing document #10 Printer 2
+Printing document #9 Printer 2
+Printing document #8 Printer 2
+Printing document #7 Printer 2
+Printing document #6 Printer 2
+Printing document #5 Printer 2
+Printing document #4 Printer 2
+Printing document #3 Printer 2
+Printing document #2 Printer 2
+Printing document #1 Printer 2
+Printing document #5 Printer 1
+Printing document #4 Printer 1
+Printing document #3 Printer 1
+Printing document #2 Printer 1
+Printing document #1 Printer 1
+====- Application has stopped =======
+
+
+
+
+IV. Starting Thread using a Thread (Main Thread)
+
+19. Modify the previous MyTask
+	> change name to YourTask
+	> implement Runnable
+	> change the Printer to 3
+
+INSIDE App.java
+
+// MyTask IS-A Thread
+class YourTask implements Runnable{
+	@Override
+	public void run(){
+		for(int doc = 10; doc > 0; doc--){
+			System.out.println("Printing document #" + doc + " Printer 3");
+		}
+	}
+}
+
+
+
+20. Inside the main(), do the following
+	> create new Thread object
+	> pass new YourTask instance
+	> call start() of Thread object
+
+INSIDE App.java
+
+		new Thread(new YourTask()).start();
+
+
+21. Execute the main()
+	> we can see that it performs the same ways as any other Thread
+
+OUTPUT
+
+===== Application has started =======
+Printing document #10 Printer 2
+Printing document #9 Printer 2
+Printing document #8 Printer 2
+Printing document #7 Printer 2
+Printing document #6 Printer 2
+Printing document #5 Printer 2
+Printing document #4 Printer 2
+Printing document #3 Printer 2
+Printing document #2 Printer 2
+Printing document #1 Printer 2
+Printing document #10 Printer 1
+Printing document #9 Printer 1
+Printing document #8 Printer 1
+Printing document #7 Printer 1
+Printing document #6 Printer 1
+Printing document #5 Printer 1
+Printing document #4 Printer 1
+Printing document #3 Printer 1
+Printing document #2 Printer 1
+Printing document #10 Printer 3
+Printing document #9 Printer 3
+Printing document #8 Printer 3
+Printing document #7 Printer 3
+Printing document #6 Printer 3
+Printing document #5 Printer 3
+Printing document #1 Printer 1
+Printing document #4 Printer 3
+Printing document #3 Printer 3
+Printing document #2 Printer 3
+Printing document #1 Printer 3
+====- Application has stopped =======
+
+
+
+V. Showing the main thread
+
+22. Create a new class
+	> SyncApp
+
+23. Inside main(), do the following
+	> int i = 10/0;
+
+INSIDE main()
+
+	public static void main(String[] args) {
+		System.out.println("==== Application Started ====");
+		
+		int i = 10/0;
+
+		System.out.println("==== Application Finished ====");
+	}
+	
+
+24. Execute the main()
+	> we will get an Exception
+	> we can see that it says thread "main"
+
+OUTPUT
+
+==== Application Started ====
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+	at SyncApp.main(SyncApp.java:7)
+
+
+
+VI. MultiThreading demonstration
+
+25. Use the SyncApp.java
+
+26. Create a class inside it
+	> name Printer
+	> have a printDocuments()
+		- void return
+		- int numOfCopies, String docName params
+		- method body is	
+			= forloop, max iteration is numOfCopies. prints out the docName plus the iterator
+
+Printer class
+
+class Printer{
+	void printDocuments(int numOfCopies, String docName){
+		for(int i=1; i<=numOfCopies; i++){
+			System.out.println(">> Printing " + docName + " " + i);
+		}
+	}
+}
+
+
+27. Inside main()
+	> create instance of Printer class
+	> call printDocuments() and pass 10, and "JohnGlennProfile.pdf"
+
+INSIDE main()
+
+	public static void main(String[] args) {
+		System.out.println("==== Application Started ====");
+		
+		Printer printer = new Printer();
+		printer.printDocuments(10, "JohnGlennProfile.pdf");
+
+		System.out.println("==== Application Finished ====");
+	}
+
+
+28. Execute main()
+	> we should see the console printout statements
+
+OUTPUT
+
+==== Application Started ====
+>> Printing JohnGlennProfile.pdf 1
+>> Printing JohnGlennProfile.pdf 2
+>> Printing JohnGlennProfile.pdf 3
+>> Printing JohnGlennProfile.pdf 4
+>> Printing JohnGlennProfile.pdf 5
+>> Printing JohnGlennProfile.pdf 6
+>> Printing JohnGlennProfile.pdf 7
+>> Printing JohnGlennProfile.pdf 8
+>> Printing JohnGlennProfile.pdf 9
+>> Printing JohnGlennProfile.pdf 10
+==== Application Finished ====
+
+
+
+29. Create new class
+	> MyThread name
+	> extends Thread class
+	> Printer field member
+	> Constructor	
+		- takes Printer parameter
+		- assign parameter value to field member
+	> run()
+		- call printDocuments() of Printer field member and pass 10 and "JohnGlennProfile.pdf"
+
+MyThread class
+
+class MyThread extends Thread{
+	Printer pRef;
+	
+	MyThread(Printer p){
+		pRef = p;
+	}
+
+	@Override
+	public void run() {
+		pRef.printDocuments(10, "JohnGlennProfile.pdf");
+	}
+}
+
+
+30. Create new Thread again
+	> YourThread name
+	> same body as MyThread
+	> change name parameter of printDocument() to something else
+
+INSIDE SyncApp.java
+
+class YourThread extends Thread{
+	Printer pRef;
+	
+	YourThread(Printer p){
+		pRef = p;
+	}
+	
+	@Override
+	public void run() {
+		pRef.printDocuments(10, "NotJohnProfile.pdf");
+	}
+}
+
+
+
+31. Inside main()
+	> comment out the printDocuments() call
+	> create instance of MyThread and pass the Printer object
+	> create instance of YourThread and pass the same Printer object
+	> call start() of MyThread
+	> call start() of YourThread
+
+INSIDE main()
+
+	public static void main(String[] args) {
+		System.out.println("==== Application Started ====");
+		
+		Printer printer = new Printer();
+		MyThread mRef = new MyThread(printer);
+		YourThread yRef = new YourThread(printer);
+		
+		mRef.start();
+		yRef.start();
+		
+		System.out.println("==== Application Finished ====");
+	}
+
+
+OUTPUT
+
+==== Application Started ====
+==== Application Finished ====
+>> Printing JohnGlennProfile.pdf 1
+>> Printing JohnGlennProfile.pdf 2
+>> Printing JohnGlennProfile.pdf 3
+>> Printing JohnGlennProfile.pdf 4
+>> Printing JohnGlennProfile.pdf 5
+>> Printing JohnGlennProfile.pdf 6
+>> Printing JohnGlennProfile.pdf 7
+>> Printing NotJohnProfile.pdf 1
+>> Printing JohnGlennProfile.pdf 8
+>> Printing NotJohnProfile.pdf 2
+>> Printing NotJohnProfile.pdf 3
+>> Printing JohnGlennProfile.pdf 9
+>> Printing JohnGlennProfile.pdf 10
+>> Printing NotJohnProfile.pdf 4
+>> Printing NotJohnProfile.pdf 5
+>> Printing NotJohnProfile.pdf 6
+>> Printing NotJohnProfile.pdf 7
+>> Printing NotJohnProfile.pdf 8
+>> Printing NotJohnProfile.pdf 9
+>> Printing NotJohnProfile.pdf 10
+
+	> we can see that the two Thread execute their task in erratic order
+
+
+
+32. Call join() of MyThread after its start() call
+
+INSIDE main()
+
+	public static void main(String[] args) {
+		System.out.println("==== Application Started ====");
+		
+		Printer printer = new Printer();
+		MyThread mRef = new MyThread(printer);
+		YourThread yRef = new YourThread(printer);
+		
+		mRef.start();
+		try {
+			mRef.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		yRef.start();
+		
+		System.out.println("==== Application Finished ====");
+	}
+
+
+OUTPUT
+
+==== Application Started ====
+>> Printing JohnGlennProfile.pdf 1
+>> Printing JohnGlennProfile.pdf 2
+>> Printing JohnGlennProfile.pdf 3
+>> Printing JohnGlennProfile.pdf 4
+>> Printing JohnGlennProfile.pdf 5
+>> Printing JohnGlennProfile.pdf 6
+>> Printing JohnGlennProfile.pdf 7
+>> Printing JohnGlennProfile.pdf 8
+>> Printing JohnGlennProfile.pdf 9
+>> Printing JohnGlennProfile.pdf 10
+==== Application Finished ====
+>> Printing NotJohnProfile.pdf 1
+>> Printing NotJohnProfile.pdf 2
+>> Printing NotJohnProfile.pdf 3
+>> Printing NotJohnProfile.pdf 4
+>> Printing NotJohnProfile.pdf 5
+>> Printing NotJohnProfile.pdf 6
+>> Printing NotJohnProfile.pdf 7
+>> Printing NotJohnProfile.pdf 8
+>> Printing NotJohnProfile.pdf 9
+>> Printing NotJohnProfile.pdf 10
+
+
+	> we can see that YourThread instance only started doing its task ONLY AFTER MyThread is done on itself
+
+
+
+33. Remove the join()
+
+34. Add Thread.sleep(500) in the for loop in printDocuments() of class Printer
+
+Printer class
+
+class Printer{
+	void printDocuments(int numOfCopies, String docName){
+		for(int i=1; i<=numOfCopies; i++){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(">> Printing " + docName + " " + i);
+		}
+	}
+}
+
+
+
+35. Execute main()
+	> we can see that MyThread and YourThread is doing their task more orderly
+
+==== Application Started ====
+==== Application Finished ====
+>> Printing JohnGlennProfile.pdf 1
+>> Printing NotJohnProfile.pdf 1
+>> Printing JohnGlennProfile.pdf 2
+>> Printing NotJohnProfile.pdf 2
+>> Printing JohnGlennProfile.pdf 3
+>> Printing NotJohnProfile.pdf 3
+>> Printing JohnGlennProfile.pdf 4
+>> Printing NotJohnProfile.pdf 4
+>> Printing JohnGlennProfile.pdf 5
+>> Printing NotJohnProfile.pdf 5
+>> Printing JohnGlennProfile.pdf 6
+>> Printing NotJohnProfile.pdf 6
+>> Printing JohnGlennProfile.pdf 7
+>> Printing NotJohnProfile.pdf 7
+>> Printing JohnGlennProfile.pdf 8
+>> Printing NotJohnProfile.pdf 8
+>> Printing JohnGlennProfile.pdf 9
+>> Printing NotJohnProfile.pdf 9
+>> Printing JohnGlennProfile.pdf 10
+>> Printing NotJohnProfile.pdf 10
+
+
+
+36. Add synchronized modifier in the printDocuments() of Printer class
+
+INSIDE Printer class
+
+	synchronized void printDocuments(int numOfCopies, String docName){
+		for(int i=1; i<=numOfCopies; i++){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(">> Printing " + docName + " " + i);
+		}
+	}
+
+
+37. Execute the main()
+	> we can see that only when MyThread is done is where YourThread is started its task
+
+OUTPUT
+
+==== Application Started ====
+==== Application Finished ====
+>> Printing JohnGlennProfile.pdf 1
+>> Printing JohnGlennProfile.pdf 2
+>> Printing JohnGlennProfile.pdf 3
+>> Printing JohnGlennProfile.pdf 4
+>> Printing JohnGlennProfile.pdf 5
+>> Printing JohnGlennProfile.pdf 6
+>> Printing JohnGlennProfile.pdf 7
+>> Printing JohnGlennProfile.pdf 8
+>> Printing JohnGlennProfile.pdf 9
+>> Printing JohnGlennProfile.pdf 10
+>> Printing NotJohnProfile.pdf 1
+>> Printing NotJohnProfile.pdf 2
+>> Printing NotJohnProfile.pdf 3
+>> Printing NotJohnProfile.pdf 4
+>> Printing NotJohnProfile.pdf 5
+>> Printing NotJohnProfile.pdf 6
+>> Printing NotJohnProfile.pdf 7
+>> Printing NotJohnProfile.pdf 8
+>> Printing NotJohnProfile.pdf 9
+>> Printing NotJohnProfile.pdf 10
+
+
+
+38. Remove synchronized modifier in printDocuments() of Printer class
+
+39. Add synchronized (pRef) {} inside the run() of both Thread classes and add the codes inside
+
+INSIDE both YourThread and MyThread
+
+	@Override
+	public void run() {
+		synchronized (pRef){
+			pRef.printDocuments(10, "JohnGlennProfile.pdf");
+		}
+	}

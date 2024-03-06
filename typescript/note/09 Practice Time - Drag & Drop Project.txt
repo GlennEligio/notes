@@ -1,0 +1,1512 @@
+09 Practice Time - Drag & Drop Project
+
+Content:
+01 Module Introduction
+02 Getting Started
+03 DOM Element Selection & OOP Rendering
+04 Interacting with DOM elements
+05 Creating & Using an Autobind Decorator
+06 Fetching User Input
+07 Creating a Re-Usable Validation Functionality
+08 Rendering Project Lists
+09 Managing Application State
+10 More Classes and Custom Types
+11 Filtering Projects with Enums
+12 Adding Inheritance & Generics
+13 Rendering Project Items with a Class
+14 Using a Getter
+15 Utilizing Interfaces to Implement Drag & Drop
+16 Drag Events & Reflecting the Current State in the UI
+17 Adding a Droppable Area
+18 Finishing Drag & Drop
+19 Wrap Up
+
+
+
+
+
+
+
+
+
+
+
+01 Module Introduction
+02 Getting Started
+
+GOAL:
+1. Create an app where we can drag the items from one list and drop to another list 
+	> in this case, we will create an app that stores a list of Project
+	> we can also add new Projects by using the form
+
+SETUP
+1. Use the provided index.html and app.css
+
+Explanation
+1. template
+	> allows us to specify an HTML element which is not rendered or loaded immediately
+	> we can then use JS/TS to reach out to this template to rendered the nested HTML elements 
+
+
+
+
+
+
+
+03 DOM Element Selection & OOP Rendering
+
+Methods/Classes used
+document.importNode(node: DocumentNode, deep: boolean | undefined)
+ > fetches the Node inside a DocumentNode (i.e. any HTMLElement, typically a template) to create a new DocumentFragment that we can use later
+ > includes the nested elements inside the DocumentNode being fetched if "deep" argument is TRUE
+
+HTMLTemplate.content
+ > returns the template contents as DocumentFragment
+ > DocumentFragment WRAPS the supposedly contents of the template element
+
+DocumentFragment.firstElementChild
+ > returns the first element child inside a DocumentFragment
+
+HTMLElement.insertAdjacentElement(where: InsertPosition, element: Element)
+ > inserts the "element" argument adjacent to the HTMLElement
+ > where can take multiple values
+	1. "afterbegin" - element is added AFTER the opening tag
+	2. "afterend"	- element is added AFTER the closing tag
+	3. "beforebegin"	- element is added BEFORE the opening tag
+	4. "beforeend"	- element is added BEFORE the closing tag
+
+
+GOAL:
+1. Use OOP to render the needed UI
+
+STEPS
+1. Create a Class
+2. Add three properties
+	- templateElement
+		-> type HTMLTemplateElement
+		-> points to the template element that contains the elements that we want to render later (in this case, the form element inside)
+	- hostElement 
+		-> type HTMLDivElement
+		-> refers to the element that will host the HTML element to be displayed
+		-> similar to ReactJS's root element
+	- element
+		-> type HTMLFormElement	
+		-> will point to the form element inside the templateElement
+		-> we will later insert this as child element inside hostElement
+3. Create a constructor
+	> for templateElement and hostElement, use document.getElementById and pass "project-input" and "app" respectively
+		- dont forget to do null coalescing and type casting
+	> for the element property, we will first fetch the content of templateElement using document.importNode()
+		- for 1st arg, pass the content of templateElement by accessing templateElement.content	
+		- for 2nd arg, pass true to include all the nested element
+	> assign the firstElementChild of document.importNode() result through .firstElementChild property
+		- dont forget to type cast
+4. Create a private method "attach"
+	> no parameter or return
+	> inside, insert the element property inside the hostElement after its opening tag using the hostElement's insertAdjacentElement() function
+		- for 1st argument, pass "afterbegin"
+		- for 2nd argument, pass the element property
+5. Call the attach method inisde the constructor at the end
+
+
+
+Using the ProjectInput class
+1. Create an instance of the class
+2. Check the webpage if form is correctly rendered
+
+class ProjectInput {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLFormElement;
+
+  constructor() {
+    this.templateElement = document.getElementById(
+      "project-input"
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById("app")! as HTMLDivElement;
+
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as HTMLFormElement;
+
+    this.attach();
+  }
+
+  private attach() {
+    this.hostElement.insertAdjacentElement("afterbegin", this.element);
+  }
+}
+
+const prjInput = new ProjectInput();
+
+
+
+
+
+
+
+
+
+
+04 Interacting with DOM elements
+
+GOAL:
+1. Add styling to the FormElement
+2. Interact with the HTMLFormElement "element" and its input elements
+3. Add submitEventHandler to the "element"
+4. Write one of the inputs value in the console
+
+STEPS
+1. Assign an id to the formElement
+	> we can do this by assigning new value to the "id" property of the formElement
+	> in the CSS file, we have styles dedicated to this id
+2. Create new properties to the ProjectInput Class
+	> this will point to the input elements inside formElement
+3. Assign values to the new properties
+	> use querySelector() to the formElement and pass the corresponding ids of the input
+	> dont forget to use type cast
+4. Create two methods inside the class
+	> configure() to add submitEventHandler to element
+	> submitHandler() to handle submit event of form
+5. Define the configure() and submitHandler()
+	> dont forget to bind the submitHandler function inside configure() to the "this" of class
+
+
+EX:
+// NEW ProjectInput class
+
+class ProjectInput {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLFormElement;
+  titleInputElement: HTMLInputElement;
+  descriptionInputElement: HTMLInputElement;
+  peopleInputElement: HTMLInputElement;
+
+  constructor() {
+    this.templateElement = document.getElementById(
+      "project-input"
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById("app")! as HTMLDivElement;
+
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as HTMLFormElement;
+    this.element.id = "user-input";
+
+    this.titleInputElement = this.element.querySelector("#title") as HTMLInputElement;
+    this.descriptionInputElement = this.element.querySelector("#description") as HTMLInputElement;
+    this.peopleInputElement = this.element.querySelector("#people") as HTMLInputElement;
+
+    this.configure()
+    this.attach();
+  }
+
+  private attach() {
+    this.hostElement.insertAdjacentElement("afterbegin", this.element);
+  }
+
+  private submitHandler(event: Event) {
+    event.preventDefault();
+    console.log(this.titleInputElement.value);
+  }
+
+  private configure(){
+    this.element.addEventListener("submit", this.submitHandler.bind(this))
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+05 Creating & Using an Autobind Decorator
+
+EX:
+// Autobind Decorator
+function Autobind(_: any, _2: string, propDesc: PropertyDescriptor) {
+  const originalMethod = propDesc.value;
+  const updatedDescriptor: PropertyDescriptor = {
+    configurable: true,
+    enumerable: false,
+    get() {
+      const boundFn = originalMethod.bind(this);
+      return boundFn;
+    },
+  };
+  return updatedDescriptor;
+}
+
+// @Autobind in the submitHandler
+  @Autobind
+  private submitHandler(event: Event) {
+    event.preventDefault();
+    console.log(this.titleInputElement.value);
+  }
+
+  private configure() {
+    this.element.addEventListener("submit", this.submitHandler);
+  }
+
+
+
+
+
+
+
+
+
+06 Fetching User Input
+
+GOAL:
+1. Create a function to fetch user inputs from the inputElement properties
+	> inside, we will also do small validation logic just to check if inputs is empty or not
+	> return either a tuple that contains the inputs or void
+
+EX:
+// inside ProjectInput Class
+
+  private gatherUserInput(): [string, string, number] | void {
+    const enteredTitle = this.titleInputElement.value;
+    const enteredDescription = this.descriptionInputElement.value;
+    const enteredPeople = this.peopleInputElement.value;
+
+    if (
+      enteredTitle.trim().length === 0 ||
+      enteredDescription.trim().length === 0 ||
+      enteredPeople.trim().length === 0
+    ) {
+      alert("Please enter a complete form");
+      return;
+    }
+    return [enteredTitle, enteredDescription, +enteredPeople];
+  }
+
+  @Autobind
+  private submitHandler(event: Event) {
+    event.preventDefault();
+
+    const inputs = this.gatherUserInput();
+    if (Array.isArray(inputs)) {
+      console.log(inputs);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+07 Creating a Re-Usable Validation Functionality
+
+Creating a Re-Usable Validation Functionality
+ > we can either use Decorators or just Interface and Function
+
+Interface and Function solution
+ > create an interface that holds several properties
+	1. value 
+		- the value that we are validating
+	2. [validator: string]: any
+		- we can add many string properties and the data needed for validation
+		- this must be OPTIONAL, since we may not want to add some of these validators later
+
+EX:
+interface Validatable {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+}
+
+ > we will then create a function for validation
+  	- this function accepts a Validatable and returns a boolean
+ 	- inside the function we will check if each validator properties exist
+		- and if they do, we will do a validation process to the value property
+
+EX:
+// Validatable interface
+interface Validatable {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+}
+
+// Validation function
+function validate(validatableInput: Validatable) {
+  let isValid = true;
+  if (validatableInput.required) {
+    isValid = isValid && validatableInput.value.toString().trim().length !== 0;
+  }
+  if (
+    validatableInput.minLength != null &&
+    typeof validatableInput.value === "string"
+  ) {
+    isValid =
+      isValid &&
+      validatableInput.value.toString().trim().length >=
+        validatableInput.minLength;
+  }
+  if (
+    validatableInput.maxLength != null &&
+    typeof validatableInput.value === "string"
+  ) {
+    isValid =
+      isValid &&
+      validatableInput.value.toString().trim().length <=
+        validatableInput.maxLength;
+  }
+  if (
+    validatableInput.min != null &&
+    typeof validatableInput.value === "number"
+  ) {
+    isValid = isValid && validatableInput.value >= validatableInput.min;
+  }
+  if (
+    validatableInput.max != null &&
+    typeof validatableInput.value === "number"
+  ) {
+    isValid = isValid && validatableInput.value <= validatableInput.max;
+  }
+  return isValid;
+}
+
+
+// Using Validation function inside the gatherUserInput() function
+  private gatherUserInput(): [string, string, number] | void {
+    const enteredTitle = this.titleInputElement.value;
+    const enteredDescription = this.descriptionInputElement.value;
+    const enteredPeople = this.peopleInputElement.value;
+
+    const titleValidatable: Validatable = {
+      value: enteredTitle,
+      required: true,
+    };
+    const descriptionValidatable: Validatable = {
+      value: enteredDescription,
+      required: true,
+      minLength: 5,
+    };
+    const peopleValidatable: Validatable = {
+      value: +enteredPeople,
+      required: true,
+      min: 1,
+      max: 5,
+    };
+
+    if (
+      !validate(titleValidatable) ||
+      !validate(descriptionValidatable) ||
+      !validate(peopleValidatable)
+    ) {
+      alert("Invalid form input");
+      return;
+    }
+    return [enteredTitle, enteredDescription, +enteredPeople];
+  }
+
+
+
+Decorator for validation
+
+// Code
+interface ValidatorConfig {
+  [className: string]: {
+    [propName: string]: string[];
+  };
+}
+
+const registeredValidators: ValidatorConfig = {};
+
+function Required(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: [
+      ...(registeredValidators[target.constructor.name]?.[propName] ?? []),
+      "required",
+    ],
+  };
+  console.log(registeredValidators);
+}
+
+function Positive(target: any, propName: string) {
+  registeredValidators[target.constructor.name] = {
+    ...registeredValidators[target.constructor.name],
+    [propName]: [
+      ...(registeredValidators[target.constructor.name]?.[propName] ?? []),
+      "positive",
+    ],
+  };
+  console.log(registeredValidators);
+}
+
+class Project {
+  @Required
+  title: string;
+  @Required
+  description: string;
+  @Positive
+  people: number;
+
+  constructor(t: string, d: string, p: number) {
+    this.title = t;
+    this.description = d;
+    this.people = p;
+  }
+}
+
+validate(obj: any): boolean {
+    const className = obj.constructor.name;
+    const objPropValidators = registeredValidators[className];
+    if (!objPropValidators) {
+      return true;
+    }
+    let isValid = true;
+    for (const prop in objPropValidators) {
+      for (const validator of objPropValidators[prop]) {
+        switch (validator) {
+          case "required":
+            isValid = isValid && obj[prop].trim() !== 0;
+            break;
+          case "positive":
+            isValid = isValid && +obj[prop] > 0;
+            break;
+        }
+      }
+    }
+    return isValid;
+  }
+
+
+  private gatherUserInput(): [string, string, number] | void {
+    const enteredTitle = this.titleInputElement.value;
+    const enteredDescription = this.descriptionInputElement.value;
+    const enteredPeople = this.peopleInputElement.value;
+
+    const createdProject = new Project(
+      enteredTitle,
+      enteredDescription,
+      +enteredPeople
+    );
+
+    if (!this.validate(createdProject)) {
+      alert("Please enter a complete form");
+      return;
+    }
+    return [enteredTitle, enteredDescription, +enteredPeople];
+  }
+
+
+
+
+
+
+
+
+
+
+
+08 Rendering Project Lists
+
+Rendering Project Lists
+ > we will use the same approach as the ProjectInput Class, where
+	1. we created properties that points to 
+		- template that holds the content to render
+		- the content
+		- the host element that will wrap the rendered contents
+		- the type of Project List, either 'active' or 'finished'
+ > we will then do the same with rendering these elements, like attaching the content of template to the host element
+ > we will also configure the elements inside the template content like
+	- adding id to the unordered list
+	- adding textContent to header2
+
+EX:
+class ProjectList {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLFormElement;
+
+  constructor(private type: "active" | "finished") {
+    this.templateElement = document.getElementById(
+      "project-list"
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById("app")! as HTMLDivElement;
+
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as HTMLFormElement;
+    this.element.id = `${this.type}-projects`;
+    this.attach();
+    this.renderContent();
+  }
+
+  private attach() {
+    this.hostElement.insertAdjacentElement("beforeend", this.element);
+  }
+
+  private renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector("ul")!.id = listId;
+    this.element.querySelector("h2")!.textContent =
+      this.type.toUpperCase() + " PROJECTS";
+  }
+}
+
+const activePrjList = new ProjectList("active");
+const finishedPrjList = new ProjectList("finished");
+
+
+
+
+
+
+
+
+
+
+
+09 Managing Application State
+
+Managing Application State
+ > for this, we will create a Singleton Class, which will hold the necessary App States like project lists, listener functions to the project list, etc
+
+// ProjectState class, a singleton to manage app state
+// Project State Management
+class ProjectState {
+  private listeners: any[];
+  private projects: any[];
+  private static instance: ProjectState;
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new ProjectState();
+    return this.instance;
+  }
+
+  private constructor() {
+    this.projects = [];
+    this.listeners = [];
+  }
+
+  addProject(title: string, description: string, numOfPeople: number) {
+    const newProject = {
+      id: Math.random.toString(),
+      title: title,
+      description: description,
+      people: numOfPeople,
+    };
+    this.projects.push(newProject);
+    for (const listener of this.listeners) {
+      listener(this.projects.slice());
+    }
+  }
+
+  addListener(listener: Function) {
+    this.listeners.push(listener);
+  }
+}
+
+// Initialize the ProjectState
+const projectState = ProjectState.getInstance();
+
+// Using ProjectState addProject() inside ProjectInput submitHandler()
+  @Autobind
+  private submitHandler(event: Event) {
+    event.preventDefault();
+
+    const inputs = this.gatherUserInput();
+    if (Array.isArray(inputs)) {
+      const [title, description, people] = inputs;
+      projectState.addProject(title, description, people);
+      console.log(inputs);
+    }
+
+    this.clearInputs();
+  }
+
+// Adding a listener function to the ProjectState's listener array prop where we fetch the ProjectState projects and assign it to ProjectList's assignedProject property
+    projectState.addListener((projects: any) => {
+      this.assignedProjects = projects;
+      this.renderProjects();
+    });
+
+
+
+
+
+
+
+
+10 More Classes & Custom Types
+
+Adding Types/Classes to the Project app
+ > with this, we can ensure type safety throughout the project
+ > also, we will be given better IDE autocompletion
+
+1. Project class
+	> used to define the a project object
+2. ProjectStatus enum
+	> used to specify the status of the Project
+3. Listener function type
+	> used to define the function inside the listener array of ProjectState
+
+// New Class, enum, type
+enum ProjectStatus {
+  Active,
+  Finished,
+}
+
+class Project {
+  constructor(
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
+}
+
+type Listener = (projects: Project[]) => void;
+
+
+Usage
+1. inside Project class
+class ProjectState {
+  private listeners: Listener[];
+  private projects: Project[];
+  private static instance: ProjectState;
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new ProjectState();
+    return this.instance;
+  }
+
+  private constructor() {
+    this.projects = [];
+    this.listeners = [];
+  }
+
+  addProject(title: string, description: string, numOfPeople: number) {
+    const newProject = new Project(
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.Active
+    );
+    this.projects.push(newProject);
+    for (const listener of this.listeners) {
+      listener(this.projects.slice());
+    }
+  }
+
+  addListener(listener: Listener) {
+    this.listeners.push(listener);
+  }
+}
+
+2. Inside ProjectList class
+// Project List
+class ProjectList {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLFormElement;
+  // HERE
+  assignedProjects: Project[];
+
+  constructor(private type: "active" | "finished") {
+    this.templateElement = document.getElementById(
+      "project-list"
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById("app")! as HTMLDivElement;
+    this.assignedProjects = [];
+
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as HTMLFormElement;
+    this.element.id = `${this.type}-projects`;
+
+    // HERE
+    projectState.addListener((projects: Project[]) => {
+      this.assignedProjects = projects;
+      this.renderProjects();
+    });
+
+    this.attach();
+    this.renderContent();
+  }
+
+  private attach() {
+    this.hostElement.insertAdjacentElement("beforeend", this.element);
+  }
+
+  private renderProjects() {
+    const listEl = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
+    for (const prjItem of this.assignedProjects) {
+      const listItem = document.createElement("li");
+      listItem.textContent = prjItem.title;
+      listEl.appendChild(listItem);
+    }
+  }
+
+  private renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector("ul")!.id = listId;
+    this.element.querySelector("h2")!.textContent =
+      this.type.toUpperCase() + " PROJECTS";
+  }
+}
+
+
+
+
+
+
+
+
+
+
+11 Filtering Projects with Enums
+
+Fixing two bugs
+1. Project with status ACTIVE shows up in Finished Project list
+2. Existing Project inside the ProjectList gets added again
+
+Solution
+1. Filtering the Projects to be assigned to each Project List
+2. Cleaning the ProjectList before rendering the assignedProject again by appending inside ProjectList
+	- performance-wise very costly since we are dealing with REAL DOM
+	- can be solved by doing comparison of assignedProject but we will not do it here
+
+Filtering the Projects to be assigned to each Project List
+1. Inside the listener function we add to the ProjectState inside ProjectList class, we will filter the projects inside ProjectState before assigning it to the ProjectList assignedProjects
+
+// inside ProjectList class
+    projectState.addListener((projects: Project[]) => {
+      this.assignedProjects = projects.filter(p => {
+        if(this.type === "active"){
+          return p.status === ProjectStatus.Active
+        }
+        return p.status === ProjectStatus.Finished
+      });
+      this.renderProjects();
+    });
+
+
+Cleaning the ProjectList before rendering the assignedProject again
+1. We will assign hostElement's innerHTML to empty before we render the assignProject's element into a list element
+
+// inside ProjectList
+  private renderProjects() {
+    const listEl = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
+    for (const prjItem of this.assignedProjects) {
+      const listItem = document.createElement("li");
+      listItem.textContent = prjItem.title;
+      listEl.appendChild(listItem);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+12 Adding Inheritance & Generics
+
+Adding Inheritance & Generics
+ > in our current Project Manager app, we written a lot of duplicate code
+	- specifically in ProjectList and ProjectInput Classes
+ > with Inheritance & Generics, we can lessen this by creating a "parent" class
+	- with inheritance, we can inherit some properties/methods of parent class
+	- with generics, we can make the said parent class work with any types
+
+Component Class
+ > abstract
+ > generic, takes two type argument
+	1. type of the hostElement
+	2. type of the element content inside the Template
+ > contains three properties
+	1. template element
+	2. host element
+	3. element
+		- fetch from inside the template element
+		- rendered inside host element
+ > constructor takes four input
+	1. template html id
+	2. hostelement html id
+	3. boolean whether element is to render at beginning or end of hostElement
+	4. OPTIONAL - elementId
+ > contains one private method
+	1. attach
+		- attaches the element inside the hostElement
+ > contains two abstract method
+	1. renderContent
+		- specifies how to render the content inside the hostElement
+		- mainly involves modifying the contents of the element
+	2. configure
+		- involves configuring the behavior of element
+
+State class
+ > used for managing the State
+ > takes one type argument
+	1. type of the State to managed by Listener
+ > have one property
+	1. listeners
+		- protected
+		- takes an array of Listener functions
+ > have one method
+	1. addListener
+		- adds a Listener function inside the listeners property
+
+EX:
+// Component abstract class
+Below is the Component abstract class and ProjectList and ProjectInput extending to it
+
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
+  templateElement: HTMLTemplateElement;
+  hostElement: T;
+  element: U;
+
+  constructor(
+    templateId: string,
+    hostElementId: string,
+    private insertAtStart: boolean,
+    elementId?: string
+  ) {
+    this.templateElement = document.getElementById(
+      templateId
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById(hostElementId)! as T;
+
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as U;
+    if (elementId) {
+      this.element.id = elementId;
+    }
+
+    this.attach();
+  }
+
+  private attach() {
+    this.hostElement.insertAdjacentElement(
+      this.insertAtStart ? "afterbegin" : "beforeend",
+      this.element
+    );
+  }
+
+  abstract renderContent(): void;
+  abstract configure(): void;
+}
+
+// Project List
+class ProjectList extends Component<HTMLDivElement, HTMLFormElement> {
+  assignedProjects: Project[];
+
+  constructor(private type: "active" | "finished") {
+    super("project-list", "app", false, `${type}-projects`);
+    this.assignedProjects = [];
+    projectState.addListener((projects: Project[]) => {
+      this.assignedProjects = projects.filter((p) => {
+        if (this.type === "active") {
+          return p.status === ProjectStatus.Active;
+        }
+        return p.status === ProjectStatus.Finished;
+      });
+      this.renderProjects();
+    });
+
+    this.renderContent();
+  }
+
+  renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector("ul")!.id = listId;
+    this.element.querySelector("h2")!.textContent =
+      this.type.toUpperCase() + " PROJECTS";
+  }
+
+  configure() {}
+
+  private renderProjects() {
+    const listEl = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
+    listEl.innerHTML = "";
+    for (const prjItem of this.assignedProjects) {
+      const listItem = document.createElement("li");
+      listItem.textContent = prjItem.title;
+      listEl.appendChild(listItem);
+    }
+  }
+}
+
+// ProjectInput
+class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
+  titleInputElement: HTMLInputElement;
+  descriptionInputElement: HTMLInputElement;
+  peopleInputElement: HTMLInputElement;
+
+  constructor() {
+    super("project-input", "app", true, "user-input");
+    this.titleInputElement = this.element.querySelector(
+      "#title"
+    ) as HTMLInputElement;
+    this.descriptionInputElement = this.element.querySelector(
+      "#description"
+    ) as HTMLInputElement;
+    this.peopleInputElement = this.element.querySelector(
+      "#people"
+    ) as HTMLInputElement;
+
+    this.configure();
+  }
+
+  configure() {
+    this.element.addEventListener("submit", this.submitHandler);
+  }
+
+  renderContent() {}
+
+  private gatherUserInput(): [string, string, number] | void {
+    const enteredTitle = this.titleInputElement.value;
+    const enteredDescription = this.descriptionInputElement.value;
+    const enteredPeople = this.peopleInputElement.value;
+
+    const titleValidatable: Validatable = {
+      value: enteredTitle,
+      required: true,
+    };
+    const descriptionValidatable: Validatable = {
+      value: enteredDescription,
+      required: true,
+      minLength: 5,
+    };
+    const peopleValidatable: Validatable = {
+      value: +enteredPeople,
+      required: true,
+      min: 1,
+      max: 5,
+    };
+
+    if (
+      !validate(titleValidatable) ||
+      !validate(descriptionValidatable) ||
+      !validate(peopleValidatable)
+    ) {
+      alert("Invalid form input");
+      return;
+    }
+    return [enteredTitle, enteredDescription, +enteredPeople];
+  }
+
+  private clearInputs() {
+    this.titleInputElement.value = "";
+    this.descriptionInputElement.value = "";
+    this.peopleInputElement.value = "";
+  }
+
+  @Autobind
+  private submitHandler(event: Event) {
+    event.preventDefault();
+
+    const inputs = this.gatherUserInput();
+    if (Array.isArray(inputs)) {
+      const [title, description, people] = inputs;
+      projectState.addProject(title, description, people);
+      console.log(inputs);
+    }
+
+    this.clearInputs();
+  }
+}
+
+
+// State class and ProjectState extending to it
+class ProjectState extends State<Project> {
+  private projects: Project[] = [];
+  private static instance: ProjectState;
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new ProjectState();
+    return this.instance;
+  }
+
+  private constructor() {
+    super();
+  }
+
+  addProject(title: string, description: string, numOfPeople: number) {
+    const newProject = new Project(
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.Active
+    );
+    this.projects.push(newProject);
+    for (const listener of this.listeners) {
+      listener(this.projects.slice());
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+13 Rendering Project Items with a Class
+
+Rendering Project Items with a Class
+ > in this case, we will now use the Component class as well to create the ProjectItems
+ > for ProjectItem, we will use
+	- the ul inside ProjectList template as hostElement
+	- the template with id "single-project" as template
+	- a Project object to fillup the content elements inside the single-project template
+
+EX:
+// Project Item
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+  project: Project;
+
+  constructor(hostElement: string, p: Project) {
+    super("single-project", hostElement, false, p.id);
+    this.project = p;
+
+    this.configure();
+    this.renderContent();
+  }
+
+  configure(): void {}
+
+  renderContent(): void {
+    this.element.querySelector("h2")!.textContent = this.project.title;
+    this.element.querySelector("h3")!.textContent =
+      this.project.people.toString();
+    this.element.querySelector("p")!.textContent = this.project.description;
+  }
+}
+
+
+// template for single-project
+    <template id="single-project">
+      <li>
+        <h2></h2>
+        <h3></h3>
+        <p></p>
+      </li>
+    </template>
+
+// Using the ProjectItem inside ProjectList
+  private renderProjects() {
+    const listEl = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
+    listEl.innerHTML = "";
+    for (const prjItem of this.assignedProjects) {
+      new ProjectItem(this.element.querySelector("ul")!.id, prjItem);
+    }
+  }
+
+
+
+
+
+
+
+
+14 Using a Getter
+
+Using a Getter 
+ > for getting correct string when we fetch Project's people, we can use a getter
+
+// Getter method
+  get persons() {
+    if (this.people === 1) {
+      return "1 person assigned";
+    }
+    return `${this.people} persons assigned`;
+  }
+
+
+
+
+
+
+
+
+15 Utilizing Interfaces to Implement Drag & Drop
+
+Function/Object used
+DragEvent
+ > Event Object passed to the argument of eventListener function related to drag events
+ > this drag related event includes
+	1. dragstart
+		- fired when we start dragging a draggable element
+		- draggable element have the eventListener
+	2. dragend
+		- fired when we finished dragging a draggable element (i.e. let go of mouse button)
+		- draggable element have the eventListener
+	3. dragover
+		- fired when we hover to the element while we are dragging
+		- drag target element have the eventListener
+	4. drop
+		- fired when we "drop" the draggable element to the drop target
+		- drag target element have the eventListener
+	5. dragleave
+		- fired when we leave to the element while we are dragging
+		- drag target element have the eventListener
+ > contains several properties like
+	1. target, explicitTarget, originalTarget
+		- for dragstart and dragend, this refers to the element being dragged	
+	2. dataTransfer
+		- not all drag-related events contains this property
+		- used to transfer data to the drop target
+
+Interface to implement
+1. Draggable
+  > added to the elements that is supposed to be draggable
+  > contains two methods inside
+    - dragStartHandler(event: DragEvent): void
+    - dragEndHandler(event: DragEvent): void  
+  > we will use this methods to the "dragstart" and "dragend" eventListener of Draggable element
+
+2. DragTarget
+  > added to the element that is supposed to be the drag target 
+    - elements where we are suppose to drop the dragged element
+  > contains three methods
+    - dragOverHandler(event: DragEvent): void
+    - dropHandler(event: DragEvent): void
+    - dragLeaveHandler(event: DragEvent): void  
+
+NOTE:
+1. To make an element draggable, we must set that element's "draggable" property to TRUE
+
+EX:
+// Drag & Drop interfaces
+interface Draggable {
+  dragStartHandler(event: DragEvent): void;
+  dragEndHandler(event: DragEvent): void;
+}
+
+interface DragTarget {
+  dragOverHandler(event: DragEvent): void;
+  dropHandler(event: DragEvent): void;
+  dragLeaveHandler(event: DragEvent): void;
+}
+
+// Using Draggable in ProjectItem
+class ProjectItem
+  extends Component<HTMLUListElement, HTMLLIElement>
+  implements Draggable
+{
+
+// Inisde ProjectItem, implementations of the functions
+  @Autobind
+  dragStartHandler(event: DragEvent): void {
+    console.log(event);
+  }
+
+  dragEndHandler(_: DragEvent): void {
+    console.log("Dropped");
+  }
+
+  configure(): void {
+    this.element.addEventListener("dragstart", this.dragStartHandler);
+    this.element.addEventListener("dragend", this.dragEndHandler);
+  }
+
+// Template html of the ProjectItem
+    <template id="single-project">
+      <li draggable="true">
+        <h2></h2>
+        <h3></h3>
+        <p></p>
+      </li>
+    </template>
+
+
+
+
+
+
+
+
+
+
+
+
+16 Drag Events & Reflecting the Current State in the UI
+
+Function/Objects used
+DragEvent
+ > Event Object passed to the argument of eventListener function related to drag events
+
+GOAL:
+1. Implement "Droppable" interface to the drop target, the ProjectList
+2. Create implementation of the methods
+	> dragOverHandler
+		- for now, we want to update UI where we change the background color of element
+		- ex: make the background color from white pinker/bluer
+	> dropHandler
+		- for now, no implementation
+	> dragLeaveHandler
+		- for now, we want to remove any UI update we made in dragOverHandler
+		- ex: make the background back to white from pink/blue
+3. Configure the ProjectList's "element" property in configure()
+	> inside configure, we will add the implemented methods from "Droppable" interface into the ProjectList's "element" property
+
+Ex:
+// ProjectList implementing DragTarget
+class ProjectList
+  extends Component<HTMLDivElement, HTMLFormElement>
+  implements DragTarget
+{...}
+
+// Inside ProjectList, where we create definitions of implemented methods and used it in configure()
+  @Autobind
+  dragOverHandler(_: DragEvent): void {
+    const listEl = this.element.querySelector("ul")!;
+    listEl.classList.add("droppable");
+  }
+
+  dropHandler(_: DragEvent): void {}
+
+  @Autobind
+  dragLeaveHandler(_: DragEvent): void {
+    const listEl = this.element.querySelector("ul")!;
+    listEl.classList.remove("droppable");
+  }
+
+  configure() {
+    this.element.addEventListener("dragover", this.dragOverHandler);
+    this.element.addEventListener("drop", this.dropHandler);
+    this.element.addEventListener("dragleave", this.dragLeaveHandler);
+
+    projectState.addListener((projects: Project[]) => {
+      this.assignedProjects = projects.filter((p) => {
+        if (this.type === "active") {
+          return p.status === ProjectStatus.Active;
+        }
+        return p.status === ProjectStatus.Finished;
+      });
+      this.renderProjects();
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+17 Adding a Droppable Area
+
+Function/Objects used
+DragEvent.dataTransfer
+ > contains functions/properties related to data transfering in drag-related events
+ > NOT ALL drag-related events have a dataTransfer
+
+DragEvent.dataTransfer.setData(format: string, data: string)
+ > method inside the dataTransfer property of DragEvent
+ > mostly used in the DragEvent of 'dragstart' event
+ > format refers to the MIME type, though typically we would only use either
+	1. "text/plain"
+	2. "text/html"
+ > data refers to the data we want to set in the DataTransfer object
+ > calling this method will add item in the DragEvent.dataTransfer.types array
+	- the value will be the "format" parameter we passed
+
+DragEvent.dataTransfer.getData(format: string)
+ > method used to fetch data stored in a specific DataTransferItem
+	- ex: if we called dataTransfer.setData("text/plain", "someElementId"), dataTransfer.getData("text/plain") will return the "someElementId"
+
+DragEvent.dataTransfer.effectAllowed
+ > property specifies the effect that is allowed for a drag operation
+    	- "copy" operation is used to indicate that the data being dragged will be copied from its present location to the drop location
+    	- "move" peration is used to indicate that the data being dragged will be moved
+ 	- "link" operation is used to indicate that some form of relationship or connection will be created between the source and drop locations. 
+ > this property SHOULD BE SET in the "dragstart" event to set the desired drag effect for the drag source
+
+DragEvent.preventDefault
+ > function in the DragEvent used to prevent the default behavior of drag-related events
+ > for "dragover" DragEvent, the default behavior is to NOT ALLOW/FIRE the "drop" event
+	- so, in cases where we want to fire off "drop" event, calling preventDefault in "dragover" is a MUST
+ > for "drop" DragEvent, the default behavior is to NAVIGATE the page to the value inside event.dataTransfer.types elements
+	- with this, calling preventDefault in "drop" DragEvent is NEEDED to not navigate the page
+
+
+GOAL:
+Setup "dragstart" DragEvent
+1. Add the project id data inside the DataTransfer inside when dragging
+  	> we will add the data in "dragstart" with MIME type of "text/plain"
+2. Set the eventAllowed of DataTransfer to "move"
+	> just to specify that we are moving data instead of making a copy
+
+Setup "dragover" DragEvent
+1. Check if theres a data inside the DataTransfer.types
+	> if there a data, we should do the following
+		- preventDefault behavior of "dragover"
+		- do UI updates to ProjectList's "element"
+
+Setup "drop" DragEvent
+1. Prevent default behavior of the "drop" DragEvent
+	> preventing page navigation
+2. Access the data inside DataTransfer instance and log it on console
+
+
+
+// "dragstart" eventHandler in ProjectItem
+  @Autobind
+  dragStartHandler(event: DragEvent): void {
+    event.dataTransfer!.setData("text/plain", this.project.id);
+    event.dataTransfer!.effectAllowed = "move";
+  }
+
+// "dragover" and "drop" eventHandlers in ProjectList
+  @Autobind
+  dragOverHandler(event: DragEvent): void {
+    if (event.dataTransfer?.types[0] === "text/plain") {
+      event.preventDefault();
+      const listEl = this.element.querySelector("ul")!;
+      listEl.classList.add("droppable");
+    }
+  }
+
+  dropHandler(event: DragEvent): void {
+    event.preventDefault();
+    console.log(event.dataTransfer!.getData("text/plain"));
+  }
+
+
+
+
+
+
+
+
+
+
+18 Finishing Drag & Drop
+
+GOAL:
+1. Create function in ProjectState class for updating a Project's status
+	> takes project id and ProjectStatus enum as parameter
+	> checks if Project's current status is not equal to the status input
+		- if not equal, proceed to change status value AND fire off all listeners
+2. Create function inside ProjectState class for firing off listener functions in ProjectState
+	> since we will do this logic in both addProject and moveProject, we are better off refactoring and adding this logic inside a function
+3. Add logic inside "drop" DragEvent handler inside ProjectList to call the ProjectState's moveProject function
+	> we will pass the project id inside DataTransfer of DragEvent and the ProjectList's "type" property
+
+EX:
+
+// updated ProjectState function
+  addProject(
+    id: string,
+    title: string,
+    description: string,
+    numOfPeople: number
+  ) {
+    const newProject = new Project(
+      id,
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.Active
+    );
+    this.projects.push(newProject);
+    this.updateListeners();
+  }
+
+  moveProject(id: string, status: ProjectStatus) {
+    const project = this.projects.find((p) => p.id === id);
+    if (project && project.status !== status) {
+      project.status = status;
+      this.updateListeners();
+    }
+  }
+
+  private updateListeners() {
+    for (const listener of this.listeners) {
+      listener(this.projects.slice());
+    }
+  }
+
+
+// updated "drop" DragEvent handler
+  @Autobind
+  dropHandler(event: DragEvent): void {
+    event.preventDefault();
+    const id = event.dataTransfer!.getData("text/plain");
+    projectState.moveProject(
+      id,
+      this.type === "active" ? ProjectStatus.Active : ProjectStatus.Finished
+    );
+    const listEl = this.element.querySelector("ul")!;
+    listEl.classList.remove("droppable");
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+19 Wrap up
+
+

@@ -1,0 +1,11 @@
+13 Audience Q&A on Reactive Sources
+
+NOTES:
+1. Flux is agnostic when it comes to emitting and executing subcribed behaviors
+	> it depends on what Flux implementation is being used
+2. In Reactive programming model, it hides what happens underneath, specifically on how
+	> reactive source knows that it data is changed
+	> reactive source emits the element
+	> subscriber executes its behavior on the emitted element
+3. If multiple subscription on a specific stream exist, the execution of the subscription is random, not deterministic, and no pattern
+4. Flux works like a publisher, and all that subscribed to it will receive its emitted element

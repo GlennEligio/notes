@@ -1,0 +1,230 @@
+1001. Create Docker image from React app
+
+
+SOURCE:
+https://mherman.org/blog/dockerizing-a-react-app/#docker
+
+
+I. Project Setup
+II. Docker
+III. Production
+IV. React Router and Nginx
+V. Next steps
+
+
+I. Project Setup
+	> skip this if you already have the app ready
+1. Install Create React App globally
+	$ npm install -g create-react-app@3.4.1
+2. Generate a new app
+	$ npm init react-app sample --use-npm
+	$ cd sample
+
+
+II. Docker
+1. Add a Dockerfile to the project root
+	> modify the node Docker image tag, and react-script version to match your app's version
+
+
+Dockerfile content:
+
+# pull official base image
+FROM node:latest
+
+# set working directory
+WORKDIR /app
+
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install app dependencies
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm install --silent
+RUN npm install react-scripts@5.0.0 -g --silent
+
+# add app
+COPY . ./
+
+# start app
+CMD ["npm", "start"]
+
+
+2. Add a .dockerignore
+	> used to ignore files/folders to speed up Docker build process
+
+.dockerignore content:
+
+node_modules
+build
+.dockerignore
+Dockerfile
+Dockerfile.prod
+
+
+
+3. Build and tag the Docker image
+	$ docker build -t <REPOSITORY>:<TAG> <DIRECTORY>
+	> ex: $ docker build -t sample:dev .
+	> ex: $ docker build -t shuntjg/gba-frontend:0.0.1.RELEASE .
+
+
+4. Spin up the container once the image is built	
+	> after running the Container, visit http://localhost:3000
+
+$ docker run \
+    -itd \
+    --rm \
+    -v ${PWD}:/app \
+    -v /app/node_modules \
+    -p 3000:3000 \
+    -e CHOKIDAR_USEPOLLING=true \
+    sample:dev
+
+$ docker run -itd --rm -v ${PWD}:/app -v /app/node_modules -p 3000:3000 -e CHOKIDAR_USEPOLLING=true shuntjg/gba-frontend:0.0.1
+
+
+What’s happening here?
+docker run
+	> The docker run command creates and runs a new container instance from the image we just created.
+-itd
+	> combination of -it and -d option
+	> -d makes the application running inside to be DETTACHED from Contianer life cycle
+	> -it starts the container in interactive mode. 
+		- Why is this necessary? As of version 3.4.1, react-scripts exits after start-up (unless CI mode is specified) which will cause the container to exit. 		- Thus the need for interactive mode.
+--rm
+	> --rm removes the container and volumes after the container exits.
+-v
+	> -v ${PWD}:/app mounts the code into the container at “/app”.
+{PWD} 
+	> may not work on Windows. See this Stack Overflow question for more info.
+	> for Windows, use %cd%
+-p 3000:3000
+	> Since we want to use the container version of the “node_modules” folder, we configured another volume: -v /app/node_modules. You should now be able to remove the local “node_modules” flavor.
+	> -p 3000:3000 exposes port 3000 to other Docker containers on the same network (for inter-container communication) and port 3000 to the host.
+-e CHOKIDAR_USEPOLLING=true
+	> Finally, -e CHOKIDAR_USEPOLLING=true enables a polling mechanism via chokidar (which wraps fs.watch, fs.watchFile, and fsevents) so that hot-reloading will work.
+	
+NOTE:
+1. If you run into an "ENOENT: no such file or directory, open '/app/package.json". error, you may need to add an additional volume: -v /app/package.json.
+2. {PWD} may not work on Windows. See this Stack Overflow question for more info.
+	> https://stackoverflow.com/questions/22111060/what-is-the-difference-between-expose-and-publish-in-docker
+3. docker run command NEEDS TO BE EXECUTED in the same directory where the Dockerfile is located
+	> to be specific, the root folder of the React app
+
+
+
+
+III. Production
+1. Create a separate Dockerfile for use in production called Dockerfile.prod
+	> Here, we take advantage of the multistage build pattern to create a temporary image used for building the artifact – the production-ready React static files – that is then copied over to the production image. 
+	> The temporary build image is discarded along with the original files and folders associated with the image. 
+	> This produces a lean, production-ready image.
+
+
+Dockerfile.prod:
+
+# build environment
+FROM node:13.12.0-alpine as build
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm ci --silent
+RUN npm install react-scripts@3.4.1 -g --silent
+COPY . ./
+RUN npm run build
+
+# production environment
+FROM nginx:stable-alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
+
+2. Build the image
+	> $ docker build -f Dockerfile.prod -t sample:prod .
+
+3. Run the Container
+	> $ docker run -it --rm -p 1337:80 sample:prod
+
+4. Access the React app
+	> http://localhost:1337/
+
+
+
+IV. React Router and Nginx
+	> if you try to go to other Route url in the browser on the current React running in nginx, you can see that it will redirect you to 404 page
+	> if you use React Router in the React app, you need to modify the default.conf configuration file of the nginx Server inside Container
+
+1. Create a directory to contain the modified configuration file for nginx
+	> we will use this to override the default.conf file inside nginx Server in Container
+	> create this in the root directory of ReactJS project
+	> change the node, nginx, and react-script version to suit your needs
+	> the modification we added in config file is this line
+		- try_files $uri $uri/ /index.html;
+		- EXPLANATION: https://stackoverflow.com/questions/17798457/how-can-i-make-this-try-files-directive-work
+		- In short, by default, it only uses try_files. (ex: if we do a "/login", it will look for file named "login")
+		- Adding $uri will make the nginx look for page that makes the URI passed
+
+file directory
+./nginx/nginx.conf
+
+nginx.conf content:
+
+server {
+
+  listen 80;
+
+  location / {
+    root   /usr/share/nginx/html;
+    index  index.html index.htm;
+    try_files $uri $uri/ /index.html;
+  }
+
+  error_page   500 502 503 504  /50x.html;
+
+  location = /50x.html {
+    root   /usr/share/nginx/html;
+  }
+
+}
+
+
+
+2. Create new Dockerfile 
+	> modification in this Dockerfile from previous one is where we overwrite the default.conf file using the nginx.conf in root directory of React
+
+# build environment
+FROM node:17.8.0-alpine as build
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm ci --silent
+RUN npm install react-scripts@5.0.0 -g --silent
+COPY . ./
+RUN npm run build
+
+# production environment
+FROM nginx:stable-alpine
+COPY --from=build /app/build /usr/share/nginx/html
+# new
+# overwrite the default.conf
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
+
+
+3. Build the image
+	> $ docker build -f Dockerfile.prod -t sample:prod .
+
+4. Run the Container
+	> $ docker run -it --rm -p 1337:80 sample:prod
+
+
+Now, if you visit Routes defined in React app (e.g. "/login", "/register", "/admin"), you will not be visited by a 404 NOT FOUND page.
+Instead, you will be redirected to correct page.
+
+

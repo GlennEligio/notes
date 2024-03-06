@@ -1,0 +1,586 @@
+Day 7
+
+docker container run -it --name c1 -d ubuntu
+	> create a Docker Container with name 1 using ubuntu Docker image
+
+docker rm -f c1
+	> used to FORCEFULLY remove a Docker Container
+
+NOTE:
+1. Docker Container can not be removed if they are in running state
+	> it must be stopped first using docker stop
+	> or you can add "-f" flag to forcefully remove a running Docker Container
+2. We can inject a Docker output into another Docker command using $(docker output)
+	> ex: docker rmi $(docker images -q) for removing all docker images
+
+docker container run -it --name webserver -p 80:80 -d ubuntu
+	> "-p" specifies the port forwarding of the host machine to the Docker Container
+	> the first port is the LOCAL MACHINE PORT
+	> the second port is the DOCKER CONTAINER PORT
+	> in example above, the Port 80 of Host machine is mapped to Port 80 of Docker Container
+		- this will FORWARD all request of Host's Port 80 to Docker Container's Port 80
+
+docker cp myapp.html webserver:/var/www/html/
+	> "cp" command is used to copy a specific file in local machine to container's directory
+	> in example above, myapp.html in local machine is copied in webserver Container's /var/www/html
+
+docker rmi $(docker images -q)
+	> used to delete all the Docker images in Local repository
+
+
+INSTALLING Apache in the Docker Container
+1. Run webserver Docker Container
+	docker container run -it --name webserver -p 80:80 -d ubuntu
+2. Enter terminal of webserver Docker Container
+	docker exec -it webserver bash
+3. Install the apache2 inside webserver and start it
+	apt update 
+	apt install apache2 -y 
+	service apache2 start
+4. Go to your browser and use public ip address of Ubuntu Server 1 and you will be able to see Apache defualt page.
+	 http://3.108.3.172
+5. Exit the docker container
+	exit
+6. Create a test.html file in the localmachine
+	echo "<h1>This is a simple header</h1>" >> test.html
+7. Copy the file from local machine to the /var/www/html inside the Docker Container
+	docker cp test.html web1:/var/www/html/
+8. Access the test.html in the browser, concatenate "/test.html" to the public ip address of Ubuntu server 1
+	http://3.108.3.172/test.html
+
+
+Assignment
+1.	docker container run -it --name webserver -p 80:80 -d ubuntu
+		> in case of local machine's port 80 is already allocated, use other port (e.g. -p 81:80)
+		> in this case, you will have to access the apache2 website in port 81 of localmachine (http://<public ip>:81/)
+	docker exec -it webserver bash
+2.	apt update 
+	apt install apache2 -y 
+3.	service apache2 start
+5.	exit
+	echo "<h1>My appppp</h1>" >> myapp.html
+	docker cp myapp.html webserver:/var/www/html/
+6. 	docker stats webserver
+7. 	docker stop webserver
+8. 	docker start webserver
+		-> start apache2 again inside the container
+9. 	docker rm -f webserver
+
+
+
+Docker Commit (using Custom Images)
+	> we can create Custom Images by:
+		a. Creating Image from existing Container using Docker Commit
+		b. Creating Image from existing Docker Image
+		c. Dockerfile
+			- script to create custom docker image
+			- mainly used for automation
+
+1. Creating Image from existing Container
+
+docker commit <container name> <new image name>
+	> will create a Docker Image based on Docker Container specified
+	> ex: docker commit webserver webimg
+		- this will create a Docker image "webimg" based on the "webserver" Container
+	> even if the Docker Container where this Image is based from is deleted, the Docker Image will STAY
+
+
+2. Creating Image from existing Image
+
+docker image tag <base image> <new image>
+	> will create a Docker image based on Docker image specified
+	> ex: docker image tag ubuntu myubuntu
+		- this will create a "myubuntu" Docker image based on the "ubuntu" image
+	> even if base image is removed/delete, the new image will stay and persist
+
+3. Dockerfile
+	> set of instruction used to create a Docker image
+
+
+
+Docker Save and Load
+	> commands used to save and load docker images 
+	> for sending Docker images for other users
+
+docker save <image name> > <tar or zip file name>
+	> used to store a Docker image in a Compressed file type
+	> ex: docker save webserver > myimg.tar
+
+docker load < <tar or zip file>	
+	> used to load a Docker image from a compressed tar or zip file
+	> ex: docker load < myimg.tar
+
+
+dockerhub
+	> hub.docker.com
+	> global repository for docker images
+	> by default, Docker images we push are in public registry
+
+Pushing our own Docker Image in our dockerhub registry
+1. Create custom image (adding your docker id is IMPORTANT)
+	docker image tag <base image> <docker id>/<image name>
+	docker image tag webimg shuntjg/webimg
+2. Login your dockerhub account
+	docker login
+3. Enter credentials
+4. Push the newly created Docker image to your dockerhub repository	
+	docker push <dockerid>/<image name>
+	docker push shuntjg/webimg
+
+
+
+docker push <docker id>/<image name>
+	> used to push a Docker image in Docker id's image registry
+docker pull <docker id>/<image name>
+	> used to pull a Docker image from DockerId's registry to the local registry
+
+
+
+DOCKER REGISTRY
+	> a registry is a storage and content delivery system, holding named Docker images available in different tagged version
+	> Docker Registry itself is a Docker image
+
+Creating a Docker Registry locally
+docker container run -d -p 5000:5000 --name local_registry registry
+	> since Docker Registry is an Image itself, we will use the "run" command
+	> also, we must set the specific port of the container
+	> "-d" since we would want to be in dettached mode (background)
+
+Pushing an Image in the Local Docker Registry
+	> same as to when we push an Image in dockerhub registry
+	> except we will use the <machine ip>:<tcp port mapped to docker registry>
+
+docker push <machine ip:tcp port>/<image name>
+
+
+56  docker images
+   57  docker ps
+   58  curl localhost:5000/v2/_catalog
+   59  docker images
+   60  docker rmi ramansharma95/webimg
+   61  docker image tag webimg localhost:5000/webimg
+   62  docker images
+   63  docker push localhost:5000/webimg
+   64  curl localhost:5000/v2/_catalog
+   65  docker images
+   66  docker rmi webimg
+   67  docker rmi localhost:5000/webimg
+   68  docker images
+   69  docker pull localhost:5000/webimg
+   70  docker images
+
+
+Dockerfile
+	> Dockerfile is a script used to create custom docker images
+	> mainly used for automation (CI/CD)
+	> uses a lot of "Reserve" words
+	> FROM is a mandatory
+
+Reserve words
+FROM
+	> used to fetch a base image to be used
+	> syntax is:
+		FROM <base image>
+ARG
+	> stands for Arguments
+	> DEBIAN_FRONTEND=noninteractive
+		- makes the actions/commands non-interactive
+		- ex: apache2 installation prompts about geolocation,timezone,etc will not show
+	> syntax is:
+		ARG <key>=<value>
+		ARG DEBIAN_FRONTEND=noninteractive
+RUN
+	> adds instruction layers
+	> these includes
+		- shell comamnds (apt update, apt install, etc)
+	> syntax is
+		RUN <shell command>
+		RUN apt-get update
+COPY
+	> used to copy a file from localmachine running the Container to the Container directory inside
+	> syntax is
+		COPY <source> <destination in the container>
+ADD
+	> used to add files/directory to docker image
+	> difference with COPY is that ADD can fetch file from any source (eg Internet)
+		- ex: https://mirrors.download.net/example.zip
+	> also, if we add a compressed file using ADD, it will UNZIP the file in the destination 
+	> syntax is
+		ADD <source> <destination in the container>
+ENTRYPOINT
+	> similar to CMD
+	> except ENTRYPOINT commands are executed at the start of Container instantiation
+	> executed only ONCE
+ENV
+	> stands for environment variables
+	> Docker Container can access this variables directly
+		- ex: echo $name in the Linux/Ubuntu
+	> syntax is:
+		ENV <name> <value>
+
+
+
+docker build 
+
+81  vi Dockerfile
+   82  docker build . -t img2
+   83  docker images
+   84  docker container run -it --name c2 -d img2
+   85  docker exec -it c2 bash
+   86  vi Dockerfile
+   87  touch myfiles myfile2
+   88  ls
+   89  wget https://mirrors.estointernet.in/apache/maven/maven-3/3.6.3/source/apache-maven-3.6.3-src.tar.gz
+   90  ls
+   91  vi Dockerfile
+   92  docker build . -t img3
+   93  docker images
+   94  docker container run -it --name c3 -d img3
+   95  docker exec -it c3 bash
+   96  vi Dockerfile
+   97  docker build . -t img4
+   98  docker container run img4
+   99  docker container run img4 echo "Hello Devops"
+  100  vi Dockerfile
+  101  docker build . -t img5
+  102  docker container run img5
+  103  docker container run img5 echo "Hello Devops"
+  104  vi Dockerfile
+  105  docker build . -t img6
+  106  docker container run img6
+  107  docker container run img6 "Hello Devops"
+
+
+
+Docker MultiStage file
+	> having a huge Docker image if not preferred since Docker image is supposed to be lightweight
+	> to create a multistage file, we will need to create multiple stages inside Dockerfile
+	> each stages are separated by FROM keyword
+
+EX:
+
+FROM maven:latest AS build
+WORKDIR /
+COPY src /src
+COPY pom.xml /
+RUN mvn  clean package
+
+
+FROM openjdk:alpine
+COPY --from=build /target/myproj-1.0-SNAPSHOT.jar /myproj-1.0-SNAPSHOT.jar
+EXPOSE 8080
+CMD java -cp /myproj-1.0-SNAPSHOT.jar com.raman.App
+
+    1  git clone https://github.com/onlineTrainingguy/jenkinscicd.git
+    2  ls
+    3  cd jenkinscicd/
+    4  ls
+    5  vi Dockerfile
+    6  docker build . -t img6
+    7  docker container run img6
+    8  docker images
+    9  vi Dockerfile
+   10  docker build . -t img7
+   11  docker container run img7
+   12  docker images
+
+
+
+Docker Storage (Docker volumes & Docker bind mount)
+
+Types of Docker Storage
+1. Non persistent	
+	-> data is deleted WITH container
+	-> uses temporary file storage (tmpfs)
+2. Persistent		
+	-> Docker volume (data is under docker daemon)
+
+
+STEPS
+	> NOTE: IGNORE
+1. Delete Docker Containers and Images (in case of error, just add force flag "-f")
+	docker rm -f $(docker ps -a -q)
+	docker rmi -f $(docker images -q)
+2. Run a Ubuntu Docker Image in container
+	docker container run -it --name c1 -d ubuntu
+3. Enter c1 Container terminal
+	docker exec -it c1 bash
+4. Create a test directory
+	mkdir test
+5. Go inside test
+	cd test
+6. create files 1 2 3 4 
+	touch 1 2 3 4 
+	ls
+7. Exit the Container terminal
+	exit
+8. Stop c1 Container 
+	docker stop c1
+9. Remove the c1 container forcefull
+	docker rm -f c1
+10. Check docker containers
+	docker ps -a
+11. Run c1 container again
+	docker container run -it --name c1 -d ubuntu
+12, Check for files in /app, files should not be present since we REMOVED the Container
+	ls /app
+13. Remove c1 container again forcefully
+	docker rm -f c1
+13. Run the Docker Container again, this time setting mount to type tmpfs (temporary file system)
+	docker container run -it --name c1 --mount type=tmpfs,destination=/app -d ubuntu
+14. Go inside c1 container
+	docker exec -it c1 bash
+15. Go to /app and create files 1 2 3 4
+	cd app/
+	ls
+	touch 1 2 3 4
+	ls
+16. Exit container
+	exit
+17. Stop container
+	docker stop c1
+18. Start container
+	docker start c1
+19. Go inside c1 Container
+	docker exec -it c1 bash
+20. Check contents of /app folder, it should be empty even if we ONLY STOPPED it since we set mount to type of tmpfs
+	ls app
+
+
+Docker Volume
+	> used for persisting data
+
+Commands:
+  create      Create a volume
+  inspect     Display detailed information on one or more volumes
+  ls          List volumes
+  prune       Remove all unused local volumes
+  rm          Remove one or more volumes
+
+docker volume create [OPTIONS] [VOLUME]
+	> used to create a volume
+
+Options:
+  -d, --driver string   Specify volume driver name (default "local")
+      --label list      Set metadata for a volume
+  -o, --opt map         Set driver specific options (default map[])
+
+
+STEPS:
+1. Check the Docker components
+	ls /var/lib/docker/
+2. Go inside volumes section
+	ls /var/lib/docker/volumes/
+3. Prune all unused Docker Volume
+	docker volume prune
+4. Check Docker Volume command help
+	docker volume
+5. Check Docker volumes again after Prune (some volume shouldve removed)
+	ls /var/lib/docker/volumes/
+6. Create a Docker volume named "demo-vol"	
+	docker volume create demo-vol
+7.
+   37  docker volume ls
+   38  ls /var/lib/docker/volumes/
+   39  ls /var/lib/docker/volumes/demo-vol/_data/
+   40  docker container run -it --name c1 --mount source=demo-vol,destination=/app -d ubuntu
+   41  docker rm -f c1
+   42  docker ps
+   43  docker container run -it --name c1 --mount source=demo-vol,destination=/app -d ubuntu
+   44  docker exec -it c1 bash
+   45  ls /var/lib/docker/volumes/demo-vol/_data/
+   46  docker rm -f c1
+   47  docker ps -a
+48  ls /var/lib/docker/volumes/demo-vol/_data/
+   49  docker container run -it --name c2 --mount source=demo-vol,destination=/demo -d centos
+   50  docker exec -it c2 bash
+   51  docker rm -f c2
+   52  docker volume rm demo-vol
+   53  ls /var/lib/docker/volumes/demo-vol/_data
+   54  docker container run -it --name c2 --mount source=demo-vol,destination=/demo -d centos
+   55  docker inspect c2
+	> search for "Mounts" section
+   56  docker rm -f c2
+   57  docker volume prune
+
+
+Bind Mount
+	> method of persisting data
+	> Bind Mount bind a folder in the FileSystem to a specific folder inside Container
+		- any changes in folder of Container will take effect in the binded folder of FileSystem
+
+   58  mkdir mydir
+   59  ls
+   60  rm -ifr *
+   61  ls
+   62  mkdir mydir
+   63  cd mydir/
+   64  ls
+65  docker container run -it --name c1 -v /home/ubuntu/mydir:/demo1 -d ubuntu
+cd demo1
+   66  docker exec -it c1 bash
+   67  ls
+   68  touch 5 6
+   69  ls
+   70  docker exec -it c1 bash
+   71  docker rm -f c1
+   72  ls
+   73  docker container run -it --name c2 -v /home/ubuntu/mydir:/data -d centos
+   74  docker exec -it c2 bash
+   75  docker inspect c2
+
+
+Docker Networking
+
+Networking types
+1. Bridge network
+	
+
+Docker 0
+	> created by Host Machine running a Docker by default
+	> default connection of the Containers created
+	> each of the Container is allocated a specific subnet IP in this Docker 0
+	> by default, CIDR of Docker 0 network is 16 (256x256 possible subnet ip)
+
+
+ip address
+	> used to show ip address available inside the machine
+	> right now, we can see three things
+		a. Loopback address
+		b. NIC address
+		c. Docker0
+
+docker network ls
+	> shows all docker network available
+	> one of them is the bridge network
+
+docker network create -d bridge
+	> "-d" specifies the driver used for docker network
+	> in example above, bridge type network is created
+
+docker container run -it --name web --network br1 -d 
+
+
+
+DOCKER NETWORK COMMANDS
+1  ip a
+    2  docker ps
+    3  docker rm -f c2
+    4  ip a
+    5  docker network ls
+    6  docker container run -it --name c1 -d ubuntu
+    7  ip a
+    8  docker inspect c1
+	> we should see a new ip address here referring to the docker container c1
+    9  docker container run -it --name c2 -d centos
+   10  ip a
+   11  docker inspect c2
+   12  docker exec -it c2 bash
+   13  docker rm -f c1 c2
+   14  docker network create -d bridge br1
+   15  ip a
+   16  docker pull ramansharma95/webapp
+   17  docker pull ramansharma95/mysql
+   18  docker container run -it --name web --network br1 -d ramansharma95/webapp
+   19  docker rm -f web
+   20  docker container run -it --name web --network br1 -p 80:80 -d ramansharma95/webapp
+   21  docker container run -it --name db --network br1  -d ramansharma95/mysql
+   22  cd ..
+   23  docker exec -it web bash
+		> look for the ip address to visit here
+
+NEW SESSION (FOR MYSQL edit)
+24. docker exec -it db bash
+25. mysql -uroot -pwhizlabs
+26. Do the sql commands below
+
+db container commands
+
+create database company;
+use company;
+create table employee ( name varchar(30), mobile varchar(30));
+ select * from employee;
+
+
+26. Go to webapp website (pass public ip address of ubuntu1)
+27. Enter information
+28. Check data entered in mysql
+	select * from employee
+
+
+
+Bridge 
+	> docker container is running in the docker0 network
+
+Host network
+	> docker container is running in the host machine
+
+None network
+	> does not have any ip address
+	> usage include
+		- training data
+		- testing applications
+	> after testing in none network, we typically move it to other network
+
+
+docker network disconnect <driver-name> <container>
+docker network connect <driver-name> <container>	
+	> used to disconnect/connect a docker container into a specific network driver type
+
+
+DOCKER NETWORK TYPES COMMANDS
+1  docker rm -f web db
+    2  docker network rm br1
+    3  docker network ls
+    4  docker container run -it --name h1 --network host -d nginx
+    5  docker inspect h1
+    6  docker container run -it --name h1 --network host -d nginx
+    7  docker container run -it --name h2 --network host -d nginx
+    8  docker ps -a
+    9  docker container rm -f h1 h2
+   10  docker network ls
+   11  docker container run -it --name n1 --network none -d centos
+   12  docker inspect n1
+   13  docker exec -it n1 bash
+	ip a
+		> here we can see that we dont have ip address in the container EXCEPT loopback ip
+	exit
+   14  docker network disconnect none n1
+   15  docker network connect bridge n1
+   16  docker inspect n1
+		> we should see in "Networks" that it is now a bridge
+
+
+DOCKER COMPOSE
+	> used to create Services to call different Docker Container
+	> with Docker Compose, a new network bridge will be created
+	> Docker Compose manages Docker Container in a single machine
+	> Docker composed in defined using a yaml file
+
+yaml file contents
+version:
+	> defines the version of docker compose
+services:
+	> defines the services used to 
+
+docker-compose scale db=1
+
+
+DOCKER COMPOSE COMMANDS
+18  sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   19  chmod +x /usr/local/bin/docker-compose
+   20  vi docker-compose.yaml
+   21  docker-compose up -d
+   22  docker ps -a
+   23  docker rm -f n1
+   24  docker ps -a
+   25  docker network ls
+   26  ip a
+   27  docker-compose scale db=3
+   28  docker ps
+   29  docker-compose --scale db=1
+   30  docker-compose scale db=1
+   31  docker ps
+   32  docker-compose down
+   33  docker ps
+   34  docker network ls

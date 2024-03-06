@@ -1,0 +1,35 @@
+26. Enabling Discovery Locator with Eureka for Spring Cloud API Gateway
+
+
+Properties to add
+spring.cloud.gateway.discovery.locator.enabled
+	> defines if the Gateway will use Eureka Service Discovery for its Route Locator
+	> the API Gateway needs to have Eureka Discovery Client in its classpath/dependency
+	> takes a boolean value (true/false)
+	> the URI structure of the API gateway to invoke other Service API endpoints in Eureka Naming Server is
+		{API gateway host URL}/{Service Name}/{expose API endpoint of Service}
+
+EX:
+If
+	1. API gateway service is hosted in http://localhost:8765
+	2. Service name is CURRENCY-EXCHANGE
+	3. Exposed API endpoint to call is "/currency-exchange/from/USD/to/INR"
+Then the resulting Route URL to call in API gateway is
+	http://localhost:8765/CURRENCY-EXCHANGE/currency-exchange/from/UDS/to/INR
+
+
+
+spring.cloud.gateway.discovery.locator.lowerCaseServiceId
+	> defines if the service Id to use in API Gateway URL will be lower case or not
+		- by default, Services registed in Eureka Naming Server are in UPPERCASES
+		- so to invoke the Services, we will need to type the Service name in UPPERCASE
+	> takes boolean value (true/false)
+		- if set to false, we CAN ONLY invoke Services in lowercase
+		- ex: http://localhost:8765/currency-exchange/currency-exchange/from/USD/to/INR WILL return a result
+		- ex: http://localhost:8765/CURRENCY-EXCHANGE/currency-exchange/from/USD/to/INR WILL NOT return a result
+
+
+EX:
+# Gateway Properties
+spring.cloud.gateway.discovery.locator.enabled=true
+spring.cloud.gateway.discovery.locator.lowerCaseServiceId=true

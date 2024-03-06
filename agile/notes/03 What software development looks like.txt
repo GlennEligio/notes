@@ -1,0 +1,78 @@
+03 What software development looks like?
+
+What Software Development looks like and how it evolved over the years?
+
+Real life example of process (Creating a house)
+1. Buyer meets builder to specify needs
+2. List buyer needs
+3. Home layout design
+4. Home detail design
+5. Build home
+6. Local city approval
+7. Home inspection with the buyer
+8. Buyer starts living in the house
+9. Maintenance
+
+
+Analogy to Software development (WATERFALL)
+1. Requirements
+	> Fetching Requirements, 
+	> Analysis of different options, 
+  	> Prototyping of software to show to Users
+2. Design
+	> Architecture
+	> High level design
+	> Low level design
+	> involves the Software architects and developers
+	> here, we define the components to be created
+3. Implementation
+	> Coding the components
+	> Unit testing the components
+4. Verification
+	> Integration Testing
+		- test how each components are working together
+	> User Acceptance Testing (UAT)
+		- users are involved
+5. Operations and Maintenance
+	> User start using the product 
+	> here, Users might provide changes or request for fixes
+
+
+Waterfall methodologies issues
+1. Requirements changes from time to time
+	> hard to predict requirements ahead of time
+	> if theres a requirement changes, all stages will need to be repeated again
+	> One of the issues the software industry saw was that once a product was given to users after several years of development, users responded saying "This is not what i want".
+2. Misintepretation of the requirements by the Software architects and developers
+	> this issues will propagate down the chain
+	> Since waterfall methods has no way to get early feedback from users, the issues go undetected for long time.
+3. Integration issues undetected
+	> these issues with component integration may not be detected for a long time since we will be able to do this only if the components are finished
+	> Sub-components of software are built in silos and are not integrated till the end. This causes late defect detection and costly changes in the end.
+
+
+Variants of Waterfall to address issues
+1. V Model
+2. Sashimi model
+3.  RUP model
+4. Incremental model
+5. Spiral model
+
+
+
+Agile
+ > not a model, but a mindset 
+ > specific software developers created "Agile Manifesto & Principle"
+ > many models are created based on the Agile Manifesto like
+	- SCRUM
+	- XP
+ > main idea is that instead of creating a long single cycle of software development, we will do the development in SHORT CYCLES. We code, build, test each cycle and apply what we learn in next cycles
+
+
+How to response quickly and confidently
+1. Continuous Integration
+	> changes is automatically applied to the codebase
+2. Automated Testing
+	> testing of the app's components and their integration is automated
+3. Automated Deployment
+	> software is automatically deployed and propagated to the deployment environment

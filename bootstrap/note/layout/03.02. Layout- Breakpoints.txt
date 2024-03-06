@@ -1,0 +1,41 @@
+03.02. Layout- Breakpoints
+
+Breakpoints
+	> Breakpoints are customizable widths that determine how your responsive layout behaves accross devices
+
+Breakpoints Core concepts
+1. Breakpoints are building blocks of responsive design
+	> use them to control when your layout can be adapted at a particular viewport or device size
+2. Use media queries to architect your CSS by breakpoint
+	> Media queries are a feature of CSS that allow you to conditionally apply styles based on a set of browser and operating system parameters
+	> Bootstrap commonly use min-width property in their media queries
+3. Mobile first, responsive desgin is the goal
+
+
+Available breakpoints
+	> Bootstrap includes six default breakpoints, sometimes referred to as "grid tiers", for building responsively
+	> These breakpoints can be customized if you're using Bootstrap's source Sass files
+	> SYNTAX IS: prop-breakpoint-number
+		-> ex: col-sm-4, md-lg-4, etc
+
+Breakpoints		Class infix		Dimensions 
+X-Small			None			<576px
+Small			sm			>=576px
+Medium			md			>=768px
+Large			lg			>=992px
+Extra large		xl			>=1200px
+Extra extra large	xxl			>=1400px
+
+EX:
+<div col-sm-1 col-md-2 col-lg-3 col-xl-4 col-xxl-6></div>
+	> this div will
+		1. occupy 1 col in row when width >=576px
+		2. occupy 2 col in row when width >=768px
+		3. occupy 3 col in row when width >=992px
+		4. occupy 4 col in row when width >=1200px
+		5. occupy 5 col in row when width >=1400px
+
+
+Overriding Breakpoints
+	> These breakpoints are customizable via Sass—you’ll find them in a Sass map in our _variables.scss stylesheet.
+

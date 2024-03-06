@@ -1,0 +1,29 @@
+Scanner method
+	> used to get input
+	> we can pass an InputStream to its constructor
+	> with it, it will "scan" the inputstream in console
+	> need java.util.Scanner package in import
+	
+
+Scanner syntax
+1. Defining scanner method
+	Scanner scannerName = new Scanner(System.in);
+2. Defining variable for input being scanned
+	String name = scannerName.next();
+
+
+Some methods of the Scanner class
+	
+nextLine()
+	> reads a line of text/characters in InputStream until it reaches a linebreak "\n" or ENTER and then return the said text
+
+nextInt()
+	> reads the characters in the InputStream until it reaches a linebreak "\n" then try to parse the text it read into Integer and returns it.
+
+
+
+Process:
+	1. After defining scanner method, the program will scan for input.
+	2. After getting input, it will be assigned to variable assigned as scannerName.next()
+
+

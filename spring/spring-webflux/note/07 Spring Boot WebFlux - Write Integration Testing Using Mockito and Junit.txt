@@ -1,0 +1,244 @@
+07 Spring Boot WebFlux - Write Integration Testing Using Mockito and Junit
+
+Dependency needed:
+1. Spring Boot Starter Test
+	> contain testing framework library like Mockito and Junit
+2. Reactor Test
+	> contains testing api for reactive testing
+
+
+Annotation used:
+@WebFluxTest
+ > equivalent of @WebMvcTest in Spring MVC
+ > Annotation that can be used for a Spring WebFlux test that focuses only on Spring WebFlux components.
+  > Using this annotation will disable full auto-configuration and instead apply only configuration relevant to WebFlux tests (i.e. @Controller, @ControllerAdvice, @JsonComponent, Converter/GenericConverter, and WebFluxConfigurer beans but not @Component, @Service or @Repository beans).
+ > By default, tests annotated with @WebFluxTest will also auto-configure a WebTestClient. 
+ > For more fine-grained control of WebTestClient, the @AutoConfigureWebTestClient annotation can be used.
+ > takes input arguments
+	1. Class controller class
+		- specify which Controller class to add in AppContext
+
+
+Interfaces used
+WebTestClient
+ > Client for testing web servers that uses WebClient internally to perform requests while also providing a fluent API to verify responses. 
+ > This client can connect to any server over HTTP, or to a WebFlux application via mock request and response object
+ > This object is AUTOCONFIGURED if the class it is injected to is annotated with @WebFluxTest
+ > similar to WebClient but is for testing purpose
+
+Methods
+WebTestClient.get()
+ > one of the method to prepare the WebTestClient to use specific Http method for sending request
+ > we can use other HTTP methods as well like WebTestClient.post(), put(), delete(), etc
+ > can either return a RequestBodyUriSpec or RequestHeaderUriSpec based on the Http method used
+	- for RequestHeaderUriSpec (get, delete), we can modify the headers and uri of the request
+	- for RequestBodyUriSpec (post, put, patch), we can modify the request body, in addition of RequestHeaderUriSpec functionality
+	- both of these interfaces extends to the RequestHeaderSpec, which allows you to modify headers
+
+
+RequestHeadersSpec
+ > specification for adding request headers and performing an exchange
+ > contains method to add headers, cookies and to perform the exchange through exchange()
+ 
+Methods:
+exchange(): ResponseSpec
+ > finish the request and perform the exchange
+ > receives the Response
+
+
+
+ResponseSpec
+ > Chained API for applying assertions to a response
+ > contains methods necessary to do response assertion for integration testing
+ 
+Methods:
+expectStatus(): StatusAssertions
+expectHeader(): HeaderAssertions
+expectCookie(): CookieAssertions
+ > used to do assertions to request header, status, and cookie
+ > returns an Assertions object where we can chain assertion methods
+ > these method will return the ResponseSpec again, so that we can chain multiple assertion methods
+
+returnResult(Class<T> elementClass)
+ > get the result of the response body as the FluxExchangeResult<T>
+ > after this, we can call getResponseBody() to return a Flux of the specified T type
+ > after getting the Flux<T> of response body, we can use StepVerifier to do Assertion to the events sent
+
+
+
+
+StepVerifier
+ > A StepVerifier provides a declarative way of creating a verifiable script for an async Publisher sequence, by expressing expectations about the events that will happen upon subscription. 
+ > The verification must be triggered after the terminal expectations (completion, error, cancellation) have been declared, by calling one of the verify() methods.
+ > Create a StepVerifier around a Publisher using create(Publisher) or withVirtualTime(Supplier<Publisher>) (in which case you should lazily create the publisher inside the provided lambda).
+ > Set up individual value expectations using expectNext, expectNextMatches(Predicate), assertNext(Consumer), expectNextCount(long) or expectNextSequence(Iterable).
+ > Trigger subscription actions during the verification using either thenRequest(long) or thenCancel().
+ > Finalize the test scenario using a terminal expectation: expectComplete(), expectError(), expectError(Class), expectErrorMatches(Predicate), or thenCancel().
+ > Trigger the verification of the resulting StepVerifier on its Publisher using either verify() or verify(Duration). 
+	- (note some of the terminal expectations above have a "verify" prefixed alternative that both declare the expectation and trigger the verification).
+ > If any expectations failed, an AssertionError will be thrown indicating the failures.
+
+
+EX:
+ StepVerifier.create(Flux.just("foo", "bar"))
+    .expectNext("foo")
+    .expectNext("bar")
+    .expectComplete()
+    .verify();
+
+
+
+Creating Integration Testing for Spring Webflux
+1. For endpoints where you don't need to assert the response body, using WebTestClient and its assertion methods is enough
+2. For endpoints whose response body is needed to be asserted, you will need to use StepVerifier to verify the Flux/Mono
+
+
+
+EX: ProductControllerTest.java
+
+@ExtendWith(SpringExtension.class)
+@WebFluxTest(ProductController.class)
+@Slf4j
+public class ProductControllerTest {
+
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @MockBean
+    private ProductService service;
+
+    private Product p1, p2, p3;
+
+    @BeforeEach
+    void setup() {
+        p1 = new Product(new ObjectId().toHexString(), "Product1", 1, 20.1);
+        p2 = new Product(new ObjectId().toHexString(), "Product2", 2, 25);
+        p3 = new Product(new ObjectId().toHexString(), "Product3", 2, 30);
+    }
+
+    @Test
+    @DisplayName("Get all products and returns 200OK with the Products")
+    void getProducts_returns200OKWithProducts() {
+        Flux<Product> productFlux = Flux.just(p1, p2, p3);
+        when(service.getProducts()).thenReturn(productFlux);
+
+        Flux<ProductDto> productFluxExchangeResult = webTestClient.get()
+                .uri("/products")
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(ProductDto.class)
+                .getResponseBody();
+
+        StepVerifier.create(productFluxExchangeResult)
+                .expectSubscription()
+                .expectNext(AppUtils.entityToDto(p1))
+                .expectNext(AppUtils.entityToDto(p2))
+                .expectNext(AppUtils.entityToDto(p3))
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("Get product with valid id returns 200OK with corresponding Product")
+    void getProductById_withValidId_returns200OKWithCorrectProduct() {
+        Mono<Product> productMono = Mono.just(p1);
+        String validId = p1.getId();
+        when(service.getProductById(validId)).thenReturn(productMono);
+
+        Mono<ProductDto> productMonoResult = webTestClient.get()
+                .uri("/products/" + validId)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(ProductDto.class)
+                .getResponseBody().single();
+
+        StepVerifier.create(productMonoResult)
+                .expectSubscription()
+                .expectNext(AppUtils.entityToDto(p1))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Get products within a price range with min and max returns 200OK with Products within the range")
+    void getProductsByPriceRange_withValidMinAndMaxReqParam_with200OKWithCorrectProducts() {
+        double min = 20;
+        double max = 26;
+        Flux<Product> productFlux = Flux.just(p1, p2, p3).filter(p -> p.getPrice() > min && p.getPrice() < max);
+        when(service.getProductByPriceRange(min, max)).thenReturn(productFlux);
+
+        Flux<ProductDto> productFluxResult = webTestClient.get()
+                .uri(uriBuilder -> {
+                    return uriBuilder.path("/products/range")
+                            .queryParam("min", min)
+                            .queryParam("max", max).build();
+                }).exchange()
+                .expectStatus().isOk()
+                .returnResult(ProductDto.class)
+                .getResponseBody();
+
+        StepVerifier.create(productFluxResult)
+                .expectSubscription()
+                .expectNextMatches(p -> p.getPrice() > min && p.getPrice() < max)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Create Product and returns the Product created")
+    void saveProduct_withProperPayload_returns201CreatedWithNewProduct() {
+        ProductDto dtoRequest = AppUtils.entityToDto(p1);
+        Product productToBeSaved = AppUtils.dtoToEntity(dtoRequest);
+        log.info("Product to be saved {}", productToBeSaved);
+        Mono<Product> savedProductMono = Mono.just(p1);
+        when(service.saveProduct(productToBeSaved)).thenReturn(savedProductMono);
+
+        Mono<ProductDto> dtoResponse = webTestClient.post()
+                .uri("/products")
+                .bodyValue(AppUtils.entityToDto(p1))
+                .exchange()
+                .expectStatus().isOk() // TODO: Configure the endpoint so that Response is 201 Created
+                .returnResult(ProductDto.class)
+                .getResponseBody().single();
+
+        StepVerifier.create(dtoResponse)
+                .expectSubscription()
+                .expectNext(AppUtils.entityToDto(p1))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Update Product and returns 200 OK with updated Product")
+    void updateProduct_withProperPayload_returns200OkWithUpdatedProduct() {
+        ProductDto dtoRequest = AppUtils.entityToDto(p1);
+        String validId = p1.getId();
+        when(service.updateProduct(AppUtils.dtoToEntity(dtoRequest), validId)).thenReturn(Mono.just(p1));
+
+        Mono<ProductDto> dtoResponse = webTestClient.put()
+                .uri("/products/" + validId)
+                .body(Mono.just(dtoRequest), ProductDto.class)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(ProductDto.class)
+                .getResponseBody().single();
+
+        StepVerifier.create(dtoResponse)
+                .expectSubscription()
+                .expectNext(dtoRequest)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    @DisplayName("Delete Product using valid Id returns 200OK")
+    void deleteProduct_withValidId_returns200OK() {
+        String validId = p1.getId();
+        when(service.deleteProduct(validId)).thenReturn(Mono.empty());
+
+        webTestClient.delete()
+                .uri("/products/" + validId)
+                .exchange()
+                .expectStatus().isOk();
+    }
+}
+

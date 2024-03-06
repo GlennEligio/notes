@@ -1,0 +1,227 @@
+Section 9 - NIFI Custom Processor - Do the Impossible
+
+Contents:
+40. Overview on NiFi Custom Processor
+41. Development Environment Setup
+42. Out First Custom Processor
+
+
+
+
+40. Overview on NiFi Custom Processor
+
+NiFi Processor Recap
+ > We have tons of Data Source and Data Sink Processors
+ > At the time of recording this video, NiFi has 280+ Processors
+ > Each Processors in NiFi is unique in its own way
+ > NiFi have processors for all your data needs
+ 
+ 
+ 
+Why Custom Processors
+ > There will be situations where you will not be able to use any of these in-built processors which comes bundled with NiFi to cater your requirements
+ > This is where the Custom Processors of NiFi comes in handy
+
+
+
+The Million Dollar Question
+ > NiFi provides maven archetypes to create our own processors or controller services, which is compatible and easy to include as part of our data flow
+ > Whenever someone tells, you can extend their tool. You will get tons of questions regarding on how easy it's going to be and how can we migrate this custom code when a new version of the tool arrives
+ 
+ 
+ 
+Why its simple?
+ > A processor in NiFi takes an input flow file, and do some processing on top of it and produces an output flow file. It can also have some properties using which you can configure the way the processor processes the input data
+ > The FlowFile abstraction of NiFi makes it so simple and easy to create custom processors
+ 
+ 
+ 
+Maven Archetype - Auto generates everything we need
+
+Advantages of Using Maven Archetype
+ > The NiFi custom processor maven archetype makes your life easy by auto-generating the code required for us to get started
+ > The auto-generated code has everything we need, and all we have to do is to write your custom Java code inside it to process the input flow file to product the output flow file
+
+
+
+41. Development Environment Setup
+
+
+Download and Setup Java Developer ENVIRONMENT:
+
+Installing the JDK Software and Setting JAVA_HOME - https://docs.oracle.com/cd/E19182-01/820-7851/inst_cli_jdk_javahome_t/
+
+
+
+Extra Reference:
+https://www.mkyong.com/java/how-to-set-java_home-on-windows-10/
+https://www.mkyong.com/java/how-to-install-java-jdk-on-ubuntu-linux/
+https://www.mkyong.com/java/how-to-set-java_home-environment-variable-on-mac-os-x/
+
+
+
+Download and Setup Maven:
+https://www.mkyong.com/maven/how-to-install-maven-in-windows/
+https://www.mkyong.com/maven/how-to-install-maven-in-ubuntu/
+https://www.mkyong.com/maven/install-maven-on-mac-osx/
+
+
+
+Download Eclipse:
+https://www.eclipse.org/downloads/
+
+
+
+
+
+42. Out First Custom Processor
+
+
+Generate project using Maven Archetype
+1. Go to the directory where you want to create the Maven project
+2. Assuming you have maven installed, execute the command below
+	> $ mvn archetype:generate
+3. Enter "nifi" to filter out the nifi related archetypes
+	> nifi
+4. Select the number for custom processor with name "org.apache.nifi:nifi-processor-bundle-archetype"
+5. Select the number of the version you want
+	> 1.8.0
+6. Provide the maven properties
+	> groupId: com.nifi.custom
+	> artifactId: nifi-custom-processor
+	> versionL 1.0
+	> artifactBaseName: custom
+	> package: com.nifi.custom.processors.custom
+	> NOTE: Do not use SNAPSHOT version, you will have problem later when building the nar file for the custom processor
+7. Open the project directory with the IDE of your choice
+	> ex: IntelliJ
+
+
+
+Relevant Project files
+1. src/main/resources/META-INF/services/org.apache.nifi.processor.Processor
+	> contains the properties of the Custom processor
+	> initially, it will contain the reference to the ENTRYPOINT java file for this custom processor
+2. com.nifi.custom.processors.custom.MyProcessor
+	> default java file created to serve as an entry point for the custom processor
+	> if we change this java file name, we must update the one in the org.apache.nifi.processor.Processor file
+	
+
+
+Explanation on some code lines in the Entrypoint java class
+1. public static final PropertyDescriptor MY_PROPERTY = new PropertyDescriptor.Builder()
+	> this is used to specify the necessary "processor-specific" properties of the Custom processor
+
+2. public static final Relationship MY_RELATIONSHIP = new Relationship.Builder()
+	> this is used to specify the relationship type this processor supports
+	
+3. init()
+	> method used to initialize the Custom processor properties
+	> this properties includes the properties (MY_PROPERTY), descriptiors, relationships (MY_RELATIONSHIP), etc.
+	> initially, it will 
+		1. initialize 'descriptors' local variable and add properties to it using MY_PROPERTY, then assign the descriptors into the 'descriptors' class variable
+		2. initialize 'relationships' local variable, add the MY_RELATIONSHIP, and assign it to the relationships class variable
+		
+3. onTrigger()
+	> executed when a FlowFile passed throw the Custom Processor
+	> initially, it has the following code:
+		- get FlowFile within the session
+		- if flowFile is null, return
+	> no custom processing logic is present intially
+
+
+
+Configuring the Custom Processor project
+1. Update the entrypoint java file of the project
+	> Passthrough.java
+2. Update the entrypoint java file reference in the org.apache.nifi.processor.Processor file
+	> com.nifi.custom.processors.custom.Passthrough
+3. Inside Passthrough class, on its onTrigger() method, add the following code at the end. Here, we basically just pass the flowFile to the relationships without any processing
+	> session.transfer(flowFile, MY_RELATIONSHIP);
+	
+
+EX:
+@Tags({"example"})
+@CapabilityDescription("Provide a description")
+@SeeAlso({})
+@ReadsAttributes({@ReadsAttribute(attribute="", description="")})
+@WritesAttributes({@WritesAttribute(attribute="", description="")})
+public class MyProcessor extends AbstractProcessor {
+
+    public static final PropertyDescriptor MY_PROPERTY = new PropertyDescriptor
+            .Builder().name("MY_PROPERTY")
+            .displayName("My property")
+            .description("Example Property")
+            .required(true)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
+    public static final Relationship MY_RELATIONSHIP = new Relationship.Builder()
+            .name("MY_RELATIONSHIP")
+            .description("Example relationship")
+            .build();
+
+    private List<PropertyDescriptor> descriptors;
+
+    private Set<Relationship> relationships;
+
+    @Override
+    protected void init(final ProcessorInitializationContext context) {
+        descriptors = new ArrayList<>();
+        descriptors.add(MY_PROPERTY);
+        descriptors = Collections.unmodifiableList(descriptors);
+
+        relationships = new HashSet<>();
+        relationships.add(MY_RELATIONSHIP);
+        relationships = Collections.unmodifiableSet(relationships);
+    }
+
+    @Override
+    public Set<Relationship> getRelationships() {
+        return this.relationships;
+    }
+
+    @Override
+    public final List<PropertyDescriptor> getSupportedPropertyDescriptors() {
+        return descriptors;
+    }
+
+    @OnScheduled
+    public void onScheduled(final ProcessContext context) {
+
+    }
+
+    @Override
+    public void onTrigger(final ProcessContext context, final ProcessSession session) {
+        FlowFile flowFile = session.get();
+        if (flowFile == null) {
+            return;
+        }
+        // TODO implement
+        session.transfer(flowFile, MY_RELATIONSHIP);
+    }
+}
+
+
+
+Building the Project
+1. Go to the root directory of the project
+	> should be the same level as the pom.xml file, but outside the nifi-custom-nar and nifi-custom-processors project directory
+2. Execute the command
+	> $ mvn install
+
+
+
+NAR
+ > NAR is Nifi Archive file
+ > It is similar to a WAR or JAR file
+ > We can deploy the NAR files in NiFi, similar to deployment of WAR files in Tomcat, or any application servers
+ 
+ 
+ 
+Adding the Custom processor
+1. Get the NAR file inside 'nifi-custom-nar/target' directory and place it inside the lib folder of the NiFi root directory
+2. Restart the NiFi server
+3. Search the Custom processor inside the NiFi instance
+	> it should be the same name as the entrypoint class
+4. Add the Custom processor and check the Configurations of it

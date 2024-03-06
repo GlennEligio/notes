@@ -1,0 +1,62 @@
+Cloud Essentials
+
+Contents:
+02 What is Cloud Computing
+03 Using Cloud Computing and the term
+04 How we got to cloud computing
+05 The on prem model
+06 Working with the on prem model
+07 Virtual machines
+08 Key characteristics of on prem data centers
+09 The problem with on prem
+10 Exam practice question 1
+11 Defining cloud computing Gartner and NIST definitions
+12 Five essential characteristics
+13 A modern definition of cloud 
+14 Exam practice question 2
+15 Exam practice question 3
+16 Service models explained
+17 Service model details and exceptions
+18 Shared responsibility model
+19 Example practice question 4
+20 Deployment models
+21 Advantages and disadvantages of deployment models
+22 Practice Example Question 1
+23 Practice Example Question 2
+24 Economies of scale
+25 CapEx vs OpEx
+26 Whatever As A Service
+27 Example question
+28 Cloud Service Types
+29 Cloud control of services
+30 Pets vs Cattle
+31 Regions
+32 Availability Zone
+33 Exam question
+34 Exam question
+35 Compute Services
+36 Cloud Services Example
+37 Wrap Up
+
+
+
+Problems:
+1. Multiple cloud providers
+2. Too many services
+3. Inconsistent material between cloud provider services
+
+
+Why you need to learn the Cloud Essentials
+1. To be able to participate in design discussion
+2. Converse properly with other architects
+3. Properly transition for Cloud Certifications
+
+
+Certification Examples
+1. AWS Certified Cloud Practitioner exam
+2. Azure Fundamentals AZ-900 exam
+
+
+Target audience
+1. Programmers that can write code and build apps, and wants to understand the cloud space
+2. Someone who wants to learn a cloud provider and its services and to get certified for it

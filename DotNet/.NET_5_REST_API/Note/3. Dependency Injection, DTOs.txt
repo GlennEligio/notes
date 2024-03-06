@@ -1,0 +1,236 @@
+Dependency Injection, DTOs
+
+Topics to discuss
+1. What is dependency injection?
+2. How to register and inject dependencies in .NET 5
+3. How to implement Data Transfer Objects (DTOs)
+4. How to map entities to DTOs
+
+
+Data Transfer Object (DTO)
+	> actual Contract that going to be enabled from client and our service (rest api )
+
+
+
+
+I. Implementing Dependency Injection in our Controller
+	> create an interface that corresponds to the Repo class that we have right now
+	> implement the said Interface to our Repo class
+	> change the field member of Controller class from Repo class to Interface	
+	> modify Controller constructor
+	> add/register the interface and its concrete class to the StartUp.cs ConfigureService()
+
+
+
+1. Create the interface that matches our Repo class
+	> create a C# file inside Repositories folder that will hold our interface
+		= name it IItemRepository.cs
+	> inside the Interface, we will create abstract methods that matches the methods of Repo class
+	> also, another way of create an interface that matches a specific class in by 
+		a. Press the Class name
+		b. Press the yellow lightbulb
+		c. Select 'Extract Interface'
+	> after creating the Interface, implement it to our Repository class
+
+
+INSIDE IItemRepository.cs file
+
+using System;
+using System.Collections.Generic;
+using Catalog.Entities;
+
+namespace Catalog.Repositories
+{
+    public interface IItemRepository 
+    {
+        Item GetItem(Guid id);
+        IEnumerable<Item> GetItems();
+    }
+}
+
+
+
+INSIDE the InMemItemsRepository.cs
+
+    public class InMemItemsRepository : IItemRepository
+
+
+
+
+
+2. Modify our Controller class
+	> right now, we have EXPLICIT DEPENDENCY to our Repo class
+	> lets do the following in order to use DEPENDENCY INJECTION
+		a. Change the property of our Controller class
+			= from InMemItemRepository to IItemRepository 
+		b. Change constructor of our Controller class
+			= add an IItemRepository parameter
+			= assign the parameter value to our property
+
+INSIDE our ItemsController.cs
+
+
+    public class ItemsController : ControllerBase
+    {
+        private readonly IItemRepository repository;
+
+        public ItemsController(IItemRepository repository)
+        {
+            this.repository = repository;
+        }
+
+
+
+
+3. Register our Services (Interface and its Concrete Implementation) to our IServiceCollection in StartUp
+	> call the AddSingleton<>() of the IServiceCollection parameter of ConfigureServices() of StartUp class
+	> in the <>, pass the Interface and the Concrete implementation of it
+		= in our case, Interface = IItemRepository, Concrete implementation = InMemItemRepository
+
+INSIDE ConfigureServices() of StartUp class
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<IItemRepository, InMemItemsRepository>();
+
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Catalog", Version = "v1" });
+            });
+        }
+
+
+
+
+4. Test our application
+	> save all, run and debug
+	> call GetItems() and copy a GUID
+	> call GetItem() and pass the GUID we copied
+	> check the response
+
+	We should get a 200 OK response code. This is because everytime we send a request, the Controller doesnt create a new Instance of the InMemItemRepository again. Instead, we call the Singleton InMemItemRepository from the IServiceCollection. Singleton means that only one instance of the said class exist. Therefore, the values of GUID remain static.
+
+
+
+
+
+II. Using DTO in order to create a Contract 
+	> create a record (DTO) that represents the data that will be sent by our service to the client
+	> create a static method that will map the Entity properties to a new DTO object instance
+	> use the static method to change the Entity objects inside our Controller's endpoint to DTO object
+	> change return type of Controller endpoints from Entity object to DTO object
+
+
+5. Create a record for our DTO
+	> create a folder in root named Dtos
+	> inside Dtos folder, 
+	> have its property resemble the Entity record for now
+		= typically, we only have a portion of the Entity record mapped to the DTO	
+		= we dont want to expose all Entity's data to client
+
+
+INSIDE ItemDto.cs
+
+using System;
+
+namespace Catalog.Dtos
+{
+    public record ItemDto
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+        public decimal Price { get; init; }
+        public DateTimeOffset CreatedDate { get; init; } 
+    }
+}
+
+
+
+
+6. Create a C# file in the root directory
+	> name it Extension.cs
+
+
+7. Create a static class and a static method inside the Extension.cs
+	> static class
+		- name: Extension
+	> static method
+		- name: AsDto
+		- return type: ItemDto
+		- parameter: this Item item
+			= with this, we wont need to call the AsDto and pass the Item object
+			= instead, the AsDto method will be callable to the Item object itself
+		- method body:
+			= return a new instance of Dto object where its properties is mapped from the Item parameter
+
+
+INSIDE Extensions.cs file
+
+using Catalog.Dtos;
+using Catalog.Entities;
+
+namespace Catalog
+{
+    public static class Extensions
+    {
+        public static ItemDto AsDto(this Item item)
+        {
+            return new ItemDto
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Price = item.Price,
+                CreatedDate = item.CreatedDate
+            }
+        }
+    }
+}
+
+
+
+
+8. Use the AsDto() static method in the Controller endpoints
+	a. GetItems()
+		> called Select() from the GetItems() result
+		 	= with this, we can modify/change every variable inside the list
+			= in our case, we will change the Item objects into its ItemDto object counterpart
+			= we will use lambda expression to get the individual Item, then call the AsDto() to the said Item
+		> change return type
+			= from IEnumerable<Item> to IEnumerable<ItemDto>
+	b. GetItem()
+		> call the AsDto() to the Item in return statement
+		> change return type from ActionResult<Item> to ActionResult<ItemDto>
+
+
+INSIDE the Controller class
+
+        [HttpGet]
+        public IEnumerable<ItemDto> GetItems()
+        {
+            var items = repository.GetItems().Select(item => item.AsDto());
+            return items;
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<ItemDto> GetItems(Guid id)
+        {
+            var item = repository.GetItem(id);
+            if(item is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(item.AsDto());
+        }
+
+
+
+
+
+9. Test the application
+	> save all, run and debug
+	> check the result of GetItems() and GetItem()
+	> check the schema of the object we received in GetItem()
+
+	As we can see, the schema has changed from Item to ItemDto

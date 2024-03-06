@@ -1,0 +1,148 @@
+02 Getting Started with JSP
+
+Contents
+06 JSP and Servlets Overview
+07 FAQ Are JSP and Servlets still used in F7 ... ummm yep
+08 Setting Up the Development Environment Overview
+09 Installing Tomcat on MS Windows
+10 Install Tomcat on Mac
+11 Installing Eclipse on MS Windows
+12 Install Eclipse on Mac
+13 COnnecting Eclipse to Tomcat
+14 FAQ HELP - Cant Start Tomcat - Ports are in Use
+
+
+
+
+
+
+
+
+06 JSP and Servlets Overview
+
+Topics
+1. What are Web Applications?
+2. What are JSP and Servlets?
+3. What types of apps can you create?
+
+What are Web Applications
+ > A website is where the HTML pages are generated dynamically BASED on the user's actions
+
+JSPs and Servlets
+ > Java code that runs on the web server
+ > Reads user's actions ... normally from HTML form
+ > Performs the work
+ > Returns an HTML page that is generated DYNAMICALLY
+ > JSPs and Servlets are KEY COMPONENTS of the Java Enterprise Edition (Java EE)
+ > Popular MVC frameworks are actually built on top of JSP and Servlets
+	- Spring
+	- JSF
+	- Struts
+
+
+
+
+
+
+07 FAQ Are JSP and Servlets still used in F7 ... ummm yep
+
+FAQ: Are JSP and Servlets still used in 2017?
+Question: I Would like to know if JSP and Servlet Still used in Real world applications in 2016?
+Answer: Yes, JSP and Servlets are used in the real world in 2016. Here's a link where you can get details and real world case studies / reviews.
+		- https://real-world-java-ee.zeef.com/arjan.tijms
+
+Question: I heard about JSP and Servlet are no longer supported by Oracle, This is why I asked this question.
+Answer: Servlets and JSP are supported by Oracle. Take a look at the Java EE 7 page at the Oracle website.  This is the current version of Java EE 7.
+		- www.oracle.com/technetwork/java/javaee/tech/index.html
+
+
+
+
+
+
+
+
+
+08 Setting Up the Development Environment Overview
+
+Topics
+1. Required Software
+2. High-level steps
+
+Prerequisite
+JDK
+
+Required Software
+1. Java Application Server - Tomcat
+2. Java Integrated Development Environment - Eclipse
+
+
+
+
+
+
+
+09 Installing Tomcat on MS Windows
+
+STEPS using Executable Installer
+1. Download executable of the Tomcat installer
+2. Run the exe file
+	> provide a credential, we may need it when accessing Manager page of Tomcat
+3. After installing and starting tomcat, visit localhost:8080 to check if Tomcat is runnign
+
+
+STEPS using the Tomcat content files
+1. Download the compressed Tomcat files
+2. Extract the compressed file
+3. Execute the startup.sh script file insie the bin folder of the Tomcat files using any SHELL
+4. Comfirm that its running by checking localhost:8080
+
+
+Stopping the Tomcat
+1. Go to Services
+2. Find the Apache Tomcat service
+3. Stop the service
+
+
+
+
+
+
+
+
+
+10 Install Tomcat on Mac
+11 Installing Eclipse on MS Windows
+
+Installing Eclipse
+ > either use the executable file or the compressed zip file of the Eclipse
+ > for executable, just run the file
+ > for compressed, just extract the file
+ > you can then go to the content and run the .exe file of eclipse to run it
+
+
+
+
+
+
+12 Install Eclipse on Mac
+13 Connecting Eclipse to Tomcat
+
+BENEFITS
+1. Start Tomcat from Eclipse
+2. Easily deploy applications directly to Tomcat
+
+Starting a Tomcat Server in Eclipse
+1. Open Eclipse
+2. Go to the "Servers" section
+3. Add New Server
+4. Choose Apache -> Tomcat 9.0 (or tomcat version that you started), then click next
+5. In next window, specify where the Tomcat is installed
+	- by default its in C:/Program Files/Apache Software Foundation/Tomcat x.x/
+6. In next window, it defines the Applications in Workspace that you want to run in Tomcat Server
+7. After all of that, you should see a Tomcat Server in the Servers section
+
+
+
+
+14 FAQ HELP - Cant Start Tomcat - Ports are in Use

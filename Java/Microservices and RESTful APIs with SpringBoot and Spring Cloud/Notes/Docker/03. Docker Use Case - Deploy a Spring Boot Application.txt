@@ -1,0 +1,21 @@
+03. Docker Use Case - Deploy a Spring Boot Application
+
+
+Container Deployment
+	> only need the Docker installed and the Docker Image
+1. Install Container Solution
+	- i.e. Docker
+2. Download the Docker Image of Spring Boot app
+3. Run the Docker Image in a Docker Container
+
+
+Traditional Deployment
+1. Must pass the following requirements
+	a. Applications
+		> prepare the Application to run (eg. jar files)
+	b. Software
+		> some apps need softwares to run (SDK, Runtimes)
+	c. OS
+		> some application needs different config for each OS to run
+	d. Hardware
+		> storage, ram, cpus, etc

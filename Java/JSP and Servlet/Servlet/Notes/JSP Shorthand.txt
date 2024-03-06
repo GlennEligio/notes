@@ -1,0 +1,9 @@
+JSP Shorthand function
+
+${param.attributeName}
+	> used to access specific parameter in the request that we received
+
+${modelAttribute}
+	> used to access specific attribute in the Model that we received
+${sessionAttribute}
+	> used to access specific attribute in the Session

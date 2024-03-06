@@ -1,0 +1,3 @@
+Task Data Access Bean
+
+RESTClassicSampleGen.bat location=com.abc.commerce.orders.beans.RatingDataBean outputDir=C:\RESTconfig additionalClassPath="C:\IBM\WCDE_V9\workspace\WebSphereCommerceServerExtensionsLogic\bin"

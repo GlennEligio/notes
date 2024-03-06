@@ -1,0 +1,54 @@
+09. useState hook
+
+Adding State in a Function Component
+	> before the useState hook is created, we can only add State in the Class Components
+		- because of this, Function Components are called "dumb components" before
+	> but with useState hook, we can now add State in a Functional Component
+
+useState
+	> hook to add in Functional Component to add State to them
+	> to use this, we will need to import useState from 'react'
+		import { useState } from 'react'
+
+Creating a State using useState
+	> to add State in Functional Component using useState, we will need to use the following syntax:
+		const [stateName, stateUpdateFn] = useState(defaultValue)
+	> here, there are following things that you must provide
+		stateName	refers to the name of the State to add
+		stateUpdateFn	refers to the function used to change the value of State (setter)
+		defaultValue	refers to the default value of the State
+
+EX: Usage of useState
+
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      text: "Doctors Appointment",
+      day: "Feb 5th at 2:30pm",
+      reminder: true,
+    },
+    {
+      id: 2,
+      text: "Meeting at School",
+      day: "Feb 6th at 1:30pm",
+      reminder: true,
+    },
+    {
+      id: 3,
+      text: "Food Shopping",
+      day: "Feb 5th at 2:30pm",
+      reminder: false,
+    },
+  ]);
+
+
+
+
+Modifying State
+	> with useState method, in order to modify the State, we will use the setter function provided to a specific State
+	> we will then pass the new value of the State into it
+	> syntax: setStateName(newValue)
+
+ex:
+      setTasks([...tasks, {id: 1, text: "Hello", day: "Feb 10th at 2:30pm", reminder: true}]);
+

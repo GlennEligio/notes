@@ -1,0 +1,41 @@
+14. Create simple Currency Exchange Service
+
+URL
+http://localhost:8000/currency-exchange/from/USR/to/INR
+
+1. Create @RestController
+2. Create a CurrencyExchange class
+	> have properties 
+		- Long id
+		- String from
+		- String to
+		- BigDecimal conversionMultiple
+2. Create a RequestMapping
+	> have two @PathVariable
+		- /currency-exchange/from/{from}/to/{to}
+	> return a CurrencyExchange with following data
+		- id to 1000L
+		- from using from path var
+		- to using to path var
+		- conversionMultiple to BigDecimal.valueOf(50)
+
+CurrencyExchange Class
+public class CurrencyExchange {
+
+	private Long id;
+	private String from;
+	private String to;
+	private BigDecimal conversionMultiple;
+	
+
+Controller Class
+@RestController
+public class CurrencyExchangeController {
+
+	@GetMapping("/currency-exchange/from/{from}/to/{to}")
+	public CurrencyExchange retrieveExchangeValue(
+			@PathVariable("from") String from, 
+			@PathVariable("to") String to) {
+		return new CurrencyExchange(1000L, from, to, BigDecimal.valueOf(50));
+	}
+}

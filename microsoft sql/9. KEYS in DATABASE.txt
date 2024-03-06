@@ -1,0 +1,17 @@
+KEYS IN THE DATABASE
+
+1. CANDIDATE KEY
+	> set of attributes that can uniquely identify a table
+	> a table can have MULTIPLE Candidate key but ONLY ONE of them is a PRIMARY KEY
+2. SUPER KEY
+	> set of attributes that can uniquely identify a tuple (row)
+	> CANDIDATE, PRIMARY, AND UNIQUE KEYS ARE PRIMARY KEYS, but vice-versa is not true.
+3. PRIMARY KEYS
+	> a column or key in a table that is used to uniquely identify every tuple
+	> a table can only have ONE primary key
+	> unique values, and cannnot be null
+4. ALTERNATE KEYS
+	> CANDIDATE KEYS that are not chosen as PRIMARY KEYS
+5. FOREIGN KEYS
+	> a column that creates a relationship between two tables
+	> typically, these are PRIMARY KEYS of other table that is used together with another table

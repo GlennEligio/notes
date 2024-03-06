@@ -1,0 +1,67 @@
+165 - EventBridge overview
+
+EventBridge Overview
+ > formerly CloudWatch Events
+ > here, we can "watch" events, and "react" on these events
+ > examples of these are
+	1. Scheduled events: Cron jobs (scheduled scripts)
+		- ex: Schedule every hour -> Trigger script on Lambda function
+	2. Event Pattern: Event rules to react to a service doing something
+		- ex: IAM Root User Sign in Event -> SNS Topic with Email notification
+			-> we might do this since in pratice, we dont want to login using the IAM Root user
+ > examples of the "reactions" to the events includes:
+	- trigger Lambda functions
+	- send SQS/SNS messages
+	
+	
+Amazon EventBridge RUles
+ > EventBridge sits between the Event sources and the Event reaction destination
+ > Event sources include but not limited to:
+	1. EC2 instance
+		- ex: Start instance
+	2. CodeBuild
+		- ex: failed build
+	3. S3 Event
+		- ex: upload object
+	4. Trusted Advisor
+		- ex: new Finding
+	5. CloudTrail
+		- ex: any API call
+	6. Schedule or Cron	
+		- ex: every 4 hours
+ > Event reaction destination can be grouped into the following:
+	1. Compute
+		- Lambda
+		- AWS Batch
+		- ECS Task
+	2. Integration
+		- SQS
+		- SNS
+		- Kinesis Data Streams
+	3. Orchestration
+		- Step Functions
+		- CodePipeline
+		- CodeBuild
+	4. Maintenance
+		- SSM
+		- EC2 actions
+		
+		
+EventBridge Event Buses
+ > EventBridge uses Event buses to receive Events from different sources
+ > There are THREE Event buses available
+	1. Default event bus
+		- Event going here are from the native AWS Services
+	2. Partner Event bus
+		- Events from AWS SaaS partners like zendesk and DATADOG uses this event bus
+	3. Custom Event bus
+		- Events from custom applications will be sending their events here
+		
+		
+Other Amazon EventBridge capabilities
+1. Schema Registry
+	> here, we can see the event schema, its data type and so on
+2. Archive events
+	> we can also archive all or filtered events sent to an event bus indefinitely or for a set period
+3. Replay archived events
+	> we can replay any archived events

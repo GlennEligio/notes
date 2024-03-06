@@ -1,0 +1,36 @@
+23 RHCSA RHEL 8 - Start, stop, and check the status of network services
+
+
+Commands
+service SERVICENAME status
+ > used to check the status of the service passed
+ > used in older versions of Linux
+	- if used in newer versions, it will be redirected to /bin/systemctl status command
+ > ex:
+	$ service sshd status
+
+
+systemctl [start | stop | is-active] SERVICENAME
+systemctl [option] [enable | disable | is-enabled] SERVICENAME
+systemctl status SERVICENAME
+systemctl [mask | unmask] SERVICENAME
+ > used to do the following
+	1. start or stop the service
+	2. check if service is active, currently running
+	3. enable or disable the service
+	4. check if service is enabled
+	5. check the status of the service
+ > with start, the service will immediately execute and run
+ > with enable, the service will be loaded at the start of the boot up
+	- creates a symbolic link somewhere in "/etc/systemd/system" to a unit file, most often somewhere in "/lib/systemd/system"
+ > with status, it will show different information about the service like
+	1. name of service
+	2. directory of service
+	3. status and the date of status
+	4. document links
+	5. PID
+	6. Memory used
+ > with mask, it will change the unit file of the service to a symlink to "/dev/null", essentially masking it as system level and making it IMPOSSIBLE to load the service
+	- with disable, the service can still be loaded if other service depends on it
+ > options:
+	-now		enable and execute/run the service immediately or disable and stop the service

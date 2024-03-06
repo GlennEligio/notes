@@ -1,0 +1,378 @@
+
+INCLUDES:
+Client-Secret
+	> A secret string that the application uses to prove its identity when requesting a token.
+	> Also can be referred to as application password.
+	> the Secret value will be redacted in the webpage after a certain period of item
+
+Accept header
+	> Accept request-header field can be used to specify certain media types which are acceptable for the response
+
+
+
+Client application information
+
+Application (client) ID
+	4c11be2b-5929-4900-8f84-ec9de3dbe14f
+Object ID
+	aed3bb49-36e6-4b10-bdf1-2db8320ab259
+Directory (tenant) ID
+	f8cdef31-a31e-4b4a-93e4-5f571e91255a
+
+
+
+
+I. Registering a Client App in AAD
+
+1. Register a new application in AAD
+	> this is for the client application
+	> name it WeatherClient_Development
+	> TenantId should be the same
+	> Client Id should be unique to the application only
+
+
+
+2. Add a Client-Secret to the said Application
+	> go to Certificates and secrets at left hand menu
+	> click New client secret
+	> give it a Name
+	> after creating, make sure you Copy the Value and Secret ID and store it somewhere
+		= Value: 	OC5JD..do36hL.-xZT.i--p5zOJTtR~743
+		= Secret ID: 	19e2c621-0d77-413a-8f44-d5b5b45c0f1a
+
+
+
+3. Add the WeatherAPI that we registered in AAD to the list of API that we will grant the Client app the permission to access
+	> click Add a permission
+	> select My APIs tab
+	> select WeatherAPI_Developemnt
+	> select Application permission
+	> check the DaemonAppRole we added earlier in the AppRole in Manifest
+	> click Add permission
+
+
+
+II. Creating a C# Console App Daemon
+
+4. Create new console app in Visual Studio Code
+	> type this line in terminal, assuming you are in the chosen directory
+		= dotnet new console -n SecureClient
+
+
+
+5. Open the Client console application
+
+
+
+6. Create a json file for storing the information necessary to connect to Azure
+	> inside the json file, add these following items
+		a. Instance		
+			> same as the Instance item in WebApi, except we add {} block with 0 inside it
+			> we will replace this {} block later
+		b. TenantId
+			> same as the TenantId in WebApi since they are located in the same directory
+		c. ClientId
+			> the application id of the Client app we registered in Azure
+			> will be unique to this app
+		d. BaseAddress
+			> the url of the endpoint we will try to access with this daemon app
+		e. ResourceId
+			> the app id uri of the App we registered that corresponds to the Web Api
+			> used to determine which App in the AAD we will acquire the token
+			> append it with a ".default" string				
+
+
+INSIDE appsettings.json file we created
+
+{
+    "Instance": "https://login.microsoftonline.com/{0}",
+    "TenantId": "f8cdef31-a31e-4b4a-93e4-5f571e91255a",
+    "ClientId": "4c11be2b-5929-4900-8f84-ec9de3dbe14f",
+    "ClientSecret": "RANDOM_CLIENT_SECRET",
+    "BaseAddress": "https://localhost:5001/WeatherForecast",
+    "ResourceId": "api://bc0f4d93-08a9-47b3-9dd7-b9bf9bc45e34/.default"
+}
+
+
+
+6. Add the following packages in our Console application
+	> use dotnet add package <package-name> in CLI
+		a. Microsoft.Extensions.Configuration
+			= so we can use Config class where we fetch several data just like in Web API
+		b. Microsoft.Extensions.Configuration.Binder
+			= support for the Configuration package
+		c. Microsoft.Extensions.Configuration.Json
+			= support for the Configuration package, means we will use json file to store config data
+		d. Microsoft.Identity.Client
+			= we need this in order to give our console app its own identity that we will give and have the Azure verify for acquiring token
+	> check the .csproj file for the packages that we installed
+
+
+INSIDE SecureClient.csproj file
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.34.0" />
+  </ItemGroup>
+
+
+
+
+
+7. Create the Client Configuration Class
+	> add the following namespace in the C# file
+		- System
+		- System.IO
+		- System.Globalization
+		- Microsoft.Extensions.Configuration
+	> add the following inside the Class
+		a. Properties
+			- String Instance, 
+			- String TenantId, 
+			- String ClientId, 
+			- String Authority
+				= for this, we will only have a getter where we will return a String.Format() where the format is CultureInfo.InvariantCulture so the it doesnt change when it goes to system with different Culture	
+				= as for the object of Format(), we will use the Instance and TenantId string objects 
+			- String ClientSecret, 
+			- String BaseAddress
+			- String ResourceId
+	> ReadJsonFromFile method
+		= used for creating a Configuration class object using the json file we give using the file path name
+		= we will then use the Configuration object and its properties (which we get from the json file we created earlier) to have AuthConfig object that we will return to this method inherit its properties
+		= public access, static, AuthConfig return type, String path parameter
+		= inside the method, we will do the following
+			- Create an IConfiguration object
+			- Using ConfigurationBuilder we read the contents of our json config file
+			- Set value of IConfiguration object to the result of build() of ConfigurationBuilder object
+			- We pass back our read-in config bound to our AuthConfig class
+
+INSIDE AuthConfig.cs
+
+using System;
+using System.IO;
+using System.Globalization;
+using Microsoft.Extensions.Configuration;
+
+namespace SecureClient
+{
+    public class AuthConfig
+    {
+        public string Instance { get; set; }
+        public string TenantId { get; set; }
+        public string ClientId { get; set; }
+        public string Authority 
+        { 
+            get
+            {
+            return String.Format(CultureInfo.InvariantCulture, Instance, TenantId);
+            }
+        }
+        public string ClientSecret { get; set; }
+        public string BaseAddress { get; set; }
+        public string ResourceId { get; set; }
+
+        public static AuthConfig ReadFromJsonFile(string path)
+        {
+            IConfiguration Configuration;
+            
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(path);
+
+            Configuration = builder.Build();
+
+            return Configuration.Get<AuthConfig>();
+        }
+    }
+}
+
+
+
+
+8. Test the AuthConfig class
+	> inside the Main method, create a AuthConfig object suing the ReadJsonFromFile static method
+		=  we will call this method from the Class itself since its static
+	> call Console.WriteLine() and pass the Authority string property of the AuthConfig object we created
+
+INSIDE Main method()
+
+        static void Main(string[] args)
+        {
+            AuthConfig config = AuthConfig.ReadFromJsonFile("appsettings.json");
+            Console.WriteLine($"Authority: {config.Authority}");
+        }
+
+
+
+
+9. Test the application
+	> save all, build and run
+	> check the Console for the result
+	> if we hover to the console result, it is a URL link
+		= this is because we set the String format to the Instance string (which is a URL format)
+
+CONSOLE LOG:
+
+	Authority: https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a
+
+
+
+
+10. Create the part of the Asynchronous method where we ACQUIRE the Token
+	> before we create the method, lets add the following namespaces in the using directive
+		- System.Threading.Tasks;
+		- Microsoft.Identity.Client;
+	> the method will be 
+		- private access, 
+		- static and async modifier
+		- Task return type
+	> inside the method, we will do the following
+		- create an AuthConfig object using ReadFromJsonFile() and passing the json file name
+		- declare an IConfidentialClientApplication object
+		- give it a value using the ConfidentialClientApplicationBuilder.Create() and pass the ClientId of the AuthConfig object
+		- call the following method of the Create()
+			a. WithClientSecret() and pass the ClientSecret property of the AuthConfig object
+			b. WithAuthority() and pass a new Uri() with the Authority property of AuthConfig inside the Uri()
+			c. Build() to finalize the Builder
+		- create a String array and pass the ResourceId property of the AuthConfig object
+		- declare an AuthenticationResult object and initialize it to NULL
+		- create a try-catch block
+		- inside try, set the AuthenticationResult object value to the result of the app.AcquireTokenForClient().ExecuteAsync() call
+			> we will add an "await" modifier to the method call
+			> we will pass the String array variable that contains the ResourceId
+			> lets also change the color of Console to Green and write down the AccessToken of the AuthenticationResult object
+		- inside catch, we will catch the MsalClientException
+			> change Color of Console to red
+			> write the message of the exception caught
+			> reset the color of Console
+
+INSIDE THE RunAsync() method
+
+        private static async Task RunAsync()
+        {
+            AuthConfig config = AuthConfig.ReadFromJsonFile("appsettings.json");
+
+            IConfidentialClientApplication app;
+
+            app = ConfidentialClientApplicationBuilder.Create(config.ClientId)
+                .WithClientSecret(config.ClientSecret)
+                .WithAuthority(new Uri(config.Authority))
+                .Build();
+
+            string[] resourceIds = new string[]{config.ResourceId};
+
+            AuthenticationResult result = null;
+
+            try
+            {
+                result = await app.AcquireTokenForClient(resourceIds).ExecuteAsync();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Token acquired \n");
+                Console.WriteLine(result.AccessToken);
+                Console.ResetColor(); 
+            }
+            catch(MsalClientException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                Console.ResetColor();
+            }
+        }
+
+
+
+
+
+11. Call the RunAsync() inside the Main()
+	> we will call the GetAwaiter().GetResult() of the RunAsync()
+		= GetAwaiter() will get an Awaiter used to wait for the Task
+		= GetResult() is used to ends the await of the asynchronous task being executed
+
+INSIDE Main()
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Fingers crossed...");
+            RunAsync().GetAwaiter().GetResult();
+        }
+
+
+
+
+12. Test the application
+	> save all, build and run
+	> check the Console log
+
+CONSOLE LOG:
+Fingers crossed...
+Token acquired 
+
+eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJhcGk6Ly9iYzBmNGQ5My0wOGE5LTQ3YjMtOWRkNy1iOWJmOWJjNDVlMzQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9mOGNkZWYzMS1hMzFlLTRiNGEtOTNlNC01ZjU3MWU5MTI1NWEvIiwiaWF0IjoxNjI2MzU4OTc4LCJuYmYiOjE2MjYzNTg5NzgsImV4cCI6MTYyNjQ0NTY3OCwiYWlvIjoiRTJaZ1lQRE5YbEZ4dHBXMXlETG9yNlB4NlZ1bkFBPT0iLCJhcHBpZCI6IjRjMTFiZTJiLTU5MjktNDkwMC04Zjg0LWVjOWRlM2RiZTE0ZiIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2Y4Y2RlZjMxLWEzMWUtNGI0YS05M2U0LTVmNTcxZTkxMjU1YS8iLCJyaCI6IjAuQVVFQU1lX04tQjZqU2t1VDVGOVhIcEVsV2l1LUVVd3BXUUJKajRUc25lUGI0VThCQUFBLiIsInRpZCI6ImY4Y2RlZjMxLWEzMWUtNGI0YS05M2U0LTVmNTcxZTkxMjU1YSIsInV0aSI6Im90cTFVclhQYVVXb01UYW5ycHVzQUEiLCJ2ZXIiOiIxLjAifQ.di6NjnmFEoaFYdUCC6SVJYnGj8mO9cZ7xAK_ZWUSYhxOwFiCTKK6WF5qU0HzS39oiAV6aUZRRfiG_eZfRTcOwrTtGXweJE7IBJ4ZKelsN7sB55U007okNKvLpX5goylBWR2sgXld06aTYVG-4CCTqa2SfDwbLJhmgnJxhTDVa05vg5o2yChpVcDORYGt2ZRj8LEaxAjYU5uSVmSYGbu-dzP7Tyep_y4FQJMRE65JBGZPTimKrgXZ8axtkEbqKIQ8ln8JDIMkmuL6-OU8e8eddnnL9LOghe4kVZRh3SmcaQizLB8J19T3Pfy8b8elUP2ioCtMGk68RQ6sMSeuwGv4sw
+
+
+
+	
+
+13. Create the 2nd part of the RunAsync(), which is we call the protected endpoint of WebAPI using the Token we got
+	> before we create the additional code in the RunAsync(), add these following namespaces in using directive
+		- System.Net.Http
+		- System.Net.Http.Headers
+		- System.Linq
+	> inside the RunAsync() after the try-catch block, we will do the following
+		- create an HttpClient object as new instance of it
+		- get the DefaultRequestHeaders of the HttpClient object and pass it into a variable
+		- check if the variable (with is the default request header of http client) check both of the conditions below
+			-> Accept header value is null
+			-> Accept header string list doesnt have "application/json" included in it
+		- if both condition is true, then we will add the "application/json" in the Accept header value list using .Add(new
+      MediaTypeWithQualityHeaderValue("application/json")) to the Accept header of httpCLient defaultRequestHeaders
+		- add Authorization header to the httpClient defaultRequestHeaders to a new AuthenticationHeaderValue()
+			= inside the AuthenticationHeaderValue(), pass the "bearer" string and the AccessToken from the AuthenticationResult
+		- create a new HttpResponseMessage object by calling the GetAsync() of the httpClient
+			= pass the BaseAddress property of the AuthConfig to the GetAsync()
+			= add await modifier to the GetAsync() call
+		- check if the response is successful using IsSuccessStatusCode
+			-> if success, then display the content of response using Content.ReadAsStringAsync() of the HttpResponseMessage object in COLOR GREEN
+				= use await since we are calling an Async() method
+			-> if fail, then display the response status code and the content of response in COLOR RED
+
+
+INSIDE RunAsync(), after the first part (acquiring token)
+
+	    var httpClient = new HttpClient();
+            var defaultRequestHeader = httpClient.DefaultRequestHeaders;
+
+            if(defaultRequestHeader.Accept == null || 
+                !defaultRequestHeader.Accept.Any(m => m.MediaType == "application/json"))
+                {
+                    httpClient.DefaultRequestHeaders.Accept
+                    .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                }
+            defaultRequestHeader.Authorization = new AuthenticationHeaderValue("bearer", result.AccessToken);
+
+            HttpResponseMessage response = await httpClient.GetAsync(config.BaseAddress);
+
+            if(response.IsSuccessStatusCode)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                string json = await response.Content.ReadAsStringAsync();
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Failed to call the Web API: {response.StatusCode}");
+                string json = await response.Content.ReadAsStringAsync();
+                Console.ResetColor();
+            }
+
+
+
+
+14. Test the complete daemon application
+	> save all, build and run the Web API
+	> save all, build and run the daemon app
+	> check the Console log to observe the result
+

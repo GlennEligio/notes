@@ -1,0 +1,128 @@
+04.06. Nav and Tabs
+
+~~~~~ COMPONENT - NAV and TAB ~~~~~
+Nav	
+	> Navigation available in Bootstrap share general markup and styles, from the base .nav class to the active and disabled states. 	> Swap modifier classes to switch between each style.
+
+Creating Nav
+I. Using list
+1. Create a list element and add "nav" class
+2. Populate the list with list item with class "nav-item"
+3. Add link element inside list item with class "nav-link"
+
+II. Using nav
+1. Create nav element with class "nav"
+2. Populate the nav with link elements with class "nav-link"
+3. Specify if nav-link is active by added "active" or "disable" class
+"nav"
+	> used to create a navigation
+	> typically added in a list element
+"nav-item"
+	> used to specify a navigation item
+	> added in a list item inside a list
+"nav-link"
+	> used to specify a link inside a navigation item
+	> added in a link element inside list item
+
+
+
+
+Nav Styles
+	> .nav class is created with flexbox capabilities
+
+1. Horizontal
+	> nav uses flex-direction: row by default
+2. Vertical
+	> use flex-column class
+
+
+Nav items alignment
+	> use justify-content-* classes to align the .nav-item elements
+
+
+
+
+~~~~~~ COMPONENT - TABS ~~~~~~
+Tab
+	> Takes the basic nav from above and adds the .nav-tabs class to generate a tabbed interface. 
+	> Use them to create tabbable regions with our tab JavaScript plugin.
+	> With Tabs, we can create tabbable panes of local content
+	> to use Nav Tab, add .nav-tab class to a .nav element
+	> EX: <ul class="nav nav-tabs">
+
+
+Pill
+	> another style of Nav, but with Tab looking like pills/button when active
+	> to use Nav pill, add .nav-pill class to a .nav element
+	> ex: <ul class="nav nav-pills">
+
+
+Fill and Justify
+.nav-fill
+	> added in a .nav element
+	> this makes the Nav items takes ALL THE SPACE in a Nav
+
+.nav-justified
+	> added in a .nav element
+	> this makes the Nav items takes ALL THE SPACE and have SAME WIDTH
+
+
+Tabbable panes of Local Content using Nav
+RULES:
+1. No Dropdowns in Nav items
+2. role="tablist", role="tab", role="tabpanel", and additional aria- attributes ARE REQUIRED in order to convey their structure, functionality and current state to users of assistive technologies (such as screen readers)
+	> role="tablist" 	added to .nav element
+				for <nav> markup, add the role in a div that wraps the .nav-item, then wrap the .nav to the div
+	> role="tab" 		added to .nav-link
+	> role="tabpanel"	added to .tab-pane
+3. As best practice, use <button> elements for the tabs
+
+
+
+Creating Nav for Tabbable panes
+1. Create a Nav
+	> either by using <ul> or <nav> markup
+2. Add the classes need
+	> .nav
+	> .nav-item	
+	> .nav-link
+3. Add the required role attribute for each Nav parts
+	> role="tablist" 	added to .nav element
+	> role="tab" 		added to .nav-link
+	> role="tabpanel"	added to .tab-pane
+	> NOTE: For <nav> markup, DO NOT ADD the role="tablist" in <nav>. 
+		Instead, add div inside the <nav>, add the original content of the <nav> inside, then add the role="tablist" in div
+4. Add the necessary data api attributes in the tab Buttons
+	> data-bs-toggle="tab" is a MUST
+	> data-bs-target="#{tabpanelId}" value must MATCH the ids of the tabpanels
+	> ex: if tabpanel id is "home", then data-bs-target="#home"
+
+Creating TabPanels for Tabbable panes
+1. Create a div that will contain the Tabpanels
+2. Add .tab-content class to the div above
+3. Inside the .tab-content, add several divs that will serve as tab panel
+4. In each div tabpanels, add the following
+	> .tab-pane class
+	> id that should match the data-bs-target of its corresponding tab
+	> role="tabpanel"
+
+EX:
+<div class="d-flex align-items-start">
+  <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+    <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</button>
+    <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</button>
+    <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</button>
+    <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</button>
+  </div>
+  <div class="tab-content" id="v-pills-tabContent">
+    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">...</div>
+    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
+    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
+    <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
+  </div>
+</div>
+
+
+
+Fade effect in Tab
+	> add "fade" to each .tab-pane elements to add fade effect when changing tabs

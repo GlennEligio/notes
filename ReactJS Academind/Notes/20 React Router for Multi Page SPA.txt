@@ -1,0 +1,1668 @@
+20 React Router for Multi Page SPA
+
+Contents
+001 Module Introduction
+002 What is Routing & Why
+003 Installing React Router
+004 Defining & Using Routes
+005 Working with Links
+006 Using NavLinks
+007 Adding Dynamic Routes with Params
+008 Extracting Route Params
+009 Using "Switch" and "exact" for Configuring Routes
+010 Working with Nested Routes
+011 Redirecting The User
+012 Time to Practice - Onwards to a New Project
+013 Practice Redirecting & Extracting Params
+014 Practicing Nested Routes
+015 Adding a Layout Wrapper Component
+016 Adding Dummy Data & More Content
+017 Outputting Data on the "Details" page
+018 Adding a "Not Found" page
+019 Implementing Programmatic (Imperative) Navigation
+020 Preventing Possible Unwanted Route Transitions with "Prompt" Component
+021 Working with Query Parameters
+022 Getting Creative With Nested Routes
+023 Writing More Flexible Routing Code
+024 Sending & Getting Quote Data via Http
+025 Adding the "Comments" Features
+025 Upgrading To React Router v6
+
+
+
+
+
+001 Module Introduction
+
+Module Content
+1. What is Client-Side "Routing"?
+2. Using React-Router
+3. Advance Features: Dynamic & Nested Routes
+
+
+
+
+
+
+
+
+002 What is Routing & Why
+
+Routing
+ > a feature where we display different HTML content based on the URL
+	- ex: "/welcome" displays Welcome page, "/products" displays Products page
+
+Multi-Page Routing
+ > Routing where we use multiple HTML pages in order to change the content based on URL
+ > with this, there will be ONE HTML request and then loaded in order to update the content
+	- per Page Change, we will do a New Request and Response
+ > typically seen in Frontend with Server-side rendering
+ > ex: "/welcome" will request "welcome.html" page, "/products" will request "products.html"
+
+
+Building SPAs
+ > when building complex user interfaces, we typically build Single Page Applications (SPAs)
+ > with SPA like React, we will only do ONE INITIAL HTML request & response
+ > then, content changes based on Page URL changes are done by client-side (React) code 
+	- React changes the visible content WITHOUT fetching a new HTML file
+	- What React do is 
+		1. Prevent default behavior when changing URL (reloading the Browser tab)
+		2. Change the content dynamically based on the Page url
+
+
+
+
+
+
+
+
+
+003 Installing React Router
+
+Installing React Router
+ > to do this, install the "react-router-dom"
+	- to make sure we will install the version 5, add "@5" at the end
+	- ex: "npm install react-router-dom@5"
+ > "react-router-dom" is different from "react-router"
+ 	- "react-router-dom" is the react-router version for Web Apps
+
+
+
+
+
+
+
+
+
+004 Defining & Using Routes
+
+Defining Routes
+ > to create a Route, we will first import Route Component from 'react-router-dom'
+ > then, we will define the Route's properties like:
+	- path to match (by defining the Route's "path" property value)
+	- Component to display (nested inside <Route> component)
+ > by default, the Route uses "partial matching" to determine if Page url matches the "path" prop
+	- this means that if we have path="/products", both "/products" and "/products/testPath" will MATCH
+ > adding "exact" prop in Route will disable this partial matching and use exact matching
+
+EX:
+In example below, the Welcome Component will be displayed if the Page url is base-url.com/welcome
+Same as the Products component, it will only be shown when relative url path is "/products"
+
+import { Route } from "react-router-dom";
+import Products from "./pages/Products";
+import Welcome from "./pages/Welcome";
+
+function App() {
+  return (
+    <div>
+      <Route path="/welcome">
+        <Welcome />
+      </Route>
+      <Route path="/products">
+        <Products />
+      </Route>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+Using Routes
+ > to make the Routes work, we must nest them inside a <BrowserRoute> component
+ > BrowserRoute can also be imported from 'react-router-dom'
+ > we typically add this BrowserRoute in the index.js, nesting the App component inside it
+
+EX;
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+
+import "./index.css";
+import App from "./App";
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+
+NOTE:
+1. Having separate folder for "Page" Components can make it easier to distinguish
+
+ex:
+> src
+  > pages
+    - Welcome.js
+    - Products.js
+  - App.js  
+  - index.js
+
+
+
+
+
+
+
+
+
+005 Working with Links
+
+Working with Links
+ > when navigating user from one Page to another, we typically use a anchor tag <a></a>
+ > but, when using the anchor tag, this will cause the Browser to SEND request to fetch the HTML request
+ > for this reason, we will be using the Link Component from 'react-router-dom'
+
+Link
+ > a component from 'react-router-dom'
+ > with Link, we can also navigate the user from another page, but it also does the following
+	1. Prevent the default behavior of anchor tags, where it send a request to fetch the HTML page
+		- this cause the Browser tab to refresh
+	2. Instead of "href" prop, we will use the "to" prop to define the URL destination of the Link
+ > these Link component are rendered as anchor tag if we look at the final DOM
+ > what happens when we use a Link components is:
+	1. Listen to the clicks in this links
+	2. Prevent the browser default behavior
+	3. Manually  update the URL for us
+		- this will make it look like we switch the page url
+	4. Change the UI components being displayed based on the page url
+
+EX:
+// MainHeader.js
+import React from "react";
+import { Link } from "react-router-dom";
+
+const MainHeader = () => {
+  return (
+    <header>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/welcome">Welcome</Link>
+          </li>
+          <li>
+            <Link to="/products">Products</Link>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
+};
+
+export default MainHeader;
+
+
+
+
+
+
+
+
+006 Using NavLinks
+
+NavLinks
+ > component from 'react-router-dom'
+ > the same as the Link, but mostly used for Navigation Links for Navigation Bars
+ > have a property "activeClassName" which takes a CSS input
+	- this CSS style input will be applied to the NavLink component and its child component when the Page url matches the "to" prop of the NavLink
+	- this CSS style typically highlights the NavLink component to show to user which page he/she is in
+	- this CSS style is applied while user is in the Page, and removed when the user is not
+
+EX:
+In this example, we can see two NavLinks with "activeClassName" prop of classes.active.
+This means that if a NavLink matches the Page url, this {classes.active} is then applied to the NavLink 
+And if we take a look at the MainHeader.module.css, we can see that the selector ".header a.active", it added specific CSS style that we can see if a NavLink is "active"
+
+// MainHeader.js
+import React from "react";
+import classes from "./MainHeader.module.css";
+import { NavLink } from "react-router-dom";
+
+const MainHeader = () => {
+  return (
+    <header className={classes.header}>
+      <nav>
+        <ul>
+          <li>
+            <NavLink activeClassName={classes.active} to="/welcome">
+              Welcome
+            </NavLink>
+          </li>
+          <li>
+            <NavLink activeClassName={classes.active} to="/products">
+              Products
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
+};
+
+export default MainHeader;
+
+
+// MainHeader.module.css
+.header {
+  width: 100%;
+  height: 5rem;
+  background-color: #044599;
+  padding: 0 10%;
+}
+
+.header nav {
+  height: 100%;
+}
+
+.header ul {
+  height: 100%;
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.header li {
+  margin: 0 1rem;
+  width: 5rem;
+}
+
+.header a {
+  color: white;
+  text-decoration: none;
+}
+
+.header a:hover,
+.header a:active,
+.header a.active {
+  color: #95bcf0;
+  padding-bottom: 0.25rem;
+  border-bottom: 4px solid #95bcf0;
+}
+
+
+
+
+
+
+
+
+
+
+
+007 Adding Dynamic Routes with Params
+
+Adding Dynamic Routes with Params
+ > using React Router, we can add dynamic routes by adding URL params in the Route's "path"
+ > to add a URL param (that we will fetch later) into the Route's path, we will use colon, then defining the name of URL param
+
+EX:
+          <Route path="/product-detail/:productId">
+            <ProductDetail />
+          </Route>
+
+NOTE:
+1. For this Route to match, we will need to provide the "productId" URL param
+	> "/product-detail/a-book" will match
+	> "/product-details/qweqwe" will match
+	> "/product-details/an-online-course/react-js" will match
+	> "/product-details/" and "/product-details" will NOT MATCH
+
+
+
+
+
+008 Extracting Route Params
+
+Extracting Route Params
+ > earlier, we create a Route whose path accepts data through URL params
+	- ex: <Route path="/product-details/:productId">
+ > now, we will extract these URL params inside the Components that is displayed inside the said Route
+ > to do this, we will use the useParams() hook from 'react-router-dom'
+
+useParams()
+ > functional hook from 'react-router-dom'
+ > used to fetch the URL params in the Route path that it is nested inside
+ > this functional hook returns an Object whose key:value pairs are the URL param names and its value respectively
+
+EX:
+In example below, we added a URL param "productId" in the Route's path that nest the ProductDetail component
+Then, inside the ProductDetail component, we imported the useParams hook from 'react-router-dom', and used to it fetch the URL params key:value pairs in the Route it is nested
+For example, if we go to "/product-detail/a-book", then inside the ProductDetail component,
+	1. console.log(params) will output { productId: "a-book" }
+	2. <p>{params.productId}</p> will display "a-book"
+
+// Route component
+          <Route path="/product-detail/:productId">
+            <ProductDetail />
+          </Route>
+
+// ProductDetail component
+import React from "react";
+import { useParams } from "react-router-dom";
+
+const ProductDetail = () => {
+  const params = useParams();
+
+  console.log(params);
+
+  return (
+    <section>
+      <h1>Product Detail</h1>
+      <p>{params.productId}</p>
+    </section>
+  );
+};
+
+export default ProductDetail;
+
+
+
+
+
+
+
+
+
+
+009 Using "Switch" and "exact" for Configuring Routes
+
+Switch
+ > a component inside 'react-router-dom'
+ > using the Switch component, only ONE Route is active at a time
+ > to do this, we will nest ALL of the Route inside the Switch
+
+EX:
+<Switch>
+  <Route path="/about"/>
+  <Route path="/welcome"/>
+  <Route path="/products"/>
+</Switch>
+
+exact
+ > a prop that can be define in the Route component
+ > with this, it will disable the partial matching, and use exact matching to determine if Route will be active
+	- partial matching is where the Route will match IF the Page url STARTS with the Route's path prop
+		-> ex: "/products" and "/products/p1" will match to Route with path "/products"
+	- exact matching is where the Route will match IF the Page url is exacting the same as the Route's path prop
+		-> ex: Route with path "/products" will only be active with Page URL "/products"
+
+EX:
+In example below, we have a Switch that wrap several Routes. With this setup, only ONE of these Routes will be active.
+Also, with the exact prop in the Route with path "/products", we are making sure that if we navigate to Page url "/products/p1" to display a ProductDetail component, the Products component will not be rendered as well.
+
+function App() {
+  return (
+    <div>
+      <MainHeader />
+      <main>
+        <div>
+          <Switch>
+            <Route path="/welcome">
+              <Welcome />
+            </Route>
+            <Route path="/products" exact>
+              <Products />
+            </Route>
+            <Route path="/products/:productId">
+              <ProductDetail />
+            </Route>
+          </Switch>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+010 Working with Nested Routes
+
+Working with Nested Routes
+ > in React Router, we have a feature of Nested Routes
+ > with Nested Routes, we can nest Route component inside the Components nested inside a Route as well
+ > just make sure that the Nested Route's path is a "subpath" of the Route's path where it is nested
+	- if we have Route with path "/welcome", then we can only nest Route inside whose path starts with "/welcome"
+	- this is because the "parent" Route MUST be active in order for the nested Routes to be active as well (assuming the path matches)
+	- ex: Route with path "/welcome/new-user" nested inside Route with path "/welcome"
+
+EX:
+With example below, the Route inside the Welcome component will be active if Page url is "/welcome/new-user"
+
+// inside App.js
+            <Route path="/welcome">
+              <Welcome />
+            </Route>
+
+// Welcome.js
+const Welcome = () => {
+  return (
+    <div>
+      <h2>Welcome</h2>
+      <Route path="/welcome/new-user">
+        <p>Welcome new user</p>
+      </Route>
+    </div>
+  );
+};
+
+
+
+
+
+
+
+
+011 Redirecting The User
+
+Redirecting The User
+ > to redirect the user, we can either use
+	1. Redirect component from 'react-router-dom'
+	2. useHistory (or useNavigate for v6) hook
+ > for now, we will discuss the Redirect component
+
+Redirect
+ > a component from the 'react-router-dom'
+ > used to redirect the user from one page url to another
+ > to define the url destination, we will assign value to the "to" prop of the Redirect
+
+EX:
+In this example, we have a new Route with path "/". Inside this Route is a Redirect component with "to" prop of "/welcome"
+Now, if we navigate to this Route, we will notice that instead of navigating to page url "/", we are REDIRECTED to page url "/welcome"
+
+function App() {
+  return (
+    <div>
+      <MainHeader />
+      <main>
+        <div>
+          <Switch>
+            <Route path="/">
+              <Redirect to="/welcome" />
+            </Route>
+            <Route path="/welcome">
+              <Welcome />
+            </Route>
+            <Route path="/products" exact>
+              <Products />
+            </Route>
+            <Route path="/products/:productId">
+              <ProductDetail />
+            </Route>
+          </Switch>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+012 Time to Practice - Onwards to a New Project
+
+URLS:
+/quotes	
+ > all quotes
+/new-quote
+/quotes/:quoteId
+ > show specific quote
+/quotes/:quoteId/comments
+ > nested inside "/quotes/:quoteId"
+ > show the comments on a specific quote
+
+Pages component to be nested in Routes
+1. AllQuotes
+2. NewQuote
+2. QuoteDetail
+
+Setting up the Routing
+1. Add <BrowserRouter> in the index.js and wrap the App component
+2. In App component, create the Routing by:
+	- Adding Switch Component
+	- Adding several Route Component inside the switch
+	- Add the Page component inside their corresponding component
+3. Dont forget to add exact prop to the Route with path "quote"
+	- this will make sure that the  "/quotes" Route will not be display in "/quotes/:quoteId" Route
+
+EX:
+// index.js
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+
+
+// App.js
+function App() {
+  return (
+    <Switch>
+      <Route path="/quotes" exact>
+        <AllQuotes />
+      </Route>
+      <Route path="/quotes/:quoteId">
+        <Quote />
+      </Route>
+      <Route path="/new-quote">
+        <NewQuote />
+      </Route>
+    </Switch>
+  );
+}
+
+
+
+
+
+
+
+013 Practice Redirecting & Extracting Params
+
+GOAL:
+1. Redirect "/" to "/quotes"
+2. Display the "quoteId" URL param inside QuoteDetails (which is inside "/quotes/:quoteId" Route)
+
+SOLUTION
+1. Use the Redirect component from react-router-dom
+	> add "to" prop to the Redirect component and pass "/quotes" as the destination
+	> dont forget to add exact in Route "/"
+2. Use the useParams hook from react-router-dom
+	> this useParams hook will output the URL params in form of key:value pair
+
+EX:
+// App.js
+function App() {
+  return (
+    <Switch>
+      <Route path="/" exact>
+        <Redirect to="/quotes" />
+      </Route>
+      <Route path="/quotes" exact>
+        <AllQuotes />
+      </Route>
+      <Route path="/quotes/:quoteId">
+        <QuoteDetail />
+      </Route>
+      <Route path="/new-quote">
+        <NewQuote />
+      </Route>
+    </Switch>
+  );
+}
+
+// QuoteDetail.js
+const QuoteDetail = () => {
+  const params = useParams();
+
+  return (
+    <React.Fragment>
+      <h1>QuoteDetail</h1>
+      <p>{params.quoteId}</p>
+    </React.Fragment>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+014 Practicing Nested Routes
+
+GOAL:
+1. Nest the "/quotes/:quoteId/comments" Route inside the "/quotes/:quoteId" Route
+
+SOLUTION
+1. Create a nested Route inside Component rendered in "/quotes/:quoteId" Route
+	> in QuoteDetails component's JSX code, we will create a new Route component
+	> this Route will have a path that is a "subpath" of the QuoteDetails's Route's path
+		- important because nested Route will not be rendered if its Parent Route is not rendered
+
+EX:
+// QuoteDetail.js
+const QuoteDetail = () => {
+  const params = useParams();
+
+  return (
+    <React.Fragment>
+      <h1>QuoteDetail</h1>
+      <p>{params.quoteId}</p>
+      <Route path="/quotes/:quoteId/comments">
+        <Comments />
+      </Route>
+    </React.Fragment>
+  );
+};
+
+
+
+
+
+
+
+
+
+015 Adding a Layout Wrapper Component
+
+GOAL:
+1. To create a Layout Wrapper Component
+
+SOLUTION
+1. Create a Layout wrapper component
+	> inside the Layout component, theres two things	
+	  	- MainNavigation component
+		- main element that wraps the props.children
+	> for MainNavigation component, we will use NavLink to serve as the navigation links
+
+EX:
+// MainNavigation.js
+const MainNavigation = () => {
+  return (
+    <header className={classes.header}>
+      <div className={classes.logo}>Great Quotes</div>
+      <nav className={classes.nav}>
+        <ul>
+          <li>
+            <NavLink to="/quotes" activeClassName={classes.active}>
+              All Quotes
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/new-quote" activeClassName={classes.active}>
+              Add a Quote
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
+};
+
+
+// Layout.js
+const Layout = (props) => {
+  return (
+    <React.Fragment>
+      <MainNavigation />
+      <main className={classes.main}>{props.children}</main>
+    </React.Fragment>
+  );
+};
+
+// App.js
+function App() {
+  return (
+    <Layout>
+      <Switch>
+        <Route path="/" exact>
+          <Redirect to="/quotes" />
+        </Route>
+        <Route path="/quotes" exact>
+          <AllQuotes />
+        </Route>
+        <Route path="/quotes/:quoteId">
+          <QuoteDetail />
+        </Route>
+        <Route path="/new-quote">
+          <NewQuote />
+        </Route>
+      </Switch>
+    </Layout>
+  );
+}
+
+
+
+
+
+
+
+
+
+016 Adding Dummy Data & More Content
+
+GOAL:
+1. Display dummy data using QuoteList in AllQuote page
+2. Display a form to add Quote using QuoteForm in NewQuote page
+
+EX:
+// NewQuote.js
+import React from "react";
+import QuoteForm from "../components/quotes/QuoteForm";
+
+const NewQuote = () => {
+  const addQuoteHandler = (quoteData) => {
+    console.log(quoteData);
+  };
+
+  return <QuoteForm onAddQuote={addQuoteHandler} />;
+};
+
+export default NewQuote;
+
+// AllQuote.js
+const DUMMY_QUOTES = [
+  {
+    id: "q1",
+    author: "John",
+    text: "Learning React is hard",
+  },
+  {
+    id: "q2",
+    author: "Glenn",
+    text: "Learning React is good",
+  },
+];
+
+const AllQuotes = () => {
+  return <QuoteList quotes={DUMMY_QUOTES} />;
+};
+
+
+
+
+
+
+
+
+
+
+
+017 Outputting Data on the "Details" page
+
+GOAL:
+1. Navigate user to QuoteDetail page for specific Quote
+2. Output Quote data in the QuoteDetail page
+
+SOLUTION
+1. Use Link component in the QuoteItem in AllQuote page
+	> instead of normal anchor tag, use the Link component from react-router-dom
+2. Use HighlightedQuote component to display the Quote
+ 	> first we will add the DUMMY_QUOTE data in the QuoteDetail page
+	> then using the "quoteId" URL param, we will find the matching Quote in DUMMY_QUOTE
+	> if Quote is undefined (no match found), return some text to denote that no match was found
+	> else, output HighlightedQuote component with Quote data passed to it
+
+// QuoteItem.js
+const QuoteItem = (props) => {
+  return (
+    <li className={classes.item}>
+      <figure>
+        <blockquote>
+          <p>{props.text}</p>
+        </blockquote>
+        <figcaption>{props.author}</figcaption>
+      </figure>
+      <Link to={`/quotes/${props.id}`} className="btn">
+        View Fullscreen
+      </Link>
+    </li>
+  );
+};
+
+
+// QuoteDetail.js
+const DUMMY_QUOTES = [
+  {
+    id: "q1",
+    author: "John",
+    text: "Learning React is hard",
+  },
+  {
+    id: "q2",
+    author: "Glenn",
+    text: "Learning React is good",
+  },
+];
+
+const QuoteDetail = () => {
+  const params = useParams();
+
+  const quote = DUMMY_QUOTES.find((quote) => quote.id === params.quoteId);
+
+  if (!quote) {
+    return <h1>No Quote found</h1>;
+  }
+
+  return (
+    <React.Fragment>
+      <HighlightedQuote text={quote.text} author={quote.author} />
+      <Route path="/quotes/:quoteId/comments">
+        <Comments />
+      </Route>
+    </React.Fragment>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+018 Adding a "Not Found" page
+
+Adding a "Not Found" page
+ > we typically want to display this page if user visit a page with no matching Route
+ > in order to do this, we want to:
+    	1. Add a Route which match ALL the request url path
+		- to do this, we need to have the "path" of Route set to "*"
+		- this "*" will match all request url path
+	2. Place it at the BOTTOM of the Switch component
+		- this way, the React Router will first look at the Route with defined paths
+		- then, if it doesnt found a match, the Route "*" will serve as a fallback Route
+
+EX:
+// App.js
+function App() {
+  return (
+    <Layout>
+      <Switch>
+        <Route path="/" exact>
+          <Redirect to="/quotes" />
+        </Route>
+        <Route path="/quotes" exact>
+          <AllQuotes />
+        </Route>
+        <Route path="/quotes/:quoteId">
+          <QuoteDetail />
+        </Route>
+        <Route path="/new-quote">
+          <NewQuote />
+        </Route>
+        <Route path="*">
+          <NotFound />
+        </Route>
+      </Switch>
+    </Layout>
+  );
+}
+
+// NotFound.js
+import React from "react";
+
+const NotFound = () => {
+  return <h1>404 Page not found</h1>;
+};
+
+export default NotFound;
+
+
+
+
+
+
+
+
+
+
+
+
+
+019 Implementing Programmatic (Imperative) Navigation
+
+Navigation in React Router
+ > right now, we have NavLink and Link to navigate user to another Page
+ > but, this method requires user interaction.
+ > what if we want to navigate user programmatically,
+	- ex: after submitting a form, inside the form submission handler, we want to navigate user to another page
+ > for this case, we can use the useHistory hook
+
+useHistory
+ > hook from react-router-dom
+ > returns an object that contains three property
+	1. location
+		- which returns the current url page
+	2. push
+		- used to programmatically navigate user to another page
+		- done by adding new history entry
+			-> this means that after changing page, user can go back to previous page using back button
+	3. replace, navigate user to another page
+		- used to programmatically navigate user to another page
+		- done by replacing the current history entry
+			-> this means that after changing page, user cant go back to "previous" page using back button
+			-> instead, if back button is used, it will go back to previous previous page
+
+NOTE:
+1. Both push() and replace() will cause a re-evaluation to Components in the Route destination
+	
+EX:
+useHistory().push("/quotes")
+	- "/quotes/q1"
+	- "/new-quote"
+	- "/quotes" (after using push())
+	- "/new-quote" (after using back)
+
+useHistory().replace("/quotes")
+	- "/quotes/q1"
+	- "/new-quote"
+	- "/quotes" (after using replace())
+	- "/quotes/q1" (after using back)
+
+
+EX:
+// NewQuote.js
+const NewQuote = () => {
+  const history = useHistory();
+
+  const addQuoteHandler = (quoteData) => {
+    console.log(quoteData);
+
+    history.push("/quotes");
+  };
+
+  return <QuoteForm onAddQuote={addQuoteHandler} />;
+};
+
+export default NewQuote;
+
+
+// QuoteForm.js formSubmission handler
+
+  function submitFormHandler(event) {
+    event.preventDefault();
+
+    const enteredAuthor = authorInputRef.current.value;
+    const enteredText = textInputRef.current.value;
+
+    // optional: Could validate here
+
+    props.onAddQuote({ author: enteredAuthor, text: enteredText });
+  }
+
+
+
+
+
+
+020 Preventing Possible Unwanted Route Transitions with "Prompt" Component
+
+Preventing Possible Unwanted Route Transitions with "Prompt" Component
+ > sometimes, we want to prompt the user from changing page url for some reason
+	- ex: unsubmitted form
+ > in order for us to give a prompt to user, we can use the Prompt component from react-router-dom
+
+Prompt
+ > a component in react-router-dom library
+ > with this, it will show a prompt (browser built-in) when user navigate to a different page
+ > this component takes two props
+	1. when
+		- takes a boolean input
+		- determines when to give a prompt when user navigates away (ex: if false, will not show prompt to navigating user)
+	2. message
+		- takes a function input
+		- this function input takes the location as parameter 
+			-> contains the information about the current page (similar to useHistory().location)
+		- this function must return a string
+			-> this string will be shown in the prompt
+
+Using Prompt for unsubmitted Forms
+1. When setting up Prompt for Forms, we must remember to only give Prompt when user entered a data
+	> if user hasnt touched the Form, we must not give prompt when user navigate
+	> to do this, we can use the onFocus eventListener of the form element
+	> then when onFocus event happened, we want to modify some state to signify that form is "touch"
+		- typically done using State 
+2. Then if the user click the submit button, we must revert this State to false in order to not show the prompt when submitting
+	> we do this by setting up the onClick of the submit button
+	> inside on clickHandler, we set the State to false
+
+EX:
+// QuoteForm.js
+const QuoteForm = (props) => {
+  const [isEntered, setIsEntering] = useState(false);
+  const authorInputRef = useRef();
+  const textInputRef = useRef();
+
+  function submitFormHandler(event) {
+    event.preventDefault();
+
+    const enteredAuthor = authorInputRef.current.value;
+    const enteredText = textInputRef.current.value;
+
+    // optional: Could validate here
+
+    props.onAddQuote({ author: enteredAuthor, text: enteredText });
+  }
+
+  const finishEnteringHandler = () => {
+    setIsEntering(false);
+  };
+
+  const formFocusHandler = () => {
+    setIsEntering(true);
+  };
+
+  return (
+    <Fragment>
+      <Prompt
+        when={isEntered}
+        message={(location) =>
+          "Are you sure you want to navigate? All entered data in this form will be lost"
+        }
+      />
+      <Card>
+        <form
+          onFocus={formFocusHandler}
+          className={classes.form}
+          onSubmit={submitFormHandler}
+        >
+          {props.isLoading && (
+            <div className={classes.loading}>
+              <LoadingSpinner />
+            </div>
+          )}
+
+          <div className={classes.control}>
+            <label htmlFor="author">Author</label>
+            <input type="text" id="author" ref={authorInputRef} />
+          </div>
+          <div className={classes.control}>
+            <label htmlFor="text">Text</label>
+            <textarea id="text" rows="5" ref={textInputRef}></textarea>
+          </div>
+          <div className={classes.actions}>
+            <button onClick={finishEnteringHandler} className="btn">
+              Add Quote
+            </button>
+          </div>
+        </form>
+      </Card>
+    </Fragment>
+  );
+};
+
+
+
+
+
+
+
+
+
+021 Working with Query Parameters
+
+Working with Query parameters
+ > sometimes, we want to use the Query parameters in page url to do something
+	- ex: sorting content in page using data from query params (http://localhost:3000/quotes?sort=asc)
+ > to do this, we need to do fetch the query params from the page url
+ > we will use the following functions/hooks
+
+useLocation()
+ > functional hook from react-router-dom
+ > returns the location object
+ > location object contains properties like
+	1. key
+	2. pathname
+		-> refers to relative url path
+		-> "/quotes"
+	3. search
+		-> refers to the query parameters
+		-> "?sort=asc"
+
+URLSearchParams(string: searchParams)
+ > returns a Object with method to modify, access, delete the query parameters
+ > takes a query parameter string from url
+	- we can get this from "search" property of useLocation() output
+ > methods inside includes
+	1. get(string: queryKey)
+		- takes the query parameter key as input
+		- returns the query parameter value as output
+ 
+Fetching/Accessing the Query parameters
+ > to fetch the Query parameters in React, we need to
+	1. Import useLocation() hook to fetch the location object in browser
+		- this returns an object which contains the page information such as url, search params, etc.
+	2. Using the useLocation() result, access the search/query parameters
+		- located in the "search" property of the location object
+	3. Pass this location.search to the constructor of URLSearchParams()
+	4. Using the URLSearchParams object, access the query parameter you want by calling get() and passing query parameter key
+
+EX:
+Below, we used the useLocation and URLSearchParams to access the query params. We then used it to change the following
+1. State that defines if quotes are ascending or not
+2. URL where changeSortingHandler navigates
+3. The text in the button that we used to change sorting of quotes
+4. The source quotes that we display in the JSX
+
+
+// QuoteList.js
+const sortQuotes = (quotes, ascending) => {
+  return quotes.sort((quoteA, quoteB) => {
+    if (ascending) {
+      return quoteA.id > quoteB.id ? 1 : -1;
+    } else {
+      return quoteA.id < quoteB.id ? 1 : -1;
+    }
+  });
+};
+
+const QuoteList = (props) => {
+  const location = useLocation();
+  const history = useHistory();
+
+  const queryParams = new URLSearchParams(location.search);
+
+  const isAscending = queryParams.get("sort") === "asc" ? true : false;
+
+  const sortedQuotes = sortQuotes(props.quotes, isAscending);
+
+  const changeSortingHandler = () => {
+    history.push("/quotes?sort=" + (isAscending ? "desc" : "asc"));
+  };
+
+  return (
+    <Fragment>
+      <div className={classes.sorting}>
+        <button onClick={changeSortingHandler}>
+          Sort {isAscending ? "Descending" : "Ascending"}
+        </button>
+      </div>
+      <ul className={classes.list}>
+        {sortedQuotes.map((quote) => (
+          <QuoteItem
+            key={quote.id}
+            id={quote.id}
+            author={quote.author}
+            text={quote.text}
+          />
+        ))}
+      </ul>
+    </Fragment>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+022 Getting Creative With Nested Routes
+
+GOAL:
+1. To display "Load Comments" button in QuoteDetails page
+	> but, we only want it to show in "/quotes/:quoteId" route, not in "/quotes/:quoteId/comments" where the "Load Comments" button will navigate us
+
+SOLUTION
+1. Use nested Route to display the button only for the specific Route
+
+EX:
+As we can see below, we only display the "Load Comments"
+
+// QuoteDetail.js
+const DUMMY_QUOTES = [
+  {
+    id: "q1",
+    author: "John",
+    text: "Learning React is hard",
+  },
+  {
+    id: "q2",
+    author: "Glenn",
+    text: "Learning React is good",
+  },
+];
+
+const QuoteDetail = () => {
+  const params = useParams();
+
+  const quote = DUMMY_QUOTES.find((quote) => quote.id === params.quoteId);
+
+  if (!quote) {
+    return <h1>No Quote found</h1>;
+  }
+
+  return (
+    <React.Fragment>
+      <HighlightedQuote text={quote.text} author={quote.author} />
+      <Route path={`/quotes/${params.quoteId}`} exact>
+        <div className="centered">
+          <Link to={`/quotes/${params.quoteId}/comments`} className="btn--flat">
+            Load comments
+          </Link>
+        </div>
+      </Route>
+      <Route path="/quotes/:quoteId/comments">
+        <Comments />
+      </Route>
+    </React.Fragment>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+023 Writing More Flexible Routing Code
+
+Writing More Flexible Routing Code
+ > right now, we have our Route paths HARDCODED
+ > the problem with this approach is that if we change a Route's path in App.js (where the top level Routes are located), the Nested Routes in those modified Route will be INVALID
+ > for this, we want our Nested Route's path to be DYNAMIC, and we can do this by using:
+	- useLocation() pathname
+	- useHistory() location.pathname
+	- useRouteMatch() path or url
+ > with this pathname/path/url, we can make our nested Route path dynamic
+	- ex: if we have top level Route "/quotes" with a nested Route `${match.path}/comments`, even if we change the top level Route to "/quoteList", it wont be affect at all since the nested Route path's value will change as well
+
+
+useRouteMatch 
+ > hook from react-router-dom
+ > used to extract information with regards to the Route like
+	- URL path params
+	- Route's url path
+	- Absolute url
+
+useHistory().push() 
+ > besides passing a string literal value into the push method, we can also pass an Object to define the url destination
+ > this Object's properties are
+	- pathname (MANDATORY)
+	- search (query params)
+
+EX:
+In QuoteDetails, we used useRouteMatch hook to dynamically define the values of Route's path and Link's to props inside JSX code.
+In QuoteList, we used another form of useHistory().push() function to define the url destination inside changeSortingHandler function
+
+// QuoteDetails.js
+const QuoteDetail = () => {
+  const params = useParams();
+  const match = useRouteMatch();
+
+  const quote = DUMMY_QUOTES.find((quote) => quote.id === params.quoteId);
+
+  if (!quote) {
+    return <h1>No Quote found</h1>;
+  }
+
+  return (
+    <React.Fragment>
+      <HighlightedQuote text={quote.text} author={quote.author} />
+      <Route path={match.path} exact>
+        <div className="centered">
+          <Link to={`${match.url}/comments`} className="btn--flat">
+            Load comments
+          </Link>
+        </div>
+      </Route>
+      <Route path={`${match.path}/comments`}>
+        <Comments />
+      </Route>
+    </React.Fragment>
+  );
+};
+
+
+// QuoteList.js
+const QuoteList = (props) => {
+  const location = useLocation();
+  const history = useHistory();
+
+  console.log(history);
+
+  const queryParams = new URLSearchParams(location.search);
+
+  const isAscending = queryParams.get("sort") === "asc" ? true : false;
+
+  const sortedQuotes = sortQuotes(props.quotes, isAscending);
+
+  const changeSortingHandler = () => {
+    history.push({
+      pathname: location.pathname,
+      search: `?sort=${isAscending ? "desc" : "asc"}`,
+    });
+  };
+
+  return (
+    <Fragment>
+      <div className={classes.sorting}>
+        <button onClick={changeSortingHandler}>
+          Sort {isAscending ? "Descending" : "Ascending"}
+        </button>
+      </div>
+      <ul className={classes.list}>
+        {sortedQuotes.map((quote) => (
+          <QuoteItem
+            key={quote.id}
+            id={quote.id}
+            author={quote.author}
+            text={quote.text}
+          />
+        ))}
+      </ul>
+    </Fragment>
+  );
+};
+
+
+
+
+
+
+
+
+
+024 Sending & Getting Quote Data via Http
+
+GOAL:
+Using Http request to the Firebase backend api:
+1. Fetch Quote data in the Firebase
+	- if Quote data is present, show the Quotes using QuoteList
+	- if Quote data is empty, show NoQuotes to give user access to NewQuote page
+2. Send new Quote data in Firebase
+	- if successful, redirect user to AllQuote page
+3. Show the details of the Quote using QuoteDetails
+	- if successful, show the Quote using QuoteDetails
+	- else, show that No Quote exist
+
+
+
+
+
+
+
+
+
+025 Adding the "Comments" Features
+
+GOAL:
+Using http request to Firebase, we must be able to:
+1. Add Comments in the Firebase
+	> folder "path" in Firebase for storing comments is
+		- root/comments/quoteId
+			- comment1
+			- comment2
+			- comment3
+	> done in the NewCommentForm
+	> after adding comment, Comments in React app should be refreshed by fetching the Comments again
+2. Fetch the Comments in the Firebase for a specific Quote
+	> using quoteId, fetch all the Comment in a Quote in Firebase
+
+
+
+
+
+
+
+
+
+
+025 Upgrading To React Router v6
+
+Upgrades needed from React Router v5 to v6
+ > Link: https://reactrouter.com/docs/en/v6/upgrading/v5
+
+Changes from React Router v5 to v6
+1. Routes as replacement to Switch component
+2. Route's "element" prop to contain JSX elements to be render
+3. Route's "path" are "exact" by DEFAULT
+4. Adding a "/*" to the end of Route's path will enable partial matching
+5. React Router has better algorithm when picking the best Route to be loaded
+6. NavLink's "activeClassName" prop is replaced with "className" that can access navigation data through function input parameter
+7. Navigate as replacement to Redirect component
+8. ALL Route component must be nested inside a Routes component
+9. Route with nested Route inside must have their path ends with "/*"
+10. Paths of nested Route are RELATIVE to the path of their parent Route
+11. Link's "to" prop value can be relative as well if we are navigating to the same Route
+12. Using Outlet component as another way to write nested Route components
+13. useNavigate as replacement to useHistory hook for programmatic/imperative navigation
+14. Prompt component used to send prompt when user navigates away DOESNT EXIST in V6
+
+
+1. Routes as replacement to Switch component
+ 	> instead of Switch component to nest Routes, we will use the Routes component
+2. Route's "element" prop to contain JSX elements to be render
+	> we also need to put the JSX elements to be rendered in the "element" prop of Route instead of nesting them inside.
+
+EX:
+function App() {
+  return (
+    <div>
+      <MainHeader />
+      <main>
+        <Routes>
+          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/products" exact element={<Products />} />
+          <Route path="/products/:productId" element={<ProductDetail />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
+
+
+3. Route's "path" are "exact" by DEFAULT
+	> this means that we dont need to add "exact" prop to Route
+
+EX:
+from 	<Route path="/products" exact element={<Products />} />
+to	<Route path="/products" element={<Products />} />
+
+
+
+4. Adding a "/*" to the end of Route's path will enable partial matching
+	> since in v6, exact matching is the default method, to enable v5 default matching (partial matching), we will need to add "/*" at the end of the Route's path
+
+EX: "/products/*" in v6 will match to "/products", "/products/p1", "products/p1/1"
+
+
+5. React Router has better algorithm when picking the best Route to be loaded
+	> in v6, the order of the Routes doesnt have an effect to the algorithm
+	> instead, it looks at the Routes' path and its specificity to determine the correct Route
+
+EX:
+If we have Routes with path of
+1 "/products/*"
+2 "/products/:productId"
+3 "/products/edit"
+
+It will prioritize the the following paths in order
+1 "/products/edit"
+	> since the path's value is STATIC and hardcoded
+2 "/products/:productId"
+	> paths that expects a URL path variable will be prioritize next after static url
+3 "/products/*"
+	> paths that ends with "/*" will have the least priority and serves as a fallback path in case the request doesnt match the other two
+
+
+
+
+
+6. NavLink's "activeClassName" prop is replaced with "className" that can access navigation data through function input parameter
+	> instead of "activeClassName", we  will use the "className" prop
+	> this prop accepts function input that can access navigation data through parameter
+	> in this navData param, we can access the "isActive" property that returns true if NavLink is active
+
+EX:
+            <NavLink
+              className={(navData) => (navData.isActive ? classes.active : "")}
+              to="/welcome"
+            >
+
+
+
+7. Navigate as replacement to Redirect component 
+	> Redirect is removed in v6, instead we will use the Navigate component
+	> retains the "to" prop which indicates the destination url
+	> unlink Redirect which replaces the current page, Navigate will PUSH a new page in history stack
+	> to have the behavior of Redirect component, add "replace" prop
+
+EX:
+          <Route path="/" exact>
+            <Navigate replace to="/welcome" />
+          </Route>
+
+
+
+8. ALL Route component must be nested inside a Routes component
+	> in v6, even nested Route components must be wrapped with Routes
+
+EX:
+// in App.js
+<Route path="/welcome" element={<Welcome />} />
+
+// Welcome.js
+const Welcome = () => {
+  return (
+    <section>
+      <h1>The Welcome Page</h1>
+      <Routes>
+        <Route path="/welcome/new-user" element={<p>Welcome, new user!</p>} />
+      </Routes>
+    </section>
+  );
+};
+
+
+
+9. Route with nested Route inside must have their path ends with "/*"
+	> in v6, path matching are "exact" by default
+	> to use "partial" matching (default in v5) in order to cover the nested Routes, we must add "/*" at the end of the parent Route
+10. Paths of nested Route are RELATIVE to the path of their parent Route
+	> behind the scene, the path of a nested Route will be CONCATENATED to its Parent Route to determine its true path
+	> this means that we would only need to pass a path RELATIVE to its parent Route's path
+	> NOTE: Nested Route's path MUST NOT start with "/" for this to work
+		-> if the path starts with "/", it will be treated as absolute url instead of relative
+
+EX:
+In example below, we have a Parent Route with path "/welcome/*" with nested Route with path "new-user"
+This means that in order to render the nested Route, we will need to visit "/welcome/new-user" since "/welcome/" + "/new-user" is "/welcome/new-user"
+
+// Parent Route in App.js
+<Route path="/welcome/*" element={<Welcome />} />
+
+// Nested Route in Welcome.js
+const Welcome = () => {
+  return (
+    <section>
+      <h1>The Welcome Page</h1>
+      <Routes>
+        <Route path="new-user" element={<p>Welcome, new user!</p>} />
+      </Routes>
+    </section>
+  );
+};
+
+
+11. Link's "to" prop can be relative value as well if we are navigating to the same Route
+	> if we are navigating to the same Route, then we can make the Link's "to" prop value a relative path
+
+EX:
+In example below, we have a Link inside "/welcome/*" Route that navigates to "/welcome/new-user"
+Since we are just adding "new-user" to the source url to destination url using Link, we can just pass "new-user" to Link's prop
+This will have same effect as Link with "to" prop of "/welcome/new-user"
+
+// Inside App.js
+<Route path="/welcome/*" element={<Welcome />} />
+
+// Link inside Welcome.js
+      <Link to="/welcome/new-user">To Products</Link>
+
+// New Link with relative "to" prop value
+      <Link to="new-user">To Products</Link>
+
+
+12. Using Outlet component as another way to write nested Route components
+	> with Outlet component, we can write nested Route and its routing better
+	> where instead of writing the Route component inside the Component rendered by its Parent route, we can just nest the Route component inside its parent Route component
+	> then, using the Outlet component inside the Component rendered by Parent Route, we can define where to display the nested Route components if they match
+
+EX:
+// Parent Route with Route components nested inside
+          <Route path="/welcome/*" element={<Welcome />}>
+            <Route path="new-user" element={<p>Welcome, new user!</p>} />
+          </Route>
+
+// Component rendered by Parent Route using the Outlet component
+const Welcome = () => {
+  return (
+    <section>
+      <h1>The Welcome Page</h1>
+      <Link to="new-user">To New User</Link>
+      <Outlet />
+    </section>
+  );
+};
+
+
+
+13. useNavigate as replacement to useHistory hook for programmatic/imperative navigation	
+	> with useNavigate hook, we can also do what useHistory do
+	> the useNavigate hook returns a function that we can use to navigate
+		-> compare to useHistory where it returns an Object with function properties
+	> for useHistory().push(), we have useNavigate()(string: url)
+	> for useHistory().replace(), we have useNavigate()(string: url, {replace: true})
+	> for navigationg history stack relatively, we can pass number to useNavigate() function return value
+
+EX:
+const navigate = useNavigate();
+
+// for pushing a new page when navigating
+navigate("/welcome")
+
+// for replacing the current page when navigating
+navigate("/welcome", {replace: true})
+
+// for navigating history stack relatively
+navigate(-1)	// backward by 1 page like back button
+navigate(1)	// forward by 1 page like forward button
+navigate(-2)	// backward by 2 pages
+
+
+
+14. Prompt component used to send prompt when user navigates away DOESNT EXIST in V6
+	> for this, if we change from v5 to v6, we will need to use a work around for this

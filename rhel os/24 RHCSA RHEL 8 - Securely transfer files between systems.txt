@@ -1,0 +1,28 @@
+24 RHCSA RHEL 8 - Securely transfer files between systems
+
+Prerequisite for securely transferring files between systems
+1. The must be under THE SAME NETWORK (or at least have communication with each other)
+ 	> for VMs, they must be in the same NAT Network
+
+
+Commands
+scp SOURCEFILE(S) USERNAME@IPADDR:TARGETDIR		-> copying files from current server to remote server
+scp USERNAME@IPADDR:SOURCEFILE(S) TARGETDIR		-> copying files from remote server to current server
+ > securely copy files
+ > a remote file copy program
+ > takes several inputs
+	SOURCE	file or directory to copy
+	USERNAME	one of the username on the other server
+	IPADDR	ip address of the other server in the same network
+	TARGETDIR	destination of the files on the other server
+ > ex:
+	$ scp file6 user1@10.0.2.5:tmp
+		- will copy file6 to the server 10.0.2.5 under user1 USER and in the tmp file
+	$ scp /etc/ssh/* user1@10.0.2.5:/tmp
+		- copy everything under /etc/ssh to server 10.0.2.5 under user1 USER in the /tmp directory
+	$ scp user1@10.0.2.4:/home/user1/Documents/fileToTransfer.txt /home/jglenn/Documents
+		- copy the fileToTransfer.txt file in the remote server to the current server in specified directorys
+ > NOTES:
+	1. The destination directory must exist, if you want to paste the files selected to a directory to target server
+	2. The user used in destination server will be the permission target used when we add/modify files in the dest. server.
+		- ex: if we write to a file where only ROOT can write and we used "user1" when we transfer file (user1@10.0.2.4), then we will be denied

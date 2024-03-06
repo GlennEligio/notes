@@ -1,0 +1,46 @@
+06. JSON
+
+VII. JSON
+
+JSON
+	> stands for JavaScript Object Notation
+	> a format used to create values for Javascript Object literals
+	> format that is widely used on transferring complex object into Strings to be sent on the fly
+
+JSON
+	> a class in Javascript
+	> we can use this to apply changes to a String or Object
+		a. Serialize/Stringify
+		b. Deserialize/Parse	
+	> this class have methods
+		a. stringify(Object o)
+			= converts a Javascript object into a JSON string
+		b. parse(String s)
+			= parse a JSON string into a Javascript object
+
+EX:
+const todos = [
+  {
+    id: 1,
+    text: "Take out trash",
+    isCompleted: true,
+  },
+  {
+    id: 2,
+    text: "Meeting with boss",
+    isCompleted: true,
+  },
+  {
+    id: 3,
+    text: "Dentist appt",
+    isCompleted: false,
+  },
+];
+
+// Convert todos variable to JSON string
+const JsonString = JSON.stringify(todos);
+// Convers the JSON string back to Javascript object
+const todosNew = JSON.parse(JsonString);
+
+console.log(JsonString);
+console.log(todosNew);

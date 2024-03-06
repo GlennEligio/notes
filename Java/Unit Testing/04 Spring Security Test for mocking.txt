@@ -1,0 +1,46 @@
+Unit Test Controller Endpoints secured with Spring Security
+
+
+Annotation used
+@WithMockUser
+	> annotation added in a @Test method
+	> will inject an Authentication object in the SecurityContext of the Test process
+	> have the following parameters to define
+		- String username	
+			-> default ""
+		- String password	
+			-> default "password"
+		- String[] roles	
+			-> default {"USER"}
+		- String value		
+			-> default ""
+		- List<GrantedAuthority> authorities 	
+			-> default {}
+
+Class/Interface used
+SecurityMockMvcRequestPostProcessors
+	> used to process Request into an Authentication Object
+	> have the following methods
+
+user(String username)
+	> defines the username of Authentication Object
+roles(String... roles)
+	> defines the roles of the Authentication Object
+password(String... password)
+	> defines the password of the Authentication object
+csrf()
+	> adds a  CSRF token to the Request
+
+
+Steps
+1. Add Spring Security Test Dependency
+
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
+

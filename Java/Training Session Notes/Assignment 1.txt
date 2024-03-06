@@ -1,0 +1,34 @@
+Employee ( id,firstName,lastName,Email)
+EmployeeDao 
+ addEmp (add emp in list)
+
+static {
+add some default users object to show the default no of Employees
+
+}
+ loadEmp( show the employees)
+
+
+RestController(
+
+/showemp
+
+/addemp
+
+to add the ID value automatically (check the size of list and add the next ID)
+
+Postman for JSON based data 
+
+-----------------
+
+P-1 (/showemp)
+
+P-2 (/addemp)
+
+
+start.spring.io( devtools + web) ( Assignment1)
+
+headers
+handle exception centrally
+response entity
+unit testing

@@ -1,0 +1,559 @@
+06 Styling React Components
+
+
+001 Module Introduction
+
+Module Content
+1. Conditional & Dynamic Styles
+2. Styled Components
+3. CSS Modules
+4. Radium
+
+
+
+
+
+002 Setting Dynamic Inline Styles
+
+Inline CSS Styles
+ > we can add inline CSS styles in DOM elements inside JSX code
+ > to do this, we will need to:
+	1. Add "style" property
+	2. Pass Object literal to it (enclosed in curly braces)
+	 	- the Object literal is basically CSS block/json
+
+EX:
+Here, the text color of label element can be either black or red, depending on the value of "isValid" variable
+
+        <label style={{ color: isValid ? "black" : "red" }}>Course Goal</label>
+
+
+NOTES:
+1. As per normal CSS, inline OVERWRITES the CSS property defined in the inline itself
+	> ex: if we have "color:black" in CSS file, and we add "color:red" in the inline of element, it will override it
+2. For CSS property that is multiword and uses hyphen, we should rewrite them in camelCase
+ 	- this is because we cant use the hyphen/dash symbol
+
+EX:
+        <input
+          style={{
+            borderColor: isValid ? "black" : "red",
+            background: isValid ? "transparent" : "salmon",
+          }}
+          type="text"
+          onChange={goalInputChangeHandler}
+        />
+
+
+
+
+
+
+003 Setting CSS Classes Dynamically
+
+Setting CSS Class in DOM elements in JSX Dynamically
+ > in JSX, we can define the CSS classes in DOM elements by passing string in "className" property
+ > and since we are passing string value here, we can make use of "Template literals" to dynamically set the value of the "className"
+ > in Template literals, we can inject values in string dynamically
+ > to use Template literals in JSX
+ 	1. add curly braces
+	2. create opening and closing backtick (ex: ``)
+	3. inside the backticks, we can use the Template literals
+
+
+EX:
+In this example, we can see in div that we set its className value dynamically. If the isValid variable is false, then "invalid" class will be added, else it will not
+
+      <div className={`form-control ${!isValid ? "invalid" : ""}`}>
+        <label>Course Goal</label>
+        <input type="text" onChange={goalInputChangeHandler} />
+      </div>
+
+
+
+
+
+
+004 Introducing Styled Components 
+
+SOURCE:
+Tagged templated
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates
+
+
+PROBLEM:
+ > CSS files are applied GLOBALLY
+	- these means Components can access the CSS classes of other Components
+
+SOLUTION
+ > Styled Components
+
+
+Styled Components
+ > Components that have CSS styles in them
+ > These CSS styles are only applied to that specific Component
+ 	- Useful for creating a Component with specific style
+  	- These Component are typically used more than once
+
+
+Creating Styled Components
+1. Install/Import styled-components dependency
+	> npm install --save styled-components
+2. Create a Component
+3. Import 'styled-components' library into the Components
+	> import styled from 'styled-components';
+4. Assign a tag function as value of Component as oppose to the normal function
+	> tag function uses tagged templated to pass input to the function itself
+		- template literal input is enclosed with backticks (``)
+	> these input is called tagged template, which is then parsed by the tag function
+	> these template literal can be multiline as well
+
+EX:
+import styled from "styled-components";
+
+const Button = styled.button`
+  .button {
+    font: inherit;
+    padding: 0.5rem 1.5rem;
+    border: 1px solid #8b005d;
+    color: white;
+    background: #8b005d;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.26);
+    cursor: pointer;
+  }
+
+  .button:focus {
+    outline: none;
+  }
+
+  .button:hover,
+  .button:active {
+    background: #ac0e77;
+    border-color: #ac0e77;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.26);
+  }
+`;
+
+export default Button;
+
+
+NOTE:
+1. We can create Styled Components of other DOM element, not just button
+	> ex: a, p, h1, div
+	> ex: const Header = styled.h1``
+2. We can omit the usage of CSS class selector to the template literal input of tag function
+	> this is because all CSS properties will be applied to the Styled Components directly
+	> for pseudo-selector (e.g. :hover, :focus) or nested selector (e.g. div label), we can use the ampersand symbol (&) to refer to the Styled Component
+
+EX:
+import styled from "styled-components";
+
+const Button = styled.button`
+  .button {
+    font: inherit;
+    padding: 0.5rem 1.5rem;
+    border: 1px solid #8b005d;
+    color: white;
+    background: #8b005d;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.26);
+    cursor: pointer;
+  }
+
+  .button:focus {
+    outline: none;
+  }
+
+  .button:hover,
+  .button:active {
+    background: #ac0e77;
+    border-color: #ac0e77;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.26);
+  }
+`;
+
+export default Button;
+
+
+To:
+
+import styled from "styled-components";
+
+const Button = styled.button`
+  font: inherit;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid #8b005d;
+  color: white;
+  background: #8b005d;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover,
+  &:active {
+    background: #ac0e77;
+    border-color: #ac0e77;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.26);
+  }
+`;
+
+export default Button;
+
+
+
+
+
+
+
+005 Styled Components & Dynamic Props
+
+Styled Components & Dynamic Props
+ > Styled Components, like any other Components, can also receive Props
+ > these Props can then be used inside the template literal input of tag function to dynamically change the CSS style of Styled Component
+
+ 
+Adding Props to Styled Component
+ > same as adding Props to a Component
+ > ex: <FormControl invalid={!isValid}> <FormControl/>
+
+
+Accessing Props inside Styled Components
+ > use the format of template literal to inject value in CSS styles
+	- ex: border-color: ${}
+ > inside the curly braces, pass a function and return the expected value
+ 	- this function can receive the Props object as parameter
+ 	- this parameter is where we can access the Props we passed when we used the Styled Component itself
+
+
+EX:
+Using Styled Component and passing Props
+    <form onSubmit={formSubmitHandler}>
+      <FormControl invalid={!isValid}>
+        <label>Course Goal</label>
+        <input type="text" onChange={goalInputChangeHandler} />
+      </FormControl>
+      <Button type="submit">Add Goal</Button>
+    </form>
+
+
+Styled Component that uses Dynamic Props
+const FormControl = styled.div`
+  margin: 0.5rem 0;
+
+  & label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: ${(props) => (props.invalid ? "red" : "black")};
+  }
+
+  & input {
+    display: block;
+    width: 100%;
+    border: 1px solid ${(props) => (props.invalid ? "red" : "#ccc")};
+    font: inherit;
+    line-height: 1.5rem;
+    padding: 0 0.25rem;
+    background: ${(props) => (props.invalid ? "#ffd7d7" : "transparent")};
+  }
+
+  & input:focus {
+    outline: none;
+    background: #fad0ec;
+    border-color: #8b005d;
+  }
+`;
+
+
+NOTES:
+1. We can initialize these Styled Components in the same JS file as the Component that uses it
+	- typically done if thats the only Component where the Styled Component is used
+
+
+
+
+
+
+
+006 Styled Components & Media Queries
+
+Media Queries in Styled Components
+ > we can also define Media Queries inside the Styled Component
+ > specifically, we can add it inside the template literal input of tag function
+
+EX:
+const Button = styled.button`
+  font: inherit;
+  width: 100%;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid #8b005d;
+  color: white;
+  background: #8b005d;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover,
+  &:active {
+    background: #ac0e77;
+    border-color: #ac0e77;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.26);
+  }
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
+`;
+ 
+
+
+
+
+
+
+007 Using CSS Modules
+
+CSS modules
+ > A CSS Module is a CSS file in which all class names and animation names are scoped locally by default.
+ > With this, we can solve the problem of selector name collisions or affecting other Components' styles due to CSS file being global and non-scoped
+ > By default, CSS module is AVAILABLE in create-react-app
+	- this feature is available with react-scripts@2.0.0 and higher.
+
+
+How CSS Module create locally scoped styles and animations
+ > CSS module fetches all styles and animation of a specific CSS class selector
+	- includes pseudo selector of the Class like :hover, :focus, etc
+ > When we import a CSS module, the import value will be an Object
+	- this Object contains the CSS classes as property
+	- so to access a specific CSS class style and its pseudo selector, we will do it as if we are accessing property in an Object
+	- ex: className={styles.button}
+	- here, we are accessing ".button" CSS class in the "styles" CSS module import
+ > it will then create a unique class name for that CSS class style
+ > the resulting unique class name will have the format of
+	- <ComponentName>-<CSS Class name>-<Unique hash id>
+	- ex: Button_button_u2seHx
+
+
+Creating CSS Module
+1. Create CSS file
+2. Rename it to <CSS filename>.module.css
+	> with this renaming, we gave a signal to the underlying compilation process to transform the code so that CSS Modules work
+
+
+Importing and Using CSS Module
+1. Create a Component
+2. Import the CSS Module
+	> instead of typical CSS file import, we will give this import a name
+	> ex: old import -> import './Button.css'
+	> ex: new import -> import styles from './Button.module.css'
+3. Use the import name to the "className" property of a DOM element in JSX
+	> ex: <button className={styles}>
+4. Access the specific CSS class that you want to apply in the DOM element throught the styles value
+	> this will apply all CSS class style of ".button" and its pseudo-selectors (e.g. ".button:hover")
+	> ex: <button className={styles.button}>
+
+
+EX:
+Button.module.css
+.button {
+  font: inherit;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid #8b005d;
+  color: white;
+  background: #8b005d;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button:hover,
+.button:active {
+  background: #ac0e77;
+  border-color: #ac0e77;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.26);
+}
+
+
+
+Button.js
+import React from "react";
+import styles from "./Button.module.css";
+
+const Button = (props) => {
+  return (
+    <button type={props.type} className={styles.button} onClick={props.onClick}>
+      {props.children}
+    </button>
+  );
+};
+
+export default Button;
+
+
+
+Inspecting the DOM element with CSS module in it
+ > here, we can see the class property of the button element
+ > the format Component_Class_UniqueHash is followed
+	- Button being the Component that nest this <button>
+	- button being the CSS class inside the CSS module
+	- 1ASF6 being the Unique hash to avoid CSS class selector collision
+
+<button type="submit" class="Button_button__1ASF6">Add Goal</button>
+
+
+NOTE:
+1. For CSS classes that uses hypen or dash, use this format to access it through CSS module
+	> className={styles['class-name']}
+	> ex: className={styles['form-control']}
+
+
+
+
+
+
+
+008 Dynamic Styles with CSS modules
+009 Media Queries in CSS modules
+
+Dynamic Styles with CSS modules
+ > just like normal CSS classes in DOM element of JSX code, we can also dynamically add/remove CSS styles from CSS modules
+ > for this, we will need to use template literals to inject values (which in this case, the CSS module styles)
+
+Media Queries in CSS modules
+ > we can define media queries in CSS modules in the same way as normal media queries in normal CSS files
+ > compared to styled-components, we will need to add selectors to the CSS properties inside the media queries that we define
+
+
+EX:
+Dynamic Styles in CSS module
+// Inside CourseInput.js JSX
+
+      <div className={`${styles["form-control"]} ${!isValid && styles.invalid}`}>
+        <label>Course Goal</label>
+        <input type="text" onChange={goalInputChangeHandler} />
+      </div>
+
+Resulting CSS class in div
+<div class="CourseInput_form-control__20Bod 
+		CourseInput_invalid__x9R-I">
+	<label>Course Goal</label><input type="text">
+</div>
+
+
+
+EX:
+Media queries in the CSS
+// Inside Button.module.css
+
+@media (min-width: 768px) {
+  .button {
+    width: auto;
+  }
+
+
+
+
+
+
+
+
+010 Radium (pseudo selectors)
+
+PROBLEM:
+1. Favoring inline styles for scoped styling instead of CSS we limit us on adding more complex styles like
+	a. Pseudo classes (:hover, :focus, etc)
+	b. Media Queries
+
+Solution: Radium module package
+
+
+Radium
+ > used to make more complex styles using inline CSS
+ > let us add valid CSS pseudo-selector and media queries as properties in a Object that we assign as style of a JSX element
+	- the Radium then parse it and add the CSS pseudo-selector style to that JSX element, hence keeping the locally scope styles pattern
+
+Usage:
+1. Install Radium package in React app
+	> npm install --save radium
+2. Import radium library
+	> import Radium from 'radium'
+3. Instead of exporting the Component itself, wrap it in Radium by passing the Component itself into Radium function
+	> export default Radium(ComponentName)
+
+
+Example of inline style Object with Radium:
+
+const style = {
+  background: 'green',
+  color: 'white',
+  font: 'inherit',
+  border: '1px solid blue',
+  padding: '8px',
+  cursor: 'pointer',
+  ':hover': {
+    backgroundColor: 'lightgreen',
+    color: 'black'
+  }
+}
+
+<div style={style}>
+  {some JSX}
+</div>
+
+In the example above, we can see the ':hover' property of style Object that we will use to apply inline style.
+What Radium will do is it will apply properties inside ":hover" into the ":hover" event of the JSX element where this style Object is used.
+
+
+Example of accessing pseudo selector style properties
+
+style[':hover'] = {
+  backgroundColor: 'salmon',
+  color: 'black'
+}
+
+
+NOTE:
+1. We can use this for both Class and Functional Components
+
+
+
+
+
+
+
+011 Radium (media queries)
+
+Radium with media queries
+ > for inline media queries with Radium to work, you will need to use StyledRoot
+ > we can do a named import of it in 'radium' library
+ > as for adding media queries in Object assign for inline style, its the same as for pseudo selector
+
+Usage
+1. Import StyledRoot alongside Radium from 'radium'
+ 	> import Radium, { StyledRoot } from 'radium'
+2. Wrap the whole JSX code of Component with <StyledRoot>
+3. Export the Radium with the Component inside
+	> export default Radium(ComponentName)
+
+EX:
+const style = {
+  @media (min-width: 500px): {
+    width: '450px'
+  }
+}
+
+return (
+  <StyledRoot>
+    <div className="Person" style={style}>
+      {some JSX code}
+    </div>
+  </StyledRoot>
+)

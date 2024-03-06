@@ -1,0 +1,168 @@
+12. Spring Data Rest
+
+Spring Data Rest
+	> same purpose as the Spring Data JPA
+		- help reduce the boiler-plate codes for creating REST APIs
+	> leverages the existing JpaRepository
+	> Spring will give you a REST CRUD implementation for FREE
+		- help minimize boiler-plate REST code
+		- no new coding required
+	> Spring Data REST will expose these endpoints for free
+	
+
+Spring Data REST dependency
+	> even with this, we still need the Spring Data JPA
+
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-data-rest</artifactId>
+	</dependency>
+
+
+Spring Data REST - How Does it Work
+	> Spring Data REST will SCAN your project for JpaRepository
+	> Expose REST APIs for each entity type for your JpaRepository
+
+REST Endpoints
+	> By default, Spring Data REST will create endpoints based on entity type
+	> Simple pluralized form
+		- First character of Entity type is lowercase
+		- Then just adds an "s" to the entity
+	> NOTE: Special Plural form is not supported
+		- EX: Goose - Geese, Syllabus - Syllabi
+	> To change these resource name manually, use @RepositoryRestRestResouce and define the path property
+	
+EX:
+	public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
+	
+	}
+
+	> since the Entity is Employee, the REST API will have the url path of "employees"
+		- ex: localhost:8080/employees
+
+	@RepositoryRestResource(path="members")
+	public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
+	
+	}
+
+	> in this case, the REST API will have the url path of "members"
+		- ex: localhost:8080/members
+
+	> here are the REST API Endpoints to be created
+
+HTTP METHOD	PATH			CRUD Action
+POST		/employees		Create a new employee
+GET		/employees		Read a list of employees
+GET		/employees/{employeeId}	Read a single employee
+PUT		/employees/{employeeId}	Update an existing employee
+DELETE		/employees/{employeeId}	Delete an existing employee
+	
+
+HATEOAS
+	> Spring Data REST endpoints are HATEOAS compliant
+	> stands for Hypermedia As The Engine Of Application State
+	> Hypermedia-driven sites provide information to access REST interfaces
+		- think of it as meta-data for REST data
+	> Spring Data REST response using HATEOAS
+	> HATEOAS uses Hypertext Application Language (HAL) data format
+	> this HATEOAS is composed of the following
+		1. Actual Response of the REST API endpoint
+		2. Response meta-data	
+			- links to data
+	> For a collection, meta-data includes page size, total elements, pages, etc
+		
+
+EX: 
+REST response from: GET /employees/3
+
+{
+    "firstName": "Avani",
+    "lastName": "Gupta",
+    "email": "avani@luv2code.com",
+    "_links":{
+        "self":{
+            "href":"http://localhost:8080/employees/3"
+        },
+        "employee":{
+            "href":"http://localhost:8080/employees/3"
+        }
+    }
+}
+
+
+REST response from GET /employees (Collection response)
+
+{
+    "_embedded": {
+        "employees":{
+            "firstName": "Leslie",
+            "...":"..."
+        },
+        "...":"..."
+    },
+    "page":{
+        "size": 20,
+        "totalElements": 5,
+        "totalPages": 1,
+        "number": 0
+    }
+}
+
+
+
+ADVANCE FEATURES	
+	> Pagination, sorting, and searching
+	> Extending and adding custom queries with JPQL
+	> Query Doman Specific Language (Query DSL)
+
+
+
+CONFIGURATION PROPERTIES OF Spring Data REST
+
+Base url path
+	> defines the base-url or base-path of the REST API generated
+	> here is the properties to define in application.properties file
+		a. spring.data.rest.base-path
+			= takes a String value
+
+NAME				DESCRIPTION
+spring.data.rest.base-path	defines the base-url or base-path of the generated REST API
+
+EX:
+spring.data.rest.base-path=/rest-api
+	> with this in application.properties, instead of the 
+		localhost:8080/employees
+	> we will need to go to
+		localhost:8080/rest-api/employees
+
+
+Pagination
+	> by default, Spring Data REST will return the first 20 elements
+		- page size = 20
+	> you can navigate to the different pages of data using query param	
+		- param name: "page", param type: int
+		- pages are zero-based (starts with 0)
+		- ex: 	http://localhost:8080/employees?page=0
+			http://localhost:8080/employees?page=1
+	> to define the Pagination properties of the Spring Data REST, here are the properties to set
+
+NAME					DESCRIPTION
+spring.data.rest.base-path		Base path used to expose repository resources
+spring.data.rest.default-page-size	Set default size of page (elements inside a single page)
+spring.data.rest.max-page-size		Maximum size of pages
+
+
+SORTING
+	> you can SORT by the property names of your entity
+	> to do this, add "sort" as query parameter
+	> "sort" param takes a String vararg
+	> in "sort" param, we can pass the property names
+
+Ex: sort by last name 	(http://localhost:8080/employees?sort=lastName)
+
+	> we can also define the order of SORTATION (Ascending / Descending)
+		- to do this, add "desc" or "asc" to the end of "sort" param value 
+
+Ex: sort by first name, descending 	(http://localhost:8080/employees?sort=firstName,desc)
+
+Ex: sort by last name, then first name, ascending 	(http://localhost:8080/employees?sort=lastName,firstName,asc)

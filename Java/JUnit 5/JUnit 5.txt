@@ -1,0 +1,332 @@
+Junit 5 
+
+Junit API
+	> provide a way to test our Java 
+
+Subject Under Test
+	> a Class or Method that we want to test
+
+Junit Test Class
+	> a Class that contains all the Test method that we will run
+
+
+Junit Framework Structure
+
+Junit Platform
+	> provide a way to run/launch JUnit in either
+		- IDE
+		- Build Tools
+		- Console
+
+Junit Jupiter
+	> provide API/libraries for us to create JUnit Test
+
+Junit Vintage
+	> provides test unit engine to support backward compatibility for Junit3 and Junit4
+
+3rd Party Testing Frameworks
+
+
+
+Junit 5  
+
+Annotations
+
+Method Annotations
+@Test
+	> method annotation
+	> annotation to tell JUnit that the method is a JUnit test method
+@DisplayName(String s)
+	> by default, the name of Test unit is the method name
+	> @DisplayName annotation will change the name of the JUnit test method in JUnit window to String s
+@BeforeAll
+	> executed before any of the Test method inside Test class
+	> used for setting up any 
+@BeforeEach
+	> execute EVERY TIME BEFORE a Test method is executed
+@AfterEach
+	> executed EVERY TIME AFTER a Test method is executed
+@AfterAll
+	> executed after all of the Test method is done executed
+@EnabledOnOs(value = OS, disabledReason = String msg)
+	> Test method will be ENABLED if the machine's OS is the same as the one in value parameter
+	> if NOT, disabledReason will be printed
+	> we can pass the following in value
+		- OS.LINUX
+		- OS.WINDOWS
+		- OS.MAC
+		- OS.SOLARIS
+		- OS.OTHER
+@DisabledOnOs(value = OS[], disabledReason = String msg)
+	> Test method will be DISABLED if the machine's OS is the same as the one in value parameter
+	> if NOT, disabledReason will be printed
+@RepeatedTest(value = int i)
+	> used for testing functinality with Randomness
+	> executed Test method multiple repetitions based on value parameter
+	> substitutes @Test
+@RepeatedTest(value = int v, name = "Current repetition: {currentRepetition}, Total repetition: {totalRepetitions}")
+	> same as @RepeatedTest but we define the name of the repetitions
+	> by default, the names of Test method repetition is 
+		- repetition {currentRepetition} of {totalRepetitions}
+	> but we can define this by adding name parameter to @RepeatedTest
+	> currentRepetition and totalRepetitions variable is defined by @RepeatedTest by default
+		- we can use this variables to name the repetitions
+@ValueSource(T = {})
+	> we can directly pass the input in the annotation itself
+	> we can pass different T of data
+		- Strings, Ints, Longs, Shorts, Floats, Doubles, Bytes, Chars, classes
+	> after defining the inputs,
+		- add parameter in the Test method which have same Type as the input
+		- we can then call this parameter inside the Test method
+@MethodSouce("methodName")
+	> we will pass a method whose return value will then be used to provide input
+	> the method will provide the input by returning an array or list of values
+	> the Type of parameter in the Test method should be the same Type of the methodSource return Type
+@CsvSource({T, T, T})
+	> CSV stands for Comma Separated Values
+	> the data that is then passed as parameters of the Test method
+@CsvFileSource(resources = "cvs-file-location")
+	> data from the .csv file is passed as parameters of the Test method
+@Disabled
+	> method annotation
+	> used to disable the Test method when we execute Unit Testing
+
+
+Class annotations		
+@TestInstance(TestInstance.Lifecycle)
+	> added in Test Class
+	> defines how we create instance of TestClass for each Test methods
+	> by default, its TestInstance.Lifecycle.PER_METHOD	
+	> we can pass the following		
+		1. TestIntance.Lifecycle.PER_CLASS
+			> all Test method inside Test class will share ONE Test class instance 
+			> if we pass this, static keyword in @BeforeAll and @AfterAll can be omitted
+		2. TestInstance.Lifecycle.PER_METHOD
+			> each Test method inside Test class will have their OWN Test class instance
+@Nested
+	> class annotation
+	> used in the innerClass that is nested inside Test Class
+
+
+
+
+
+Assertions Class
+	> Class in JUnit 5 library that is used to create Assertions
+
+Assertion class methods
+assertFalse(Boolean condition) 			
+	> to pass test, the condition must return FALSE
+assertTrue(Boolean condition)			
+	> to pass test, the condition must return TRUE
+assertEquals(Object expected, Object actual)	
+	> to pass test, the expected and actual Objects must have SAME VALUE
+		- must point to same location in Stack
+assertThrow(Class<T> expectedType, Executable executeable)	
+	> to pass the test, the Executable must throw an Exception that is the same type as the expectedType parameter
+assertSame(Object expectedObject, Object actualObject)
+	> to pass the test, the expectedObject and actualObject must be the same Object type
+		- must point to same location inside Heap 
+
+Executable 
+	> Functional Interface inside JUnit API added in ver 5
+	> takes no parameter and returns no value
+	> used to execute code that is expected to throw an exeception
+
+
+
+Assumptions Class	
+	> Class in JUnit 5 library that is used to create Assumptions
+	> difference with Assertion is that if Assumption fails, the Test method will just be ABORTED instead of giving a FAIL
+
+Assumptions method
+	> most of the methods here is similar to AssertionClass with the difference only in method name
+		- instead of assertTrue, its assumeTrue
+
+assumeTrue(Boolean condition)		
+	> will not abort the Test method if the condition is TRUE
+
+
+
+Junit Test Lifecycle
+	> when executed, Junit will create NEW instance of the Test class
+	> each phase is represented by different annotations in JUnit 5
+		- @BeforeAll
+			> executed before any of the Test method inside Test class
+			> used for setting up any 
+		- @BeforeEach
+			> execute EVERY TIME BEFORE a Test method is executed
+		- @Test
+		- @AfterEach
+			> executed EVERY TIME AFTER a Test method is executed
+		- @AfterAll
+			> executed after all of the Test method is done executed
+	> The Before methods (@BeforeAll, @BeforeEach) perform some INITIALIZATION actions like setting up of test data or environment data, before executing the tests.
+	> The After methods (@AfterAll, @AfterEach) perform CLEAN UP TASK like cleaning up of created Environment Data or Test Data.
+	> @BeforeAll and @AfterAll are called only once for the entire test, and the methods are usually marked as static.
+
+
+
+Conditional Execution
+	> we can define the condition to when we will execute the Test method
+	> some of the conditions are
+		- OS of machine
+
+@EnabledOnOs(value = OS, disabledReason = String msg)
+	> Test method will be ENABLED if the machine's OS is the same as the one in value parameter
+	> if NOT, disabledReason will be printed
+	> we can pass the following in value
+		- OS.LINUX
+		- OS.WINDOWS
+		- OS.MAC
+		- OS.SOLARIS
+		- OS.OTHER
+@DisabledOnOs(value = OS[], disabledReason = String msg)
+	> Test method will be DISABLED if the machine's OS is the same as the one in value parameter
+	> if NOT, disabledReason will be printed
+
+
+
+
+RepeatedTest
+	> Test method are executed multiple times
+	> substitue @Test
+
+@RepeatedTest(value = int i)
+	> used for testing functinality with Randomness
+	> executed Test method multiple repetitions based on value parameter
+@RepeatedTest(value = int v, name = "Current repetition: {currentRepetition}, Total repetition: {totalRepetitions}")
+	> same as @RepeatedTest but we define the name of the repetitions
+	> by default, the names of Test method repetition is 
+		- repetition {currentRepetition} of {totalRepetitions}
+	> but we can define this by adding name parameter to @RepeatedTest
+	> currentRepetition and totalRepetitions variable is defined by @RepeatedTest by default
+		- we can use this variables to name the repetitions
+
+
+
+
+Parameterized Test
+	> test are executed with different set of input
+	> substitute @Test
+	> Data is provided using different annotations
+		- @ValueSource
+		- @MethodSource
+		- @CsvSource
+
+@ValueSource(T = {})
+	> we can directly pass the input in the annotation itself
+	> we can pass different T of data
+		- Strings, Ints, Longs, Shorts, Floats, Doubles, Bytes, Chars, classes
+	> after defining the inputs,
+		- add parameter in the Test method which have same Type as the input
+		- we can then call this parameter inside the Test method
+
+	SYNTAX:
+		@ValueSource(T = {})
+		public void testMethodName(T input){
+			// use the input parameter
+		}
+
+	EX:
+		@ValueSource(strings = {"John","Glenn","Eligio"})
+		public void shouldBeInsideDatabase(String names){
+			// use names parameter
+		}
+
+
+@MethodSouce("methodName")
+	> we will pass a method whose return value will then be used to provide input
+	> the method will provide the input by returning an array or list of values
+	> the Type of parameter in the Test method should be the same Type of the methodSource return Type
+
+		SYNTAX:
+		@MethodSource("methodSourceName")
+		public void testMethodName(T input){
+			// use input parameter
+		}
+
+		private static List<T> methodSourceName(){
+			return Array.asList(T t, T t, T t);
+		}
+
+		EX:
+		@MethodSource("nameGenerator")
+		public void shouldBeInsideDatabase(String names){
+			// use names parameter
+		}
+
+		private static List<String> nameGenerator(){
+			return Arrays.asList("John","Glenn","Eligio");
+		}
+ 
+
+@CsvSource({T, T, T})
+	> CSV stands for Comma Separated Values
+	> the data that is then passed as parameters of the Test method
+
+		EX:
+		@CsvSource({"John","Glenn","Eligio"})
+		public void shouldBeInDatabase(String names){
+			// use names as parameter
+		}
+
+
+@CsvFileSource(resources = "cvs-file-location")
+	> data from the .csv file is passed as parameters of the Test method
+
+		EX:
+		@CsvFileSource(resources = "/data.csv")
+		public void shouldBeInDatabase(String names){
+			// use names as parameter
+		}
+
+
+
+
+
+Nested Tests
+	> a Class that is used to group Tests together into a logical group
+	> makes the Test class more organized
+	> @Nested used on top of the class
+	> Can only use @BeforeEach and @AfterEach
+	> Cannot use @BeforeAll and @AfterAll by default
+
+@Nested
+	> class annotation
+	> used in the innerClass that is nested inside Test Class
+
+		EX:
+		public class TestClass{
+				
+			@Nested
+			class nestedClass{
+		
+				@Test
+			
+				@Test	
+
+			}
+		}
+		
+
+
+Disabled Tests 
+	> used to disable the Test method when doing a Unit Testing
+	> @Disabled is used
+
+@Disabled
+	> method annotation
+	> used to disable the Test method when we execute Unit Testing
+
+EX:
+		@Disabled
+		@Test
+		public void shouldBeInDatabase(){
+
+		}
+
+								
+
+
+

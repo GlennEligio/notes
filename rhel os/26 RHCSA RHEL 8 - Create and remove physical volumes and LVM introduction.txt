@@ -1,0 +1,52 @@
+26 RHCSA RHEL 8 - Create and remove physical volumes and LVM introduction
+
+
+LVM
+ > stands for Logical Volume Manager
+ > LVM allows for a layer of abstraction between your operating system and the disks/partitions it uses
+ > In traditional disk management, your operating system looks for what disks are available (/dev/sda, /dev/sdb, etc) and then looks at thwat partitions are available on those disks (/dev/sda1, /dev/sda2, etc)
+ > Using Disk and Partitions as analogy, Disk will be the Volume Group and Partitions will be the Logical 
+
+EX:
+PV1 -|       |- LV1
+PV2 -|-> VG -|
+PV3 -|	  |- LV2
+
+Analogy with Disk
+Disk(s) = Volume Group
+Partitions(s) = Logical Volumes
+
+
+Creating LVM
+1. Open fdisk UI for specific physical volume
+	$ fdisk /dev/sdb
+2. Create new partition
+	> n to create new partition
+	> t to change the partition type (8e for Linux LVM) 
+	> w to save the partition
+
+
+Commands
+pvdisplay
+ > display various attributes of physical volume(s)
+ > also includes additional informations such as
+	- VG it is mapped to
+	- PV Size, and whether it is Allocatable
+	- PE Size and Total PE Size
+	- Free PE and Allocated PE
+	- PV UUID
+
+
+pvcreate PV
+ > Initialize physical volume(s) for use by LVM
+ > We will pass a partition of the disk as PV input
+	- this partition will be of type LVM
+ > By default, it will not be mapped to a Volume Group
+ > EX:
+	$ pvcreate /dev/sdb1
+
+
+pvremove PV
+ > remove LVM label(s) from physical volume(s)
+ > ex:
+	$ pvremove /dev/sdb1

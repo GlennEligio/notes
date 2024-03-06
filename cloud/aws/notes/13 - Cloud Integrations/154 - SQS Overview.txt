@@ -1,0 +1,51 @@
+154 - SQS Overview
+
+Amazon SQS - Simple Queue Service
+
+What is Queue?
+ > composed of the following components
+	1. Producers
+	2. Queue
+	3. Consumers
+ > the process involves
+	1. the Producer send messages to the Queue
+		- there could be one or more Producers
+	2. these messages are then stored in the Queue
+	3. the Consumers can read the messages from the Queue by polling from the Queue
+		- polling means requesting messages from the queue
+		- there could be one or more Consumers, which may be different messages
+	4. onces the Consumers are done processing a video, then they will delete the message from the queue and it will be gone
+ > in this model, we have Producers sending messages in the Queue, and the Consumers polling and processing the messages at different speed
+ 
+ 
+Amazon SQS - Standard Queue
+ > Oldest AWS offering (over 10 years old)
+ > Fully managed service (~serverless), use to decouple applications
+ > Scales from 1 message per second to 10,000s per second
+ > Default retention of messages: 4 days, maximum of 14 days
+ > No limit to how many messages can be in the queue
+ > Messages are DELETED after they're read by consumers
+ > Low latency (<10 ms on publish and subscribe/receive)
+ > Consumers share the work to read messages & scale horizontally 
+ 
+ 
+Use case:
+1. SQS to decouple between application tiers
+	> in example below, we have two application tiers, Web Servers and Video Processing, DECOUPLED by the SQS Queue
+		- Web Servers are hosted in EC2 instances and uses Auto Scaling Group (ASG) for scaling
+		- Video processing also uses EC2 instances and ASG for scaling
+	> the process involves
+		- request goes to Web Servers
+		- web server instance then acts as the Producer and send messages to the SQS Queue
+		- the Video processing instances then poll message from the Queue to process them and reply them back
+		- SQS queue receives the reply, sends it back to Web servers and delete the message
+	> in this case, the Video Processing and Web servers can scale INDEPENDENTLY without affecting one another
+
+
+EX:						
+
+									PUT
+request -----> Web Servers	-------------->	SQS Queue -----------> Video Processing
+			- EC2 Instances											- EC2 Instances
+			- scaling is handled by ASG								- uses ASG for scaling
+	 

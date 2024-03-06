@@ -1,0 +1,260 @@
+
+
+INCLUDES:
+
+App Registration Information
+
+1. Application (client) ID 	= bc0f4d93-08a9-47b3-9dd7-b9bf9bc45e34
+	> refers to the GUID of the said Application (Web API)
+	> will change for every client registered in the specific directory
+2. Object ID 			= b8ad0183-b9cb-45a5-ac68-27573302a1e5
+3. Directory (tenant) ID	= f8cdef31-a31e-4b4a-93e4-5f571e91255a
+	> refers to the id of the current directory the app is currently sitting in
+4. App ID URI			= api://bc0f4d93-08a9-47b3-9dd7-b9bf9bc45e34
+	> used for the exposed application to be identified
+
+
+
+Daemon Application
+	> an application that have zero user interaction
+	> have its own identity that they need to prove in order to access the said resources (like WebApi) from specific source (like Azure Active Directory)
+	> the daemon app will present its identity like ID, credentials (user, pass), and application id uri to Azure AD.
+
+
+TIPS:
+1. All of the sensitive informations (in our case, the APP ID URI and Tenant ID), should be kept in User Secrets instead of appsettings.json since others can use it on malicous intent. 
+
+2. Decorating the entire Controller class with [Authorize] will have the same effect as adding the decoration to all endpoints
+
+
+I. Creating and Test the Default Web API template
+	> we will use the default WebAPI template for this
+	> check if its working
+
+1. Create a new Web API in Visual Studio Code
+	> set the directory to the location you desire
+		= cd stands for change directory
+		= EX: cd D:\Study\programming\.NETCore
+	> type the following to create a new Web API file
+		= dotnet new webapi -n SecureAPI
+		= SecureAPI will be the name of the project folder
+	> open the project folder by going to File -> Open folder and choose the project folder
+
+
+
+
+2. Test the WeatherForecast WebAPI that is included in default Web API
+	> save all, build and run the Web API
+	> send a GET request to the url of application + endpoint url
+		= located in launchSettings.json > ProjectName > application Url
+		= "https://localhost:5001;http://localhost:5000"
+		= endpoint url is the Controller name
+		= in our case the endpoint url is WeatherForecast
+	> input this url to the GET request on Postman
+		= https://localhost:5001/WeatherForecast
+	> check the result
+
+RESPONSE BODY
+
+[
+    {
+        "date": "2021-07-15T19:03:27.400732+08:00",
+        "temperatureC": 35,
+        "temperatureF": 94,
+        "summary": "Bracing"
+    },
+    {
+        "date": "2021-07-16T19:03:27.4017821+08:00",
+        "temperatureC": 18,
+        "temperatureF": 64,
+        "summary": "Balmy"
+    },
+    {
+        "date": "2021-07-17T19:03:27.4017842+08:00",
+        "temperatureC": -8,
+        "temperatureF": 18,
+        "summary": "Mild"
+    },
+    {
+        "date": "2021-07-18T19:03:27.4017844+08:00",
+        "temperatureC": 14,
+        "temperatureF": 57,
+        "summary": "Bracing"
+    },
+    {
+        "date": "2021-07-19T19:03:27.4017846+08:00",
+        "temperatureC": -12,
+        "temperatureF": 11,
+        "summary": "Balmy"
+    }
+]
+
+
+
+
+II. Register the Web Api to the Azure Active Directory
+
+3. Go to Azure Active Directory inside the Azure Account
+	> from Home, look for Azure Service and with it, choose the Azure Active Directory
+	> in the side menu of Azure Active Directory, go to App Registration
+		= this is where we will register the Web Api and the Client
+
+
+
+4. Register the WeatherForecast API
+	> from Azure Active Directory, look for "App registrations" in the side menu
+	> in App registration pages, click "New registration"
+	> fill up the name and supported account type
+		= Name: WeatherAPI_Development
+		= Supported Account type: Anything except Personal Microsoft Account
+			> reason is that only the Microsoft Account can access the App and in our case, we will use an external application
+
+
+
+	Right now, we have this abstract registration that we made in the AAD for our Web API. But both the AAD and the Web API is still disconnected to each other. We will solve that by modifying our Web API so that it will connect to AAD.
+
+
+
+III. Expose the WebAPI for use
+
+5. Expose the Application by creating an Application ID URI	
+	> in AAD side menu, go to Expose an API
+	> click the "Set" text beside the Application
+		= this will automatically create and set an App ID URI for us
+	> now when we go back to the Overview of the WeatherAPI_Development, we will set that the Application ID URI that we created is present
+
+
+
+
+
+IV. Update Manifest of WebAPI to allow specific daemon apps to access it
+
+6. Edit the Manifest of the WeatherAPI_Development app
+	> our goal is to add items inside the appRoles of Manifest
+	> the purpose is that so the WeatherAPI_Development can grant access to a Daemon app with specific ID that we will provide as well
+	> paste this text to replace is "appRoles":[],
+	> refreshing the page will fix the indentions
+	
+FROM THIS:
+
+"appRoles":[],
+	
+TO THIS:
+
+"appRoles": [ 
+  { 
+    "allowedMemberTypes": [ 
+      "Application" 
+    ], 
+    "description": "Daemon apps in this role can consume the web api.",
+    "displayName": "DaemonAppRole",
+    "id": "6543b78e-0f43-4fe9-bf84-0ce8b74c06a3",
+    "isEnabled": true,
+    "lang": null,
+    "origin": "Application",
+    "value": "DaemonAppRole"
+  } 
+],
+
+
+
+
+V. Revisit & Secure Our API Endpoint
+
+7. Update the appsettings.json
+	> insert all the necessary informations so that we can connect this Web API to the Application we registered on the AAD.
+	> create an item named "AAD" whose value is a list of items named
+		a. ResourceId, whose value is the APP ID URI of our application
+			= "api://bc0f4d93-08a9-47b3-9dd7-b9bf9bc45e34"
+		b. InstanceId, whose value will be the same in every stuff that we will connect to AAD
+			= "https://login.microsoftonline.com/"
+		c. TenantId, the ID of the directory where the application we registered is located
+			= "f8cdef31-a31e-4b4a-93e4-5f571e91255a"
+	> this means that the data we put in the appsettings.json can be accessed in the Configuration object in the StartUp class
+
+INSIDE the appsettings.json file, as one of its item
+
+  "AAD" :
+  {
+    "ResourceId": "api://bc0f4d93-08a9-47b3-9dd7-b9bf9bc45e34",
+    "InstanceId": "https://login.microsoftonline.com/",
+    "TenantId": "f8cdef31-a31e-4b4a-93e4-5f571e91255a"
+  }
+
+
+
+
+8. Install the JwtBearer package
+	> with this, we can add authentication to our api endpoints using Json WebTokens
+	> this Json WebTokens will be provided from the AAD to the clients that will try to access one of our endpoints
+	> to add JwtBearer packages, type this line below in terminal
+	> check .csproj file to see if JwtBearer is added
+
+INSIDE THE TERMINAL
+
+	dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+
+
+
+
+
+9. Update the StartUp class
+	> add the JwtBearer namespace in using directives
+	> call the AddAuthentication() from services and pass JwtBearerDefaults.AuthenticationScheme to it
+	> call the AddJwtBearer from AddAuthentication()
+	> inside AddJwtBearer, we will pass and configure the options argument using lambda expression
+		a. set the Audience of option to the ResourceId item of Configuration object
+		b. set Authority of option to the Instance+TenantId item of the Configuration object
+
+INSIDE using directives of StartUp class
+
+	using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+INSIDE ConfigureServices() of StartUp class
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(opt =>
+            {
+                opt.Audience = Configuration["AAD:ResourceId"];
+                opt.Authority = $"{Configuration["AAD:Instance"]}{Configuration["AAD:TenantId"]}";
+            }
+            );
+
+
+
+
+
+10. Update Configure()
+	> add Authorization and Authentication in the request pipeline
+
+INSIDE Configure()
+
+	app.UseAuthentication();
+	app.UseAuthorization();
+
+
+
+
+11. Update the Controller Class
+	> add Authorization in the using directive
+	> add [Authorize] decoration to the GET request endpoint method
+
+INSIDE Controller class using directive
+
+	using Microsoft.AspNetCore.Authorization;
+
+INSIDE GET request annotations
+
+        [Authorize]
+        [HttpGet]
+        public IEnumerable<WeatherForecast> Get()
+
+
+
+
+
+12. Test the application
+	> save all, build and run
+	> set a GET request to Weather API using Postman
+
+	If we did things correctly, we should get a 401 Unauthorized error with WWW-Authenticate Header of Bearer from response.

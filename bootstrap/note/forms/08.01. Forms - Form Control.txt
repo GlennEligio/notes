@@ -1,0 +1,81 @@
+08.01. Forms - Form Control
+
+~~~~~~ FORMS - FORM CONTROL ~~~~~~~
+Forms
+	> Bootstrap offers several classes to modify the base form properties
+1. Form
+2. Sizing
+3. Disabled
+4. Readonly
+5. Readonly plaintext
+6. Fileinput
+7. Color
+8. Datalist
+
+1. Example
+Creating Simple Bootstrap Form
+1. Create normal form with form, label, input elements (input, checkbox, select, textarea, button)
+2. Add the following classes in each of the elements inside the form element
+
+.form-label
+	> added in the label element for the input
+	> adds 0.5rem margin at bottom
+
+
+2. Sizing
+
+.form-control
+.form-control-{size}
+	> added in input element
+	> makes it so that input occupies 100% width
+	> when focused, adds bluish border glow
+	> Size sets the height of the .form-control
+		- lg for Large	
+		- sm for small
+
+
+3. Disabled
+
+disabled
+	> boolean attribute added in input
+	> disables the input
+
+
+4. Readonly
+readonly
+	> boolean attribute added in input element
+	> prevent modification in input's value
+
+
+5. Readonly plain text
+.form-control-plaintext
+	> added in input with readonly attribute
+	> remove the default form field styling and preserve the correct margin and padding
+
+
+6. File input
+.formFile
+.formFile{size}
+.formFileDisabled
+.formFileMultiple
+	> added in input element of type "file"
+	> .formFileDisabled makes file input disabled
+	> .formFileMultiple for multiple file 
+
+
+7. Color
+.form-control-color
+	> added in input type="color"
+
+
+8. Datalist
+	> we can create group of option element that can be accessed through an input
+	> to do this, we need to 
+		1. Create input element
+		2. Define the list attribute of element
+			-> this MUST MATCH the id of the datalist element
+		3. Create a datalist element
+		4. Define id of datalist element
+			-> MUST MATCH the value of the list attribute of input
+		5. Define several option elements inside the datalist
+

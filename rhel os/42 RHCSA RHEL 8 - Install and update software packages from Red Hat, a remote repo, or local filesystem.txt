@@ -1,0 +1,177 @@
+42 RHCSA RHEL 8 - Install and update software packages from Red Hat, a remote repo, or local filesystem
+
+
+Dnf
+ > serves as replacement for yum package manager starting at RHEL8
+ > this will roughly maintains CLI compatibility with YUM and defines a strict API for extensions and plugins
+
+Dnf packages naming convention
+NAME-VERSION-RELEASE.ARCHITECTURE
+ > name is the package name
+ > version will be the version
+ > release refers to the OS release version
+ > architecture refers to 32bit or 64bit
+ > ex:
+	nano-2.9.8-1.el8.x86_64
+		- 1.el8 is the Enterprise Linux 8
+
+
+dnf-utils
+ > package/module that will be give more dnf options like
+	- add/remove repositories with "dnf-config-manager" command
+	- enable/disable repositories from being used to get packages
+
+
+createrepo
+ > package used to create a package repository locally for us to fetch packages
+
+
+Creating a Local Package Repository in DNF/YUM config
+1. Create directory
+	$ mkdir /root/local_Repo
+2. Add some .rpm file inside
+	$ cp /root/nano-2.9.8-1.el8.x86_64.rpm /root/local_repo/
+3. Create repository using "createrepo" and specify the package location
+	$ createrepo --database /root/local_repo
+4. Using "dnf-config-manager", add the repository weve just created 
+	$ dnf config-manager --add-repo file:///root/local_repo
+5. Check if the yum.repos.d directory is updated, which should contain file other than the redhat.repo
+	$ ls /etc/yum.repos.d
+6. Update the .repo file by changing the name to more appropriate one
+	$ vi root_local_repo.repo
+		ex:
+		[Local_Repo]
+		name=Local Server Repo
+		baseurl=file:///root/local_repo
+		enabled=1 	
+7. Update the DNF to reflect the new repository added
+	$ dnf update
+		- i got error i dont know how to fix
+8. Disable and enable the repository to not be included in repository to search
+	$ dnf config-manager --set-disabled Local_Repo
+	$ dnf config-manager --set-enabled Local_Repo
+9. Check if the repository is picked up by dnf repoinfo command
+	$ dnf repoinfo
+
+
+
+Commands
+dnf search PACKAGE
+ > used to search for packages/modules that matches the NAME provided in the repository
+ > PACKAGE input can use wildcards like *
+ > ex:
+	$ dnf search nano
+
+
+dnf list PACKAGE
+ > used to list all the packages installed and available to be installed
+ > PACKAGE input can use wildcards to refine the search query
+ > ex:
+	$ dnf list nan*
+
+
+dnf repolist all
+ > list ALL package repositories, which includes the disabled ones
+ > ex:
+	$ dnf repolist all
+
+
+dnf repoinfo
+ > list all enabled repositories and their informations like
+	- repo id, name, revision, date updated, total packages, size, baseUrl, expiration, filename
+ > checking the content of the repo-filename file will present you more in-depth information about the repositories
+ > ex:
+	$ dnf repoinfo
+
+
+dnf info PACKAGE
+ > list down all information about the package specified
+ > informations include
+	- name, version, release, architecture, size, source, repository, from repo, summary, url, license, description
+
+
+dnf install PACKAGE
+ > install the said package in the system
+ > fetches the latest version and overrides the one installed if its an older version
+ > ex:
+	$ dnf install nano
+
+
+dnf remove PACKAGE
+ > used to remove a package in the system
+ > ex:
+	$ dnf install nano
+	
+
+dnf provides "DIRECTORY"
+ > outputs the packages that the said directory provides
+ > DIRECTORY input takes wildcards
+ > ex:
+	$ dnf provides "*/bin/nano"
+
+
+dnf download [OPTIONS...] PACKAGE
+ > used to download a specific package as .rpm file
+ > options:
+	--downloaddir	specifies the download directory
+	--resolve		specifies to resolve the dependencies by download them as well
+ > ex:
+	$ dnf download --downloaddir=. --resolve nano
+
+
+dnf localinstall PACKAGE.rpm
+ > used to install a package using .rpm file locally
+ > the .rpm file must be present
+ > ex:
+	$ dnf localinstall nano-2.9.8-1.el8.x86_64.rpm
+
+
+dnf groups list
+ > list all the packages group currently present, installed, and available groups to be installed to the system
+ > Packages group can be seen similarly to a System tool or Developer tool where it is a set of packages/modules/tools
+ > ex:
+	$ dnf groups list
+
+
+dnf group [install | remove] "PACKAGE GROUP"
+ > used to install or remove a pcakage group in the system 
+ > ex:
+	$ dnf group install "System Tools"
+	$ dnf group remove "System Tools"
+
+
+dnf history list
+ > show all the dnf commands/actions that you have done
+ > shows a table that includes informations such as
+	- id, command line, date and time, action(s), and number of packages affected/altered
+
+
+dnf history [undo | redo] ID
+ > used to undo or redo the dnf action/command done using its History ID
+ > undo will revert the action while redo will do the action as is
+ > this undo/redo will also be saved in history list
+ > ex:
+	$ dnf history undo 22
+	$ dnf history redo 22
+
+
+dnf config-manager [OPTIONS] <SECTION>...
+ > needs dnf-utils module
+ > dnf config-manager plugin, manage main and repository DNF configuration options, toggle which repositories are enabled or disabled, and add new repositories 
+ > OPTIONS:
+	--add-repo		used to add a remote repository to the DNF
+	--set-enabled	used to disable a remote repository
+	--set-disabled	enables a package repository to fetch packages
+ > ex:
+	$ dnf config-manager --add-repo https://somerepo.com
+	$ dnf config-manager --set-disabled rhel8.examplerepo.com
+	$ dnf config-manager --set-enabled rhel8.examplerepo.com
+
+
+createrepo [OPTION]
+ > used to create a local package repository with local directory
+ > options:
+	-database		takes a directory as input, specifies the location of the .rpm files to store
+ > ex:
+	$ createrepo -database /root/local_repo
+	

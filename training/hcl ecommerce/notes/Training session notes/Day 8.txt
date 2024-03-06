@@ -1,0 +1,207 @@
+Day 8
+
+Credentials:
+wcsadmin/wcsadmin
+ > for Accelerator console and Management tool
+
+Shipping informations:
+ > address destination
+ > area of jurisdiction which specifies the allowed area where we can ship the product
+ > charge fees based on the area where the product is shipped
+
+
+Management center for HCL Commerce
+ > https://localhost:8000/lobtools/cmc/ManagementCenterMain?locale=en_US
+ > wcsadmin/wcsadmin
+	- username and password
+ > before, can only be viewed in IE8
+ > 
+
+Accelerator Console
+ > https://localhost:8000/webapp/wcs/tools/servlet/ToolsLogon?XMLFile=common.mcLogon
+ ?
+
+
+Setting shipping details
+https://help.hcltechsw.com/commerce/9.1.0/user/tasks/tshsetsp.html
+
+
+Jurisdiction
+ > Home -> Change Shipping -> Jurisdiction
+New Jurisdiction
+ > name Philippines
+ > Country/region philippines
+ > press OK
+
+Shipping Modes
+ > Home -> Change Shipping -> Shipping mode
+New Shipping Mode
+ > Carrier new
+	- Name DTDC
+ > Shipping service
+	- Name DTDC same day delivery
+ > Description
+	- DTDC same day delivery
+ > Estimated delivery time desc
+	- 1 day
+ > 
+
+Shipping Codes
+ > Home -> Change Shipping -> Shipping Codes -> Shipping Code Details
+ > press New button
+ 	- Details tab
+		-> pass info
+ > select Shipping Codes
+	- press Charges
+	-
+ > New Shipping code
+	-
+	- Assigning Shipping code for specific products
+		-> Category List (top level category)
+			= Apparel
+ > Defining Charge details for the new Shipping code
+		-> Grocery
+	- Name
+ > activate the new Shipping Codes
+
+
+JURST
+ > table that contains all the Shipping Jurisdiction created
+
+SHIPMODE
+ > table that contains all the Shipping mode
+
+CALCODE
+ > table that contains all the Shipping Code
+
+CALCODEDSC
+ > table that contains the calculation code description 
+ > to search for specific calculation code, we will need to search using calcode_id or language_id columns
+
+CALRULE
+ > contains all the Calculation method rules
+
+CALMETHOD
+ > contains all the specific method on how the Calculation like Shipping is done
+
+CALSCALE
+ >
+
+CALSCALEDS
+
+
+select * from jurst;
+select * from shipmode;
+select * from calcode;
+select * from calcodedsc where calcode_id = 11501;
+select * from calrule;
+select * from calmethod where calmethod_id = -28;
+select * from calscale;
+select * from calscaleds where calscale_id = 11501;
+
+https://help.hcltechsw.com/commerce/9.1.0/user/tasks/tshsetsp.html
+
+https://localhost:8000/lobtools/cmc/ManagementCenter
+
+
+
+Management Center Tools - PROMOTION
+SOURCE: https://help.hcltechsw.com/commerce/9.1.0/management-center/tasks/tprcreat.html
+
+CREATING PROMOTIONS STEPS:
+1. Go to Management Center tools
+2. Click the menu at the top left
+3. Select AuroraESite to show/modify promotions for consume store
+4. Click Promotions at the left tab
+
+NOTES:
+1. When we delete a Promotion, we only delete a reference to the said promotions.
+2. When Status of promotion is "green", it means the promotions are activated
+3. Use CTRL to select multiple promotions
+
+
+Three types of Promotion based
+ > Catalog entry level
+ > Shipping promotions
+ > Order level
+
+Promotion priority
+ > higher number means higher priority
+ > from 1-999
+
+
+-- shipping/vat charges
+
+select * from shipmode;
+
+select cc.calcode_id,cc.code,cr.calrule_id,clrp.calrlookup_id,clrp.value,cc.field1,cc.sequence,cc.flags,cs.code
+from calcode cc
+inner join CALRULE cr on cc.calcode_id = cr.calcode_id
+inner join CRULESCALE crs on crs.calrule_id = cr.calrule_id
+inner join CALSCALE cs on cs.calscale_id = crs.calscale_id
+inner join CALRANGE clr on clr.calscale_id = cs.calscale_id
+inner join CALRLOOKUP clrp on clrp.CALRANGE_ID = clr.CALRANGE_ID
+where cc.calusage_id = -2 and cc.storeent_id = 11651;
+
+
+PROMOTINO NOTES
+1. Better to create new promotion than updating it
+	> this is to prevent problems with customer using old promotion info, where it theres less discount/offer on it
+2. We can use Data Load utility to create promotions
+3. Exclusivity of the Promotion is based on the level
+
+
+Calculation usage code
+-1 Discount
+-2 Shipping
+-3 Sales tax
+-4 Shipping tax
+-5 Coupon
+-6 Surcharge
+-7 Shipping Adjustment
+
+
+
+Gaurav 1:32 PM
+https://localhost:8000/lobtools/cmc/ManagementCenterMain?locale=en_US
+wcsadmin/wcsadmin
+https://localhost:8000/webapp/wcs/tools/servlet/MCLaunched?&langId=-1&storeId=1
+Gaurav  to  Everyone 2:19 PM
+https://help.hcltechsw.com/commerce/9.1.0/user/tasks/tshsetsp.html
+Gaurav  to  Everyone 3:10 PM
+https://localhost:8000/lobtools/cmc/ManagementCenter
+https://help.hcltechsw.com/commerce/9.1.0/management-center/tasks/tprcreat.html
+Gaurav  to  Everyone 3:42 PM
+-- shipping/vat charges
+
+select * from shipmode;
+
+select cc.calcode_id,cc.code,cr.calrule_id,clrp.calrlookup_id,clrp.value,cc.field1,cc.sequence,cc.flags,cs.code
+from calcode cc
+inner join CALRULE cr on cc.calcode_id = cr.calcode_id
+inner join CRULESCALE crs on crs.calrule_id = cr.calrule_id
+inner join CALSCALE cs on cs.calscale_id = crs.calscale_id
+inner join CALRANGE clr on clr.calscale_id = cs.calscale_id
+inner join CALRLOOKUP clrp on clrp.CALRANGE_ID = clr.CALRANGE_ID
+where cc.calusage_id = -2 and cc.storeent_id = 11651;
+Gaurav  to  Everyone 3:50 PM
+https://help.hcltechsw.com/commerce/9.1.0/management-center/tasks/tprctpctgorder.html
+Richard Anderson Capua  to  Everyone 3:58 PM
+beb
+*brb
+back
+Gaurav  to  Everyone 4:29 PM
+https://help.hcltechsw.com/commerce/9.1.0/calculationframework/concepts/ccfcalc_usages.html
+Gaurav  to  Everyone 4:39 PM
+scheduler: https://help.hcltechsw.com/commerce/9.1.0/admin/concepts/cjsjobs.html
+Registry:  https://help.hcltechsw.com/commerce/9.1.0/management-center/tasks/ttf_cmcregistry.html
+
+
+
+-- updates ur yourname password to 'wcsadmin' 
+update userreg set salt='wcsadminSalt1', logonpassword=x'4a5354376d36693467546a544d3648525867546c4c434a4479536739637850574238686d58316777376349316f745568426e3730684452463532646e47547271497a5667354f54464e647367554969677a677a2b63673d3d20202020202020202020202020202020202020202020202020202020202020202020202020202020' where USERS_ID=3;
+
+-- revert it back to original password of wcsDemo user
+update userreg set salt='45u6f843gf7h', logonpassword=x'772f54724876464e71686a6d62514f384d654530774a316358423858766f777a5576517953476e3654554163714e535054673341782b51494e4431615232454641515a51344235724b7738544d4d382b7256636b4e773d3d20202020202020202020202020202020202020202020202020202020202020202020202020202020' where USERS_ID=3;
+;
+commit;

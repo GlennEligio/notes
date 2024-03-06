@@ -1,0 +1,81 @@
+Task Custom Controller Command
+1. Go to WebSphereCommerceServerExtensionsLogic project
+2. Create new package under src directory
+	> com.mycompany.commerce.commands
+3. Create new interface which extends to ControllerCommand interface
+	> TestControllerCmd
+4. Create a new class that implements TestControllerCmd interface and extends to ControllerCommandImpl
+	> TestControllerACmdImpl
+	> override/implement the performExecute() and getRequestProperties()
+5. Create a new class again, same instruction in step 4
+	> TestControllerBCmdImpl
+	> override/implement the performExecute() and getRequestProperties()
+6. In the TestControllerCmd interface, define two constant String properties, "NAME" and "defaultCommandClassName"
+	> defaultCommandClassName defines the default Class implementation to use for this Controller command interface
+
+EX:
+// TestControllerCommand interface
+package com.mycompany.commerce.commands;
+
+import com.ibm.commerce.command.ControllerCommand;
+
+public interface TestControllerCmd extends ControllerCommand{
+
+	public static final String NAME = "com.mycompany.commerce.commands.TestControllerCmd";
+	public static final String defaultCommandClassName="com.mycompany.commerce.commands.TestControllerACmdImpl";
+}
+
+// TestControllerACmdImpl
+package com.mycompany.commerce.commands;
+
+import com.ibm.commerce.command.ControllerCommandImpl;
+import com.ibm.commerce.datatype.TypedProperty;
+import com.ibm.commerce.exception.ECException;
+
+public class TestControllerACmdImpl extends ControllerCommandImpl implements TestControllerCmd {
+
+	@Override
+	public TypedProperty getRequestProperties() {
+		// TODO Auto-generated method stub
+		return super.getRequestProperties();
+	}
+
+	@Override
+	public void performExecute() throws ECException {
+		// TODO Auto-generated method stub
+		super.performExecute();
+		System.out.println("In perform execute of ::" + getClass().getName());
+	}
+}
+
+
+
+6. Insert a row into CMDREG table
+	> we will do this if we want to configure a command like the default class implementation of a custom Controller command
+	> use insert query below
+
+EX:
+INSERT INTO CMDREG (storeent_id, interfacename, description, classname, target) VALUES (0, 'com.mycompany.commerce.commands.TestControllerCmd','A demo Controller Command','com.mycompany.commerce.commands.TestControllerBCmdImpl','Local')
+
+
+7. Stop the server WebSphere Commerce Test
+
+8. Go to Stores project, and navigate to WebContent/WEB-INF
+9. Copy a single action element in the struts-config-catalog.xml and paste it inside action-mappings of the struts-config-ext.xml
+10. Change the properties of the <action> element like parameter,path
+
+EX: Inside struts-config-ext.xml
+<struts-config>
+	<action-mappings type="com.ibm.commerce.struts.ECActionMapping">
+	    <action
+            parameter="com.mycompany.commerce.commands.TestControllerCmd"
+            path="/MyTestCommand" type="com.ibm.commerce.struts.BaseAction">
+    	</action>
+	</action-mappings>
+</struts-config>
+
+11. Start the server WebSphere Commerce Test Server again
+12. Visit the url to use the custom Controller Command
+	> Base url is localhost/webapp/wcs/stores/servlet
+	> That whole url is the base url + path specified in the struts-config-catalog.xml
+		- ex: http://localhost/webapp/wcs/stores/servlet/MyTestCommand

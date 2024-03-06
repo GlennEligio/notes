@@ -1,0 +1,31 @@
+09 The problem with On Prem data centers
+
+
+On Prem deployment problems
+1. Monolithic apps
+	> typically the kind of apps in On prem, Monolithic apps have their own set of problems
+	> these includes slower deployments since Monolithic apps tends to get big and harder to manage
+	> this will result in slow addition of feature that might be a deal breaker especially in rapidly changing world
+2. Predictable scalability
+	> scaling, more often than not, is unpredictable
+	> in On Prem, we add apps/services that have predictable scalability
+	> but, we should create application as much as NECESSARY to handle any traffic that comes in the apps
+3. Relational databases
+	> mostly monolithic and install in ONE server, these relational databases becomes a single point of failure, so you end up having availability issues as a result
+	> this can also open up scaling issue with regards to its single server deployment, wherein case of surge of request to the point where it goes over the specified capacity, its hard to scale it up to accom
+4. Design to avoid failures
+	> important thing to note is that you CANNOT AVOID failures since they are inevitable in a distributed system
+	> instead, we must build the services/apps for partition tolerance
+	> Partition tolerance refers to the tolerance of the application to have failures
+		- ex: instead of closing the app when no response is received from the other service, it will just display an error message
+5. Occasional large updates
+	> slow time to market, since features that you want is shipped slower, especially in competitive and ever-changing industry
+6. Manual management	
+	> cumbersome and does not scale in a distributed systems, especially if you have numerous servers that scales up and down to handle the load
+	> the Ops team may not be able to handle managing multiple servers manually, especially if the server changes from time to time
+	> also takes a lot of time to do
+7. Snowflake servers
+	> results in a unique configuration in the hardware which make it hard to reproduce issues that happen on it
+	> best case scenario is that it will affect the production server and can be fixed immediately
+	> worst case is that it will sitting there and you will only know it until some critical junction which result in a production issue, many month after it is deployed. in this case, it will be hard to track the issue
+ 

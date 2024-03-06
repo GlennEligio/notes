@@ -1,0 +1,68 @@
+11. JPA and Spring Boot Starter Data JPA
+
+JPA
+	> stands for Java Persistence API (JPA)
+	> Standard API for Object-to-Relational-Mapping (ORM)
+	> only a specification
+		- defines a set of interfaces
+		- requires an implementation to be usable
+
+
+JPA - Vendor Implementations
+1. Hibernate
+2. EclipseLink
+
+
+Benefits of JPA
+	> you are not locked to vendor's implementation
+	> maintain protable, flexible code by coding to JPA spec (interfaces)
+	> can theoreticaly switch vendor implementations
+		- for example, if Hibernate stops supporting their product
+		- you could switch to EclipseLink without vendor lock in
+	> for Spring Boot, Hibernate is DEFAULT implementation of JPA
+
+
+Standard JPA API
+	> JPA API methods are similar to Native Hibernate API
+	> JPA also supports a query language: JPQL (JPA Query language)
+
+
+
+Spring Data JPA	
+	> can be used with Spring and Spring Boot
+	> create a DAO and just plug in 
+		1. your entity type and 
+		2. primary key
+	> Spring will give you a CRUD implementation for FREE
+		- helps to minimize boiler-plater DAO code
+	> will need the spring-boot-starter-data-jpa
+
+DEPENDENCY
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+
+JpaRepository
+	> Spring Data JPA provides the interface: JpaRepository
+		- ex: JpaRepository<Employee, Integer>
+	> exposes methods (some by inheritance from parents)
+		- ex: findAll(), findById(Integer id), save(Employee emp), deleteById(Integer id)
+	> this interface have a @NoRepositoryBean annotation
+		
+@NoRepositoryBean
+	> The annotation is used to avoid creating repository proxies for interfaces that actually match the criteria of a repo interface but are not intended to be one. 
+	> It's only required once you start going into extending all repositories with functionality.
+		- this means that if you have another @Repository, you can use @NoRepositoryBean to say to Spring that the interface is not a @Repository since it may assume it is one based on the structure
+
+
+
+Advance Features
+	> Extending and Adding CUSTOME QUERIES with JPQL
+	> Query Domain Specific Language (Query DSL)
+	> Defining custom methods (low-level coding)
+
+
+
+

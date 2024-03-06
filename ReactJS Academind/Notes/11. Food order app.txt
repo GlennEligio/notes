@@ -1,0 +1,112 @@
+11. Food order app 
+PROJECT NOTES:
+1. Use proper element tags for semantics
+	
+<header> for header
+<footer> for footer
+<main> for main content
+<section> for a section of content inside main (nested inside main as well)
+<ul> and <li> for list of Components/Items
+<span> for inline elements
+<div> for block elements
+
+
+
+
+2. Proper and Clear Project Structure
+
+Example Project Structure:
+src
+ > assets (for images, icons, static files, etc)
+ > components (for Components)
+     > UI (common UI elements like Button, Card, Input and must be configurable where all info is passed through props)
+     > Layout (headers, footers, everything except main and section contents)
+     > Component 1,2,3 (UI components inside <main> and <section>)
+ > store (Application wide state by convention)
+     - resource-context.js ("auth-context.js", "cart-context.js")
+
+
+
+
+3. Injecting HTML element properties through Spread operator
+	> we can inject properties (key: value pairs) to an HTML element in JSX through the use of spread operator
+
+EX:
+ > We can see below that the input property that we set in Input Component instance is an Object
+ > This Object's key:value pairs is then assign as props of the <input> element inside Input Component's JSX code
+
+Input Component instance
+      <Input
+        label="Amount"
+        input={{
+          id: props.id,
+          type: "number",
+          name: props.name,
+          min: "1",
+          max: "5",
+          step: "1",
+          defaultValue: "1",
+        }}
+      />
+
+Input Component JSX
+const Input = (props) => {
+  return (
+    <div className={classes.input}>
+      <label htmlFor={props.input.id}>{props.label}</label>
+      <input {...props.input} />
+    </div>
+  );
+};
+
+
+
+NOTES:
+1. Array.reduce()
+	> used to reduce a list of items inside Array into a SINGULAR VALUE
+	> useful for occassions like
+		a. concatenating item property String value
+		b. getting the total of the item property Number value
+	> takes two input parameters
+		a. Function to modify currentValue
+		b. Initial currentValue
+	> the function input receives two Input parameter
+		a. currentValue
+		b. item in array
+	> typically, we modify the current value using a property of the Item in current iteration
+
+SYNTAX:
+Array.reduce((currentVal, item) => {
+ // logic to return new current value
+}, initialValue)
+
+
+EX:
+const total = cartItems.reduce((currentTotal, item) => { return currentTotal}, 0)
+
+
+
+2. Function.prototype.bind()
+	> method used to return a new function, that when invoked, has its "this" set to a specific value
+	> with this, even if we execute the function elsewhere, the "this" value will still be the same
+
+
+3. Array.prototype.findIndex()
+	> used to find an index of an Object inside the array
+	> takes a function input
+	> this function have a one parameter which is the item for current iteration
+	> inside the function, we must define the condition to match which item we are looking for
+		- must return a boolean value
+	> returns the index of the Object inside the Array
+
+EX:
+      const existingCartItemIndex = state.items.findIndex(
+        (item) => item.id === action.item.id
+      );
+
+      if (existingCartItem) {
+	console.log('Item exist')
+      } else {
+        console.log('Item doesnt exist')
+      }
+

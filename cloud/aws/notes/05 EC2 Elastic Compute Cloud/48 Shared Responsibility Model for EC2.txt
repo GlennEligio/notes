@@ -1,0 +1,17 @@
+48 Shared Responsibility Model for EC2
+ 
+
+Shared Responsibility Model for EC2
+AWS Responsibilities
+ > Infrastructure (global network security)
+ > Isolation on physical hosts
+ > Replacing faulty hardware
+ > Compliance validation
+
+
+User/Customer Responsibilities
+ > Security Groups rules
+ > Operating-system patches and updates
+ > Software and utilities installed on the EC2 instance
+ > IAM Roles assigned to EC2 & IAM user access management
+ > Data security on your instance (file encryption)

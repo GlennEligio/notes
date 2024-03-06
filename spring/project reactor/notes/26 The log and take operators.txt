@@ -1,0 +1,71 @@
+26 The log and take operators
+
+Operators
+ > process/transform the items emitted by the Flux, in which it returns another set of Flux
+ > besides the normal Stream operators like filter() and map(), we also have new operators that we can use for Flux
+
+
+Flux<T>.take(int N)
+ > take only the first N values from the flux, if available
+
+Flux<T>.log()
+ > logs the events and element in a stream
+ > does not transform the Flux itself, just prints the output to the Logger defined
+ > observer all Reactive Stream signals and trace them using Logger support
+ > Default will use Level.INFO and java.util.logging
+	- If SLF4J is available, it will be used instead
+ > NOTE:
+	1. Depending on the position of the log() in method chain calls, it may be working in a different set of Flux
+		- ex: if theres a filter() before the log(), it will be logging the elements of the filtered Flux
+
+
+EX 1: Unfiltered Flux
+// Code
+        List<Integer> intList = ReactiveSources.intNumbersFlux()
+                .log()
+                .toStream()
+                .toList();
+        System.out.println("List is: " + intList);
+        System.out.println("Total items: " + intList.size());
+
+// Logs
+[ INFO] (main) onSubscribe(FluxConcatMap.ConcatMapImmediate)
+[ INFO] (main) request(256)
+[ INFO] (parallel-1) onNext(1)
+[ INFO] (parallel-2) onNext(2)
+[ INFO] (parallel-3) onNext(3)
+[ INFO] (parallel-4) onNext(4)
+[ INFO] (parallel-5) onNext(5)
+[ INFO] (parallel-6) onNext(6)
+[ INFO] (parallel-7) onNext(7)
+[ INFO] (parallel-8) onNext(8)
+[ INFO] (parallel-1) onNext(9)
+[ INFO] (parallel-2) onNext(10)
+[ INFO] (parallel-2) onComplete()
+List is: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Total items: 10
+
+
+
+EX: Filtered Flux logging
+// Code
+        ReactiveSources.intNumbersFlux()
+                .filter(n -> n > 5)
+                .log()
+                .subscribe(System.out::println);
+
+// Logs
+[ INFO] (main) onSubscribe(FluxFilter.FilterSubscriber)
+[ INFO] (main) request(unbounded)
+Press a key to end
+[ INFO] (parallel-6) onNext(6)
+6
+[ INFO] (parallel-7) onNext(7)
+7
+[ INFO] (parallel-8) onNext(8)
+8
+[ INFO] (parallel-1) onNext(9)
+9
+[ INFO] (parallel-2) onNext(10)
+10
+[ INFO] (parallel-2) onComplete()

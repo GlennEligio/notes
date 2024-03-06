@@ -1,0 +1,346 @@
+01 Introduction
+
+Reference:
+https://github.com/kalaspuffar/buildtool-guide
+https://www.youtube.com/watch?v=OzFvOu2UMcc&list=PLM3Bf4Rz7ZMvu0NjaQd3BI0V-ZgpCLhUI
+
+ANT
+ > stands for Another Neat Tool
+ > a build tool for Java applications
+ > using Apache Ant's buildfile (build.xml) written in XML, we can provide instruction or steps to define how we will build the application
+ > example task that we can define inside the buildfile includes
+	1. resolving the dependencies like .jar files needed
+	2. cleaning the output folder directory
+	3. compiling the project
+	4. packaging
+	5. deploying to server
+
+
+
+
+
+02 Setting Up Apache Ant Environment
+
+Download the Apache Ant
+ > go to the Apache Ant website
+ > download zip file
+ > extract the content of zip file anywhere
+	- this should contain a bin folder
+	- preferrably in C:/Program Files/apache-ant-1.10
+ > copy the folder directory where zip file content is located
+
+For Windows
+ > Go to System Properties
+ > Click Environment Variables
+ > Add the following environment variables
+	1. ANT_HOME
+		- value is the folder directory of the zip file content extracted
+	2. JAVA_HOME
+		- value is the folder directory of the extracted Java zip file
+ > also, add %ANT_HOME%\bin in the path environment variables
+	- path environment variables refers to the directory where System will search for executables for specific commands
+
+
+
+
+
+
+
+
+03 HelloWorld With Apache Ant
+
+STEPS
+1. Write XML file that does some task(s)
+	> Project
+		> Target(s)
+			> Task(s)
+2. Feed that XML file to the ant script
+3. Ant script will use the libraries to perform our tasks
+
+COMMANDS USED
+ant
+ > used to execute a Ant commands
+ > by default, it will look for a build.xml file to execute
+ 
+ant -buildfile <xml file>
+ > used to build project using the specified buildfile xml 
+ > ex: ant -buildfile somefile.xml
+
+
+Apache Ant's buildfiles
+ > Apache Ant's buildfiles are written in XML. 
+ > Each buildfile contains one project and at least one (default) target. 
+	- Targets contain task elements. 
+	- Each task element of the buildfile can have an id attribute and can later be referred to by the value supplied to this. 
+		-> The value has to be unique. (For additional information, see the Tasks section below.)
+
+Project
+ > top level root element inside an Apache Ant buildfile
+ > contains <property> and <target>s elements
+ > must have at least a "default" property assigned
+	- this refers to the default target to use when no target is supplied
+
+
+Task
+ > A task is a piece of code that can be executed.
+ > A task can have multiple attributes (or arguments, if you prefer). 
+	- The value of an attribute might contain references to a property. 
+	- These references will be resolved before the task is executed.
+ > SYNTAX:
+	<name attribute1="value1" attribute2="value2" ... />
+		- name -> name of the task
+		- attributeN -> attribute name
+		- valueN -> value for this attribute
+ > Ex: <mkdir dir="${dist}"/>
+	- this will create a directory with name being the property "dist" value
+
+
+Target
+ > A target is a container of tasks and datatypes that cooperate to reach a desired state during the build process.
+ > Targets can depend on other targets and Apache Ant ensures that these other targets have been executed before the current target. 
+	- For example you might have a target for compiling and a target for creating a distributable. 
+	- You can only build a distributable when you have compiled first, so the distribute target depends on the compile target.
+
+
+EX:
+ > in this buildfile, it will execute the "test" target, which will do the following
+	1. print "Hello world"
+	2. make a directory "dist"
+
+// build.xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<project default="test">
+    <target name="test">
+        <echo message="Hello world"/>
+        <mkdir dir="dist"/>
+    </target>
+</project>
+
+
+
+
+
+
+
+
+4. Apache Ant Tasks & Tags
+
+
+Project 
+ > <project>
+ > root element in an Apache Ant buildfile
+	- there can only be one Project per buildfile
+ > takes three properties
+	1. name 
+		- refers to the name of the project
+		- not required
+	2. default
+		- default target to use when no target is supplied
+		- not required
+		- however, since Ant 1.6.0, every project includes an implicit target that contains any and all top-level tasks and/or types. 
+		- This target will always be executed as part of the project's initialization, even when Ant is run with the -projecthelp option.
+	3. basedir
+		- base directory from which all path calculations are done
+			-> a relative path is resolved relative to the directory containing the buildfile
+		- not required
+		- defaults to the parent directory of the buildfile, unless overridden by the project's basedir or the basedir property (".")
+
+
+Target
+ > constitute a list of Task to be executed
+ > each Project will have a default target to executed when none is defined
+ > each Target contains properties like
+	1. name
+		- name of the Target
+		- REQUIRED
+	2. depends
+		- a comma-separated list of names of targets on which the target depends
+		- if we define a targets list here, it will execute those targets first before executing this target
+	3. description
+		- a short description of this target's function
+	4. if
+		- the name of the property that must be set in order for this target to execute, or something evaluating to true.
+	5. unless
+		- the name of the property that must not be set in order for this target to execute, or something evaluating to false.
+	6. extensionOf
+		- Adds the current target to the depends list of the named extension-point. since Ant 1.8.0.
+	7. onMissingExtensionPoint
+		- What to do if this target tries to extend a missing extension-point. (fail, warn, ignore). since Ant 1.8.2.
+
+
+Task
+ > task that will be executed by a Target
+ > Target can have one or more Task
+ > SYNTAX:
+	<name attribute1="value1" attribute2="value2" ... />
+		- name -> name of the task
+		- attributeN -> attribute name
+		- valueN -> value for this attribute
+ > for list of built-in tasks, go to 
+	- https://ant.apache.org/manual/tasklist.html
+
+
+EX:
+ > in this example, we set the default target to "another"
+ > but since it depends on the "test", the test will get executed first, then "another" will be executed
+
+// build.xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<project default="another" basedir="." name="SQL injection example">
+    <target name="test">
+        <echo message="Hello"/>
+    </target>
+    <target name="another" depends="test">
+        <echo message=" world"/>
+    </target>
+</project>
+
+
+
+
+
+
+
+
+
+05 Apache Ant 'Properties'
+
+Properties
+ > Properties are an important way to customize a build process or to just provide shortcuts for strings that are used repeatedly inside a buildfile.
+ > In its most simple form properties are defined in the buildfile (for example by the property task) or might be set outside Ant. 
+ > A property has a name and a value; 
+	- the name is case-sensitive. 
+ > Properties may be used in the value of task attributes or in the nested text of tasks that support them. 
+	- This is done by placing the property name between ${ and } in the attribute value. 
+	- For example, if there is a builddir property with the value build, then this could be used in an attribute like this: ${builddir}/classes. 
+	- This is resolved at run-time as build/classes.
+
+
+Ways of defining properties
+1. By supplying both the name and one of value or location attributes.
+2. By supplying the name and nested text.
+3. By supplying both the name and refid attributes.
+4. By setting the file attribute with the filename of the property file to load. 
+	- This property file has the format as defined by the file used in the class 5. java.util.Properties, with the same rules about how non-ISO-8859-1 characters must be escaped.
+6. By setting the url attribute with the URL from which to load the properties. 
+	- This URL must be directed to a file that has the format as defined by the file used in the class java.util.Properties.
+7. By setting the resource attribute with the resource name of the property file to load. 
+	- A resource is a property file on the current classpath, or on the specified classpath.
+8. By setting the environment attribute with a prefix to use. 
+	- Properties will be defined for every environment variable by prefixing the supplied name and a period to the name of the variable.
+9. By setting the runtime attribute with a prefix to use. 
+	- Properties prefix.availableProcessors, prefix.freeMemory, prefix.totalMemory and prefix.maxMemory will be defined with values returned by the corresponding methods of the Runtime class.
+
+
+Types of Properties that we can use
+1. Properties defined inside the buildfile's <project>
+2. Properties fetched externally through a file
+3. System properties
+4. Ant built-in properties
+5. Output of expression (i.e. toString)
+
+
+EX:
+<?xml version="1.0" encoding="UTF-8" ?>
+<project default="displayProperties" name="Properties example">
+    <!-- Properties fetched from file -->
+    <property file="./build.dev.properties"/>
+    <!-- Properties defined in buildfile -->
+    <property name="somekey" value="somevalue"/>
+    <property name="myUrl" value="www.company.com"/>
+    <target name="displayProperties">
+        <!-- User defined properties -->
+        <echo message="User defined properties: somekey: ${somekey}, myUrl: ${myUrl}"/>
+
+        <!-- User defined properties in external file-->
+        <echo message="External file properies: customPropName: ${customPropName}"/>
+
+        <!-- System Properties -->
+        <echo message="System Properties: OS Name: ${os.name}, JVM: ${java.vm.version}"/>
+
+        <!-- Built in properties of Ant -->
+        <echo message="Built in properties: Basedir: ${basedir}, Ant home: ${ant.home}"/>
+
+        <!-- toString of Types -->
+        <fileset id="xmlfiles" dir="." includes="*.xml"/>
+        <echo> toString of fileset: ${toString:xmlfiles}</echo>
+    </target>
+</project>
+
+
+
+
+NOTE:
+1. For large project, using external file to supply properties is PREFERRED
+	- properties defined inside buildfile can be hard to manage at large numbers
+
+
+
+
+
+
+
+
+
+06 Logging in Ant
+
+Loggin in Ant
+ > to log the console outputs of the Ant build process, we will need to use the <record> tag
+ 
+Recorder
+ > <record> tag
+ > A recorder is a listener to the current build process that records the output to a file.
+ > contains three properties that we can define
+	1. name
+		- The name of the file this logger is associated with.
+		- REQUIRED
+	2. loglevel
+		- defines the required log level of the logs to be written/recorded write
+		- values = error|warn|info|verbose|debug
+		- default is it will include all logs
+	3. append
+		- Should the recorder append to a file, or create a new one?
+		- can be start or stop, or true or false
+			- if true, will append value to current log file, else it will overwrite the current value
+		- defaults to no state change
+
+EX:
+ > here it will save all the logs in "properties.log"
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<project default="displayProperties" name="Properties example">
+    <record name="properties.log" loglevel="verbose" append="true"/>
+    <!-- Properties fetched from file -->
+    <property file="./build.dev.properties"/>
+    <!-- Properties defined in buildfile -->
+    <property name="somekey" value="somevalue"/>
+    <property name="myUrl" value="www.company.com"/>
+    <target name="displayProperties">
+        <!-- User defined properties -->
+        <echo message="User defined properties: somekey: ${somekey}, myUrl: ${myUrl}"/>
+
+        <!-- User defined properties in external file-->
+        <echo message="External file properies: customPropName: ${customPropName}"/>
+
+        <!-- System Properties -->
+        <echo message="System Properties: OS Name: ${os.name}, JVM: ${java.vm.version}"/>
+
+        <!-- Built in properties of Ant -->
+        <echo message="Built in properties: Basedir: ${basedir}, Ant home: ${ant.home}"/>
+
+        <!-- toString of Types -->
+        <fileset id="xmlfiles" dir="." includes="*.xml"/>
+        <echo> toString of fileset: ${toString:xmlfiles}</echo>
+    </target>
+</project>
+
+
+
+
+
+
+
+
+
+
+

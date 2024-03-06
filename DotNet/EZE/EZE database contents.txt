@@ -1,0 +1,25 @@
+[
+    {
+        "id": "ec122204-85e3-4b7d-8d69-fea2773353af",
+        "name": "Tester",
+        "description": "For testing stuff",
+        "condition": "Good",
+        "createdDate": "2021-09-22T13:09:07.0710601+00:00"
+    },
+    {
+        "id": "0f1f5322-1c8d-459d-99ec-dff2f25518a5",
+        "name": "Voltmeter",
+        "description": "For measuring voltage",
+        "condition": "Good",
+        "createdDate": "2021-09-22T13:09:55.0727472+00:00"
+    },
+    {
+        "id": "021d035d-9c7c-432d-9a3e-771a469b05bd",
+        "name": "Screwdriver",
+        "description": "Tool",
+        "condition": "Good",
+        "createdDate": "2021-09-22T13:10:57.344788+00:00"
+    }
+]
+
+ad561db8-0da4-49d8-b2d8-2b80c41af55b

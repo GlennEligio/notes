@@ -1,0 +1,240 @@
+08 Build a Multi-Lingual App with JSTL - i18n Tags
+
+Contents
+51 Multi-Lingual Internalization Overview
+52 Multi-Lingual Internalization Message
+53 Build a Multi-Lingual App with JSTL Part 1
+54 Build a Multi-Lingual App with JSTL Part 2
+55 Build a Multi-Lingual App with JSTL Part 3
+
+
+
+
+
+
+
+
+
+
+
+51 Multi-Lingual Internalization Overview
+
+I18N
+ > stands for Internalization
+	- i and n for the first and last letter, and 18 is the 18 letters between the two
+
+
+Locale
+ > locale is the combination of language code and country code
+ > there are differences for a language depending on the country
+	- ex: English (US) and English (UK)
+
+
+Formatting Messages for Internalization
+ > instead of hard-coding display text/messages in application, we will make use of LABELS / PLACEHOLDERS
+ > for each label, we will create translated version for different localization (ex: en_US, en_GB, jp, ger)
+ > then based on the user's language selection, system will included appropriate text
+ > not only the words is affected by localization, but also formats like Date, Number, Currency, etc
+
+
+I18N tag lib uri
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+
+I18N functions and tags (prefix: fmt)
+Setting local
+ > setLocale
+ > requestEncoding
+
+Messaging
+ > bundle
+ > message
+ > param
+ > setBundle
+
+Number and Date Formatting
+ > formatNumber
+ > formatDate
+ > parseDate
+ > parseNumber
+ > setTimeZone
+ > timeZone
+
+
+
+
+
+
+
+
+
+
+
+
+52 Multi-Lingual Internalization Message
+
+GOAL:
+1. Build a Multi-Lingual Application
+
+To Do List:
+1. Create Resource Files
+	> Translated versions of the labels
+2. Create JSP page with labels
+3. Update JSP page to change locale based on user selection
+
+
+1. Create Resource Files
+	> Translated versions of your labels
+		- need to use Google Translate to populate this
+	> Must name the file using the "locale"
+		- use the format <your project file name>_LANGUAGECODE_COUNTRYCODE.properties
+		- ex: mylabels_es_ES.properties or mylabels_de_DE.properties
+ 	> Populate the resource file with key=value pairs corresponding to that locale
+	
+EX:
+# mylabels_es_ES.properties
+label.greeting=Hola
+label.firstname=Nombre de pila
+label.lastname=Apellido
+label.welcome=Biendvenidos a la clase de formacion
+
+2. Create JSP page with labels
+ 	> inside the JSP, we will make use of i18n tags
+	> for outputting localized message, we will use the "message" tag
+		- then with its "key" property, we can define which key=value pair in resource file does it point to
+		- ex: <fmt:message key="label.greeting" />
+
+3. Update JSP page to change locale based on user selection
+	> our JSP page will send links to itself
+	> will pass the locale as a parameter
+		- ex: <a href="i18n-messages-test.jsp?theLocale=en_US">English (US)</a>
+	> then we will check the request parameter for the locale value
+		- note that HTTP request also contains a locale value in its headers, which we can use as fallback
+		- in jsp, we can access it through the pageContext.request.locale
+
+
+
+
+
+
+
+
+
+
+
+
+
+53 Build a Multi-Lingual App with JSTL Part 1
+
+Creating Resource file
+ > besides the locale-specific resource file, we can also create a "fallback" or "default" resource file
+	- typically, this will be in en_US
+ > for this, we will not add language code and country code for resource file name
+
+# mylabels.properties
+label.greeting=Howdy
+label.firstname=First Name
+label.lastname=Last Name
+
+# mylabels_es_ES.properties
+label.greeting=Hola
+label.firstname=Nombre de pila
+label.lastname=Apellido
+label.welcome=Bienvenidos a la clase de formacion.
+
+# mylabels_de_DE.properties
+label.greeting=Hallo
+label.firstname=Vorname
+label.lastname=Nachname
+label.welcome=Willkomen in der Ausbildung Klasse.
+
+
+
+
+
+
+
+54 Build a Multi-Lingual App with JSTL Part 2
+
+GOAL:
+1. use i18n "message" tag to output localized messages
+
+
+// i18n-messages-test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<fmt:message key="label.greeting"/> <br><br>
+	<fmt:message key="label.firstname" /><i>John</i> <br>
+	<fmt:message key="label.lastname"/> <i>Doe</i> <br><br>
+	<fmt:message key="label.welcome"/> <br>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+55 Build a Multi-Lingual App with JSTL Part 3
+
+GOAL:
+1. Create variable to hold the locale
+	> Read the request parameter "theLocale"
+	> if not empty, use it
+	> else, use the default locale present in request header through pageContext
+2. Set the locale using i18n "setLocale" tag by passing the locale variable
+3. Set the bundle by passing the BASE NAME of the resource file for localization
+	> the JSP will APPEND the locale after the basename to determine the resource file to use for specific localization
+	> syntax: mylabels_<theLocale>.properties
+	> ex: mylabels_es_ES.properties
+4. Create hyperlinks that direct to same page but with theLocale query parameter
+5. Display the locale used
+
+
+// i18n-messages-test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<!DOCTYPE html>
+
+<c:set 
+	var="theLocale" 
+	value="${not empty param.theLocale ? param.theLocale : pageContext.request.locale }"
+	scope="session"/>
+	
+<fmt:setLocale value="${theLocale }"/>
+<fmt:setBundle basename="com.luv2code.jsp.tagdemo.i18n.resources.mylabels"/>
+	
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<a href="i18n-messages-test.jsp?theLocale=en_US">English (US)</a>
+	|
+	<a href="i18n-messages-test.jsp?theLocale=es_ES">Spanish (ES)</a>
+	|
+	<a href="i18n-messages-test.jsp?theLocale=de_DE">German (DE)</a>
+	<hr>
+	<fmt:message key="label.greeting"/> <br><br>
+	<fmt:message key="label.firstname" />: <i>John</i> <br>
+	<fmt:message key="label.lastname"/>:  <i>Doe</i> <br><br>
+	<fmt:message key="label.welcome"/> <br>
+	<hr>
+	Selected locale: ${theLocale }
+</body>
+</html>

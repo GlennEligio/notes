@@ -1,0 +1,266 @@
+About.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About</title>
+  </head>
+  <body>
+    <img src="./images/logo.png" id="top" width="200" alt="Company logo" />
+    <h2>Coffee Junkie</h2>
+    <ul>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="numbers.html">Numbers</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <br />
+      <br />
+    </ul>
+    <img
+      src="./images/coffee-banner-fit.jpg"
+      height="400"
+      alt="coffee banner"
+    />
+    <br />
+    <br />
+    <br />
+    <br />
+    <h2>About Us</h2>
+    <p>
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquid voluptas
+      ea nemo! Ipsam sed fugiat, repellat molestias libero similique minima,
+      debitis sapiente maiores ut repudiandae nulla soluta! Quibusdam provident
+      odit facilis dignissimos? Eveniet incidunt temporibus consectetur
+      dignissimos, ipsum molestias laudantium eligendi atque dolore accusantium
+      architecto provident alias exercitationem hic sint, ipsa veritatis
+      repellendus corporis! Dolor laborum omnis et quia distinctio doloremque
+      ipsa incidunt nostrum debitis consequuntur! Nesciunt error nemo eveniet
+      odio facilis ad, neque dolores suscipit cumque modi numquam voluptates.
+    </p>
+    <br />
+    <br />
+    <br />
+    <br />
+    <h4>Copyright &copy; 2019</h4>
+    <a href="#top">Back to top</a>
+  </body>
+</html>
+
+
+
+
+Contact.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact</title>
+  </head>
+  <body>
+    <img src="./images/logo.png" id="top" width="200" alt="Company logo" />
+    <h2>Coffee Junkie</h2>
+    <ul>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="numbers.html">Numbers</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <br />
+      <br />
+    </ul>
+    <img
+      src="./images/coffee-banner-fit.jpg"
+      height="400"
+      alt="coffee banner"
+    />
+    <br />
+    <h2>Contact Us</h2>
+    <form action="" method="">
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" />
+      <br />
+      <br />
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" />
+      <br />
+      <br />
+      <label for="description"><strong>Description</strong></label>
+      <br />
+      <br />
+      <textarea
+        name="description"
+        id="description"
+        cols="30"
+        rows="10"
+      ></textarea>
+      <br />
+      <br />
+      <input type="submit" />
+    </form>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <h4>Copyright &copy; 2019</h4>
+    <a href="#top">Back to top</a>
+  </body>
+</html>
+
+
+Home.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+  </head>
+  <body>
+    <img src="./images/logo.png" id="top" width="200" alt="Company logo" />
+    <h2>Coffee Junkie</h2>
+    <ul>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="numbers.html">Numbers</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <br />
+      <br />
+    </ul>
+    <img
+      src="./images/coffee-banner-fit.jpg"
+      height="400"
+      alt="coffee banner"
+    />
+    <br />
+    <br />
+    <br />
+    <br />
+    <h2>Feature products</h2>
+    <br />
+    <br />
+    <!-- House blend -->
+    <h3>House blend coffee</h3>
+    <br />
+    <img src="./images/house-blend.jfif" width="200" alt="house-blend" />
+    <br />
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae accusamus
+      quis suscipit, molestiae, quibusdam deleniti soluta rem deserunt enim
+      earum voluptatem vel consectetur necessitatibus quae temporibus laudantium
+      corporis corrupti culpa delectus id cum tempora sit dolores! Dicta porro
+      voluptatem sint quibusdam nobis inventore, magni at repellat sed non!
+      Corrupti, accusantium?
+    </p>
+    <a href="https://www.wikipedia.org/" target="_blank">Details</a>
+    <br />
+    <br />
+    <br />
+    <!-- French roast -->
+    <h3>French roast</h3>
+    <br />
+    <img src="./images/french-roast.jfif" width="200" alt="house-blend" />
+    <br />
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae accusamus
+      quis suscipit, molestiae, quibusdam deleniti soluta rem deserunt enim
+      earum voluptatem vel consectetur necessitatibus quae temporibus laudantium
+      corporis corrupti culpa delectus id cum tempora sit dolores! Dicta porro
+      voluptatem sint quibusdam nobis inventore, magni at repellat sed non!
+      Corrupti, accusantium?
+    </p>
+    <a href="https://www.wikipedia.org/" target="_blank">Details</a> <br />
+    <br />
+    <br />
+    <!-- Columbian roast -->
+    <h3>Columbian roast</h3>
+    <br />
+    <img src="./images/columbian-roast.jfif" width="200" alt="house-blend" />
+    <br />
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae accusamus
+      quis suscipit, molestiae, quibusdam deleniti soluta rem deserunt enim
+      earum voluptatem vel consectetur necessitatibus quae temporibus laudantium
+      corporis corrupti culpa delectus id cum tempora sit dolores! Dicta porro
+      voluptatem sint quibusdam nobis inventore, magni at repellat sed non!
+      Corrupti, accusantium?
+    </p>
+    <a href="https://www.wikipedia.org/" target="_blank">Details</a> <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <h4>Copyright &copy; 2019</h4>
+    <a href="#top">Back to top</a>
+  </body>
+</html>
+
+
+
+
+Numbers.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Numbers</title>
+  </head>
+  <body>
+    <img src="./images/logo.png" id="top" width="200" alt="Company logo" />
+    <h2>Coffee Junkie</h2>
+    <ul>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="numbers.html">Numbers</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <br />
+      <br />
+    </ul>
+    <img
+      src="./images/coffee-banner-fit.jpg"
+      height="400"
+      alt="coffee banner"
+    />
+    <br />
+    <br />
+    <h2>Our Store</h2>
+    <table style="border:2px solid black; border-spacing:25px">
+      <tr>
+        <th>City</th>
+        <th>Chicago</th>
+        <th>New York</th>
+        <th>Los Angeles</th>
+      </tr>
+      <tr>
+        <td>Orders</td>
+        <td>125</td>
+        <td>250</td>
+        <td>500</td>
+      </tr>
+      <tr>
+        <td>Profit</td>
+        <td>$10,000</td>
+        <td>$20,000</td>
+        <td>$30,000</td>
+      </tr>
+    </table>
+    <br />
+    <br />
+    <br />
+    <br />
+    <h4>Copyright &copy; 2019</h4>
+    <a href="#top">Back to top</a>
+  </body>
+</html>

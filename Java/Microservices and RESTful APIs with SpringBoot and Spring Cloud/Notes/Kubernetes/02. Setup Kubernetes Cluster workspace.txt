@@ -1,0 +1,23 @@
+02. Setup Kubernetes Cluster workspace
+
+Creating K8s cluster
+1. Cloud
+	- GKE
+	- AWS KS
+	- Azure KS
+	- Okteto (Free)
+2. Local
+	- Docker Desktop
+	- minikube
+
+I. Cloud (GKE)
+1. Login your google account
+2. Go to https://cloud.google.com
+3. Choose "Get started for free"
+4. Follow the instructions
+	> you need to have Debit/Credit card in order to avail the Free trial
+
+
+II. Local (Docker Desktop)
+1. Run Docker Desktop
+2. In Settings, enable Kubernetes

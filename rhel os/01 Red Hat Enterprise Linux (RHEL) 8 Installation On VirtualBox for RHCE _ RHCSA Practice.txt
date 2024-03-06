@@ -1,0 +1,10 @@
+01 Red Hat Enterprise Linux (RHEL) 8 Installation On VirtualBox for RHCE & RHCSA Practice
+
+Host machine requirements
+1. 64-bit x86 machine with hardware virtualization assistance (Intel VT-X or AMD-V)
+2. An OS supported by VirtualBox such as Microsoft Windows 7 or later, Apple Mac OS X 10.8 or later, Ubuntu Linux 12.04 or later
+3. 4GB RAM (8GB preferred)
+4. 24GB of available disk
+
+Tools/Files needed
+1. RHEL OS Image (.iso) file

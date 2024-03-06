@@ -1,0 +1,201 @@
+Servlets
+
+
+HTTP
+	> a protocol that clients and servers use on the web to communicate
+	> stateless protocol
+	> supports ONE request per connection
+		- once client sent the request, it will disconnect
+
+
+HTTP Request & Response
+
+HTTP Request
+	> is a packet of information that one computer sends to another computer to communicate something
+HTTP Response
+	> is the packet of information sent by Server to the Client in response to an earlier Request made by Client
+
+
+Servlets
+	> technology to creates Web Application
+	> API that provides Interfaces and Classes 
+	> Interface Must be implemented to create Servlet
+	> Class that extends the capabilities of the server to responds to any incoming requests
+	> A web component deployed to create Web Page
+	> Robust and Scalable
+
+
+Servlet Life cycle
+
+Start
+1. Loading & Instantiation
+	> Servlet is initialized using init()
+	> init() is called by Servlet component
+2. Initialized
+	> Servlet call the service() to process client request
+	> service() is call to inform the Servlet about the client request
+3. Handling request
+	> the Servlet may terminal the Request thread once its done executing the work
+4. End
+	> destroy() is called to terminate the Servlet and be put for garbage collection
+Stop
+
+
+
+Steps to create Simple Servlet
+1. Create and compile simple servlet code
+2. Add mappings to web.xml file
+3. Start Apache Tomcat
+4. Start Web Browser & Request Servlet
+
+
+
+Creating an HttpServlet
+	> two ways
+		- Create the HttpServlet subclass and its mapping manually
+		- Use built-in Servlet	generator of Eclipse IDE
+
+
+Create the HttpServlet subclass and its mapping manually
+Creating HttpServlet subclass
+1. Create a class
+2. Extend to HttpServlet
+3. Create the method inside the class that corresponds to HTTP Verbs request
+	- doPut()
+	- doGet()
+	- doDelete()
+	- doPost()
+4. These method must have two parameters
+	- HttpServletRequest
+	- HttpServletResponse
+5. These method must have these Exceptions in the throws signature
+	- ServletException
+	- IOException
+
+Mapping the HttpServlet in the Web app
+6. In the ProjectFolder > WebContent > WEB-INF > web.xml, just before the <welcome-file-list>
+	- add <servlet> and <servlet-mapping>
+7. Inside the <servlet> element, add
+	- <servlet-name>
+		= pass any name that you want 
+	- <servlet-class>
+		= pass the package location of the Class that extends to HttpServlet
+		= ex: com.package.Login
+8. Inside the <servlet-mapping>
+	- <servlet-name>
+		= pass the name you assign to <servlet-name> of <servlet> element you want to map
+	- <url-pattern>
+		= defines the url to where the Servlet will be called
+		= the String that will be passed here 
+		
+	
+Classes that are inside the javax.servlet
+
+HttpServlet
+	> makes a Class to be a Servlet
+	> must override atleast ONE method
+		- doGet(), if the servlet supports HTTP GET requests
+		- doPost(), for HTTP POST requests
+		- doPut(), for HTTP PUT requests
+		- doDelete(), for HTTP DELETE requests
+		- init() and destroy(), to manage resources that are held for the life of the servlet
+		- getServletInfo(), which the servlet uses to provide information about itself
+
+HttpServletRequest
+	> represents the request that Servlet received
+	> can call methods like
+
+getParameter(String name)
+	> fetches the variable of same name on the request url query
+	> ALWAYS RETURN String variable 
+
+getRequestDispatcher(String url)
+	> dispatches the request to another url (typically url of another Servlet in same project)
+	> return a RequestDispatcher object
+	> to direct the request after this, call forward() of Request
+ 
+
+
+HttpServletResponse
+	> represents the response that the Servlet will send back to client
+	> can call methods like
+
+addHeader(String name, String value)
+	> add a Header to the response
+setHeader(String name, String value)
+	> set a Header value to response
+setContentType(String type)
+	> set the response body MIME type to the one passed
+	> ex: "text/html"
+getWriter()
+	> used to get the PrintWriter of HttpServletResponse	
+	> can call println() and print() of the PrintWriter output to add text to it
+setAttribute(String name, Object o)
+	> used to add attribute in a HttpServletRequest
+	> other Servlet can then fetch the said Attribute if they give the correct name
+
+
+
+GENERIC SERVLETS
+
+Generic Servlet
+	> a generic servlet is a protocol independent Servlet that should ALWAYS override the service() method to handle the client request
+
+
+Why Generic Servlet
+	> easier to write
+	> very simple life cycle methods
+	> to write one, you just need to extend javax.servlet.GenericServlet and override the service() method
+
+How to create Generic Servlets
+1. Create class
+2. Extend to GenericServlet method
+3. Override the service() of GenericServlet Class
+	> same as the other methods of HttpServlet but for takes all kind of request
+
+Mapping Generic Servlet
+	> same method as the HttpServlets mapping
+
+
+
+
+SERVLET CLASSES & INTERFACES
+
+Servlet
+	> declares lifecycle method of servlet
+ServletConfig
+	> allows servlet to get Initialization methods
+ServletContext
+	> enables servlet to log access and access infornatuib
+ServletRequest
+	> used to READ DATA from client request
+ServletResponse
+	> used to WRITE DATA to client response
+GenericServlet
+	> implements servlet and Servlet.Config Interface
+ServletInputStream
+	> provides input stream to read request from the client
+ServletOutputStream
+	> provides output stream to write responses to the client
+ServletException
+	> indicates SERVLET ERROR has occured
+UnavailableException
+	> indicates servlet is NOT AVAILABLE
+HttpServlet
+	> provides methods to handle Http Request and Response
+HttpServletRequest
+	> enables servlets to read data from Http Request
+HttpServletResponse
+	> enables servlets to write data to HttpResponse
+
+
+
+
+
+
+
+
+
+
+
+	

@@ -1,0 +1,177 @@
+Day 10
+
+Task in project
+1. Customization of SOlr
+2. Create 
+3. Dataload in Catentry table
+	> field3 and field4
+4. Add one attribute in the product 
+	> "gift wrappable"
+5. Custom Order message
+6. Custom User registration
+	> add new input in user register form (favorite food, and color)
+7. 
+
+mARCH 20
+ > 2 hours session about the capstone project
+
+
+Today agenda
+1. Commerce Composer
+2. Migration from V8 to V9
+
+
+WCS V9 Commerce Composer
+ 
+PLP
+ > product listing page
+ > ex: Catalog group product listing (Women's Apparel)
+ 
+PDP
+ > product display page
+ > page that display product information
+ > ex: Synergy Athletic Shoes product display page
+ 
+HCL Commerce Composer
+ > the Commerce Composer tool gives you the freedom to quickly create and assemble the contents of your store
+ 
+HCL Commerce Composer workflow
+1. Choose a page, or create a new one
+2. Select a layout template
+3. Create a layout for the page by adding widgets and defining their contents
+4. 
+
+HCL Commerce Composer flow
+1. To start composing your page, choose an existing store page that requires a new layout, such as 
+
+Workspace Task Group Approver
+ > only have read only to the contents
+ 
+SU URL
+ > url that is optimizing for search engine
+ 
+Hero banner
+E-Marketing Spot
+Merchandising Associations
+ > recommendation for related products for upsell
+ 
+Page handled by the Commerce composer
+ > home page
+ > catalog entry page
+ > sub catalog group page
+ > product image page
+ 
+Why not all page is created in the Commerce composer
+ > the customization needs to be done in the source code level
+ 
+ 
+ -- for widgets:
+--Contains information about all widgets registered on the system
+select * from plwidgetdef;
+-- description of widget
+select * from PLWIDGETDEFDESC ;
+--This table contains the association of widgets to page layouts.
+select * from plwidget;
+
+-- delete from plwidgetdef where identifier in ('UVWelcomeUser','UVShipToBillTo');
+-- delete from plwidgetdef where identifier in ('UVShipToBillTo');
+
+-- page layout
+-- main table for page layout
+select * from pagelayout;
+-- relation of page layout to parent page layout
+select * from PLTEMPLATEREL;
+
+-- what widgets are part of page layout. Main page layout also exists in PLWIDGETDEF table. So this table will contain main template for any page layout and all widgets that are part of this new layout. Also tells which widget resides in which slot.
+select * from plwidget;
+-- page layout clildren i.e widgets part of page layout
+select * from plwidgetrel;
+
+-- number and details of slots in an layout
+select * from PLWIDGETSLOT ;
+
+
+NOTES:
+1. Dynamic widgets should not be cached (ex: inventory stock widget)
+
+Open Management Center
+Manage Stores --> Commerce COmposer
+Layout --> new layout
+
+
+WCS V9 Migration 
+
+1. We need to convert all of our calls to REST
+
+
+Struts to Spring - View
+ > for Struts, we use the Store ent id, but with Spring, we will use Store name
+ 
+OptCounter field is a mandatory field for WCS V9 (NON NULLABLE VALUE)
+
+If we change the class anme of the AccessBean, we will need to change everything that references the old package and classname
+
+
+256 bits password in V9, 32 bits password for V8
+
+
+
+
+Chat history
+Francis Jan S Dimata 1:01 PM
+yes
+good afternoon sir
+Francis Jan S Dimata  to  Everyone 1:16 PM
+sir?
+can you repeat the question
+Francis Jan S Dimata  to  Everyone 1:17 PM
+not yet sir
+i'm currently processing to create 5-6 promotion
+sorry I don't have camera and mic right now sir
+Jeorge Emprese  to  Everyone 2:17 PM
+Shopping cart
+Domingo C. Macunay Jr.  to  Everyone 2:17 PM
+menu
+Richard Anderson Capua  to  Everyone 2:17 PM
+Password Reset page
+John Tristan Cometa  to  Everyone 2:17 PM
+account profile page
+You  to  Everyone 2:17 PM
+Register User page
+Richard Anderson Capua  to  Everyone 2:17 PM
+About Us page
+Ma Mercedita D Bueno  to  Everyone 2:18 PM
+Log in page
+Gaurav  to  Everyone 2:23 PM
+-- for widgets:
+--Contains information about all widgets registered on the system
+select * from plwidgetdef;
+-- description of widget
+select * from PLWIDGETDEFDESC ;
+--This table contains the association of widgets to page layouts.
+select * from plwidget;
+
+-- delete from plwidgetdef where identifier in ('UVWelcomeUser','UVShipToBillTo');
+-- delete from plwidgetdef where identifier in ('UVShipToBillTo');
+
+-- page layout
+-- main table for page layout
+select * from pagelayout;
+-- relation of page layout to parent page layout
+select * from PLTEMPLATEREL;
+
+-- what widgets are part of page layout. Main page layout also exists in PLWIDGETDEF table. So this table will contain main template for any page layout and all widgets that are part of this new layout. Also tells which widget resides in which slot.
+select * from plwidget;
+-- page layout clildren i.e widgets part of page layout
+select * from plwidgetrel;
+
+-- number and details of slots in an layout
+select * from PLWIDGETSLOT ;
+Gaurav  to  Everyone 2:46 PM
+Open Management Center
+Manage Stores --> Commerce COmposer
+Layout --> new layout
+https://help.hcltechsw.com/commerce/9.1.0/management-center/tutorial/tpz_tutindex.html
+All Layout--> any page , six slots
+name for layout
+add value for priority

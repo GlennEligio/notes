@@ -1,0 +1,51 @@
+06 Query Rules - Introduction
+
+Query Rules
+ > these are the Rules that are composed of two parts:
+	1. Condition
+	2. Consequence
+ > if the condition is met (ex: keyword = X), then consequence is applied (ex: filter on Y)
+ > with this process, specific behaviors are edge cases that were previously very hard to deal with are now solved in an elegant way
+ > sample use cases for Query rules are:
+	1. Auto Filters
+	2. Remove words
+	3. Merchandising
+	4. Displaying banners
+	
+	
+Conditions
+ > for a Query rule to be triggered, it has to meet a specific condition, and defining this condition is the first step of setting up a Query rule
+ > Query rule conditions are composed of two elements:
+	1. Query pattern
+	2. Context
+ > Query pattern consists of one or multiple tokens treated as phrase/token
+	- there are two types of Token
+		1. Literal
+			-> a plain word that must appear EXACTLY as is
+		2. Face value placeholder, 
+			-> this will match any value of a given facet in the same index
+			-> for this to work, the facet must have been declared first in the "attributesForFaceting"
+ > Context restricts the "active area" of a given Query rule
+	- allows us to enable the rule only for a subset of queries (ex: specific category of an e-commerce website)
+	
+	
+Consequence
+ > a Rule consequence can be one or multiple section in sequence performed on the query itself or on the results
+ > here are some of the main consequences used
+	1. Add Query Parameter
+		- if condition is met, it allows us to add any number of any valid search parameters to the query
+	2. Automatic Filter
+		- the Automatic facet filter consequence transforms a facet value placeholder into a facet filter
+		- the value from the query as captured by the placeholder is used as the value for the facet filter
+	3. Remove Word
+		- the Remove of word from the query string consequence allows you to defined a word that you want to be stripped of the query
+		- if the removed word has multiple occurences in the query string, then all occurances will be removed
+	4. Promote Result
+		- with the Promote specific hits consequence, one or multiple objects of the same index are promoted to predefined positions in the result set
+	5. Display specific info
+		- with display specific info consequence, it allows us to return a custom JSON object along the results to display things like promotional banners
+
+ 
+NOTES:
+1. Query rules are NOT MEANT TO REPLACE a good Ranking strategy but they are great for EDGE CASES and Custom Behaviours where using the Ranking strategy only does not help
+2. We can do all Query rules related operations in both the Dashboard and API of Algolia

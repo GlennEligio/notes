@@ -1,0 +1,294 @@
+Section 7 - NiFi Registry for Version Control
+
+29. Overview on NiFi Registry
+30. Installation of NiFi Registry
+31. Configuring NiFi and NiFi Registry to Enable Version Control
+32. Configuring NiFi Registry with Multiple NiFi instances
+33. Configuring NiFi Registry to Enable Git Persistence
+
+
+
+
+29. Overview on NiFi Registry
+NiFi Registry
+ > NiFi Registry is a complementary project that provides a central location for storing and managing shared resources across one or more NiFi instances
+	- this means that we must download this SEPARETEL
+ > It is a separate sub-project of Apache NiFi
+ > This means we must download it separately and it will follow a different release cycle and version
+ 
+ 
+Why Nifi Registry
+ > Assume you are working in a team, and more than one person is working on a Data flow, then version control of the flow becomes complex
+ > For a very long-time, people used NiFi templates to enable version control and it's such a pain
+ > NiFi template is not created or optimized for doing version control in the first place
+ > We have to manually download the template and commit your changes to any other version control tools like TFS, SVN, or GIT.
+ > Merge is going to be a nightmare
+	- this is because for the entire NiFi data flow, we will only have ONE xml file
+	- this makes it hard to compare the changes in each versions
+ > More complexity is involved when we need to take the latest version of the template from the repository and merge it with your un-committed local version
+ 
+
+How NiFi registry helps with the issue
+ > NiFi registry provides an implementation of a Flow Registry for storing and managing versioned flows
+ > it also allows for integrates seamlessly with multiple NiFi instances by allows to store, retrieve, and upgrade versions of the data flow to the registry
+ 
+ 
+ 
+ 
+30. Installation of NiFi Registry
+
+
+Downloading Binary of NiFi Registry for installation
+1. Search "nifi registry" in the Internet and go to the first link
+2. Alternatively, use this link below
+	> https://nifi.apache.org/registry.html
+3. Download the binary available
+	> as of this time, NiFi registry is of version 1.23.2
+	> https://www.apache.org/dyn/closer.lua?path=/nifi/1.23.2/nifi-registry-1.23.2-bin.zip
+4. Extract the content of the compressed binary file
+
+
+Running NiFi Registry
+1. Go in the /bin directory of the binary content
+2. Execute the following to start nifi registry
+	> Windows: run-nifi-registry.bat
+	> Mac/Linux/Unix: nifi-registry start
+3. By default, NiFi starts at port 18080
+4. Visit the link below to check if NiFi registry is running
+	> localhost:18080/nifi-registry
+	
+Issue: 
+1. NiFi is not running
+	> checking the nifi-registry-app.log. we can see that the nifi registry is not running at allows
+	> checking the Internet, it seems that Nifi Registry does come with JAXB implementation jar file under <install-dir>\lib\java11
+	> in my machine, I'm running a newer version of Java, which does nt come with JAXB implementation
+	> "Server start failed: java.lang.IllegalStateException: Unable to load cache item"
+	> to solve this, copy the content (jar files) of "<install-dir>\lib\java11" to "<install-dir>\lib"
+	> https://stackoverflow.com/questions/68399289/nifi-registry-0-8-throws-java-lang-illegalstateexception-unable-to-load-cache-i
+	
+	
+	
+	
+	
+	
+31. Configuring NiFi and NiFi Registry to Enable Version Control
+
+
+What is a Bucket?
+ > A bucket is nothing but logical segregation of the Data Flow, and one bucket can have more than one Flow associated with it
+ > You can consider a Bucket like a Folder available in the File System where we will keep related files inside it
+ > In our case, the files are nothing but the related flows
+ 
+ 
+Connecting NiFi instance to NiFi Registry
+1. In the NiFi instance, go to the NiFi settings
+	> click global menu icon at top right
+	> go to the Registry Clients tab
+2. Add a NiFi Registry client
+	> click the plus sign icon
+	> assign the name that you want
+		- ex: Local Registry
+	> for type select "NiFiRegistryFlowRegistryClient"
+	> give it a description
+		- ex: Local Registry Description
+3. Configure the NiFi registry client
+	> pass the URL where the NiFi registry is running
+	> ex: http://localhost:18080/
+4. To test the connection
+	> right click any Process Group
+	> select Version -> Start Version Control
+	> in the "Save Flow Version" window, "Registry" field, you should see the NiFi registry client that you have created
+	
+
+Adding a Bucket
+1. Go to the NiFi registry
+2. Go to the Buckets dashboard
+	> click the wrench icon at the top right
+	> go to the Buckets tab
+3. Add a new Bucket
+	> click New Bucket button
+	> give it a name and description
+		- Name: First Bucket
+		- Description: First Bucket Description
+	> click Create
+
+
+Adding ProcessGroup in the Bucket
+1. Go to the NiFi instance
+2. Add any ProcessGroup for version control
+	> right click the process group
+	> Version -> Start Version control
+3. Add the ProcessGroup in the Bucket in the "Save Flow Version"
+	> Select the NiFi Registry Client
+	> Select the Bucket in that NiFi Registry
+	> Give the Flow Version the following info
+		- name: CSV to JSON
+		- description: CSV to JSON
+		- version comments: CSV to JSON
+	> click Save
+4. After saving, we should see a Green tick icon at the top left of the ProcessGroup
+
+
+
+
+Checking changes in the ProcessGroup
+1. Add new components inside the ProcessGroup we saved for Version Control
+2. Exit the Process Group
+3. We should see that the Green tick icon has been changed to Grey star icon
+	> this denotes that the ProcessGroup is OUT OF SYNC to the one stored in NiFi registry
+4. To show the Local changes
+	> right click process group
+	> select Version -> Show local changes
+5. We can also revert the changes, but for now, lets keep it to show how we can commit the changes to NiFi registry
+
+
+
+Commiting changes in the ProcessGroup to the NiFi Registry bucket
+1. Right click the modified Process Group
+2. Select Version -> Commit local changes
+3. Give version comment for this comment
+	> Added dummy processors
+	> save
+4. After this, we should see the Green tick mark again in the ProcessGroup
+5. Also in the NiFi registry, if we check the Flow for the specific ProcessGroup, we should see that the "Versions" is now 2
+
+
+NOTES:
+1. ProcessGroups are the only component that we can add in NiFi Registry buckets for version control
+
+
+
+
+
+32. Configuring NiFi Registry with Multiple NiFi instances
+
+Current Limitation of NiFi Registry
+ > You can't take the latest version of the flow WITHOUT reverting your local changes
+ > To put it in simpler words, you can't merge your local changes with a newer version available in the registry
+ > You can only revert your local changes and take the latest version, and redo your changes again and commit the same
+	
+
+Demo:
+1. Prerequisite
+	> 2 NiFi instance and 1 NiFi Registry instance running
+	
+	
+Importing Flow from NiFi Registry
+1. Connect the UNCONNECTED NiFi instance (NiFi instance B) to the NiFi registry instance
+	> add the NiFi Registry in the Registry clients under Controller Settings
+2. Add a Process Group inside the NiFi instance
+3. In the "Add Process Group" window, you should see an "Import from Registry" link
+	> press the link
+4. In the "Import Version"
+	> select the Registry, Bucket, and Flow Name to import
+	> we can also select the Version of the Flow to import
+	
+
+
+Pulling newer version of Flow
+1. In the NiFi instance B, create changes in the Flow we imported and push the changes to the Registry
+	> enter the Flow/Process group
+	> add dummy components
+	> commit the changes
+2. In the NiFi instance A, 
+	> if we have the same Flow/Process group inside, we should see a red arrow icon at top right of Flow/Process group
+	> this denotes that the current version of Flow is lower than that inside the registry
+3. In the NiFi instance A, pull the newer version of the Flow
+	> right click the Flow
+	> Version -> Change version
+	> select the newest version
+4. Now, the green tick icon should be present and replaced the green arrow icon
+
+
+NOTE:
+1. If you are having problem with "UNAUTHORIZED" when running two nifi instance, this means that the credentials for both instances are the same
+	> to solve this, update the credentials with the command below
+	
+# Linux/Unix/Mac
+nifi.sh set-single-user-credentials <username> <password>
+# Windows
+nifi.cmd set-single-user-credentials <username> <password>
+
+
+
+33. Configuring NiFi Registry to Enable Git Persistence
+
+
+NiFi Registry Persistence
+ > by default it uses the FileSystemPersistenceProvider, which persist the NiFi Registry data in the file system
+ > but theres also an option to use Git by using GitFlowPersistenceProvider
+ > with GitFlowPersistenceProvider, we will need to provide the following
+	1. Flow Storage Directory
+		- directory where the git repo is located locally
+	2. Remote to push
+		- ex: origin
+	3. Remote Access User
+		- remote username
+	4. Remote Access Password
+		- ex: GitHub personal access tokens
+		
+		
+Prerequisite
+1. GitHub repo
+2. (GitHub) Personal Access Token with enough scope
+	> all "repo" scope
+3. 1 Nifi instance and 1 NiFi registry instance running
+	> Nifi instance should be connected to Nifi registry
+	
+
+Creating GitHub repo
+1. Create a PUBLIC empty repo
+	> ex: "tutorial-nifi-registry"
+
+
+Creating Personal Access Token
+1. Go to GitHub settings
+2. Then to Developer Settings
+3. Enter personal access tokens
+4. Select Tokens (classes) -> Personal Access Token (Classes)
+5. Give it a name, and for scope, select all the "repo" choices
+6. Create the token
+	> SAMPLE_RANDOM_TOKEN
+
+
+
+Cloning the GitHub repo
+1. Select a directory to clone the repo created
+	> ex: <install-dir>/remote_git_flow_storage
+2. Clone the repo
+
+
+
+Configuring NiFi registry to use Git Persistence
+1. Go to conf
+2. Open providers.xml
+3. Comment out the flowPersistenceProvider for FileSystemPersistenceProvider, and uncomment the flowPersistenceProvider for GitFlowPersistenceProvider
+4. Change the property of the flowPersistenceProvider
+5. DO NOT FORGET TO RESTART THE NIFI REGISTRY INSTANCE
+
+EX:
+    <flowPersistenceProvider>
+        <class>org.apache.nifi.registry.provider.flow.git.GitFlowPersistenceProvider</class>
+        <property name="Flow Storage Directory">D:/Study/programming/workspaces/Nifi/nifi-registry-1.23.2-bin/nifi-registry-1.23.2/remote_git_flow_storage/tutorial-nifi-flows</property>
+        <property name="Remote To Push">origin</property>
+        <property name="Remote Access User">glenneligio@gmail.com</property>
+        <property name="Remote Access Password">RANDOM_SAMPLE_PASSWORD</property>
+        <property name="Remote Clone Repository"></property>
+    </flowPersistenceProvider>
+
+
+
+
+Demo: Push changes to NiFi registry with Git Persistence
+1. Add new Flow in the NiFi registry using ANY of the Process Group available in the NiFi instance
+	> right click Process Group
+	> Version -> Start Version Control
+	> Add the Process Group as Flow in the NiFi registry
+2. Check the Git repository
+	> the repository should not be empty at this point
+	> there should be a .snapshot file for the Flow you've just uploaded in the NiFi registry
+	
+	
+	
+NOTE:
+1. Each commit of new Flow version in the NiFi registry represents ONE Git commit

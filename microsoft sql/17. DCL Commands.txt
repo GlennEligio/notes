@@ -1,0 +1,47 @@
+DCL Commands
+	> used to grant or revoke privileges to the user
+
+For us to use DCL commands, we must first create a user. To be able to create a user we need LOGIN.
+
+Syntax for creating LOGIN:
+
+	CREATE LOGIN logInName WITH PASSWORD = 'passWord'
+
+Example:
+
+	CREATE LOGIN SAMPLELOGIN WITH PASSWORD = 'glenn'
+
+Now we can CREATE a USER that will use this LOGIN.
+
+Syntax for creating USER:
+
+	CREATE USER userName FOR LOGIN logInName;
+
+Example:
+
+	CREATE USER GLENN FOR LOGIN SAMPLELOGIN;
+
+
+GRANTING/REVOKING Privileges
+
+Syntax:
+GRANTING Privileges
+
+	GRANT Privilege ON TableName TO userName;
+
+REVOKING Privileges
+
+	REVOKE Privilege ON TableName TO userName;
+
+Example:
+
+	GRANT SELECT ON StudentsInfo TO GLENN;
+	REVOKE SELECT ON StudentsInfo TO GLENN;
+
+These will GRAND/REVOKE the SELECT clauses to the StudentsInfo table to USER GLENN.
+
+Also, to be able to see the USERS and their PRIVILEGES, you can go to
+	
+	Databases > DatabaseName > Security > Users
+
+

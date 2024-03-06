@@ -1,0 +1,27 @@
+Database Management System (DBMS)
+	> software that is used to manage the Database
+	> serves as an interface between the database and its end-users or programs, allowing users to retrieve, update, and manage how the information is organized and optimized
+	> allows user to;
+		a. Define the data
+			= create datatable and define the table (column, rows,)
+		b. Update the data
+			= allows access to user to insert, modify, and delete the database
+		c. Retrieve the data
+			= allows user to retrieve data based on the requirement
+		d. Administration of users
+			= allows user to register and monitors its action and enforces data securiry, maintain data integrity, monitors performance
+
+
+TYPES OF DBMS
+1. Hierarchical DBMS
+	> showcases predecessor and succesor type of relationship
+	> represent data in a tree-like form.
+	> relationship between records is one-to-many
+2. Network DBMS
+	> type of database model wherein multiple member records or files can be linked to multiple owner files and vice versa.
+3. Relational DBMS
+	> structure that allows the user to access the data in relation to another piece of data in the database
+4. Object-oriented DBMS
+	> database management system in which information is represented in the form of objects as used in object-oriented programming. 
+
+

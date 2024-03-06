@@ -1,0 +1,63 @@
+07 Traditional IT Overview
+
+How Websites work
+ > Application (i.e. webapps) are hosted in a remote Server
+ > Client will send request to the Server (as packets of data) through the Network
+ > In order for the Client and Server to know each other's location in the Network, both Client and Server uses IP addresses, which is similar on how normal addressed work
+	- this way, Client know where to send a request, and Server knows where to send the response
+ > Using real life mailing system, we can make an analogy where
+	- Client serves as the sender of mail
+	- Server serves as the receiver of mail
+	- Network will be the post office
+	- IP addresses will be the sender and receiver address
+
+
+
+What is a server composed of?
+ > CPU - for computation
+ > RAM - for short term memory storage
+ > Data - for long term memory storage
+ > Database - for storing data in a structure way, where we can query later
+ > Routers, switch, DNS server - for networking 
+
+
+
+IT Terminologies
+Network 
+ > cables, routers, and servers connected with each other
+Router
+ > A networking device that forwards data packets between computer networks.
+ > They know where to send your packets on the internet!
+Switch
+ > takes a packet and send it to the correct server / client on your network
+
+
+Structure
+ > note that server and client here can be interchangable, since the Client might able be managed under a Router and a Switch
+
+				     |--- Server
+Client -----> Router -----> Switch --|--- Server
+				     |--- Server
+
+
+Traditional IT Infrastructure
+ > uses On-premises data centers
+ > worked for so many years
+
+Problems with Traditional IT approach
+ > Pay for the rent for the data center
+ > Pay for power supply, cooling, maintenance
+ > Scaling is limited
+	- to scale, we need to buy new servers
+	- but with new servers comes the need for more space, power supply, and maintenance
+ > Needs to hire 24/7 team to mointor the infrastructure
+ > Needs to be able to deal with disasters (earthquake, power shutdown, fire)
+
+
+
+
+NOTE:
+1. Cloud resources, typically server resource like CPU, RAM, Data or even the server itself, is served by the Cloud ON DEMAND.
+
+
+

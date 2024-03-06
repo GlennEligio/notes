@@ -1,0 +1,169 @@
+Day 10 Spring
+
+
+Feign Client
+	> complete alternative to the RestTemplate
+	> used to communicate to another MicroServices
+
+Using Feign
+I. Enabling Feign
+
+Dependency:
+	> spring cloud starter open feign
+	> dont forget to add the dependencies management tags with springcloud inside it
+	
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+    <version>2.1.5.RELEASE</version>
+</dependency>
+
+
+
+1. Add @EnableFeignClients in the Main App
+	> we can define the basePackage="" parameter
+		- specifies where the @FeignClients are located
+
+@SpringBootApplication
+@ComponentScan("com")
+@EnableFeignClients
+public class SpringFeignConsumer {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringFeignConsumer.class, args);
+	}
+
+}
+
+
+
+2. Create an interface to hold all the Request Call to another 
+	> add it in the same package as the MainApp, if you are using SpringBootApplication
+		- avoid bean not detected error
+	> add @FeignClient() annotation to interface
+	 	- pass the following parameters to @FeignClient()
+			a. name=""
+				-> pass the spring.application.name of the Service that we will get data from
+			b. url=""
+				-> pass the absolute url (base url) of the Microservice
+				-> not needed if we use the Eureka Client-Service (only need name)
+
+
+
+
+3. Inside interface, add abstract methods 
+	> this will be equivalent of the methods that uses RestTemplates
+	> but here, we will use annotations and the Feign will do the implementation of the said abstract method
+	> these method will have the following
+		- @RequestMapping annotation
+			= this annotation will have the following parameter
+				a. method = RequestMethod[]
+					-> defines the Http method for Request to send
+					-> takes a RequestMethod enum value
+				b. value = ""
+					-> defines the relative url inside the Service's controller
+					-> will be concatenated with base-url that we define in @FeignClient
+		- Return type that corresponds to expected return type of MicroService's response
+
+
+INSIDE @FeignClient interface
+
+	@RequestMapping(method = RequestMethod.GET, value = "/loadAll")
+	public ResponseEntity<List<Employee>> loadAll();
+
+
+
+4. We can now use this method to call in external MicroServices
+		
+
+
+
+
+
+
+
+I. Configuring Feign Client
+	> need two services to use Feign Client
+		- Consumer
+		- Producer
+			= provide information to consumer
+
+1. Copy the SpringMSEmp
+	> rename to SpringFeignProducer
+
+
+2. In the Controller of SpringFeignProducer
+	> create a new method
+		- public access
+		- Employee return type
+		- getSingleEmp method name
+		- inside the method
+			= create a single Employee object
+				=> assign it with values in constructor parameter
+			= return the Employee
+		- add @GetMapping("/employee")
+
+3. Create a SpringFeignConsumer project
+	> copy of SpringMSClient
+
+4. Add this dependency in the Consumer project
+	> dont forget to add the dependencies management tags with springcloud inside it
+	
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+    <version>2.1.5.RELEASE</version>
+</dependency>
+
+
+
+5. Clean the AppDelegate
+
+
+6. Clean the AppController
+
+
+7. Inside the SpringFeignProducer
+	> inside application.properties, 
+		add spring.application.name=emp-service
+		add server.port=8090
+	
+
+
+8. Inside the AppDelegate
+	> change the AppDelegate from a Class to Interface
+	> add @FeignClient() to the AppDelegate
+		- name="emp-service"
+		- url="http://localhost:8090"
+	> add method
+		- public Employee getData();
+		- @RequestMapping(method=RequestMethod.GET, value="/employee")
+
+9. Inside AppController
+	> add AppDelegate field member
+		- autowire it
+	> create method
+		- public void getEmployee()
+		- inside method
+			= create Employee object
+				-> assign it the value of delegate.getData()
+			= print out the Employee object
+		- add @GetMapping("/employee")
+
+
+10. Inside SpringFeignConsumer MainApp
+	> add @EnableFeignClients
+
+
+
+11. Move the AppDelegate inside MainApp package
+
+
+
+12. Run the SpringFeignConsumer
+	> there should be no changes in output since we just changed the way we call the SpringMSEmp
+
+
+
+
+II. Implementing Feign in the AppEmpClient, AppEmpMS and AppEmpDb

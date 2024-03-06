@@ -1,0 +1,71 @@
+01 Introduction to Reactive Programming
+
+Core Features of Reactive Programming
+1. New Programming Paradigm
+2. Asynchronous and non blocking
+3. Functional Style code
+4. Data Flow as event driven stream
+5. Backpressure on data streams
+
+
+1. New Programming PARADIGM
+Using Restaurant as analogy
+1. For Synchronous & Blocking
+	> Take the customer's order
+	> Tell the cook to prepare order
+	> Wait for the food to be cooked
+	> Give the food to the customer
+	> After all of that, then we can only take the next person's order
+2. Asynchronous & Non blocking
+	> Take the customer's order
+	> Tell the cook to prepare food
+	> Instead of waiting for it to be cooked, take the next person's order and listen for (subscribe to) the cook to tell you the first customer's food is done
+	> Once the food is done, you give the food to the customer
+	> In this case, the Cook is the Publisher, and the Server is the subscriber
+
+
+
+2. Asynchronous and non blocking
+Traditional REST API - Spring MVC
+ > one Thread per request model
+ > a Request will not be handled unless theres a free Thread to be used
+
+Reactive Programming thread processing - Spring Webflux
+ > Event loop is used to delegate all IO operations to available threads
+ > Ex: Thread 1 may send a request to fetch data in a database, but the response to this request is sent to the Event loop, which it may delegate to a different Thread (ex: Thread 3)
+
+
+
+
+
+3. FUNCTIONAL STYLE CODE
+Functional style code vs Rest code
+Traditional Rest API Code
+public void deleteUser(Integer userId) {
+	userRepository.deleteById(userId);
+}
+
+Reactive Program functional style code
+public Mono<User> deleteUser(Integer userId) {
+	return userRepository.findById(userId)
+	.flatMap(existingUser -> userRepository.delete(existingUser))
+	.then(Mono.just(existingUser));
+}
+
+
+
+4. DATA FLOW AS EVENT DRIVEN STREAM
+Data Flow as event driven stream
+ > here, the Data Flow is treated as an event driven stream
+ > ex: anytime theres a new Record inserted/updated in a Reactive MongoDB (publisher), it will push data/event to the client (subscriber) through the Application
+ > throughout the Data Flow, the Connection remains open
+	
+
+
+
+5. BACKPRESSURE ON DATA STREAMS
+Backpressure Control
+ > with Reactive programming, we can control how much a Subscriber "request" for an item from a Reactive Source
+ > with this, we can handle issues like
+	- Application may not be able to handle huge data
+	- Application may crash with outOfMemoryError

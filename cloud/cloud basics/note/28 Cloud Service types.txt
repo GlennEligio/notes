@@ -1,0 +1,21 @@
+28 Cloud Service types
+
+
+Cloud Service types
+1. Compute
+ 	> services related to computing stuff
+	> ex: AWS lambda
+2. Storage
+	> for storing data, BLOBs
+	> ex: AWS DynamoDB
+3. Networking
+ 	> used alongside other Cloud resources
+	> can't acquire this service on its own (i.e. attached to the other resources rented)
+	> ex: firewall configs, loadbalancers
+4. Application
+5. Metrics/Analytics
+	> 	> can't acquire this service on its own (i.e. attached to the other resources rented like servers, vm, etc)
+
+
+Virtual Machines
+ > the lowest unit in the Cloud Services

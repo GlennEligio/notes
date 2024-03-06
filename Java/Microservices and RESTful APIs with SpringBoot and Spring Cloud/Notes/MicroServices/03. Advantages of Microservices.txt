@@ -1,0 +1,23 @@
+03. Advantages of Microservices
+
+
+Advantages of Microservices Architecture
+1. Adaptability to new technologies and process
+	> since microservices are built in REST style (using common communication technique, e.g. HTTP request), they can communicate with each regardless if these microservices are built using DIFFERENT technologies
+	> Monolithic application would NOT have that flexibility when it comes to adapting new technologies in its system
+
+EX:
+Microservice 1 might be a Java Microservice
+Microservice 2 might be a NodeJS
+Microservice 3 might be written in Kotlin
+
+
+2. Dynamic Scaling
+	> we can easily scale the application in order to accomodate for different load/traffic for different time 
+		- In Holiday seasons like Black Friday, there might be more load compare to the rest of the year.
+		- With microservice, we can easily scale the Service up to accomodate to this increase in traffic then scale it down after the Black Friday
+
+
+3. Faster Release Cycles
+	> since the application is made up of smaller components, its much easier to release micro services compared to monolith application
+	> we can also bring new features FASTER to market

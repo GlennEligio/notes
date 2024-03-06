@@ -1,0 +1,6 @@
+Forking
+	
+
+Fork
+	> an action to completely copy a repository and its content to another repository
+	> when we fork a repository, we can specify where repository we will store the forked repo

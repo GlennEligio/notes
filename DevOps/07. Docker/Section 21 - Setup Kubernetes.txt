@@ -1,0 +1,120 @@
+Section 21 - Setup Kubernetes
+
+119. Kubernetes Setup - Introduction and Minikube
+
+Options for setting up Kubernetes
+1. Local machine setup
+	> in order to setup a k8s cluster locally, we will need either of the following below to create one
+		a. minikube
+		b. MicroK8s
+		c. Kubeadm
+	> minikube and microk8s are solutions for developers or for those who want to just play around and learn Kubernetes
+	> kubeadm tool is used to bootstrap and manage production grade Kubernetes cluster
+2. Hosted solutions (e.g. Cloud hosted)
+	> these are clusters that are hosted remotely
+	> example of these are clusters provided by Cloud providers (e.g. AWS, Azure, GCP) like
+		a. Azure Kubernetes Service (AKS)
+		b. Amazon Elastic Kubernetes Service (EKS)
+		c. Google Kubernetes Engine (GKE)
+3. Kodekloud lab
+	> provided by Kodekloud udemy course
+	> only in the context of the udemy course haha
+	
+
+minikube setup
+ > unlike the typical K8s cluster where there are Master and Worker node, minikube bundles ALL of the components found in both Master and Worker nodes into a single image, providing us a SINGLE-NODE Kubernetes cluster so we can get started in a matter of minutes
+	- the whole bundle is packaged into an ISO image and is available online for download
+ > nowadays, minikube provides an executable command line utility that will automatically download the ISO, and deploy it in a virtualization platform such as Oracle, VirtualBox, or VMware Fusion
+	- this means that we must have a hypervisor install in the machine
+	- for Windows, we could use VirtualBox or Hyper-V
+	- for Linux, we could use VirtualBox or KVM	
+ > in addition, to interact with the minikube cluster (or any K8s cluster in general), we must have 'kubectl' CLI installed in the machine
+ > in summary, we need the following
+	1. minikube installed
+	2. hypervisor
+	3. kubectl
+ 
+
+
+
+120. Demo - Minikube Setup
+
+Download kubectl
+
+Goal: Setup a k8s cluster locally
+
+kubectl 
+ > SOURCE: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+ > STEPS:
+	1. Download kubectl
+	2. Install kubectl
+	3. Verify installation of kubectl, check version\
+	
+minikube
+ > PREREQUISITES:
+	1. Virtualization is enabled in the machine
+		- this setting can be enabled in BIOS typically
+		- for linux, use command below
+			$ grep -E --color 'vmx|svm' /proc/cpuinfo
+	2. kubectl installed
+	3. 2 CPUs or more
+	4. 2GB of free memory
+	5. 20GB of free disk space
+	6. Internet connection
+	7. Container or virtual machine manager, such as: Docker, QEMU, Hyperkit, Hyper-V, KVM, Parallels, Podman, VirtualBox, or VMware Fusion/Workstation
+ > SOURCE: https://minikube.sigs.k8s.io/docs/start/
+ > STEPS:
+	1. Install a Hypervisor	
+		- we can use VirtualBox
+		- alternatively, we can utilize Docker to provision cluster. but this can result in security or data loss issues
+	2. Install Minikube
+		- either through a package, or via direct download
+	3. Start minikube using correct driver in argument
+		- ex: minikube start --driver=virtualbox
+	3. Check minikube status to verify
+		- minikube status
+		
+
+Testing minikube cluster
+1. Add a deployment in the cluster
+	kubectl create deployment hello-minikube --image=k8s.gcr.io/echoservier:1.10
+2. Check the deployment added
+	kubectl get deployment
+3. Expose the deployment as service
+	kubectl expose deployment hello-minikube --type=NodePort --port=8080
+4. Get url of the exposed service
+	minikube service hello-minikube --url
+5. Test the url
+6. Cleanup
+	kubectl delete services hello-minikube
+	kubectl delete deployment hello-minikube
+7. Check the status
+	kubectl get pods
+
+
+
+
+
+121. Reference - File
+
+Install and set up the kubectl tool: –
+
+https://kubernetes.io/docs/tasks/tools/
+
+Install Minikube: –
+
+https://minikube.sigs.k8s.io/docs/start/
+
+Install VirtualBox: –
+
+https://www.virtualbox.org/wiki/Downloads
+
+https://www.virtualbox.org/wiki/Linux_Downloads
+
+Minikube Tutorial: –
+
+https://kubernetes.io/docs/tutorials/hello-minikube/
+
+If the minikube installation has been done on the macOS, then to access the URL on the local browser, we need to do a few steps to get the service URL to work. Those steps are covered on this documentation page: –
+
+https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-service-with-tunnel

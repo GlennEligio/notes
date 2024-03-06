@@ -1,0 +1,152 @@
+Object Oriented Programming Part 3
+includes
+1. Composition -> way of using classes inside another class
+Example: Using Engine class inside Car class
+Since Car class have Engine properties like
+- name
+- color
+- doors
+but the Engine also have properties like
+- model
+- rpm
+- power rating
+
+2. Putting a documentation or comment in a method
+
+Main class
+
+package com.glenneligio.oop3;
+
+public class Main {
+    public static void main(String[] args) {
+        /*
+            Composition
+                -> way of using classes inside another classes
+         
+            HOW TO PUT CLASS DATA TYPE AS PARAMETER OF A METHOD
+            1. Define a variable as Class data type before putting in method's argument
+            EXAMPLE
+            Engine engine =  new Engine (name, speed, type);
+            Car car = new Car (name, doors, color, engine);
+
+            2. Directly put the definition or value of the Class data type in method's argument
+            EXAMPLE
+            Car car = new Car (name, doors, color, new Engine (name, speed, type));
+
+         */
+        Car mercedes = new Car ("Mercedes AMG", 2, "Silver", new Engine ("Renault", 8000));
+        System.out.println(mercedes.getName());
+
+
+        //getting the Class datatype in a Class' instance field
+        /*
+            to get the return type of a method,
+            1. hold down CRTL key and hover the cursor to the method
+            2. click the method, then press CRTL + Q (this also show documentation of method)
+         */
+        Engine engine = mercedes.getEngine();
+
+
+        // (.) dot operator, used to get the properties of keyword before the dot
+        // object.properties
+        // can be either object.instanceField or object.Method()
+        System.out.println("Engine Model: " +  mercedes.getEngine().getModel());
+    }
+}
+
+
+Car Class
+
+package com.glenneligio.oop3;
+
+public class Car {
+
+    //instance fields
+    private String name;
+    private int doors;
+    private String color;
+
+    //can have a Class as a instance field, since Class is a data type, albeit more complex
+    private Engine engine;
+
+    //constructor
+    public Car(String name, int doors, String color, Engine engine) {
+        this.name = name;
+        this.doors = doors;
+        this.color = color;
+        this.engine = engine;
+    }
+
+    //getters and setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getDoors() {
+        return doors;
+    }
+
+    public void setDoors(int doors) {
+        this.doors = doors;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    //Syntax of putting documentation/comment of the method
+    //can be seen by pressing the method then pressing CTRL+Q
+    /**
+     * Returns the engine of the car.
+     * @return
+     */
+    public Engine getEngine() {
+        return engine;
+    }
+
+
+    public void setEngine(Engine engine) {
+        this.engine = engine;
+    }
+}
+
+
+Engine class
+package com.glenneligio.oop3;
+
+public class Engine {
+    //instance fields
+    private String model;
+    private int rpm;
+
+    //constructor
+    public Engine(String model, int rpm) {
+        this.model = model;
+        this.rpm = rpm;
+    }
+
+    //getters and setters
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public int getRpm() {
+        return rpm;
+    }
+
+    public void setRpm(int rpm) {
+        this.rpm = rpm;
+    }
+}

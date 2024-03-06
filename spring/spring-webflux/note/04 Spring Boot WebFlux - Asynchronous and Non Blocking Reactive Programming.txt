@@ -1,0 +1,119 @@
+04 Spring Boot WebFlux - Asynchronous and Non Blocking Reactive Programming
+
+
+Advantages of Spring Boot WebFlux
+1. Client is the one DIRECTLY subscribing to the Flux/Mono exposed by backend webserver (Netty)
+	> if the Client, cancels the request, the onCancel event will be thrown by the Publisher back to the WebFlux application and cancel the rest of the event emission
+	> compare to the traditional method, where even if the Client already cancelled the request, the Thread still continue on what its doing, until it finishes all the tasks assigned to it
+2. We have an option to expose/send the emitted items directly to the Client as Text stream
+	> with this, the Client can see the elements of the Flux being emitted by the WebFlux app
+
+
+
+
+Creating Sample WebFlux application
+1. Use the project setup earlier
+2. Create packages:
+	- controllers
+	- services
+	- dto
+	- dao
+3. Create the classes inside the following
+	- Customer in dto
+	- CustomerDao in dao
+	- CustomerService in services
+	- CustomerController in controllers
+
+
+Testing
+1. Send request in both "/customers" and "/customers/stream" and check the logs and execution time
+2. Send request in both endpoints, and in the middle of request, cancel it. Check the logs to see if process is cancelled or what events are called for Flux endpoint
+
+
+
+Codes:
+// Customer.java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Customer  {
+    private int id;
+    private String name;
+}
+
+
+
+// CustomerDao.java
+@Component
+public class CustomerDao {
+
+    public static void sleepExecution(int i) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public List<Customer> getCustomers() {
+        return IntStream.rangeClosed(1, 50)
+                .peek(CustomerDao::sleepExecution)
+                .peek(i -> System.out.println("Processing count: " + i))
+                .mapToObj(i -> new Customer(i, "Customer" + i))
+                .toList();
+    }
+
+    public Flux<Customer> getCustomersStream() {
+        return Flux.range(1, 50)
+                .delayElements(Duration.ofSeconds(1))
+                .doOnNext(i -> System.out.println("Processing count: " + i))
+                .log()
+                .map(i -> new Customer(i, "Customer" + i));
+    }
+}
+
+
+
+// CustomerService.java
+@Service
+public class CustomerService {
+
+    @Autowired
+    private CustomerDao dao;
+
+    public List<Customer> loadAllCustomers() {
+        long start = System.currentTimeMillis();
+        List<Customer> customers = dao.getCustomers();
+        long end = System.currentTimeMillis();
+        System.out.println("Total execution time: " + (end-start));
+        return customers;
+    }
+
+    public Flux<Customer> loadAllCustomersStream() {
+        long start = System.currentTimeMillis();
+        Flux<Customer> customers = dao.getCustomersStream();
+        long end = System.currentTimeMillis();
+        System.out.println("Total execution time: " + (end-start));
+        return customers;
+    }
+}
+
+
+
+// CustomerController.java
+@RestController
+@RequestMapping("/customers")
+public class CustomerController {
+
+    @Autowired
+    private CustomerService service;
+
+    @GetMapping
+    public List<Customer> getAllCustomers() {
+        return service.loadAllCustomers();
+    }
+
+    @GetMapping(value = "/stream", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    public Flux<Customer> getAllCustomersStream() {
+        return service.loadAllCustomersStream();
+    }
+}

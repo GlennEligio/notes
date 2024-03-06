@@ -1,0 +1,48 @@
+128 Beanstalk Hands On
+
+
+Creating an Elastic Beanstalk Application
+1. Search Beanstalk service in AWS
+2. In homepage, click 'Create Application'
+3. In 'Create a webapp' page
+	> Application name - DemoApp
+	> Platform - Node.js
+	> Application code - Sample application (provided by AWS)
+	> Create the application
+
+
+Check the CloudFormation created for BeanStalk
+1. Wait for the Elastic Beanstalk to finish creating
+2. Go to the CloudFormation service dashboard
+3. We should see a new CloudFormation Stack that is related to the Elastic Beanstalk we created earlier
+4. Go to Template tab, then click 'View In Designer'
+	> we should see different AWS resources like ELB, Security Groups, ASG, CloudWatch, etc... that makes up the Elastic Beanstalk 
+
+
+
+Checking BeanStalk application
+1. Go to BeanStalk
+2. Click the Link/URL exposed by the BeanStalk application
+3. You should see a default page created by AWS for the NodeJS app
+4. Go to the EC2 instance page
+	> you should see the EC2 instance created for the BeanStalk
+	> check its Tag tab, which should tell you that its from BeanStalk
+	> you can also see in the Properties tab that it has Elastic IP attached to it
+5. Back to Elastic Beanstalk page, check the Configuration section
+	> we should see all the configuration settings of the BeanStalk application
+
+
+Checking Elastic Beanstalk Environments
+1. Got o Elastic Beanstalk, the click 'Go to environment'
+	> you should see the Environment that is created by default
+
+
+Clean up
+1. Delete the Elastic Beanstalk application
+	> this will also delete the environment associated to it
+
+
+NOTE:
+1. Beanstalk is used to create and manage applications
+2. Beanstalk uses CloudFormation behind the scene to provision the application
+3. You can create different Environments (EX: DEV, PROD, UAT), for a specific Beanstalk application that you can apply

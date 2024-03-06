@@ -1,0 +1,37 @@
+03.05 Layout - Gutters
+
+Gutters
+	> Gutters are the padding between your columns, used to responsively space and align content in the Bootstrap grid system.
+	> Gutters are the GAPS between column content, created by horizontal padding. We set padding-right and padding-left on each column, and use negative margin to offset that at the start and end of each row to align content.
+	> Gutters start at 1.5rem (24px) wide. This allows us to match our grid to the padding and margin spacers scale.
+	> Gutters can be responsively adjusted. Use breakpoint-specific gutter classes to modify horizontal gutters, vertical gutters, and all gutters.
+
+Notation/Syntax
+{property}{side}-{size}
+
+g-{size}	for all sides
+gx-{size}	for x-axis gutter
+gy-{size}	for y-axis gutter
+
+Horizontal Gutter 
+	> defines the space between the col elements and the sides of the row
+	> higher the size, the LESSER the gap between col elements and the sides of the row
+	> SYNTAX:
+		gx-{size}	for left and right
+	> NOTE: If larger gutters are used, it may cause unwanted OVERFLOW. For this, we can either
+		a. Use matching padding utility for Container
+		b. Add "overflow-hidden" class to Container
+
+
+Vertical Gutter
+	> defines the space between the col elements of a row
+		-> this happens when a row can occupy all the col due to overflow (col elements occupy > 12 columns)
+	> higher the size, the LARGER the gap between the wrapped col elements in a row
+	> SYNTAX
+		gy-{size}	for y-axis
+	> NOTE: If larger gutters are used, it may cause unwanted OVERFLOW. For this, we can either
+		a. Use matching padding utility for Container
+			-> py-{size}
+		b. Add "overflow-hidden" class to Container
+
+

@@ -1,0 +1,79 @@
+CSS Part 5 Text related Property
+
+
+Text position related property
+
+text-align
+	> align the text to a specific position
+	> text-align can take multiple values
+		a. left		- aligns the text to the left
+				- default value
+		b. right	- aligns the text to the right
+		c. center	- centers the text
+		e. justify	- streches the lines so that each line has equal width (like in newspaper and magazine)
+		f. initial	- set property value to its default
+		g. inherit	- inherit the parent's value
+
+
+
+
+line-height
+	> control the height of each line, or specifically, the SPACE IN BETWEEN each line
+	> can take the general unit measurements as value (px, em, rem, vh, vw, etc)
+
+
+letter-spacing
+	> controls how much space is in between the characters
+	> can also take the general unit of measurements as value (px, em, rem, vh, vw, etc.)
+
+
+
+word-spacing
+	> controls how much space is in between the words
+	> again, can also take the general units of measurement in html
+
+
+
+text-transform
+	> controls the capitalization of text
+	> can take one of the several possible values
+		a. none		- no capitalization
+				- the text renders as it is
+				- default value if property is not defined
+		b. capitalize	- transform the first character of each word to uppercase
+		c. uppercase	- transform all characters to uppercase
+		d. lowercase	- transform all characters to lowercase
+		e. initial	- set the property value to its default
+		f. inherit	- inherits this property from its parent element
+
+
+
+
+text-decoration
+	> can take one or more values based on three parameters
+		1. text-decoration-line
+			> can have one or more of these several possible values
+				a. none		- default value
+						- specifies no line for the text-decoration
+				b. underline	- specifies that a line will be displayed under the text
+				c. overline	- specifies that a line will be displayed over the text
+				d. line-through	- specifies that a line will be displayed through the text
+		2. text-decoration-color
+			> can be given value that represents color (name, rgb, rgba, hex)
+		3. text-decoration-style
+			> can have one of the several possible values
+				a. solid	- default value
+						- the line will display as a single line
+				b. double	- the line will display as double line
+				c. dotted	- the line will display as dotted line
+				d. dashed	- the line will display as a dashed line
+				e. wavy		- the line will display as a wavy line
+	> we can also pass either 'initial' or 'inherit' for each parameter
+
+
+EX:
+h1{
+	text-decoration="underline wavy red"
+}
+
+	This will make the h1 have an red wavy underline in it

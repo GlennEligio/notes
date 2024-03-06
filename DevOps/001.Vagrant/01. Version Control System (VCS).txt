@@ -1,0 +1,24 @@
+01. Version Control System (VCS)
+
+Version Control System
+	> it is a repository which maintains the CHANGES to a file(s) over time so that you can recall a specific version later
+	> a repository can be though as DATABASE CHANGES.
+		- it contains all the EDITS and historical snaps of your project
+		- it is the component of software configuration management
+
+Types of Version Control System
+1. Local Version Control System
+	- exist only in the local machine
+	- a version control system which keeps track of all the changes to file under local computer
+2. Centralized Version Control System
+	- it is a CENTRALIZED repository that contains all versioned file
+	- disadvantage is that theres a SINGLE POINT OF FAILURE (if central server fail, all changes is gone)
+	- examples are
+		a. Perforce
+		b. Subversion
+3. Distributed Version Control System
+	- the complete codebase, including its full history is MIRRORED on every developer's machine
+	- examples are
+		a. Git
+		b. BitBucket
+	

@@ -1,0 +1,38 @@
+Apache Tomcat 10
+
+01 Introduction
+
+Terminology
+1. Context
+	> a Context is a web application
+
+Directories and Files
+1. /bin
+	> startup, shutdown, and other scritps
+	> the *.sh files (for Unix systems) are functional duplicates of the *.bat files (for Windows system)
+	> Since the Win32 command-line lacks certain functionality, there are some additional files in here
+2. /conf
+	> configuration files and related DTDs
+	> the most important file in here is server.xml
+		- it is the main configuration file for the container
+3. /logs
+	> log files are here by default
+4. /webapps
+	> this is where your webapps go
+
+
+
+Setting up Tomcat Server
+1. Read the RUNNING.txt in the apache tomcat folder
+2. Create two environment variables
+	> CATALINA_HOME (and CATALINA_BASE for multiple Tomcat server instance)
+		- REQUIRED
+		- value will be the location/directory where bin folder of tomcat is located
+	> JRE_HOME or JAVA_HOME
+		- REQUIRED
+		- value will be the directory where bin folder of java zip content is located
+3. To start the Tomcat Server
+	> In CLI (Powershell or CMD, running as admin), run the startup.bat
+	> You should see the tomcat website at localhost:8080
+4. To shutdown the Tomcat Server
+	> run shutdown.bat in same folder as startup.bat

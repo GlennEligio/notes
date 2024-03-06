@@ -1,0 +1,25 @@
+10. Content Negotiation
+
+Content Negotiation
+	> In HTTP, content negotiation is the mechanism that is used for serving different representations of a resource to the same URI to help the user agent specify which representation is best suited for the user (for example, which document language, which image format, or which content encoding).
+	> Right now, our RESTful webservice can only serve using JSON representations
+	> For our webservice to be able to serve using XML representation, we will need to add jackson dataformat xml dependency
+
+Jackson Dataformat Xml
+	> dependency added so that our Spring REST webservice can serve using XML representation of Resource
+	> with this the Jackson can serialize/transform XML to Java Object and vice-versa
+
+Dependency
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-xml</artifactId>
+    <version>2.13.0</version>
+</dependency>
+
+
+Accept
+	> request header that defines what Resource representation that Client can accept
+	> ex: application/xml , application/json
+Content-Type
+	> request header that defines what Resource representation the Request body use
+	> same value of the Accept

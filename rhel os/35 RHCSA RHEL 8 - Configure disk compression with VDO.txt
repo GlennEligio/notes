@@ -1,0 +1,69 @@
+35 RHCSA RHEL 8 - Configure disk compression
+
+VDO
+ > stands for Virtual Data Optimizer
+ > Virtual Data Optimizer (VDO) is a device mapper module which provides data reduction capabilities to the Linux block storage stack. 
+ > It uses deduplication and inline compression features to shrink data as it is being written to storage media.
+ > With Virtual Data Optimizer (VDO) it is possible to trade CPU/RAM resources for disk space.  
+	- This allows compression of files without the requirement of using gzip, rar or other compression tools.
+	- Regarding use cases, VDO can, for example, be used under local filesystems, iSCSI or Ceph.
+ > to install, we will need two modules
+	1. vdo
+	2. kmod-kvdo
+
+
+PREREQUISITE
+1. Physical Volume available (ex: /dev/sdb), not partitioned, mounted or contains a filesystem
+
+
+Creating a VDO
+1. Install the needed modules
+	$ dnf install vdo kmod-kvdo
+2. Check if the physical volume that we will use for VDO is mounted
+	$ lsblk				check if the physical device that we will use is partitioned or used for Volume groups
+	$ umount /mnt			to unmouunt anything in /mnt
+	$ vi /etc/fstab			to check if we have mounting configured
+	$ lvremove /dev/vg1/lv1	remove logical volume in the volume group
+	$ fdisk /dev/sdb			used fdisk GUI to manually remove all partitions, press "d" to delete
+	$ lsblk				check if physical volume to use is clean again, no partition or not used for volume groups
+3. Create a VDO using the physical volume device
+	$ vdo create --name=vdo1 --device=/dev/sdb --vdoLogicalSize=10G --writePolicy=auto
+4. Create xfs filesystem in the VDO volume
+	$ mkfs.xfs /dev/mapper/vdo1
+5. Mount the filesystem to the /mnt
+	$ mount /dev/mapper/vdo1 /mnt
+6. Test the mounting
+	$ ls /mnt
+	$ touch /mnt/newfile
+	$ ls -lhtra /mnt
+	$ umount /mnt
+	$ ls /mnt				newfile should not persist since vdo is dismounted
+
+
+
+Commands
+vdo
+ > manage kernel VDO devices and related configuration information
+ > sypnosis
+	  vdo  {  activate  | changeWritePolicy | convert | create | deactivate |
+             disableCompression | disableDeduplication |  enableCompression  |
+             enableDeduplication  | growLogical | growPhysical | import | list
+             | modify | printConfigFile | remove | start |  status  |  stop  |
+             version } [ options... ]
+
+ > options:
+	 for 'vdo create'
+	--name=volume			defines the name of VDO volume (required)
+	--device=device			defines the block device to use for VDO stage(required)
+	--vdoLogicalSize=megabytes	defines the size of the VDO volume
+	--writePolicy=policy		specifies the write policy 
+							1. sync - writes are acknoweldge only after the data is guaranteed to persist
+							2. async - writes are acknowledge when the data has been cached for writing to the underlying storage		
+							3. auto -  let VDO device which policy to use
+ > ex:
+	vdo create --name=vdo1 --device=/dev/sdb --vdoLogicalSize=10G --writePolicy=auto
+		- creates a  VDO volume "vdo1" to the "/dev/sdb" block device with size of 10G
+	vdo stop -n vdo1
+		- stops the vdo named "vdo1"
+	vdo remove -n vdo1
+		- remove the vdo named "vdo1"

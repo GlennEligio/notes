@@ -1,0 +1,44 @@
+145 CloudFront Hands On
+
+
+Creating S3 Bucket
+1. Go to S3 Bucket
+2. Create an S3 Bucket
+	> give it a name - demo-cloudfront-glenneligio
+	> block public access to it
+3. Upload files inside the S3 Bucket
+4. Test if you can access them using Object URL
+	> Unless you use the pre-signed url of the S3 Object using 'Open' button, you should not be able to access it
+
+
+
+Creating CloudFront
+1. Search CloudFront in AWS Management Console
+2. Create a CloudFront distribution
+3. In Origin
+	> select the S3 bucket that we created earlier
+	> for Origin Access, choose Legacy Access Identities
+		- this refers to the OAI
+		- though, next time, use the recommended choice
+		- then 'Create new OAI'
+		- select 'Yes, update the bucket policy' chose
+4. In Settings
+	> pass 'index.hmtl' as the Default root object
+5. Finish creating CloudFront distribution
+6. Wait until the CloudFront distribution is deployed
+
+
+Testing CloudFront
+1. Go to the CloudFront distribution that you created
+2. In General tab, copy the 'Distribution domain name'
+3. Paste it in the browser
+	> you should be greeting with the default root object in S3 bucket, which is the index.html
+
+
+
+Invalidating CloudFront cache
+ > if you updated a file in the S3, the Users will still get the older version since it is cached in the CloudFront edge
+1. Go to CloudFront dashboard
+2. Go to Invalidations tab
+3. Create an invalidation
+4. Select all files to have their cache invalidated

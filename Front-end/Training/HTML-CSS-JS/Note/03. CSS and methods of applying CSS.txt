@@ -1,0 +1,304 @@
+03. CSS and methods of applying CSS
+
+CSS
+	> cascading style sheet
+	> used to design the webpage
+	> three ways to add CSS to Webpages
+		1. Inline CSS
+			- same line css
+			- added style to a specific <element>
+		2. Internal CSS
+			- added in HTML by adding <style> in <head> section of HTML page
+			- in <style>, and inside we can define CSS codes
+		3. External CSS
+			- CSS codes are in separate file
+			- added in HTML page using <link>, then defining 
+
+EX:
+INLINE CSS
+    <!-- Inline CSS -->
+    <!-- style is an HTML attribute -->
+    <h1 style="color:blue">Programming with myself</h1>
+
+INTERNAL CSS inside <head>
+    <!-- Internal CSS -->
+    <style>
+        h1 {
+            color: red;
+        }
+        h2 {
+            color: blue;
+        }
+        h3 {
+            border: 1px solid black;
+        }
+    </style>
+
+
+EXTERNAL CSS
+    <!-- External CSS -->
+    <link rel="stylesheet" href="./style.css">
+
+
+
+
+
+SHORTCUTS:
+1. element*n	
+	> create an n amount of element
+
+EX:
+tr*6
+
+RESULT:
+      <tr></tr>
+      <tr></tr>
+      <tr></tr>
+      <tr></tr>
+      <tr></tr>
+      <tr></tr>
+
+
+2. element1*n>element2*n
+	> create an n amount of element1, with n amount of element2 nested inside of each of element1
+
+EX:
+tr*3>td*3
+
+RESULT:
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+
+
+CSS
+Three ways of using CSS
+1. Inline, as style attribute of element
+2. Internal, inside <style> tags inside <head>
+3. External, different file
+
+Three ways of selecting element
+<h1 class="h1class" id="h1Id">Header tag</h1>
+1. By HTML element
+	> syntax: element {}
+EX:
+h1 {
+background: black
+}	
+
+2. By Class
+	> syntax: .className {}
+EX:
+.h1class {
+text-decoration: underline
+}
+
+3. By element Id
+	> syntax: #elementId {}
+EX:
+#h1Id {
+font-style: italic
+}
+
+
+
+CSS Box model
+> composed of the following
+	1. Content
+		> strictly what the element shows (text, image)
+	2. Padding
+		> distance between the content and the border 
+	3. Border
+		> actual border of an element	
+		> this is what other element's border interact to
+	4. Margin
+		> an offset space outwards, starting from the border
+
+
+
+Padding
+	> defines the space between the content and the border of the element
+
+
+
+
+
+Font Properties
+font-family
+	> defines the font family to use to display the text
+		- ex: san-serif, roboto, chiller, monospace, etc
+font-size
+	> defines the font size of each character in text
+	> we can pass either measurements (px, em, rem, etc.)
+	> or use predefine constants (small, large, medium)
+font-style
+	> defines the style of the font
+		- ex: italic, bold, normal
+font-weigth
+	> defines the weigth of strokes of each line in character
+	> more font-weight, thicker the stroke
+font-variant
+	> defines the variant of text
+		- ex: small-caps, all-caps, capitalized
+
+
+COLOR PROPERTIES
+1. 
+
+
+PSEUDO CLASSES
+	> classes specific to each event that happens in an element
+	> the syntax is
+		element:event
+	> ex: button:hover to define button element when cursor is hovering
+1. :link
+1. :visited
+2. :hover
+3. :active
+4. :link
+
+
+BACKGROUND PROPERTIES
+1. background
+	> changes the background of the content of element
+	> takes hex, predefine colors, etc
+2. background-color
+	> changes the background color of the element
+3. background-image
+	> defines the image that will be used as background of element
+	> takes an href of image
+4. background-position
+	> defines the position of the background used
+
+
+
+CSS BORDERS
+1. border-width
+	> defines the width of border
+	> takes measurement value (px, em, rem, etc)
+2. border-color
+	> defines the color of the border
+	> takes hex, or predefine colors
+3. border-style
+	> defines the style of the border
+	> can have values like
+		- solid
+		- dashed
+		- dotted
+		- double
+		- etc
+4. border
+	> used for shorthand of the three properties of borders (style, color, width)
+	> we can pass three values of these three properties in this property
+		- ex: border: 1px solid black
+5. border-top, border-right, border-bottom, border-left
+	> used to refer to a specific side of border
+	> we can define the properties of these specific sides as well
+		- ex: border-top-style: solid, border-bottom-width:2px
+6. border-radius
+	> defines the radius of the rounded corners in the border
+
+
+CSS LIST PROPERTIES
+1. list-style
+	> defines how we style the icons to signify a list
+	> can have values like		
+		a. upper-alpha / lower-alpha
+			- uses alphabetical letters
+		b. circle
+		c. square
+
+
+
+CSS WIDTH-HEIGHT
+1. width
+	> defines the width of the content
+2. height
+	> defines the height of the content
+3. line-height
+	> defines the height of each line of the element
+	> different on height where in it takes effect to each line of text in element
+4. max-height / min-height
+	> defines the maximum and minimum height of the element
+5. max-width / min-width
+	> defines the max and min width of the element
+
+
+
+CSS FLOAT
+1. float
+	> defines the position of the element where it will float
+	> takes values like
+		- left
+		- right
+
+CSS CLEAR
+1. clear
+	> defines the 
+
+
+CSS CLIP
+1. clip
+	> used to clip an element
+	> takes four units of values which defines the four points of the final image crop
+
+
+CSS CURSOR
+1. cursor
+	> defines the style of cursor when it hovers to a specific element
+	> can take values like
+		- help
+		- progress
+		- pointer
+		- zoom-in
+
+
+CSS VISIBILITY
+1. visibility
+	> defines the visibility of the element
+	> takes value of 			
+		- hidden
+			= hides the element, BUT it still takes space
+		- visible
+			= shows the element
+
+
+CSS DISPLAY
+1. display
+	> defines how we display the element
+	> takes values like
+		- block
+			= displays element as a block
+		- inline
+			= displays element as an inline
+		- none
+			= does not display the element
+			= WILL NOT TAKE SPACE
+
+
+CSS POSITION PROPERTIES
+1. position
+	> defines the positioning style of element
+	> can take values like
+		- absolute
+			= with this, the positioning of element will be relative to start of viewport (top-right)
+			= used in conjunction of left / right / top / bottom to define position
+		- relative
+			= with this, the positioning of the element will be relative to its origin position
+			= used in conjuction of left / right / top / bottom to define position
+		- static
+2. left / right / top / bottom
+	> defines the distance of the element away from the start

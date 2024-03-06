@@ -1,0 +1,205 @@
+13. Setting up CORS configuration of Spring Boot app with Spring Security
+
+Dependencies needed:
+1. Spring Security
+2. Spring Web
+3. Thymeleaf (optional)
+	- only if you will send request from script in HTML page created by Thymeleaf
+
+
+Error: Access-Control-Allow-Origin => Missing
+	> typical error received in browser when accessing resource from different origin
+	> for these, we will need to configure CORS config of Server to accept our Request
+
+
+What is the CORS?
+	> stands for Cross-Origin Resource Sharing
+	> Cross-Origin Resource Sharing (CORS) is a protocol that enables scripts running on a browser client to interact with resources from a different origin.
+	> Essentially, CORS
+		1. BLOCKS the web browser or script from accessing the response
+		2. DOES NOT protect the mutation operation
+			- if POST/PUT/DELETE is called, the operation will still happen
+
+
+Why CORS?
+	> XHR or Fetch API follows the "same-origin-policy"
+	> That makes it so JavaScript can only make calls to URLs that lives on the SAME ORIGIN where the script is running
+
+
+
+What do we mean by different origin?
+	> Two origins are different if they have:
+		1. a different scheme
+			- HTTP or HTTPS
+		2. a different domain
+			- sample.com vs api.sample.com vs another.com	
+		3. a different port 
+			- sample.com:8081 vs sample.com:8080
+
+
+Why do we need CORS policy
+	> Generally speaking, web apps should never interact with resources from a DIFFERENT ORIGIN
+	> However, in today's web app structure, you will mostly have a backend and frontend which are running on different ports	
+	> Therefore you somehow guarantee the communication between two sides.
+	> Web browsers can use headers related to CORS to determine whether or not an fetch call should continue or fail
+		- there are few headers, but the most important one is the "Access-Control-Allow-Origin"
+
+Access-Control-Allow-Origin
+	> headers used in CORS
+	> tells browser to allow that origin to access the resource
+	> ex:
+		Access-Control-Allow-Origin: *
+			-> ALL domain origins of scripts can access the backend resource 
+		Access-Control-Allow-Origin: http://sample.com
+			-> ONLY scripts of domain http://sample.com can access the backend resource
+
+
+
+How CORS works
+	> Cors works by adding new Http Headers that let servers describe which origins are permitted to read that information from a web browser.
+		- you can still send curl request to the server
+	> CORS specification says that any mutating request (requests that change something in the server such as POST,PUT,DELETE ) must be done in the following way:
+		1. First, browser must do a preflight request and ask the supported methods to the server with the HTTP OPTIONS. (Requests that do not need any preflight request are called simple requests)
+		2. After getting the approval from the server, then web browser can send the actual request.
+Server can also inform the clients whether the credentials should be send with requests.
+
+
+Simple vs Mutating Request
+	> with Mutating Request, you are trying to modify a resource in the server
+		- typically uses POST, PUT, DELETE methods
+	> with Simple Request, you only want to read a resource in server
+		- typically uses GET, HEAD, or POST (with limited content-types)
+
+
+Simple Request specifications
+1. HTTP methods allowed
+	- GET
+	- HEAD
+	- POST (with limited content-types)
+2. Headers below are the only ones that the request sender are allowed to manually set
+	> exception to these are headers automatically set by the user agen (e.g. Connection, User-Agent)
+	- Accept
+	- Accept-Language
+	- Content-Language
+	- Content-Type (but only the allowed ones)
+3. Allowed values of Content-Type by default
+	- application/x-www-form-urlencoded
+	- multipart/form-data
+	- text/plain
+4. No ReadableStream object is used in the request
+5. No registered eventListener for the object returned by XHR.upload
+
+
+
+Classes and Interfaces used
+
+CorsFilter
+	> javax.servlet.Filter implementation to handle CORS pre-flight requests and interceptCORS simple and actual requests with a CorsProcessor, and to updatethe response, 
+		- e.g. with CORS response headers, based on the policy matchedthrough the provided CorsConfigurationSource. 
+
+
+UrlBasedCorsCOnfigurationSource
+	> CorsConfigurationSource that uses URL path patterns to select the CorsConfiguration for a request. 
+	> have the following methods
+		a. registerCorsConfiguration(String urlPattern, CorsConfiguration corsConfig)
+			-> Variant of setCorsConfigurations(Map) to register one mapping at a time.
+			-> String urlPattern can use "ant-matchers" to define which urls to apply the CorConfiguration parameter
+
+CorsConfiguration
+	> A container for CORS configuration along with methods to check against theactual origin, HTTP methods, and headers of a given request. 
+	> By default a newly created CorsConfiguration DOES NOT permit anyc ross-origin requests and must be configured explicitly to indicate what should be allowed.
+		-> Use applyPermitDefaultValues() to flip the initialization model to start with open defaults that permit all cross-origin requests for GET, HEAD, and POST requests.
+	> Have the following methods:
+		a. setAllowedOrigins(List<String> origins)
+			-> used to define the list of allowed origins
+		b. setAllowedMethods(List<String> methods)
+			-> used to define the list of allowed HTTP methods
+		c. setAllowedHeaders(List<String> headers)
+			-> used to define the list of allowed request headers
+		d. setMaxAage(Duration maxAge)
+			-> Configure how long, as a duration, the response from a pre-flight requestcan be cached by clients.
+
+
+
+
+
+Setting Up CORS in Spring Boot using Spring Security
+1. Add SpringBoot Starter for Spring Security in pom.xml
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+
+2. Create a Class that EXTENDS to WebSecurityConfigurerAdapter class
+	
+@EnableWebSecurity
+public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+}
+
+
+
+3. Overwrite the configure(HttpSecurity http) method of WebSecurityConfigurerAdapter class
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+	}
+
+
+
+4. Call cors() of the HttpSecurity http parameter
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.cors();
+	}
+
+
+5. Setup the CorsFilter Bean to be used
+	> 1ST CorsFilter is used for REST APIs Spring Boot
+		- with this, we can define the following specification of Request to accept
+			a. Allowed Origins of Request
+			b. Allowed Headers of Request
+			c. Allowed Methods of Request
+		- we can also define the request mappings in Spring Boot to apply this CORS configuration
+	> 2ND CorsFilter is used for Spring Boot front-end apps 
+		- there are scenarios where we will have scripts in HTML generated by Thymeleaf and sends request to same Spring Boot
+		- this request from script is NOT EXEMPTED from CORS
+		
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Arrays.asList("*"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("*"));
+        corsConfiguration.setMaxAge(Duration.ofMinutes(10));
+        source.registerCorsConfiguration("/**", corsConfiguration);	// define request mappings to apply the CORS config
+        return new CorsFilter(source);
+    }
+
+
+
+@Component
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("*");
+            }
+        };
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        http.authorizeRequests().anyRequest().permitAll();
+    }
+}

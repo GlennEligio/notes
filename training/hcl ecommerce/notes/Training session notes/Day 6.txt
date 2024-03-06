@@ -1,0 +1,173 @@
+Day 6
+
+STORECONF
+ > Store-specific configuration data that is used by the storefront code for dynamic rendering.
+ > can be updated in runtime
+
+
+Configuring RazorSQL connection wizard
+C:\WCDE_V9\lib\db2\java\db2jcc4.jar
+ > location of db2 java driver
+com.ibm.db2.jcc.DB2Driver
+ > fully qualified class name
+username/password : USER/PASS
+ > db2 credentials
+http://localhost/webapp/wcs/admin/servlet/db.jsp
+ > jsp served by WCS for users to enter sql queries
+
+localhost:5000 default database ip address and 5000
+
+https://razorsql.com/download.html
+ > download url for razor sql
+ > choose windows 64 bit with installer
+
+
+06
+NOTES:
+
+07
+NOTEs:
+1. 
+
+08
+notes:
+1. HCL Commerce with Spring using Spring Context and have support for EJBs
+2. IoC is where you give the control of object's lifecycle to someone else. In Spring, instead of the developers managing the object's lifecylce and their dependencies with each other, it will be managed by spring contianer
+3. Dependency injection can be done with either setter method or constructor
+
+
+09
+NOTES:
+1. 
+
+
+12
+notes:
+1. We should not modify any out of the box xml configuration. Instead, we will create extension files for each in case we want to extend/override things. spring-extensions.xml will be used to define the mappings to this extension files
+2. spring-extensions.xml are located in the LOBTools/WebContent/WEB-INF/spring-extension.xml
+3. Any new functionality not provided in the out of the box HCL Commerce V9, it should go in the extension files
+
+
+13 14 15
+NOTE:
+1. Each Controller Bean are separated to each other
+
+16
+NOTE:
+1. cmc = content management center. the package
+2. 
+
+
+17
+notes:
+1. Name-value pair processing refers to the Controller and Task commands. BOD processing refers to the legacy feature where we will either go a GET, CHANGE, PROCESS, or SYNC
+
+
+18.
+note:
+1. presentation layer using OGIS framework
+2. Information inside business context can be order, item, catalog, sales catalog, language, etc
+3. Used to manage business contextual information -  Business Context
+4. 
+
+
+
+19.
+NOTE:
+1. User's activity is saved in the database
+
+
+20
+NOTE:
+1. 
+
+
+21
+note:
+1. AuditContext are provided by the third party interface. This is to avoid rewriting component to fit these different vendors
+
+
+29
+NOTE:
+1. View command are deprecated. Replaced by Global froward and global beans at  v9
+
+
+31
+NOTE:
+1. Data Beans can be classified into diffferent 
+
+32
+NOTE:
+1. Controller command needs to have CommandContext before it can be invoked
+
+33
+NOTE:
+1. We can get the StoreId from the BaseContext
+2. SetCurrencyPreference command is used to set the currency preference
+3. Currency is derived from the language id as part of globalization framework
+
+
+35
+NOTE:
+1. Generic users are not tracked since it might result in too much data handled/tracked by the HCL Commerce
+2. isGeneric() returns a boolean to indicate if the User is a Generic user or not. If false, it will create a generic user for this current request
+3. isRetriable() returns a boolean, which indicates if the request can be retried or not. Example of the command that is not retriable is OrderProcessCommand. Example of the command that is retriable is DisplayProductInfo
+4. TypeProperty is a HashMap, and we will need to do TypeCasting when we are accessing requestProperties
+5. validateParameters() is used to validate request parameters
+6. getResources() is used to return Resource vector pairs
+7. performExecute(0
+
+
+36
+NOTE:
+1. For every Task and Controller command. We will do the following
+	> create a custom Task / Controller command interface that implements TaskCommand/ControllerCommand interface
+	> create
+
+
+37
+NOTE:
+1. ControllerCommand invokes TaskCommand
+2. We should always override "performExecute()" method of the TaskCommand implementation
+3. getResource() of TaskCommand always returns null
+
+
+38
+NOTE:
+1. CMDREG table contains all the commands
+2. Storeent_id column specify which stores can invoke that command
+
+
+Creating Custom Controller Command
+0. Go to the src directory of WebSphereCommerceServerExtensionsLogic
+1. Create a custom interface that extends to com.ibm.commerce.command.ControllerCommand
+2. Create a custom class that
+	> extends to ControllerCommandImpl
+	> implements the custom interface earlier
+3. Override the performExecute() of the custom class
+4. Override the getProperties() of the custom class
+5. Repeat Step 2 to 4, for another custom class, with different class name, and method implementations
+
+Configuring the implementation class to use for specific ControllerCommand interface
+1. In the custom interface, we will need to specify two string properties
+	> Name
+	> defaultCommandClassName
+
+
+Adding the Custom Controller Command in the CMDREG table
+1. Use the command below
+  > insert into CMDREG (storeent_id, interface,description,classname,target) values (0, 'controllercommandinterfacepackagename','description','defaultCommandClassNmae')
+
+Defining URL mapping for Controller command
+1. Go to Stores/WebContent/WEB-INF/struts-config-catalog.xml
+2. Define another <action> element and define the following
+	> parameter, the ControllerCommand interface
+ 	> type, BaseAction
+	> path, url path
+	> sub property
+
+Testing the Controller command
+1. Visit the url for the custom Controller Command
+2. Base url is localhost/webapp/wcs/stores/servlet
+3. That whole url is the base url + path specified in the struts-config-catalog.xml
+4. ex: http://localhost/webapp/wcs/stores/servlet/MyTestCommand

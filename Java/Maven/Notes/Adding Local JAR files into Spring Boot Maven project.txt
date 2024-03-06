@@ -1,0 +1,22 @@
+Adding Local JAR files into Spring Boot Maven project
+
+PREREQUISITE:
+1. Maven
+
+
+1. Download the jar file (and the associated pom file if you can)
+2. Add the jar file (and pom file) in a directory same level as "src" folder
+	> ex: lib/dpotapi.jar
+3. Follow the steps in the website
+	> https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
+	> this will install the local jar files into your machine's local maven repository
+4. You can now delete the jar files used for installation/adding
+
+Example command
+mvn install:install-file -Dfile=lib\dpotapi.jar -DpomFile=lib\dpotapi-1.0.0.pom
+
+
+NOTE:
+1. When executing the mvn command, we must be in a maven project (with pom.xml in the same directory)
+2. When passing values to file and pomFile argument, pass the relative file path, based on the directory where in CLI is
+	> ex: if we are in the project base directory, and jar files are in the "lib" folder in same directory, pass "lib\example.jar" to the file argument

@@ -1,0 +1,666 @@
+04 File System and Command Line Args (Notes App)
+
+15 Getting Input from Users
+16 Argument Parsing with Yargs 1
+17 Argument Parsing with Yargs 2
+18 Storing Data with JSON
+19 Adding a Note
+20 Removing a Note
+21 ES6 Aside: Arrow Functions
+22 Refactoring to Use Arrow Functions
+23 Listing Notes
+24 Reading a Note
+
+
+
+
+
+
+15 Getting Input from Users
+
+process.argv
+ > argv is a property in the "process" variable of Node.js
+ > this contains the arguments that we pass in the node commands
+ > this will be in form of an ARRAY
+	- the first two element will be the 
+		1. location of the executable used to run node commands
+		2. the JS file that we executed using node command
+ > passing additional data in the "node <fileName>" will be added in this array as well
+
+EX:
+// command executed
+node app.js add Adrian
+
+// JS code
+const command = process.argv;
+console.log(command);
+
+
+// console output
+[
+  'C:\\Program Files\\nodejs\\node.exe',
+  'D:\\Study\\programming\\nodejs\\workspace\\04\\notes-app\\app.js',
+  'add',
+  'Adrian'
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+16 Argument Parsing with Yargs 1
+
+Yargs
+ > a popular package for parsing arguments in the commands
+ > Yargs helps you build interactive command line tools, by parsing arguments and generating an elegant user interface.
+
+Installing Yargs 
+ > npm i yargs
+
+Using Yargs
+ > importing yargs in the JS file
+	- const yargs = require('yargs')
+ > using yargs to fetch the command arguments
+	- yargs.argv
+
+process.argv vs yargs.argv
+// command sent
+node app.js add --title=HelloWorld
+
+// JS code
+console.log(process.argv);
+console.log(yargs.argv);
+
+// process.argv
+[
+  'C:\\Program Files\\nodejs\\node.exe',
+  'D:\\Study\\programming\\nodejs\\workspace\\04\\notes-app\\app.js',
+  'add',
+  '--title=HelloWorld'
+]
+
+// yargs.argv
+{ _: [ 'add' ], title: 'HelloWorld', '$0': 'app.js' }
+
+
+Reserved arguments for yargs
+ > --help
+	- shows the additional arguments that you can pass to modify the yargs
+	- ex: node app.js --help
+ > --version
+	- shows the current version of the yargs parser that we are using
+	- but default it starts with 1.0.0
+	- to modify it, call the yargs.version(version: string)
+		-> ex: yargs.version('1.1.0')
+
+EX:
+// commands executed
+node app.js --help
+node app.js --version
+
+// console logs
+Options:
+  --help     Show help                                                 [boolean]
+  --version  Show version number                                       [boolean]
+1.0.0
+
+
+
+Adding a command with yargs
+ > to add a command to the node command, we can use the yargs.command()
+
+yargs.command(command: obj)
+ > takes an object with the following properties
+	1. command
+		- the command that we will add in CLI input
+	2. describe
+		- the description of command that will be shown in --help
+	3. handler
+		- the function that will be executed when the command is used
+
+EX:
+yargs.command({
+  command: "add",
+  describe: "Add a new note",
+  handler: function () {
+    console.log("Adding a new note");
+  },
+});
+
+// command used
+1. node app.js --help
+2. node app.js add
+
+// console logs
+1. app.js [command]
+Commands:
+  app.js add  Add a new note
+Options:
+  --help     Show help                                                 [boolean]
+  --version  Show version number                                       [boolean]
+
+2. Adding a new note
+
+
+
+
+
+
+
+
+
+
+17 Argument Parsing with Yargs 2
+
+Configuring command's options 
+ > earlier, we learn how to add supported commands in node command using yargs.command()
+ > now, we will learn how to add --options to these commands
+
+Adding options to command
+ > to add an option command, we will add "builder" property to the object we pass in yargs.command()
+ > this "builder" property takes an object as well whose properties is the option names
+	- this option names then take another object whose properties defines the option like
+		1. describe: string
+			- describes the command option shown in --help
+		2. demandOption: boolean
+			- defines if the option is OPTIONAL or not when using the command it is attached
+			- by default, its value is false
+			- if true, command will throw error if the said option is not defined
+		3. type: string
+			- defines the type of the values that can be assigned to the option
+			- can be either 'string' | 'number' | 'boolean' | 'array'
+			- by default, its value is 'boolean' and when we dont pass any value, it will be set to TRUE
+
+Structure of "builder"
+"builder" : {
+  [optionName: string] : {
+    describe: string;
+    demandOption: boolean;
+    type: 'string' | 'number' | 'boolean' | 'array' | 'count'
+  }
+}
+
+EX:
+// add command
+yargs.command({
+  command: "add",
+  describe: "Add a new note",
+  builder: {
+    title: {
+      description: "Note title",
+      demandOption: true,
+      type: "string",
+    },
+  },
+  handler: function () {
+    console.log("Adding a new note");
+  },
+});
+
+
+Accessing argv values in command handler
+ > most likely, we would also want to use the option's values in the command handler as well
+ > to make the command handler access its option's value, we can ADD "argv" to the handler function parameter
+	- this will point to the value of the yargs.argv
+
+EX:
+// handler prop of the "add" command
+  handler: function (argv) {
+    console.log("Title: " + argv.title);
+    console.log("Body: " + argv.body);
+  },
+
+
+NOTE:
+1. To make the yargs parse the command we have executed, we will need to either
+	> access yargs.argv
+	> call yargs.parse()
+2. We need to have the yargs parse the command AFTER we configured the parsing logic like adding commands, defining their options, etc
+
+
+
+
+
+
+
+18 Storing Data with JSON
+
+JSON
+ > stands for JavaScript Object Notation
+ > JSON is a lightweight format for storing and transporting data
+ > JSON is often used when data is sent from a server to a web page
+ > JSON is "self-describing" and easy to understand
+
+JSON vs JavaScript objects
+ > JSON have their keys wrapped in double quotes while JS object do not
+
+JSON object
+ > object in the Node.js
+ > used to deal with JSON serialization and deserialization
+
+JSON.stringify(data: any): string
+ > method of JSON
+ > used to serialize the input data into JSON format
+ > takes any data, whether its primitive variables or JS object
+ > returns a string which is the JSON representation of the input
+
+JSON.parse(json: string): any
+ > method of JSON
+ > used to deserialize the input into a JavaScript object
+
+EX:
+// JS code
+const book = {
+  title: "Ego is the enemy",
+  author: "Ryan Holiday",
+};
+
+const bookJson = JSON.stringify(book);
+console.log(bookJson);
+
+const parsedData = JSON.parse(bookJson);
+console.log(parsedData);
+
+// console logs
+{"title":"Ego is the enemy","author":"Ryan Holiday"}
+{ title: 'Ego is the enemy', author: 'Ryan Holiday' }
+
+
+FileSystem methods
+fs.readFileSync(path: string)
+ > used to read the content inside the file provided with path
+ > takes the path directory of file as input
+ > returns a buffer that contains byte representation of the data content of the file
+ 
+EX:
+// return value of fs.readFileSync()
+<Buffer 7b 22 6e 61 6d 65 22 3a 22 47 6c 65 6e 6e 22 2c 22 70 6c 61 6e 65 74 22 3a 22 45 61 72 74 68 22 2c 22 61 67 65 22 3a 32 33 7d>
+
+Why JSON?
+1. FileSystem can only work with strings when writing data in the files
+
+Using FileSystem and JSON to store and fetch data
+I. Storing Data with JSON.stringify() and fs.writeFileSync()
+	1. First, we will serialize the object into JSON string using JSON.stringify()
+	2. Then, using fs.writeFileSync(), we will write the JSON string into the .json file passed
+II. Fetching Data with fs.readFileSync() and JSON.parse()
+	1. First, we will fetch the data from the .json file using fs.readFileSync()
+		- this returns a buffer that contains byte representation of JSON data
+ 	2. Then, we will use toString() to the buffer return value to convert it to the original JSON string
+	3. Lastly, with JSON.parse(), we will convert the JSON string into the original JavaScript data
+
+EX:
+const fs = require("fs");
+const book = {
+  title: "Ego is the enemy",
+  author: "Ryan Holiday",
+};
+
+const bookJson = JSON.stringify(book);
+console.log(bookJson);
+
+// writing
+fs.writeFileSync("1-json.json", bookJson);
+
+// reading
+const dataBuffer = fs.readFileSync("1-json.json");
+const dataJSON = dataBuffer.toString();
+const data = JSON.parse(dataJSON);
+console.log(data.title);
+
+
+
+
+
+
+
+
+
+19 Adding a Note
+
+Adding a Note
+ > together with yargs commands, FileSystem, and JSON, we will configure the "add" command to be able to
+	1. take "title" and "body" options
+	2. use these options to add a note object in a .json file using FileSystem and JSON
+
+Steps
+1. Create a utility js file named notes.js
+2. Inside the notes.js, we will create three functions
+	- getNotes
+	- addNote
+	- loadNotes
+3. Export these functions as an object
+	- this object contains properties that points to the functions inside notes.js
+4. Import the exported object of notes.js into the app.js
+5. Use the properties of the imported object inside the handler property of the yargs.command() that configures the "add" command
+
+// notes.js
+const fs = require("fs");
+
+const getNotes = function () {
+  return "Your notes...";
+};
+
+const addNote = function (title, body) {
+  const notes = loadNotes();
+  const duplicateNotes = notes.filter((note) => note.title === title);
+  if (duplicateNotes.length === 0) {
+    notes.push({
+      title: title,
+      body: body,
+    });
+    saveNotes(notes);
+    console.log("Note added");
+    return;
+  }
+  console.log("Note title taken");
+};
+
+const saveNotes = function (notes) {
+  const notesJSON = JSON.stringify(notes);
+  fs.writeFileSync("notes.json", notesJSON);
+};
+
+const loadNotes = function () {
+  try {
+    const dataBuffer = fs.readFileSync("notes.json");
+    const dataJSON = dataBuffer.toString();
+    const data = JSON.parse(dataJSON);
+    return data;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
+module.exports = {
+  getNotes,
+  addNote
+};
+
+// app.js
+yargs.command({
+  command: "add",
+  describe: "Add a new note",
+  builder: {
+    title: {
+      description: "Note title",
+      demandOption: true,
+      type: "string",
+    },
+    body: {
+      description: "Note body",
+      demandOption: true,
+      type: "string",
+    },
+  },
+  handler: function (argv) {
+    notes.addNote(argv.title, argv.body);
+  },
+});
+
+
+
+
+
+
+
+
+
+20 Removing a Note
+
+Removing a Note using yargs, FileSystem, and JSON
+I. Removing a Note
+1. Create yargs command "remove"
+	> needs to have "title" option given
+	> in the handler, fetch the "title" and call the removeNote() function exported inside notes.js util
+2. Create a util method in notes.js named "removeNote"
+	> takes one input, the title string
+3. Inside the method, 
+	> fetch the existing notes using loadNotes()
+ 	> check if a note with given title exist in loaded notes using Array.findIndex() or Array.filter()
+	> if it exist, remove the note in the loadedNotes, serialize it, and overwrite the content of notes.json
+	> if it doesnt, log that a note with specified title doesnt exist
+
+// notes.js
+
+const removeNote = function (title) {
+  const notes = loadNotes();
+  const noteIndex = notes.findIndex((note) => note.title === title);
+  console.log(noteIndex);
+  if (noteIndex !== -1) {
+    notes.splice(noteIndex, 1);
+    saveNotes(notes);
+    const greenMsg = chalk.bgGreen("Note with title: " + title + " removed");
+    console.log(greenMsg);
+    return;
+  }
+  const redMsg = chalk.bgRed("Note with title: " + title + " doesnt exist");
+  console.log(redMsg);
+};
+
+// app.js
+yargs.command({
+  command: "remove",
+  describe: "Remove a new note",
+  builder: {
+    title: {
+      description: "Note title",
+      demandOption: true,
+      type: "string",
+    },
+  },
+  handler: function (argv) {
+    notes.removeNote(argv.title);
+  },
+});
+
+
+
+
+
+
+
+
+
+21 ES6 Aside: Arrow Functions
+
+Arrow Functions
+ > arrow function is syntax for writing a JavaScript function
+ > compare to normal JavaScript function, it is more cleaner way of writing functions
+
+SYNTAX:
+Original Function
+const square = function (x) {
+  return x * x
+}
+
+Arrow function
+1. Normal arrow function
+const square = (x) => {
+  return x * x
+}
+
+2. One parameter arrow function
+	> if function have one parameter only, we can OMIT the parenthesis in parameters
+const square = x => {
+  return x * x
+}
+
+3. One expression arrow function
+ 	> if function's body have only one expression, we can omit the curly braces
+	> with no curly braces, the expression's result value will be IMPLICITLY RETURN
+		- this means that we dont have to use the keyword "return" as well
+const square = x => x * x;
+
+
+Function as method property
+ > with ES6, we also have a syntax for assigning function as property to an object without using "function" keyword
+ > if we use arrow function, it will not have the "this" binding, and therefore will have problems when we use "this" inside it
+
+EX:
+// standard
+const event = {
+  name: "Birthday party",
+  printGuestList: function () {
+    console.log("Guest list for " + this.name);
+  },
+};
+
+// arrow function -> "this" results in undefined
+const event = {
+  name: "Birthday party",
+  printGuestList: () => {
+    console.log("Guest list for " + this.name);
+  },
+};
+
+// es6 function definition syntax
+const event = {
+  name: "Birthday party",
+  printGuestList() {
+    console.log("Guest list for " + this.name);
+  },
+};
+
+Function as input argument of another function
+ > we can also use either standard function or arrow function for the input
+
+EX:
+const filteredArray = stores.filter(store => store.name === "Tindahan");
+
+
+NOTES:
+1. Arrow functions are not suited for assigning function values to object properties
+	> this is because Arrow functions do NOT bind their own "this" value
+	> it would be best to use either standard function or the ES6 syntax for function properties
+
+
+
+
+
+
+
+22 Refactoring to Use Arrow Functions
+
+GOAL
+1. Use either ES6 function definition or Arrow function in Notes app
+
+
+
+
+
+
+
+
+23 Listing Notes
+
+// list command
+// list
+yargs.command({
+  command: "list",
+  describe: "List all notes",
+  handler() {
+    notes.listNotes();
+  },
+});
+
+
+// listNotes function in notes.js
+const listNotes = () => {
+  const notes = loadNotes();
+  const header = chalk.green.bold("Your notes");
+  console.log(header);
+  notes.forEach((note) => {
+    const noteLog = chalk.green(`Title: ${note.title}, Body: ${note.body}`);
+    console.log(noteLog);
+  });
+};
+
+
+
+
+
+
+
+24 Reading a Note
+
+Fixing addNote
+ > we should not add note with duplicate title
+ > we also should stop indexing the notes array as SOON as we saw a note with same title
+	- filter() basically index through all of the array element
+	- we can use either findIndex() or find() to solve this issue
+
+// old addNote()
+const addNote = (title, body) => {
+  const notes = loadNotes();
+  const duplicateNotes = notes.filter((note) => note.title === title);
+  if (duplicateNotes.length === 0) {
+    notes.push({
+      title: title,
+      body: body,
+    });
+    saveNotes(notes);
+    console.log("Note added");
+    return;
+  }
+  console.log("Note title taken");
+};
+
+// new addNote
+const addNote = (title, body) => {
+  const notes = loadNotes();
+  const duplicateNote = notes.findIndex((note) => note.title === title);
+  if (!duplicateNote) {
+    notes.push({
+      title: title,
+      body: body,
+    });
+    saveNotes(notes);
+    console.log("Note added");
+    return;
+  }
+  console.log("Note title taken");
+};
+
+
+// read command
+yargs.command({
+  command: "read",
+  describe: "Read all notes",
+  builder: {
+    title: {
+      description: "Note title",
+      demandOption: true,
+      type: "string",
+    },
+  },
+  handler(argv) {
+    notes.readNote(argv.title);
+  },
+});
+
+// readNote function in notes.js
+const readNote = (title) => {
+  const notes = loadNotes();
+  const note = notes.find((note) => note.title === title);
+  if (note) {
+    const greenMsg = chalk.green.bold(
+      `Title: ${note.title}, Body: ${note.body}`
+    );
+    console.log(greenMsg);
+  } else {
+    const redMsg = chalk.red.bold(`No notes with title '${title}' found`);
+    console.log(redMsg);
+  }
+};
+
+

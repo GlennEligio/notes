@@ -1,0 +1,50 @@
+113 Databases & Analytics Summary
+
+
+Databases & Analytics Summary in AWS
+Relation Databases - OTLP: RDS & Aurora (SQL)
+ > OTLP - Online
+
+Differences between Multi-AZ, Read Replicas, Multi-Region
+ > Multi-AZ, database situated in mutli-AZ, composed of Main DB and Failover DB to be used as backup
+ > Read Replicas, database replicas for read operations only, for spreading read workload
+ > Multi-Region, mutiple read-only database replicas all over different region, write operation is still on main database
+
+In-memory Database: ElastiCache
+
+Key/Value Database: DynamoDB (serverless) & DAX (cache for DynamoDB)
+
+Warehouse - OLAP (Online Analytical Processing): Redshift (SQL)
+
+Hadoop Cluster: EMR
+ > Hadoop Cluster are a group of EC2 instance working together
+
+Athena
+ > query data on Amazon S3 (serverless & SQL)
+
+QuickSight
+ > dashboards on your data (serverless)
+ > similar to Grafana
+
+DocumentDB
+ > 'Aurora for MongoDB' (JSON - NoSQL database)
+
+Amazon QLDB (Quantum Ledger Database)
+ > Financial Transaction Ledger (immutable journal, cryptographically verifiable)
+ > Not decentralized
+
+Amazon Managed Blockchain
+ > managed Hyperledger Fabric and Etherium blockchains
+ > Decentralized
+
+Glue
+ > managed ETL (Extract Transform Load) and Data Catalog service (Glue Catalog)
+
+Database Migration
+ > DMS - Database Migration Service
+
+Neptune
+ > graph database
+ > useful for graph dataset
+
+

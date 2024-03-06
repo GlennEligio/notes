@@ -1,0 +1,1000 @@
+React JS Crash Course Traversy Media
+
+
+What is React?
+	> React is a JavaScript library for building user interfaces
+	> React runs on the client as a SPA (Single Page App), but can be used to build full stack apps by communicating with a Server/API
+		- e.g. MERN stack
+	> React is often referred to as a front-end "framework" because it is capable and directly comparable to a framework such as Angular or Vue 
+	> Maintained by Facebook
+
+
+Why use React?
+1. Structure the "view" layer of your application
+	> React serves the "View" layer of MVC architecture
+2. Reusable components with their own state/props
+	> we can assign properties to a Component (one-way, immutable)
+	> we can also reassign the Component's States to update the display
+3. JSX - Dynamic markup
+	> stands for Javascript Syntax eXtension
+	> combines both Presentation (Markup) and Logic
+4. Interactive UIs with Virtual DOM
+	> each portion of the Webpage has its own Virtual DOM
+	> these means that it does not have to reload the whole page to update a portion of it
+5. Performance & testing
+6. Very popular in the industry
+
+
+
+Prerequisites - What should you know first?
+1. Good handle on JavaScript
+	- not recommended to jump into React without learning JS first
+2. Data types, variables, functions, loops, etc
+3. Promises & asynchronous programming
+4. Array methods like forEach() & map()
+5. Fetch API & making HTTP requests
+
+
+Tools
+1. Text Editor (VSCode)
+2. Node
+3. npm
+4. React Developer Tools extension in browser
+5. ES7 React/Redux/React Native Snippets extension in VSCode
+
+
+
+UI Components
+	> When using React, think of your UI as a bunch of separate components
+	> Each Component can also nest one or more Components
+
+
+
+Components: Functions vs Classes
+	> Components in React can be created in two ways
+		1. Functions
+		2. Classes
+			- for class, it must extend to the React.Component class
+	> Both of the methods must render/return a JSX
+		- For function, JSX can be returned using return () keyword
+		- For classes, JSX can be returned by return it inside the render() method of React.Component
+	> Components can also take props
+		- we do this by adding "parameters" when we invoke a Component
+		- ex: <Header title="My Title"/>
+		- in this case, it invokes the Header Component and passes title variable in props with value of "My Title"
+	> Components can be used and invoked using the following syntax:
+		<Component props1=value props2=value>
+	> These props we pass can be accessed in the props parameter of the Component
+
+
+
+JSX - JavaScript Syntax Extension
+	> similar to HTML but just a syntactic sugar for JavaScript
+	> similar to HTML syntax aside from the few things
+		- some HTML parameter have different names (class -> className, for -> htmlFor) since they conflict with JS keywords
+	> we can inject Javascript expressions in the JSX using curly braces {}
+		- these JS expressions include
+			1. JS variables			{name }
+			2. JS ternary operations	{x ? 'Yes' : 'No'}
+			3. JS operations 		{1+2}
+		- in example below, we injected the "name" variable to JSX expression that we return
+
+EX:
+function App() {
+  const name = "Brad";
+
+  return (
+    <div className="App">
+      <h1>Hello from React</h1>
+      <h2>Hello {name}</h2>
+    </div>
+  );
+}
+
+		
+
+
+
+Component's State - Working with State
+	> Components can have "State" which is an object that determines how a component renders and behaves
+	> in the State includes:
+		1. data to display in Component
+		2. events/logic/behavior of the Component
+	> "App" or "global" state refers to the state that is available to the entire UI, not just a single Component
+		- typically, these states includes data where many Components uses
+	> Prior to React 16.8, we had to use class based components to use state.
+	> Now, we can use State in functional Components with "hooks" 
+
+
+
+React Hooks
+	> React Hooks are functions that let us hook into the React state and lifecycle features from function components
+	> some of this hooks are
+		useState				Returns a stateful value and a function to update it
+		useEffect				Perform side effects infunction components (ex: API call when page loads)
+		useContext, useReducer, useRef 		Beyond the scope of this course
+	> We can also create our own custom hooks
+
+
+
+
+Create React App 
+1. Install npm
+	> go to NodeJS site
+	> installing NodeJS automatically install npm as well
+2. Check Node and npm version
+	> node must be >= 8.10
+	> npm must be >= 5.6
+
+	node --version 
+	npm --version
+3. Do the following command in Terminal
+	> "react-task-tracker" in first command represents the React app name
+
+	npx create-react-app react-task-tracker
+	cd my-ap
+	npm start
+4. Access the React app that is currently running
+	> by default, runs in localhost:3000
+
+
+
+React Project Files and Folders
+package.json
+	> contains the following data
+		1. name of React app
+		2. version of React app
+		3. dependencies installed
+			-> react
+			-> react-dom
+			-> react-script (development server, script tools)
+		4. scripts used to start/build/test the React app
+
+public/index.html
+	> the Single HTML page that nest the React.Components
+		- these means that all the data inside the <head> is also applied to the Components (such us BootStrap CSS)
+	> inside the html, theres a <div> with id of "root"
+		- this is where all the React Components 
+
+src/index.js
+	> acts as the ENTRYPOINT for React
+	> inside the index.js, we
+		1. Imported the React, ReactDOM, index.css, App from App.js
+		2. Call the ReactDOM.render()
+
+
+ReactDOM.render()
+	> renders a JSX inside the specified element
+	> takes two parameters
+		1. JSX to render
+		2. HTML element in index.html where the JSX will be Nested/Render
+			
+
+src/App.js
+	> serves as the "root" Component of React App
+
+
+
+Enabling Emmet Abbreviation in React Javascript files
+1. Go to a JS file in React App src folder
+2. Look at the bottom, you should see "Javascript"
+3. Change to "Javascript React"
+	- with this, emmet should now work
+
+
+Delete the following files
+1. App.css
+2. App.test.js
+3. logo.svg
+4. setupTests.js
+
+
+Fix the App.js
+	> remove the imports that is not present/used
+
+
+
+ES7+ React, Redux, React-Native snippets
+	> extension used to access snippets related to React
+	> to see all snippets and shortcuts, go to
+		https://github.com/dsznajder/vscode-react-javascript-snippets/blob/HEAD/docs/Snippets.md
+	> some of these snippets include:
+
+React Compnents
+1. rafce
+import React from 'react';
+
+const $1 = () => {
+  return <div>$0</div>;
+};
+
+export default $1;
+
+2. rcc
+import React, { Component } from 'react';
+
+export default class FileName extends Component {
+  render() {
+    return <div>$2</div>;
+  }
+}
+
+
+
+
+React Application src folder structure
+	> components folder contains the Components JS files
+
+index.js
+App.js
+index.css
+components folder
+	
+
+
+~~~~~~ REACT COMPONENT ~~~~~~~~
+
+React Component
+	> can be created by using either
+		a. Functional Component
+		b. Class Component
+
+Functional Component
+	> function used to render a Component
+	> inside the function, we must return a JSX expression
+		- this JSX expression must have ONE PARENT ELEMENT
+	> JS files that contains Components typically starts with Capital letter
+		- ex: Header.js, Menu.js
+	> to create Functional Component, we can either do it manually or using the snippets/shortcut
+	> for manual, the function must:
+		1. Return a JSX to render
+		2. Be able to be exported and in default
+			-> we can do this by either:	
+				a. create Function and export default the said Function
+				b. add "export default" keyword when creating the Function
+	> for snippet/shortcut using ES7+ React/Redux/React-Native, type
+		rafce
+
+EX:
+const Header = () => {
+  return (
+    <header>
+      <h1>Task Tracker</h1>
+    </header>
+  );
+};
+
+export default Header;
+
+
+
+Class Component
+	> class that is used to render a Component
+	> to make a class a Component, we can either do it manually or with snippets
+	> to make it manually, the Class must have:
+		1. React imported in the JS file
+		2. Class must be extended to React.Component
+		3. Class must define the render() of the React.Component
+		4. render() function must return a JSX to render
+		5. Class must be able to be exported, either by:
+			a. adding "export default"
+			b. adding "export default ClassName" after defining the Class
+	> to make it using snippet/shortcut, type
+		rce
+
+
+EX:
+import React from "react";
+
+class App extends React.Component {
+  render() {
+    return <h1>Hello from a class</h1>;
+  }
+}
+
+export default App;
+
+
+
+
+
+Importing a React Component
+	> to import a React Component to another JS file, we can use the following syntax:
+
+		import FunctionName/ClassName from 'directory path'
+
+	> for example, if we will import a Functional Component Header from src/components into the App.js (that is in src folder), we will write
+
+		import Header from './components/Header'
+
+
+
+
+Props
+	> refers to the properties we passed into a Component
+	> IMMUTABLE data that we can pass to the Component that we invoke
+	> to pass a prop, we will add "parameters" to the Component that we invoke
+		- syntax is:
+			<ComponentName props1=value props2=value2>
+		- example:
+			<Header title='Hello'>
+	> the Component can then access the data we passed through the "props" parameter
+		- from the props parameter, we can then call the props that we added
+		- example:
+			props.title
+
+
+EX:
+// App.js (where we invoke the Header and pass "title" props)
+import React from "react";
+import Header from "./components/Header";
+
+function App() {
+  const name = "Brad";
+
+  return (
+    <div className="container">
+      <Header title="Hello" />
+    </div>
+  );
+}
+
+export default App;
+
+
+// Header.js (where we will use the props pass through the "props" parameter)
+const Header = (props) => {
+  return (
+    <header>
+      <h1>{props.title}</h1>
+    </header>
+  );
+};
+
+export default Header;
+
+
+
+Component.defaultProps
+	> with this, we can add Default Props values to a Component
+	> we can add the values to the Props on a Component by defining its defaultProps property
+	> defaultProps property is an Object Literal
+		- this property contains several key:value pairs to define the props of the said Component
+	> the key:value pairs properties in defaultProps will be OVERRIDEN if we pass the same key when we invoke the Component
+
+EX:
+const Header = (props) => {
+  return (
+    <header>
+      <h1>{props.title}</h1>
+    </header>
+  );
+};
+
+Header.defaultProps = {
+  title: "Hello",
+};
+
+export default Header;
+
+
+
+
+Props destructuring
+	> we can also destructure the props parameter and instead pass the keys expected
+	> ex: if we are expecting a title and a content properties to be passed, instead of
+		const Header = (props) => { return <h1>{props.title + props.content}</h1>}
+	> we can do
+		const Header = ({title, content}) => { return <h1>{title + content}</h1>}
+	> with destructuring, we dont have to access the properties through the "props" parameter
+
+EX:
+const Header = ({ title }) => {
+  return (
+    <header>
+      <h1>{title}</h1>
+    </header>
+  );
+};
+
+Header.defaultProps = {
+  title: "Hello",
+};
+
+export default Header;
+
+
+
+Component.propTypes
+	> we can also define some of the characteristics of the props we pass like:
+		- props' datatype
+		- if certain props is required
+	> to add this functionality, we can either
+		1. Import the PropTypes from 'prop-types'
+			import PropTypes from 'prop-types'
+		2. Use snippet/shortcut
+			"impt"
+	> we will then define propTypes property of the Component
+	> propTypes is an Object literal
+		- meaning it is composed of several key:value pairs	
+		- in propTypes
+			a. keys refers to the prop name
+			b. value refers to the PropTypes objects
+				-> these PropTypes object defines the constraints/characteristics of the props
+				-> ex: title: PropTypes.string
+				-> this will make it so the Component can only accept "title" prop with datatype of string
+	> we can define several characteristics to apply to props like
+		1. dataType
+			-> we can define a specific datatype for a prop
+			-> to do this, we will define the assign the key to a specific PropType property
+			-> syntax: propName: PropType.<datatype>
+			-> example: title: PropType.string
+		2. isRequired
+			-> we can define if the prop is required or not
+			-> to do this, we will call .isRequired after the dataType
+			-> syntax: propName: PropType.<datatype>.isRequired
+			-> example: title: PropType.string.isRequired
+
+EX:
+import PropTypes from "prop-types";
+
+const Header = ({ title }) => {
+  return (
+    <header>
+      <h1>{title}</h1>
+    </header>
+  );
+};
+
+Header.defaultProps = {
+  title: "Hello",
+};
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+};
+
+export default Header;
+
+
+	> Here, we first imported the PropTypes from 'prop-types'
+	> Then we defined the propTypes of the Header Component
+	> Inside the propTypes, we defined that
+		1. "title" prop 
+			- must be of type string
+			- must be supplied when invoking the Header Component
+
+
+
+
+Styling in React
+	> to style in React App, we can do it in two ways
+		1. inline css 
+		2. external css using index.css
+	> for inline css, we can either
+		1. add the style as is in the element of JSX
+		2. create a JS object which hold CSS, then assign the said object to style parameter
+
+Inline 1
+
+<h1 style={{ color: "red", background: "black" }}>{title}</h1>
+
+
+Inline 2 using JS object for holding CSS style
+
+<h1 style={headingStyle}>{title}</h1>
+const headingStyle = {
+  color: "red",
+  background: "black",
+};
+
+
+
+
+~~~~~ EVENT HANDLING ~~~~~~
+
+Handling Events in React
+	> Handling events with React elements is very similar to handling events on DOM elements. 
+	> There are some syntax differences:
+		1. React events are named using camelCase, rather than lowercase.
+		2. With JSX you pass a function as the event handler, rather than a string.
+		3. To prevent default behavior of event, preventDefault() must be called explicitly
+			- compared to plain HTML where we can return false to do so
+
+EX:
+in HTML
+<button onclick="activateLasers()">
+  Activate Lasers
+</button>
+
+in React
+<button onClick={activateLasers}>
+  Activate Lasers
+</button>
+
+
+Creating Event Handler function for React Components
+	> There are two ways of supplying Function as Event Handler in a React Component's JSX
+		1. Passing the function variable
+      			<button onClick={this.handleClick}></button>
+		2. Defining the function inline
+			<button onClick={() => console.log('Click')}></button>
+	> There are two ways of supplying Function as Event Handler in React Component
+		1. Through props
+		2. Through Class methods
+	> Class method are NOT BOUND by default
+	> Because of this, we cannot use a method for event handling unless we bind it to the Class
+	> There are two ways to do the binding
+		1. Add a Class field in the constructor, and then call the bind() of the function of Class, and pass "this"
+			- ex: this.handleClick = this.handleClick.bind(this)
+		2. Use the experimental public class fields syntax
+			-> this syntax ensures 'this' is bound within handleClick
+			- ex: handleClick = () => {console.log('this is:', this)}
+
+EX: Event Handler through binding method 1
+
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
+  }
+}
+
+
+EX: Event Handler through binding method 2
+class LoggingButton extends React.Component {
+  // This syntax ensures `this` is bound within handleClick.
+  // Warning: this is *experimental* syntax.
+  handleClick = () => {
+    console.log('this is:', this);
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        Click me
+      </button>
+    );
+  }
+}
+
+
+EX: Event Handler through props
+// In Header.js
+  const onClick = () => {
+    console.log("Click");
+  };
+
+  return (
+    <header className="header">
+      <h1>{title}</h1>
+      <Button color="green" text="Add" onClick={onClick} />
+    </header>
+  );
+
+
+// In Button.js
+const Button = ({ color, text, onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      style={{ backgroundColor: color }}
+      className="btn"
+    >
+      {text}
+    </button>
+  );
+};
+
+
+EX: Event handler provided INLINE
+class LoggingButton extends React.Component {
+
+  render() {
+    return (
+      <button onClick={() => }>
+        Click me
+      </button>
+    );
+  }
+}
+
+
+SyntheticEvent
+	> a cross-browser wrapper around the browser's native event
+	> It has the same interface as the browser's native event, including stopPropagation() and preventDefault(), except the events work identically across all browsers
+	> Event handler function will be passed instances of the SyntheticEvent
+		- we can access this by adding a parameter to the event handler function
+	> Each SyntheticEvent object has the following attributes
+		boolean bubbles
+		boolean cancelable
+		DOMEventTarget currentTarget
+		boolean defaultPrevented
+		number eventPhase
+		boolean isTrusted
+		DOMEvent nativeEvent
+		void preventDefault()
+			> used to prevent default behavior
+		boolean isDefaultPrevented()
+		void stopPropagation()
+		boolean isPropagationStopped()
+		void persist()
+		DOMEventTarget target
+			> returns the HTML element that is the target of Event
+		number timeStamp
+		string type
+
+
+EX:
+// Inside Header.js
+  const onClick = (e) => {
+    console.log(e.target);
+    console.log(" Click");
+  };
+
+
+
+
+
+
+Adding State in a Function Component
+	> before the useState hook is created, we can only add State in the Class Components
+		- because of this, Function Components are called "dumb components" before
+	> but with useState hook, we can now add State in a Functional Component
+
+useState
+	> hook to add in Functional Component to add State to them
+	> to use this, we will need to import useState from 'react'
+		import { useState } from 'react'
+
+Creating a State using useState
+	> to add State in Functional Component using useState, we will need to use the following syntax:
+		const [stateName, setStateName] = useState(defaultValue)
+	> here, there are following things that you must provide
+		stateName	refers to the name of the State to add
+		setStateName	set + StateName, refers to the function used to change the value of State (setter)
+		defaultValue	refers to the default value of the State
+
+EX: Usage of useState
+
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      text: "Doctors Appointment",
+      day: "Feb 5th at 2:30pm",
+      reminder: true,
+    },
+    {
+      id: 2,
+      text: "Meeting at School",
+      day: "Feb 6th at 1:30pm",
+      reminder: true,
+    },
+    {
+      id: 3,
+      text: "Food Shopping",
+      day: "Feb 5th at 2:30pm",
+      reminder: false,
+    },
+  ]);
+
+
+
+
+Modifying State
+	> with useState method, in order to modify the State, we will use the setter function provided to a specific State
+	> we will then pass the new value of the State into it
+	> syntax: setStateName(newValue)
+
+ex:
+      setTasks([...tasks, {id: 1, text: "Hello", day: "Feb 10th at 2:30pm", reminder: true}]);
+
+
+List and Keys
+	> we sometimes use Arrays to populate a UI
+	> using map() of Array, we transform each of the item into a JSX
+	> some of these JSX needs to be tracked for changes (ex: Components) while other do not (ex: normal HTML tags like h1, li, etc)
+		- for those that needs to be tracked, we will use Keys
+	> Keys help React identify which items have changed, are added, or are removed. 
+		- Keys should be given to the elements inside the array to give the elements a stable identity
+		- ex: id attribute of an element
+
+EX:
+// For Array.map() to create JSX that doesnt need Keys
+const Tasks = ({ tasks }) => {
+  return (
+    <>
+      {tasks.map((task) => (
+        <h3>{task.text}</h3>
+      ))}
+    </>
+  );
+};
+
+export default Tasks;
+
+
+// For Array transform that needs Keys for tracking
+import Task from "./Task";
+
+const Tasks = ({ tasks }) => {
+  return (
+    <>
+      {tasks.map((task) => (
+        <Task key={task.id} task={task} />
+      ))}
+    </>
+  );
+};
+
+export default Tasks;
+
+
+
+
+React Icons
+	> node package module used to provide icons to be used for designing
+	> to add this, type in the Terminal
+		npm install react-icons --save
+	> to verify installation, check the package.json in root directory
+		- we should see "react-icons" in the dependencies section
+
+Using React Icons
+	> to use a specific Icon in React App, we will need to import it
+	> to import a specific Icon, we can use the syntax
+		import { IconName } from 'react-icons'
+	> ex: importing the Times icon (X) which is named FaTimes, we can use
+		import { FaTimes } from 'react-icons/fa'
+
+EX:
+import { FaTimes } from "react-icons/fa";
+
+const Task = ({ task }) => {
+  return (
+    <div className="task">
+      <h3>
+        {task.text} <FaTimes />
+      </h3>
+      <p>{task.day}</p>
+    </div>
+  );
+};
+
+export default Task;
+
+
+
+
+
+Building the React App for Deployment
+	> to build the React App, use the command in root directory
+		npm run build
+	
+
+Running the built React App
+	> to run a built React app, you will need a static server
+	> one of these static server is Serve node package module
+		- to install Serve, we can use the command
+			npm install -g serve
+	> to run a React app, use the command in the location of build folder
+		serve -s build -p <TCP PORT>
+		serve -s build -p 8000
+	> we can now access the React app in localhost:8000 (or the tcp port you assigned in serve command)
+
+
+
+
+JSON Server for Mock Server
+	> json-server node package module is used to create a mock rest api server with a json file being its source/database
+	> to install the json-server, we can use the command
+		npm i json-server
+	> to verify installation, check in package.json dependencies section
+    		"json-server": "^0.17.0",
+
+
+Configuring a json-server
+	> add an item in the "scripts" section of the package.json file
+		"server": "json-server --watch db.json --port 5000"
+	> run the script in the root directory of React app
+		npm run server
+	> the command above will create a file named db.json
+		- this json file will have some default content that we can overrite
+	> the Route/Paths of this Mock Rest API that we can call changed dynamically
+		- will changed based on the content of the json file
+
+EX: 
+db.json file
+{
+  "tasks": [
+    {
+      "id": 1,
+      "text": "Doctors Appointment",
+      "day": "Feb 5th at 2:30pm",
+      "reminder": true
+    },
+    {
+      "id": 2,
+      "text": "Meeting at School",
+      "day": "Feb 6th at 1:30pm",
+      "reminder": true
+    },
+    {
+      "id": 3,
+      "text": "Food Shopping",
+      "day": "Feb 5th at 2:30pm",
+      "reminder": false
+    }
+  ]
+}
+
+
+Example routes/path
+GET 	localhost:5000/tasks 				to fetch all task
+GET	localhost:5000/tasks/1				to fetch task whose id is 1
+GET	localhost:5000/tasks?id=3&reminder=true		to fetch task whose id is 3 and reminder is true
+POST 	localhost:5000/tasks				to add a task in json-server
+
+
+
+React "useEffect" Hooks
+	> The useEffect Hook allows you to perform side effects in your components.
+		- Some examples of side effects are: fetching data, directly updating the DOM, and timers.
+	> useEffect accepts two arguments. The second argument is optional.
+		- useEffect(<function>, <dependency>)
+	> these arguments stands for
+		a. function
+			- function that will be performed everytime useEffect is executed
+		b. dependency
+			- an array of variables that useEffect monitors
+			- if one of the variable/s changed, useEffect will be executed
+			- props or states are often passed into this argument
+	> if we dont pass an argument in dependency, useEffect will run EVERYTIME COMPONENT RENDER
+	> if we pass an empty Array in dependency, the useEffect will only run ONCE
+	> if we pass an Array of variables in dependency, it will monitor changes in those variable/s, and if theres a change, it will run the useEffect
+
+1. No dependecy passed
+
+useEffect(() => {
+  //Runs on every render
+});
+
+
+2. An empty array:
+
+useEffect(() => {
+  //Runs only on the first render
+}, []);
+
+
+3. Props or state values
+
+useEffect(() => {
+  //Runs on the first render
+  //And any time any dependency value changes
+}, [prop, state]);
+
+
+
+
+REACT ROUTER DOM
+	> a node package module that gives React routing capabilities
+	> with this, we can reroute any request to a specific page/component based on its request url
+	> to add React Router in the React app, use the command
+		npm i react-router
+		npm i react-router-dom
+	> to verify the installation, look at these line in "dependencies" section of package.json file
+	    	"react-router": "^6.2.1",
+		"react-router-dom": "^6.2.1"
+	> We will need two Components inside the react-router-dom
+		1. BrowserRouter
+			- nest all the Routes
+		2. Route
+			- provide definition which Components will show/render based on the Request URL
+			- in Route, we will 
+
+
+Components in React Router
+	> We will use four Components inside the react-router-dom
+		1. BrowserRouter
+		2. Route	
+		3. Routes
+		4. Link
+	> BrowserRouter 
+		-> is where we will nest all the Routes
+	> Routes
+		-> nest all the Routes in a group
+	> Route 
+		-> defines the logic on how we will HANDLE a specific Request
+		-> contains two parameter
+			a. path		URL to check/match
+			b. exact	Specifies the request url must EXACTLY match the path defined in Route
+					Not needed anymore since url path is exact by default
+			c. element	React Component to render in case Request URL and Route's URL match
+	> Link 
+		-> serves as a replacement to HTML link tag <a>
+		-> contains one property/parameter to define
+			a. to		defines which Route that request will be redirected to
+		-> with Link from React, the page will NOT LOAD in order to render the Component
+	
+
+React Router Usage
+	> main use of the React Router is to SHOW/RENDER COMPONENTS BASED ON THE REQUEST URL
+	> to use React Router, we must first import the following items
+		a. for creating the Routing logic
+			import { BrowserRouter as Router, Route} from 'react-router-dom'
+		b. for rerouting request
+			import { Link } from 'react-router-dom'
+
+A. For Creating the Routing Logic
+1. Add <Router></Router> in render of App.js
+	> App.js serves as the root component so this is where we will define the Routing logic
+	> if we didnt use alias in BrowserRoute, we will use <BrowserRouter></BrowserRouter>
+2. Add <Routes></Routes> inside <Router>
+3. Nest <Route></Route> components inside the <Routes>
+4. Define the Route definition
+	> define the parameters of the Route Component
+		a. path for the request url to match
+		b. exact if request url must exactly match the path url
+			- as of React Router V6, theres no need to use exact prop
+			- Route paths are exact by default
+		c. element to specify the JSX or Components to render
+
+B. For Rerouting request
+1. Add <Link> component
+2. Define the "to" parameter to define the Route the request will go
+
+
+NOTES:
+1. <Routes> can only nest <Route> components
+2. <Link> can only be used on Components that is nested inside <BrowserRouter>
+
+
+
+
+
+React useLocation hook
+	> The useLocation hook is a function that returns the location object that contains information about the current URL. 
+	> Whenever the URL changes, a new location object will be returned.
+
+Location object properties
+1. hash: 	the anchor part (#)
+2. pathname: 	the path name
+3. search: 	the query string part
+4. state
+5. key
+
+useLocation hook Use cases
+	> useful in many cases when you want to trigger a function based on a change of the URL. 
+	> In general, it is used in conjunction with the useEffect hook provided by React.
+
+Ex: For example, the pages of your React app are taller than the height of the screen (100 vh) and you want to scroll to the top of the page every time the user switches the route, like this:
+
+// Create a custom hook that uses both useLocation and useEffect
+const useScrollToTop = () => {
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    // scroll to the top of the browser window when changing route
+    // the window object is a normal DOM object and is safe to use in React.
+  }, [location]);
+};
+
+
+.

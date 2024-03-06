@@ -1,0 +1,55 @@
+20. Using RestTemplate to invoke call from Currency Conversion Service to Currency Exchange Service
+
+Classes / Interfaces to use
+
+RestTemplate
+	> Synchronous client to perform HTTP requests, exposing a simple, template method API over underlying HTTP client libraries such as the JDK HttpURLConnection, Apache HttpComponents, and others.
+	> The RestTemplate offers templates for common scenarios by HTTP method, in addition to the generalized exchange and execute methods that support of less frequent cases.
+	
+Methods:
+ResponseEntity<T> 	getForEntity(URI uri, Class<?> extends T entity, Map<String, Object> pathVariables)
+				> Retrieve a representation by doing a GET on the URI template. The response is converted and stored in an ResponseEntity. URI Template variables are expanded using the given map.
+				
+
+ResponseEntity
+	> Extension of HttpEntity that adds an HttpStatus status code.
+	> Used in RestTemplate as well as in @Controller methods. 
+
+
+Fetching CurrencyExchange data from Currency Exchange Server to Currency Conversion Service
+1. Create a HashMap<String, Object> object
+	> this will store the UriVariable variables that we will inject in RestTemplate URI as a pair of String and Object
+2. Create a ResponseEntity<CurrencyConversion> object
+	> fetch the result of the getForEntity() method call of a new Instance of RestTemplate
+3. Create a CurrencyConversion object
+	> fetch the result of the getBody() of ResponseEntity
+4. Change the proeprties of the CurrencyConversion that we will return
+	> specifically, the conversionMultiple, totalCalculatedAmount, and environment
+		- get this from the CurrencyConversion object
+
+calculateCurrencyConversion API endpoint method
+
+	@GetMapping("/currency-exchange/from/{from}/to/{to}/quantity/{quantity}")
+	public CurrencyConversion calculateCurrencyConversion(
+			@PathVariable("from") String from,
+			@PathVariable("to") String to,
+			@PathVariable("quantity") BigDecimal quantity) {
+		
+		HashMap<String, String> uriVariables = new HashMap<>();
+		uriVariables.put("from", from);
+		uriVariables.put("to", to);
+		
+		ResponseEntity<CurrencyConversion> responseEntity = 
+				new RestTemplate().getForEntity(
+						"http://localhost:8000/currency-exchange/from/{from}/to/{to}",
+						CurrencyConversion.class,
+						uriVariables);
+		
+		CurrencyConversion currencyConversion = responseEntity.getBody();
+		
+		return new CurrencyConversion(1000L, 
+				from, to, quantity, 
+				currencyConversion.getConversionMultiple(), 
+				quantity.multiply(currencyConversion.getConversionMultiple()), 
+				currencyConversion.getEnvironment());
+	}

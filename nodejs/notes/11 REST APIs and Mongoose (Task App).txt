@@ -1,0 +1,1601 @@
+11 REST APIs and Mongoose (Task App)
+
+Contents
+83 Setting up Mongoose
+84 Creating a Mongoose Model
+85 Data Validation and Sanitization Part 1
+86 Data Validation and Sanitization Part 2
+87 Structuring a REST API
+88 Installing Postman
+89 Resource Creation Endpoints: Part 1
+90 Resource Creation Endpoints: Part 2
+91 Resource Reading Endpoints: Part 1
+92 Resource Reading Endpoints: Part 2
+93 Prmoise Chaining
+94 Promise Chaining Challenge
+95 Async/Await
+96 Async/Await part 2
+97 Integrating Async/Await
+98 Resource Updating Endpoints: Part 1
+99 Resource Updating Endpoints: Part 2
+100 Resource Deleting Endpoints
+101 Separate Route File
+
+
+
+
+
+
+
+
+
+
+
+
+83 Setting up Mongoose
+
+Function/Object used
+mongoose
+ > top level object mongoose npm module exports
+
+mongoose.connect(connectionUrl: string, option: object): Promise
+ > used to connect to a specific Database
+ > similar to mongodb.MongoClient.connect()
+ > takes two inputs
+ 	1. connectionUrl 
+		- must have the database name to it and not just the protocol, ip, and port address
+		- ex: "mongodb://127.0.0.1:27107/task-manager-api"
+ 	2. options
+		- contains configuration of the Connection
+ > returns a Promise
+	- will be resolved if connection succeed, and rejected if connection failed
+
+
+mongoose.model(name: string, schema: { [modelProp: string]: { [modelPropConfig: value] } }): Model
+ > used to create a Model
+ > takes two input
+	1. name
+		- model name, a string
+	2. schema
+		- schema of the model
+		- object that takes several properties which will be the Model Properties or Document fields
+		- these Model Property will take an object value, which will be the Model Properties' configuration (like the Model prop datatype)
+ > returns a constructor function for the said Model
+
+new Model(model: object)
+ > used to create a new instance of Model
+ > model input must have the same properties and properties data type as the one defined in mongoose.model()
+
+Model.prototype.save()
+ > used to save the Model in the database as Document
+ > returns a Promise which will contain either 
+	- the Model instance saved when resolved
+	- the Error if when rejected
+
+
+
+Mongoose 
+ > https://mongoosejs.com/
+ > elegant mongodb object modeling for node.js
+ > npm module related to MongoDB
+ > with Mongoose, we can do the following
+	1. Validation of Object we use to add as Document
+	2. Authentication for assigning roles/actions to users
+ > is a Object Document Mapper
+	- similar to ORM or Object Relational Mapping like JPA or Entity Framework
+ > uses MongoDB module behind the scene
+
+
+Installing Mongoose
+ > npm i mongoose
+
+
+Setting up Project Structure
+ > create "src" folder inside root directory
+	- will contain source code
+ > create "db" folder inside src
+	- will contain source code related to database
+
+
+Using Mongoose module
+ > import the mongoose module using require()
+ > we then call the connect() function to the exported object of mongoose module
+ 
+EX:
+const mongoose = require("mongoose");
+mongoose.connect("mongodb://127.0.0.1:27017/task-manager-api", {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+});
+
+
+Model
+ > Model is similar to an Entity in JPA
+ > describes the structure of data that we will store in the MongoDB
+ > contains a unique property "__v"
+	- "__v" refers to the Model's version
+
+Creating Model
+ > to create a model, we will call the model() of the mongoose object
+ > model() takes two inputs
+	1. name: string
+	2. schema: { [modelProp: string]: { [modelPropConfig: string]: value }}
+ > the model() returns the constructor for the said Model
+	- we can use this constructor to create an instance of a Model which we can save in MongoDB database later
+ > the Model's constructor function takes an object whose properties must be the same as the Model's schema
+
+EX:
+const User = mongoose.model("User", {
+  name: {
+    type: String,
+  },
+  age: {
+    type: Number,
+  },
+});
+
+const me = new User({
+  name: "Glenn",
+  age: 32,
+});
+
+
+Saving an instance of Model to Database
+ > to save a Model in database, we will need to use the save() method of model
+ > save() returns a Promise when either receives the Model instance saved or the Error
+	- with this, we can use then() and catch() to utilize these
+
+EX:
+// code
+me.save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+// LOG
+{
+  name: 'Glenn',
+  age: 32,
+  _id: new ObjectId("62a96f5a6024d418ae783ad6"),
+  __v: 0
+}
+
+
+Basic Validation in Mongoose Model
+ > by default, the Mongoose will have validation to the Model
+ 	- ex: if we assign value to a property of Model instance of different data type
+
+EX:
+const me = new User({
+  name: "Glenn",
+  age: "wOW",
+});
+
+me.save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+
+// LOGS
+Error: User validation failed: age: Cast to Number failed for value "wOW" (type string) at path "age"
+
+
+
+
+
+
+
+
+
+
+
+
+84 Creating a Mongoose Model
+
+//CODE
+const Task = mongoose.model("Task", {
+  description: {
+    type: String,
+  },
+  completed: {
+    type: Boolean,
+  },
+});
+
+const cleaning = new Task({
+  description: "Cleaning",
+  completed: false,
+});
+
+cleaning
+  .save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+// LOG
+{
+  description: 'Cleaning',
+  completed: false,
+  _id: new ObjectId("62a973a3ffac879429ec8f60"),
+  __v: 0
+}
+
+
+
+
+
+
+
+
+
+
+
+85 Data Validation and Sanitization Part 1
+
+Data Validation
+ > the data of the Model instance properties will be validated
+ > this means that these properties must confirm to rules like
+	- what data type they can be assign to
+	- conditions the properties value must meet (like if age is greater than 18+)
+
+Data Sanitization 
+ > the data of the Model instance properties will be sanitized
+ > this means we will modify the properties before we use the Model itself
+ > examples are:
+	1. removing the white spaces in the User's name property
+	2. removeing the password property to the User instance
+
+
+Validation Documetation
+ > https://mongoosejs.com/docs/validation.html
+ > we can add Validations to the Model's property through the Model Property's schema
+	- Schema is what we pass as the second argument of mongoose.model()
+	- Schema contains properties whose value is the SchemaType
+	- SchemaType contains properties that defines the Schema properties' configuration like validations
+ > we can add several validations inside the SchemaType like
+	1. required: boolean
+		> defines if the property is required or not
+	
+EX:
+// code where required is used
+const Task = mongoose.model("Task", {
+  description: {
+    type: String,
+    required: true,
+  },
+  completed: {
+    type: Boolean,
+  },
+});
+
+const cleaning = new Task({
+  completed: false,
+});
+
+// log
+Error: Task validation failed: description: Path `description` is required.
+
+
+
+Custom Validation
+ > Mongoose also provides us to create custom validation
+ > we do this by passing a function property to the Schema named "validate"
+ > "validate" function have the following properties
+	- takes one argument, the property value to validate
+	- this function must return a boolean to denote if value is valid or not
+ > note that not passing a value to the property with "validate" will NOT BE VALIDATED
+
+EX:
+const User = mongoose.model("User", {
+  name: {
+    type: String,
+    required: true,
+  },
+  age: {
+    type: Number,
+    validate(value) {
+      if (value < 0) {
+        throw new Error("Age must be a positive number");
+      }
+      return true;
+    },
+  },
+});
+
+
+Third Party NPM Libraries for Custom Validation
+ > we can use third party libraries for validating Model properties
+ > one of the example is the "validator" npm module
+	- https://www.npmjs.com/package/validator
+EX:
+// Code where the Model's email is validated using validator npm module
+const validator = require("validator");
+const User = mongoose.model("User", {
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is invalid");
+      }
+    },
+  },
+  age: {
+    type: Number,
+    validate(value) {
+      if (value < 0) {
+        throw new Error("Age must be a positive number");
+      }
+      return true;
+    },
+  },
+});
+
+// log
+{
+  name: 'Asade',
+  email: 'glenneligio@gmail.com',
+  age: 1,
+  _id: new ObjectId("62a981b5e144637d9ea4fa1a"),
+  __v: 0
+}
+
+
+SchemaTypes
+ > SchemaTypes are the object that you pass to the Schema's "type" key
+ > you can think of SchemaTypes as a configuration object for an individual property
+ > these objects defines the validation done to the Schema Property
+ > These SchemaTypes object contains several options that we can use to configure the Schema like:
+	1. required: boolean
+		- makes the Schema's property required
+	2. default: any or function
+		- defines the default value if no value is passed to Schema's property
+		- if function, return value will be the default value
+	3. validate: function
+		- uses to validate the Schema property
+		- receives the Schema property as value
+		- must return true or false to denote if value is valid
+			-> though we typically THROW AN ERROR if value is invalid
+
+
+SchemaType built-in validator for different SchemaType "type" property
+ > in SchemaType object, we define the "type" key to define the correct data type
+ > alongside this, SchemaType with specific "type" value can access built-in validators like
+	1. for "type": String
+		- enum, match, minLength and maxLength		
+	2. for "type": Number
+		- max and min
+
+
+Data Sanitization using Mongoose
+ > with SchemaType, we can define the sanitization that we will do the Model's property value BEFORE we added them
+ > each of the SchemaType "type"s (like String, Number, Boolean, etc) have different property of SchemaType to define to modify or sanitize them
+	1. for Strings
+		- lowercase: boolean
+		- uppercase: boolean
+		- trim: boolean
+
+EX:
+// code which add User Model whose age have default value of 0 and trims, lowercase the email
+const User = mongoose.model("User", {
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is invalid");
+      }
+    },
+  },
+  age: {
+    type: Number,
+    default: 0,
+    validate(value) {
+      if (value < 0) {
+        throw new Error("Age must be a positive number");
+      }
+      return true;
+    },
+  },
+});
+
+// code that adds a User with no age and not trimmed/uppercased email
+const me = new User({
+  name: "Asade",
+  email: "    GLENNELIGIO@GMAIL.COM      ",
+});
+
+// logs
+{
+  name: 'Asade',
+  email: 'glenneligio@gmail.com',
+  age: 0,
+  _id: new ObjectId("62a98a583a864d8532db0616"),
+  __v: 0
+}
+
+
+
+
+
+
+
+
+
+
+
+
+86 Data Validation and Sanitization Part 2
+
+EX:
+const User = mongoose.model("User", {
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is invalid");
+      }
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    trim: true,
+    minLength: 7,
+    validate(value) {
+      if (value.includes("password")) {
+        throw new Error(`Password can not include "password"`);
+      }
+      return true;
+    },
+  },
+  age: {
+    type: Number,
+    default: 0,
+    validate(value) {
+      if (value < 0) {
+        throw new Error("Age must be a positive number");
+      }
+      return true;
+    },
+  },
+});
+
+const me = new User({
+  name: "Asade",
+  email: "    GLENNELIGIO@GMAIL.COM      ",
+  password: "secret2    ",
+});
+
+me.save()
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+
+
+
+
+
+
+
+
+
+
+87 Structuring a REST API
+
+Application Programming Interface (API)
+ > set of tools that allows developer to build software applications
+ 	- ex: Node.js, Express, Mongoose
+
+Representational State Transfer - Application Programming Interface (REST API or RESTful API)
+ > REST API allows clients to access and manipulate resources using a set of predefined operations
+	- Resource may refer to a User, Task, WeatherForecast, Geolocation, etc
+	- Predefine operations includes the CRUD operations for the Resources\
+
+Representational
+ > with REST API, we are working with the "representations" of our data
+ > data is stored in the database, but the operations exposed by the REST API allows us to manipulate or access these data
+
+State Transfer
+ > REST API transfers the State from Server to Client
+	- this makes the Server "stateless"
+ 	- this means that Server DOES NOT STORE states regarding the Client or Client Session
+ > with this, each request from the Client contains ALL INFORMATION necessary to 
+	1. modify/access the specific Resource or do certain operation exposed by REST API
+	2. authenticate itself to the Server
+ 
+Using/Communication with REST API
+ > in most cases, communication with REST API is done using HTTP request
+ > the HTTP request Client sends contains informations such us
+	1. HTTP request method used 			- REQUIRED
+	2. HTTP request relative URL path		- REQUIRED
+	3. HTTP request headers	
+	4. HTTP request body
+		- in JSON format
+	5. HTTP request query parameters
+ > then the Server responds back with an HTTP response with the following information
+	1. header
+	2. body
+	3. Status code	
+		- denotes the status of the requests operation
+
+GOAL:
+ > create a REST API to modify/expose the Task Resource
+ > endpoints to expose these operations includes
+	1. create Task 
+		- POST /tasks
+	2. read all Tasks
+		- GET /tasks
+	3. read one Task
+		- GET /tasks/:id
+	4. update Task
+		- PATCH /tasks/:id
+	5. delete Task
+		- DELETE /tasks/:id
+
+Request
+ > compose of three parts
+	1. request line
+		- consist of request method, request path, and HTTP protocol version
+	2. request headers
+		- consist of list of key:value pairs
+	3. request body
+		- json format
+
+Example Request
+POST /tasks HTTP/1.1								- request line	
+Accept: application/json							- request header 1
+Connection: Keep-Alive								- request header 2
+Authorization: Bearer JWT_BEARER_TOKEN	- request header 3
+
+{"description": "Order new drill bits"}						- request body
+
+
+
+Response
+ > consist of the following parts
+	1. status line
+		- consist of the HTTP protocol version, status code, status name
+	2. response headers
+		- key:value pairs
+	3. response body
+		- json format
+
+EX:
+HTTP/1.1 201 Created
+Date: Sun, 28 Jul 2019 15:37:37 GMT
+Server: Express
+Content-Type: application/json
+
+{"_id": "10912830jkmknnmasd", "description": "Order new drill bits", "completed": false}
+
+
+
+
+
+
+
+
+
+
+
+
+88 Installing Postman
+
+Postman
+ > a REST API Client used to fire off HTTP request
+
+Using Postman
+1. Creating Collection
+	> Collection contains several Request configuration used to send HTTP request
+2. Creating Request
+ 	> inside Collection, we can create Request with specific information like headers, query params, body, url, etc
+
+
+
+
+
+
+
+
+89 Resource Creation Endpoints: Part 1
+
+Function/Object used
+app.post(path: string, callback: (req, res) => {})
+ > used to create a POST endpoint
+ > take same argument as app.get()
+
+express.json()
+ > Returns middleware that only parses json and only looks at requests where the Content-Type header matches the type option.
+ > we can pass the result of this to app.use() in order to make the Express parse the request JSON string body
+	- ex: app.use(express.json())
+
+res.status(code: number)
+ > used to set the Response's Status code
+ > we can method chain call the res.send() to this
+	- ex: res.status(400).send(error)
+
+
+Requirements
+1. Express
+	> for creating endpoints to be exposed to Clients
+2. nodemon
+	> for easier development
+	> we can install this as devDependencies
+
+Setup the Project
+1. Add scripts to the package.json
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+
+Setup the Server
+1. Create index.js inside the src
+2. Setup Express server inside index.js
+
+// inside index.js
+const express = require("express");
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log("Server is up at port: " + port);
+});
+
+
+Create a POST endpoint
+ > to create a POST endpoint, we will need to call the app.post()
+ > this receives the same arguments as the app.get(), which are
+	1. path
+	2. callback which receives the request and response
+ > now, we can see POST request with json body to this endpoint
+
+EX:
+app.post("/users", (req, res) => {
+  console.log(req.body);
+  res.send("Request received");
+});
+
+
+Configure Express
+ > we need Express to automatically parse the incoming JSON for us
+ > to do this, we will use the app.use() method again
+	- this time, we will pass express.json() inside
+ > with this, when we call req.body, we should see the JSON we've sent
+
+EX:
+app.use(express.json());
+
+
+
+Setting up Mongoose with Express
+1. In src/db folder, create mongoose.js
+	> inside mongoose.js, we will setup the MongoDB connection by calling mongoose.connect()
+2. Inside src/models, create the JavaScript file for exposing the Models
+	> inside these file, we will expose the output of the mongoose.model() call
+3. Inside index.js, call require() and pass the location of the mongoose.js
+	> this will execute the mongoose.connect() which is responsible for connecting the Node.js app to the MongoDB database
+4. After connecting to MongoDB, import the Models in the index.js as well	
+	> with this, we can do all sorts of MongoDB operations for that specific Mongoose Model
+
+// Inside src/db/mongoose.js
+const mongoose = require("mongoose");
+
+mongoose.connect("mongodb://127.0.0.1:27017/task-manager-api", {
+  useNewUrlParser: true,
+});
+
+// Inside src/models/user.js
+const mongoose = require("mongoose");
+const validator = require("validator");
+
+const User = mongoose.model("User", {
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is invalid");
+      }
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    trim: true,
+    minLength: 7,
+    validate(value) {
+      if (value.includes("password")) {
+        throw new Error(`Password can not include "password"`);
+      }
+      return true;
+    },
+  },
+  age: {
+    type: Number,
+    default: 0,
+    validate(value) {
+      if (value < 0) {
+        throw new Error("Age must be a positive number");
+      }
+      return true;
+    },
+  },
+});
+
+module.exports = User;
+
+
+// inside index.js
+const express = require("express");
+require("./db/mongoose");
+const User = require("./models/user");
+
+
+
+Using the Model inside an Endpoint/Route
+ > using the Model we imported, we can use it to create a Model, and save it to database
+ > when saving a Model, we will be given a Promise that contains either the saved Model or the error
+
+EX:
+// inside index.js
+app.post("/users", (req, res) => {
+  const user = new User(req.body);
+
+  user
+    .save()
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((e) => {
+      res.send(e);
+    });
+});
+
+
+Setting up the Status Code for the Response
+ > right now, even if we send the error, it will send a 200 OK response
+ > for us to set the status code of response, we will need to call res.status()
+	- in res.status(), we will pass the status code number
+	- note that we need to call this BEFORE the res.send()
+	- we can also chain this calls into one line instead of two
+
+EX:
+// POST /users endpoint
+app.post("/users", (req, res) => {
+  const user = new User(req.body);
+
+  user
+    .save()
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((e) => {
+      res.status(400).send(e);
+    });
+});
+
+
+NOTE:
+1. When a Resource Creation is SUCCESSFUL, the Status code must be 201 CREATED
+
+
+
+
+
+
+
+
+90 Resource Creation Endpoints: Part 2
+
+// inside src/models/task.js
+const mongoose = require("mongoose");
+
+const Task = mongoose.model("Task", {
+  description: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  completed: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+module.exports = Task;
+
+
+// inside index.js
+const Task = require("./models/task");
+
+app.post("/tasks", (req, res) => {
+  const task = new Task(req.body);
+
+  task
+    .save()
+    .then((task) => res.send(task))
+    .catch((error) => res.status(400).send(error));
+});
+
+
+
+
+
+
+
+
+91 Resource Reading Endpoints: Part 1
+
+Functions/Object used
+Model.find(filter: object): Promise<Model[]>
+ > used to find Models or Documents that matches the filter object query
+ > returns a Promise where we can either access the Models is fetching is successful or the error if things go poorly
+ 	- note that if no Document matches the filter, the Promise will still be successful but returns an empty array
+ > passing an empty object to "filter" will result in fetching ALL MODELS/DOCUMENTS
+
+Model.findOne(filter: object): Promise<Model>
+ > used to find a Model/Document that matches the filter object query
+ > will fetch the FIRST Document that matches
+ > takes a filter object query to be used for matching
+ > returns a Promise where we can either access the Model if fetching is successful or the error if things go poorly
+ 	- note that if no Document matches the filter, the Promise will still be successful but returns a null
+
+Model.findById(id: string): Promise<Model>
+ > used to find a Model/Document whose "_id" value matches the input id
+ > takes a id string as input
+	- this refers to the HEXSTRING value of ObjectID
+ > returns a Promise where we can either access the Model if fetching is successful or the error if things go poorly
+ 	- note that if no Document matches the filter, the Promise will still be successful but returns a null
+
+req.params
+ > lets us access the path variables in the form of object key:value pairs
+ > ex: 
+	endpoint path = "/users/:id"
+	request path = "/users/someRandomId"
+	req.params = { id: "someRandomId" }
+
+
+
+Resource Reading Endpoints - Fetch All
+ > now, we will create endpoints for reading resources
+ > specifically, we will create GET endpoint that returns either one or all documents
+
+EX:
+app.get("/users", (req, res) => {
+  User.find({})
+    .then((users) => {
+      res.send(users);
+    })
+    .catch((error) => {
+      res.status(404).send(error);
+    });
+});
+
+
+Resource Reading Endpoints - Fetch Document by Id
+ > for this GET endpoint, our goal is to fetch a specific Document using the Id
+ > the difference between this and the find all Documents GET endpoint is
+	1. we will add a path variable to get the id to be used
+	2. we will use Model.findById() method to fetch the Document
+
+
+
+
+
+
+
+
+
+
+92 Resource Reading Endpoints: Part 2
+
+// code for fetching all tasks and tasks with specific id
+app.get("/tasks", (req, res) => {
+  Task.find({})
+    .then((users) => {
+      res.send(users);
+    })
+    .catch((error) => {
+      res.status(500).send();
+    });
+});
+
+app.get("/tasks/:id", (req, res) => {
+  Task.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send();
+      }
+      res.send(user);
+    })
+    .catch((error) => {
+      res.status(500).send();
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+93 Promise Chaining
+
+Function/Object used
+Model.findByIdAndUpdate(id: string, update: object): Query<Model>
+ > used to find the Document to update by string id, and then update the Document fields using the update object
+ > returns a Query, which is a Promise, that contains the Model/Document BEFORE it is updated
+
+Model.countDocuments(filter: object): Query<number>
+ > used to count the Documents whose field matches the filter objects property
+ > returns a Query Promise which returns the count of Document matched when resolved
+
+
+Promise Chaining
+ > a process where we chain multiple Promises together
+ 	- in code, what we are doing is chaining several then() call
+ > possible only IF the callback inside then() returns ANOTHER Promise
+ > in method chaining, we can call MULTIPLE then() to process each of Promise's resolved value
+	- each then() will have its parameter come from the PRECEEDING then()'s resolved value
+ > in method chaining, we can only call ONE catch() 
+	- this will be place at the END of the Promise chain
+	- if one of the Promise in the chain is rejected, it will skip the then() calls and jump straight to catch() to execute it
+
+EX:
+// Promise example
+const add = (a,b) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(a + b)
+    }, 2000)
+  })
+}
+
+
+// Without Promise chaining. 
+add(2, 3)
+  .then((sum) => {
+    console.log(sum);
+
+    add(sum, 5)
+      .then((sum2) => {
+        console.log(sum2);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  })
+  .catch((e) => {
+    console.log(e);
+  });
+
+
+// with Promise chaining
+add(3, 4)
+  .then((sum) => {
+    console.log(sum);
+    return add(sum, 5);
+  })
+  .then((sum2) => {
+    console.log(sum2);
+  })
+  .catch((e) => {
+    console.log(e);
+  });
+
+
+
+EX:
+// With Model.findByIdAndUpdate() and Model.countDocuments()
+require("../src/db/mongoose");
+const User = require("../src/models/user");
+
+User.findByIdAndUpdate("62a96f5a6024d418ae783ad6", { age: 1 })
+  .then((user) => {
+    console.log(user);
+    return User.countDocuments({ age: 1 });
+  })
+  .then((count) => {
+    console.log(count);
+  });
+
+
+
+
+
+
+
+
+94 Promise Chaining Challenge
+
+Function/Object used
+Model.findByIdAndDelete(id: string): Query<Model>
+ > used to delete a Document with id specified
+ > returns a Query, a Promise, which returns the deleted Document when resolved
+
+GOAL:
+1. Remove a Task by id and print the removed Document + count of remaining incomplete task
+
+// Code
+Task.findByIdAndDelete("62a973a3ffac879429ec8f60")
+  .then((user) => {
+    console.log(user);
+    return Task.countDocuments({ completed: false });
+  })
+  .then((count) => {
+    console.log(count);
+  });
+
+
+
+
+
+
+
+
+
+
+
+95 Async/Await
+
+Async/Await
+ > new feature to help us work with asynchronous process and Promises much easier
+ > composed of two keywords used together, "async" and "await"
+
+async
+ > keyword added in front of a function
+ > with async added in a function, this TRANSFORM the function's return type to a Promise
+	- the normal return value of the function will be the resolved value of the said Promise
+	- to "reject" in an async function, we will need to THROW AN ERROR
+		-> the Error object thrown will be the reject value
+ > with an "async" function, we can use then() and/or catch() to receive its resolved or rejected 
+
+EX:
+const doWork = async (work) => {
+  if (work) {
+    return work;
+  }
+  throw new Error("No work is passed");
+};
+
+console.log(doWork("Cleaning"));
+console.log(doWork());
+
+
+// logs
+Promise { 'Cleaning' }
+Promise {
+  <rejected> Error: No work is passed
+  // stack trace
+}
+
+
+// accessing the resolved value
+doWork("Cleaning")
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+
+await
+ > keyword used before a method call that returns a Promise
+ > with this, instead of a Promise, the method call will return the RESOLVED VALUE
+ > advantage of this over Promise Chaining is that
+	1. we can easily have access to resolved value of each Promise's resolved value in the Promise Chain
+		- with Promise Chains, we might need to create variable outside the chain to hold each of Promise's resolved value
+ > note that if any of the "await" Promises inside the "async" function is REJECTED, 
+	1. the proceeding awaited Promises will NOT be executed
+	2. the async function itself will immediately execute its catch() callback
+
+EX:
+// function that returns a Promise
+const add = (a, b) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (a < 0 || b < 0) {
+        return reject("Numbers must be non-negative");
+      }
+
+      resolve(a + b);
+    }, 2000);
+  });
+};
+
+// async function where all awaited Promises is resolved
+const doWork = async () => {
+  const sum = await add(1, 99);
+  const sum1 = await add(sum, 50);
+  const sum2 = await add(sum1, 30);
+  return sum2;
+};
+
+doWork()
+  .then((result) => {
+    console.log("Result: ", result);
+  })
+  .catch((error) => {
+    console.log("Error: ", error);
+  });
+
+CONSOLE LOG OUTPUT:
+Result:  180
+
+
+// async function where one of the awaited Promises is rejected
+const doWork = async () => {
+  const sum = await add(1, -99);
+  const sum1 = await add(sum, 50);
+  const sum2 = await add(sum1, 30);
+  return sum2;
+};
+
+doWork()
+  .then((result) => {
+    console.log("Result: ", result);
+  })
+  .catch((error) => {
+    console.log("Error: ", error);
+  });
+
+CONSOLE LOG OUTPUT
+Error:  Numbers must be non-negative
+
+ 
+NOTE:
+1. For error handling of awaited Promises inside an async function, we can use the try-catch
+
+EX:
+// async function where one of the awaited Promises is rejected
+const doWork = async () => {
+  try {
+    const sum = await add(1, -99);
+    const sum1 = await add(sum, 50);
+    const sum2 = await add(sum1, 30);
+    return sum2;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+
+
+
+
+
+
+
+
+96 Async/Await part 2
+
+Async/Await in the mongoose.Model functions
+
+// code
+require("../src/db/mongoose");
+const Task = require("../src/models/task");
+
+const deleteTaskAndCount = async (id) => {
+  const task = await Task.findByIdAndDelete(id);
+  const count = await Task.countDocuments({ completed: false });
+  return count;
+};
+
+deleteTaskAndCount("62abda4a413e3c00fa188898")
+  .then((count) => {
+    console.log(count);
+  })
+  .catch((e) => {
+    console.log(e);
+  });
+
+
+
+
+
+
+
+
+
+97 Integrating Async/Await
+
+Integrating Async/Await in the Route handlers
+ > we will use async/await specifically in the callback input of the app.get() and app.post() route handlers
+ > with the callback input being "async", we can now use the "await" inside it to await for the Promise's resolved values
+
+EX:
+app.post("/tasks", async (req, res) => {
+  const task = new Task(req.body);
+
+  try {
+    await task.save();
+    res.status(201).send(task);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+app.get("/tasks", async (req, res) => {
+  try {
+    const tasks = await Task.find({});
+    res.send(tasks);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+app.get("/tasks/:id", async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (task) {
+      return res.send(task);
+    }
+    res.status(404).send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+
+
+
+
+
+
+
+
+98 Resource Updating Endpoints: Part 1
+
+Function/Object used
+app.patch(path: string, callback: (req, res) => {})
+ > used to create an endpoint that accepts PATCH http request
+
+Model.findByIdAndUpdate(id: string, updates: object, options: object): Query<Model>
+ > used to update a specific Document in the Collection
+ > takes three inputs
+	1. the id string
+	2. the update object that contains key:value pairs to update Document fields
+	3. options to define the configuration when updating Document
+ > options properties include
+	1. new: boolean
+		- defines if the Model contains in the Query return is either the Document before or after the update
+		- if true, returns the updated Model, else return Model before update
+
+
+Object.keys(object: object)
+ > returns the keys of the object input as string array
+
+GOAL:
+1. Create a PATCH endpoint to update Fields of specific User Document
+2. Validate if the properties present in the Request body to be used for updating is included in valid updates
+	- if not, return 400 BAD REQUEST
+3. Update the User
+	- if present, return 200 OK with new User
+	- if user not present, return 404 NOT FOUND
+	- if theres an error in update, return 500 INTERNAL SERVER ERROR
+
+
+EX:
+app.patch("/users/:id", async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["name", "email", "password", "age"];
+  const isValidOperation = allowedUpdates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send();
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).send();
+    }
+
+    res.send(updatedUser);
+  } catch (error) {
+    res.status(400).send();
+  }
+});
+
+
+
+
+
+
+
+
+
+
+99 Resource Updating Endpoints: Part 2
+
+// CODE:
+app.patch("/tasks/:id", async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["description", "completed"];
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send();
+  }
+
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedTask) {
+      return res.status(404).send();
+    }
+
+    res.send(updatedTask);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+
+
+
+
+
+
+100 Resource Deleting Endpoints
+
+Function/Object used
+
+app.delete(path: string, callback: (req, res) => {})
+ > used to expose an endpoint that accepts http request with method DELETE
+
+Model.findByIdAndDelete(id: string): Query<Model>
+ > used to delete a Document whose _id field matches the id string input
+ > takes string input which is the _id field of Document to delete
+ > returns a Promise that returns the deleted Document when resolved
+
+
+
+Creating an Endpoint for Deleting Resources
+ > with app.delete() and Model.findByIdAndDelete() we can created an endpoint that 
+	1. accepts DELETE Http request
+	2. removes a Document in database using an id string
+
+EX:
+// CODE
+app.delete("/tasks/:id", async (req, res) => {
+  try {
+    const deletedUser = await Task.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).send();
+    }
+    res.send(deletedUser);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+101 Separate Route File
+
+Function/Objects used
+express.Router
+ > returns a constructor to the Router class
+ > a class to create modular, mountable route handlers	
+	- modular since we can create different Routers for different use cases and treat them as "module"
+	- mountable since we can mount this into the Express Server with ease
+ > a Router instance is a complete middleware and routing system
+	- for this reason, it is often referred to as a "mini-app"
+ > in a Router instance, we can call the route creating methods just like from Application instance of express()
+ > this methods includes router.get(), router.post(), router.put(), router.patch(), router.delete(), etc
+
+ 
+app.use(router: express.Router)
+ > another overload of app.use() where it takes an express.Router instance
+ > this adds the Route handlers defined the the Router instance to the Express server
+
+app.use(path: string, router: express.Router)
+ > another overload of app.use() that is related to express.Router
+ > adds the Router, but at the same time modify the paths the Route handlers inside Router have
+	- this means that all the Route handler paths will be PREFIXED by the path passed in this method
+
+EX:
+With this setup, in order to match to the Route handler below, we will need to call "/user/:id" instead of just "/"
+
+// route handler inside userRouter
+router.delete("/:id", (req, res) => {})
+
+// register router instance
+app.use("/user", userRouter)
+
+
+
+Refactoring the Routes in Express
+ > right now, we are using the application to create the Routes/Endpoints
+ 	- but in this configuration, we can only create Routes/Endpoints in a SINGLE FILE
+	- this will result in a huge .js file that contains all the Routes
+	- this is a bad design especially if the Routes have different use cases
+		-> ex: modifying/accessing different Models/Resources
+ > with this, Express provides the Router in order for us to create route handlers that we can mount in Express later
+
+
+Using Router
+1. When using Router, we typically create a SEPARATE file to contain the Router instance and Route handlers registered to it
+2. After setting up, we will export the Router instance and import it in the place where Application instance exist
+	- Application instance is the return value of express()
+3. After importing the Router instance, we will pass Router instance to the app.use()
+
+
+EX:
+// user.js
+const express = require("express");
+const router = express.Router();
+const User = require("../models/user");
+
+router.post("/users", async (req, res) => {
+  const user = new User(req.body);
+
+  try {
+    await user.save();
+    res.status(201).send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.get("/users/:id", async (req, res) => {
+  const _id = req.params.id;
+
+  try {
+    const user = await User.findById(_id);
+    if (user) {
+      return res.send(user);
+    }
+    res.status(404).send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+router.patch("/users/:id", async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["name", "email", "password", "age"];
+  const isValidOperation = allowedUpdates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send();
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).send();
+    }
+
+    res.send(updatedUser);
+  } catch (error) {
+    res.status(400).send();
+  }
+});
+
+router.delete("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.send(user);
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+module.exports = router;
+
+
+
+// index.js
+const express = require("express");
+require("./db/mongoose");
+const userRouter = require("./router/user");
+const taskRouter = require("./router/task");
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(userRouter);
+app.use(taskRouter);
+
+app.listen(port, () => {
+  console.log("Server is up at port: " + port);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+

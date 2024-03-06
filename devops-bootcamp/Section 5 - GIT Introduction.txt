@@ -1,0 +1,472 @@
+Section 5: GIT Introduction
+
+
+35. GIT Course Introduction
+
+Git Course Topics
+1. Introduction to Git
+2. Installing GIT
+3. Initialize GIT Repository
+4. GIT Branches
+5. Working as a team with Remote Repositories
+6. Cloning, Pushing, Pulling, and Fetching
+7. Pull Requests
+8. Merge Conflicts
+9. Forks
+10. Rebasing & Interactive Rebasing
+11. Cherry Picking
+12. Resetting and Reverting
+13. Stashing
+14. Reflog
+15. Understanding GIT
+
+
+
+
+36. GIT Introduction
+
+Git
+ > Git is an open source, distributed version control system
+ > can be seen as Content Tracker, where we can stores all our code changes
+ > Git is a Version Control system (VCS)
+	- VCS basically means that we can go back in time and work with a different version of our code base
+	- This is possible since VCS like Git store all the changes
+	- VCS also have branches, where each branch represent different branching versions of the code base
+ > Git is a distributed VCS
+	- Distributed means that it has a REMOTE repository which is stored in a server and a local repository which is stored on the computer of EVERY develop working on the project
+	- This means that every developer has access to the full copy of the code base
+ > With GIT (or any VCS in general), you have access to your ENTIRE project's history, the changes you made, who made the changes if you are working on a project with multiple team members, and when it was made
+
+
+
+
+
+37. Local and Remote Repositories
+
+
+Local Repository and Remote Repository
+ > GIT has two repository types, local and remote
+ > Local Repository is on your own machine, so you have direct access to it
+ > Remote repository is usually a CENTRALIZED server and is entirely optional
+	- we can save the changes that we made locally on this remote server
+	- remote repository is very useful when you want to have a backup of your data in case your computer breaks or when you're working with a team
+	
+Actions done with Remote Repositories
+1. Pulling data in Remote to an initialized Repository
+	> typically for a new team member, in order for them to start working on the project, they will pull all the changes from remote repository to their local repository
+2. Pushing changes from Local to the Remote repository
+	> after the said changes in done in Local repository, one can push the changes from Local to the Remote repository
+	> typically in a work environment, you don't directly push the changes in the PRODUCTION branch, instead you will first push it to a QA or Feature branch
+3. Syncing the local and remote repositories
+	> while working on your changes in local environment, you may want to frequently pull the changes done in remote repository to keep your codebase in your local machine up to date to the remote code base
+
+
+Local Repository stages
+1. Working Area
+	> contains all your active changes which includes
+		- new untracked files
+		- new updates in tracked files
+		- new deletes of files
+	> Git doesn't know what to do with them yet. It just knows that these files contains some updates
+2. Staging area 
+	> contains new changes that will soon be committed
+3. Committed File
+
+
+Local Repository stages process
+1. First, all the changes and untracked files in the Working area are first added in the Staging Area
+2. Then, once all the changes are added Staging Area, the developer can 'commit' all of these and transfers them from Staging Area to Committed files
+
+
+
+
+38. Install GIT
+
+Install GIT
+ > https://git-scm.com/downloads
+ > based on the OS you are using, you may have different ways of installing GIT
+ 
+Git install verification
+ > to verify git install, use the command below
+	$ git --version
+
+
+
+
+
+39. Lab Install GIT
+
+
+Q1: Let's install GIT. First, identify the operating system this lab environment is built on.
+S: Use "ls /etc/*release*" command, the print out the files output of the command itself using 'cat'
+
+Q2: Install GIT on the system. Remember to use sudo to elevate permission while installing. Refer to the GIT installation documentation here: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+S:
+1. For ubuntu, use commands below
+	$ sudo apt-get update
+		- used to update the package index files on the system
+	$ sudo apt-get install git
+
+Q3: Identify the version of git you just installed.
+S: Use 'git --version' command
+
+Q4: We will learn more about working with different git commands throughout this course. But let's see if you can figure some stuff out using the git help command. What's the git command used to Show various types of objects?
+A: 'git show'
+
+Q5: What's the git command used to List, create, or delete branches?
+A: 'git branch'
+
+Q6: What's the git command used to Download objects from another repository?
+A: 'git fetch'
+
+Q7: What's the git command used to start a working area?
+A: 'git init'
+
+Q8: You may view additional help on each command following the syntax git help <command>. For this you must first install git man pages using the command sudo apt-get install git-man. Once done use the help of the init command with the command git help init and identify the option used to create a bare repository. We will learn about initializing a repository later in this course.
+A: '--bare'
+S: 
+1. Install git-man using apt-get
+	$ sudo apt-get install git-man
+2. Use 'git help init' command
+
+
+
+
+40. Initialize a GIT Repository
+
+Initialize a GIT Repository
+ > in order to do so, use the 'git init' command
+	$ git init
+ > this will get a '.git', we can see this using 'ls -a' command
+ 
+Creating new file for git process flow demonstration
+1. $ touch story1.txt
+	> creates file named 'story1.txt'
+2. $ echo "This is a beautiful story" >> story1.txt
+	> prints the output of the echo, and appends them to the content of the story1.txt file
+	
+Checking status of the Local git repository
+ > to do so, use the 'git status' command
+ > this prints the output below
+	- the current working branch
+ > EX:
+	On branch master
+		No commits yet
+		Untracked files:
+			story1.txt
+	nothing added to commit but untracked files are present
+ 
+Adding untracked files, or unstaged changes to staging area
+ > to do so, use 'git add' command, then specify the files or directory you want to add
+	$ git add story1.txt
+	
+Configurating name and email of user
+ > before doing your first commit, you must specify in the git config the user's name and email
+ > this is so that we can track the author of the said commit, which in this case is us
+ > to add these configurations, use the commands below
+	$ git config user.name "glenn"
+	$ git config user.email "glenn@gmail.com"
+	
+Committing / Saving changes made in local repository
+ > to do so, use the 'git commit -m' command, and specify the changes made
+	$ git commit -m "Added first story"
+ > it is a best practice to have the message summarize the changes made in the said commit
+ 
+
+Commands
+git init
+ > initializes a local git repository in the current working directory
+ > creates a hidden folder named '.git'
+ > by default, creates a default branch named 'master'
+ 
+git status
+ > shows the status of the current local git repository
+ > prints the following information
+	- current working branch
+	- commits done
+	- untracked files
+	- unstaged changes
+	- staged changes
+	
+git add FILE
+git add DIRECTORY
+ > adds the specified file or directory to the staging area
+ 
+git commit -m "MESSAGE"
+ > commits all the updates in the staging area to the committed files stage
+ > if command is executed without the options, it will open a text editor for you to add the message
+
+git config user.name "USERNAME"
+git config user.email "EMAIL"
+ > used to configure the user name and email
+
+
+
+
+41. Demo: Initialize a GIT Repository
+
+Commands
+git init 
+touch story1.txt 
+echo "line1" > story1.txt
+git status
+git add story1.txt
+git status
+git config user.name "sarah"
+git config user.email "sarah@mail.com"
+git commit
+git status
+cat story1.txt
+echo "line2" >> story1.txt
+cat story1.txt
+git status
+git add story1.txt
+git commit -m "Updated first story1.txt"
+echo "line3" >> story1.txt
+echo "line1" >> story2.txt
+git status
+git add story1.txt
+
+Demo: ATOMIC commits (1)
+git commit -m "Updated story1.txt" 
+git add story2.txt
+git commit -m "Added story2.txt" 
+
+Demo: Updates on same file in working and staging area (2)
+echo "line4" >> story1.txt
+git add story1.txt
+echo "qweqweqwe" > story1.txt
+git status 
+git restore story1.txt
+git status
+cat story1.txt
+git restore --stage story1.txt
+git status
+
+Demo: Removing changes from staging area
+echo "my story ideas" > notes.txt
+echo "line4" >> story1.txt
+git add .
+git status
+git rm --cached notes.txt
+git status
+
+Demo: .gitignore
+echo "notes.txt" >> .gitignore
+cat .gitignore
+git status
+
+
+
+New commands
+git restore FILENAME
+ > used to discard the changes done in the Working area
+ > it will revert to the last state when it was STAGED
+ 
+git restory FILENAME
+ > used to discard the changes done in the staging area for the said file
+ 
+git rm [-f | --cached] FILENAME
+ > removes the FILENAME in the staging area
+ > based on the flag used, it will either put it back to working area (--cached) or remove the new file or changes entirely (-f)
+ 
+ 
+NOTES:
+1. Each commit should be ATOMIC. This means that each commit should be to solve a single problem or implement a specific feature or improvement
+	> also if each commit is atomic, it makes it easier to revert each commit since in theory, they should not affect each other
+2. When staging a change/update using 'git add', it will cache of the state of that file. This means that it is possible for a single file to be in the staging area and working area
+	> this will happen when we initially make some changes in a file, add it to the staging area, then to another change again to the said file
+	> using 'git restore' will restore the state of the file where we LAST STAGED it
+3. .gitignore contains the list of files and directory that will be NOT be tracked by GIT
+	> typically, we add commonly ignored files to this file such as the cache directories, log directorys, temporary build files, etc
+
+
+
+
+42. Lab: Initialize a GIT Repository
+
+Q1: What is the command to initialize a git repository?
+A: 'git init'
+
+Q2: Initialize a git repository at /home/sarah/story-blog. Create directory if it doesn't already exist.
+S:
+1. Check if dir exist
+	ls /home/sarah/story-blog
+2. Create if it does not
+	mkdir -p /home/sarah/story-blog
+3. Initialize git repo
+	git init
+	
+Q3: Which hidden folder gets created after initializing a git repository? Explore the repository created in the previous step
+A: .git
+S: Use 'ls -a' command
+
+Q4: Let's test some of the concepts we learned so far in our lectures. Once a git repository has been initialized, which stage contains the active changes in your local git repository?
+A: Working area
+
+Q5: Let’s add a file to our project inside /home/sarah/story-blog 
+File name: lion-and-mouse.txt
+File content: A Lion lay asleep in the forest
+S:
+1. Use command below to create lion-and-mouse.txt with specified content
+	$ echo "A Lion lay asleep in the forest" > lion-and-mouse.txt
+
+Q6: Which stage contains new changes that will soon be committed to local git repo ?
+A: Staging area
+
+Q7: Now that we've added a text file, let's see if git detected the change we made. Although we haven't done anything with git yet, we initialized a git repository in this project, so git is aware of all our files and changes. You can see the status of git by executing the git status command.
+Answer next few questions based on the git status command output.
+S: Execute 'git status'
+O:
+On branch master
+No commits yet
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        lion-and-mouse.txt
+nothing added to commit but untracked files present (use "git add" to track)
+
+Q8: What commits are listed in the git repository?
+A: No commits
+
+Q9: Whats the status of the lion-and-mouse.txt in the repository
+A: Untracked
+
+Q10: Which area of the local git repository is the lion-and-mouse.txt file in ?
+A: Working Area
+
+Q11: Stage the file lion-and-mouse.txt to make it available for commit.
+S: Use 'git add lion-and-mouse.txt' command
+
+Q12: Now, it's time to commit our change! A commit records the change in the repository compared to its previous state. But before that we must configure the git user who will be the owner of the commit.
+Set git username as sarah and user email as sarah@example.com using the below commands.
+git config user.email sarah@example.com
+git config user.name sarah
+S: Execute commands above
+	$ git config user.email sarah@example.com
+	$ git config user.name sarah
+	
+Q13: Let's commit our change! In this case, we didn't have any previous commits, so the addition of the file lion-and-mouse.txt is a change compared to its previous state. Commit the files that are currently in the staging area. First check the status of the file using the command git status. Then commit using the commit message as Added the lion and mouse story
+S: Use 'git commit' and pass the message specified
+	$ git commit -m "Added the lion and mouse story"
+
+Q14: Sarah created a new file named notes.txt where she plans to write down ideas about the story for personal purposes. She does not want git to track this file or share it with her team mates.
+What is the current status of the notes.txt file?
+A: Untracked
+S: Use 'git status' to check
+
+Q15: It is good that the file is untracked. But it is still under GIT's radar. If you run the "git add ." command accidentally git will start to track this file.
+Let's configure git to ignore this file permanently.
+S: 
+1. Add the notes.txt in the .gitignore file
+	$ echo "notes.txt" >> .gitignore
+
+Q16: What's the status of the file notes.txt now in the git status command's output.
+A: Not listed at all
+
+Q17: As you might have noticed the .gitignore file itself may be listed as untracked. It is a good practice to track the .gitignore file with git.
+
+Q18: Let's explore another git repository. We have a repository used for the development of an application cloned at /home/sarah/learning-app-ecommerce.
+Identify the state of the git repository. How many files are staged and how many are not?
+S:
+1. Go to the dir
+	$ cd /home/sarah/learning-app-ecommerce
+2. Use git status to check
+	$ git status
+	
+Q19: You are asked to commit the README.md file with the commit message Add instructions for verification and the js/theme.js file with the message Increase time from 400 to 500
+Note that the README.md file is already staged. So you just have to commit it. The file js/theme.js is to be committed as part of another commit.	
+S: 
+1. Use git commit to commit the readme.md, which is currently in staged
+	$ git commit -m "Add instructions for verification"
+2. Add the js/theme.js to staging area
+	$ git add js/theme.js
+3. Commit js/theme.js
+	$ git commit -m "Increase time from 400 to 500"
+
+Q20: What files are configured to be ignored by this repository?
+S: Print .gitignore file to see
+
+Q21: .idea/ is a directory created by the IntelliJ Idea IDE. These are personal to the user and we don't want these to be checked in to the git repository along with our code.
+
+
+
+
+
+43. GIT Log
+
+git log
+ > shows all the commits made in the repository
+ > commit informations includes
+	- commit hash
+	- author name
+	- date of commit
+	- commit message
+ > to print the commits in one line use '--oneline' option
+	$ git log --oneline
+ > adding '--name-only' option adds the filenames affected in commit
+	$ git log --name-only
+
+
+
+
+44. Lab: GIT Log
+
+Q1: We have initialised git repo in /home/sarah/story-blog. Check git log command output in that directory
+Simply run cd /home/sarah/story-blog; git log
+As we haven't commited any file yet it should show message fatal: your current branch 'master' does not have any commits yet . So lets commit some file in next step.
+S: Go to /home/sarah/story-blog and execute 'git log'
+
+Q2: Sarah has written a story lion-and-mouse.txt under /home/sarah/story-blog/. Please commit it to local git repo
+Add commit message: Added the lion and mouse story
+S: 
+1. Check git status
+	$ git status
+2. Add the lion-and-mouse.txt in the staging area
+	$ git add lion-and-mouse.txt
+3. Commit the file
+	$ git commit -m "Added the lion and mouse story"
+	
+Q3: We have committed lion-and-mouse.txt file in git repo /home/sarah/story-blog. Check git log command output in that directory
+Based on the output of the command please answer the next questions
+S: Execute git log
+	$ git log
+	
+Q4: Which info is not displayed in git log?
+A: List of changed files
+
+Q5: You can list the changed files as well using the --name-only option with the git log command
+Run the command git log --name-only
+S: Run command above
+	$ git log --name-only
+	
+Q6: Which branch has the changes been committed to?
+Branch info can be seen in first line of git log output where (HEAD -> {BRANCH_NAME} ) is displayed.
+A: master
+
+Q7: Who is the Author of the commit in git repo?
+A: sarah
+
+Q8: Another user has committed a new file to the repository now. Identify the user and the new file that was added.
+Commit message: Added a new story.
+Use the --name-only option to view the files as well
+A: tom added frogs-and-ox.txt
+S: Use 'git log --name-only' command
+
+Q9: What is the option for git log command to display the logs in compact way (one log per line)?
+If not sure try each one.
+A: --one-line
+
+Q10: Another git repository that hosts code of an e-commerce application is available at /home/sarah/learning-app-ecommerce.
+Explore the repository, check the files, git status, log etc.
+
+Q11: The repository has many commits. Can you try to list the last 3 commits alone?
+There should be an option in git log to limit the list of outputs. Use git help log. Check hint if not sure.
+S: Add '-n' flag, and pass the number of commit you want to show
+	$ git log -n 3
+	
+Q12: Identify who made the latest commit in the new repository.
+S: Use git log command to check the latest logs. The top commit is the latest
+
+Q13: Judging by their actions, can you guess who may be the javascript developer in the team?
+Look at the logs and identify the person who made changes to the .js file recently. You have already learned the option to display files associated with a commit
+S: Use 'git log --name-only' command, and check if any commits have a .js file on them

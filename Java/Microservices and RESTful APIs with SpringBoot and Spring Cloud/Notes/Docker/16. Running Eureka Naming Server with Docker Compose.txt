@@ -1,0 +1,67 @@
+16. Running Eureka Naming Server with Docker Compose
+
+Eureka Naming Server in Docker Compose
+	> Microservices that will register to Eureka Naming server must use proper serviceUrl
+	> the usual http://localhost:8761/eureka will not work
+		- this is due to the fact that the "localhost" refers to the network INSIDE the Container itself and not the machine it is running
+	> to fix this, we must refer to the Docker Service where the Eureka Naming Server is running
+		- ex: if we defined a Docker Service "naming-server" where Eureka Naming Server is running, the serviceUrl to use must be "http://naming-server:8761/eureka"
+		- NOTE: the port 8761 in serviceUrl must be the same as the port Eureka Naming Server is listening and the port "naming-server" Docker Service is exposing
+
+
+
+Configuring Eureka Naming Server in Docker Compose
+1. Create a Docker Image of the Eureka Naming Server
+	> configure the <build> of the pom.xml of Eureka Naming Server
+2. Modify docker-compose.yaml file
+	> add Docker Service that will host Container running the Eureka Naming Server Docker Image
+	> modify the currency-exchange-service Docker Service
+		a. add "depends_on" property and pass the "naming-server" Docker Service
+			-> this will make sure that "naming-server" is up and running BEFORE STARTING the "currency-exchange-service"
+		b. add "environment" property, and inside, add EUREKA.CLIENT.SERVICEURL.DEFAULT.ZONE env
+			-> in the env, pass the correct url of the Eureka naming server ("http://naming-server:8761/eureka")
+3. Run the Docker containers using "docker-compose up" command
+
+MODIFIED docker-compose.yaml
+
+version: '3.7'
+
+services:
+  currency-exchange:
+    image: shuntjg/mmv2-currency-exchange-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8000:8000"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+
+  naming-server:
+    image: shuntjg/mmv2-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - currency-network
+
+networks:
+  currency-network:
+
+	> here, we can see the new Docker Service named "naming-server" that uses the Docker image created by mvn spring-boot:build-image	
+	> we can also see the new properties in "currency-exchange" Docker Service which are
+		1. depends_on, which defines the service dependencies
+		2. environment, which defines the environment variables the Docker Container will use
+			-> in case the environment variable have equivalent property in application.property, the env var will OVERWRITE it
+
+
+
+EXAMPLE CONSOLE OUTPUT
+
+[+] Running 2/2
+ - Container 04docker-naming-server-1      Created                                                                 1.0s
+ - Container 04docker-currency-exchange-1  Created                                                                 0.3s
+Attaching to 04docker-currency-exchange-1, 04docker-naming-server-1
+04docker-naming-server-1      | Setting Active Processor Count to 16

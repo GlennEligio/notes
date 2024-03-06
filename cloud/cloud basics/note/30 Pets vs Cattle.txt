@@ -1,0 +1,24 @@
+30 Pets vs Cattle 
+
+
+Common elements of Cloud Architecture
+1. Decoupled from hardware resources
+	> Consumers don't have to deal with these resources
+2. Provides software control for these resources/services	
+	> example includes Web UI or GUI
+3. Comes with SLAs
+	> SLA refers to Software Level Agreement which refers to the conditions Cloud Provider specifies that Consumers must agree
+	> ex: AWS might mention in SLA that their EC2 instances are available 99.99% of the time
+
+
+Pets vs Cattle analogy
+ > analogy used to describe the decoupling from harware resources
+ > Pets refers to how we deal with hardware resources ON-PREM
+	- we typically are familiar with these resources intimately like a Pet, where we knows the specifics of it
+	- ex: we know the name of the server, or which server rack and connection a specific server have
+ > Cattle refers to how we deal with CLOUD hardware resources
+	- here, you treat the resources as Cattle
+	- you don't know any specifics with regards to the resources that you use (ex: server name, rack location, data center location)
+	- we treat these resources as one among many rather than special thing
+	- opposite of the snowflake server example given earlier
+

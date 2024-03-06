@@ -1,0 +1,28 @@
+10 Iterator and Observer pattern
+
+Iterator and Observer pattern
+ > before, people don't link this two patterns to each other
+ > difference between this two patterns is who controls/pass the data
+	- for iterator, its the Consumer who controls what the next data to be sent by Source (PULL)
+	- for observer, its the Source that controls what the next data to send to Observer (PUSH)
+
+EX:
+Iterator pattern - print every element in a List
+myList.forEach(element -> System.out.println(element));
+
+Observer pattern - listen to mouse clicks and print each click event
+clicksChannel.addObserver(event -> System.out.println(event))
+
+
+Applying Iterator pattern to Observer pattern
+ > here, the clicksChannel still controls the sending of data
+ > but we are still providing the necessary behavior that we want to happen based on the said event
+clicksChannel
+.filter(event -> event != null)
+.addObserver(event -> System.out.println(event))
+
+
+Reactive programming syntax
+clicksChannel
+.filter(event -> event != null)
+.subscribe(event -> System.out.println(event))

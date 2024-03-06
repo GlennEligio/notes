@@ -1,0 +1,86 @@
+Day 12
+Introduction
+Years of Experience
+Comfortability with J2EE
+
+Name: John Glenn Eligio, Glenn
+Experience: 1 year, same experience as Tristan and Doms since we we're deployed in same project
+Comfortability with J2EE: I have experience with Spring, but with regards to J2EE technology like Servlets, Filters,  JPA, I am familiar with them but I haven't used them directly
+
+
+
+HCL Commerce
+	> theres already code to give out of the box functionality
+	
+WC
+	> main application
+	> Enterprise Application (EAR)
+		- much bigger project
+		- inside, there should be many project in terms of .war and .jar files
+		
+Stores
+	> contain the UI, like JSP, HTML
+	> .jar files are basically the logic on the UI files like button, form processing
+	
+WebServiceRouter
+WebSphereCommerceServerExtension
+
+Three main .jar files
+	> this is where we will mainly do modifications
+	> this .ear files are located in
+		1. WC		- Logic/Transaction server
+		3. search	- Solr
+		4. crs		- UI
+	> process flow
+		1, CRS calls to the Transaction server through REST webservice
+	> Transaction server is running inside WebSphere Application Server
+	> CRS and Search is running in WebSphere Liberty Server
+	
+	
+webSphere Application Server
+	> a very bulky server like Tomcat
+	> host the WC / Transaction server
+	
+WebSphere Liberty Server
+	> light weight, can spin up in few minute
+	> host the Search and CRS server
+	
+EX: Page flow for an E commerce
+HomePage -> Department Page -> Sub category pages -> PDP
+
+
+Exercise
+1. Change behavior of the AddToCart
+	> Check if the quantity is more than 10, dont allow AddToCart
+	> If less than 10, allow AddToCart
+
+Steps
+1. Open WebSphereCommerceServerExtensionsLogic
+
+WebSphereCommerceServerExtensionsLogic
+WebSphereCommerceServerExtensionsData
+	> for JPA and Entity beans
+	
+Commands
+	> OOTB, out of the box
+	> Servlet receives the request into a Command
+	> Command can be a Controller or a Task command
+	> Controller Command must return a response, which is typically a View
+	
+OrderItemAddCmd
+	> responsible for adding items to cart
+	> we will extend this command to make logic modification
+	
+Convention package name for custom Controller Command	
+	> same package name as the OOTB Command, but instead of "ibm", change it, typically our company name
+	
+Three main methods of ControllerCmd
+	> setRequestProperties
+	> validateParameters
+	> performExecute
+	
+
+CMDREG
+	> table that contains all the registered Commands
+	
+	

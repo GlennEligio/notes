@@ -1,0 +1,85 @@
+37 EC2 Instance Types Basic
+
+EC2 Instance Types
+ > can be seen here: https://aws.amazon.com/ec2/instance-types/
+ > left side is the Instance types, which the tabs on right refers to the families
+ > this includes	
+	- General Purpose
+	- Compute Optimized
+	- Memory Optimized
+	- Accelerated Computing
+	- Storage Optimized
+	- Instance Features
+	- Measuring Instance Performance
+
+
+
+EC2 Instance Naming Convention
+	
+	m5.2xlarge
+
+m: instance class
+5: generation (since AWS improves them over time)
+2xlarge: size within the instance class
+
+
+
+
+EC2 Instance Types descriptions
+General Purpose
+ > greate for diverse workloads such as web servers or code repositories
+ > balance between:
+	- Compute
+	- Memory
+	- Networking
+ > in this course, we will be using t2.micro which is a General Purpose EC2 instance included in free tier
+
+
+
+Compute Optimized
+ > create for compute-intensive tasks that require high performance processors
+ > this includes:
+	- Batch processing workload
+	- Media transcoding
+	- High performance web servers
+	- High performance computing (HPC)
+	- Scientifiy modeling & machine learning
+	- Dedicated gaming servers
+
+
+
+Memory Optimized
+ > Fast performance for workloads that process large data sets in memory
+ > Use cases includes:
+	- High performance, relational/non-relational databases
+	- Distributed web scale cache stores
+	- In-memory databases optimized for BI (business intelligence)
+	- Applications performing real-time processing of big unstructed data
+
+
+
+Storage Optimized
+ > greate for storage-intensive tasks that require high, sequential read and write access to large data sets on local storage
+ > use cases:
+	- High frequency online transaction processing (OLTP) systems
+	- Relational & NoSQL databases
+	- Cache for in-memory databases (ex: Redis)
+	- Data warehousing applications
+	- Distributed file systems
+
+
+
+https://instances.vantage.sh/
+ > website to compare the EC2 instances of AWS
+ > we can see all the information with regards to EC2 instances like
+	- API Name
+	- Instance memory
+	- vCPUs
+	- Instance storage
+	- Network performance
+	- Linux OnDemand, Reserved, and Spot cost
+	- Windows OnDemand, Reserved, and Spot cost
+
+
+
+

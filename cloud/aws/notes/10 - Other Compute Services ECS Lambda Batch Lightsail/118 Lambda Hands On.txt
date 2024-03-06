@@ -1,0 +1,125 @@
+118 Lambda Hands On
+
+
+How the Lambda works
+1. Lambda can invoke functions/codes from different programming languages
+2. Lambda can also respond to events
+	> Once you create Lambda functions, you can configure them to respond to events from a variety of sources. Try sending a mobile notification, streaming data to Lambda, or placing a photo in an S3 bucket.
+3. Lambda can also Scale seamlessly
+ 	> Lambda scales up and down automatically to handle your workloads, and you don't pay anything when your code isn't running.
+
+
+
+Playing with AWS Lambda
+1. Go to AWS Lambda Dashboard. Initially you should be greeted with the 'begin' page of the AWS Lambda. But just incase you didnt, look for URL in the Notes
+
+How it works
+1. Creating the function to invoke
+	> select the programming language to use
+	> run the sample code
+	> you should see the output at the top
+2. Lambda responses to events
+	> click any of the event sources like the Phone, Camera or Streaming analytics
+	> you should see that many 'gear' icon pop up, which represents a Lambda functions being invoked
+3. Scale seamlessly
+	> click any of event sources again
+	> you should see that after a specific amount of invocations, the cost of Lambda increases from $0
+
+
+
+
+Creating function for Lambda
+1. For Options, select 'Use a blueprint'
+	> this will give us a template to use when invoking codes
+2. In Basic information
+	> select the template to use
+	> pass a name 'demo-lambda'
+	> execution role - 'Create a new role with basic Lambda permissions'
+3. Pass the Lambda code to execute
+	> use the sample one provided	
+4. Create the function
+5. Check if the Function is created
+6. Go to Code tab, then look for project hierarchy, you should see a file in there
+
+
+
+Run the function for Lambda
+1. Select the file in the project structure
+2. Click the Test
+3. In Configure test event
+	> Test event action - 'Create new event'
+	> Event name - 'DemoEvent'
+4. Click Test after creating the Event
+5. Another tab should open to show the result of the Test event
+
+EX:
+Test Event Name
+DemoEvent
+
+Response
+"value1"
+
+Function Logs
+2023-01-20T07:22:42.678Z	undefined	INFO	Loading function
+
+START RequestId: 97d0a68e-7f2b-40ac-b738-30bc974b3c85 Version: $LATEST
+2023-01-20T07:22:42.683Z	97d0a68e-7f2b-40ac-b738-30bc974b3c85	INFO	value1 = value1
+2023-01-20T07:22:42.683Z	97d0a68e-7f2b-40ac-b738-30bc974b3c85	INFO	value2 = value2
+2023-01-20T07:22:42.684Z	97d0a68e-7f2b-40ac-b738-30bc974b3c85	INFO	value3 = value3
+END RequestId: 97d0a68e-7f2b-40ac-b738-30bc974b3c85
+REPORT RequestId: 97d0a68e-7f2b-40ac-b738-30bc974b3c85	Duration: 4.02 ms	Billed Duration: 5 ms	Memory Size: 128 MB	Max Memory Used: 56 MB	Init Duration: 184.39 ms
+
+Request ID
+97d0a68e-7f2b-40ac-b738-30bc974b3c85
+
+
+
+
+Configuring AWS Lambda
+1. Go to the Lambda function to configure
+2. Go to Configuration tab, then click Edit
+3. Here, you can change informations like
+	> Memory
+	> Timeout
+
+
+Monitoring AWS Lambda
+1. Go to Lambda function > Monitor tab
+2. Here, you can see different Metrics, Logs, and Traces information of the Lambda function
+3. Go to Logs tab
+	> you should see a log which is created when we invoked it earlier with test event
+	> you can also see all the logs by clicking the LogStream link
+
+
+
+Changing the Lambda function code
+1. Go to Lambda Function > Code
+2. Change the source code
+	> comment the return line
+	> uncomment the execption/error line
+3. Click Deploy to save changes
+4. Execute again
+5. This time, the output should be different and tells us that something went wrong
+
+
+
+NOTES:
+1. To check the information provided by AWS to beginners of Lambda, go to "https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/begin"
+	> Region set to us-east-1, change the region code if you want to
+2. Each Lambda function invocation is handled INDEPENDENTLY and ASYNCHRONOUS
+	> the order at which a Lambda function is invoked will not be the order at which they will be finished
+3. Your first 1 million requests or 400,000 GB-seconds of compute per month are free. Costs in this demo are based on a 128 MB function with a 1 second invocation duration.
+4. Initially, when you first execute a Test Event to the Lambda Function, you will have a data related to intializing the Event which is 'Init Duration'. After the first execution, 'Init Duration' will not be present anymore
+5. Output log of the Lambda function execution includes
+	> Test Event Name
+	> Response, return value of the function
+	> Function logs, stdout of the function
+	> Start and End
+	> Request ID
+	> Report information, like 
+		- Duration, 
+		- Billed Duration, 
+		- Memory Size, 
+		- Max Memory Used
+		- Init Duration (only for first execution)
+6. The default role created by AWS Lambda includes a Policy named 'AWSLambdaBasicExecutionRole', which consist of write Permission to CloudWatchLogs service

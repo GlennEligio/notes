@@ -1,0 +1,63 @@
+14 IAM Introduction Users, Groups, Policies
+
+
+IAM: Users & Groups
+ > IAM stands for Identity and Access Management
+ > a Global Service
+ > Root account is created by default
+	- this should not be used or shared
+ > Users refers to people within your organization, which can be grouped
+ > Groups refers to a User Group
+	- can only contain users, not other groups
+ > Users don't have to belong to a group
+	- not a good practice
+ > Users can belong to multiple group
+
+
+EX:
+Developers:
+UserA, UserB
+
+Operations:
+UserC, UserD
+
+Audit
+UserB, UserC
+
+No group:
+UserE
+
+
+IAM: Permission
+ > reason why we use IAM with Users and Groups is to provision Permission to the AWS resources
+ > Users and Groups can be assigned JSON documents called Policies
+ > These Policies define the Permissions of the users
+ > In AWS, you apply the Least Privilege Principle
+	- Least Privilege Principle refers to giving the minimum permission to a user to do their job or needs
+ 
+
+Example Policies JSON document
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ec2:Describe",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "elasticloadbalancing:Describe",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:ListMetrics",
+        "cloudwatch:GetMetricStatictics",
+        "cloudwatch:Describe"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

@@ -1,0 +1,723 @@
+06 Asynchronous Node.js (Weather App)
+
+Contents
+29 Asynchronous Basics
+30 Call Stack, Callback Queue, and Event Loop
+31 Making HTTP Requests
+32 Customizing HTTP Requests
+33 An HTTP Request Challenge
+34 Handling Errors
+35 The Callback Function
+36 Callback Abstraction
+37 Callback Abstraction Challenge
+38 Callback Chaining
+39 ES6 Aside: Object Property Shorthand and Destructuring
+40 Destructuring and Property Shorthand
+41 Bonus: HTTP Request Without a Library
+
+
+
+
+29 Asynchronous Basics
+
+Non-blocking
+ > process that doesnt block main thread
+ > this means other process can be executed in the main thread while the process (typically asynchronuous process) is being process in other thread
+
+Synchronous programming model
+ > all process is being executed in single thread
+ > the process must be executed and finished before other process start
+
+Asynchronous programming model
+ > process can be executed in parallel
+	- meaning other process can run while other process is being executed
+ > this is thanks to the JS engines which use (under the hood) real multi-threading languages, like C++ (Chrome) or Rust (Firefox)
+
+
+EX:
+In example below, we can see that we have four console.log() call, where two of them are inside the callback input of setTimeout()
+If we run the app.js, we will see the the console.log() inside setTimeout() are executed AFTER the console.log() outside.
+This is because of how the setTimeout executes the callback function input in an asynchronous way
+
+console.log("Starting");
+
+setTimeout(() => {
+  console.log("2 second timer!");
+}, 2000);
+
+setTimeout(() => {
+  console.log("0 second timer!");
+}, 0);
+
+console.log("Stopping");
+
+// CONSOLE OUTPUT
+Starting
+Stopping
+0 second timer!
+2 second timer!
+
+
+
+
+
+
+
+
+
+
+
+
+
+30 Call Stack, Callback Queue, and Event Loop
+
+Call Stack
+ > a stack of call, specifically function/method call
+	- can be seen in errors where the stack traces is shown
+ > works in FILO fashion
+	- first function will be call/evaluated but it will be the last to be resolved
+	- reverse is true, last call will be evaluated but first to be resolved
+ > by default, the Call stack in JavaScript is SINGLE-THREADED
+	- in order for Node.js to do asynchronous programming, it utilizes the other threads of C++ behind the scene
+
+Node APIs
+ > some of the functions we run in JavaScript isnt supported by JavaScript natively (i.e. setTimeout())
+ > these functions are managed by the Node APIs
+ > if these function takes a CALLBACK PAIR, it will be processed by the Node.js and the Callback Function will be passed to CALLBACK QUEUE
+	- ex: setTimeout() takes two inputs, the callback function and the timer to indicate the delay before executing the callback
+	- after the timer ended, the callback is then placed in the callback queue
+
+Callback Queue
+ > contains all the callback functions processed and passed by the Node APIs
+ > works in FIFO fashion	
+	- first callback function is the first one to be resolved
+ > with the Event Loop, the callback functions will be executed ONLY if the Event Loop sees that the Call Stack of JS is empty
+
+Event Loop
+ > loop where it checks if the Call Stack is free whenever a Callback function is added in Callback Queue
+ 
+
+EX:
+Here, as always, the main() is called first, then the console.log() call
+
+// code
+const x = 1;
+const y = x + 2;
+console.log('Sum is ' + y);
+
+// call stack
+log('Sum is 3')
+main()
+
+
+EX 2: Synchronous with Callback
+NOTE:
+1. anonymous() function refers to the function passed inside forEach()
+2. Each anonymous() and console.log() of each element inside myLocations are executed and resolved SYNCHRONOUSLY
+	- these means that the anonymous() and console.log() are executed and resolved one after the other
+
+// code
+const listLocations = (locations) => {
+  locations.forEach(location => {
+    console.log(location)
+  })
+}
+const myLocations = ['Philly', 'NYC']
+listLocations[myLocations]
+
+// Call Stack
+console.log('myLocationsElements')
+anonymous('myLocationsElements')
+forEach(...)
+listLocations([...])
+main()
+
+
+
+EX 3: Asynchronous with Callback
+Below, we four console.log() call, two of them are inside the setTimeout() call
+When the JavaScript goes through the code, it will execute the console.log() outside the setTimeout().
+The setTimeout() function call is process separately by the Node APIs, which passes the callback function of each setTimeout() call to the Callback queue.
+The Event loop then waits until the Call stack is clear before executing the Callback functions in Callback Queue one by one
+
+// code
+console.log("Starting");
+setTimeout(() => {
+  console.log("2 second timer!");
+}, 2000);
+setTimeout(() => {
+  console.log("0 second timer!");
+}, 0);
+console.log("Stopping");
+
+
+// console output
+Starting
+Stopping
+0 second timer!
+2 second timer!
+
+
+
+
+
+
+
+
+
+
+
+
+
+31 Making HTTP Requests
+
+Making HTTP Requests
+ > in this section, we will create HTTP Request to fetch weather information
+ > for the backend, we will use te weatherstack.com to send the HTTP request to
+
+WeatherStack
+ > API for getting weather information, whether is
+	- current
+	- historical data in a specific date or date-range
+	- forecast
+ > needs to have API key in order to receive the data from the backend
+	- can be acquired by signing up for free
+ 
+Creating the WeatherApp
+1. Initialize node project
+	> npm init -y
+2. Add either of the two package to be used for sending HTTP request
+	> request or postman-request
+3. Import the package in the .js file using require()
+4. Use the imported package as function, and this function requires two arguments
+	a. options: object
+		> contains information about the request
+		> for now, we will just define the url property which is the url of weatherstack
+	b. callback: Function
+		> defines the callback to be executed after sending the request
+		> takes two (or three) arguments
+			- error
+			- response
+			- body (OPTIONAL)
+
+EX:
+// code
+const request = require("postman-request");
+
+const url =
+  "http://api.weatherstack.com/current?access_key=a2cbef76a319f910168600901def37ce&query=New%20York";
+
+request({ url: url }, (error, response) => {
+  const data = JSON.parse(response.body);
+  console.log(data.current);
+});
+
+// console logs
+{
+  observation_time: '11:13 AM',
+  temperature: 19,
+  weather_code: 116,
+  weather_icons: [
+    'https://assets.weatherstack.com/images/wsymbols01_png_64/wsymbol_0002_sunny_intervals.png'
+  ],
+  weather_descriptions: [ 'Partly cloudy' ],
+  wind_speed: 11,
+  wind_degree: 60,
+  wind_dir: 'ENE',
+  pressure: 1012,
+  precip: 0,
+  humidity: 70,
+  cloudcover: 75,
+  feelslike: 19,
+  uv_index: 5,
+  visibility: 16,
+  is_day: 'yes'
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+32 Customizing HTTP Requests
+
+Customizing HTTP request
+ > with "postman-request" or "request" package, we can customize the HTTP request we sent
+ > we will do it in the request(options, callback) call, defining some properties of the options input object can modify the HTTP request
+ > in the "postman-request" or "request" npm site, we can see all of the available properties we can add
+	- https://www.npmjs.com/package/postman-request#requestoptions-callback
+
+Some options properties
+1. json: boolean
+	> set the body to JSON representation
+	> adds 'Content-type: application/json' header
+	> parses the response body as JSON 
+		- no need to use JSON.stringify on body
+
+
+EX:
+const request = require("postman-request");
+
+const url =
+  "http://api.weatherstack.com/current?access_key=a2cbef76a319f910168600901def37ce&query=New%20York&units=f";
+
+request({ url: url, json: true }, (error, response) => {
+  // console.log(response.body.current);
+  const weatherDesc = response.body.current.weather_descriptions[0];
+  const temparature = response.body.current.temperature;
+  const apparentTemp = response.body.current.feelslike;
+  console.log(
+    `${weatherDesc}. It is currently ${temparature} degrees out. It feels like ${apparentTemp} degrees out.`
+  );
+});
+
+
+
+
+
+
+
+
+
+
+33 An HTTP Request Challenge
+
+GOAL:
+Use mapbox API in order to fetch the longitude and latitude of a specific place
+
+SOLUTION:
+const mapboxUrl =
+  "https://api.mapbox.com/geocoding/v5/mapbox.places/Los%20Angeles.json?access_token=pk.eyJ1IjoiZ2xlbm5lbGlnaW8iLCJhIjoiY2w0OXg2emx3MTZhczNxbXIyOHA3Nzg3ZiJ9.TGTZsl9vBMOYeSlggHSJKQ&limit=1";
+
+request({ url: mapboxUrl, json: true }, (error, response) => {
+  const coordinates = response.body.features[0].center;
+  console.log(`Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`);
+});
+
+
+
+
+
+
+
+
+
+
+34 Handling Errors
+
+Handling Errors in HTTP request
+ > when sending HTTP request, the request doesnt always get resolved successfully 
+ > this is due to many reasons, which includes but not limited to
+	- no connection established (no internet in client machine)
+	- server is offline
+	- wrong/incomplete request data
+
+Handling Errors with "postman-request" package
+ > with "postman-request", we can do error-handling either by:
+	1. checking the first parameter of the callback function input of request(), 
+		- this parameter becomes NOT NULL when theres an error that occured
+		- used for lower level error related to client, like no internet connection in client
+	2. check the response body of the HTTP request
+		- sometimes, the server stills sends a response which contains the error code even if theres an error in the HTTP request
+		- this means that the error parameter in callback function will still be NULL even if theres an error in the request
+
+EX:
+const request = require("postman-request");
+
+const weatherUrl =
+  "http://api.weatherstack.com/current?access_key=a2cbef76a319f910168600901def37ce&query=40.7831,-73.9712&units=f";
+
+request({ url: weatherUrl, json: true }, (error, response) => {
+  if (error) {
+    console.log("Unable to connect to the weather service!");
+  } else if (response.body.error) {
+    console.log("Unable to find location");
+  } else {
+    const weatherDesc = response.body.current.weather_descriptions[0];
+    const temparature = response.body.current.temperature;
+    const apparentTemp = response.body.current.feelslike;
+    console.log(
+      `${weatherDesc}. It is currently ${temparature} degrees out. It feels like ${apparentTemp} degrees out.`
+    );
+  }
+});
+
+const mapboxUrl =
+  "https://api.mapbox.com/geocoding/v5/mapbox.places/Los%20Angeles.json?access_token=pk.eyJ1IjoiZ2xlbm5lbGlnaW8iLCJhIjoiY2w0OXg2emx3MTZhczNxbXIyOHA3Nzg3ZiJ9.TGTZsl9vBMOYeSlggHSJKQ&limit=1";
+
+request({ url: mapboxUrl, json: true }, (error, response) => {
+  if (error) {
+    console.log("Unable to connect to the mapbox server");
+  } else if (response.body.features.length === 0) {
+    console.log("No matching location found. Try another search query");
+  } else {
+    const coordinates = response.body.features[0].center;
+    console.log(`Longitude: ${coordinates[0]}, Latitude: ${coordinates[1]}`);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+35 The Callback Function
+
+Callback Function
+ > a function that we provide as an ARGUMENT to another function in order to be executed later own
+ > the receiving function will then use the input function inside its own body to be called
+ > we can add parameters as well to the callback function input
+	- and if we have params, all the arguments we pass when we call the callback function inside can be accessed through these parameters
+ > NOTE: In a lot of libraries, the callback function typically have two parameters
+	1. error, which contains information when somethings goes wrong in receiving function
+	2. data, the expected result to be passed in callback when receiving function executes successfully
+
+EX:
+In example below, the callback function is used in asynchronous manner.
+The setTimeout receives an anonymous function, which will be executed later (exactly 2 seconds).
+
+// code
+setTimeout(() => {
+  console.log("Two seconds are up")
+}, 2000)
+
+// synchronous callback
+const names = ["Glenn", "John", "John"];
+const shortNames = names.filter((name) => name.length <= 4);
+console.log(shortNames);
+
+// custom method with callback input
+const geocode = (address, callback) => {
+  setTimeout(() => {
+    const data = {
+      longitude: 20,
+      latitude: 49,
+    };
+
+    callback(data);
+  }, 2000);
+};
+
+geocode("Los Angeles", (data) => {
+  console.log(data);
+});
+
+// another custom asynchronous callback
+const add = (n1, n2, callback) => {
+  setTimeout(() => {
+    const sum = n1 + n2;
+    callback(sum);
+  }, 2000);
+};
+
+add(1, 4, (sum) => {
+  console.log(sum); // Should print: 5
+});
+
+
+
+
+
+
+
+
+
+
+
+36 Callback Abstraction
+
+Callback Abstraction
+ > helps us by creating REUSABLE code
+	- instead of writing function call with same logic but different input, we can just write one function with dynamic input
+
+EX:
+In example below, we created a function "geocode"
+geocode takes two inputs
+	1. address
+	2. callback, which defines the logic that we will do in either error or data it receives
+Inside geocode, we performed the same action as the previous logic, except 
+	1. we wrapped this logic inside a function which makes it REUSABLE
+	2. we added a callback and used it inside
+		- this gives us the option to do something to the result of HTTP response
+		- in this case, we will just console.log() the error and data result
+
+const geocode = (address, callback) => {
+  const mapboxUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+    address
+  )}.json?access_token=pk.eyJ1IjoiZ2xlbm5lbGlnaW8iLCJhIjoiY2w0OXg2emx3MTZhczNxbXIyOHA3Nzg3ZiJ9.TGTZsl9vBMOYeSlggHSJKQ&limit=1`;
+
+  request({ url: mapboxUrl, json: true }, (error, response) => {
+    if (error) {
+      callback("Unable to connect to the mapbox server", undefined);
+    } else if (response.body.features.length === 0) {
+      callback(
+        "No matching location found. Try another search query",
+        undefined
+      );
+    } else {
+      const longitude = response.body.features[0].center[0];
+      const latitude = response.body.features[0].center[1];
+      callback(undefined, { longitude: longitude, latitude: latitude });
+    }
+  });
+};
+
+geocode("New York", (error, data) => {
+  console.log("Error", error);
+  console.log("Data", data);
+});
+
+
+
+
+
+
+
+
+
+37 Callback Abstraction Challenge
+
+GOAL:
+Create a function to make the forecast weather http request abstract
+
+SOLUTION:
+const request = require("postman-request");
+
+const forecast = (location, callback) => {
+  const weatherUrl = `http://api.weatherstack.com/current?access_key=a2cbef76a319f910168600901def37ce&query=${encodeURIComponent(
+    location.longitude
+  )},${encodeURIComponent(location.latitude)}&units=f`;
+
+  request({ url: weatherUrl, json: true }, (error, response) => {
+    if (error) {
+      callback("Unable to connect to the weather service!", undefined);
+    } else if (response.body.error) {
+      callback("Unable to find location", undefined);
+    } else {
+      const weatherDesc = response.body.current.weather_descriptions[0];
+      const temparature = response.body.current.temperature;
+      const apparentTemp = response.body.current.feelslike;
+      callback(
+        undefined,
+        `${weatherDesc}. It is currently ${temparature} degrees out. It feels like ${apparentTemp} degrees out.`
+      );
+    }
+  });
+};
+
+module.exports = forecast;
+
+
+
+
+
+
+
+
+
+
+38 Callback Chaining
+
+Callback chaining
+ > process where we chain one callback to other
+ > typically involves call a function with callback into the callback function input of another
+
+EX:
+In example, we called the forecast function inside the callback function input of geocode
+
+  geocode(locationInput, (error, data) => {
+    if (error) {
+      return console.log(error);
+    }
+
+    forecast(data, (error, forecastData) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log(data.location);
+      console.log(forecastData);
+    });
+  });
+
+
+
+
+
+
+
+
+
+
+39 ES6 Aside: Object Property Shorthand and Destructuring
+
+Object property shorthand
+ > if the Object's property value comes from a variable with the SAME NAME, we can omit the property name and just pass the variable name
+
+EX:
+If we look at the output of the two console logs, we will just see that they output the same value
+
+// Without Object property shorthand
+const name = "Andrew";
+const userAge = 27;
+
+const user = {
+  name: name,
+  age: userAge,
+  location: "Philadelphia",
+};
+
+console.log(user);
+
+// With Object property shorthand
+const name = "Andrew";
+const userAge = 27;
+
+const user = {
+  name,
+  age: userAge,
+  location: "Philadelphia",
+};
+
+console.log(user);
+
+
+
+Object Destructuring
+ > with Object Destructuring, we can pull properties from an object, and assign them to variables defined
+ > the syntax of Object Destructuring is provided below
+ > the variable names provided MUST BE THE SAME NAME as the properties they are pulling from object
+ > to create an alias of these properties, we can add colon after the old variable, then pass the new variable
+	- if we do this, the old variable will not hold the property anymore
+ > to add a default value to the variables if the properties they are pulling is undefined/null, we can use the equals
+	- this default value is OVERWRITTEN when theres a value present in the property being pulled in
+ > we can also use object destructuring in the parameter of the function
+	- specifically, when a parameter is expecting an Object, we can destructuring it into different parameters
+
+SYNTAX:
+const | let {var1, var2} = object
+const | let {var1: newVarName, var2: newVarName2} = object
+const | let {var1, var2 = defaultVal} = object
+const | let functionName = ({objProp, objProp1, objProp2}) => {}
+
+EX:
+// Object Destructuring
+const product = {
+  label: "Red notebook",
+  price: 3,
+  stock: 201,
+  salePrice: undefined,
+};
+
+// const label = product.label;
+// const stock = product.stock;
+
+const { label: productLabel, stock } = product;
+
+console.log(productLabel)
+console.log(stock);
+
+
+// Object destructuring in function parameters
+const transaction = (type, { label, stock }) => {
+  console.log(type, label, stock);
+};
+
+transaction("order", product);
+
+
+
+
+
+
+
+
+
+
+
+40 Destructuring and Property Shorthand
+41 Bonus: HTTP Request Without a Library
+
+HTTP and HTTPS
+ > Node.js Core Module for creating HTTP request
+ > Two different modules for sending either an http or https request
+ > to access these modules, we will import them using the keyword	
+	- "http"
+	- "https"
+
+Method of http/https
+http.request(options[, callback])
+http.request(url[, options][, callback])
+ > this method is available as well in https module
+ > url refers to the url of request
+ > callback function takes one argument, the "response "
+ 	- this argument is an IncomingMessage type
+
+
+Sending HTTP request using http.request()
+1. Call the http.request()
+2. Pass two things
+	> url
+	> callback, where we add one parameter which represents the response
+3. Inside the callback, we will do the following
+	> create a placeholder for the incoming BYTES from the response
+	> define the callback to execute when a new BYTE from response arrived
+		- we will do this by passing a callback pair to the response.on() method
+			a. "data"
+			b. callback function which receives a "chunk" of response data
+		- inside the callback function, we will use the received chunk/byte by
+			-> converting it to string using toString()
+			-> concatenating it to the placeholder variable
+	> define the callback to execute when the response ends
+		- we will do this by passing a callback pair to the response.on() method with
+			a. "end" string
+			b. callback function which doesnt receive any argument
+		- inside the callback function, we will convert the string placeholder into object using JSON.parse() and console.log() it
+3. Create a variable to hold the return value of the http.request()
+4. Call the end() method of the return value
+	> if we dont, we will not be able to finish the request and process the response
+5. For error handling, pass a callback pair to request.on() using the following input
+	a. "error"
+	b. callback function that receives one argument which holders an object related to errors	
+
+
+EX:
+const http = require("http");
+
+const url =
+  "http://api.weatherstack.com/current?access_key=a2cbef76a319f910168600901def37ce&query=New%20York";
+
+const request = http.request(url, (response) => {
+  let data = "";
+
+  response.on("data", (chunk) => {
+    data = data + chunk.toString();
+  });
+
+  response.on("end", () => {
+    const body = JSON.parse(data);
+    console.log(body);
+  });
+});
+
+request.on("error", (error) => {
+  console.log("An error: " + error);
+});
+
+request.end();
+
+
+
+
+

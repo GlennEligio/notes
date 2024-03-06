@@ -1,0 +1,38 @@
+18. Deploying Microservices to K8s & Understand Service Discovery
+
+
+I. Deploying Microservices to K8s
+1. Create a deployment using a specific Docker Image
+	> this Docker image must be either available locally, or in Docker hub public registry
+
+	kubectl create deployment currency-conversion --image=shuntjg/mmv2-currency-conversion-service:0.0.11-SNAPSHOT
+
+2. Expose the said deployment
+	> to expose it externally (outside the Cluster), we will create a Service of type LoadBalancer
+	> also, make sure that theres no Port conflict between Services inside K8s Cluster
+
+	kubectl expose deployment currency-conversion --type=LoadBalancer --port=8100
+
+
+NOTE:
+1. When creating Deployment (or anything that creates Pods itself), an environment variable HOSTNAME is automatically created
+	> this env var is accessible to application running inside a Pod
+	> this HOSTNAME will point to the name of the Pod it is running
+2. When creating Service, an environment variable <SERVICENAME>_SERVICE_HOST is automatically created
+	> ex: if Service name is "currency-exchange", then the env var name is CURRENCY_EXCHANGE_SERVICE_HOST
+	> this env var is accessible to the applications running inside a Pod that in UNDER OR REGISTERED to a Service (through label and selector)
+	> this env var will point to the url of the Service
+		- ex: CURRENCY_EXCHANGE_SERVICE_HOST value will be "http://currency-exchange"
+
+
+
+II. Understand Service Discovery
+
+K8s Service Discovery
+	> in K8s, this is done through Services
+	> Service is a named abstraction of software service (for example, mysql) consisting of local port (for example 3306) that the proxy listens on, and the selector that determines which pods will answer requests sent through the proxy.
+		- in this case, the local port is the Host's Port 
+		- the selector refers to the condition that Pods must match in order to "register" to this Service (typically done using labels)
+	> if a request comes through a Host's Port a Service is listening to, the Service will "redirect" the request to the Pods "registered" under it
+		- this is for the case of LoadBalancer Service
+	> in short, they serve as "Gateways"

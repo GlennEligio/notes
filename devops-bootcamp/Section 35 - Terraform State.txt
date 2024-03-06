@@ -1,0 +1,251 @@
+Section 35 - Terraform State
+
+Contents:
+193. Introduction to Terraform State
+194. Purpose of State
+195. Lab: Terraform State
+196. Terraform State Considerations
+
+
+
+193. Introduction to Terraform State
+
+Terraform state
+ > Terraform state refers to the state of the current infrastructure deployed by Terraform
+ > Terraform state is only created once we applied the configuration files in the infrastructure using 'terraform apply' command
+ > When a terraform state is created, it will create a new file as well called 'terraform.tfstate'
+	- terraform.tfstate contains the entire details of the infrastructure state
+ > On the subsequence 'terraform plan' and 'terraform apply' command, it will first check the current state of the Terraform
+	- using the state, it will plan the necessary actions to take in order to match the infrastructure to the one specified in configuration files
+	- this means that if there is no changes seen, no action will be done as well
+	
+
+terraform.tfstate
+ > this file is created when we execute the 'terraform apply' command for the first time
+ > contains all the details the describes the state of the Terraform infrastructure
+ > written in JSON format
+
+
+
+Sample exercise
+1. Create the files specified below
+$ ls terraform-local-file	
+	> main.tf variables.tf
+	
+# main.tf
+resource "local_file" "pet" {
+	filename = var.filename
+	content = var.content
+}
+
+# variables.tf
+variable "filename" {
+	default = "/root/pets.txt"
+}
+variable "content" {
+	default = "I love pets!"
+}
+
+
+2. Execute 'terraform init, plan, and apply' command and check the logs printed
+3. Change the variable value 'content' to 'We love pets'
+4. Execute the terraform plan and apply
+	> if we observe the logs, we can see that it reads the current state of the Terraform to determine the actions to take
+
+
+
+
+
+194. Purpose of State
+
+Use cases of Terraform State
+1. Mapping of Terraform State and Real world infrastructure
+2. Tracking Resources' metadata
+3. Performance
+4. Collaboration with 
+
+
+Mapping of Terraform State and Real World Infrastructure
+ > main purpose of the Terraform state is to MAP the resource configurations to the real world infrastructure
+ > this mapping allows Terraform to create execution plans when a DRIFT or MISALIGNMENT is identified between the resource configuration files, and the state
+ > hence, a state file can be considered to be a BLUEPRINT of all the resources that are for managers out there in the real world
+ > when Terraform creates a resource, it records its identity in the State, be it the 
+	- local file resource that creates a file in the machine
+	- a logical resource such as the random pet, which just throws out the random pet name
+	- resources in the cloud
+ > for resource identification, each resources will have 'id' attribute ASSIGNED to each of them
+	- this attribute is UNIQUE to other resources, and is used to track the infra resource in the real world
+ > besides the mapping and tracking of resources using id, Terraform also tracks resource's metadata
+
+
+Tracking Metadata
+ > Terraform also tracks resources' metadata, besides the resource's attributes
+ > one of the example is the resources' dependencies with each other
+	- if we just use implicit dependency using reference expression, the Terraform state will still track this
+	- it does so by EXPLICITLY stating the dependencies in 'terraform.tfstate' file
+ > in example below, we can see that the "pet" resource have dependency to "my-pet" resource
+	- when we apply this configuration, it can imply this dependency. hence it can determine the order of creation (i.e. creates "my-pet" first before "pet")
+	- but if we somehow remove these two resource "my-pet" and "pet", since it is no longer present in the configuration file, it can not use these to determine how to remove these two resources and in what order
+	- this is where the Terraform state comes in. Since these two resources are recorded and their dependency is defined, it can determine that it will need to delete these two, as well as what order to do so
+	
+EX: main.tf file
+resource "local_file" "pet" {
+	filename = "/root/pet.txt"
+	content = "My favorite pet is ${random_pet.my-pet.id}!"
+}
+resource "random_pet" "my-pet" {
+	length = 1
+}
+resource "local_file" "cat" {
+	filename = "/root/cat.txt"
+	content = "I like cats too!"
+}
+
+
+
+Performance
+ > if we only have a handful of resources, it may be feasible for TerraForm to reconcile state with the real world infrastructure after every single Terraform command such as plan or apply
+ > but in a real world scenario, where we are handling hundreds or thousands of infrastructure resources, especially if they distributed to different platforms like cloud, it may NOT be feasible to reconcile state for every TerraForm operation
+	- this might take several seconds to several minutes in some cases for Terraform to fetch details about every single resource from all the providers which are configured
+ > in cases of larger infrastructure, we can use the Terraform State as the RECORD OF TRUTH WITHOUT having to reconcile
+	- this would improve the performance significantly
+ > Terraform STORES a CACHE of attribute values for all resources in the state, and we can specifically make Terraform to refer to the state file ALONE while running commands and BYPASS having to refresh every time
+	- to do so, we can use the '--refresh=false' flag with all the Terraform commands that make use of the State-
+	- ex: $ terraform plan --refresh=false
+	
+	
+Collaboration
+ > since the Terraform state is stored in a file (terraform.tfstate), we can share this file to other teammates
+ > the only concern with regards to this is that others may not have the latest state data before running TerraForm commands
+	- failure to do so can result in unpredictable errors as consequence
+ > to remedy this, it is highly recommended to save the terraform state file in a remove data store rather than to rely on local copy
+	- this allows the state to be shared between all members of the team securely
+ > example of the remote state stores are 
+	- Amazon Web Services S3
+	- Hashicorp Consul
+	- Google Cloud Storage
+	- Terraform Cloud
+	
+	
+	
+COMMANDS
+terraform plan --refresh=false
+ > --refresh flag is used to specify if state will be refreshed
+ > if set to false, it will use the cached attribute values present in terraform state
+
+
+
+
+
+195. Lab: Terraform State
+
+FILES:
+Under /root/terraform-project/project-flash
+# main.tf
+resource "local_file" "speed_force" {
+    filename = "/root/speed-force"
+    content = "speed-force"
+}
+
+# reverse-flash.tf
+resource "local_file" "reverse-flash" {
+	filename = "/root/reverse-flash"
+	content = "reverse-flash"
+}
+
+# riddler.tf
+resource "local_file" "riddler" {
+	filename = "/root/riddler"
+	content = "riddler"
+}
+
+# zoom.tf
+resource "local_file" "zoom" {
+	filename = "/root/zoom"
+	content = "zoom"
+}
+
+
+#1
+Q: Which location is the terraform state file stored by default
+A: Inside the configuration directory
+
+#2
+Q: Which option should we use to disable state?
+A: We can not disable state, only state refresh when executing commands
+
+#3
+Q: Which format is the state file stored in by default?
+A: JSON
+
+#4
+Q: Which of the following commands does NOT refresh the state?
+A: terraform init
+
+#5
+Q: What is the name of the state file that is create by default?
+A: terraform.tfstate
+
+#6
+Q: Navigate to the configuration directory '/root/terraform-project/project-flash' we have create a few configuration files here. The directory has been initialized and the provider plugins downloaded inside the '.terraform' directory. Howevery, there is no 'terraform.tfstate' file created. Why is that?
+A: terraform apply was not run
+
+#7
+Q: Run the terraform show command and identify the id created for the resource called 'speed_force'
+A: No info displayed, since we haven't created the terraform state
+
+#8
+Q: Now, run terraform apply in this directory
+
+#9
+Q: Now, check terraform show again. What is the value of id for the resource called speed_force?
+A: ebeb8b595c8eb4a6e81cacf244146e742fab2981
+
+#10
+N: We have just added a new configuration file called 'aws-infra.tf' into this configuration directory and provisioned the resources.
+These are AWS resources. Do not worry if they are unfamiliar to you, we will soon be learning about them in the upcoming lectures!
+
+#11
+Q: Inspect the terraform.tf state file or run terraform show command.
+You will notice that all the attribute details for all the resources created by this configuration is now printed on the screen!
+Among them is an EC2 instance which is created by the resource called 'dev-server'. See if you can find out the 'private_ip' for the instance that was created.
+A: 10.31.38.106
+
+#12
+N: We will soon be working with AWS services and deploying resources on AWS with Terraform!
+
+
+
+
+
+
+196. Terraform State Considerations
+
+Terraform State Considerations
+1. Sensitive Data
+2. Storage for Terraform Configuration files and State files
+3. No manual edits in Terraform State file
+
+Sensitive Data
+ > terraform state contains every details about our infrastructure
+ > example of this is the AWS EC2 resource
+	- this resource will details specified in the state like allocated CPUs, the memory operating system, or the image used, type and size of disk, etc
+	- it also stores information such as the IP address allocated to the VM, and the SSH key pair used
+ > another example are the database resources, where it may also store the initial passwords which can be classified as sensitive information
+ > when using local state, this state is stored in plain text JSON files, and since some info in state are sensitive information, we need to make sure that the State file is stored in a SECURED STORAGE
+ 
+ 
+Storage for Terraform Configuration files and State files
+ > for storing these files, it is recommended to store each files in different storages
+	Configuration files 	= Version control systems for tracking
+	State files				= Remote State backends
+ > when working as a team, it is considered a best practice to store it from CONFIGURATION FILES in distributed version control system such as GitHub, GitLab, or Bitbucket 	
+ > but owning to the sensitive nature of the STATE FILE, it is not recommended to store them in Git
+	- instead, store the state in REMOTE BACKEND SYSTEMS such as AWS S3, Google Cloud Storage, Azure Storage, Terraform Cloud
+	
+	
+No Manual Edits
+ > Terraform state files are used internally by Terraform
+ > it is not recommended to manually edit the Terraform state files
+ > though there would be situations where we may want to make changes to the state file
+	- in such cases, we should rely on TerraForm State commands

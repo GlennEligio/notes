@@ -1,0 +1,119 @@
+62 RHCSA RHEL 8 - Containers - Getting Started
+
+
+Containers vs VMs
+ > when it comes to deploying applications, we have two options
+	1. Create and configure a VM where it runs our application
+	2. Create a container inside a machine (physical or virtual) and configure it so it runs the application inside
+ > with Container method, we can deploy multiple instances of the application using only a single Machine, which means single kernel, unlike with VM method where each application instance needs to have their own machine, hence needing more than one kernel
+	- Kernel is the brain of the OS, and makes up the majority of the OS storage space consumption
+ > to know more, visit the page below
+	- https://www.geeksforgeeks.org/difference-between-virtual-machines-and-containers/
+
+
+Container Architecture
+ > A container is an isolated, lightweight silo for running an application on the host operating system. 
+ > Containers build on top of the host operating system's kernel (which can be thought of as the buried plumbing of the operating system), and contain only apps and some lightweight operating system APIs and services that run in user mode, as shown in this diagram.
+
+
+Virtual Machine architecture
+ > In contrast to containers, VMs run a complete operating system–including its own kernel–as shown in this diagram.
+
+
+podman
+ > packaged used to create, and/or configure Containers
+ > similar to Docker in terms of functionality and commands used
+ > to install, run
+	$ dnf install podman
+
+
+
+Commands
+podman
+ > simple management tool for pods, containers, and images
+ > synopsis:
+	$ podman [options] command,
+ 
+
+podman search [options] TERM
+ > search registries for a given image. Can search all the default registries or a specific registry
+ > ex:
+	$ podman search httpd
+
+
+podman pull [options] IMAGE [IMAGE...]
+ > pulls an image from a registry and stores it locally
+ > ex:	
+	$ podman pull docker.io/library/httpd
+		- pulls the "docker.io/library/httpd" image and stores it locally
+
+
+podman run [options] IMAGE [COMMAND [ARG...]]
+ > runs a command in a new container from a given image
+ > will create a Container that runs the image and executes the command if we provided it
+ > options:
+	-d	runs container in background and print container ID, detached mode
+	-t	allocate a pseudo-TTY for container, 
+	-i	keep STDIN open even if not attached, used to go inside the Container's CLI
+	-p	publish a container's port, or a range of ports, to the host. used for NAT or portforwarding from host to Container
+	--privileged	give extended privileges to the container, default is false
+				by default, container cannot modify parts of the OS, since caontainer only have limited access to devices
+				"privileged" container is given the same access to devices as the user launching the container
+				important when we attach volume since Container must have privilege to attached OS directory
+	-v	create a bind mount, where a directory of OS will be mounted inside the Container's directory
+		ex: if we bind mount /home/user1 of OS to the /mnt of Container, any changes in /mnt done by Container will reflect in /home/user1
+ > ex:
+	$ podman run -dt -p 8080:80/tcp docker.io/library/httpd
+		- runs the "docker.io/library/httpd" image in detached mode, where pseudo-TTY is allowed, with portmapping to host where host's 8080 forwards request to container's 80 with tcp protocol
+
+
+podman ps [options]
+ > prints out information about the contianers
+ > options:
+	-a 	show all the containers, default is only running containers (if this flag is not present)
+ > ex:
+	$ podman ps -a
+		- list all containers, whether theyre running or not
+
+
+podman logs [options] CONTAINER [CONTAINER...]
+ > retrieves logs for one or more containers
+ > we can provide either the hash id or the randomly generated name for the Container
+ > options:	
+	-f 	follow log output
+ > ex:
+	$ podman logs busy-heisenberg
+	$ podman logs 123kansd9lk023k
+
+
+podman top [options] CONTAINER [FORMAT-DESCRIPTOR|ARGS...]
+ > display the running processes of a container, and its information like resources consumption, pid, etc
+ > for container, we can provide the random phrase name or its uuid
+ > ex:
+	podman top busy-heisenberg
+
+
+podman stop [options] CONTAINER [CONTAINER...]
+ > stops one or more running containers. The container name or ID can be used
+ > options:
+	-a		stop all running contianers
+ > ex:
+	$ podman stop busy-heisenberg
+
+
+podman start [option] CONTAINER [CONTAINER...]
+ > starts one or more containers. The container name or id can be used
+ > options
+	--all		start all containers regardless of their state or configuration
+ > ex:
+	$ podman start busy-heisenberg
+
+
+podman rm [options] CONTAINER [CONTAINER...]
+ > removes one or more containers from the host. The container name or ID can be used
+ > does not remove images
+ > options:
+	-a	remove all containers
+	-f 	force removal of container
+ > ex:
+	podman rm busy-heisenberg

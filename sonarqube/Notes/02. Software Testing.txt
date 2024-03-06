@@ -1,0 +1,56 @@
+02. Software Testing
+
+
+I. Software Testing
+
+Software Testing
+	> Software testing is a part of software development lifecycle
+	> Its aim is to ensure that the code to be deployed is of high quality with no bugs and no logical errors
+	> Involves a Developer and a Tester
+		- Developer creates Program and sends it to Tester
+		- Tester do rigorous testing to the program and sends back errors to the Developer
+		- Developer receives the errors and fix it
+		- Developer sends to again to Tester
+	> On average, 30% of the development time is spent of Testing
+	> Decreases the Maintenance cost spent on the Application
+		- due to better maintainability of the said Application
+	> Provides Securability of the Application
+
+
+Software Testing Classifications
+1. Testing type:
+	a. Manual
+		> Tester write and run the Test cases by himself
+	b. Automatic
+		> Tester write scripts that are standardized and is ran in the application
+2. Testing methods:
+	a. Static
+		> Tester examines the source code BEFORE IT IS EXECUTED / RUN
+		> Used to expose errors before running the application
+	b. Dynamic
+		> Tester examines the behavior of the application WHILE RUNNING
+3. Testing approaches
+	a. Black Box
+		> Tester does not know the internal structure of the application
+	b. White Box
+		> Tester does know the internal structure of the application
+	c. Gray Box
+		> middle ground between the Black box and White box
+4. Testing levels
+	a. Unit Testing
+		> testing individual components
+		> Unit can be 
+			- specific piece of functionality
+			- a part of program
+		> Help verify internal logic
+	b. Integration Testing
+		> Testing components groups
+		> Test how each of the components Integrations in System works
+	c. System Testing
+		> Testing the integrated system
+		> All components of software is tested
+		> Verify technical, business, functional aspects of software
+	d. Acceptance testing
+		> also called User Acceptance Testing (UAT)
+		> whole system is tested, whether it fits the requirements of the client
+

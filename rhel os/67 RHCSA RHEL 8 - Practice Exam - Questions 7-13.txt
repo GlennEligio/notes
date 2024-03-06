@@ -1,0 +1,161 @@
+67 RHCSA RHEL 8 - Practice Exam - Questions 7-13
+
+Question
+7. Create a new 2GB volume group named "vgprac"
+8. Create a 500MB logical volume named "lvprac" inside the "vgprac" volume group
+9. The "lvprac" logical volume should be formatted with the xfs filesystem and mount persistently on the /mnt/lvprac directory
+10. Extend the xfs filesystem on "lvprac" by 500MB
+11. Use the appropriate utility to create a 5TiB thin provisioned volume
+12. Configure a basic web server that displays "Welcome to the web server" once
+13. Find all files that are larger than 5MB in the /etc directory and copy them to /find/largefiles
+
+
+
+
+
+
+
+Create a new 2GB volume group named "vgprac"
+
+1. Check if the said DEVICE (/dev/sdb) is free
+	$ lsblk		check if the sdb is already partition or theres a filesystem that uses the device
+2. Unmount the DEVICE /dev/sdb before we continue
+	$ umount /dev/sdb
+3. Since we have 16gb in /dev/sdb, we will need to partition it where the partition's size is 2gb
+	$ fdisk /dev/sdb
+4. Execute the following fdisk commands
+	n 		create new partition, p for primary
+			use default partition number 
+			use default first sector, then 
+			last sector use "+2G" for 2gb size
+	w		write/save the changes and quit
+5. Check if partition is successfully created
+	$ fdisk -l		/dev/sdb1 must be present
+6. Create Physical volume from the disk partition
+	$ pvcreate /dev/sdb1
+	$ pvs					checks if the Physical volume is created
+7. Create Volume Group from the physical volume
+	$ vgcreate vgprac /dev/sdb1
+	$ vgs						check if the Volume group is created
+
+
+
+
+
+
+
+Create a 500MB logical volume named "lvprac" inside the "vgprac" volume group
+
+1. Create a logical volume from the vgprac volume group
+	$ lvcreate -L 500M -n lvprac vgprac
+	$ lvs								check if the logical volume is created correctly
+
+
+
+
+
+
+The "lvprac" logical volume should be formatted with the xfs filesystem and mount persistently on the /mnt/lvprac directory
+1. Create a xfs filesystem using lvprac logical volume
+	$ mkfs.xfs /dev/vgprac/lvprac
+		> /dev/mapper/vgprac-lvprac can work as well for the DEVICE
+2. Mount the xfs filesystem, create a file inside, and unmount
+	$ mount /dev/vgprac/lvprac /mnt/lvprac
+	$ touch /mnt/lvprac/samplefile
+	$ umount /mnt/lvprac
+	$ ls /mnt/lvprac		sample file should not be present now
+3. Add the said filesystem in the /etc/fstab to mount it persistently
+	$ vi /etc/fstab
+	> comment out the mounting for "extradisk1" label, we already umounted it and partitioned the /dev/sdb device
+	> add either of the following line 
+		/dev/vgprac/lvprac	/mnt/lvprac	xfs	defaults	0 0
+		/dev/mapper/vgprac-lvprac	/mnt/lvprac	xfs	defaults	0 0
+	> save changes
+3. Reboot the system
+4. Check if the xfs filesystem is mounted
+	$ ls /mnt/lvprac		sample file should be present
+
+
+
+
+
+
+
+Extend the xfs filesystem on "lvprac" by 500MB
+
+1. Extend the lvprac logical volume by 500MB
+	$ lvextend -L+500M  -r /dev/vgprac/lvprac			can also use the /dev/mapper/VG/LV syntax for DEVICE
+	$ lvs		check the new size of logical volume
+2. OPTIONAL: Extend the xfs filesystem inside the lvprac, to occupy all available space 
+	> only for those who didnt use "-r" option when extending logical volume size
+	$ xfs_growfs /mnt/lvprac
+3. Check the new size of logical volume
+	$ lvs
+	$ df -h
+
+
+
+
+
+
+
+
+Use the appropriate utility to create a 5TiB thin provisioned volume
+
+0. Add repo sources with dnf config-manager
+	$ dnf config-manager --add-repo http://repo.eight.example.com/BaseOS
+	$ dnf config-manager --add-repo http://repo.eight.example.com/AppStream
+	$ dnf update
+1. Install vdo alongside the kernel module for it
+	$ dnf install vdo kmod-kvdo
+2. Check if theres a physical volume or a device available to use
+	$ pvs
+	$ lsblk
+3. Unmount the /dev/sdc
+	$ umount /dev/sdc
+	$ vi /etc/fstab			comment out the line where the mountpoint is "/extradisk2"
+3. In this case, we will use the whole device (/dev/sdc) to create a VDO
+	$ vdo create --name=vdo1 --device=/dev/sdc --vdoLogicalSize=5T --writePolicy=auto --force
+4. Check if the VDO is created
+	$ fdisk -l /dev/mapper/vdo1
+
+
+
+
+
+
+
+(SERVER 1) Configure a basic web server that displays "Welcome to the web server" once
+
+1. Install httpd module
+	$ dnf install httpd
+2. Start the httpd service
+	$ systemctl start httpd	
+	$ systemctl status httpd	check httpd service status
+3. Setup firewall, check the current active firewall zone
+	$ firewall-cmd --get-active-zone
+4. Check settings of the active zone
+	$ firewall-cmd --zone public --list-all
+5. Modify active zone so that http and https services are allowed
+	$ firewall-cmd --zone public --add-service http --permanent
+	$ firewall-cmd --zone public --add-service https --permanent
+5. Add an index.html file to serve as default greeting page
+	$ echo "Welcome to the webserver" > /var/www/html/index.html
+6. Test the webserver	
+	$ curl localhost:80
+	$ wget localhost:80
+	$ cat index.html			check the downloaded index.html by the wget command
+
+
+
+
+
+
+
+SERVER1 - Find all files that are larger than 5MB in the /etc directory and copy them to /find/largefiles
+
+1. Create the /find/largefiles directory
+	$ mkdir /find/largefiles
+2. Use either find + -exec option flag, or a for loop with the find command output
+	$ for i in `find /etc -size +5M`; do cp $i /find/largefiles; done			OPTION 1
+	$ find /etc -size +5M -exec cp {} /find/largefiles/ \;					OPTION 2

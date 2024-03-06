@@ -1,0 +1,20 @@
+004 Meeting the Client
+
+
+Scenario
+1. You will be a designer to take on the Amazon with regards to better shopping experience
+
+Assumption
+1. You already met the client
+2. You are now started to tackle the problem
+
+
+GOALS:
+1. Learn the skills necessary and create the web portfolio
+2. Main goal when meeting the client is to solve their problem, meet their demand.
+3. Understand their needs, and create the designs that they are unable to do
+
+NOTES:
+1. At the end of the course, we will discuss what to do when it comes to "Meeting the Client"
+2. Must be flexible. Technology is evolving and so is the demands/needs
+	> we must be able to design in any platform

@@ -1,0 +1,36 @@
+04 Intro to Software Development Models
+
+Software Development Models
+ > putting the pieces of the puzzle together
+
+Why theres many software development models?
+ > each team have different needs
+ > each model will solve different needs
+
+
+Classifications of the Software Development models
+1. Predictive vs Adaptive
+2. Incremental vs Iterative
+
+Predictive
+ > the client/customer have a good understanding of the product that you are building
+ > here, you get the product in one shot
+ > since we have concrete idea about what product to build, theres no incentive to change the source code drastically during the development phase
+
+Adaptive
+ > the customer/client have a general idea on what product to build but not a concrete one
+ > starts with an idea, then build a prototype / low-fidelity version of the software
+ > based on the feedback from the prototype, we will create a new version of the product
+ > Adjust based on the feedback of the customer/client
+
+
+Incremental
+ > customer/client have good idea of what product to build
+ > instead of building the product in one-shot, we will do it INCREMENTALLY by its components
+ > real-life analogy: creating a car, where we might want to create the wheels, then engine, then chasis, and assemble them in increments
+ 
+Interative
+ > customer/client have good idea of what product to build
+ > instead of building the product incrementally by its components, we will create a whole product
+ > then based on the feedback from the product, we might modify the product or create a new one to satisfy the need
+ > real-life analogy: travelling from one place to another, we might initially use a bike, but we might change it into a motorcycle, or a car if bike is not enough

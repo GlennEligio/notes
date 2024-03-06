@@ -1,0 +1,256 @@
+My answer on Challenge 4 Message and Contact app
+
+Main class
+
+package com.glenneligio.messagecontactapp;
+
+public class Main {
+    public static void main(String[] args) {
+
+        Database.getInstance("MessagesAndContact");
+        Prompts prompts = new Prompts();
+
+
+        prompts.getUser();
+        prompts.greeting();
+
+
+        while(Prompts.isMainMenu()){
+
+            Prompts.mainMenu();
+
+            switch (Prompts.getMainMenuOption()) {
+                case 1 -> {
+                    Prompts.setContactMenu(true);
+                    while (Prompts.isContactMenu()) {
+                        Prompts.contactMenu();
+                        switch (Prompts.getContactMenuOption()) {
+                            case 1 -> Database.showAllContacts();
+                            case 2 -> Database.addContact();
+                            case 3 -> Database.searchContact();
+                            case 4 -> Database.deleteContact();
+                            default -> Prompts.setContactMenu(false);
+                        }
+                    }
+                }
+                case 2 -> {
+                    Prompts.setMessageMenu(true);
+                    while (Prompts.isMessageMenu()) {
+                        Prompts.messageMenu();
+                        switch (Prompts.getMessageMenuOption()) {
+                            case 1 -> Database.seeAllMessages();
+                            case 2 -> Database.sendNewMessage();
+                            default -> Prompts.setMessageMenu(false);
+                        }
+                    }
+                }
+                default -> {
+                    System.out.println("Application will now close.");
+                    Prompts.setMainMenu(false);
+                }
+            }
+        }
+    }
+}
+
+
+
+Database class
+
+package com.glenneligio.messagecontactapp;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class Database {
+    private static final Map<String, String> contacts =  new HashMap<>();
+    private static final Map<String, String> messages =  new HashMap<>();
+
+    private static Database instance;
+
+    private Database(String name) {
+    }
+
+    public static synchronized Database getInstance(String name){
+        if (null ==  instance){
+            instance = new Database(name);
+        }
+        return instance;
+    }
+
+    public static void addContact(){
+
+        System.out.println("Input the name: ");
+        Scanner scanner = new Scanner(System.in);
+        String contactName = scanner.next();
+
+        System.out.println("Input the contact details: ");
+        Scanner scanner1 = new Scanner(System.in);
+        String contactDetails = scanner1.next();
+
+        Database.contacts.put(contactName, contactDetails);
+    }
+
+    public static void sendNewMessage(){
+        System.out.println("Enter the recipient: ");
+        Scanner scanner = new Scanner(System.in);
+        String messageRecipient = scanner.next();
+
+        System.out.println("Input the message: ");
+        Scanner scanner1 = new Scanner(System.in);
+        String messageBody = scanner1.next();
+
+        Database.messages.put(messageRecipient, messageBody);
+
+        System.out.println("Message sent.");
+    }
+
+    public static void searchContact(){
+        boolean isSearched;
+        System.out.println("Enter the person's name");
+        Scanner scanner = new Scanner(System.in);
+        String contactSearch = scanner.next();
+
+        if (Database.contacts.containsKey(contactSearch)){
+            System.out.println(contactSearch + "\n" +
+                    Database.contacts.get(contactSearch));
+        }else{
+            System.out.println("There's no match in the contact list.");
+        }
+    }
+
+    public static void deleteContact(){
+        System.out.println("Enter the name of the person: ");
+        Scanner scanner = new Scanner(System.in);
+        String contactSearchRemove = scanner.next();
+
+           if (Database.contacts.containsKey(contactSearchRemove)){
+               Database.contacts.remove(contactSearchRemove);
+               System.out.println(contactSearchRemove + " is removed from the contact list.");
+           }else{
+               System.out.println("The " + contactSearchRemove + " is not on the contact list.");
+           }
+    }
+
+    public static void showAllContacts(){
+        for (Map.Entry<String,String> entry : contacts.entrySet())
+            System.out.println(entry.getKey() + "\t" + entry.getValue());
+    }
+
+    public static void seeAllMessages(){
+        for (Map.Entry<String,String> entry : messages.entrySet())
+            System.out.println(entry.getKey() + "\t" + entry.getValue());
+    }
+}
+
+
+Prompts class
+
+package com.glenneligio.messagecontactapp;
+
+import java.util.Scanner;
+
+public class Prompts {
+    private static boolean mainMenu;
+    private static boolean contactMenu;
+    private static boolean messageMenu;
+
+    private String user;
+
+    private static int mainMenuOption;
+    private static int contactMenuOption;
+    private static int messageMenuOption;
+
+    public Prompts() {
+    }
+
+    public void getUser(){
+        System.out.println("Enter your name: ");
+        Scanner scanner = new Scanner(System.in);
+        user = scanner.next();
+    }
+
+    public void greeting(){
+        System.out.println("Hello " + user);
+        setMainMenu(true);
+    }
+
+    public static void mainMenu(){
+        System.out.println("\t1. Manage Contacts\n" +
+                "\t2. Messages\n" +
+                "\t3. Quit");
+        Scanner mainMenu = new Scanner(System.in);
+        setMainMenuOption(mainMenu.nextInt());
+    }
+
+    public static void contactMenu(){
+        System.out.println("Contact Menu\n" +
+                "\t1. Show all contacts\n" +
+                "\t2. Add a new contact\n" +
+                "\t3. Search for a contact\n" +
+                "\t4. Delete a contact\n" +
+                "\t5. Go back to the previous menu");
+        Scanner contactMenu = new Scanner(System.in);
+        setContactMenuOption(contactMenu.nextInt());
+    }
+
+    public static void messageMenu(){
+        System.out.println("Message menu\n" +
+                "\t1. See the list of all messages\n" +
+                "\t2. Send a new message\n" +
+                "\t3. Go back to the previous menu");
+        Scanner messageMenu = new Scanner(System.in);
+        setMessageMenuOption(messageMenu.nextInt());
+    }
+
+
+
+    public static int getMainMenuOption() {
+        return mainMenuOption;
+    }
+
+    public static void setMainMenuOption(int mainMenuOption) {
+        Prompts.mainMenuOption = mainMenuOption;
+    }
+
+    public static int getContactMenuOption() {
+        return contactMenuOption;
+    }
+
+    public static void setContactMenuOption(int contactMenuOption) {
+        Prompts.contactMenuOption = contactMenuOption;
+    }
+
+    public static int getMessageMenuOption() {
+        return messageMenuOption;
+    }
+
+    public static void setMessageMenuOption(int messageMenuOption) {
+        Prompts.messageMenuOption = messageMenuOption;
+    }
+
+    public static boolean isMainMenu() {
+        return mainMenu;
+    }
+
+    public static void setMainMenu(boolean mainMenu) {
+        Prompts.mainMenu = mainMenu;
+    }
+
+    public static boolean isContactMenu() {
+        return contactMenu;
+    }
+
+    public static void setContactMenu(boolean contactMenu) {
+        Prompts.contactMenu = contactMenu;
+    }
+
+    public static boolean isMessageMenu() {
+        return messageMenu;
+    }
+
+    public static void setMessageMenu(boolean messageMenu) {
+        Prompts.messageMenu = messageMenu;
+    }
+}

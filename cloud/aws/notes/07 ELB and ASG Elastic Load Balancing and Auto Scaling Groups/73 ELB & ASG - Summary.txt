@@ -1,0 +1,22 @@
+73 ELB & ASG - Summary
+
+High Availability
+ > refers to the application/system having multiple instances across different region/AZ, which makes it available all the time
+Scalability (vertical and horizontal)
+ > refers to the ability of the application to scale in order to accomodate increasing load
+Elasticity
+ > refers to the ability to scale up and down based on the demand
+Agility in Cloud
+ > concept of the Cloud which make you work more agile because you can create and delete  resources quickly
+Elastic Load Balancers (ELB)
+ > distribute traffic across backend EC2 instances, can be multi-AZ
+ > Support health checks
+ > 3 types:
+	- Application LB (HTTP - L7)
+	- Network LB (TCP - L4)
+	- Classic LB (old)
+Auto Scaling Groups (ASG)
+ > implement Elasticity for your application, across multiple AZ
+ > scale EC2 instances based on the demand on your system, replace unhealthy
+ > integrated with the ELB
+	- we can use ELB to balance load between EC2 instances of ASG

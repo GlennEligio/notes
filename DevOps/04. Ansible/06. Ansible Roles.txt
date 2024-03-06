@@ -1,0 +1,66 @@
+06. Ansible Role
+
+Ansible Roles
+	> Ansible Roles are next level of abstraction of Ansible Playbooks
+	> Benefits of Ansible Roles includes:
+		- Idea of include files and combine them to form clean and reusable abstraction
+		- Easy to maintain/troubleshooting the playbooks
+	> Roles are located in /etc/ansible/roles
+
+
+Structure of Roles
+	> An Ansible Role has a defined directory structure with EIGHT main standard directories
+		- a Role must have at least ONE of these directories
+		- we can OMIT any directories the role does not use
+	> By default, Ansible will look in each directory within a role for a main.yml (or main.yaml / main) file for relevant content
+
+tasks/main.yml
+	> the main list of the tasks that the role executes
+	> serves as the ENTRYPOINT of the role execution
+handlers/main.yml
+	> handlers, which may be used within or outside this role
+library/my_module.py
+	> modules, which may be used within this role
+defaults/main.yml
+	> default variables for the role
+	> these variables have the LOWEST PRIORITY of any variables available
+		- can be easily overriden by other variables, including inventory variables
+var/main.yml
+	> other variables for the role
+files/main.yml
+	> files that the role deploys
+templates/main.yml
+	> templates that the role deploys
+meta/main.yml
+	> metadata for the role
+
+
+
+Using Role
+	> to execute a Role, we have three methods
+		1. add roles: in Play attributes
+			- classic way of using roles in a Play
+		2. add include_role: in Tasks attributes
+			- here, you can reuse roles DYNAMICALLY anywhere in the Tasks section of a play using include_role
+		3. add import_role: in Tasks attributes
+			- here, you can reuse roles STATICALLY anywhere in the Tasks section of a play using import_role
+
+EX: 1
+---
+- hosts: webservers
+  roles:
+    - common
+    - webservers
+
+
+When you use the roles option at the play level, for each role ‘x’:
+	If roles/x/tasks/main.yml exists, Ansible adds the tasks in that file to the play.
+	If roles/x/handlers/main.yml exists, Ansible adds the handlers in that file to the play.
+	If roles/x/vars/main.yml exists, Ansible adds the variables in that file to the play.
+	If roles/x/defaults/main.yml exists, Ansible adds the variables in that file to the play.
+	If roles/x/meta/main.yml exists, Ansible adds any role dependencies in that file to the list of roles.
+	Any copy, script, template or include tasks (in the role) can reference files in roles/x/{files,templates,tasks}/ (dir depends on task) without having to path them relatively or absolutely.
+
+
+
+			

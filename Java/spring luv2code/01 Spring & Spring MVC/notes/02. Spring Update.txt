@@ -1,0 +1,15 @@
+Spring 5
+
+
+What's New in Spring 5?
+	> Updated minimum requirements for Java 8 or higher
+	> Deprecated legacy integration for: Tiles, Velocity, Portlet, Guava etc.
+	> Upgraded Spring MVC to use new versions of Servlet API 4.0
+	> Added new reactive programming framework: Spring WebFlux
+
+
+Spring 4 Main Features
+	> Inversion of Control
+	> Dependency Injection
+	> Spring AOP
+	> Spring MVC

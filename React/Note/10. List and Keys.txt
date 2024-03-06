@@ -1,0 +1,40 @@
+10. List and Keys
+
+List and Keys
+	> we sometimes use Arrays to populate a UI
+	> using map() of Array, we transform each of the item into a JSX
+	> some of these JSX needs to be tracked for changes (ex: Components) while other do not (ex: normal HTML tags like h1, li, etc)
+		- for these, we will use Keys
+	> Keys help React identify which items have changed, are added, or are removed. 
+		- Keys should be given to the elements inside the array to give the elements a stable identity
+		- ex: id attribute of an element
+
+EX:
+// For Array.map() to create JSX that doesnt need Keys
+const Tasks = ({ tasks }) => {
+  return (
+    <>
+      {tasks.map((task) => (
+        <h3>{task.text}</h3>
+      ))}
+    </>
+  );
+};
+
+export default Tasks;
+
+
+// For Array transform that needs Keys for tracking
+import Task from "./Task";
+
+const Tasks = ({ tasks }) => {
+  return (
+    <>
+      {tasks.map((task) => (
+        <Task key={task.id} task={task} />
+      ))}
+    </>
+  );
+};
+
+export default Tasks;

@@ -1,0 +1,105 @@
+WCS9 Comparing Solr and Elasticsearch architectures
+
+
+Comparing Solr and Elasticsearch architectures
+	> the Solr and Elasticsearch systems behave similarly at the storefront level
+	> Behind that layer are certain key differences	in architecture
+	
+Solr search architecture
+	> The Solr search server consists of:
+		- a set of REST services
+		- a search runtime framework that reuses the Solr search programming model
+		- a set of HCL Commerce foundation services that also provide access to the HCL Commerce database
+		
+Solr search architecture diagram
+	> consist of the following, Solr search server and Production database
+	> Solr search server consist of the following:
+		1. Search index
+			- Category
+			- CatalogEntry
+				-> Product
+				-> Inventory
+			- Unstructured
+		2. REST services	
+		3. Search runtime
+		4. Foundation services
+	> extension points of the Solr search architecture includes
+		1. Expression providers
+		2. Expression pre-processors
+
+Search runtime
+	> Search runtime consist of the following components
+		1. REST handler
+		2. Search interface
+			- wc-search.xml
+		3. Expression providers
+		4. Expression processor
+			- Expression pre-processors
+		5. Search index
+
+Search runtime process flow
+1. Name-value pair request is sent to the REST handler
+2. REST handler process this name-value pair request and turn it into a "parameter map". REST handler send the parameter map and search profile specified in the wc-search.xml file to the Search Interface
+3. Search interface outputs a SearchCriteria, in which it will send to the Expression providers. Expression provide might use one business components to create the final Search expression. This search expression will be sent to the Expression processors
+4. The expression processor uses the Solr engine to run the search against the index, and captures the result for post-processing and final response to be sent to Search interface as SearchResponse
+
+
+
+
+
+The V9.1 Ingest and Query services
+	> The Elasticsearch query process is structured very similarly to the Solr services
+	> The main different lies in the microservice architecture of the system, and the exits to the Elasticsearch and the ZooKeeper administrative functions, rather than to Solr and the monolithic search server
+	> One of the biggest advantages the 9.1 Query service provides is its natural language processing (NLP) and tooling support. Solr does not have these features and they provide considerable extra power
+
+Elasticsearch Architecture
+	> consist of the following 
+		1. REST handler
+		2. Search server
+			- Search interface
+				-> Search profiles in .json format
+			- Expression providers
+			- Expression processor
+				-> Expression pre-processors
+				-> Expression post-processors
+		3. Elastic index
+		4. Zookeeper Config server
+		5. Transaction server
+		
+Elasticsearch processor flow
+1. REST handler receives request, and process it into a parameter map. Using the search profile in .json format, it will sent the parameter map + search profile to Search interface
+2. Search interface sends Search criteria to Expression provide.
+3. Expression providers will create the final search expression to be sent to Expression processor
+	> expression providers also fetching the Search rules and marketing data in the Transaction Server's registry
+	> if NLP is switched on, it will also interact with Elastic index to get Custom ner and dimension matchmaker, and use Stanford NLP as well
+4. Expression processor, alongside the pre- and post-processors, processes this search expression. 
+	> The Expression pre-processor will fetch the custom search profiles and external config from Zookeeper Config Server
+	> The Expression post-processors will send the Search query from Elastic index and retrieve the result
+5. Expression post-processor will send the result of query search to the Search interface and REST handler in JSON format
+
+
+
+
+
+Comparing Solr and Elasticsearch deployment architecture
+	> There are certain deployment architecture differences between the HCL Commerce search solution based on Solr and the HCL Commerce search solution based on the Elasticsearch.
+	> Unlike Solr, the HCL Commerce search solution based on the Elasticsearch contains common data environment. It has the following benefits
+		1. Enables capacity sharing
+		2. De-couples indexed data from the query service to allow to scale each service independently
+		3. Uses Index cluster to allow dynamic scaling
+		4. Shards index and uses distributed search at query time
+	> In addition to common data environment, certain new components such as indexing pipeline, NLP, event bus have been added to the HCL Commerce search solution based on Elasticsearch
+	> The following table depicts the key differences between the Solr and Elasticsearch deployment architecture:
+	
+
+Elasticsearch vs Solr deployment architecture table
+Service name							Solr							Elasticsearch
+Store (Authoring environment)			x1 (Server)						x1 (Web or Server)
+Transaction (Authoring environment)		x1								x1
+Search (Authoring environment)			x1 (Master)						x1 (Query)
+Store (Live environment)				x1								x1 (Web or Server)
+Transaction (Live environment)			x1								x1
+Search (Live environment)				x1 (Repeater), x3 (Slave)		x3 (Query)
+Ingest (shared)							Not applicable					x1 (NiFi)
+Data (shared)							Not applicable					Elasticsearch cluster
+Event bus (shared)						Not applicable					x1 (Redis)

@@ -1,0 +1,102 @@
+06.13. Text
+
+XIII. Text
+1. Text alignment
+	> NOTE: text alignment property is INHERITED by child classes
+
+NOTATION:
+text-{position}
+text-{breakpoint}-{position}
+
+Positions
+start
+center
+end
+
+
+2. Text wrapping and overflow
+
+NOTATION:
+text-{wrap|no-wrap}
+
+
+3. Word break
+	> with "text-break", it will apply the following properties
+		-> word-wrap: break-word
+		-> word-break: break-word
+
+
+4. Text transform
+	> transform the text into either lowercased, UPPECASED, or Capitalized
+
+NOTATION
+text-{lowercase|uppercase|capitalize}
+
+
+5. Font size
+	> only apply font-size CSS property
+
+NOTATION:
+fs-{size}
+
+Sizes
+1-6	1 being the largest, 6 being the smallest
+
+
+6. Font weight
+
+NOTATION:
+fw-{value}
+
+Values:
+bold
+bolder
+normal
+light
+lighter
+
+
+7. Font style
+
+NOTATION:
+fst-{italic|normal}
+
+
+8. Line height
+	> defines the height of each line
+		-> not to be confused with font-size/height
+		-> synanomous with linespacing
+
+NOTATION:
+lh-{value}
+
+Values
+1
+sm
+base
+lg
+
+
+9. Monospace font
+	> "font-monospace"
+
+
+
+10. Reset text or link color
+	> reset a text or links color so that it inherits the color from its parent
+		-> if parent has "text-muted", link inside it will have "text-muted" property IF the link have "text-reset"
+
+NOTATION:
+"text-reset"
+
+
+11. Text decoration
+	> used to decorate the text
+
+NOTATION:
+text-decoration-{value}
+
+Values
+underline
+line-through
+none

@@ -1,0 +1,879 @@
+Java Core Interview Question
+
+
+02 What is Java?
+
+Answer:
+Java is an Object Oriented Programming language, used to create application in different platform such as desktop, mobile, and web.
+Java, compared to C and C++, is a portable language, where you Write Once, and Run Anywhere
+Java is also very popular today in server-side applications.
+
+
+
+03 What are the characteristics of Java
+
+Java creator, James Gosling, set out 5 characters of Java when creating it, which are 
+1. Simple, object oriented, and familiar
+	> Java is created so that developers of C, and C++, which are the popular programing language at that time, will be familiarized when it comes to the syntax
+2. Robust and secure
+	> Java runs in a virtual machine, instead on the native processor. This introduces robustness and security built around Java like it doesnt have direct access to machine code
+	> Theres also checks and bound in the JVM as well
+3. Architectural-neutal and portable
+	> key characteristic to Write Once, Run anywhere
+	> as long as theres a JVM in the machine, regardless of its processor architecture, it can run any Java bytecode
+4. High performance
+5. Interpreted, threaded, and dynamic
+	> interpreted since JVM needs to interpret the bytecode first
+	> threaded since you can do thread manipulation
+
+
+
+
+04 What is JVM
+
+JVM
+ > stands for Java Virtual Machine
+ >  a runtime VM used to run Java programs by passing the Java bytecode
+ > has a specification on how it should run
+	- with this, different implementations are available
+ > important on making Java platform agnostic
+
+
+
+
+05 What is JRE
+ 
+JRE
+ > stands for Java Runtime Environment
+ > composed of several software element that together run a Java application on a machine
+ > consist of:
+	ClassLoader
+	JVM
+	Libraries and Toolkits
+ > JRE orchestrate activies between these software elements
+ > Installed on machines that need to run Java applications
+
+
+
+
+
+06 What is JDK
+
+JDK
+ > stands for Java Developer Kit
+ > contain JRE inside it
+ > set of tools to help developers write Java programs
+ > based off the Java language specification
+ > comes with:
+	Utilities
+	Java compiler
+	Class libraries
+
+
+
+
+
+06.1 Whats the difference between JDK, JRE, JVM
+
+JDK - software used to develop/write Java applications
+JRE - software used to run Java applications
+JVM - abstract virtual machine that JRE spins up to run Java applications in
+
+
+
+
+
+
+07 What is Java bytecode
+
+Java bytecode
+ > instruction set for the JVM
+ > created by the process of compilation of a Java program
+ > JVM takes this and executes it
+ > cannot be run natively on a machine
+ > bytecode is consistent across machines
+ 	- JVM implementation may vary, but it will run the same
+ > enables "write-once-run-anywhere" feature of Java
+
+
+
+
+
+
+08 Different between path and classpath
+
+Difference between path and classpath
+ > both are environment variables
+ > PATH is an operating system speciic variable that influences what binaries are avaiable for running
+ > Classpath is a Java construct to indicate where all the compiled classes and jars are available
+	- This could be multiple locations
+ > EX:
+   1. Java runtime - example: java command -> PATH
+   2. Bytecode picked up and loaded by the java compiler and runtime -> Classpath
+
+
+
+
+
+
+09 Difference between sourcepath and classpath
+
+Difference between sourcepath and classpath
+ > Sourcepath is where all the classes (that you wrote) resided
+ > Source root in your IDE for example
+ > Classpath is where dependencies - libaries/jars go
+ > Compiler loads these when required for compilation
+ > Runtime can use these to load bytecode - classpath scan
+
+
+
+
+
+
+10 Different Memory areas allocated by the JVM
+
+Heap
+ > space for objects in memory
+ > "Global"
+	- any Context can reference objects here as long as they have reference to it 
+ > Largest of the memory spaces
+
+
+Stack
+ > Holds thread level data
+ > Local variables and object references
+ > Call frames for each method execution
+	- these Frames are added on top of the Stack
+	- after method execution, that Stack is removed
+
+
+Code area (meta space)
+ > Stores bytecode, JIT info
+ > Loads all the things necessary for JVM to execute bytecode
+
+
+Implementation / native area
+ > Registers
+ > C implementation stacks
+
+
+
+
+
+
+11 Whats the difference between permgen and metaspace
+
+Difference between PermGen and Metaspace
+ > Both are memory areas in the JVM
+ > Before Java 8, there was a memory area called PermGen
+ > Java 8 onwards, this is now called Metaspace
+ > PermGen had a FIXED max size allocated (configurable)
+ > Metaspace on the other hand expands as needed by default
+ > Has maxMetaSpaceSize configuration. Triggers garbage collection when hit
+	- this makes the Metaspace behave like PermGen
+ > Because of class loading/unloading, no "permanent generation" happens anymore
+	- before Metaspace, when something is loaded in PermGen, its there forever
+
+
+
+
+
+
+
+12 What is garbage collection
+
+Garbage collection
+ > process of removing unused and orphaned objects from the heap
+ > Automatic process. Does not need programming intervention
+ > Has APIs to trigger programmatically (not recommended)
+ > Generation based approach
+	- three generation based on time when it was created (Young, Old, Permanent)	
+	- different generation have different strategies for garbase collection
+ > Benefits - no manual memory management
+ > Drawback - performance intrusion
+	- small impact to performance
+
+
+
+
+
+13 What is JIT Compilation
+
+What is JIT Compilation
+ > JVM selectively converts certain byte code instructions to native code
+ > Converts to the native instruction set of the CPU it is being run on
+ > Makes a judgement call based on usage, performance characteristics
+ > Hence "Just In Time"
+ > Goal is optimization
+
+
+
+
+
+14 How to configure Java heap space
+
+How to configure Java heap space
+ > configured using flag: -Xms and -Xmx
+ > Xms - initial memory allocation pool
+ > Xmx - maximum allocation
+ > When maximum is to be hit
+	- Garbage collection
+	- Out of memory errors
+ > You don't want the space to be too little or too much
+
+
+
+
+15 How to configure Java stack size
+
+How to configure Java stack
+ > Configured using flag: -Xss
+ > Xss - initial stack size
+ > Stack grows dynamically
+ > When all available memory is consumed
+	- Stack overflow exception
+ > Usually not a big deal
+ > Stack overflow usually happens because of circular invocation
+
+
+
+
+
+16 What is a class loader
+
+What is a Classloader
+ > Part of JRE
+ > They load Java classes into the runtime
+ > This happens only when needed
+	- JVM requests a class
+	- Class loader tries to find it (Class bytecode) and load it
+
+
+
+
+
+17 What are the types of classloaders
+
+What are the types of classloaders
+1. Application/System class loaders
+	> classes in the class path
+2. Extension class loader
+	> Core Java JDK classes
+3. Bootstrap class loader
+	> Loads the other class loaders!
+	> Core Java runtime classes (low level, fundamental)
+4. Custom Class loaders
+
+
+
+
+
+18. What is public static void main and what happens if I switch order
+
+What is public static void main
+ > main entrypoint of the Java application
+ > public static void are the modifiers to a method called main
+ > public - method is accessible outside the class
+ > static - a class instance isn't needed
+ > void - Method doesn't return anything
+ > main - Special name convention to indicate an execution entry point
+
+
+What happens if I switch order of modifiers
+ > orders of modifiers DON'T MATTER
+ > static void public main works just as well
+ > Modifiers must be BEFORE the method name
+
+
+
+
+
+19. Can you execute code before the main method
+
+Can you execute code before the main method
+ > Yes, you can run code before main method starts
+ > This can be done by using static blocks
+ > Static blocks in a class execute when the class is loaded
+ > So, this runs before the main method is executed
+
+EX:
+class ExampleClass {
+  static {
+    System.out.println("Before main method");
+  }
+
+  public static void main(String[] args) {
+    System.out.println("Inside main method");
+  }
+}
+
+
+
+
+
+20. What is the difference between continue and break statement?
+
+Answer:
+ > Both are used in loops
+ > Break is used to end the loop immediately
+ > Continue is used to end that particular iteration
+ > Ex: Looping an array until you find an exceptional case: use break
+ > Ex: Processing every element, but skipping some on some condition: use 'continue'
+ > Break is also used in switch (to prevent fall through)
+
+
+
+
+21. What is the difference between float and double
+
+What is the difference between float and double
+ > both are Real numbers
+ > both are imprecise (need infinite precision)
+ > Float takes 32 bit. Double takes 64 bit
+ > Double is literally double the size of float
+ > Double has more precision that float
+ > By default, floating point numbers are double
+ > Use float mostly for space optimization, else use the double
+ > A double can be cast to a float
+	- with possible precision loss
+
+
+
+
+22 Why would you need a break in a switch statement?
+
+Why would you need a break in a switch statement?
+ > Switch case statements aren't "discrete" forks of execution like if-else
+ > There isn't a one-to-one map between the matched case and the block
+ > Case match is where the execution states. After that the execution flows through the end
+ > One way to break it is by using "break" statement
+ > Can be used without break to group several matching statement
+ > You can also use return keyword to break the execution flow in switch statement
+
+
+
+
+
+
+
+23 What are the primitive types in Java
+
+What are the primitive types in Java
+byte - 8 bit signed twos compliment
+char - 16 bit Unicode
+short - 16 bit signed twos compliment
+int - 32 bit signed twos compliment
+long - 64 bit twos compliment (signed or unsigned)
+float - 32 bit floating point
+double - 64 bit floating point
+boolean - One bit of information. Size undefined
+
+NOTES:
+1. Unicode maps a numerical value to a unique letter
+
+
+
+
+
+24. Explain default value behavior of local variables
+
+What is the default value of the local variable?
+ > theres no default value of the local variable
+ > they need to be initialized by the programmer
+ > does not happen automatically
+
+Why does the compiler complain about local variable initialization?
+ > Java does not initialize local variables automatically
+ > These local variables could be primitives or object references
+ > Before "using" a local variable, you need ot have put some value to it first
+ > Can be completely uninitialzed, as long as it is NOT USED!
+
+
+
+
+
+25. Can a double be cast to a byte
+
+Can a double be cast to a byte
+ > Yes, a higher precision numberic type can be cast to a lower precision numberic 
+ > This needs explicit casting
+	- EX: byte b = (byte) d
+ > Possible loss of data (lossy conversion)
+
+
+
+
+
+26. Can a byte a be cast to a double
+
+Can a byte a be cast to a double
+ > A byte does not need to be cast into a double
+	- It can be automatically assigned
+ > This is called implicit casting
+ > Implicit casting is when a low precision number type is assigned to a high precision data type
+ > No possibiliyu of data loss of data (lossless conversion)
+
+
+
+
+27 How do you break from a nested loop
+
+How do you break from a nested loop
+ > 'break' keyword works with label
+ > Indicates the statement to break, not where to go to
+ > Not a 'bad' thing to use
+ > Different from goto in that you cannot alter the flow direction or do jumps
+ > in example below, the 'break search' statement will break the 'search:for' loop, which stops the outer for loop
+
+EX:
+   search:
+        for (i = 0; i < arrayOfInts.length; i++) {
+            for (j = 0; j < arrayOfInts[i].length;
+                 j++) {
+                if (arrayOfInts[i][j] == searchfor) {
+                    foundIt = true;
+                    break search;
+                }
+            }
+        }
+
+
+
+
+
+
+28 What are the different acess modifiers in Java
+
+What are the different acess modifiers in Java
+Private - Within the class only
+Package private - Within the package only (Default)
+Protected - By the class of the same package, or by a sub-class of this class
+Public - Can be access by all
+
+
+
+
+
+29 What are the different scope types for java variables
+
+Answer
+1. Class level scope - member variables
+2. Method level scope - local variables
+3. Block level scope - loops, if, else if, and else blocks, etc
+
+NOTE:
+1. Scope is enclosed with curly braces
+
+
+
+
+
+
+30. What is static and the static modifier
+
+Answer:
+ > Static property/method is NOT associated with an instance
+ > Used when you need to store data that's relevant across instances
+	- ex: Math.PI
+ > Used when you need to provide methods before creating a class
+	- ex: main method
+ > Static block are to be executed when encountered
+	- this is not associated with a method
+
+
+
+
+
+31 Pass by value or pass by reference
+
+ANSWER:
+ > Java is pass by value
+ > The value being passed depends!
+ > In the case of primitives, the actual value is passed
+ > In the case of object references, the reference is passed by value
+
+
+NOTES:
+1. Two types of value, primitive and references
+	> value refers to the actual value itself
+	> reference refers to the reference of the Object in the Heap
+
+
+
+
+
+
+32 What is the initial value of instance variables
+
+ANSWERS:
+ > Instance variables (Class properties) dont need to be initialized
+ > Constrasts with local variables that error when used without initialization
+ > Primitive values take "default" values
+	0 for numeric types
+	'\000' for char
+	false for boolean
+ > Object references are null by default
+ > Recommended initialization to be done in constructor (especially object references)
+
+
+
+
+
+
+
+33 How does a constructor work
+
+ANSWER:
+ > A method that can initialize values of an object
+ > The runtime creates an instance. You can work on the instance before it is 'ready'
+ > Looks like any instance method but it isn't. No return, specific naming convention
+	- like assigning value to instance variable inside constructor
+ > Invoked by the new operator + object creation process
+ 	- ex: Foo f = new Foo()
+ > Has one by default. You can implement or parameterized
+
+
+
+
+
+
+34 How does constructor overloading work
+
+How does constructor overloading work
+ > Constructors can be overloaded as well
+ > Same concept of method overloading apply, where you use different arguments
+ > Needs arguments passed via a new keyword constructor invocation
+ 	- ex: Foo f = new Foo(arg1, arg2);
+ > Overloaded constructor "hides" default no-arg constructor
+	- this means if you create constructor overload, you can not create Class instance using constructor with no args
+	- you need to define a new constructor with no args in order to do so
+
+
+
+
+
+
+35 What is the copy constructor pattern
+
+What is the copy constructor pattern
+ > Specific pattern used to create a new object as a copy of another object
+ > Constructor of a class takes as argument of the same class type
+ > Constructor copies members from that instance
+ 
+EX:
+class Foo {
+  private Object prop;
+
+  Foo(Foo other) {
+    this.prop = other.prop;
+  }
+}
+
+
+
+
+
+
+
+
+
+36. What is the 'this' keyword?
+
+ANSWER:
+ > 'this' is a reference that points to the object whose code (method) is being run
+ > used only in instance methods (Cannot be used in static method)
+ > useful for accessing member variables when shadowed
+	- this happens when instance method argument and instance variable have THE SAME NAME
+
+EX:
+class Foo {
+  String prop;
+
+  Foo(String prop) {
+    this.prop = prop;
+  }
+}
+
+ > Useful for calling other constructor
+
+ex:
+public class Foo {
+  public String prop;
+  public Foo() {
+
+  }
+   
+  Foo(String prop) {
+    this();
+    this.prop = prop;
+  }
+}
+
+
+
+
+
+
+
+37. What is constructor chaining
+
+ANSWER:
+ > Constructor chaining is the process of having one constructor call another constructor to delegate part of the initialization
+ > Usually constructor with more args delegates to constructor with lesser args
+
+EX:
+public class Foo {
+  private String prop1;
+  private String prop2;
+  
+  public Foo() {
+    this.prop1 = "";
+  }
+
+  Foo(String prop2) {
+    this();
+    this.props = props2;
+  }
+}
+
+NOTE:
+1. You can also call the constructor of parent class by using the keyword "super"
+
+
+
+
+
+
+38. What are wrapper classes
+
+ANSWER:
+ > Classes corresponding to primitive types - that "wrap" primitive values
+	- ex: Integer object will have an 'int' property, which the Integer object wraps
+ > Used/needed with Collections since Java collections support reference types only
+
+Primitive	Wrapper
+byte		Byte
+char		Character
+short		Short
+int		Integer
+long		Long
+float		Float
+double		Double
+boolean		Boolean
+
+NOTE:
+1. Wrapper classes dont need to be instantiated, you can easily assign them primitive values of corresponding data type. This is called Auto boxing. Theres also unboxing which is the opposite
+
+
+
+
+
+
+39. What is autoboxing and unboxing
+
+ANSWER:
+ > Java has an automatic mechanism to convert, to and from, primitive and wrapper classes instances
+ > This works in both assignments of values, and passing method arguments and collection
+
+EX:
+Assignment
+Integer i = 10;
+int j = i;
+
+Method arguments and collections
+List<Integer> list = new ArrayList<>();
+list.add(5)
+
+
+
+
+
+
+40. What is singleton pattern and how do you implement it in Java
+
+ANSWER:
+ > Singleton pattern is used to enforce a single instance of a class in a given running application
+ > Java naturally allows multiple instances. The requirement is to enforce one instance
+ > Can be done by
+	1. Private constructor
+	2. Static instance
+	3. Static method that returns the instance
+
+EX:
+public class Foo {
+  private static final Foo instance = new Foo();
+
+  private Foo() {}
+
+  public static Foo getInstance() {
+    return instance;
+  }
+}
+
+  > Benefits and uses:
+	- Single instance guarantee
+	- Useful for certain objects (Ex: DB connection)
+	- Controlled lifecycle
+
+
+
+
+
+
+41 What is a final keyword and when is it used
+
+ANSWER:
+ > 'final' keyword marks something as in its final state and not to be changed
+ > on variables, it declares them as constant (at least on primitive)
+ > on object references, the reference is constant, but the object instance is not
+	- means we can not change the reference to point to another object
+	- this means we can modify Object instance (ex: setters)
+ 
+
+EX:
+private final int CONST_NUM = 10;
+private final Employee CEO = new Employee();
+
+
+ > Final on classes make them NON-EXTENSIBLE (cannot be inherited from)
+
+EX:
+public final class Foo {}
+
+
+ > Final on methods make them NON-OVERRIDABLE (can only be inherited)
+
+EX:
+public class Foo {
+  public final void doSomething() {
+
+  }
+}
+
+
+
+
+
+42 What is abstraction
+
+ANSWER:
+ > Abstraction is the design principle of separating the interface from the implementation so that the consumer / client is only concerned with the interface
+ > EX: Buttons on an electric/electronic device vs internal circuit board
+	- you only expose the button and what it does to the users and hide all the intricacies/implementation behind
+ > Manifest in class design using interfaces (and sometimes abstract classes)
+ > Abstraction can be enforced by encapsulation
+
+EX:
+public interface Flyable {
+  void fly()
+}
+
+
+
+
+
+
+43 What is encapsulation
+
+ANSWER:
+ > Encapsulation is the process of restricting access to the inner implementation details of a class.
+ > It enforces abstraction concepts by not just hiding but by guaranteeing the internals aren't exposed
+ > EX: 
+ 	- Sealed devices prevent people from messing with internals
+	- Car parts (engine)
+	- Getters and setters (programming context)
+ > Manifest in a class design using access modifiers - like 'private'
+ > Benefits include ability to refactor/change internals without breaking others
+
+EX:
+public class Foo {
+  private String obj1;
+
+  public String getObj1() {
+    return obj1;
+  }
+}
+
+
+
+
+
+
+44. What are marker interfaces
+
+ANSWER:
+ > An interface that marks or "tags" classes and their corresponding instances
+ 	- similar to a hashtag in social media
+ > Don't have any methods of their own
+ > EX: Serializable interface
+	- tags a class whether if you want the class to be serializable or not
+ > Formerly used because annotations didn't exist
+ > Not recommended these day, annotations is preferred
+ > Still exist but only for backward compatibility
+
+
+
+
+
+
+45 What is method overriding
+
+ANSWER:
+ > Overriding is when a subclass changes the behavior of an inherited method
+ > Done by the subclass implementing a method with the same signature as what it inherits from parent, then changing the method body
+ > Works for multiple levels too. Methods can be overriden irrespective of where it inherited from
+	- ex: overriding Object's toString()
+ > Actual method gets resolved at runtime. This allows for Polymorphism
+	- checks if the method is overriden or inherited
+
+
+
+
+
+
+46. What is the super class of all classes
+
+ANSWER:
+ > Every class inherits from the object superclass
+ > Root of the inheritance hierarchy
+ > Object class contains some handy methods with default implementation
+	- equals()
+	- hashCode()
+	- toString()
+
+
+
+
+
+47. What is the difference between equals operator and equals method
+
+ANSWER:
+ > == is an operator that compares two values for equality
+ > Works with primitive types. Does not work for object references
+ > Every object inherits equals method from the Object class
+ > Classes can implement custom equals method to check for value equality
+
+
+
+
+
+48. What is the difference between overloading and overriding
+
+ANSWER:
+ > Overloading - multiple methods with the same name in a class (with different arguments)
+ 	- Arguments decide which one to call
+ > Overriding -  A child class providing implementation to change inherited method behavior
+ 	- Instance decides which one gets called
+ > Overriden method CAN be overloaded
+
+
+
+
+
+49. Can static methods be overriden in Java?
+
+ANSWER:
+ > Static methods cannot be overriden in Java
+ > Method overriding has been designed to work with polymorphism
+ > Polymorphism requires instances to work. Does not apply with static
+ > It is a language design property. The creators of the language decided this behavior

@@ -1,0 +1,65 @@
+07 Query Rules - Merchandising
+
+Use case of Query rules - Merchandising
+ > typically in search on e-commerce websites, business needs sometimes have to take over purely textual ranking
+ > Query rules give this kind of granular control and in this video, we will illustrate:
+	1. How to promote a single product
+	2. Promote a specific brand
+	3. Add a promotional banner 
+	
+	
+Creating a Query rule
+1. Go to the Indices panel
+2. Select the Index you want to add Query rules to
+3. Go to the Query rules tab
+4. Click "Add a New Rule"
+
+
+Promote a single/multiple product
+1. Create a new Query rule
+2. In the Condition
+	> set the condition of query to "Contains"
+	> then pass the query keyword where if someone add it in the query, we will add the product to promote in the search result
+		- ex: "camera"
+	> for context, leave it as is
+		- it will applied to all context (throughout the index)
+3. In the Consequences
+	> click Add Consequences
+	> select Promote a Result
+	> look for the actual Product (or Algolia record in general) to promote
+	> we can also set its position in the result list (ex: 1st, 2nd, 3rd, etc)
+	> note that we can add more than one Algolia record to the result list
+4. Save the Query rule
+5. Now, if we search in Algolia using the selected query condition (ex: "camera"), it will show the products that we added in the result to promote
+
+
+Promoting a brand
+1. Remove the previous Query rule you created earlier
+2. Create a new Query rule
+3. In the Condition
+	> set the condition of query to "Contains"
+	> then pass the query keyword where if someone add it in the query, we will add the product to promote in the search result
+		- ex: "camera"
+	> for context, leave it as is
+		- it will applied to all context (throughout the index)
+4. In the Consequences
+	> click Add Consequences
+	> select Add Query Parameter
+	> add "optionalFilters", and pass "brand:GoPro"
+	> this will prioritize the records with "brand" attribute of "GoPro" to be added in results
+4. Save the Query rule
+5. Now, if we search in Algolia using the selected query condition (ex: "camera"), it will show first the product/record whose attribute matches the one we pass in "optionalFilters"
+
+
+
+Add a Promotional Banner
+1. Work on top of the Query rule for promoting brand
+2. Leave condition as is
+3. In the Consequences
+	> click Add Consequences
+	> select Display Specific info
+	> pass the custom JSON string that you want to add in the Algolia search query response body
+		- ex: {"banner_img": "banner_camera.jpg"}
+4. Save the Query rule
+5. Now, if we search in Algolia using the selected query condition (ex: "camera"), the response from the Algolia search API will contain additional information, which we can use in frontend to display banner
+		

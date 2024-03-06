@@ -1,0 +1,79 @@
+03. Nagios Object and Configurations
+
+/usr/local/nagios/etc/object
+	> contains all the configuration files for nagios
+
+localhost.cfg
+	> contains configuration of localhost server
+templates.cfg
+	> contains templates of the host servers to use
+	> templates defines the configuration settings for host servers
+	> example below is a template configuration for "linux-server" template
+EX:
+# Linux host definition template - This is NOT a real host, just a template!
+
+define host{
+        name                            linux-server    ; The name of this host template
+        use                             generic-host    ; This template inherits other values from the generic-host template
+        check_period                    24x7            ; By default, Linux hosts are checked round the clock
+        check_interval                  5               ; Actively check the host every 5 minutes
+        retry_interval                  1               ; Schedule host check retries at 1 minute intervals
+        max_check_attempts              10              ; Check each Linux host 10 times (max)
+        check_command                   check-host-alive ; Default command to check Linux hosts
+        notification_period             workhours       ; Linux admins hate to be woken up, so we only notify during the day
+                                                        ; Note that the notification_period variable is being overridden from
+                                                        ; the value that is inherited from the generic-host template!
+        notification_interval           120             ; Resend notifications every 2 hours
+        notification_options            d,u,r           ; Only send notifications for specific host states
+        contact_groups                  admins          ; Notifications get sent to the admins by default
+        register                        0               ; DONT REGISTER THIS DEFINITION - ITS NOT A REAL HOST, JUST A TEMPLATE!
+        }
+
+timeperiods.cfg
+	> contains definitions of time period variable names
+	> example below is a timeperiod named "24x7"
+		- we can see this being used in "linux-server" template above
+
+EX:
+define timeperiod{
+        timeperiod_name 24x7
+        alias           24 Hours A Day, 7 Days A Week
+        sunday          00:00-24:00
+        monday          00:00-24:00
+        tuesday         00:00-24:00
+        wednesday       00:00-24:00
+        thursday        00:00-24:00
+        friday          00:00-24:00
+        saturday        00:00-24:00
+        }
+
+
+commands.cfg
+	> contains the command names and their actions that they will do
+	> below is the command 'check_ping' is defined
+EX:
+# 'check_ping' command definition
+define command{
+        command_name    check_ping
+        command_line    $USER1$/check_ping -H $HOSTADDRESS$ -w $ARG1$ -c $ARG2$ -p 5
+        }
+
+
+
+contacts.cfg
+	> defines the contact that where the notifications will be send (email)
+	> below is a contact defined inside contacts.cfg
+
+# Just one contact defined by default - the Nagios admin (that's you)
+# This contact definition inherits a lot of default values from the 'generic-contact'
+# template which is defined elsewhere.
+
+define contact{
+        contact_name                    nagiosadmin             ; Short name of user
+        use                             generic-contact         ; Inherit default values from generic-contact template (defined above)
+        alias                           Nagios Admin            ; Full name of user
+
+        email                           nagios@localhost        ; <<***** CHANGE THIS TO YOUR EMAIL ADDRESS ******
+        }
+
+

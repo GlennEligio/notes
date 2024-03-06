@@ -1,0 +1,307 @@
+Entity, Repository, Controller (GET) endpoint
+
+Topic to discuss
+1. How to model an entity via C# record types
+2. How to implement an in-memory repository of resources
+3. Hot to implement a controller with GET routes to retrived resources
+
+
+INCLUDES:
+
+Record Types
+	> same functionality as class, but with additional properties
+		a. Use for immutable objects
+			= immutable objects means the object and its properties can not be changed
+		b. With-expression support
+			= with-expression is used when you want to create a new instance of an object BUT WITH additional properties or different property values
+
+				EX: Item potion2 = potion1 with { Price = 12 }
+
+			= in example, we created potion2 object using potion1 but we changed Price prop to 12
+		c. Value-based equality support
+			= we can compare the objects directly
+			= the application will automatically check the properties of the object to see the equality of them
+
+
+init; accessory
+	> accessory in the property of a record/class
+	> belong to same group as get; and set;
+	> used in replacement of set;
+	> important for immutable property
+	> init; is used so that the property value can only be initialized and can't be set/changed after object creation
+
+EX:
+
+//You can do this
+Item item = new() { Id = Guid.NewGuid() }
+
+//But not this
+item.Id = Guid.NewGuid();
+
+
+1. Remove some scaffold codes in the default webapi project
+	> delete the following
+		a. WeatherForecast.cs
+		b. WeatherForecastController.cs
+
+
+
+
+2. Create our Entities folder
+	> can also be named Data, Models, etc
+	> will contain the object that we will use as Resources to send to user and Table schema for our Database using EF
+
+
+
+
+3. Add an Entity class in Entities folder
+	> name it Item.cs
+	> inside the Item.cs, add the following:
+		= namespace that corresponds to file location
+		= record object inside the namespace instead of a class
+		= add a few properties inside the record object, use get; init; accesory
+			a. Guid id
+			b. string Name
+			c. decimal Price
+			d. DateTimeOffset CreatedDate 
+
+INSIDE Item.cs
+
+using System;
+
+namespace Catalog.Entities
+{
+    public record Item
+    {
+        public Guid Id { get; init; }
+        public string Name { get; init; }
+        public decimal Price { get; init; }
+        public DateTimeOffset CreatedDate { get; init; } 
+    
+    }
+}
+
+
+
+
+4. Create a Repositories folder
+
+
+
+
+5. Add a new file inside Repositories folder
+	> name it InMemItemsRepository.cs
+
+
+
+
+6. Inside the InMemItemsRepository.cs file, add the following
+	> public class InMemItemsRepository
+	> inside the class, add the following
+		a. List<Item> items
+			= private, readonly property
+			= we will initialize it as a new List of Item objects
+			= so inside the curly braces, we will create/initialize multiple Item objects
+		b. GetItems ()
+			= public access method
+			= IEnumerable<Item> return type
+			= returns the items property
+		c. GetItem()
+			= public access
+			= Item return type
+			= Guid parameter
+			= returns an Item from the items property whose Id property is equal to the Guid parameter
+
+
+INSIDE InMemItemsRepository.cs file
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Catalog.Entities;
+
+namespace Catalog.Repositories
+{
+    public class InMemItemsRepository
+    {
+        private readonly List<Item> items = new()
+        {
+            new Item {Id = Guid.NewGuid(), Name = "Potion", Price = 9, CreatedDate = DateTimeOffset.UtcNow },
+            new Item {Id = Guid.NewGuid(), Name = "Iron Sword", Price = 20, CreatedDate = DateTimeOffset.UtcNow },
+            new Item {Id = Guid.NewGuid(), Name = "Bronze Shield", Price = 18, CreatedDate = DateTimeOffset.UtcNow },
+        };
+
+        public IEnumerable<Item> GetItems()
+        {
+            return items;
+        }
+
+        public Item GetItem(Guid id)
+        {
+            return items.Where(item => item.Id == id).SingleOrDefault();
+        }
+    }
+}
+
+
+
+	Now we will create the Controller class. In this scenario, we will EXPLICITLY DEPEND to the Repository that we made earlier. This is not the best case, but this will suffice for now.
+
+
+
+
+7. Create a class inside Controllers folder 
+	> this will represent our Controller for exposing our .NET Rest api
+	> name it ItemsController.cs
+
+
+
+
+8. Inside the ItemsController.cs, add the following
+	a. Namespace that corresponds to the file location
+	b. ItemsController class
+		= located inside namespace
+		= public access
+		= inherits ControllerBase class from Microsoft.AspNetCore.Mvc library
+			> ControllerBase is like Controller but for REST api with no View
+		= annotated with following annotations
+			> [ApiController]
+			> [Route("items")]
+	c. InMemItemsRepository repository property
+		= private access and readonly variable
+		= located inside ItemsController class
+		= no value initialized, only declared
+	d. ItemsController class Contructor
+		= inside, we will initialize the repository property as new Instance of the same Class
+	e. GetItems()
+		= one of our Controller's Route endpoint
+		= annotated by the following annotations
+			> [HttpGet]
+		= returns the result of GetItems() method of the InMemItemsRepository property of Controller class
+
+
+INSIDE ItemsController.cs file
+
+using Microsoft.AspNetCore.Mvc;
+using Catalog.Repositories;
+using System.Collections.Generic;
+using Catalog.Entities;
+
+namespace Catalog.Controllers
+{
+    [ApiController]
+    [Route("items")]
+    public class ItemsController : ControllerBase
+    {
+        private readonly InMemItemsRepository repository;
+
+        public ItemsController()
+        {
+            repository = new InMemItemsRepository();
+        }
+
+        [HttpGet]
+        public IEnumerable<Item> GetItems()
+        {
+            var items = repository.GetItems();
+            return items;
+        }
+    }
+}
+
+
+
+
+9. Test the newly modified webapi
+	> call the swagger extension of our webapi
+	
+		https://localhost:5001/swagger
+
+	> check if the Route endpoints of our Webapi has changed
+	> check if the result of the new Route endpoint we added matches the expected result
+
+
+
+
+10. Add another Route endpoint in the Controller
+	> this time, it will fetch a specific item in our Catalog
+	> inside the Controller class, add another method
+	> this method will have the following property
+		a. GetItem name
+		b. public access, Item return type, Guid parameter
+		c. [HttpGet("{id}")] annotation
+		d. inside the method, we will
+			- create a variable
+			- assign it the result of the GetItem() of repository
+			- pass the Guid parameter of method to the GetItem()
+			- return the variable 
+
+
+INSIDE ItemsController class as one of its methods
+
+        [HttpGet("{id}")]
+        public Item GetItems(Guid id)
+        {
+            var item = repository.GetItem(id);
+            return item;
+        }
+
+
+
+
+11. Test the new route endpoint
+	> save all, build and run
+	> call the GetItems() endpoint
+	> get a GUID from the GetItems() response
+	> call the GetItem() endpoint and append the GUID we copied into the url endpoint
+	> check the result
+
+	As we can see, instead of the normal 200 OK response code, we get a 204 No Content response code even if we provided a GUID that the GetItems() endpoint gave us. This is because of the way our code is built.
+
+	1. In the Controller class constructor, we create a new Instance of the InMemItemsRepository.
+	2. In the InMemItemsRepository, we create a new GUID to the Items content whenever a new Repo class in created
+	3. For every request we sent to one of the Controllers's endpoint, we call the Controller's constructor
+	4. Therefore, when we called the GetItem() after the GetItems(), the GUID we copied is no longer valid because a new set of GUID is created with new Instance of InMemItemsRepository
+
+
+	We can test this by created a breakpoint to the return statement when we test the route endpoint. If we hover to the item variable, it will show that the current value of that variable is NULL. This means that theres no Item in the Items that matches the said GUID input.
+	
+
+
+
+
+12. Modify the GetItem() route endpoint
+	a. change the return type of endpoint from Item to ActionResult<Item>
+		= with this, we can modify the response code we reply to the client or caller of endpoint
+	a. create a null check for the item we fetch from repository
+		> check if item variable is null
+		> if null, return a NotFound()
+		> if not null, return an Ok() with the item variable inside it
+
+
+INSIDE ItemsController class as one of its endpoints
+
+        [HttpGet("{id}")]
+        public ActionResult<Item> GetItems(Guid id)
+        {
+            var item = repository.GetItem(id);
+            if(item is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(item);
+        }
+
+
+
+
+13. Test the application again
+	> save all, build and run
+	> get a GUID from GetItems() result
+	> call GetItem() and pass the GUID copied
+	> check the result
+
+	We should get a 404 result code.
+

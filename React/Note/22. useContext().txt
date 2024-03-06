@@ -1,0 +1,237 @@
+22. Context API and useContext()
+
+Context API
+	> used to provide Global/Application level state to all Components in app
+	> With the context API you can specify certain pieces of data that will be available to all components nested inside the context with no need to pass this data through each component. 
+		-> It is essentially semi-global state that is available anywhere inside the context. Here is a quick example.	
+	> composed of two things
+		1. Provider
+		2. Consumer
+	> everthing inside the Provider can access the data in "value" prop of Context
+
+Creating Context
+1. Create a variable, and pass the result of React.createContext()
+2. Export the said variable, so that other Components can access it;
+
+EX: 
+export const ThemeContext = React.createContext();
+
+
+ADDING VARIABLES TO THE CONTEXT
+1. Wrap everything (all JSX which includes Components) inside Context.Provider in the return of App Functional Component
+2. Pass the variable inside the "value" property of the Context.Provider
+	> NOTE: For two or more variables, pass them in this syntax:
+		A. ONE variable		=> <ThemeContext.Provider value={darkTheme}>
+		B. TWO OR MORE		=> <ThemeContext.Provider value={{darkTheme, toggleTheme}}>
+
+EX:
+If you create a Context named ThemeContext, we will do something like this
+
+  return (
+    <>
+      <ThemeContext.Provider value={darkTheme}>
+        <button onClick={toggleTheme}>Toggle Theme</button>
+        <FunctionContextComponent />
+        <ClassContextComponent />
+      </ThemeContext.Provider>
+    </>
+  );
+
+
+
+
+Accessing the values in a Context
+
+In React, the way of accessing the values in Context will depend on type of Component that will be used
+	1. For Class Component, we can wrap the JSX return value to <Context.Consume> and access the values of Context inside it
+	2. For Functional Component, we will need to use useContext() hook to do it
+
+
+I. Class Component way of accessing Context values
+1. Import the Context variable inside the Class Component
+2. Wrap the JSX return value of Class Component into Context.Consumer
+3. Access the variables we passed in Context.Provider "value" 
+
+EX:
+
+import React, { Component } from "react";
+import { ThemeContext } from "./App";
+
+export default class ClassContextComponent extends React.Component {
+  themeStyles(dark) {
+    return {
+      backgroundColor: dark ? "#333" : "#CCC",
+      color: dark ? "#CCC" : "#333",
+      padding: "2rem",
+      margin: "2rem",
+    };
+  }
+
+  render() {
+    return (
+      <ThemeContext.Consumer>
+        {(darkTheme) => {
+          return <div style={this.themeStyles(darkTheme)}>Class Theme</div>;
+        }}
+      </ThemeContext.Consumer>
+    );
+  }
+}
+
+
+
+II. Functional Component access to Context
+1. Import the Context and useContext function
+2. Define the variable/s that will only values from Context.Provider's value props
+	-> TIP: We can access MORE THAN ONE variables in Context.Provider
+
+		=> SYNTAX: const {variable1, variable2} = useContext(Context);
+
+	-> NOTE: the variable name MUST BE THE SAME as the variable you want to access in Context.Provider
+3. Assign the value of the variable/s to the useContext(Context)
+4. Use them in the same way as Class Component
+
+EX:
+
+import React, { useContext } from "react";
+import { ThemeContext } from "./App";
+
+const FunctionContextComponent = () => {
+  const darkTheme = useContext(ThemeContext);
+  const themeStyles = {
+    backgroundColor: darkTheme ? "#333" : "#CCC",
+    color: darkTheme ? "#CCC" : "#333",
+    padding: "2rem",
+    margin: "2rem",
+  };
+
+  return <div style={themeStyles}>Function Theme</div>;
+};
+
+export default FunctionContextComponent;
+
+
+
+
+EXTRA:
+Create JS file to 
+1. Expose Function that returns the ContextProvider JSX to be used
+2. expose Functional hook for accessing and updating Context variables
+
+I. Expose Function that returns the ContextProvider JSX to be used
+1. Create JS file
+	-> name "ThemeContext.js"
+2. Import useContext, useState, and React into the JS file
+3. Copy the Context variable that we expose in the App.js into the ThemeContext.js
+	-> here, we dont need to expose it, since we will use the exposed hooks to access and modify its values
+4. Create and expose a Function
+5. The Function will have the following
+	a. Have a "children" parameter
+		-> this will represent the child Components that Context.Provider will encapsulate
+	b. Have the States that we will add in the Context
+	c. Return the Context.Provider component we have in ThemeContext.js 
+	d. Pass the variables that we have to the "value" props of the Context.Provider
+	e. Add the "children" parameter inside the <Context.Provider> element
+
+
+EX:
+import React, { useContext, useState } from "react";
+
+const ThemeContext = React.createContext();
+
+export const ThemeProvider = ({ children }) => {
+  const [darkTheme, setDarkTheme] = useState(true);
+
+  const toggleTheme = () => {
+    setDarkTheme((prevDarkTheme) => !prevDarkTheme);
+  };
+
+  return (
+    <ThemeContext.Provider value={{ darkTheme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+
+
+II. Expose hooks for accessing and modifying Context variables
+1. Create and expose the functions
+2. These functions will have the following
+	> return useContext(Context)
+	> NOTE: One function PER Context
+
+EX:
+import React, { useContext, useState } from "react";
+
+const ThemeContext = React.createContext();
+
+// The exposed hook to access Context
+export function useTheme() {
+  return useContext(ThemeContext);
+}
+
+export const ThemeProvider = ({ children }) => {
+  const [darkTheme, setDarkTheme] = useState(true);
+
+  const toggleTheme = () => {
+    setDarkTheme((prevDarkTheme) => !prevDarkTheme);
+  };
+
+  return (
+    <ThemeContext.Provider value={{ darkTheme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+
+
+
+III. Accessing Context
+1. Encapsulate all Component into the exposed Function that returns the Context.Provider
+
+EX:
+import React from "react";
+import { ThemeProvider } from "./ThemeContext";
+
+import FunctionContextComponent from "./FunctionContextComponent";
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <FunctionContextComponent />
+    </ThemeProvider>
+  );
+}
+
+
+
+2. In the Components that will access the Context variables, import the exported Function as hook
+	-> NOTE: Only works with Functional Component
+3. 
+
+EX:
+import React from "react";
+import { useTheme } from "./ThemeContext";	// imported functional hook that return useContext(ThemeContext)
+
+const FunctionContextComponent = () => {
+  const { darkTheme, toggleTheme } = useTheme();	// used the hook to provide values to variables
+  const themeStyles = {
+    backgroundColor: darkTheme ? "#333" : "#CCC",
+    color: darkTheme ? "#CCC" : "#333",
+    padding: "2rem",
+    margin: "2rem",
+  };
+
+  // used the variables in the elements
+  return (
+    <>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+      <div style={themeStyles}>Function Theme</div>
+    </>
+  );
+};
+
+export default FunctionContextComponent;
+

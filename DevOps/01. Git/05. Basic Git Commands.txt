@@ -1,0 +1,297 @@
+05. Basic Git Commands (Setting up configs)
+
+
+Git Commands
+
+SETTING UP THE GIT
+
+git --version
+	> checks the version of Git installed
+
+git config --global user.name "Sandeep.D"
+git config --global user.email "sandeep.d@simplilearn.net"
+git config --global user.username "simplilearn-github
+	> used to set a username, name and email to the developer	
+		- with this, we can know who is checking the code in and out and making the changes
+
+git config --list
+	> shows the list of config properties we set
+
+git <command> -h
+	> shows a breakdown of the command in CONSOLE which includes
+		- template of using the command
+		- possible commands, flags, values to pass
+	> below is the result of git branch --help, where we can see how we can use git branch command
+
+EX:
+D:\Study\programming\Front end\Workspaces>git branch -help
+usage: git branch [<options>] [-r | -a] [--merged] [--no-merged]
+   or: git branch [<options>] [-l] [-f] <branch-name> [<start-point>]
+   or: git branch [<options>] [-r] (-d | -D) <branch-name>...
+   or: git branch [<options>] (-m | -M) [<old-branch>] <new-branch>
+   or: git branch [<options>] (-c | -C) [<old-branch>] <new-branch>
+   or: git branch [<options>] [-r | -a] [--points-at]
+   or: git branch [<options>] [-r | -a] [--format]
+
+Generic options
+    -v, --verbose         show hash and subject, give twice for upstream branch
+    -q, --quiet           suppress informational messages
+    -t, --track           set up tracking mode (see git-pull(1))
+    -u, --set-upstream-to <upstream>
+                          change the upstream info
+    --unset-upstream      unset the upstream info
+    --color[=<when>]      use colored output
+    -r, --remotes         act on remote-tracking branches
+    --contains <commit>   print only branches that contain the commit
+    --no-contains <commit>
+                          print only branches that don't contain the commit
+    --abbrev[=<n>]        use <n> digits to display object names
+
+Specific git-branch actions:
+    -a, --all             list both remote-tracking and local branches
+    -d, --delete          delete fully merged branch
+    -D                    delete branch (even if not merged)
+    -m, --move            move/rename a branch and its reflog
+    -M                    move/rename a branch, even if target exists
+    -c, --copy            copy a branch and its reflog
+    -C                    copy a branch, even if target exists
+    -l, --list            list branch names
+    --show-current        show current branch name
+    --create-reflog       create the branch's reflog
+    --edit-description    edit the description for the branch
+    -f, --force           force creation, move/rename, deletion
+    --merged <commit>     print only branches that are merged
+    --no-merged <commit>  print only branches that are not merged
+    --column[=<style>]    list branches in columns
+    --sort <key>          field name to sort on
+    --points-at <object>  print only branches of the object
+    -i, --ignore-case     sorting and filtering are case insensitive
+    --format <format>     format to use for the output
+
+
+git <command> --help
+git help <command>
+	> shows an HTML pages for a manual of a specific git command
+	> shows a part of git-doc
+	> this doc is located in the local machine itself (no need for internet connection)
+
+
+
+INITIALIZING THE LOCAL GIT REPO AND MODIFYING IT
+
+git init
+	> initialize a local git repo in a specific directory in local machine
+
+git status
+	> checks the status of the local git repo
+	> shows the
+		- untracked files (files that newly added but NOT commited)
+		- changes not staged for commit (files that are MODIFIED but NOT commited)
+		- changes to be committed (new files and modified files that are added but NOT commited)
+
+git add <file-name>
+	> adds a file in the local git repo
+	> passing a dot (.) to the file-name section will add ALL NEW FILES and MODIFIED files into the tracked file
+		- these tracked file can then be committed using git commit
+
+git commit -m <message> -m <submessage>
+	> commits all the changes (addition of files / modification of files) on the local git repo
+	> we can attach a message to the commit action by passing a String surrounded by double quotation marks
+		- ex: git commit -m "Initial commit"
+
+git diff
+	> shows the difference from the current files in directory compared to the files tracked in local git repo
+
+EX:
+D:\Study\programming\Front end\Workspaces>git diff
+diff --git a/demo.txt b/demo.txt
+index 632b28d..8c0c8f5 100644
+--- a/demo.txt
++++ b/demo.txt
+@@ -1 +1,2 @@
+-Hello main branch
+\ No newline at end of file
++Hello main branch
++Newly added line
+\ No newline at end of file
+
+
+
+PUSHING THE LOCAL GIT REPOSITORY TO A REMOTE GIT REPOSITORY
+
+git config --global user.username <Remote Git Username>
+	> adds the remote Git Account (Github) to the config
+	> with this, we can access its repository where we can push files
+
+git remote add <name> <url>
+	> adds a remote git url for us to push files to
+	> ex: git remote add origin https://github.com/GlennEligio/test-demo.git
+
+git remote -v
+	> shows all remote git repo we have
+
+git remote set-url <name> <newurl>
+	> changes the url of a specific remote git repo
+
+git push [<options>] [<repository>] [<refspec>...]
+	> template for git push commands
+
+git push <repository> <branch>
+	> pushes a specific branch from local git repo to the remote repository specified	
+		- ex: git push origin master
+	> NOTE: the branch in local git repo MUST MATCH that of the branch name in remote git repo for us to push
+
+
+
+BRANCHING and MERGING IN GIT 
+
+git branch <new-branch>
+	> used to create a new branch in local git repo	
+	> ex: git branch first_branch
+
+git branch -av
+	> list all branch in local git repo
+
+git branch -D <branch-name>
+	> delete a branch
+
+git push origin -delete <branch-name>
+	> delete a branch in the remote git repo
+
+git checkout <branch-name>
+	> used to change branch to the one specified
+	> ex: git checkout first_branch
+
+git checkout -b <new-branch>
+	> used to create a new branch AND change the current branch to the new branch created
+	> ex: git checkout -b first_branch
+
+git merge <branch-to-merge-to-current-branch>
+	> used to merge one branch to another branch
+	> NOTE: we must be in the branch where the MERGE RESULT will be located
+		- ex: if we want to merge "first_branch" to "main", and we want the result to be in "main", the current branch must be in "main"
+			= git checkout main
+			= git merge first_branch
+	
+EX:
+main files
+12/25/2021  07:49 PM                 5 demo.txt
+12/25/2021  07:22 PM                35 info.txt
+12/25/2021  07:22 PM                35 info2.txt
+
+first_branch files
+12/25/2021  07:53 PM                35 demo.txt
+12/25/2021  07:22 PM                35 info.txt
+12/25/2021  07:22 PM                35 info2.txt
+12/25/2021  07:53 PM                35 info3.txt
+
+merge command result
+D:\Study\programming\Front end\Workspaces>git merge first_branch
+Updating d97d4d6..cbb5b01
+Fast-forward
+ demo.txt  | 3 ++-
+ info3.txt | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+ create mode 100644 info3.txt
+
+main files after merge
+12/25/2021  07:53 PM                35 demo.txt
+12/25/2021  07:22 PM                35 info.txt
+12/25/2021  07:22 PM                35 info2.txt
+12/25/2021  07:53 PM                35 info3.txt
+
+
+LOGGING AND HISTORY OF COMMITS
+
+git log
+	> shows the logs of commits made in the given git repo
+	> latest commits are in the top of the list
+
+
+
+CLONING REMOTE GIT REPOSITORIES
+
+git clone <repository-url>
+	> clones a given remote git repository using either
+		- SSH
+		- HTTPS link
+	> sometimes you will need to be authenticated to access or clone a specific repository
+		- for SSH, you will need to pass a passphrase
+		- for HTTPS, you will need to pass a username and password
+
+
+
+RESET, REVERTING CHANGES/COMMITS IN LOCAL GIT REPO
+
+git reset <commit hash id>
+	> removes commit in the commit logs and put the files/changes back to UNTRACKED
+	> adding "--soft" flag in git reset will put the files/changes from COMMIT to STAGED
+	> adding "--hard" flag in git reset will RESET the state of the current branch to the Commit state that we specified
+		- this means that everything we changed in the local git repo in current branch will be GONE
+			= files added are REMOVED
+			= files modified are ROLLBACK to previous state
+
+EX:
+Commit logs
+D:\Study\programming\Front end\Workspaces\git-reset>git log --pretty=oneline
+b00b87f31848143f9b1e8cbd20eca0896d9ab6ac (HEAD -> master) 4th commit modified info3.txt
+9ed3d3ecc1e82095fdda515d8a8f334d87b6a5c9 3rd commit added new file
+17fc5582175ad189386f5bbfa016b890b9508d10 2nd commit added new file
+fe86ca3ff254aa8f08de8a3b7b1b68fe6a27b18f 1st commit
+
+
+After git reset --soft <commit id of 2nd commit>
+Commit logs
+D:\Study\programming\Front end\Workspaces\git-reset>git log --pretty=oneline
+17fc5582175ad189386f5bbfa016b890b9508d10 (HEAD -> master) 2nd commit added new file
+fe86ca3ff254aa8f08de8a3b7b1b68fe6a27b18f 1st commit
+
+Git status
+D:\Study\programming\Front end\Workspaces\git-reset>git status
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   info3.txt
+
+
+
+git revert <commit id>
+	> adds a Revert action in the commit logs
+		- what Revert does is undoing or reversing the action made by a specific commit
+		- the commit reverted is still in the commit log as well
+
+EX:
+Commit logs
+D:\Study\programming\Front end\Workspaces\git-reset>git log --pretty=oneline
+51b8735faa42339adb499ffe39f40d3904566dc1 (HEAD -> master) 3rd commit added new file
+17fc5582175ad189386f5bbfa016b890b9508d10 2nd commit added new file
+fe86ca3ff254aa8f08de8a3b7b1b68fe6a27b18f 1st commit
+
+After reverting the 2nd commit
+D:\Study\programming\Front end\Workspaces\git-reset>git log --pretty=oneline
+f4fb364d148c4b981cd56c5bff7dfca0013cc233 (HEAD -> master) Revert "2nd commit added new file"
+51b8735faa42339adb499ffe39f40d3904566dc1 3rd commit added new file
+17fc5582175ad189386f5bbfa016b890b9508d10 2nd commit added new file
+fe86ca3ff254aa8f08de8a3b7b1b68fe6a27b18f 1st commit
+
+
+
+
+UPDATING LOCAL GIT REPO BRANCH FROM REMOTE GIT REPO BRANCH
+
+git fetch
+	> checks for the difference between the current branch on Local Git repo to the Remote Git repo
+	> used in conjunction with git merge <remote git repo branch>
+		- ex: git fetch, then git merge origin/master
+
+
+git pull <remote git repo name> <remote git repo branch>
+	> combination of git fetch and git merge <remote git repo name>/<remote git repo branch>
+	> with this, we can update the local repo by 
+		1. fetching changes in remote git repo branch
+		2. merge these changes in the current branch we are in
+
+
+
+MERGE CONFLICTS
+git mergetool --tool=vimdiff

@@ -1,0 +1,37 @@
+24 Economies of scale
+
+
+Economies of scale
+ > "Cost advantages that enterprises obtain due to their scale of operation"
+
+
+Scenario: Setting up and scaling data center
+What is more expensive?
+1. Setting up a data center
+2. Doubling the capacity of a data center
+
+Answer:
+ > No. 1 is more expensive than No.2 (assuming the capacity adding in no.2 is the same as the capacity of no.1)
+ > The reason is that when you set up a data center from scratch will require you more than scaling a data center for similar capacity gain
+ > Example of these are
+ 	- Problems that you encounter when dealing with data center the first time
+	- The inefficiencies due to lack of experience dealing with data centers
+ > When we scale the data center for no.2, we already know what problems we will face, and optimizations on how to do it efficiently. This will result in less cost in doing so.
+
+
+
+
+Scenario: Choosing how to deploy your applications
+Choose between:
+1. Paying for your own hardware and operations staff
+2. Paying Amazon's hardware, Amazon's operations staff AND Amazon (since they need to profit)
+
+
+Answer:
+ > In the face value, it seems that no.2 will not be a good choice since not only you are paying for hardware and operation staff, but you are also paying the Cloud Provider (Amazon) for the service since they need to profit
+ > But we must remember that Cloud Providers have the Economies of Scale on their side since they provide these hardwares/operation staff in a much larger scale
+ > With this, the Cloud provides can
+	1. do things at lower cost
+	2. do things more efficiently/better at the same cost
+	3. pass the savings they get down to its customers
+		- this is ensured by the competition, since if they don't, the competition will naturally get them out

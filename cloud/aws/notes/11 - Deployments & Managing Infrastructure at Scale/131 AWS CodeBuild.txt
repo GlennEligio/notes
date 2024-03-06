@@ -1,0 +1,28 @@
+131 AWS CodeBuild
+
+
+AWS CodeBuild
+ > Code building service in the cloud (name is obvious)
+ > Compiles source code, run tests, and produces packages that are ready to be deployed (by CodeDeploy for example)
+
+
+AWS CodeBuild diagram
+CodeCommit 
+ ^
+ |
+ | Retrieve Code
+ |
+CodeBuild
+ |
+ | Build code
+ |
+ V
+Ready-to-deploy artifact
+
+
+
+Benefits of AWS Code Build
+1. Fully managed, serverless
+2. Continuously scalable & highly available
+3. Secure
+4. Pay-as-you-go pricing - only pay for the build time

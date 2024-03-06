@@ -1,0 +1,185 @@
+12 Global Exception Handling - Functional Endpoints
+
+SOURCE:
+https://www.youtube.com/watch?v=xV6oHL3bUg0&list=PLVz2XdJiJQxyB4Sy29sAnU3Eqz0pvGCkD&index=12&ab_channel=JavaTechie
+https://boottechnologies-ci.medium.com/spring-webflux-rest-api-global-exception-handling-278f4095e45b
+https://hantsy.github.io/spring-reactive-sample/web/exception.html
+
+
+Two ways of creating Global Excepting Handlers for Functional Endpoints - Spring Webflux
+1. Using AbstractErrorWebExceptionHandler + DefaultErrorAttributes implementation/subclass
+2. Using customized WebExceptionHandler @Bean, and define cases for the Mono<ServerResponse> to return
+
+
+Interfaces/Classes used
+1. AbstractErrorWebExceptionHandler
+	> Abstract base class for ErrorWebExceptionHandler implementations.
+	> contains methods that we will be overriding/using in this abstract class' subclasses
+		- getRoutingFunction, defines the Routes and the corresponding Handler function to use to handle the exception
+		- setMessageWrite, configure HTTP message writers to serialize the response body with
+		- setMessageReaders, configure HTTP message readers to deserialize the request body with
+	
+2. DefaultErrorAttributes
+	> Default implementation of ErrorAttributes. Provides the following attributes when possible:
+		timestamp - The time that the errors were extracted
+		status - The status code
+		error - The error reason
+		exception - The class name of the root exception (if configured)
+		message - The exception message (if configured)
+		errors - Any ObjectErrors from a BindingResult exception (if configured)
+		trace - The exception stack trace (if configured)
+		path - The URL path when the exception was raised
+		requestId - Unique ID associated with the current request
+
+3. WebExceptionHandler
+ 	? 
+
+
+Properties added in application.properties
+1. server.error.include-message=always
+	> always adds the message string that we passed when we programmatically throw an Exception
+	> by default, message in not included in the ErrorResponse
+
+
+
+Creating the Global Exception Handling for Functional Endpoints (AbstractErrorExceptionHandler + DefaultErrorAttributes)
+ > by default, the custom exception system provided in SpringMVC does not work in Spring WebFlux for the simple reason that the underlying runtime containers are not the same
+ > "WebExceptionHandler" is the top-level interface to the exception handler of Spring WebFlux, so it can be traced back to the subclass
+ > Spring Boot provides a "WebExceptionHandler" that sensibly handles all errors.
+	- It position in the processing order is immediately before the handlers provided by WebFlux, which are considered last
+ > the steps include
+	1. Customize the Global Error Response Attributes
+	2. Implement the Global Error Handler
+
+1. Customize the Global Error Response Attribute
+	> annotate with @Component
+	> create a class that extends to DefaultErrorAttributes
+	> override the "getErrorAttributes" method
+		- we must return a Map<String, Object>, where the String and Object will be the ErrorResponse keys and values respectively
+ 	> we will also do custom ErrorResponse value here based on the Exception thrown, which we can get in the getErrorAttributes's ServerRequest parameter
+2. Implement the GlobalErrorHandler
+	> annotate with @Component and @Order(-2)
+		- @Order(2) is used to give a priority boost to the component that Spring Boot class DefaultErrorWebExceptionHandler, which is of Order(-1) priority
+	> extends to AbstractErrorWebExceptionHandler
+	> in the constructor, we will:	
+		- add ServerCodecConfigurer parameter to constructor in order to inject it
+		- call the super constructor, where will pass a new WebProperties.Resources instance to its corresponding argument
+			-> this is to avoid creating a @Bean of specific class
+		- call the setMessageWriters() and setMessageReaders of the super, and pass the ServerCodecConfigurer.getWriters() and ServerCodecConfigurer.getReaders() to them respectively
+	> create a HandlerFunction that will be returning a ServerResponse based on errorPropertiesMap from ServerRequest
+		- this HandlerFunction will be used WHENEVER a Throwable is thrown during Request processing
+	> override the getRoutingFunction, where we will be
+		- returning a RouterFunction that matches to all Request, and passing the HandlerFunction that we created inside it
+
+
+EX:
+// Custom Exceptions
+// ApiException.java
+@Data
+@AllArgsConstructor
+public class ApiException extends RuntimeException {
+
+    private final HttpStatus code;
+    private final String message;
+}
+
+// UnAuthorizedException.java
+public class UnAuthorizedException extends RuntimeException{
+    private String message;
+
+    public UnAuthorizedException(String message) {
+        super(message);
+        this.message = message;
+    }
+    public UnAuthorizedException() {
+    }
+}
+
+// ErrorAttributesKey.java where all keys that we want in ErrorResponse is defined
+@Getter
+public enum ErrorAttributesKey{
+    CODE("code"),
+    MESSAGE("message"),
+    TIME("timestamp"),
+    PATH("path");
+
+    private final String key;
+    ErrorAttributesKey(String key) {
+        this.key = key;
+    }
+}
+
+
+// GlobalErrorAttributes.java
+record ExceptionRule(Class<?> exceptionClass, HttpStatus status){}
+
+@Component
+public class GlobalErrorAttributes extends DefaultErrorAttributes {
+
+    private final List<ExceptionRule> exceptionsRules = List.of(
+            new ExceptionRule(UnAuthorizedException.class, HttpStatus.UNAUTHORIZED)
+    );
+
+
+    @Override
+    public Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
+        Throwable error = getError(request);
+
+        final String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
+        Optional<ExceptionRule> exceptionRuleOptional = exceptionsRules.stream()
+                .map(exceptionRule -> exceptionRule.exceptionClass().isInstance(error) ? exceptionRule : null)
+                .filter(Objects::nonNull)
+                .findFirst();
+
+        return exceptionRuleOptional.<Map<String, Object>>map(exceptionRule -> Map.of(ErrorAttributesKey.CODE.getKey(), exceptionRule.status().value(),
+                        ErrorAttributesKey.MESSAGE.getKey(), error.getMessage(),
+                        ErrorAttributesKey.TIME.getKey(), timestamp,
+                        ErrorAttributesKey.PATH.getKey(), request.path()))
+                .orElseGet(() -> Map.of(ErrorAttributesKey.CODE.getKey(), determineHttpStatus(error).value(),
+                        ErrorAttributesKey.MESSAGE.getKey(), error.getMessage(),
+                        ErrorAttributesKey.TIME.getKey(), timestamp,
+                        ErrorAttributesKey.PATH.getKey(), request.path()));
+    }
+
+
+    private HttpStatus determineHttpStatus(Throwable error) {
+        if(error instanceof ResponseStatusException err) {
+            return (HttpStatus) err.getStatusCode();
+        } else if (error instanceof ApiException apiException) {
+            return apiException.getCode();
+        } else {
+            return MergedAnnotations.from(error.getClass(), MergedAnnotations.SearchStrategy.TYPE_HIERARCHY).get(ResponseStatus.class).getValue(ErrorAttributesKey.CODE.getKey(), HttpStatus.class).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
+
+
+
+// GlobalErrorWebExceptionHandler.java
+@Component
+@Order(-2)
+public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
+
+    public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes,
+                                          ApplicationContext applicationContext,
+                                          ServerCodecConfigurer configurer) {
+        super(errorAttributes, new WebProperties.Resources(), applicationContext);
+        super.setMessageReaders(configurer.getReaders());
+        super.setMessageWriters(configurer.getWriters());
+    }
+
+    @Override
+    protected RouterFunction<ServerResponse> getRoutingFunction(ErrorAttributes errorAttributes) {
+        return RouterFunctions.route(RequestPredicates.all(), this::renderErrorResponse);
+    }
+
+    private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
+
+        final Map<String, Object> errorPropertiesMap = getErrorAttributes(request, ErrorAttributeOptions.defaults());
+
+        int statusCode = Integer.parseInt(errorPropertiesMap.get(ErrorAttributesKey.CODE.getKey()).toString());
+        return ServerResponse.status(HttpStatus.valueOf(statusCode))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(errorPropertiesMap));
+    }
+}

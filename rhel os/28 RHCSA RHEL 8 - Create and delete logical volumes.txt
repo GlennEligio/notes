@@ -1,0 +1,47 @@
+28 RHCSA RHEL 8 - Create and delete logical volumes
+
+Commands
+lvs
+ > display information about the Logical Volumes
+
+lvcreate [option args] VG
+ > create a logical volume
+ > to create a linear LV, we will need to use the following options
+	-L	size of Logical volume
+	-n 	name of logical volume
+ > EX:
+	$ lvcreate -L 4G -n lv1 vg1
+		- creates a logical volume "lv1" with size of 4GiB in volume group "vg1"
+
+
+lvextend [option args] LV
+ > used to add space to a logical volume
+ > to create an LV with specified size
+	$ lvextend -L[+]Size[m|UNIT] LV
+ > ex:
+	$ lvextend -L+2G /dev/vg1/lv1
+ > note:
+	1. we need to pass the whole directory of the Logical Volume
+	2. make sure that the size to add will not exceed the size available in the Volume Group
+
+
+lvresize
+ > resize a logical volume
+ > to resize a logical volume, use the syntax below
+	$ lvresize -L [+| -]Size[m|Unit] LV
+ > EX:
+	$ lvresize -L-1G /dev/vg1/lv1
+ > note:
+	1. make sure that the size to add in LV will not exceed the available space in VG
+
+
+lvremove
+ > remove the Logical Volume in the Volume group
+ > to remove, use syntax below
+	$ lvremove LV
+ > ex:
+	$ lvremove /dev/vg1/lv1
+ > note:
+	1. If the Logical Volume is MOUTNED, it is advised to unmount it first before removing in the Volume group
+		- we can use the "umount" command for this
+		- ex: umount /mnt/lv1

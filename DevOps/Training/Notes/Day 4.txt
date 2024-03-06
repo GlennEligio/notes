@@ -1,0 +1,292 @@
+Day 4
+
+Ansible
+	> A Push based Configuration Management Tool
+	> Agentless, only Master Server have
+	> works on SSH layer
+
+
+CHANGING HOSTNAME
+sudo su
+hostname <name>
+bash
+
+
+STEPS
+1. On Master
+	sudo su
+	apt update
+	ssh-keygen
+	cat /root/.ssh/id_rsa.pub
+2. Copy the result of cat command
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKpo7jT5/i6wQkx34oJVtt4ZZGoc7C74bkXtOn9Kwv1EYm7DTj1L+qXtLfWr/6pLWVpgPSeS8MPhALJ4z1XuG5Vj92HjfKZms4vKKfMk4ktZiYKatBW75yZbbsqQq5fuKFpCicedqkMtVDRKVvlYwEsWy52BvUFcu3T1sikzczgATdyMJ06j0kYKVf/UoRazWq2NSc2bDupu0d3EWPS+OpeEztF0xbuQFSKB+W+QOeeZqB2NZ2xzIJsUP10pnlUx4dVyIyllWfhJ1MVTOZVNZTgIk44asf3qrVrESlTuB2gGjuD0yTKWPSd0sz0UaJrelMURkkdGunDxor5i4xNYbN root@node1
+3. On Node2, Node3, CentOS
+	sudo su
+	vi /root/.ssh/authorized_keys
+4. Inside authorized_keys file, paste the ssh public key from cat command result at the NEXT LINE
+	> current content of this file is ONE-LINE, to go to end, press END key
+5. On Master, add Ansible repository to your system
+	sudo apt-add-repository ppa:ansible/ansible
+6. On Master,
+	sudo apt-get update	
+	sudo apt-get install ansible
+	ansible --version
+
+
+
+Inventory File
+	> contains files and information related to the Ansible
+	> these files/informations includes
+		- machines/nodes being managed
+		- configuration settings
+	> located in /etc/ansible
+	> contains the following files
+		a. ansible.cfg
+			> configuration file for Ansible
+			> to modify the configuration settings
+				- UNCOMMENT the config setting (commented line starts with #)
+				- change the value
+		b. hosts
+			> defines the nodes/machines being managed
+			> includes the ip address used to connect to them using SSH
+
+
+
+STEPS:
+1. Edit the hosts file in /etc/ansible
+	vi /etc/ansible/hosts
+2. At the end of the file, pass the following
+[webservers]
+node2privateIp
+node3privateIp
+[dbservers]
+centosprivateIp
+
+
+
+MODULES in Ansible
+
+CentOS/Redhat
+	> yum as package manager
+Ubuntu
+	> apt as package manager
+
+
+
+STEPS:
+1. Check Ansible Modules
+		ansible-doc -l | more
+2. Check for Ansible modules
+	> this will display the module description and its properties to use
+	> syntax is
+		ansible-doc -s <package-module-name>
+		ansible-doc -s yum	to check for yum package manager
+
+
+USAGE of Ansible Modules
+1. Commands
+	-> also called Adhoc Commands
+	-> Ansible commands only
+2. Scripts
+	-> also called Playbook
+	-> used to either
+		- install software
+		- modify resources
+
+
+Ansible Adhoc commands
+ansible <host-group> -m <module-name> -a <attributeName=attributeValue>
+	> passing "all" in hostgroup will apply the command to all hostgroups
+
+EX:
+	ansible all -m ping
+
+This will install ping module in all hostgroups
+
+
+COLOR RESULT MEANING
+1. Green
+	> executes successfully
+	> no state change
+2. Yellow
+	> execute successfully
+	> state changed
+3. Pink
+	> warning (e.g deprecated)
+4. Red
+	> error
+
+
+Remove deprecation warnings in Ansible results
+1. Set deprecation_warnings in ansible.cfg to false
+	> line 180
+
+
+
+Using shell module, install apache2 in the hosts that belong to webservers
+	ansible webservers -m shell -a "apt install apache2 -y"
+
+Using shell module, purge apache2 in webservers hosts
+	ansible webservers -m shell -a "apt purge apache2 -y"
+
+Using shell module, install apach2 in the centos
+	ansible dbservers -m shell -a "yum install httpd -y" 
+
+Using service module, start the httpd in the centos
+	ansible dbservers -m service -a "name=httpd state=started"
+
+Using service module, stop the httpd service in the centOs
+	ansible dbservers -m service -a "name=httpd state=stopped"
+
+Using copy module, copy the /tmp/master.txt from MasterServer to the WebServer's and DbServer's /tmp/master.txt
+	ansible webservers,dbservers -m copy -a "src=/tmp/master.txt dest=/tmp/master.txt"
+
+Using copy module, create /tmp/master.txt and have its contents be "Testing" in WebServer and DbServer
+	ansible webservers,dbservers -m copy -a "content="Testing" dest=/tmp/master.txt"
+
+
+	
+ASSIGNMENT
+1. Install apache on centos server
+2. Uninstall apache on webservers
+3. create a directory /home/ubuntu/newdir on webservers
+4. remove the dir /home/ubuntu/newdir
+5. run date command on dbservers
+
+ANSWER
+1. ansible dbservers -m shell -a "yum install httpd -y"
+2. ansible webservers -m shell -a "apt purge apache2 -y"
+3. ansible webservers -m shell -a "mkdir /home/ubuntu/newdir"
+4. ansible webservers -m shell -a "rmdir /home/ubuntu/newdir"
+5. ansible dbservers -m shell -a "date"
+
+
+
+
+ANSIBLE PlayBooks
+	> uses .yaml file
+
+YAML (aint markup language)
+	> data oriented just like JSON
+	> stores data in key pair values
+	> case and indent SENSITIVE like python
+
+Hierarchy of PlayBook
+	
+PlayBook	
+	> Play 1
+		> Task 1
+			> Modules
+		> Task 2
+	> Play 2
+
+
+Play	
+	> contains all the Task to be executed in the host specified
+	> in Play, we can define two things
+		a. name: 
+			- defines the name of the Play
+		b. hosts:
+			- defines the host groups where the Play will be 
+		c. tasks:
+			- defines the tasks that this Play will execute
+
+Task
+	> defines the script or actions that will be taken in the hosts defined in Play
+	> in Task, we can define several attributes
+		a. name:
+			- defines the name of Task
+		b. vars:
+			- defines the variable to be used
+			- value passed into it will be the variable's value
+			- to use a variable inside the Task, enclose it inside curly braces
+		c. vars_prompt:
+			- used to prompt the user for variable values
+			- have several attributes used to define the variables to ask
+				a. name:
+					- defines the name of variable
+				b. prompt:
+					- defines the message to show in prompt
+			- to use a variable inside the Task, enclose it inside curly braces
+		d. when:
+			- defines the condition that must be passed for a Task to be executed
+			- typically uses 
+				= the variables defines in vars: and vars_prompt: when creating conditions
+				= ansible_facts[<name>] (e.g. ansible_facts['os_family'])
+		e. with_items:
+			- used for create a "for loop" to the Task
+			- used to define several values of a variable
+			- then task will then be execute for each values in this with_items: attribute
+
+
+
+ANSIBLE ROLE
+	> Roles in Ansible are next level of abstraction of Ansible playbooks
+	> Similar to Puppet Modules
+
+Benefits of Ansible Roles
+   > idea of include files and combine them to form clean and resuable abstraction
+	
+   > Easy to maintain/troubleshooting the playbooks
+
+
+ANSIBLE GALAXY
+	> website to download Ansible Roles
+
+INCLUDING AN ANSIBLE ROLE IN PLAYBOOK
+	> add roles: to the playbook
+	> pass the name of the Ansible Role
+
+EX:
+---
+ - name: executing role
+   hosts: webservers,dbservers
+   roles:
+        - geerlingguy.apache
+
+
+Generating our own Ansible Role
+	> to create an Ansible Role
+		- adding --offline is important to prevent Ansible from fetching an "apache" role online
+
+		ansible-galaxy init apache --offline
+
+	> the Ansible will then create this folder structure
+
+.
+└── apache
+    ├── README.md
+    ├── defaults
+    │   └── main.yml
+    ├── files
+    ├── handlers
+    │   └── main.yml
+    ├── meta
+    │   └── main.yml
+    ├── tasks
+    │   └── main.yml
+    ├── templates
+    ├── tests
+    │   ├── inventory
+    │   └── test.yml
+    └── vars
+        └── main.yml
+
+
+INCLUDING a yaml file inside a yaml file
+	> use include keyword then input the yaml file you want to include
+		- if same directory, passing the filename is enough
+		- else, must specify the directory file path
+
+EX:
+- include: install.yml
+
+- include: configure.yml
+
+
+NOTE: Root folder of the Role is the /roles/<rolename>/files
+	> ex: src=file.txt will search the file in the /ansible/roles/RoleName/files/file.txt
+
+
+
+

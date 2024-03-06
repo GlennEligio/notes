@@ -1,0 +1,261 @@
+12 3rd part libraries & TypeScript
+
+Contents:
+01 Module Introduction
+02 Using JavaScript () Libraries with TypeScript
+03 Using declare as a Last Resort
+04 No Types Needed class-transformer
+05 TypeScript-embracing class-validator
+06 Wrap Up
+
+
+
+
+
+01 Module Introduction
+
+Module Content
+1. "Normal" Libraries & Using them with TypeScript
+2. TypeScript-specific libraries
+
+
+
+
+
+
+
+02 Using JavaScript () Libraries with TypeScript
+
+Using JavaScript () Libraries with TypeScript
+ > by default, TypeScript doesnt know how to deal with 3rd party libraries written in PURE JavaScript
+	- if import a pure JS library in a .ts file, the TypeScript will a compilation error
+
+Type definition modules for third party libraries
+ > to make these 3rd party libraries work in TypeScript files, we will need to add the modules that contains the TYPE DEFINITIONS of these 3rd party libraries
+ > these Type definitions of the third party libraries in contains in a repository named "DefinitelyTyped"
+	- ex: https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/lodash for lodash type definitions
+ > the contents of these Type definition module are consist mostly of the TypeScript files
+
+EX:
+// lodash library
+npm i --save lodash
+// npm module for lodash type definitions
+npm i --save-dev @types/lodash
+
+
+// ./src/app.ts
+import _ from "lodash";
+console.log(_.shuffle([1, 2, 3, 4]));
+
+// console.log result in index.html page
+Array(4)
+0: 2
+1: 3
+2: 1
+3: 4
+
+
+NOTE:
+1. The TypeScript will still work even if you import a third party library even if we dont install the Type definition library for them	
+	> if we dont have the type definitions, it will still fetch the .js corresponding file and use them as dependency
+
+
+
+
+
+
+
+03 Using declare as a Last Resort
+
+declare
+ > a keyword used to "declare" a variable, which can then be used inside the TypeScript file
+ > used in order to declare a variable that you, as a developer, know that will exist
+	- ex: accessing a global variable defined in the <script> of the .html page
+
+Syntax:
+declare (var | let | const) varName: type;
+
+ex:
+declare var GLOBAL: string;
+console.log(GLOBAL)
+
+
+
+Using declare as a Last Resort
+ > sometimes there are variables/function/object/package that we know will exist in the final build but cant access directly in the TypeScript file for some reason
+ > this includes
+	- globally defined variable inside the html pages' script
+ 	- 3rd party libraries that you know will exist in final build but since theres no TypeScript equivalent, you cant access it
+ > for this, we can use "declare" keyword as a last resort
+	- this will make the TypeScript assume that the said variable exist, and therefore can be used inside the TypeScript file
+
+EX:
+// inside index.html
+  <body>
+    <script>
+      var GLOBAL = "global variable";
+    </script>
+  </body>
+
+// app.ts
+import _ from "lodash";
+declare var GLOBAL: string;
+console.log(_.shuffle([1, 2, 3, 4]));
+console.log(GLOBAL);
+
+
+// console output
+(4) [3, 2, 1, 4]	app.ts:5 
+global variable		app.ts:6
+
+
+
+
+
+
+
+
+
+04 No Types Needed class-transformer
+
+class-transformer
+ > used to 
+	1. transform plainData (objects) into a Class instances and vice versa
+	2. serialize and deserialize
+ > needs "reflect-metadata" shim as dependency, therefore we will need to install this as well
+	- we will import this package in a global place, like the "entry" file of the Webpack
+ > to install class-transformer, we will need two things
+	npm i --save class-transformer reflect-metadata
+
+Functions in class-transformer module
+1. plainToClass	
+	> deprecated, replaced by plainToInstance
+2. plainToInstance
+3. plainToClassFromExist
+4. classToPlain
+5. classToClass
+6. serialize
+7. deserialize and deserializeArray
+
+
+EX:
+// product.model.ts
+export class Product {
+  title: string;
+  price: number;
+
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+
+  getInformation() {
+    return [this.title, `$${this.price}`];
+  }
+}
+
+
+// app.ts file
+import "reflect-metadata";
+import { Product } from "./product.model";
+import { plainToInstance } from "class-transformer";
+
+const products = [
+  {
+    title: "Book",
+    price: 20,
+  },
+  {
+    title: "Apple",
+    price: 50,
+  },
+  {
+    title: "Pencil",
+    price: 10,
+  },
+];
+
+// old way
+// const transformedProducts = products.map((product) => {
+//   return new Product(product.title, product.price);
+// });
+
+// using class transformer
+const transformedProducts = plainToInstance(Product, products);
+console.log(transformedProducts);
+
+
+
+
+
+
+
+
+
+05 TypeScript-embracing class-validator
+
+class-validator
+ > a package for adding class validation
+ > uses TypeScript decorators to add validation rules to the class' properties
+ 	- we can then use the validate() function exported by "class-validator" itself to check for validation errors in Class instance
+ > this module provides as with several decorator and functions for adding validation rules to class and for validating class instance
+ > to install the class-validator, we will use
+	- npm install --save class-validator
+
+Some of the validation decorators exported by class-validator
+1. IsNotEmpty
+2. IsNumber
+3. IsPositive
+
+Function/Object exposed by "class-validator"
+IsNotEmpty
+ > validation decorator for checking if instance prop is not empty
+IsNumber
+ > validation decorator which checks if instance prop is a number
+IsPositive
+ > validation decorator for checking if instance prop is a positive number
+
+validate(instance: object): Promise<ValidationError[]>
+ > used to validate an instance of a Class
+ > returns a ValidationError array which is accessible through the Promise's resolved value
+
+
+EX:
+// product.model.ts
+import { IsNotEmpty, IsNumber, IsPositive } from "class-validator";
+
+export class Product {
+  @IsNotEmpty()
+  title: string;
+
+  @IsPositive()
+  @IsNumber()
+  price: number;
+
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+
+  getInformation() {
+    return [this.title, `$${this.price}`];
+  }
+}
+
+
+// app.ts
+import { validate } from "class-validator";
+
+const invalidProduct = new Product("", -5.5);
+validate(invalidProduct).then((errors) => {
+  if (errors.length > 0) {
+    console.log(errors);
+  }
+
+  console.log(invalidProduct);
+});
+
+
+
+
+06 Wrap Up

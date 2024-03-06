@@ -1,0 +1,110 @@
+Day 5
+
+NOTES:
+1. For Guest users created, theres a CRON job that will be responsible for cleaning this guest user that exist for specific duration already
+2. State of Order include:
+	X, deleted
+	P, pending
+	C, complete order
+	M, gone for payment
+	H, payment successful
+	G, delivered
+
+
+
+01
+notes:
+1. oRDERFLOW
+	> OrderCreate
+	> OrderAddItem
+	> OrderUpdateItem
+	
+
+02
+NOTES:
+1. OrderPrepare locks the order, which order info and its item prices is locked
+
+
+03
+NOTES:
+1. OrderProcess is where we submit the order
+
+
+04
+NOTES:
+1. OrderCancel
+
+
+05
+notes:
+1. CSV file is processed and turned into data to be added in HCL Commerce database
+2. Dataloader supports different datasource like csv, excel file, etc. CSV file is out of the box feature
+
+
+
+06
+NOTES:
+1. Physical object is called SDO
+
+
+08
+NOTES:
+1. Initial load is for initializing database. While for delta load load is for replacing data in the database. Delta is used for either loading staging or production servers
+
+09
+notes:
+1. wc-dataload.xml contains the datasource file, database name
+
+
+12
+NOTES:
+1. OPTKEY refers to the 
+
+
+
+13
+NOTES:
+1. wc-dataload.env
+
+
+
+14
+NOTES:
+1. Dataloading can be done offline. No need for the application to be online
+
+
+
+NOTES:
+1. wc-dataload.xml file will be the entrypoint
+
+
+Applying dataload
+1. Search for the data to update in the catentry using the partnumber
+2. Take note of the storeent_id, this will define the Store on which the dataloading will be applied to
+
+
+Editing the wc-dataload-env.xml
+ > we need to edit which store the wc-dataload-env.x2ml file it will edit
+1. Get store identifier from "storecat" table
+2. We get the store id of the store from "store" and "storeent"
+
+
+Steps
+1. Take any product that you want to edit
+2. In Inventory.csv, specify the Store name, Item bean name (Partnumber), quantity\
+
+
+C:\WCDE_V9\bin>dataload.bat
+ > location of dataload.bat
+
+
+Using dataload utility
+1. Shop in the AuroraStore and choose an item
+	> take note of the SKU, this will be the partname of the catentry row
+2. Try to add the item in cart in large amount (ex: 9000). We should try to make the no stock available error pop up
+3. Go to the Inventory.csv, and add a new row for the 
+
+dataload/CatalogEntryUpdate/wc-dataload-catalog-entry-description-update.xml
+dataload/CatalogEntryUpdate/CatEntryDescriptionUpdate.csv
+dataload/wc-dataload-env.xml
+	

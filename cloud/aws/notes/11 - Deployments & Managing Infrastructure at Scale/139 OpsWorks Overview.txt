@@ -1,0 +1,31 @@
+139 OpsWorks Overview
+
+AWS OpsWorks
+ > Chef & Puppet help you perform server configuration automatically, or repetitive actions
+ > They work great with EC2 & On-Premises VM
+ > AWS OpsWorks = Managed Cheft & Puppet
+ > It's an alternative to AWS SSM
+ > Only provision standard AWS resources like:
+	- EC2 Instances, Databases, Load Balancers, EBS volumes
+
+
+OpsWorks Architecture
+OpsWorks Stack
+ > Elastic LoadBalancer Layer (OpsWorks Layer 1)
+	- contains ALB
+ > Application Server Layer (OpsWorks Layer 2)
+	- contains App Server Instances (EC2)
+	- Cookbook Repository sends the Application information to configure the App Instances
+	- App Repository contains the Application source code to be used for installation in EC2 instances
+ > Database Layer (OpsWorks Layer 3)
+ 	- contains Database Server (RDS)
+	
+
+
+
+NOTE:
+1. In the exam, if a service needing a Chef or Puppet is mentioned, think of AWS OpsWork
+2. OpsWorks architecture is similar to 3 tier application seen in the Elastic Beanstalk
+3. The reason why you would use OpsWorks is when you are alreaady using Chef or Puppet and you are migrating to Cloud (AWS). We can re-use Chef or Puppet templates here
+
+

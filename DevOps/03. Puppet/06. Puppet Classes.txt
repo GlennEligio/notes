@@ -1,0 +1,120 @@
+06. Puppet Classes And Conditionals
+
+
+Puppet Classes
+	> Puppet classes are defined as a collection of resources, which are grouped together in order to get a target node or machine in a desired state
+	> These classes are defined inside Puppet manifest files (.pp) which is located inside Puppet modules
+	> The main purpose of using a class is to reduce the same code repetition inside any manifest file or any other Puppet code
+
+
+SYNTAX:
+Non-Parameterized Puppet Class
+class <CLASSNAME>{
+	<TYPE> { '<TITLE>':
+		<ATTRIBUTE> = <VALUE>,
+	}
+}
+
+Parameterized Puppet Class
+class <CLASSNAME>($<PARAMETER NAME>){
+	<TYPE> { '<TITLE>':
+		<ATTRIBUTE> = <VALUE>,
+	}
+}
+
+
+EX:
+class puppet_user{
+  user { 'puppet_user':
+       ensure => present,
+       uid => 1001,
+       home => '/home/puppet_user'
+       }
+}
+
+class puppet_user($username){
+  user { $username:
+       ensure => present,
+       uid => 1001,
+       home => '/home/$username'
+       }
+}
+
+
+Invoking/Using Puppet Class
+	> for non-parameterized, we can use include keyword
+	> for parameterized, we need to use class keyword, and define the parameter values
+
+EX:
+Non-parameterized Puppet Class usage
+class puppet_user{
+  user { 'puppet_user':
+       ensure => present,
+       uid => 1001,
+       home => '/home/puppet_user'
+       }
+}
+node default{
+  include puppet_user
+}
+
+
+
+Parameterized Puppet Class usage
+class puppet_user($username){
+  user { $username:
+       ensure => present,
+       uid => 1001,
+       home => '/home/$username'
+       }
+}
+
+#invoke the class
+node default{
+  class { puppet_user:
+     username => 'puppet_user',
+        }
+}
+
+
+
+Creating Conditionals for Resource Declaration
+	> we can attach conditions to be met for a Resource to be applied in target node
+	> typically created inside a Puppet Class
+		- we use Class's parameter values to create conditional statements
+
+SYNTAX:
+<CONDITION>{
+	<RESOUCE DECLARATION>
+}
+
+EX:
+Parameterized Puppet Class with Conditional Resource Declaration
+
+class user($username, $test) {
+
+     user { $username:
+            ensure => present,
+            managehome => true,
+          }
+     if $test =='testing' {
+          file { '/tmp/2.txt':
+           content => $test,
+          }
+        }
+     else
+    {
+         file { '/tmp/3.txt':
+           content => $test,
+          }
+
+    }
+}
+
+node default {
+       class { 'user':
+               username => 'raman',
+               test => 'notesting' ,
+             }
+
+}

@@ -1,0 +1,74 @@
+Red Hat Enterprise Linux (RHEL) 8
+
+Contents:
+SETUP
+01 Installation On VirtualBox for RHCE & RHCSA Practice
+02 Setup SSH Server on a Linux Guest VM with Virtual Box - NAT and Port Forwarding
+
+RHCSA RHEL 8
+03 Access a shell prompt and issue commands with correct syntax
+04 Use input-output redirection
+05 Use grep and regular expressions to analyse text
+06 Access remote systems using SSH
+07 Log in and switch users in multiuser targets
+08 Archive, compress, unpack, and uncompress files using tar, star, gzip, and bzip2
+09 Create and edit text files | Part 1 | Nano
+10 Create and edit text files | Part 2 | Vi
+11 Create, delete, copy, and move files and directories
+12 Create hard and soft links
+13 List, set and change standard ugo/rwx permissions
+14 Locate, read, and use system docs including man, info, and files in /user/share/doc
+15 Boot, reboot, and shut down a system normally
+16 Boot systems into different targets manually
+17 Interrupt the boot process in order to gain access to a system
+18 Identify CPU/memory intensive processes and kill processes
+19 Adjust process scheduling
+20 Manage Tuning Profiles (tuned)
+21 Locate and interpret system log files and journals
+22 Preserve system journals
+23 Start, stop, and check the status of network services
+24 Securely transfer files between systems
+25 List, create, delete partitions on MBR and GPT disks
+26 Create and remote physical volumes and LVM introduction
+27 Assign physical volumes to volume groups
+28 Create and delete logical volumes
+29 Configure systems to mount file systems at boot by UUID or label
+30 Add new partitions and logical volumes, and swap to a system non-destructively
+31 Create, mount, unmount, and use vfat, ext4, and xfs file systems
+32 Mount and unmount network file systems using NFS
+33 Extend existing logical volumes
+34 Create and configure set-GID directories for collaboration
+35 Configure disk compression
+36 Manage Layered Storage (Stratis)
+37 Diagnose and Correct File Permission Problems
+38 Schedule tasks using at and cron
+39 Start and stop services and configure services to start automatically at boot
+40 Configure systems to boot into a specific target automatically
+41 Configure time service clients
+42 Install and update software packages from Red Hat, a remote repo, or local filesystem
+43 Work with package module streams
+44 Modify the system bootloader
+45 Configure IPv4 and IPv6 addresses
+46 Configure hostname resolution
+47 Configure network services to start automatically at boot
+48 Restrict network access using firewall-cmd/firewall
+49 Create, delete, and modify local user accounts
+50 Change passwords and adjust password aging for local user accounts
+51 Create, delete, and modify local groups and group memberships
+52 Configure superuser access
+53 Configure firewall settings using firewall-cmd/firewalld
+54 Create and user file access control lists
+55 Configure key-based authentication for SSH
+56 Set enforcing and permissive modes for SELinux
+57 List and identify SELinux file and process context
+58 Restore default file contexts
+59 Use boolean settings to modify system SELinux settings
+60 Diagnose and address routine SELinux policy violations
+61 Using AutoFS with NFS
+62 Containers - Getting Started
+63 Containers Continued
+64 Create simple shell scripts
+65 Practice Exam - Environment Setup
+66 Practice Question - Questions 1-6
+67 Practice Question - Questions 7-13
+68 Practice Question - Questions 14-19

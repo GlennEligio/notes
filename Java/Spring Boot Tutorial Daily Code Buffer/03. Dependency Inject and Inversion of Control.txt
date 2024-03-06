@@ -1,0 +1,20 @@
+03. Dependency Injection
+
+
+Why use Dependency Injection pattern?
+	> provides IoC (Inversion of Control)
+		- this means that the developer will not be the one creating an instance of dependency to be used
+	> with IoC, theres only one sources to pull an instance of a Class/Interface instead of creating an instance  for each dependency manually
+		- useful when we have hundreds of Classes/Interfaces in a project
+
+
+Inversion of Control (IoC)
+	> give the control of Classes from the developer to the framework being used
+		- ex: instantiation of Classes / Interface, specific implementation of Interface
+
+	
+EXAMPLE OF Dependency Injection
+1. Spring Container and Beans
+	> Bean represents the instance of the Class / Interface to be injected
+	> These beans are contained inside the Spring Container
+	> If developer whats to add dependency to a specific class, he will just pull an instance of the Class/Interface from the Spring Container

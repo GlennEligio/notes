@@ -1,0 +1,123 @@
+21. Using Feign REST Client for Service Invocation
+
+
+Feign
+	> framework from Spring Cloud
+	> used for Microservices invokation/communication
+	> makes it really easy to call other Microservices
+
+Dependency
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+
+
+@Annotation Used
+
+@EnableFeignClient
+	> Scans for interfaces that declare they are feign clients @FeignClient.
+	> Configures component scanning directives for use with @Configuration classes.
+		- automatically scans @FeignClients that is inside the subpackages of the @Configuration class's package
+	> have parameters like
+
+Parameters
+basePackageClasses
+	> takes a Class as parameter (Class<?>, e.g. FeignClientLocation.class)
+	> Type-safe alternative to basePackages() for specifying the packages toscan for annotated components. The package of each class specified will be scanned. 
+
+basePackage
+	> takes a String input (e.g. "com.application.feignclients")
+	> Base packages to scan for annotated components. 
+
+clients		
+	> takes a Class as parameter (e.g. CurrencyExchangeProxy.class)
+	> List of classes annotated with @FeignClient. If not empty, disables classpathscanning.
+
+
+@FeignClient
+	> Annotation for interfaces declaring that a REST client with that interface should becreated (e.g. for autowiring into another component). If SC LoadBalancer is availableit will be used to load balance the backend requests, and the load balancer can beconfigured using the same name (i.e. value) as the feign client.
+	> have parameters like
+
+Parameters
+name
+	> takes a String input (e.g. "currency-exchange")
+	> defines the service id with optional protocol prefix
+	> typically the Spring App name of the Microservice to invoke
+url	
+	> takes a String input (e.g. "localhost:8000")
+	> an absolute URL or resolvable hostname (the protocol is optional)
+
+Usage of Feign Clients
+1. Add OpenFeign dependency
+2. Enable Feign Clients in Spring Boot app
+	> add @EnableFeignClients in @SpringBootApplication Class
+3. Create a Feign Client to invoke call to other Microservices
+	> create an interface
+	> add @FeignClient
+		- define the "name" and "url" of the annotation	
+			- name will be the Spring App Name of Service to invoke
+			- url will be the host url of the Service
+	> add a RequestMapping inside the interface
+		- this will define the API endpoint that we will call to a specific Service
+			= we can just copy the method signature of the specific API endpoint method from Service to invoke in this FeginClient
+		- it must 
+			a. have @RequestMapping (or @GetMapping/@PostMapping, etc) annotations
+			b. be an abstract method
+				= the OpenFeign will be the one to define the method body behind the scene
+		- you can customize this RequestMapping by
+			= define how to send the data (RequestBody, PathVariable, RequestParam, etc)
+			= define the API endpoint to call
+
+
+EXAMPLE OF USAGE
+
+@SpringBootApplication Class
+
+@SpringBootApplication
+@EnableFeignClients()
+public class CurrencyConversionServiceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(CurrencyConversionServiceApplication.class, args);
+	}
+
+}
+
+
+
+@FeignClient interface
+
+@FeignClient(name = "currency-exchange", url = "localhost:8000")
+public interface CurrencyExchangeProxy {
+
+	@GetMapping("/currency-exchange/from/{from}/to/{to}")
+	public CurrencyConversion retrieveExchangeValue(
+			@PathVariable("from") String from, 
+			@PathVariable("to") String to);
+}
+
+
+@Controller class
+
+@RestController
+public class CurrencyConversionController {
+	
+	@Autowired
+	private CurrencyExchangeProxy proxy;
+
+	@GetMapping("/currency-exchange-feign/from/{from}/to/{to}/quantity/{quantity}")
+	public CurrencyConversion calculateCurrencyConversionFeign(
+			@PathVariable("from") String from,
+			@PathVariable("to") String to,
+			@PathVariable("quantity") BigDecimal quantity) {
+		
+		CurrencyConversion currencyConversion = proxy.retrieveExchangeValue(from, to);
+		
+		return new CurrencyConversion(1000L, 
+				from, to, quantity, 
+				currencyConversion.getConversionMultiple(), 
+				quantity.multiply(currencyConversion.getConversionMultiple()), 
+				currencyConversion.getEnvironment() + " feign");
+	}
+}

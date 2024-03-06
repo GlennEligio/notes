@@ -1,0 +1,63 @@
+SHORTCUTS:
+1. element*n	
+	> create an n amount of element
+
+EX:
+tr*6
+
+RESULT:
+      <tr></tr>
+      <tr></tr>
+      <tr></tr>
+      <tr></tr>
+      <tr></tr>
+      <tr></tr>
+
+
+2. element1*n>element2*n
+	> create an n amount of element1, with n amount of element2 nested inside of each of element1
+
+EX:
+tr*3>td*3
+
+RESULT:
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+
+3. element1/element2
+	> create element1 and element2 in same level
+
+
+4. tagName.className
+	> create an html element tag with specific class name
+	> we can add as many class as we can
+	> ex: div.container.card will create <div class='container card'/>
+	
+
+5. tagName#elementId
+	> create an html element with specific id
+	> can add ONE id
+	> ex: div#form will create <div id="form"/>
+
+6. tagName.className-$*n or tagName#elementId-$*n
+	> this will create multiple html element with numbered className or elementId
+	> the dollar sign ($) will be replaced by a number
+
+ ex: div.form-$*3 will create
+    <div class="form-1"></div>
+    <div class="form-2"></div>
+    <div class="form-3"></div>

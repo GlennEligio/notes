@@ -1,0 +1,394 @@
+JSP Standard Tag Library (JSTL) - Core Tags
+
+Contents:
+38 JSP Tags Overview
+39 Install JSTL Jar files
+40 Where can I download the JSTL Jar files
+41 FAQ Why Two JAR files for JSTL.html
+42 JSTL Core tags - Looping with forEach - Overview
+43 JSTL Core tags - Project Setup
+44 JSTL Core Tags - Looping with forEach - Write some code
+45 JSTL Core Tags - Looping with forEach - Bulding HTML tables
+46 FAQ Reading Cookies with JSTL
+47 JSTL Core Tags - Testing Codnitionals with the IF tag
+48 JSTL Core Tags - choose Tag
+
+
+
+
+
+
+
+
+
+
+
+38 JSP Tags Overview
+
+Topics
+1. What are JSP Tags
+2. Sample Use case
+3. Benefits
+
+JSP tags categories
+1. JSP Custom Tags
+	> custom created by users
+	> uses Java class behind the scene
+2. JSP Standard Tag Library (JSTL)
+	> created by Oracle
+	> standard tags
+
+
+Benefits of JSP Custom Tags
+1. Separation of business and presentation logic
+2. Minimize the amount of scriptlet code in a JSP
+3. Avoids dumping thousands of lines of code in a JSP
+4. JSP page is simple... main focus of JSP is only the presentation
+5. Tag is REUSABLE
+
+
+JSP Standard Tag Library (JSTL)
+ > Oracle created a Specification for standard tags
+ > There are different categories of the tags, with different purposes
+	1. Core
+	2. Messages Formatting i18n
+	3. Functions
+	4. XML
+	5. SQL
+ > NOTE: Using SQL is a bad practice. 
+	- for prototyping, its ok
+	- but in practice, we typically put SQL (or database in general) logics in Servlets using MVC architecture 
+
+
+
+
+
+
+
+
+
+
+
+39 Install JSTL Jar files
+
+Jar files needed
+1. JavaServer Pages (TM) TagLib Implementation 
+	> https://mvnrepository.com/artifact/org.glassfish.web/javax.servlet.jsp.jstl
+2. JavaServer Pages(TM) Standard Tag Library API
+	> https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/javax.servlet.jsp.jstl-api
+
+
+Jar file installation location
+ > ./src/main/webapp/WEB-INF/lib
+
+
+Adding JSTL tags in JSP 
+ > to add tag library in JSP, we will use the syntax below
+ > SYNTAX:
+	<%@ taglib uri="tag-library-url" prefix="prefix-tag"%>
+ > EX: for JSTL Core tags
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+
+EX:
+// test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<c:set var="stuff" value="<%= new java.util.Date() %>"/>
+	Time on the server is ${stuff}
+</body>
+</html>
+
+
+
+
+
+
+
+40 Where can I download the JSTL Jar files
+
+FAQ: Where can I download the JSTL JAR files from the Internet?
+Answer
+I provided a convenience URL that includes both JAR files. Those steps are covered in the previous video.
+However, you may want to download the JAR files directly from the Internet repositories. 
+---
+
+Here are the links:
+https://mvnrepository.com/artifact/org.glassfish.web/javax.servlet.jsp.jstl/1.2.1
+https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/javax.servlet.jsp.jstl-api/1.2.1
+
+
+
+
+
+
+
+
+
+
+
+
+41 FAQ Why Two JAR files for JSTL.html
+
+Question:
+You used jstl and jstl api jars, I would like to know what are the differences  between them?
+---
+Answer:
+javax.servlet.jsp.jstl-api-1.2.1.jar
+- This contains the JSTL API interfaces and support classes. However a large number of the interfaces do not have implementation classes.
+
+javax.servlet.jsp.jstl-1.2.1.jar
+- This contains an implementation of the JSTL API. This code implements all of the interface from the API above.
+
+
+
+
+
+
+
+
+
+
+
+
+42 JSTL Core tags - Looping with forEach - Overview
+
+Core Tags examples
+Tag		Description
+catch		catches any throwable to occurs in the body
+choose		conditional tag that can be used for exclusive operations, similar to switch statement
+if		simple if/then conditional
+import		retrieves a URL and exposes its contents on the page or a variable
+forEach		Iterates over a collection of values
+forTokens	Iterates over a collection of tokens
+out		Used in scriptlets to display output, similar to <%= ... %>
+otherwise	used with the <choose> tag to handle the else clause
+param		Adds a parameter to a URL
+redirect	Redirects the browser to a new URL
+remove		removes a scoped variable
+set		Assigns an expression value to a variable
+url		defines a ULR with query parameters
+when		used with the <choose> tag, when a condition is true
+
+
+JSP Core Taglib Reference
+ > every page that uses the Core thats must include the reference below:
+	<% taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+ > theres no internet connection made with this, the URI is just a UNIQUE IDENTIFIER to this tag library	
+	- this URI will be used for scanning the local jar file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+43 JSTL Core tags - Project Setup
+
+Project Setup: tagdemo
+In the following videos, you will use the tagdemo project. Here are the steps to create the project and add support files.
+
+1. In Eclipse, select File > New > Dynamic Web Project
+2. For project name, enter: tagdemo
+3. Keep all other defaults and click Finish.
+
+Next, you need to install the JSTL JAR files
+
+4. Visit http://www.luv2code.com/downloadjstl
+5. Save the zip file to your computer
+6. Unzip the file
+7. Copy the two JAR files
+- javax.servlet.jsp.jstl-1.2.1.jar
+- javax.servlet.jsp.jstl-api-1.2.1.jar
+8. In Eclipse, paste the two JAR files to your tagdemo project directory: WebContent/WEB-INF/lib
+
+
+
+
+
+
+
+
+
+
+
+
+44 JSTL Core Tags - Looping with forEach - Write some code
+
+// foreach-simple-test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+  	<%
+  		// create dummy data ... normally provided by MVC
+  		String[] cities = { "Mumbai", "Singapore", "Philadelpia"};
+  		pageContext.setAttribute("myCities", cities);
+  	%>
+	<c:forEach var="tempCity" items="${myCities }">
+		${tempCity } <br/>
+	</c:forEach>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+45 JSTL Core Tags - Looping with forEach - Building HTML tables
+
+// foreach-students-test.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page import="java.util.*,com.luv2code.jsp.tagdemo.Student"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Student Table</title>
+</head>
+<body>
+	<%
+	// create dummy data ... typically provided by MVC
+	List<Student> students = new ArrayList<>();
+
+	students.add(new Student("John", "Doe", false));
+	students.add(new Student("John", "Glenn", true));
+	students.add(new Student("John", "Tristan", false));
+
+	pageContext.setAttribute("myStudents", students);
+	%>
+	<table border="1">
+		<thead>
+			<tr>
+				<th>First name</th>
+				<th>Last name</th>
+				<th>Gold Customer?</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach var="tempStudent" items="${myStudents }">
+				<tr>
+					<td>${tempStudent.firstName }</td>
+					<td>${tempStudent.lastName }</td>
+					<td>${tempStudent.goldCustomer }</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+46 FAQ Reading Cookies with JSTL
+
+Question:
+Is it possible to read cookie without scriptlet but using JSTL code?
+
+Answer:
+Yes. The standard syntax to access HTTP Cookie value in JSP is:
+
+${cookie.<cookie name>.value}
+So if you want to print value of cookie named “foobar” on JSP page, you would use:
+
+${cookie.foobar.value}
+You can also loop through all of the cookies using this
+
+<c:forEach items="${cookie}" var="currentCookie">  
+    Cookie name as map entry key: ${currentCookie.key} <br/>
+    Cookie object as map entry value: ${currentCookie.value} <br/>
+    Name property of Cookie object: ${currentCookie.value.name} <br/>
+    Value property of Cookie object: ${currentCookie.value.value} <br/>
+</c:forEach>
+
+
+
+
+
+
+
+
+
+
+
+47 JSTL Core Tags - Testing Codnitionals with the IF tag
+
+IF tag
+ > <c:if> tag evaluates an expression and displays its body content only if the expression evaluates to TRU
+ > its "test" property contains the expression to evaluate
+ > we can also use "not" keyword to invert the expression result
+
+EX:
+	<c:if test="${tempStudent.goldCustomer }">
+		Special Discount
+	</c:if>
+	<c:if test="${not tempStudent.goldCustomer }">
+		-
+	</c:if>
+
+
+
+
+
+
+
+
+
+48 JSTL Core Tags - choose Tag
+
+choose tag
+ > similar to if tag, but inside, we can create an multiple if" and "else if" cases using when tag, and a default "else" using otherwise tag
+
+EX:
+	<c:choose>
+		<c:when test="${tempStudent.goldCustomer }">
+			Special Discount
+		</c:when> 
+		<c:otherwise>
+		 	No soup for you
+		</c:otherwise>
+	</c:choose>
+
+
+
+
+
+
+
+

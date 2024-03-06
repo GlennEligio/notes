@@ -1,0 +1,81 @@
+44 RHCSA RHEL 8 - Modify the system bootloader
+
+
+GRUB
+ > stands for GRand Unified Bootloader
+ > used by RHEL8, RHEL7 and maybe RHEL6
+ > small piece of code that allows you to boot up various different operating systems
+	- calls kernel, ram disks
+ > supports all kinds of filesystems, xfs, ext, fts
+
+
+Getting to GRUB Bootloader screen
+ > while the system is loading, repeatedly press up and down to pause the system in the GRUB Bootloader screen
+ > in the screen, you should see different Kernels that we can use to bootload
+ > we can also edit the boot options of each kernel by pressing "e"
+
+
+KERNEL boot configuration informations
+1. Kernel to boot
+2. Root directory location
+3. The swap location for emergency memory
+4. Lvms used
+5. Rhgb setting to define the bootloader logging
+	- pass quite to not log all the details
+6. Initial ramdisk to use "initrd"
+	> contains the actual image to load
+
+
+/etc/default/grub
+ > configuration file that we can use to make changes in the grub configurations
+ > aways from the main configuration, which is what grub uses
+ > we can edit this, then use the make configuration command to overwrite the settings in main config with the new values
+	- there will be a verification proccess in the /etc/default/grub before it is used to overwrite the main config
+	- main config of grub is stored in "/boot/grub2/grub.cfg"
+ > inside are the informations of grub like
+	GRUB_TIMEOUT		How long in seconds until the GRUB boots the default options
+	GRUB_TERMINAL_OUTPUT	How the grub outputs/writes its logs
+	GRUB_TIMEOUT_STYLE	How the grub displays the time countdown before it timesout
+	GRUB_CMDLINE_LINUX	Defines the boot loading config, we can see this when we press E to a kernel in grub
+
+ex: 
+$ cat /etc/default/grub
+GRUB_TIMEOUT=5
+GRUB_TIMEOUT_STYLE=countdown
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="resume=/dev/mapper/rhel_rhel8--rhce-swap rd.lvm.lv=rhel_rhel8-rhce/root rd.lvm.lv=rhel_rhel8-rhce/swap rhgb quiet"
+GRUB_DISABLE_RECOVERY="true"
+GRUB_ENABLE_BLSCFG=true
+
+
+
+
+Commands
+grub2 then press TAB twice
+ > will list all the commands that we can issue related to grub
+
+
+grub2-editenv list
+ > list all the environment variables grub2 uses
+ > some of this can be seen in the boot options of the kernel
+
+
+grub2-set-default
+ > set the default boot menu entry for GRUB, which refers to the kernel to boot with
+ > sypnosis:
+	$ grub2-set-default [--boot-directory=DIR] MENU ENTRY
+ > ex:
+	$ grub2-set-default 1
+		- selects the Kernel at index 1, which is the second options
+
+
+grub2-mkconfig
+ > generate a GRUB configuration file
+ > synopsis
+	$ grub-mkconfig [-o | --output=FILE]
+ > ex:
+	$ grub2-mkconfig -o /boot/grub2/grub.cfd
+		- uses the config file from "/etc/default/grub" to overwrite the main config file "/boot/grub2/grub.cfg"

@@ -1,0 +1,138 @@
+Open Redirects
+
+Contents:
+I. About this Course
+II. Open Redirects
+01. Open Redirect Attack
+III. Code Remediation
+02. Java Remediation
+03. .NET Remediation
+IV. Additional Resources
+V. Thank you
+
+
+
+
+
+
+
+
+
+I. About this Course
+
+Open Redirects
+ > type of security vulnerability that can affect many web applications
+ > any time a system redirects traffic in an unsafe manner
+	- this could potentially benefit malicious users who depend on such oversights to succeed in their goals
+
+
+
+
+
+
+
+
+II. Open Redirects
+01. Open Redirect Attack
+
+Open Redirect Attack
+ > also known as "Unvalidated Redirects and Forwards"
+ > this is where we used any of the information in the request (typically in request query params) to redirect as user to another page
+	- with this, we can pass a malicious website url to the request url, pass it to unsuspecting users that will then be greeting with the malicious website url, typically the same with the original website
+
+
+
+
+
+
+
+
+III. Code Remediation
+02. Java Remediation
+
+Java Remediation
+ > instead of directly taking the url from the request, we would want to 
+	1. create a WHITELIST of urls to redirect a user
+	2. check if the input url from the request is included in the said WHITELIST
+		- if included, redirect the request to that url
+		- if not, just dont redirect
+ > or just AVOID taking the destination URL from the request url data
+
+EX:
+// Previous code
+public void simpleRedirect(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+  res.setContentType("text/html");
+  PrintWriter pw = res.getWriter();
+
+  String target = request.getParameter("redirectURL");
+  res.sendRedirect(target);
+
+  pw.close();
+}
+
+
+// Modified code
+public void simpleRedirect(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+  res.setContentType("text/html");
+  PrintWriter pw = res.getWriter();
+
+  String[] safeURLs = new String[]{ getArrayOfSafeURLs() };
+  HashMap<String, Integer> urlMap = new HashMap<String, Integer>();
+
+  for (int i = 1; i <= safeURLs.length(); i++) {
+    urlMap.put(safeURLs[i], i);
+  }
+
+  String targetIndex = new String(req.getParameter("redirectIndex"));
+  if(urlMap.values().containsKey(targetIndex)) {
+    res.sendRedirect(urlMap.get(targetIndex));
+  }
+
+  pw.close();
+}
+
+
+
+
+
+
+
+
+
+03. .NET Remediation
+
+.NET Remediation
+ > same as Java, either
+	1. create a whitelist of url destination and perform a check if the url in request in included
+	2. or just dont take the url destination from the request itself
+
+// OLD CODE
+private void simpleRedirect(object sender, EventArgs e) {
+  Response.Redirect(Request.Form[target], false);
+}
+
+// NEW CODE
+private void simpleRedirect(object sender, EventArgs e) {
+  string[] safeURLs = { getArrayOfSafeURLs() };
+  List<KeyValuePair<string, int>> urlMap = new List<KeyValuePair<string, int>>();
+
+  for (int i = 0; i < safeURLs.length; ++i){
+    safeURLs.Add(new KeyValuePair<string, int>(safeURLs[i], i));
+  }
+
+  if(safeURLs.Exist(x => x.PartID == 1444)) {
+    Response.Redirect(Request.Form[target], false);
+  }
+}
+
+
+
+
+
+IV. Additional Resources
+
+OWASP
+https://owasp.org/
+
+
+V. Thank you

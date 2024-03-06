@@ -1,0 +1,106 @@
+Hibernate CRUD Features
+
+TWO IMPORTANT CLASSES
+
+SessionFactory
+	> reads the hibernate config file
+	> creates session objects
+	> heavy-weight object
+	> only create once in your app
+
+Session
+	> wraps a JDBC Connection
+	> Main object used to save/retrieve object
+	> Short-lived object
+	> Retrieved from SessionFactory
+
+
+
+Primary Keys
+	> uniquely indentifies each row in a table
+	> must be a unique value
+	> cant contain NULL values
+
+TO ASSIGN A PRIMARY KEY IN HIBERNATE
+1. Add @Id to the field
+2. Add @GeneratedValue() to the @Id field
+3. Pass a GenerationType[] enum value in the @GeneratedValue()
+
+ID Generation Strategies
+GenerationType.AUTO
+	> pick an appropriate strategy for the particular database
+GenerationType.IDENTITY
+	> assign primary keys using database identity column
+	> most commonly used for MySQL AUTO_INCREMENT
+GenerationType.SEQUENCE
+	> assign primary keys using a database sequence
+GenerationType.TABLE
+	> assign primary keys using an underlying database table to ensure uniqueness
+
+
+
+READING DATA IN DATABASE USING HIBERNATE
+1. Call get() of Session and pass the primary key
+2. Assign the result to an Entity instance
+
+
+
+QUERYING FOR OBJECTS IN DATABASE USING HIBERNATE QUERY LANGUAGE
+1. Call createQuery() of Session, and pass the HQL you want to use
+2. Call the list() after createQuery()
+3. Assign the result of list() to a List<Entity>
+
+
+
+Hibernate Query Language (HQL)
+	> Query language for retrieving objects
+	> Similar in nature to SQL
+	> where, like, order by, join, in, etc..
+	> passed in Session.createQuery()
+	> to refer to a tableName using FROM keyword, PASS the Entity name
+	> to refer to a table column name, PASS the Entity field variable name and fetch it to the text substitute of Entity name
+
+EX:
+	session.createQuery("FROM Student s WHERE s.lastName='Michael' AND s.firstName='Ja'")
+
+	> here, we fetch FROM Student table, and substitute it with 's'
+	> we fetch the lastName and firstName field/column tables to the 's'
+
+
+
+UPDATING AN ENTITY TO THE DATABASE
+1. Fetch the specific Entity using Session.get()
+2. Assign the result to an Entity object
+3. Call the setter method to the Entity object and pass the new value
+4. Call commit()
+
+REASON WHY WE DONT NEED update() method for updating Entities
+	> the reason why this works is that Entities are PERSISTENT OBJECTS
+	> they are cached in the Session and SessionFactory
+	> changing their properties and calling commit will send appropriate SQL queries to do the update
+
+
+
+UPDATING ENTITIES USING HQL
+1. Call createQuery() of Session 
+2. Pass the HQL to createQuery()
+	> pass a normal UPDATE SQL query
+	> again, using Entity name to refer to tableName
+3. Call executeUpdate() after the createQuery()
+4. Call commit() to save
+
+
+DELETING ENTITIES USING Session.delete()
+1. Fetch the Entity that you want to delete using Session.get()
+	> pass the Entity Class and primary key
+2. Assign the result to an Entity object
+3. Call Session.delete() and pass the Entity object
+4. Call commit()
+
+
+DELETING ENTITIES USING HQL
+1. Call createQuery() of Session
+	> pass a normal SQL delete query
+	> but refer to tableName as name of Entity and columnName to field variable name
+2. Call executeUpdate() after createQuery()
+3. Call commit()

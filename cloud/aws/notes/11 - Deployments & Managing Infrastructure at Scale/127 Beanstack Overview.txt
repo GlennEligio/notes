@@ -1,0 +1,67 @@
+127 Beanstack Overview
+
+Typical Architecture: Web App 3-tier 
+ > 3-TIER architecture group consist of three components, the Presentation tier, the Application tier, and the Data tier
+ > in this case, the Presentation tier will be the Elastic LoadBalancer(ELB), the Application tier will be the ASG (which contains the App instances), and the Data tier will be the ElastiCache + Amazon RDS
+
+		(AutoScaling Group)
+		|---> EC2 instance (AZ1) ---|---> ElastiCache 	
+User ---> ELB --|---> EC2 instance (AZ2) ---|	(store/retrieve session+cache data)
+		|---> EC2 instance (AZ3) ---|---> Amazon RDS
+						(read/write data)
+
+
+Developer problems on AWS
+1. Managing infrastructure
+2. Deploying Code
+3. Configuring all the databases, load balancers, etc
+4. Scaling concerns
+5. Most web apps have the same architecture (ALB + ASG)
+	> Application Loadbalancer + AutoScaling Group
+6. All the developers want is for their code to run!
+7. Possibly, consistently across different applications
+
+
+
+AWS Elastic Beanstalk Overview
+ > Elastic Beanstalk is a developer centric view of deploying an application on AWS
+ > It uses all the component's we've seen before:
+	- EC2, ASG, ELB, RDS, etc
+ > But it's all in one view that's easy to make sense of! 
+ > We still have full control over the configuration
+ > Beanstalk = Platform as a Service (PaaS)
+ > Beanstalk is free but you pay for the underlying instances
+
+
+Elastic Beanstalk
+ > Managed service
+   - Instance configuration / OS is handled by Beanstalk
+   - Deployment strategy is configurable but performed by Elastic Beanstalk
+   - Capacity provisioning
+   - Load balancing & auto-scaling
+   - Application health-monitoring & responsiveness
+ > Just the application code is the responsibility of the developer
+ > Three architecture models
+   1. Single instance deployment: good for developers
+   2. LB + ASG: great for production or pre-production web applications
+   3. ASG only: great for non-web apps in production (workers, etc...)
+ > Supports for many platforms
+   - Go
+   - Java SE
+   - Java with Tomcat
+   - .NET on Windows Server with IIS
+   - Node.js
+   - PHP
+   - Python
+   - Ruby
+   - Packer Builder
+   - Single Container Docker
+   - Multi-Container Docker
+   - Preconfigurated Docker
+   - if not suppoerted, you can write your custom platform (advanced)
+
+
+
+Elastic Beanstalk - Health Monitoring
+ > Health agent pushes metrics to CloudWatch
+ > Checks for app health, publishes health events

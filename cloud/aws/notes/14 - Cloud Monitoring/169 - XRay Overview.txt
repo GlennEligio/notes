@@ -1,0 +1,30 @@
+169 - XRay Overview
+
+AWS X-Ray
+ > used for debugging in AWS by giving you a VISUAL ANALYSIS OF OUR APPLICATIONS
+	- this includes:
+		a. average request process time
+		b. request processed per min
+		c. name of the resource (ex: myfrontend-dev, 169.254.169.254)
+		d. AWS ARN (Amazon Resource Name)
+		e. ratio of successful and failed request processing
+		f. see services connections and dependencies
+
+Why use AWS X-Ray?
+ > typically, debugging in Production in old way, we will do:
+	1. Test locally
+	2. add log statements everywhere
+	3. re-deploy production build, and check the logs
+ > the log formats differs across applications and log analysis is hard
+ > for MONOLITH APPS, this may be easy since theres only one place the logs are stored, but for MICROSERVICES, each services will have their own log formats and storages
+ > in old way, there is also NO COMMON VIEWS of your entire architecture
+ 
+AWS X-Ray advantages
+1. Easy for troubleshooting performance (see bottlenecks)
+2. Understand dependencies in a microservice architecture
+3. Pinpoint service issues
+4. Review request behavior
+5. Find errors and exceptions
+6. Easy to see if we are meeting time SLA
+7. See which services request are throttled
+8. Identifty users that are impacted

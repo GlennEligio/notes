@@ -1,0 +1,150 @@
+01 Red Hat Enterprise Linux (RHEL) 8 Installation On VirtualBox for RHCE & RHCSA Practice
+
+Host machine requirements
+1. 64-bit x86 machine with hardware virtualization assistance (Intel VT-X or AMD-V)
+2. An OS supported by VirtualBox such as Microsoft Windows 7 or later, Apple Mac OS X 10.8 or later, Ubuntu Linux 12.04 or later
+3. 4GB RAM (8GB preferred)
+4. 24GB of available disk
+
+Tools/Files needed
+1. RHEL OS Image (.iso) file
+ 	> must be RHEL OS 8
+	> can be acquired through RHEL OS Developer Site
+2. Oracle VirtualBox
+
+
+Creating NAT Network
+1. Open VirtualBox preferences
+2. Go to Network
+3. Create a new NAT Network
+4. Edit the NAT Network
+5. Inside, define a Port Forwarding rule
+	> this will be used when we want to communicate from Host machine to VM
+	> inisde, add a rule with the following info
+		- protocol (TCP)
+		- Host IP (127.0.0.1)
+		- Host Port (2218)
+		- 10.0.2.5 Guest IP (the ip address assigned to this VM, you can check later inside VM using "ip address" and change it)
+		- Guest Port (22)
+
+
+Setting up RHEL OS VM
+1. Open VirtualBox
+2. Create new VM by going to Machine -> New
+3. Specify the name of VM and the location of its files
+4. For VM properties
+	- 8gb ram
+	- VDI hard disk
+	- 50gb size, can be lower if you want
+5. Edit RHEL OS VM
+	- bidirectional clipboard to true
+	- drag and drop to true
+	- set Video Memory to max if you can, we may use GUI later on	
+	- adjust the Processor allocated to VM if you can
+	- in Storage -> Controller: IDE, set the Optical Drive to use the RHEL OS iso file that we downloaded
+	- in Network, set the Adapter 1 to be attached to a NAT Network and choose the NAT Network we created earlier
+		-> in Advance setting, Promicious must be "Default"
+6. Start the RHEL OS VM
+
+
+Setting up RHEL OS inside VM
+1. When prompted to either install RHEL OS or test the media (optical drive), choose install
+2. After running some processes, you will be greeted with RHEL OS GUI for installation
+	- Choose a language to use
+3. In the GUI, configure the Network in order for RHEL OS VM to connect to internet
+	> go to Network & Host name
+	> Turn on the ethernet
+	> Define the Host name "RHEL8-RHCE.local"
+4. In the GUI, setup the Time and Date
+	> set it to correct Timezone
+5. In the GUI, connect the RHELOS to the Red Hat using our Red Hat account
+	> enter the RH account credentials 
+	> for this to work, we must be connected to Internet, which we have done in the step 3
+6. In the GUI, apply the default configuration for Installation destination
+	> apply the default configuration setting in it
+7. In the GUI, remove the unnecessary Softwares
+	> only add Windows File Server, Debugging Tools, Remote Management for Linux, Network File System Client, Performance Tools, Guest Agents
+8. In the GUI, setup the root account
+	> click Root Password
+ 	> setup the Root Password
+9. In the GUI, create a User
+ 	> pass the necessary information of user
+ 	> make the User administrator as well, and require a password
+	> leave the advanced setting the same
+		- dont change the user group, keep it as "wheel", since we want to use "su" commands in this user
+10. Other settings, leave as is
+	> KDUMP is for logging into system when kernel crash, ex: kernel panic
+		- you can disable this to save resources
+12. Begin Installation
+
+
+NOTE:
+1. If the RHEL OS VM cant connect to Internet, change the Network Adapter setting of RHEL OS VM from NAT Network to Bridge Adapter, and change Promicuous Mode to Allow All
+
+
+Configuring RHEL OS
+1. In the Initial Setup, you will need to setup the License Information by accepting the License Agreement
+2. When logged in, press CTRL + F3
+	> this will navigate you to the console
+	> then you will be asked to login the credentials
+		- use the root user for this, with "root" as username and the root password
+3. Insert Guest Additions CD image
+	> in the VM window, press Device -> Insert Guest Additions CD...
+4. Install "Developer Tools" using dnf
+	> use the command below to do so
+	> dnf groupinstall "Development Tools"
+	> press y to all the prompts, which includes
+		- signature keys from Red Hat
+5. Install the "kernel-devel" and "elfutils-libelf-devel"
+	> elfutils-libelf-devel package contains the libraries to create applications for handling compiled objects
+	> kernel-devel package installs the needed kernel development header files in the /usr/src/kernels directory, organized according to their kernel version.
+	> use the command below 
+	> dnf install kernel-devel elfutils-libelf-devel
+6. Mount the Additional Guest CD, execute the VBoxLinuxAddtions.run script inside to add additional modules
+	> $ mount /dev/cdrom /mnt
+	> $ cd /mnt
+ 	> $ ls -lhtra
+		- there should be file list output
+	> $ ./VBoxLinuxAdditions.run
+
+
+
+Connect to the RHEL OS VM via SSH client
+1. Get the IP address necessary to connect to RHEL OS VM
+	> if you used NAT Network for the RHEL8 VM, configure the Port Forwarding rule so that the request send from port 2222 of loopback ip of host machine is being forwarded to the RHEL8 VM's ip address at port 22
+		- Host ip = 127.0.0.1, Host port = 2222, VM ip = VM designated ip, VM port = 22
+ 	> if you use bridge adapter, VM ip most likely be accessible in the same network where the Host IP is connected
+		- execute "ifconfig" and check the inet of the first Ethernet connection, that will be the ip address used in PuTTy
+2. Use SSH client to connect
+	> if VM is connected via NAT network, use Host machine loopback ip as ip address, and the port assigned in Port Forward rule as the port
+	> if VM is connected via Bridge adapter, use the IP address output of "ifconfig" and port 22 for target port
+3. Login using the User we created earlier
+	> you can use root but it will be better to use the User to check if it works
+
+
+Rebooting system
+ > This is to save any changes we have made so far in RHEL8 VM
+	- this will create a SNAPSHOT that we can go back in case of any problem later on
+ > To do so, we will need to use the "reboot" command
+
+
+Login via GUI
+ > we can also login via GUI, where we will enter the credentials of the User we made earlier
+ > in the GUI, we can also open a terminal where we can issue commands
+
+
+Update DNF packages
+ > to update dnf package, we can use the command
+	- sudo dnf update
+ > for this to work, we will need the user that issues this command to be an Administrator
+
+
+Create a Clone and Snapshot of the RHEL8 VM
+1. Create Clone
+	> to create a Clone, we will right click the VM in the VirtualBox
+	> then choose Clone
+	> give it a name "RHEL8-RHCE Client" and for Mac Addresses Policy choose Generate new MAC Address
+2. Rename the original RHEL8 VM to RHEL8-RHCE Server
+3. Create a Snapshot of RHEL8 VM Server and Client
+	> click the menu icon at the right and choose Snapshot
+	> press "Take" and provide "Initial Build Date" for Server and "Intial Build Post Clone" for Client

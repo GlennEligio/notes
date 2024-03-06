@@ -1,0 +1,73 @@
+05 Ranking part 2
+
+
+Ranking customization usage examples:
+1. E-commerce
+2. Media
+3. Mobile
+
+E-commerce:
+ > a clear ranking strategy that can be understood and configured by developers, merchandisers, and marketers alike is mission-critical for e-commerce businesses
+	- this is what can make the difference between a sale and a customer bouncing back on google
+	- thanks to Algolia's tie-breaking approach, we are able to set up efficient ranking strategies to offer your users the best results
+	
+Ranking customization usage example to address E-commerce needs
+1. Product Recency
+	> "As a customer, I want to see the most recent items (ex: iphone) in the top results"
+	> With Algolia, we can add product release date to the Custom Ranking (ex: releaseDate)
+		- then we can specify how it will be sorted (in this case, in descending order)
+2. Product Popularity
+	> "As a customer, I want the best selling items (ex: sedan) to show first"
+	> We can add the number of sales or product popularity (ex: Nb. sales) in the Custom Ranking
+		- then we specify to sort them in descending order
+3. 	Sales
+	> "For flash sales or campaigns, I want promoted items on top of the results"
+	> We can add additional field/attribute (ex: isPromoted, with boolean value) in Custom Ranking
+		- then we can specify how the items is ordered based on whether the attribute is set to true or false 
+		- ex: all items with isPromoted attribute set to true will be on top of the result list
+4. Data-driven
+	> "Boost based on an item conversion/query basis"
+	> We can use the collected query/conversion data and enrich records
+		- query/conversion data refers to how much a specific query is converted into specific record
+		- ex: for "tomato" search, specific items will be clicked more than others like ketchup (10 times), pizza sauce (5 times), grape (3), etc
+		- we can use this query/conversion data to then sort the result of specific queries, in this case in descending order
+5. Price books
+	> "Display dynamic pricing based on period and profile"
+	> Price books refers to the list of prices that only applies on specific criteria (ex: date, customer segment, etc)
+	> We can create DUPLICATE records per price groups, where each records have different prices for each price groups
+		- then, we will add criteria to determine the correct record to return (ex: date, customer segment like guest, registered user, early access, etc)
+6. User Preferences
+	> "Boost results matching a user's preferences"
+	> We can use the data based on user's preferences to match the result of the query
+		- then we will sort the result based on the category determined to best match the user's preferences
+		- ex: a user may have preference with category "Running", this would mean that a search for "shoes" may return items related to "Running" more at the top of the result list
+7. Purchase History
+	> "Boost results based on previously bought items"
+	> We can enrich records with user purchase history
+		- then, we can sort the result based on the amount of times the item is bought
+		- ex: if we search "battery", we might sort the result based on how many times each product result is bought (ex: AAA 3 times, AA 2 times, D 1 time, etc)
+
+
+Ranking customization usage example to address Media needs
+1. Promote results with data meaningful to your business
+	> on a Blog site, we can sort the search result of blogs based on the following:
+		a. How many time the blog is viewed
+		b. How many times the blog is shared
+		c. How many times the blog is liked
+2. Promote results based on user preferences
+	> on a Media site, we can sort the articles/blogs shown to users based on their preferences
+	> ex: if user has a preference for topics like Finance, we may put more importance/ranking to the Finance-related articles to the said users
+3. Find relevant articles with Typo Tolerance
+	> on a Media site, we can sort the articles/blogs shown to users based on their search query, and adding typo tolerance to it
+	> ex: if user searches for "mcConnahey", the results may include articles related to "mcConnaughey"
+4. Find quotes buried inside articles with Proximity rules
+	> ex: if user searches for "I have a dream", we can show results/articles that contains the said phrase
+	
+	
+	
+Ranking customization usage example to address Media needs
+1. Geo Rule
+	> with geo rule, we can sort the search result based on how near the said result to you
+	> to use Geo rule, we need to add geolocation specific attribute in the records
+		- add "_geoloc" attribute, and inside the "_geoloc", we need to provide "lat" and "lng", which corresponds to latitude and longitude
+	> ex: for a "Fast food locator app", we can use Geo rule to show the nearest fast food based on user's location and the fast food geolocation informations

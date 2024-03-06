@@ -1,0 +1,354 @@
+05 State Management with JSP
+
+Content:
+29 Tracking user actions with Sessions - Overview
+30 Tracking user actions with Sessions - Writing code
+31 FAQ Session Tracking - How does the TODO LIST demo work
+32 FAQ for TO DO list example im able to enter empty items. How to fix
+33 FAQ Details on PageContext and Session objects
+34 Personalize Content with Cookies - Overview
+35 Personalize Content with Cookies - App Demo
+36 Personalize Content with Cookies - Write some Code
+37 FAQ How To Handle White-Space in Cookie Values
+
+
+
+
+
+
+
+
+
+
+29 Tracking user actions with Sessions - Overview
+
+Topics
+1. Session Tracking Demo
+2. Session - Coding Steps
+3. Full JSP Session Example
+
+
+
+JSP session object
+ > JSP session is created once for user's browser session. UNIQUE for this user
+ > Commonly used when you need to keep track of the user's actions
+
+Session Demo Example
+ > JSP page to manage a TODO list
+ > List of items will be stored in the user's session object
+ > Each user will have their own TO DO list
+
+Sessions
+ > each Session is stored in the Server memory (in this case, Tomcat server memory)
+ > when a user connects to the server (JSP page), server assigns a session id for that user to uniquely identify them
+ > Tomcat server handles this Session ID by itself, developer dont need to pass the session id back and forth for each HTTP transaction
+
+Adding data to session object
+ > to add data, we will use the session.setAttribute(String name, Object value)
+ > ex: session.setAttribute("myToDoList", items);
+
+Retrieving data from session object
+ > to retrieve data, we will use the session.getAttribute(String name)
+	- with this, we can perform a "casting" to change the Object's type
+
+
+Session object and its function
+Objects/Functions used
+session
+ > implicit object inside JSP 
+
+session.setAttribute(String name, Object value)
+ > used to add value to session
+
+session.getAttribute(String name): Object
+ > used to return value from session
+ > returns an Object, which we can cast into another type/class
+
+session.isNew(): boolean
+ > returns true if the session is new
+
+session.getId(): String
+ > returns the session id
+
+session.invalidate(): void
+ > invalidates this session and unbinds any object associated with it
+
+session.setMaxInactiveInterval(long mills): void
+ > set the idle time for a sesssion to expire
+ > the value is supplied in milliseconds
+
+NOTE:
+1. Session attributes uses reference by value
+	> when we pass the session attribute as value to another variable, the reference will be passed
+	> this means that if we edit that said variable, changes will reflect to the session attribute itself
+
+
+
+
+
+
+30 Tracking user actions with Sessions - Writing code
+
+// todo-demo.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<!-- Step 1: Create the HTML form -->
+	<form action="todo-demo.jsp">
+		Add new item: <input type="text" name="theItem">
+		<br/>
+		<input type="submit" value="Submit">
+	</form>
+	<br/>
+	Item entered: <%= request.getParameter("theItem") == null ? "" : request.getParameter("theItem") %>
+	
+	<!-- Step 2: Add new item to "To Do" List -->
+	<%
+		// get the TO DO items from the session
+		List<String> items = (List<String>) session.getAttribute("myToDoList");
+
+		// if the TO DO items doesn't exist, then create a new one
+		if(items == null) {
+			items = new ArrayList<String>();
+			session.setAttribute("myToDoList", items);
+		}
+		
+		// see if there is form data to add
+		String theItem = request.getParameter("theItem");
+		if(theItem != null && theItem.toString().trim() != "") {
+			items.add(theItem);
+		}
+	%>
+	
+	<!-- Step 3: Display all "To Do" item from session -->
+	<hr>
+	<b>To Do List Items:</b>
+	<ol>
+		<%
+			for(String item: items) {
+				out.println("<li>" + item + "</li>");
+			}
+		%>
+	</ol>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+31 FAQ Session Tracking - How does the TODO LIST demo work
+32 FAQ for TO DO list example im able to enter empty items. How to fix
+33 FAQ Details on PageContext and Session objects
+34 Personalize Content with Cookies - Overview
+
+Topics
+ > What are Cookies?
+ > Cookies API
+
+Cookies
+ > text data exchange between web browser and server 
+ > consist of key-value pair, where key is used to reference the value
+ > can be used for:
+	- personalizing a website for a user
+	- keep track of user preferences
+		ex: favorite programming language or favorite departure airport
+ > browser will only send cookies that match the server's domain name
+	- with this, servers will only receive/access the cookies that it sends to browser
+
+Cookie API - Package
+ > Cookie class defined in package: javax.servlet.http
+ > Package imported for free in all JSP pages, no need to import the package
+
+Creating Cookie
+ > to create a cookie, we will use the Cookie's constructor to create an instance
+ > ex: Cookie theCookie = new Cookie("myApp.favoriteLanguage", favLang)
+
+Sending the Cookies to Browser
+ > to send the cookie to browser, we will use the response.addCookie(Cookie cookie) function
+
+Reading Cookies from the Browser
+ > to read cookies, we will use the request.getCookies() function
+	- this function returns an Array of Cookies object
+
+
+Cookie API
+
+Cookie class
+ > represents a Cookie
+ > to create one, we will use the constructor function
+
+cookie.setMaxAge(int seconds)
+ > used to define the expiration of the cookie object in seconds
+
+response.addCookie(Cookie cookie)
+ > used to add cookie to the response to sends to browser
+
+request.getCookies(): Cookie[]
+ > used to fetch the cookies in the browser added by the server itself
+ > returns an Array of Cookie objects
+
+
+
+
+
+
+
+
+
+35 Personalize Content with Cookies - App Demo
+
+To Do List
+1. Create HTML form to personalize site
+2. Create JSP to read form data and set Cookies
+3. Create home page to read cookies and display personalized content
+
+
+
+
+
+
+
+
+
+36 Personalize Content with Cookies - Write some Code
+
+// cookies-homepage.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Cookies Homepage</title>
+</head>
+<body>
+	<% 
+		Cookie[] theCookies = request.getCookies();
+		String favLang = "Java";
+		if(theCookies != null) {
+			for(Cookie cookie : theCookies) {
+				// note: must  use Object.equals() for String comparison
+				if("favLang".equals(cookie.getName())) {
+					if(cookie.getValue() != null && cookie.getValue() != "") {
+						favLang = cookie.getValue();
+						break;
+					}
+				}
+			}
+		}
+	%>
+	<h2>Training Portal</h2>
+	<h3>New Books for <% out.print(favLang); %></h3>
+	<ol>
+		<li>blah blah blah</li>
+		<li>blah blah blah</li>
+	</ol>
+	<h3>Latest News Report for <% out.print(favLang); %></h3>
+	<ol>
+		<li>blah blah blah</li>
+		<li>blah blah blah</li>
+	</ol>
+	<h3>Hot Jobs for <% out.print(favLang); %></h3>
+	<ol>
+		<li>blah blah blah</li>
+		<li>blah blah blah</li>
+	</ol>
+	<hr>
+	<a href="cookies-personalize-form.html">Personalize this page</a>
+</body>
+</html>
+
+
+// cookies-personalize-form.html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Cookie Personalize Form</title>
+</head>
+<body>
+	<form action="cookies-personalize-response.jsp">
+		Select your Favorite Programming Language: 
+		<select name="favLang">
+			<option>Java</option>
+			<option>C#</option>
+			<option>PHP</option>
+			<option>Ruby</option>
+		</select>
+		<br>
+		<input type="submit" value="Submit"/>
+	</form>
+</body>
+</html>
+
+
+// cookies-personalize-response.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Cookies Personalize Response</title>
+</head>
+<body>
+	<% 
+		String favLang = request.getParameter("favLang");
+		if(favLang != null && favLang != "") {
+			Cookie cookie = new Cookie("favLang", favLang);
+			cookie.setMaxAge(60*60*24*365);
+			response.addCookie(cookie);
+		}
+	%>
+	Thanks! We set your favorite language to: <%= favLang != null ? favLang : "" %>
+	<br>
+	<a href="cookies-homepage.jsp">Return to the homepage</a> 
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+37 FAQ How To Handle White-Space in Cookie Values
+
+Question: 
+How to handle white-space in Cookie values?
+
+---
+
+Answer:
+To resolve this issue, we need to URL encode the cookie values.
+Java provides two classes for URL encoding and decoding: java.net.URLEncoder, java.net.URLDecoder.
+As an overview, these are the changes that need to be made.
+
+In the file: cookies-homepage.jsp:  add code to URL decode the cookie value
+
+    // decode cookie data ... handle case of languages with spaces in them
+    favLang = URLDecoder.decode(tempCookie.getValue(), "UTF-8");
+
+In the file: cookies-personalize-response.jsp: add code to URL encode the cookie value
+
+    // encode cookie data ... handle case of languages with spaces in them
+    favLang = URLEncoder.encode(favLang, "UTF-8");

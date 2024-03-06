@@ -1,0 +1,76 @@
+Section 8 - Jenkins Introduction
+
+62. Application Details
+
+App details
+ > Go web application
+ > Uses GORM as database backend
+ > In the webapp, it will present a login page where we can login
+ > Contains a Swagger documentation that we can examine
+
+Application GitHub repo link
+ > https://github.com/AdminTurnedDevOps/go-webapp-sample
+
+
+
+
+63. Working with the Application
+
+Installing Go
+ > in order to run the Go web application, we must have Go installed in the local machine
+
+Cloning the repo
+ > use the github repo to clone the repo on your local machine
+ > github repo remote link: https://github.com/AdminTurnedDevOps/go-webapp-sample.git
+ > ex:
+	git clone https://github.com/AdminTurnedDevOps/go-webapp-sample.git
+ 
+Things that we can do in the Application
+1. Start the application
+	> note that since we don't have the database setup, it will fail
+	> $ go run main.go
+2. Run all the test file inside the directory you are
+	> in this case, we can run the test cases inside 'controller' directory
+	> test files are the files taht ends with '_test.go'
+	> note that we can only run the test files WHILE the application is running
+	> ex:
+		$ cd controller
+		$ go test -v .
+			- will run all the test files
+	
+	
+Automating these processes
+ > in our example, we are currently doing all of the steps MANUALLY, like starting up our Go application, then executing 'go test' to run the test files
+ > if we have a CI solution like Jenkins setup, we can automate this steps by specifying all of the commands inside a Jenkins CI pipelines
+ > one use case of CI pipeline is to run all the test like Unit test, Mock test, Integration test, etc
+	
+ 
+
+
+
+64. Get Familiar with the Application
+
+Q1: In this lab, we will deploy the go-webapp-sample app that we saw in the lecture. This sample application uses Echo as web application framework and Gorm as the backend database.
+
+Q2:Which of the following commands is used to clone a git repository?
+A: git clone <repo-url>
+
+Q3: Clone this git repository under /home/bob.
+G: https://github.com/kodekloudhub/go-webapp-sample
+S: 
+0. Create the repo if it does not exist
+	$ mkdir -p /home/bob
+1. Go to /home/bob directory
+	$ cd /home/bob
+2. Clone the repo
+	$ git clone https://github.com/kodekloudhub/go-webapp-sample.git
+	
+Q4: Now let us deploy the sample app from the repository that we just cloned. Run the following commands:
+	$ cd /home/bob/go-webapp-sample/
+	$ go run main.go &
+S: Execute commands specify and wait until it indicates that the web app is running
+
+Q5: You can now access the sample app using the Sample-App button located above the terminal.
+You can login with the following username and password:
+username: test
+password: test

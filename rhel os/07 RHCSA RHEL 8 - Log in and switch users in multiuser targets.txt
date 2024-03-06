@@ -1,0 +1,89 @@
+07 RHCSA RHEL 8 - Log in and switch users in multiuser targets
+
+Single-User mode
+ > sometimes called Maintenance Mode since it is typically used for doing maintenance in Server like patching
+ > a mode in Unix-like operating systems such as Linux operate, where a handful of services are started at system boot for basic functionality to enalbe single SUPERUSER perform critical tasks
+
+
+Runlevels
+ > A run level is a state of init and the whole system that defines what system services are operating. 
+ > Run levels are identified by numbers
+	0: Halt or shutdown system
+		- for stopping or shutting down the system
+	1: Single user mode
+	2: Multi user mode, without networking
+		- no GUI, only logged in via Terminal prompt, and logged with local user only
+		- local user can execute programs but no access to internet	
+	3: Full multiuser mode
+		- same as run level 2, but now with networking
+	4: Unused
+	5: X11 Display (GUI)
+		- default
+	6: Reboot the System
+
+
+Check run level
+ > use the command below
+	$ runlevel
+
+
+Change run level
+ > use the command below
+	$ init LEVEL
+ > EX: init 5
+
+
+Creating Users
+ > to create a user, use the command below
+	$ sudo useradd NAME
+ > by default, the password is auto generated
+ > in order to change the password of a user, we will use the command below
+	$ sudo passwd NAME
+
+
+Logging in
+ > to login, use the "su" command
+	$ su NAME
+		- to login to another user, but use the environment variables of previous user
+	$ su - NAME
+		- to login to another user, and use that USER's environment variables
+ > to login as the ROOT USER, use the command
+	$ su -
+
+
+Check and Change User account information
+ > to view user account information, use the command below
+	$ chage -l USERNAME
+ > to change user account info	
+	$ chage USERNAME
+ > to use these commands, we will need to have administrator rights, like the ROOT USER
+
+ 
+Commands
+runlevel
+ > used to check which runlevel we are currently in
+
+init LEVEL
+ > used to change the current runlevel
+
+sudo useradd NAME
+ > creates a new user
+ > need adminstrator user to use
+
+sudo passwd NAME
+ > assign a new password to a user
+
+su NAME
+ > login as new user with the NAME specified
+ > this user will have the Environment variables of the previous User used to login
+ > not passing a NAME will log you in as the ROOT
+
+su - NAME
+ > login as new user using the Name specified
+ > this time, the environment variables available will be the one the new User have, instead of the previous user
+ > not passing a NAME will log you in as the ROOT
+
+chage [option] USERNAME
+ > used to view and change the user password expiry information.
+ > options:
+	-l 	long list, more information

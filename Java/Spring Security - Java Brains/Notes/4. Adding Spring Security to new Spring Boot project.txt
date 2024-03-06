@@ -1,0 +1,43 @@
+Adding Spring Security to new Spring Boot project
+
+
+spring-boot-starter-security
+	> depedency to add in the maven in order to fetch the spring-security related dependencies
+
+
+Filters
+	> technology behind the Spring Security
+	> Filters are included in the J2EE technology
+		- they intercept any incoming request before it reaches the Servlets / URL Mappings
+
+
+
+Spring Security default behavior
+	> once the Spring Security is added in the classpath, it will exhibit the following behaviors by default
+
+1. Adds a mandatory authentication for URLs
+	> affects ALL URL mappings in the project EXCEPT "/error" of Spring Boot 
+	> "/error" is the landing page of project whenever it encounters an error
+
+2. Adds a login form
+	> all URL mappings will redirect users to this login form IF they are not Authenticated/Authorized
+
+3. Handles login error
+
+
+4. Creates a user and sets a default password
+	> the default user is "user"
+	> the default password is shown in the console
+
+
+
+OVERRIDING THE DEFAULT USER-PASSWORD of Spring Security
+
+In application.properties, define the following variables
+
+spring.security.user.name=username
+spring.security.user.password=password
+
+EX:
+spring.security.user.name=john
+spring.security.user.password=testpassword

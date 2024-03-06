@@ -1,0 +1,121 @@
+IMPLEMENTING HATEOAS for RESTful Services
+
+HATEOAS	
+	> stands for Hypermedia As The Engine Of Application State
+	> Spring Boot has a starter for this called spring-boot-starter-hateoas
+		- this dependency enables developer to add links to the Resource
+
+Use cases of HATEOAS	
+	> add additional information to Resource (e.g. links)
+
+Classes and Interfaces
+
+RepresentationModel
+	> base class for DTOs to collect links
+	> has subclasses like
+		1. CollectionModel
+			= for representing a collection of Resource
+		2. EntityModel
+			= for representing a Resource
+	> these subclasses have a static method factory inside them called "of"
+
+Methods of RepresentationModel
+
+static <T> RepresentationModel<?>	of(T object)
+						> Creates a new RepresentationModel for the given content object and no links.
+T					add(Iterable<Link> links)
+						> Adds all given Links to the resource.
+T					add(Link link)
+						> Adds the given link to the resource.
+static <T> RepresentationModel<?>	of(T object, Iterable<Link> links)
+						> Creates a new RepresentationModel for the given content object and links.
+
+
+
+Link
+	> immutable value object for links.
+	> it stores both a hypertext reference (href) and a link relation (rel)
+		- ex: <link href="style.css" rel="stylesheet" type="text/css" />
+	> exposes other attributes as defined in RFC-8288
+	> can be constructed using the following constructors
+		- of() being a static method of Link class
+
+Link of(String href)
+Link of(String href, LinkRelation relation)
+Link of(String href, String relation)
+Link of(UriTemplate template, LinkRelation relation)
+Link of(UriTemplate template, String relation)
+
+WebMvcLinkBuilder
+	> builder to ease building Link instances pointing to Spring MVC Controllers
+	> we can either 
+		1. use slash() can concatenate the id of Resource's rel
+		2. use methodOn() and pass the Controller class, then call the method on the result
+	> has the following methods
+		1. linkTo()
+			= factory method for Link Class
+		2. methodOn()
+			= used for fetching URL using Controller's methods
+
+EX:
+1.
+// Link to "/employees"
+Link link = linkTo(EmployeeController.class).withRel("employees");
+
+// Link to "/employees/{id}"
+EmployeeVO e = new EmployeeVO(1, "Lokesh", "Gupta", "howtodoinjava@gmail.com");
+Link link = linkTo(EmployeeController.class).slash(e.getId()).withSelfRel();
+
+
+2.
+Method method = EmployeeController.class.getMethod("getReportByEmployeeById", Integer.class);
+Link link = linkTo(method, 123).withSelfRel();
+
+//or
+
+Link link = linkTo(methodOn(EmployeeController.class).getReportByEmployeeById(123)).withSelfRel();
+
+
+Implement HATEOAS in retrieveAllUser() of UserController
+1. Get the list of User
+2. Create a list of EntityModel of type User using the list of User
+3. Return CollectionModel using the list of EntityModel and self ref of the retrieveAllUser() in User Controller class
+
+	// GET /users
+	// retrieveAllUsers
+	@GetMapping("/users")
+	public CollectionModel<EntityModel<User>> retrieveAllUsers() {
+		// Get the list of Users to send
+		List<User> users = service.findAll();
+
+		// Create a list of EntityModel, map each of the Users in Entity model, then add
+		// links (self link and all user link) to them
+		List<EntityModel<User>> entityModels = users.stream()
+				.map(user -> EntityModel.of(user,
+						linkTo(methodOn(this.getClass()).retrieveUser(user.getId())).withSelfRel(),
+						linkTo(methodOn(this.getClass()).retrieveAllUsers()).withRel("all-users")))
+				.toList();
+
+		// Use the list of EntityModel to populate CollectionModel and return it
+		return CollectionModel.of(entityModels, linkTo(methodOn(this.getClass()).retrieveAllUsers()).withSelfRel());
+	}
+
+Implement HATEOAS in retrieveUser(int id)
+1. Get the User
+2. Return a EntityModel using the User and the link of retrieveUser() of UserController class
+
+	// GET /users/{id}
+	// retrieveUser(int id)
+	@GetMapping("/users/{id}")
+	public EntityModel<User> retrieveUser(@PathVariable("id") int id) {
+		// Get User from Service
+		User user = service.findOne(id);
+
+		// Null check for user
+		if (user == null) {
+			throw new UserNotFoundException("id-" + id);
+		}
+
+		// Return an EntityModel using the User from service
+		return EntityModel.of(user, linkTo(methodOn(this.getClass()).retrieveUser(user.getId())).withSelfRel());
+	}

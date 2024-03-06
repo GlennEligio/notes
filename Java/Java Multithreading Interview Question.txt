@@ -1,0 +1,479 @@
+Java Multithreading Interview Question
+
+185 What is the need for Threads in Java?
+
+ANSWER:
+ > Threads allow Java code to run in parallel.
+ > There are some processes, which are independent of each other, that can be done ASYNCHRONOUSLY. This makes the processing time much lower
+ > In example below, 
+	- Step1,2,3 are independent to each other
+	- Step4 needs 1,2,3 to finish in order to do its tasks
+ > Now without Thread, the code may look something like this. Where all Steps are done SYNCHRONOUSLY (60+60+15+25 = 160) 
+ > But if we can do Step1,2,3 in parallel, then execute the Step4, it will result in only 75mins (60 from longest step in 1,2,3 plus 15 of step4)
+
+EX:
+Step1: Download and Store Bowling statistics => 60mins
+Step2: Download and Store Batting statistics => 60mins
+Step3: Download and Store Fielding Statistics => 15mins
+Step4: Merge and Analyze => 25mins
+
+
+CODE:
+ThreadExamples example = new ThreadExamples();					
+example.downloadAndStoreBattingStatistics();
+example.downloadAndStoreBowlingStatistics();
+example.downloadAndStoreFieldingStatistics();
+example.mergeAndAnalyze();
+
+
+
+
+
+186 How do you create a Thread?
+
+ANSWER:
+ > There are two ways in creating a custom Thread class
+	1. Creating a subclass of Thread class, and implementing its run() method
+	2. Creating a class that implements Runnable interface, implementing run() method. Then passing an instance of that class to a Thread constructor
+
+
+
+
+
+187 How do you create a Thread by extending Thread class?
+
+ANSWER:
+ > Create a class, extend to Thread class, and implement run()
+
+ex:
+class BattingStatisticsThread extends Thread {
+  // run method without parameters
+  public void run() {
+    for(int i=0; i<1000; i++) {
+      System.out.println("Running Bowling Statistics Thread" + i)
+    }
+  }
+}
+
+
+
+
+
+188 How do you create a Thread by implementing Runnable interface?
+
+ANSWER:
+ > by creating a class and implemeting Runnable interface
+
+EX:
+class BowlingStatisticsThread implements Runnable {
+  // run method without parameters
+  public void run() {
+    for(int i=0; i<1000; i++) {
+      System.out.println("Running Bowling Statistics Thread" + i)
+    }
+  }
+}
+
+
+
+
+
+
+189 How do run a Thread in Java?
+
+ANSWER:
+ > running a Thread is slightly different based on how you approach creating Thread
+ > for Thread created that extends Thread class
+	1. Create an instance of the Thread subclass
+	2. Call the start() method
+ > for Thread created implementing Runnable interface
+	1. Create an instance of Class that implements Runnable
+	2. Create a Thread object and pass the object earlier as constructor argument
+	3. Call the start method on the thread
+
+EX:
+For Option 1
+BattingStatisticsThread battingThread1 = new BattingStatisticsThread();
+battingThread1.start();
+
+For Option 2
+BowlingStatisticsThread bowlingInterfaceImpl = new BowlingStatisticsThread();
+Thread bowlingThread2 = new Thread(bowlingInterfaceImpl);
+bowlingThread2.start();
+
+
+
+
+
+
+
+190 What are the different states of a Thread?
+
+ANSWER:
+ > Different states that a Thread can be in are defined in class State
+	- NEW
+	- RUNNABLE
+	- RUNNING
+	- BLOCKED/WAITING
+	- TERMINATED/DEAD
+ > NEW is when a Thread instance in created but the start method is not called yet
+ > RUNNABLE is when a Thread is eligible to run, but not running yet
+	- this can happen when a Scheduler choose another Thread to run instead of the other.
+ > RUNNING is when Thread is currently running
+ > BLOCKED/WAITING/SLEEPING is when it is not eligible to be run by the Scheduler. Thread is alive but is waiting for something.
+	- example can be a synchronized block, only one Thread can be there at a time, and the other Threads are blocked
+ > DEAD/TERMINATED is when it has completed its execution. Once thread enters this state, it cannot be made active again 
+
+
+
+
+
+
+
+
+
+191 What is priority of a Thread? How do you change the priority of a Thread?
+
+ANSWER:
+ > Thread priority affects how the Scheduler allot CPU resources to a Thread
+ > It also affects which Thread the Scheduler schedules to run
+	- if two threads waiting, Scheduler will pick the one with highest priority
+	- if two threads waiting and same priority, it will be random
+ > By default in Java, a Thread is assigned a default of Priority 5
+ > This priority can be increase or decreased (Range 1 to 10, 1 being lowest, and 10 being highest)
+ 
+Setting priority
+ > to set priority of Thread, we can call setPriority() of Thread and pass int of value 1-10
+ > we can also pass Thread.MAX_PRIORITY (10), Thread.MIN_PRIORITY (1), Thread.NORM_PRIORITY();
+
+
+
+
+
+192 What is ExecutorService?
+
+ExecutorService
+ > ExecutorService interface is a new way of executing tasks asynchronously in the background
+ > An ExecutorService is very similar to a threadpool
+
+
+
+
+
+
+
+193 Can you give an example of ExecutorService?
+
+ANSWER:
+ > We can use ExecutorService by
+	1. Creating instead of ExecutorService by using one of Executors' static methods
+	2. Calling the execute() method and passing a Runnable instance
+	3. Shutting down the ExecutorService instance by calling shutdown()
+
+
+EX:
+ExecutorService executorService = Executors.newSingleThreadExecutor();
+executorService.execute(new Runnable() {
+  public void run() {
+    System.out.println("From ExecutorService");
+  }
+});
+System.out.println("End of Main");
+executorService.shutdown();
+
+
+
+
+
+
+
+194 Explain different ways of creating ExecutorService
+
+ANSWER:
+ > There are three ways in creating ExecutorService instances
+ > executorService1 can execute one task at a time
+ > executorService2 can execute 10 tasks at a time
+ > executorService3 can execute tasks after certain delay or periodically
+
+// Creates an Executor that uses a single worker thread operation off an 
+// unbounded queue
+ExecutorService executorService1 = Executors.newSingleThreadExecutor();
+
+// Creates a threadpool that reuses a fixed number of Threads
+// operating off a shared unbounded queue. At any point, the parameter
+// specifies the most threads that will be active processing tasks
+ExecutorService executorService2 = Executors.newFixedThreadPool(10)
+
+// Creates a thread pool that can schedule commands to run after a
+// given delay, or to execute periodically
+ExecutorService executorService3 = Executors.newScheduledThreadPool(10)
+
+
+
+
+
+
+195 How do you check whether an ExecutorSercice task executed successfully?
+
+ANSWER:
+ > we can use the Future object returned by submit() method of ExecutorService to check the status of tasks
+ > Future object have get() method to determine if tasks is successfully executed
+
+EX:
+Future future = executorService1.submit(new Runnable() {
+  public void run() {
+    System.out.println("From executorService1");
+  }
+});
+future.get(); // returns null if the task has finished correctly
+
+
+
+
+
+
+
+196 What is Callable? How do you execute a Callable from ExecutionService?
+
+ANSWER:
+ > Using Callable in ExecutorService service is similar to Runnable
+ > With Callable, we can use it to retrieve the result of the asynchronous tasks, unlike Runnable interface where it does not return any value
+
+EX:
+Future futureFromCallable = executorService1.submit(new Callable() {
+  public String call() throws Exception {
+    return "RESULT";
+  }
+});
+
+System.out.print("futureFromCallable.get() = " + futureFromCallable.get());
+
+
+
+
+
+
+197 WHat is synchronization of Threads?
+
+ANSWER:
+ > The synchronization of Threads is needed when there are methods where we want all the Threads to execute it synchronously
+ > To make a method synchronous, we need to use the keyword "synchronized"
+ > Example of the scenario where synchronization of thread is needed is when calling a method that changes object's property in different methods
+ > In example below, one or more Thread may execute the setAndGetSum() method
+	- this may result in Thread accessing different values of Excel instance variables
+	- Thread2 may access value of cell1 that is assigned by Thread1
+	- to fix this, we want to add "synchronized" keyword, this means only one Thread can execute this method at a time
+
+EX:
+public class Excel {
+  private int cell1;
+  private int cell2;
+  private int cell3;
+
+  // public synchronized int setAndGetSum(int a1, int a2, int a3) {
+  public int setAndGetSum(int a1, int a2, int a3) {
+    cell1 = a1;
+    sleepForSomeTime();
+    cell2 = a2;
+    sleepForSomeTime();
+    cell3 = a3;
+    sleepForSomeTime();
+    return cell1 + cell2 + cell3;
+  }
+}
+
+
+
+
+
+
+198 Can you give an example of a synchronized block?
+
+ANSWER:
+ > All code which goes into the block is synchronized on the current object
+
+EX:
+void synchronizedExample2() {
+  synchronized (this) {
+    // All code goes here... 
+  }
+}
+
+
+
+
+
+
+
+199 Can a static method be synchronized?
+
+ANSWER:
+ > Yes. Static methods and block are synchronized on the class, while Instance methods and blocks are synchronized on the instance of the class (i.e. an object of the class)
+ > Static synchronized methods and instance synchronized methods don't affect each other. This is because they are synchronized on two different things
+
+EX:
+synchronized static int getCount() {
+  return count;
+}
+
+static int getCount2() {
+  synchronized (SynchronizedSyntaxExample.class) {
+    return count;
+  }
+}
+
+
+
+
+
+
+
+200 What is the use the join() method in Threads?
+
+ANSWER:
+ > join method is an instance method of the Thread class
+ > it is used to halt/stop the execution flow of the current THread to wait until the Thread instance join() is called is finished
+ > in example below, we want to have thread3 and thread2 to run in parallel, but we want to thread4 to start ONLY if the thread3 is finished. We also want it so that thread4 only have 3 seconds to do its execution
+
+EX:
+ThreadExample thread2 = new ThreadExample();
+ThreadExample thread3 = new ThreadExample();
+ThreadExample thread4 = new ThreadExample();
+
+thread3.start();
+thread2.start();
+thread3.join(); // wait for thread3 to complete
+System.out.println("Thread3 is completed")
+thread4.start();
+thread4.join(3000); // wait for 3000 miliseconds before next line is executed
+
+
+
+
+
+
+
+201 Describe a few other important methods in Threads?
+
+ANSWER:
+Thread.yield()
+ > static method in Thread class
+ > its like a thread saying "I have enough time in the limelight. Can some other thread run next"
+ > A call to yield method changes the state of thread from RUNNING to RUNNABLE. However, the scheduler mgiht pick up the same thread to run again, especially if its the thread with highest priority
+ > Summary: yield method is a request from a thread to go to RUNNABLE state. However, the scheduler can immediately put the thread back to RUNNING state
+
+
+Thread.sleep(long miliseconds)
+ > sleep is a static method in Thread class
+ > sleep method can throw an InterruptedException
+ > slee method causes the current Thread in execution to go to sleepp for specified number of miliseconds
+
+
+
+
+
+
+
+202 What is a deadlock?
+
+ANSWER:
+ > Deadlock is a situation where two or more Threads wait for each other to finish before executing. This will make the Threads wait for one another forever
+ > Ex: Thread1 is waiting for Thread2 to finish before running. But Thread2 is also waiting for Thread1 to finish before running
+
+
+
+
+
+203 WHat are the important methods in Java for inter-thread communications?
+
+ANSWER:
+ > Important methods are wait, notify, and notifyAll
+
+
+
+
+
+204 WHat is the use of wait method?
+
+ANSWER:
+ > wait method is defined in the Object class
+ > this causes the current Thread to wait until other Thread invokes notify() or notifyAll() on the same object
+ > transforms the Thread from RUNNING to NON-RUNNABLE state
+ > wait is used in combination of notify
+
+EX:
+synchronized(thread) {
+  thread.start();
+  thread.wait();
+}
+
+
+
+205 What is the use of notify method?
+
+ANSWER:
+ > notify method is defined in the Object class
+ > wakes up a RANDOM Thread that is waiting in the same object
+ > transforms the Thread from NON-RUNNABLE to RUNNABLE state
+
+EX:
+synchronized (this) {
+  calculateSumUpToMillion()'
+  notify();
+}
+
+
+
+206 What is the use of notifyAll method?
+
+ANSWER:
+ > notifyAll is used to wake up all Threads that are waiting in the same Object
+
+EX:
+thread.notifyAll();
+
+
+
+
+
+
+
+
+208 Can you write a synchronized program with wait and notify methods?
+
+EXPLAINATION:
+1. In the Main Thread, we created instance of Calculator and started it
+2. We then called wait() in the Thread instance, which suspends the Main Thread
+3. Calculator do its long running process in the run(), then call the notify() instance method
+	- this results in the Main Thread waiting earlier to go from NON-RUNNABLE to RUNNABLE, then immediately into RUNNING to continue its execution
+4. Main thread prints the sum property of Calculator instance
+
+
+EX:
+class Calculator extends Thread {
+  long sum;
+
+  public void run() {
+    synchronized (this) {
+      for(int i=0; i<1000000; i++) {
+        sum += i;
+      }
+      notify();
+    }
+  }
+}
+
+public class ThreadWaitAndNotify() {
+  public static void main(String[] args) {
+    Calculator thread = new Calculator();
+    thread.start();
+    synchronized (thread) {
+      try {
+        thread.wait();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+    System.out.println(thread.sum);
+  }
+}

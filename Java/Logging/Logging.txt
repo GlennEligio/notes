@@ -1,0 +1,101 @@
+SLF4J
+	> The Simple Logging Facade for Java (SLF4J) serves as a simple facade or abstraction for various logging frameworks (e.g. java.util.logging, logback, log4j) allowing the end user to plug in the desired logging framework at deployment time.
+	> Spring Boot makes use of Apache Commons' Logging for its system logs by default. 
+		- Additionally, by default you can use any of the logging frameworks under the SLF4J API such as Logback (which is the default), Log4J2, and Java Util Logging in Spring Boot.
+
+
+How to use SLF4J for logging
+
+I. Create an instance of Logger interface
+	1. To enable logging in Spring, import Logger and LoggerFactory from the org.slf4j API library:
+
+		import org.slf4j.Logger;
+		import org.slf4j.LoggerFactory;
+
+
+	2. Afterwards, declare a constant to store the logger service by instantiating a logger for the class using
+
+		private static final Logger log = LoggerFactory.getLogger(DemoService.class);
+
+II. Use @Slf4j annotation in Class
+	1. Add @Slf4j in the Class
+		- will automatically generate a logger for the class without having to declare a constant. 
+		- The annotation supplies a static variable called "log" which provides the logger utilities by default:
+
+		@Slf4j
+		@Service
+		public class DemoService {
+		    //...
+		}
+
+
+
+
+LOG LEVELS
+	> every log has a degree of urgency or importance 
+	> below are the log level
+	> they are arranged by log importance in descending order
+
+public void logLevelDisplay () {
+    logger.error("Error message");
+    logger.warn("Warning message");
+    logger.info("Info message");
+    logger.debug("Debug message");
+    logger.trace("Trace message");
+}
+
+	> by default, Spring Boot application have log level set to INFO
+		- this means anything below INFO level (DEBUG, TRACE) will NOT be shown in console
+	> below are the definitions of Log levels and their Use cases
+
+1. ERROR 
+	- Error logs are serious issues that affect a significant part of the system or some part of your application has failed to operate. 
+	- Exceptions are considered ERROR level logs. Other examples of error logs are database connection failures and configuration errors. 
+	- ERROR logs are the most urgent default log level in SLF4J.
+
+2. WARN 
+	- Warning logs are used to indicate potential problems that might cause errors and should be monitored in case they fail. 
+	- Of course, the context of a warning is subjective to the developer and the situation so warning logs might vary from system to system.
+
+3. INFO 
+	- INFO is the default logging level that is set by Spring Boot. 
+	- If no configurations are made, the log level is automatically set to INFO. 
+	- These types of logs are information that isn't normally needed but is useful in situations like production code debugging or determining when certain data is manipulated.
+
+4. DEBUG 
+	- DEBUG logs include more detailed, specific information that aren't needed in normal situations. 
+	- This is often set as a log level when a developer is trying to deep trace a problem or a bug that is hard to trace.
+
+5. TRACE 
+	- TRACE is a more granular version of DEBUG. 
+	- TRACE logs are exhaustive, imagine logging every single operation the system is doing, from starting a service, initializing new variables, and calling methods.
+
+
+Configuring Log levels of each packages
+	> Log levels can be set in the Spring environment by setting its configurations in application.properties.
+	> The format to set the log level configuration is
+		
+		logging.level.[classpath] = [level]
+
+	> to specify a log level for all classes that dont have their own log level settings, the root logger can be set using logging.level.root
+		
+EX:
+logging.level.root=INFO
+logging.level.org.hibernate=DEBUG
+logging.level.com.test=DEBUG
+logging.level.com.service.DemoService=WARN
+
+
+
+Log Groups
+	> used to group up different packages to set their log level in one command
+	> the syntax is
+		
+		logging.group.[groupName]
+
+EX:
+# Initialize log group
+logging.group.test=com.test, com.test-prod, com.apptest
+
+# Set log level to log group
+logging.level.test=DEBUG

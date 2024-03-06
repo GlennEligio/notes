@@ -1,0 +1,59 @@
+25. Setting up Spring Cloud API Gateway
+
+
+Spring Cloud API Gateway
+	> alternative to Zuul API Gateway
+	> API Gateways are used to add cross-cutting functionalities throughout Microservices
+		- ex: logging, authentication, authorization, request rate limiting
+
+Why set up API Gateway?
+1. Single point of entry
+2. Unique protocol for all clients
+3. Clients don’t need to know about multiple server addresses
+4. Unique response for multiple clients
+5. Changes on backend services can be hidden from clients
+6. Multiple platforms
+7. Services are not exposed
+8. Load balancing
+9. Caching
+10. Monitoring
+
+
+Dependencies to use
+1. Spring Boot DevTools
+2. Spring Boot Actuator
+3. Eureka Discovery Client
+	> IMPORTANT
+	> the API Gateway needs to know where to redirect the route and we will fetch all the URL paths in Eureka Naming Server
+4. Config Client
+5. Gateway
+	> from Spring Cloud Routing
+	> provides a simple yet effective way to route to APIs and provide cross cutting concerns to them such as
+		- security
+		- monitoring/metrics
+		- resilency
+
+
+Properties to define
+spring.application.name=api-gateway
+server.port=8765
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+
+
+RoutePredicates
+	> if we look at the Console logs after running the API gateway, we can see the RoutePredicatesFactory
+	> we can see that it is similar to AOP advices methods
+
+Loaded RoutePredicateFactory [After]
+Loaded RoutePredicateFactory [Before]
+Loaded RoutePredicateFactory [Between]
+Loaded RoutePredicateFactory [Cookie]
+Loaded RoutePredicateFactory [Header]
+Loaded RoutePredicateFactory [Host]
+Loaded RoutePredicateFactory [Method]
+Loaded RoutePredicateFactory [Path]
+Loaded RoutePredicateFactory [Query]
+Loaded RoutePredicateFactory [ReadBody]
+Loaded RoutePredicateFactory [RemoteAddr]
+Loaded RoutePredicateFactory [Weight]
+Loaded RoutePredicateFactory [CloudFoundryRouteService]

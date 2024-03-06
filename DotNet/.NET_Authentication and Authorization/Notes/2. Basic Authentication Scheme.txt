@@ -1,0 +1,382 @@
+Basic Authentication
+
+Steps to follow
+1. Add app.UseAuthentication() in Configure() of StartUp class
+2. AuthenticationHandler class
+3. AuthenticationSchemeOptions
+4. [Authorize] annotation to Controller or Route endpoint
+5. services.AddAuthentication
+6. AuthenticationResult.Fail & Success
+7. AuthenticationHeaderValue
+
+
+
+1. Add app.UseAuthentication() in Configure() of StartUp class
+	> add it BEFORE the UseAuthorization() and AFTER UseRouting()
+
+INSIDE Configure() of StartUp class
+
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+
+
+
+
+2. Create the AuthenticationHandler class to handle authentication of http request in Request Pipeline.
+	> create a Handlers folder in root directory of webapi
+	> add BasicAuthenticationHandler.cs file inside it
+	> add a BasicAuthenticationHandler class that EXTENDS to AuthenticationHandler class
+	> set type of AuthenticationHandler class to AuthenticationSchemeOptions
+	> implement the necessary items such us
+		a. super constructor
+		b. abstract class method
+
+
+INSIDE BasicAuthenticationHandler.cs file
+
+
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace Eze.Handlers
+{
+    public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+    {
+        public BasicAuthenticationHandler(
+            IOptionsMonitor<AuthenticationSchemeOptions> options, 
+            ILoggerFactory logger, 
+            UrlEncoder encoder, 
+            ISystemClock clock) 
+            : base(options, logger, encoder, clock)
+        {
+        }
+
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}
+
+
+
+
+
+
+3. Add a return value to the HandleAuthenticateAsync() method
+	> have it return a AuthenticationResult.Fail()
+	> pass a string in the Fail()
+		- this will be the error message that will be seen by request sender
+	> also, add a async modifier in the method signature
+
+
+INSIDE BasicAuthenticationHandler class
+
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            return AuthenticateResult.Fail("Need to implement");
+        }
+
+
+
+
+4. Add an [Authorize] annotation in the controller class
+
+INSIDE AccountController class
+
+    [Authorize]
+    [ApiController]
+    [Route("api/account")]
+    public class AccountController : ControllerBase
+	{
+
+	}
+
+
+
+
+5. Add Authentication in the IServiceCollection in ConfigureServices()
+	> to add Authentication, insert this code inside ConfigureServices()
+
+		services.AddAuthentication(string authenticationScheme);
+
+	> this will take a string parameter which defines the type of authentication scheme to use. since we want to use basic authentication scheme, pass "BasicAuthentication"
+
+		services.AddAuthentication("BasicAuthentication");
+
+	> lets also define the schemeOptions by calling AddScheme() after service.AddAuthentication()
+
+		services.AddAuthentication()
+			.AddScheme<>();
+
+	> for the type, we will pass AuthenticationSchemeOptions and the BasicAuthenticationHandler
+	> for the parameter, lets pass "BasicAuthentication" and null for options
+
+
+INSIDE ConfigureServices() of StartUp class
+
+            services.AddAuthentication("BasicAuthentication")
+                    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+
+
+
+
+6. Test the application
+	> save all, run and debug
+	> add a breakpoint in the return call of HandleAuthenticateAsync() of BasicAuthenticationHandler class
+	> call an endpoint or the controller with the [Authorize] attribute in it
+	> check if the breakpoint is called
+
+
+
+
+II. Modifying HandleAuthenticateAsync()
+
+7. Check if Authorization Header is present in the http request
+	> to check for Authorization header, use the following method
+
+		Request.Headers.ContainsKey(string headerName)
+
+	> this will return either true or false depending on the check
+	> in our case, we are looking for "Authorization" header, so it will be
+
+		Request.Headers.ContainsKey("Authorization")
+
+	> now, lets use this boolean function in order to create the Header presence check
+		- if fail, return an AuthenticateResult.Fail() with appropriate message
+
+
+INSIDE HandlerAuthenticateAsync()
+
+            if(!Request.Headers.ContainsKey("Authorization"))
+            {
+                return AuthenticateResult.Fail("Authorization Header not present");
+            }
+
+
+
+
+8. Read the AuthorizationHeader value by parsing it
+	> to parse the HeaderValue, use this following code
+
+		AuthenticationHeaderValue.Parse(Request.Headers["headerKeyName"]);
+
+	> in our case, we are trying to get the Authorization header value so it will be
+
+		AuthenticationHeaderValue.Parse(Request.Headers["Authorize"]);
+
+	> assign the result of the Parse call in a variable
+
+
+INSIDE the HandleAuthenticateAsync()
+
+            var authenticationHeaderValue = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+
+
+
+
+9. Convert the variable into bytes by converting from base64 format
+	> convert the variable into bytes by converting from base64 format
+		- Basic Authentication strings uses Base64 as encryption format
+		- to convert from base64 into bytes use the following code
+
+		Convert.FromBase64String(authenticatioHeaderValue.Parameter);
+
+	> assign the result in another variable
+
+		var bytes = Convert.FromBase64String(authenticatioHeaderValue.Parameter);
+
+
+INSIDE HandleAuthenticateAsync()
+
+            var bytes = Convert.FromBase64String(authenticationHeaderValue.Parameter);
+
+
+
+
+10. Encode the following bytes into a string with UTF8 format
+	- to encode bytes into a string with UTF8 format, use the following code
+
+		Encoding.UTF8.GetString(bytes)
+
+	- assign it to a string variable
+
+		string credentials = Encoding.UTF8.GetString(bytes);
+
+INSIDE HandleAuthenticateAsync()
+
+		string credentials = Encoding.UTF8.GetString(bytes);
+
+
+
+11. Test the application
+	> create a string that will contain the username and password
+		- the convention of this credential string is that username and password must be concatenated and separated by a colon
+
+		<Username>:<Password>
+
+	> in our case, the string credentials will be 
+
+		admin@gmail.com:passwordpassword
+
+	> and when it is encoded into base64 in base64encode.org website, it will be
+
+		YWRtaW5AZ21haWwuY29tOnBhc3N3b3JkcGFzc3dvcmQ=
+
+	> now lets add this in the Authorization header value in http request that we will send
+
+		Header Key name: Authorization
+		Header value: Basic YWRtaW5AZ21haWwuY29tOnBhc3N3b3JkcGFzc3dvcmQ=
+
+	> add a breakpoints in the following point
+		- last return call of the HandlerAuthenticateAsync
+
+	> test and run
+		- save all, run and debug
+		- send an http request on the controller with [Authorize]
+		- when breakpoint is reached, hover the mouse cursor in the following variables to check the values
+			a. authenticationHeaderValue
+			b. bytes
+			c. credentials
+
+
+
+III. Validating the Credential sent from Basic Authentication 
+	- implement database in order to validate the web request sender 
+
+
+12. Inject the Service that contains the list of Users where we will validate if web request sender is valid
+	- in my case, I will use the MongoDb client that I have already setup in webapi
+
+
+INSIDE BasicAuthenticationHandler class
+
+        private readonly IEzeRepository repo;
+
+        public BasicAuthenticationHandler(
+            IOptionsMonitor<AuthenticationSchemeOptions> options, 
+            ILoggerFactory logger, 
+            UrlEncoder encoder, 
+            ISystemClock clock,
+            IEzeRepository repo) 
+            : base(options, logger, encoder, clock)
+        {
+            this.repo = repo;
+        }
+
+
+
+13. Split the string credentials into two
+	> use Split() to string credentials and pass ":" to it
+		- this will make the result into a string array
+		- change datatype from string to string[]
+	> assign the first string in the array to username string
+	> assign the second string in the array to password string
+
+INSIDE HandleAuthenticateAsync()
+
+            string[] credentials = Encoding.UTF8.GetString(bytes).Split(":");
+            string username = credentials[0];
+            string password = credentials[1];
+
+
+
+
+14. Fetch the Account object in database that matches the username and password we got from basic authentication header parameter
+	> use the repository to fetch the Account
+
+INSIDE HandleAuthenticateAsync()
+
+            Account existingAccount = (await repo.GetAccountsAsync() as List<Account>).Where(account => account.Username == username && account.Password == password).FirstOrDefault();
+
+
+
+
+15. Check if the Account object from repository is null
+	> if null, return an AuthenticateResult.Fail with appropriate message
+	> else, create the following using the username and password
+		- Claim
+			- use Username as ClaimType.Name
+		- ClaimIdentity
+			- use the Claim with Scheme.Name
+		- ClaimsPrincipal
+			- use the ClaimIdentity
+		- AuthenticationTicket
+			- use the ClaimPrincipal with Scheme.Name
+
+INSIDE BasicAuthenticationHandler()
+
+            if(existingAccount == null)
+            {
+                return AuthenticateResult.Fail("Invalid username or password");
+            }else
+            {
+                var claims = new [] {new Claim(ClaimTypes.Name, existingAccount.Username)};
+                var claimIdentity = new ClaimsIdentity(claims, Scheme.Name);
+                var claimPrincipal = new ClaimsPrincipal(claimIdentity);
+                var ticket = new AuthenticationTicket(claimPrincipal, Scheme.Name);
+
+                return AuthenticateResult.Success(ticket);
+            }
+
+
+
+16. Wrap everything around in a try catch block
+	> in try block, insert the section from parsing Authorization header to existingAccount check
+	> in catch block, return an AuthenticateFail with appropriate message
+	> with this, we can remove the last return call
+
+
+INSIDE BasicAuthenticationHandler class
+
+
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            if(!Request.Headers.ContainsKey("Authorization"))
+            {
+                return AuthenticateResult.Fail("Authorization Header not present");
+            }
+
+            try
+            {
+                var authenticationHeaderValue = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
+
+                var bytes = Convert.FromBase64String(authenticationHeaderValue.Parameter);
+
+                string[] credentials = Encoding.UTF8.GetString(bytes).Split(":");
+                string username = credentials[0];
+                string password = credentials[1];
+
+                Account existingAccount = (await repo.GetAccountsAsync() as List<Account>).Where(account => account.Username == username && account.Password == password).FirstOrDefault();
+
+                if(existingAccount == null)
+                {
+                    return AuthenticateResult.Fail("Invalid username or password");
+                }else
+                {
+                    var claims = new [] {new Claim(ClaimTypes.Name, existingAccount.Username)};
+                    var claimIdentity = new ClaimsIdentity(claims, Scheme.Name);
+                    var claimPrincipal = new ClaimsPrincipal(claimIdentity);
+                    var ticket = new AuthenticationTicket(claimPrincipal, Scheme.Name);
+
+                    return AuthenticateResult.Success(ticket);
+                }
+            }catch(Exception)
+            {
+                return AuthenticateResult.Fail("Error has occured");
+            }
+        }
+
+
+
+
+17. Test the application
+	> save all, build and run
+	> send a request with basic authorization value with matching credentials	
+	> check the result of request

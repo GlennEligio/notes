@@ -1,0 +1,440 @@
+11. JWT implementation in Spring Boot + Spring Security
+
+
+
+Dependencies needed for JWT implementation
+
+1. jjwt from io.jsonwebtoken
+
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+    <version>0.9.1</version>
+</dependency>
+
+
+
+2. jaxb-api from javax.xml.bind
+	> removed from JDK from version 9 onwards
+
+<dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.0</version>
+</dependency>
+
+
+MAIN CLASSES INSIDE io.jsonwebtoken 
+
+Jwts 
+	> class inside io.jsonwebtoken
+	> Factory class useful for creating instances of JWT interfaces. Using this factory class can be a goodalternative to tightly coupling your code to implementation classes.
+	> with this class, we can call
+		- parser()
+		- builder()
+
+
+Claims
+	> A JWT Claims set. 
+	> This is ultimately a JSON map and any values can be added to it, but JWT standard names are provided as type-safe getters and setters for convenience.
+	> Because this interface extends Map&lt;String, Object&gt;, if you would like to add your own properties,you simply use map methods, for example:
+ 		
+		claims.put("someKey", "someValue");
+
+
+JwtParser
+	> interface responsible for parsing Jwt
+
+JwtBuilder
+	> interface responsible for building Jwt
+	
+
+
+
+Jwt Parsing related methods OF JwtParser
+
+FACTORY METHOD FOR JwtParser
+
+parser()
+	> method of Jwts
+	> used mainly for parsing a Jwt
+	> Returns a new JwtParser instance that can be configured and then used to parse JWT strings
+	> this JwtParser can then be configured
+
+
+BUILDER METHODS OF JwtParser
+
+setSigningKey(String secretKey)
+	> method of JwtParser
+	> Sets the signing key used to verify any discovered JWS digital signature. If the specified JWT string is nota JWS (no signature), this key is not used. this specifies the Secret key used in order to decrypt the Jwts	
+	> takes a String which is the signing key
+	> returns a JwtParser for method chaining
+
+requireId(String id)
+requireSubject(String subject)
+requireAudience(String audience)
+requireIssuer(String issuer)
+requireIssuedAt(Date issuedAt)
+requireExpiration(Date expiration)
+requireNotBefore(Date notBefore)
+require(String claimName, object value)
+	> checks if the parsed JWT contain a specific Claim in its content
+	> if the specific Claim is NOT PRESENT or NOT EQUAL to the one passed on method, it will conclude that JWT in INVALID
+	> returns a JwtParser for method chaining
+
+parseClaimsJwS(String jwt)
+	> called AFTER CONFIGURING the JwtParser by calling Jwts.parser().setSigningKey()
+	> Parses the specified compact serialized JWS string based on the builder's current configuration state and returns the 
+resulting Claims JWS instance
+	> takes a String Jwt
+	> returns a Jws<Claims> 
+
+getBody()
+getHeader()
+getSignature()
+	> returns the Claims from a specific part of the Jws<Claims>
+	> called after parseClaimJwts(String jwt)
+
+
+	
+Jwt Building related methods of JwtBuilder interface
+
+FACTORY METHOD FOR JwtBuilder
+
+builder()
+	> called from Jwts Class
+	> returns a JwtBuilder for method chaining
+
+
+BUILDER METHODS FOR JwtBuilder
+
+setClaims(Map<String, Object>)
+	> set the Claims of the Jwt to be generated
+	> takes a Map<String, Object> or Claims as parameter
+	> for now, we will pass a new HashMap<String, Object>
+
+addClaims(Map<String, Object>)
+	> add additional Claims into the JWT to be generated
+	> takes a Map<String, Object> or Claims object as parameter
+
+setId(String id)
+setSubject(String subject)
+setAudience(String audience)
+setIssuer(String issuer)
+setIssuedAt(Date issuedAt)
+setExpiration(Date expiration)
+setNotBefore(Date notBefore)
+	> add a new Claim for the pre-defined variables names (sub, iat, id, etc.)
+
+claim(String claimName, object value)
+	> add a new Claim with custome variable name and value
+
+signWith(SignatureALgorithm alg, String secretKey)
+	> Signs the constructed JWT using the specified algorithm with the specified key, producing a JWS. 
+	> This is a convenience method: the string argument is first BASE64-decoded to a byte array and this resultingbyte array is used to invoke signWith(SignatureAlgorithm, byte []).
+
+compact()
+	> Actually builds the JWT and serializes it to a compact, URL-safe string according to the JWT Compact Serializationrules.
+	> returns the JWT string
+
+
+
+SPRING SECURITY RELATED CLASSES AND METHODS
+
+OncePerRequestFilter
+	> class inside 
+		org.springframework.web.filter.
+	> filter specialized for intercepting Http request ONCE
+	> have a method called doFilterInternal() that needs to be implemented
+
+doFilterInternal()
+	> same as doFilter() of normal Filter class
+	> Same contract as for doFilter, but guaranteed to bejust invoked once per request within a single request thread.See shouldNotFilterAsyncDispatch() for details. 
+	> Provides HttpServletRequest and HttpServletResponse arguments instead of thedefault ServletRequest and ServletResponse ones.
+
+
+
+SecurityContextHolder
+	> Associates a given SecurityContext with the current execution thread.
+	> can give the current SecurityContext in the local execution thread using getContext()
+
+SecurityContext
+	> can be fetched by calling getContext() of the SecurityContextHolder
+	> Interface defining the minimum security information associated with the current thread of execution.
+	> using this, we can fetch or set the current Authentication object being handled by calling getAuthentication() and setAuthentication()
+
+
+getAuthentication()
+	> method of SecurityContext
+	> return the current Authentication object currently holding
+		- will return NULL if no Authentication is found
+
+setAuthentication(Authentication authentication)
+	> method of SecurityContext
+	> sets the Authentication object the SecurityContext holds
+	> takes an Authentication object as parameter
+	
+
+
+sessionManagement()
+	> method of HttpSecurity class
+	> returns a SessionManagementConfigurer that allows configuring of Session Management. 
+
+
+
+
+
+CREATE UTIL CLASS FOR JWT generation and validation
+
+JwtUtil Class
+
+@Service
+public class JwtUtil {
+
+	private String SECRET_KEY = "secret";
+
+	public String extractUsername(String token) {
+		return extractClaim(token, Claims::getSubject);
+	}
+
+	public Date extractExpiration(String token) {
+		return extractClaim(token, Claims::getExpiration);
+	}
+
+	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+		final Claims claims = extractAllClaims(token);
+		return claimsResolver.apply(claims);
+	}
+
+	private Claims extractAllClaims(String token) {
+		return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+	}
+
+	private Boolean isTokenExpired(String token) {
+		return extractExpiration(token).before(new Date());
+	}
+
+	public String generateToken(UserDetails userDetails) {
+		Map<String, Object> claims = new HashMap<>();
+		return createToken(claims, userDetails.getUsername());
+	}
+
+	private String createToken(Map<String, Object> claims, String subject) {
+		return Jwts.builder()
+				.setClaims(claims)
+				.setSubject(subject)
+				.setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 10)))
+				.signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+				.compact();
+	}
+	
+	public Boolean validateToken(String token, UserDetails userDetails) {
+		final String username = extractUsername(token);
+		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+	}
+}
+
+
+
+
+FLOW OF JWT GENERATION AND VALIDATION
+
+Creating SECRET KEY
+	> this secret String key should be secured or else the security of the API will be compromised
+
+Generation of JWT
+1. Using generateToken(), we will create a JWT 
+	- we will do this by passing UserDetails object
+	- this generateToken() calls createToken() which is responsible for creating the Token
+2. createToken() will take care of creating JWT itself
+	- inside createToken(), we will do the following
+		a. call builder() of Jwts class
+		b. call its builder methods to setup the JWT
+		c. call compact() to finalize the JWT
+		d. return the result
+
+
+Validation of JWT
+1. Using validateToken(), we will validate the received JWT
+	- we will need to pass the JWT and UserDetails to this method
+	- inside this method, we will do the following
+		a. fetch the username of the JWT using extractUsername() method
+			= we will pass the token to the extractUsername() token
+		b. return the result of the two test (AND operation)
+			= if username from UserDetails param and username from JWT is equal
+			= if token is not expired using isTokenExpired() and passing the JWT
+
+
+
+IMPLEMENTING JWT AUTHENTICATION (Authentication API endpoint and changing its Access)
+
+I. Add a URL mapping for authentication
+	> "/authenticate" API endpoint
+		- Accepts user ID and password
+		- Returns JWT as response
+		
+1. Create a Class that will represent the input and output of "/authenticate" API endpoint
+	a. AuthenticationRequest
+		- will have the following properties
+			> String username
+			> String password
+		- NoArgs, AllArgs constructors
+		- getters and setters
+	b. AuthenticationResponse	
+		- will have the following property
+			> String jwt
+		- AllArgs constructor
+		- getter for jwt property
+
+
+
+2. Inside the @RestController class, inject the following Class using @Autowired
+	- AuthenticationManager
+	- MyUserDetailsService
+	- JwtUtil
+
+
+3. Create "/authenticate" API Endpoint in the @RestController
+	> this API endpoint method will have the following properties
+		- @RequestMapping(value = "/authenticate", method = Request.POST)
+		- public access
+		- ResponseEntity<?> return type
+		- @RequestBody AuthenticationRequest authenticationRequest parameter
+		- throws Exception method signature
+	> inside the method body, we will do the following
+		- call authenticate() of AuthenticationManager we added earlier
+			= inside the authenticate, pass a new instance of UsernamePasswordAuthenticationToken()
+				-> pass the username and password of authenticationRequest to this class' constructor
+		- surround authenticate() call with try-catch block
+			= in the catch, pass a BadCredentialsException e
+			= inside catch, throw a new Exception and pass an appropriate message
+		- create a UserDetails instance
+			= assign it the result of loadUserByUsername() of MyUserDetailsService property
+			= pass the username of the AuthenticationRequest parameter
+		- create a String for JWT
+			= assign it the result of generateToken() of JwtUtil property
+			= pass the UserDetails object to the method
+		- return a ResponseEntity.ok
+			= add the new instance of AuthenticationResponse to the ResponseEntity
+			= pass the String JWT to the AuthenticationResponse constructor
+
+
+II. Adding @Bean for AuthenticationManager in WebSecurityConfigurerAdapter Class
+	> before Spring 2.0, the @Bean for AuthenticationManager is already present 
+	> but now, we will need to add it inside the WebSecurityConfigurerAdapter
+
+4. @Override authenticationManagerBean() of WebSecurityConfigurerAdapter
+	> inside the SecurityConfigurer Class (which extends the WebSecurityConfigurerAdapter), override authenticationManagerBean
+	> leave it as is, use the default implementation
+
+
+
+III. Allowing All Request to not be Authenticated to "/authenticate" API Endpoint
+	> we need this API Endpoint to not have Authentication and Authorization filter from Spring Security
+
+5. Override the configure(HttpSecurity http) of WebSecurityConfigurerAdapter Class
+
+
+6. Inside the configure(HttpSecurity http), do the following
+	- disable CSRF
+		> method chain call csrf().disable() of the HttpSecurity parameter
+	- authorize all request
+		> method chain call authorizeRequests()
+	- permit all request on the "/authenticate" 
+		> method chain call antMatchers("/authenticate").permitAll()
+	- for any other Request from other API endpoints, authenticate them
+		> method chain call anyRequest().authenticated()
+
+
+
+
+INTERCEPT ALL INCOMING REQUEST AND VALIDATE USING JWT AUTHENTICATION
+	> Intercept all incoming request
+	> Extract JWT from the header
+	> Validate and set in execution context
+
+IV. Create the OnePerRequestFilter
+	> this will intercept each and every request that will come
+	> it will also validate by
+		- check if theres an Authorization Header
+		- check if the Authorization value is not null and is of type Bearer
+		- check if the username from JWT is not null AND the getAuthentication() of current context is null
+		- check if JWT is valid using UserDetails from UserDetailsService
+	
+
+7. Create Class
+	> name it JwtRequestFilter
+	
+8. Extend Class to OncePerRequestFilter
+
+9. Override the doFilterInternal() of OncePerRequestFilter
+
+10. Inject MyUserDetailsService and JwtUtil to the JwtRequestFilter
+	> use @Autowired
+
+11. Create logic inside doFilterInternal()
+	
+a. Fetch the String value of the Authorization Header of request
+	> call getHeader("Authorization") of HttpServletRequest to get the value
+
+b. Initialize variable for username and jwt string
+
+c. Check if the String of Authorization Header is NOT NULL AND the String starts with "Bearer "
+	> if it passes both, 
+		- set value of String jwt to substring of Authorization Header value starting from 7
+		- set value of String username to Subject value of the JWT
+			= use extractUsername() of JwtUtil and pass the String jwt to it
+
+d. Check if username from JWT is NOT NULL AND the Authentication of the current Request is NULL
+	> if both passes
+		- fetch UserDetails from UserDetailsService by calling loadUserByUsername() and passing the username from JWT
+		- Call validateToken() of JwtUtil and pass the String jwt and UserDetails we got earlier
+		- Check if the validateToken() call result is true
+			= if TRUE, 
+				-> create a new UsernamePasswordAuthenticationToken	
+					=> pass the UserDetails, null, and Authorities of UserDetails to its constructor
+				-> set the Details of the UsernamePasswordAuthenticationToken
+					=> pass a new WebAuthenticationDetailsSource().buildDetails(request)
+				-> set the Authentication of the SecurityContextHolder.getContext()
+					=> pass the UsernamePasswordAuthenticationToken we created and modified earlier
+
+e. Call doFilter() of FilterChain
+	> pass the HttpServletRequest and Response to the method
+
+
+
+V. Set the SessionManagement of WebApplication to STATELESS
+
+12. Call and() on the method chain earlier in HttpSecurity inside configure()
+	> this is return a modified HttpSecurity and thus, saving the modification created by method chains
+
+13. Call sessionManagement()
+	> returns a SessionManagementConfigurer that allows for Session Management configuration
+
+14. Call sessionCreationPolicy()
+	> takes a SessionCreationPolicy enum value
+	> dictates what kind of SessionCreationPolicy the web application will do
+	
+
+15. Pass SessionCreationPolicy.STATELESS to the sessionCreationPolicy()
+	> this will make the Session in the Web app to be STATELESS
+	> this means that Spring Security will never create an HttpSession and it will never use itto obtain the SecurityContext
+
+
+
+VI. Add the JwtRequestFilter into the HttpSecurity
+	> add this filter BEFORE any Authentication is to be made
+
+
+16. Inject the JwtRequestFilter Class into the SecurityConfigurer
+	> use @Autowired
+
+16. Call addFilterBefore() of HttpSecurity of configure()
+	> either
+		- call and() at the end of method chain and call the addFilterBefore()
+		- create new chain and call the addFilterBefore() directly to HttpSecurity parameter
+
+17. Pass the following to the addFilterBefore()
+	- JwtRequestFilter we injected earlier
+	- UsernamePasswordAuthenticationFilter.class

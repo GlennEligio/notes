@@ -1,0 +1,98 @@
+19. CSS part 10 - CSS Media Queries (@media)
+
+includes
+@media
+mediatypes
+mediafeatures
+
+
+@media
+	> CSS rule that is used to apply different styles for different media types/devices
+	> media queries can be used to check many things, such us
+		1. width and height of the viewport
+		2. width and height of the device
+		3. orientation (landscape or portrait mode)
+		4. resolution
+	> media queries are a popular technique for delivering a tailored style sheet (responsive web design) to desktops, laptops, tables, and mobile phones
+	> @media queries contains CSS Selectors to define the design of the website
+
+
+
+CSS Syntax
+
+@media not|only mediatype and (mediafeature and|or|not mediafeature) {
+	CSS-Code;
+}
+
+Keywords
+not
+	> not keyword inverts the meaning of an entire media query
+only
+	> only keyword prevents older browsers that do not support media queries with media features from applying the specifies styles
+	> has NO EFFECT on modern browsers
+and
+	> the and keyword combines a media feature with a media type or other media features
+
+
+
+mediaTypes
+1. all
+	> default
+	> used for all media type devices
+2. print
+	> used for printers
+3. screen
+	> used for computer screens, table, smart-phone, etc
+4. speech
+	> used for screenreaders
+
+
+
+Some of the mediafeatures
+1. min-width(em|rem|x%)
+	> check for the width of the viewport
+	> if viewport's width is GREATER than min-width, the media query will apply
+2. min-height()
+	> same as min-width but for height
+3. max-width()
+	> check for the width fo viewport
+	> if the viewport's width is LESS THAN the max-width, the media query will not apply
+4. orientation
+	> check for orientation of device
+	> takes either landscape or portrait value
+
+
+
+
+NOTES:
+1. These keywords are OPTIONAL.
+2. If you use not or only, you MUST also specify a media type
+3. If we notice, we have AND operator but not OR operator. If we want to add another mediafeature set to check for mediaquery application, we can use comma (,) to separate them
+
+
+EX:
+/* When the width is between 600px and 900px OR above 1100px - change the appearance of <div> */
+@media screen and (max-width: 900px) and (min-width: 600px), (min-width: 1100px) {
+  div.example {
+    font-size: 50px;
+    padding: 50px;
+    border: 8px solid black;
+    background: yellow;
+  }
+}
+
+
+4. Last Rule Order applies in media queries
+	> If a website features satisfies TWO mediaqueries, 
+		a. In cases where these two mediaqueries have THE SAME CSS PROPERTY defined, the LATEST mediaquery will take effect
+		b. As for the rest of CSS properties, ALL of them will take effect
+
+
+
+
+
+Using <link> to use different CSS Stylesheet for different media
+EX:
+<link rel="stylesheet" media="screen and (min-width: 900px)" href="widescreen.css">
+<link rel="stylesheet" media="screen and (max-width: 600px)" href="smallscreen.css">
+

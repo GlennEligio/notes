@@ -1,0 +1,45 @@
+06.06. Utilities - Float
+
+VI. Float
+1. Float
+	> allows an element to "float" left or right, or disable floating, based on the current viewport size
+	> start and end values are there to support the LTR and RTL orientation of words
+
+NOTATION:
+float-{position}
+float-{breakpoint}-{position}
+
+Positions
+start
+end
+none
+
+
+
+VII. Interactions
+1. Text selection
+	> specifies the way in which the content is SELECTED when the user interacts with it
+
+NOTATION
+user-select-{value}
+
+Values
+all
+auto
+none
+
+
+2. Pointer events
+	> defines if the element is interactable or not
+	> these property is inherited by child elements
+	> for preventing non-pointer interactions (i.e. keyboard), either
+		-> use tabindex="-1" HTML attribute
+		-> use aria-disable="true" HTML attribute
+		-> use disabled HTML attribute
+
+NOTATION:
+pe-{value}
+	
+Values:
+auto
+none

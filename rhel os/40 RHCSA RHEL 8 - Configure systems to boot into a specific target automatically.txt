@@ -1,0 +1,26 @@
+40 RHCSA RHEL 8 - Configure systems to boot into a specific target automatically
+
+Commands
+systemctl get-default
+ > outputs the default target used in the system
+ > ex:
+	$ systemctl get-default
+
+
+systemctl set-default TARGET
+ > changes the default.target's symbolink link to the TARGET specified
+ > ex:
+	$ systemctl set-default multi-user.target
+
+
+systemctl list-units --type target
+ > list all the units with type of target alongside some informations
+ > useful for list all the targets in the system
+ > informations include
+	1. Unit name
+	2. LOAD - reflects whether the unit definition was properly loaded
+	3. ACTIVE - the high-level unit activation state, i.e. generalization of SUB
+	4. SUB - the low-level unit activation state, values depends on unit type
+ > NOTE:
+	1. Adding "--all" will include Unit targets which either not-found, or both ACTIVE and SUB is inactive or dead
+

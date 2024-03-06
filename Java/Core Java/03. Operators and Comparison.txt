@@ -1,0 +1,17 @@
+	boolean answer0 = a>b; // checks if a is greater than b
+
+        boolean answer1 = a<b; // checks if a is less than to b
+
+        boolean answer2 = a == b;  // checks if a is equal to b, not to be confused with assignment operator =
+
+        boolean answer3 = a<=b; // check if a is less than or equal to b
+
+        boolean answer4 = a>=b;  // checks if a is greater than or less than to b
+
+        boolean answer5 = a!=b;  // checks if a is not equal to b
+
+        // OR logic, will give TRUE if at least one condition is TRUE
+        boolean answer6 = a==5 || b==2;
+
+        // AND logic , will give TRUE only if the both condition is TRUE
+        boolean answer7 = a==5 && b==2;

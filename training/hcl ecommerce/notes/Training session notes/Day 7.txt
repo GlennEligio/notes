@@ -1,0 +1,162 @@
+Day 6
+
+
+localhost:3737/search/resources/store/1/categoryview/@top?lang=-1&catalog=10001
+
+10001 = master catalog id of B2C
+10502 = sales catalog id of B2C
+
+localhost:3737/solr/MC_10001_CatalogGroup_en_US/select?q=catgroup_id:10030
+
+localhost:8080/cachemonitor - crs servers, store servers
+localhost:3737/cachemonitor - search
+ > utility for handling cache
+
+
+C:\IBM\WebSphere\Liberty\bin>installUtility
+ > used for installing extra utility
+ > we can install these while the application is running
+
+
+http://localhost:3737/search/resources/store/1/categoryview/@top?langId=-1&catalogId=10502
+
+http://localhost:3737/search/resources/store/1/categoryview/@top?langId=-1&catalogId=10501
+
+http://localhost:3737/search/resources/store/1/categoryview/@top?langId=-1&catalogId=10001
+
+http://localhost:3737/solr/MC_10001_CatalogGroup_en_US/select?q=catgroup_id:7
+
+C:\IBM\WebSphere\Liberty\bin>
+installUtility install webCacheMonitor-1.0
+
+https://localhost:3738/search/resources/store/1/productview/byId/12751
+
+
+02
+NOTE:
+
+
+03:
+NOTE:
+1. We can also create sub indexes for price and inventory. 
+2. Cores are located in C:\IBM\WebSphere\Liberty\usr\servers\searchServer\resources\search\index\solr\MC_10001\en_US
+3. localhost:3737/solr/admin/cores 
+	> is the website where all Cores are created
+
+
+
+04:
+notes:
+1. Full index is for when you do initial indexing
+2. Delta indexing is typically used for frequent partial indexing for updating current index
+3. We did a build index before, when we tried to update long and short description of catentry data
+4. URL for doing indexing is written below
+
+Build Index:
+curl --user spiuser:passw0rd --insecure -X POST https://localhost:443/wcs/resources/admin/index/dataImport/build?masterCatalogId=10001
+
+Build Index Status:
+curl --user spiuser:passw0rd --insecure -X GET https://localhost:443/wcs/resources/admin/index/dataImport/status?jobStatusId=<JobStatus>
+
+5. FFMCenter means fulfillment center
+
+
+05
+NOTES:
+1. C:\IBM\WebSphere\Liberty\usr\servers\searchServer\server.xml
+	> contains information related to searchServer
+	> <feature>webCacheMonitor-1.0</feature>
+2. For deep search sequencing, it will use both product's sequence value and the sequence value of its parent category
+3. To 
+
+
+09
+NOTES:
+1. Descriptive attribute is used to describe item while defining attribute is used to define characteristic. We typically classify/search item based on the defining attribute, and is used to differentiate items. Example for defining attriubtes are color, size of dress
+
+
+10
+NOTES:
+1. Search term associat
+
+
+12
+NOTES:
+1. Microservices includes search about the catalog, prices, information of catalog entries
+
+
+13
+NOTES:
+1. Pipelines are typically used for doing index building
+2. Slave search servers are accessing to the customers, while the Master index is hidden and replicated using repeaters to the Slave search servers
+
+
+
+14
+NOTES:
+1. Application interfaces can have multiple REST services
+2. Unstructured data includes files, heavy data
+
+
+15
+NOTES:
+1. Customer rules segments can also order the rules segments
+2. Dynamic state
+3. For B2B, 
+
+
+16
+NOTES:
+1. One container will have preprocessor, postprocessor
+2. 
+
+17
+NOTE:
+1. Catalog items needs to be in index to be searchable. For this, we will need to update index by building them in order for the catalog items added to be searchable. Typically, theres a CRON job for building indices.
+
+
+20
+1. Dataloading is done in the authorizing/staging phase
+2. Previewing the index data is done through Management center
+3. Administrators will be the one to approve the preview/delta build migration to the base schema
+4. Indexing service starts after preprocess/postprocess of the Base schema in the HCL Commerce server
+5. Data is copied/updated from Authorizing zone to Production zone using "Stage prop utility"
+6. Index is composed of master index, repeater, and slave search index. Master and repeater are not usually accessed by the consumers
+7. Health check is done in the slave search index to ensure/validate that the files are correct, the file sizes in master, repeater, and slave matches, and also the file creation date is the same
+8. Cache invalidation is done to make sure the cache in the client side is up to date
+9. CACHELVL table contains all the cache
+10. Store preview
+11. Cache invalidation is typically done by a Scheduler
+
+
+
+21
+NOTE:
+1. index lifecycle
+
+
+22
+NOTES:
+1. SRCHCONF table contains all the Cores created
+2. STAGLOG table contains all the 
+
+
+
+Part 2 :
+INSERT INTO srchattr (SRCHATTR_ID, INDEXSCOPE, INDEXTYPE, IDENTIFIER, OPTCOUNTER) 
+VALUES (10001, '0', 'CatalogEntry', '_cat.customerRanking', 0);
+INSERT INTO srchattrprop (SRCHATTR_ID, PROPERTYNAME, PROPERTYVALUE, OPTCOUNTER) 
+VALUES (10001, 'merchandising-Sort-Numeric', 'customerRanking', 0);
+INSERT INTO srchattrdesc (SRCHATTR_ID, LANGUAGE_ID, DISPLAYNAME, DESCRIPTION) 
+VALUES (10001, -1, 'Customer Ranking', null);
+INSERT INTO srchattrdesc (SRCHATTR_ID, LANGUAGE_ID, DISPLAYNAME, DESCRIPTION, OPTCOUNTER) 
+VALUES (10001, -2, 'translatedText', null, 0);
+commit;
+
+add files in C:\WCDE_V9\workspace\search-config-ext\src\runtime\config\com.ibm.commerce.search
+wc-search
+wc-component
+
+Restart server Server
+STart CRS server
+customerRanking_display : solr url on browser search for this text

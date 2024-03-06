@@ -1,0 +1,49 @@
+158 - SNS Hands On
+
+SNS Hands On
+ > here, we will do the following
+	1. Navigate to SNS Dashboard
+	2. Create an SNS Topic
+	3. Create an SNS Subscription
+	4. Send a message in an SNS Topic
+
+Creating SNS Topic
+1. Go to SNS Dashboard
+2. Here, we can create an SNS Topic by specifying the name of Topic and clicking Next step
+3. Now, in the Create topic menu
+	> Specify the name of the SNS topic if you want to change it
+	> Leave everything as is for now
+	> Create the Topic
+	
+	
+Creating a Subscription to an SNS Topic
+1. In the SNS Dashboard, select/click an SNS Topic
+2. In the SNS Topic menu, select the "Subscription" panel
+3. Click "Create Subscription"
+4. In the Create Subscription menu
+	> Select the SNS Topic that you want
+	> Select the Protocol
+		- we can use different protocol such as Http, Email, or even SQS
+		- for now, we can use Email since its easier to setup
+	> Select the Endpoint
+		- this is where the notifications from Amazon SNS will be sent
+		- in case of Email protocol, we will need to provide an email address
+	> Leave everything as is
+	> Create the SNS Subscription 
+5. At this point, if we look at the endpoint which is our email, we should see an email asking us to confirm the subscription
+
+
+Publish a message in an SNS Topic
+1. In the SNS Topic dashboard, click the "Publish message"
+2. In the "Publish messages to topic" menu
+	> specify the Subject of the message
+		- similar to Subject on an email
+	> specify the message body
+	> leave everything as is
+	> publish the message
+3. After this, check the email that we used. We should see the SNS message that we published as an email, with correct subject and message body
+
+
+Cleaning up
+1. Go to SNS Dashboard
+2. Delete the SNS Topic

@@ -1,0 +1,46 @@
+Custom HTTPS Dev Environment using .NET Core, Kestrels & Certificates
+
+Topic to be Covered:
+
+Intro
+1. Tutorial overview
+2. What we will build (Demo)
+3. Ingredients / Tooling
+
+HTTP Overview
+4. HTTPS, SSL & TSL
+5. Certificates & Authorities
+6. How HTTPS Works
+
+LocalHost set up
+7. Scaffold API
+8. Use dotnet dev-certs
+9. Localhost drawbacks
+
+Custom Domain 1
+10. Host name resolution
+11. Update Hosts file
+12. DHCP Considerations
+13. Create & Install Certificates
+
+Custom Domains 2
+14. User Secrets
+15. Configuration
+16. HTTPS Redirection
+17. Load Certificate in Kestrel
+
+
+
+TOOLS NEEDED:
+1. VS Code Text Editor
+2. .NET Core SK
+3. PowerShell
+4. Postman / Web Browser
+
+
+
+
+
+
+
+

@@ -1,0 +1,493 @@
+Day 1
+
+includes
+Linux 
+	> basic commands
+Ubuntu 18.04 OS
+	> installation of OS
+
+
+Bookmark this website
+http://www.devopsworld.co.in
+
+
+
+Operating System (OS)
+	> we can install softwares in OS
+	> examples are
+		- Unix
+			= a paid softwared
+		- Minix
+			= free version of Unix
+		- Linux
+		
+
+Linux
+	> example of OS
+	> created by Linus Torvalds
+	> OPEN SOURCE
+	> because of it being Open source, many OS today are derived from Linux like
+		- Redhat, Ubuntu, CentOs
+	> these Linux-based OS are called "Linux Distributions"
+	> two ways of running Linux
+		a. Switch Local machine OS to Linux
+		b. Create VM inside Local machine and install Linux inside it
+
+
+Virtual Machine (VM)
+	> created using Hypervisor
+	> example of this Hypervisors are
+		- Oracle VM VirtualBox
+		- VMware
+		- Microsoft Hyper-V
+
+
+Vagrant
+	> Vagrant is an open-source software product for building and maintaining portable virtual software development environments; e.g., for VirtualBox, KVM, Hyper-V, Docker containers, VMware, and AWS. 
+	> It tries to simplify the software configuration management of virtualization in order to increase development productivity
+	> NOTE: Prerequisite :-  Virtualization should be enabled on your Laptop or System.
+	> to download, go to
+		https://www.vagrantup.com/downloads
+
+Oracle VM VirtualBox
+	> to download, go to
+		https://www.virtualbox.org/wiki/Downloads
+	> choose the link based on your Local machine OS
+
+
+
+DevOps Tutorials
+
+
+Software Development LifeCycle (SDLC)
+	> is a process which followed by IT industry to design, develop, test
+
+SDLC phases
+1. Requirement Phase	
+	> get requirements of application/software to create
+	> done by pre-sales, sales team to the clients
+2. Design
+	> plan the overview of the software to create
+	> uses user stories
+	> create test cases to use
+3. Development
+4. Testing
+	> test the application
+5. Implementation
+	> similar to "production phase"
+	> the application is "live" and can be used by the end-users/consumers
+6. Maintenance
+	> application is being maintained and monitored for errors
+
+Dev team
+	> design, develop. test
+Ops team
+	> implementation, and maintenance
+
+
+
+Methodologies in SDLC
+1. Waterfall Methodology
+2. Agile
+3. DevOps
+
+
+Waterfall Methodology
+	> first SDLC process model
+	> developed in SEQUENTIAL based
+	> disadvantage are
+		a. very hard to adapt in Client's changing requirement
+		b. Client is very little involvement
+		c. lots of documentations for each step
+			= no automation in software's documentation
+	> steps includes
+		1. Requirement Analysis
+			- Client gives the requirement for Software to create
+		2. Design
+			- convert the Requirement into Software Design (Programming language, Database Structure)
+		3. Coding and Unit Testing
+			- Unit Testing is where we test each Unit in the program or software
+		4. Integration Testing
+			- Integration Testing is where they test how each of the software part integrates and works with each other
+				= ex: Database, Front end UI client, Backend APIs, etc,
+		5. Deployment
+			- Step where we move the Code/Software into Production / Live
+		6. Maintenance
+			- Application is being maintain and monitored for errors
+
+
+Agile Methodology
+	> ITERATIVE and INCREMENTAL process model
+	> divides the project into SMALL INCREMENTAL builds called "Chunks"
+	> development process consist of many ITERATIONS
+		- Iterations consist of
+			a. Requirement
+			b. Planning
+			c. Testing
+			d. Building
+			e. Design
+		- For each Iteration, the team may create one or more "Chunks" 
+		- After each Iteration, the client can check for the output for each Iteration and give inputs and feedback
+	> advantages includes
+		a. Client can be more involved since the team can show the process for software development for each iteration
+		
+
+JIRA
+	> used for documentation
+	> used for the client to give inputs
+
+
+
+
+
+Monolithic
+	> software architecture where the whole application is packed into one binary file
+		- binary files like .exe, .jar, .war, etc
+	> modules inside Monolithic Software are TIGHTLY COUPLED
+		- ex: in Monolithic App-Banking, there may be
+			a. Internet
+			b. Deposit
+			c. Withdraw
+			d. Customer Care
+	> reason for this configuration is
+		a. Machine configuration is EXPENSIVE to have
+		b. VMs are not present at that time
+	> disadvantage are
+		a. if one module fails, the ENTIRE system fails
+		b. redeploying one module will require the the ENTIRE system to shutdown and redeploy again
+
+
+Microservice
+	> software architecture where each System's modules are divided into "Services"
+	> each "Service" are typically run in each VM or Container (for Docker)
+	> each VM uses a specific amount of resources to run in its HOST machine
+	> advantage includes:
+		a. Modules / Services are loosely coupled
+			- status of each Services will not affect the other
+			- meaning one Service being down will shutdown the ENTIRE system
+		b. Scalability can be done of a specific Service only
+			- unlike Monolithic, we can scale each of the Services independently
+
+
+Scaling
+	> composed of two types
+		a. Vertical scaling
+			= increase infrastructure of each Server
+			= Scale up/down
+		b. Horizontal scaling
+			= increase server count
+			= Scale out/in
+
+
+
+DevOps methodology
+	> used for 
+		a. automation of SDLC
+		b. migration projects
+	> composed of Continuous Integration and Continuous Delivery
+	> CI/CD cycle includes steps
+		a. Dev team steps
+			1. Plan
+			2. Code
+			3. Build
+			4. Test
+		b. Ops team steps
+			5. Release
+			6. Deploy
+			7. Operate
+			8. Monitory
+
+Continuous Integration
+	> process where changes in source code will automatically
+		- integrate to source code
+		- test the new source code
+		- build the application, if tests are passed
+	> tools involved are
+		a. GitHub, for version source control
+		b. Apache Maven, for building the application's binary file
+		c. Docker for building the docker image of application
+		d. Selenium, for Testing
+		e. Jenkins for CI/CD plugin
+
+Continuous Delivery
+	> refers to automation of product build and delivery for "live" server deployment
+	> tools involved
+		a. Ansible
+		b. Docker, for containerization
+		c. Kubernetes, for Orchestration of containers
+
+Continuous Deployment
+	> refers to automation of product deployment to "live" server
+
+
+
+
+Vagrant
+	> used for creating Virtual Machines (VMs)
+	> open source software product for building and maintaining portable virtual software development environment
+
+
+
+Steps:
+1. Install Vagrant
+2. Install Virtual Box
+3. Use Vagrant file to create VMs on VirtualBox
+4. Go to Vagrant Cloud and search for Vagrant Boxes
+	https://app.vagrantup.com/boxes/search?provider=virtualbox
+5. Search generic Ubuntu OS
+	https://app.vagrantup.com/generic/boxes/ubuntu1804
+6. Go to CLI and type
+	> vagrant --version
+		- check for vagrant version
+	> vagrant init generic/ubuntu1804
+		- used to initialize the configuration for creating generic/ubuntu1804 iso image for VM
+	> vagrant up
+		- used to download the VM image using vagrant file and run it in VirtualBox
+7. Download and Open MobaXterm
+8. Start new Session
+9. Choose SSH type
+10. Enter the following
+	- Remote host 	= 127.0.0.1
+	- username 	= vagrant
+	- port		= 2222
+11. Press OK
+12. Start the session
+13. Enter "vagrant" as password
+14. If prompted with creating Master password, can skip or create one
+15. You should be prompted with CLI that is connected to the Ubuntu VM in VirtualBox
+	- you can also connect to Ubuntu VM from Command Prompt by typicing
+		= vagrant ssh
+
+
+
+
+GIT
+	> used for version control system
+
+Version control system types
+1. Local Version Control System
+	> version control system which keeps track of all the changes to files under LOCAL MACHINE
+	> advantages:
+		- easy to create
+		- fast
+	> disadvantages:
+		- hard to shared to other developer
+2. Centralized Version Control System (CVCS)
+	> centralized repository that contains all versioned files
+	> central server can be accessed by other dev
+	> ex: Perforce, Subversion, CVS
+	> advantages:
+		- devs can easily access the Source code repository
+	> disadvantages: 
+		- only ONE storage of changes history of Source Code
+		- theres a delay when accessing and modifying Source code repository (due to its remote nature)
+		- ONE point of failure (if VCS server fails, entire system fails and no one can access repo)
+3. Distributed Version Control System (DVCS)
+	> the complete codebase, including its full history, is mirrored on every developer's machine
+		- ex: Git, BitBucket
+	> repositories are
+		- Git for local repository
+		- GitHub, cloud solution for remote repository
+	> advantages:
+		- every dev have a copy of changes in the remote repository
+	> disadvantages:
+
+
+
+
+Linux / Ubuntu commands
+apt
+	> stands for application
+apt purge git -y
+	> remove or purge the git application in Linux
+apt update
+	> used to update applications
+apt install git	
+	> used to install git
+clear
+	> clears the console line interface
+sudo su
+	> login with the root user
+mkdir <folder-name>
+	> used to make directory in Linux
+cd <directory-path>
+	> used to change directory to a specific path
+	> ".." will go to parent folder
+cat <file>
+	> used to show the content of the file
+	> we can use this in .gitconfig file to show the contents of the file
+touch <filename>
+	> used to create new file in the Linux
+history
+	> used to show the commands that we pushed into the Linux CLI
+vi <file-name>
+	> used to open a file and edit it
+	> commands inside the VI editor
+		a. i
+			> used to insert file
+		b. ESC
+			> used to exit VI editor and go to command line
+		c. :wq!
+			> used to exit the editor and save the changes
+		d. :q!
+			> used to exit the editor
+		e. dd
+			> delete a line
+		f. u
+			> undo
+echo "text" >> file
+	> used to add content in a file
+rm <file>
+	> used to remove a file
+	> adding "-ifr" flag will remove a directory and its contents
+ls
+	> display all the files in the directory we are in
+	> adding "-la" will also show hidden files
+
+
+
+
+Git Bash
+	> used to open Linux CMD
+	> we can open Linux CMD in a specific folder in Windows by:
+		1. Go to specific directory in Windows Folder Manager
+		2. Right click the folder
+		3. Choose "Git Bash Here"
+
+
+
+Git Commands
+git config --global user.name <name>
+git config --global user.email <email address>
+	> used to add credentials to the global config file
+	> with this credentials, others can identify what commits we push into the local and remote repository
+
+git config --local user.name <name>
+git config --local user.email <email address>
+	> used to add credentials to the local config file
+	> with this credentials, others can identify what commits we push into the local and remote repository
+
+git status
+	> shows the status of the local git repository
+	> shows the following
+		
+git log
+	> used to show the logs of commits we create in the git repository
+	> in each log, we can see
+		- commit hash id
+		- author of commit
+	> adding --oneline flag will make the commit logs to be oneliner
+
+git commit -m <message> <file-name>
+	> used to commit a specific file/chnage in the local git repo
+	> we can add messages into the commit
+	> not passing a filename will commit all changes/file in Staged Area by default
+
+git init
+	> used to initialize a local git repo in the directory we are in
+	> we need to have credentials in either global config of git or local git config in the directory
+
+git rm --cached <file-name>
+	> used to remove a file/change in the Stage Area back to Untracked area
+	> passing a dot will include all files/changes in Stage Arae
+
+git add <file-name>
+	> used to add a file to the Staged area
+	> remove the file from Untracked to Staged area
+
+git reset <commit hash id>
+	> removes commit in the commit logs and put the files/changes back to UNTRACKED
+	> adding "--soft" flag in git reset will put the files/changes from COMMIT to STAGED
+	> adding "--hard" flag in git reset will RESET the state of the current branch to the Commit state that we specified
+		- this means that everything we changed in the local git repo in current branch will be GONE
+			= files added are REMOVED
+			= files modified are ROLLBACK to previous state
+	
+git revert
+	> rollback changes	
+	> DOES NOT DELETE the commit
+	> INSTEAD create new commit that REVERTS the changes of the specific commit to revert
+		-ex: if commit is adding file, the revert will be where we remove the file in commit stage and back to staged
+
+git diff <commit1 hashid> <commit2 hashid>
+	> shows the difference between two commits
+	> if no commit2 is passed, commit1 will be compared to the latest commit
+
+git fetch
+	> checks for the difference between the current branch on Local Git repo to the Remote Git repo
+	> used in conjunction with git merge <remote git repo branch>
+		- ex: git fetch, then git merge origin/master
+
+git merge <branch>
+	> merge the current branch to the branch specified
+	> ex: if we are in master branch and we send git merge hotfix, the hotfix branch will be merged to master branch
+
+git pull <remote git repo name> <remote git repo branch>
+	> combination of git fetch and git merge <remote git repo name>/<remote git repo branch>
+	> with this, we can update the local repo by 
+		1. fetching changes in remote git repo branch
+		2. merge these changes in the current branch we are in
+
+git clone <remote git repo url>
+	> clone the whole project inside the directory we are in
+
+
+
+Git Workflow
+	> divided into three phases
+		1. Untracked
+		2. Stage
+		3. Commit
+
+Untracked
+	> includes the working copy
+	> there, the files are still not tracked by the local git repository
+Stage
+	> here, the files/changes are staged and are ready to be committed
+Commit
+	> here, the files/changes are committed and added into the local commit history
+
+
+
+GitHub
+
+Create Personal Access Token
+	> used to create Access Token 
+		- alternative to entering the GitHub account password itself
+	> to create a Personal Access Token
+		a. Go to Setting
+		b. Developer Setting
+	> used to create API token to be used for authentication
+	> in the settings, we can define
+		- name of personal access token
+		- expiration duration
+		- scopes to define for token access
+			= repo, admin:org, user
+
+
+SSH keygen
+	> another way of authenticating to github
+	> to create SSH keygen
+		a. enter ""
+
+Deploy keys
+	> used define SSH keys that are authenticated and authorized to access/write on a specific Github repository
+	> to add one, we can go to settings of Github repository
+	
+
+Adding files to be ignored
+	> there are some files that we want to ignore either because
+		- file is too large
+		- there will be no changes to track on it
+	> to list these files, we will need to create a .gitignore file
+	> inside the .gitignore file, we can add the files to ignore
+	> these values to pass can be ant matchers as well
+		- ex: *.exe will IGNORE files the ends with ".exe"
+
+
+Readme.md
+	> used to show documentation to a Git repo
+	> inside an md file, we can write different syntax to write stuff
+		1. ## to create a Heading text
+	> we can also pass HTML tags inside to display HTML elements
+	

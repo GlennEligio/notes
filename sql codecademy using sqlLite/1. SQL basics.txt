@@ -1,0 +1,25 @@
+SQL, Structure Query Language
+> is a programming language designed to manage data stored in relational databases. SQL operates through simple, declarative statements. This keeps data accurate and secure, and helps maintain the integrity of databases, regardless of size.
+
+>for now, we will use SQLite Relational Database Management System or RDBMS
+
+
+RELATIONAL DATABASE
+	> a database that organizes information into one or more tables. Here, the relational database contains one table.
+
+
+TABLE
+	> a collection of data organized into rows and columns. Tables are sometimes referred to as relations.
+
+
+COLUMN
+	> a set of data values of a particular type. Here, id, name, and age are the columns.
+
+
+ROWS
+	> is a single record in a table
+
+
+STATEMENT
+	> text that the database recognizes as a valid command. Statements always end in a semicolon ;
+

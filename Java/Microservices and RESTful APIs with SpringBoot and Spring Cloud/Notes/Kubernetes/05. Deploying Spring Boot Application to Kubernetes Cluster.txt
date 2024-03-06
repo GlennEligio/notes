@@ -1,0 +1,34 @@
+05. Deploying Spring Boot Application to Kubernetes Cluster
+
+
+Creating Deployment in K8s using CLI
+
+kubectl create deployment <DeploymentName> --image=<ImageName>
+	> used to create a Deployment of specified name with a Container that runs specific image
+	> ex: kubectl create deployment hello-world-rest-api --image=in28min/hello-world-rest-api:0.0.1.RELEASE
+
+
+
+Exposing Deployment EXTERNALLY in Cluster
+kubectl expose deployment <DeploymentName> --type=<ServiceType> --port=<ClusterPort>
+	> expose a Deployment of specified name by creating a Service of specified name and mapping the Pods running inside Deployment through a specific Port in the Cluster
+	> ex: kubectl expose deployment hello-world-rest-api --type=LoadBalancer --port=8080
+
+
+Accessing the Deployment
+1. Check the K8s Services running
+2. Look for PORT(S) section
+	> there would be two ports
+	> first port is the Host Port, second port is the NodePort
+	> if we have LoadBalancer, we access this deployment through
+		- <Service-External-IP>:<Host Port>
+		- we can get the service's external ip by running "kubectl get services -o wide"
+		- Host port is what we specified when we run the "kubectl expose"
+	> if we have NodePort, we can access the deployment throught 
+		- <Node's Ip>:<NodePort>
+	> if we have ClusterIP service, we can access the deployment internally through
+		- <Cluster-IP>:<Port>
+3. Access the deployment
+	> if we use Cloud Solution, we are provided with endpoint where we can access the said deployment
+	> if we do this locally, we can use the "localhost" as the External IP
+	> EX: localhost:8080/hello-world-bean

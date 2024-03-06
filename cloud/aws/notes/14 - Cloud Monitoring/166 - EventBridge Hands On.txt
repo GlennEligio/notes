@@ -1,0 +1,113 @@
+166 - EventBridge Hands On
+
+Parts
+1: EventBridge dashboard
+2. Creating EventBridge rules for
+	> Scheduled rule
+	> Console sign in rule
+	> EC2 instance termination rule
+
+
+EventBridge dashboard
+ > here, we can see the following sections
+	1. Developer resources
+		- Learn
+		- Sandbox
+		- Quick starts
+	2. Events
+		- Event buses
+		- Rules
+		- Global endpoints
+		- Archives
+		- Replays
+	3. Pipes
+		- Pipes
+	4. Scheduler
+		- Schedules
+		- Schedule group
+	5. Integration
+		- Partner event sources
+		- API destinations
+	6. Schema Registry
+		- Schemas
+		
+
+EventBridge Rules
+ > A rule watches for specific types of events. When a matching event occurs, the event is routed to the targets associated with the rule. A rule can be associated with one or more targets.
+
+
+
+Creating rule -  Schedule rule
+1. Go to EventBridge dashboard -> Events -> Rules
+2. Select "default" event bus, then look for "Create rule" to create a rule
+3. In the Create rule menu, there are five steps
+	a. Define rule details
+	b. Build event pattern / Define schedule
+	c. Select targets
+	d. Configure tags
+	e. Review and create
+4. In the define rule details	
+	> provide the name
+	> select "default" as event bus
+	> select "Schedule" as rule type
+	> click "Continue to create rule"
+5. In the define schedule
+	> select the schedule pattern that you want
+6. In the select targets	
+	> select the target of the event rule
+	> ex: AWS service -> Lambda function
+7. After this, leave everything as is and create the event 
+
+
+
+Creating rule - Console sign in 
+1. Go to EventBridge dashboard -> Events -> Rules
+2. Select "default" event bus, then look for "Create rule" to create a rule
+3. In the Create rule menu, there are five steps
+	a. Define rule details
+	b. Build event pattern
+	c. Select targets
+	d. Configure tags
+	e. Review and create
+4. In define rule details	
+	> provide name (ex: SendNotificationForLogin)
+	> select default as event bus
+	> select "rule with an event pattern" as rule type
+5. In build event pattern
+	> select "AWS events or EventBridge partner events" as Event source
+	> In the "Event pattern" section
+		- select "AWS Console Sign-in"
+		- select "Sign in events" as event type
+		- select "Any user"
+	> finish the event pattern
+6. In the select target
+	> select "SNS topic" as a target
+	> we can use this to send SNS notification via email for console sign ins
+7. Leave everything as is and finalize creating event rule
+
+
+
+Creating rule - EC2 instance termination 
+1. Go to EventBridge dashboard -> Events -> Rules
+2. Select "default" event bus, then look for "Create rule" to create a rule
+3. In the Create rule menu, there are five steps
+	a. Define rule details
+	b. Build event pattern
+	c. Select targets
+	d. Configure tags
+	e. Review and create
+4. In define rule details	
+	> provide name (ex: EC2InstanceTerminateNotification)
+	> select default as event bus
+	> select "rule with an event pattern" as rule type
+5. In build event pattern
+	> select "AWS events or EventBridge partner events" as Event source
+	> In the "Event pattern" section
+		- select "EC2" as AWS service
+		- select "EC2 instance state-change notification" as event type
+		- select "Specific state(s)" and choose "terminate" state
+	> finish the event pattern
+6. In the select target
+	> select "SNS topic" as a target
+	> we can use this to send SNS notification via email for console sign ins
+7. Leave everything as is and finalize creating event rulete

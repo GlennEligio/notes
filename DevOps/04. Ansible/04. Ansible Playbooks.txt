@@ -1,0 +1,330 @@
+04. Ansible Playbooks
+
+
+
+YAML (Ain't Markup Language)
+	> files whose extensions are either .yaml or .yml
+	> It is data serialization language design to be directly writeable and readable by humands	
+	> Commonly used for configuration management
+	> Strictly speaking, YAML is a superset of json with additional features like indentation or newline
+	> Case sensitive scripting language
+	> YAML composed of several "keys" inside it
+		- Key represents a variable or column for a value
+		- Keys can take different data type (integer)
+
+
+Keys 
+	> Key represents a variable or column for a value
+	> name: httpd	- in this case, name is the key, and httpd is the value
+
+Data types
+	> represents the type of value we are storing in the key
+		x: 25		Integer
+		x: "Ansible"	String
+		x: 2.3		Float
+		x: true		Boolean
+		x: null		null
+
+Data Collection
+	> Data representation where it is composed of multiple values or single key or multiple key value pair
+
+Types of Data Collection
+1. Sequence data collection
+	> similar to "array" in other programming language
+
+EX:
+	tasks:
+        - name:
+        - debug:
+
+2. Map data collection
+	> similar to "Map" in Java or Dictionary in Python/C#
+	> can have sequence data collection
+EX:
+        tasks:
+         - name: home dir
+         - debug:
+             var: result.stdout
+
+
+
+Ansible Playbook
+	> a yaml script
+	> it sends the commands to remote server to configure remote server from command line	
+	
+
+
+Command for executing an Ansible Playbook
+
+	ansible-playbook <playbook-yaml-file>
+
+EX:	ansible-playbook playbook.yaml
+
+
+	
+Playbook Structure
+	> Playbooks consist of one or more Plays
+	> Plays consist of one or more Tasks
+	> Tasks contains one or more Modules
+	> to run a Playbook, it must contain ATLEAST one Play that contains ATLEAST one Task that contains ATLEAST one Module
+
+Playbook
+	Play1
+		Task1
+			Module1
+			Module2
+		Task1
+	Play2
+
+
+Play	
+	> contains all the Task to be executed in the host specified
+	> in Play, we can define the following attributes
+		a. name: 
+			- defines the name of the Play
+			- optional
+		b. hosts:
+			- defines the servers where the Play will be executed
+			- we can pass specific server ip address, or host group name for the servers
+		c. vars:
+			- defines the variable to be used
+			- value passed into it will be the variable's value
+			- to use a variable inside the Task, enclose it inside curly braces
+		d. vars_prompt:
+			- used to prompt the user for variable values
+			- have several attributes used to define the variables to ask
+				a. name:
+					- defines the name of variable
+				b. prompt:
+					- defines the message to show in prompt
+			- to use a variable inside the Task, enclose it inside curly braces
+		e. tasks:
+			- defines the tasks that this Play will execute
+		f. import_task:
+			- alternative to tasks:
+			- fetches the Task to be executed from external .yml file
+			- ex: import_tasks: redhat.yml
+		g. handlers:
+			- defines the Task that will be execute when they are called using notify module
+		h. roles:
+			- defines the roles that will be executed alongside the Playbook
+
+Task
+	> defines the script or actions that will be executed in the hosts defined in Play
+	> contains Modules that will be executed
+	> in Task, we can define several attributes
+		a. name:
+			- defines the name of Task
+			- optional
+		b. <module-name>
+			- we can defines modules inside a Task
+			- these Modules may contain one or more attributes that we can give values as well
+		c. when:
+			- defines the condition that must be passed for a Task to be executed
+			- typically uses 
+				= the variables defines in vars: and vars_prompt: when creating conditions
+				= ansible_facts[<name>] (e.g. ansible_facts['os_family'])
+			- ex: here in Task will only execute if test variable (from vars: or vars: prompt) is equal to "intelli"
+
+			      - name: Printing if value is intelli
+			        debug:
+			          msg: "{{ output.stdout }}"
+			        when: test=="intelli"
+
+		d. with_items:
+			- used for create a "for loop" to the Task
+			- used to define several values of a variable
+			- then task will then be execute for each values in this with_items: attribute
+			- ex: here mkdir will be executed THREE TIMES, with each execution having different value of { item }
+			      - name: creating directories
+			        command: mkdir /tmp/"{{ item }}"
+			        with_items:
+			          - dir1
+			          - dir2
+			          - dir3
+
+
+
+
+Some Ansible Module
+1. command:
+	> used to execute a shell command on target Node
+	> value to pass on this module will be the shell command
+		- ex: command: touch /tmp/1.txt
+2. register:
+	> module used to store the output of the CLI as variable
+	> value we pass on this module will be the name of the variable
+	> these variable can then be used on other part of Task
+		- ex: register: output
+3. debug:
+	> module used to diplay message in the CLI of the Ansible Master Server CLI when we execute the Module
+	> in the debug module, we must define the "msg:" attribute
+	> "msg" attribute defines the message to be shown in CLI
+		- ex: debug: 
+			msg: "Test message"
+
+
+EX:
+## 1.yaml
+---
+  - name: play for running linux commands
+    hosts: webservers
+    tasks:
+      - name: to execute date command
+        command: date
+        register: output
+      - name: Printing value of output variable
+        debug:
+          msg: "{{ output.stdout }}"
+
+  - name: play for run a shell script in dbserver
+    hosts: dbservers
+    tasks:
+      - name: execute command.sh file
+        command: sh /home/ubuntu/command.sh
+        register: result
+      - name: Printing value of output variable
+        debug:
+          msg: "{{ result }}"
+
+In this case, we can see that
+1st Task
+	> title is "play for running linux command"
+	> executed in Servers that belongs to "webservers" host group
+	> Tasks includes
+		- execute a "date" command in the CLI
+		- stores the output in the "output" variable using register module
+		- display the "output" value using debug module
+2nd Task
+	> executed in servers that belongs to "dbservers" host group
+	> Task includes
+		- execute the shell script "/home/ubuntu/command.sh"
+		- store the cli output in "result"
+		- display the "result" in the Master CLI 
+
+
+
+4. apt	
+	> stands for Advance Package Tool
+	> used to do package-related actions (installation, removal, etc)
+	> attributes to define includes
+		a. name:		
+			- defines the name of the package to use
+		b. state:
+			- defines the state the package must be
+
+EX:
+## 2.yaml
+---
+  - name: play for running linux commands
+    hosts: webservers
+    tasks:
+      - name: Install apache
+        apt: 
+         name: apache2
+         state: present
+
+
+5. service
+	> module used to modify state of a service
+	> can define attributes like
+		a. name:
+			- specify the name of service
+		b. state:
+			- specify the state of the service
+
+EX:
+## 3.yaml
+---
+  - name: stop apache
+    hosts: webservers
+    tasks:
+      - name: stop apache
+        service: 
+         name: apache2
+         state: stopped
+
+
+6. copy
+	> used to copy or modify files
+	> attributes include
+		a. content:
+			- defines the content of the file
+		b. dest:
+			- defines destination of the file
+
+EX:
+## 5.yaml
+---
+  - name: play for running linux commands
+    hosts: webservers
+    vars:
+      test: testing
+    tasks:
+      - name: create a file
+        copy:
+          content: "{{ test }}"
+          dest: /tmp/4.txt
+
+
+
+7. file:
+	> file module is similar to copy: but is more specific uses for files
+	> attributes include
+		a. path:	
+			- defines the path of the file (e.g. /tmp/1.txt)
+			- used for the file that already EXIST in the target node
+			- REQUIRED
+		b. owner:
+			- defines owner of the file
+		c. group
+			- defines the group of the file
+		d. mode:
+			- defines the modes/permission of the file
+			- similar to the chmod command of linux
+			- we can pass values that we typically pass in the chmod
+				= mode: "u=rw,g=r,o=r"
+				= mode: 0644 (for octal values, add a leading 0 to notify the parse of octal value)
+				= mode: '644'
+		e. src:
+			- defines the file from MASTER that will be copied
+			- used in conjunction with dest:
+		f. dest:
+			- used to define the destination of src: file on the target NODE system
+		g. state:
+			- define the state of the file
+			- default value is "file"
+			- if touch, if file is not present, will create NEW ONE
+			- if directory, will create a new directory if it doesnt exist
+				= used when path: value is a directory (similar to mkdir)
+
+
+
+7. notify
+	> module to call handlers
+	> Handlers are used to run operations on change
+		- these handlers contains Task that can be called/executed using the notify
+	> we can define one or more Task from Handlers to execute
+	> by default, Task from Handlers that are defined in the notify: module will only be executed if the Task is successfully executed
+		- in example below, if "Template configuration file" Task is executed successfully, the Task in notify: will be executed as well
+
+
+EX:
+- name: Template configuration file
+  ansible.builtin.template:
+    src: template.j2
+    dest: /etc/foo.conf
+  notify:
+    - Restart memcached
+    - Restart apache
+
+  handlers:
+    - name: Restart memcached
+      ansible.builtin.service:
+        name: memcached
+        state: restarted
+
+    - name: Restart apache
+      ansible.builtin.service:
+        name: apache
+        state: restarted

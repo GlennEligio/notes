@@ -1,0 +1,17 @@
+17. Docker Swarm - Visualizer
+
+
+
+dockersamples/visualizer
+	> Docker image used to give Visualization on the Swarm
+	> these informations includes
+		1. Nodes inside the Swarm with its informations like
+			- Labels
+			- Hostname
+			- Ip address
+		2. Containers running each Nodes
+
+
+Installing/Running Docker Swarm Visualizer
+
+docker service create  --name=viz --publish=8080:8080/tcp  --constraint=node.role==manager --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer

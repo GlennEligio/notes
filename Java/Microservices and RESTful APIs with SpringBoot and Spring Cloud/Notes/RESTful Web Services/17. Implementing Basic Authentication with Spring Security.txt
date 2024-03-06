@@ -1,0 +1,50 @@
+17. Implementing Basic Authentication with Spring Security
+
+Basic Authentication
+	> authentication scheme that uses username and password
+	> this username and password in concatenated and separated by colon (:)
+	> the resulting string is then encrypted using Base64 encryption
+	> for decryption, the process will be reversed
+
+Spring Security
+	> project of Spring related to security
+	> offers functionality related to Spring
+	> by default, it 
+		1. adds Basic Authentication feature
+		2. creates a single authenticated user
+			- username is "user"
+			- password is the String written in Console
+	> dependency to add this in project is
+	> to overwrite the default user and password, define this configprops in application.properties file
+		1. spring.security.user.name
+		2. spring.security.user.password
+		- pass String values in them
+
+Spring Boot Starter Security
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+
+application.properties
+
+spring.security.user.name=user
+spring.security.user.password=pass
+
+
+Adding User Credential in Request for Basic Authentication
+1. If you are using PostMan
+	> go to Authorization tab
+	> choose Basic Auth type
+	> write the username and password
+	> send the request
+2. If you use Authorization Header only
+	> go to https://www.base64encode.org/
+	> type username and password
+	> combined them and separate by colon (:)
+		- username:password
+	> encode it to Base64, using UTF-8 charset
+	> create Authorization Header in request
+	> type Basic, then space, then the encoded value from earlier
+	> send the request

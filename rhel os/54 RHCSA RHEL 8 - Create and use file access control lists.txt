@@ -1,0 +1,59 @@
+54 RHCSA RHEL 8 - Create and use file access control lists
+
+
+File Access Control Lists (FACL)
+ > gives us more granular permissions/access to particular files and directories, 
+ > rather than just relying on a single user or group for access, we can have MULTIPLE users/groups as required
+ > most Linux distro support FACL out of the box
+
+
+Checking if FACL is supported
+1. Use "getfacl" on any file or directory
+	$ getfacl file1
+
+
+Adding FACL support
+1. Open the /etc/fstab
+	$ vi /etc/fstab
+2. If mount point for the drive of root is of type "xfs", the acl is supported out of the box. No action needed
+3. If the mount point for the drive for root is not "xfs", add "acl" in the options column
+	> most likely, the options in the mount point for the drive of root is "defaults"
+	> add "acl", comma separated
+	> ex: default,acl
+
+
+
+Commands
+getfacl
+ > get file access control list
+ > shows information like
+	- filename, owner, group, and the UGO RWX permissions
+	- extended permissions for multiple user/group
+ > synopsis:
+	$ getfacl [-aceEsRLPtpndvh] file ...
+	$ getfacl [-aceEsRLPtpndvh] -
+ > ex:
+	$ getfacl file1.txt
+		- shows the facl info of the file1.txt
+
+
+setfacl
+ > set file access control lists
+ > sypnosis:
+	$ setfacl [-bkndRLPvh] [{-m| -x} acl_spec] [{-M| -X} acl_file] file ...
+	$ setfacl --restore=file
+ > options
+	-m acl_spec	modifies the extended user/group permission of specified file
+	-x acl_spec	deletes the extended permission of user/group
+	-R			applies the extended user/group permission RECURSIVELY, affective subdirectories and files
+ > ex:
+	$ setfacl -m u:user1:rwx file1
+		- modifies "file1" extended permission to add user "user1" and set permission to "rwx"
+	$ setfacl -x u:user1 file1
+		- deletes the extended permission of user "user1" in the "file1" file
+	$ setfacl -R -m u:user1:rwx testdir1
+		- modifies the extended permission of "user1" by adding "rwx" to the "testdir1" directory RECURSIVELY, affective subdirectories and files as well
+	$ setfacl -m g:IT_SUPPORT:rwx testfile1
+		- modifies the extended permission for group "IT_SUPPORT" for "testfile1" to add "rwx" permission
+	$ setfacl -x g:IT_SUPPORT testfile1
+		- deletes the extended permissions in the "testfile1" for the group "IT_SUPPORT"

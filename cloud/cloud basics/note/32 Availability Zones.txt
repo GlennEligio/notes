@@ -1,0 +1,8 @@
+32 Availability Zones
+
+Availability Zones
+ > Standalone or subset of data centers in a region
+	- 1 Region -> N Availability zones
+ > Individually and independently functioning
+ > separated geographically by a substantial amount of distance
+	- this is to ensure that if a specific Region encounters a catastrophic disaster (flood, earthquake), not all data centers will be affected or shutdown by it

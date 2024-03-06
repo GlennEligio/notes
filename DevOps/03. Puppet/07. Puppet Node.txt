@@ -1,0 +1,19 @@
+07. Puppet Node
+
+Puppet Node
+	> block of code that defines which of Resources a Node/Puppet Agent can access
+	> passing default as node name will make a node be accessible to all node/puppet agent
+
+SYNTAX
+node <NODE NAME> {
+	<RESOURCE DECLARATIONS>
+}
+
+EX:
+node default {
+    user { 'puppet_user':
+       ensure => present,
+       uid => 1001,
+       home => '/home/puppet_user'
+    }
+}

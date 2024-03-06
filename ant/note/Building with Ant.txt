@@ -1,0 +1,27 @@
+Comparing 3 Java build tools (Ant vs Maven vs Gradle)
+
+
+Ant
+ > needs to have a build.xml file
+	- build.xml contains the project definition 
+
+build.xml
+ > contains the following components
+	1. project definition properties
+	2. target(s), which defines the command that will be executed in order build the project
+ > these target(s) can be executed sequentially by defining its dependencies through "depend" property
+	- based on the targets and their "depends" prop, the ANT will execute these targets in specific order
+	- ex: if target "build" depends on target "clean", "clean" will be executed FIRST before "build"
+
+NOTE:
+1. Apache ANT doesnt have feature to manage libraries and dependencies
+	> for this, we use third party tools like Ivy
+
+Building with Ant
+1. In the root directory of project (where build.xml is located), execute "ant ivy"
+	> this is to install Ivy in the ant directory
+	> if you use other libraries and dependency management tool, you will use different command (ant <toolname>)
+2. Execute "ant resolve" to execute all the target inside the build.xml
+	> this will use the Ivy to resolve/download the dependencies needed in the project
+3. Execute "ant"
+	> this will use the build.xml in order to finalize the build

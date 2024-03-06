@@ -1,0 +1,26 @@
+NESTED QUERIES
+	> SQL queries which have an outer query and inner subquery.
+	> The subquery is a query nested within another query such as SELECT, INSERT, UPDATE, or DELETE.
+
+
+1 >>	SELECT lastname, firtname	
+	FROM employees
+	WHERE addressCode IN 	(SELECT addressCode	<< 2
+				FROM employees
+				WHERE country = 'INDIA')
+
+1. Outer Query
+2. Subquery or Inner Query
+	> the output of subquery will be the input of Outer Query
+
+
+EXAMPLE:
+
+SELECT StudentName, ParentName
+FROM StudentsInfo
+WHERE AddressOfStudent IN 	(SELECT AddressOfStudent 
+				FROM StudentsBackup 
+				WHERE Country = 'Philippines');
+
+Firsts, we will get the output of the Subquery. The subquery will give us the AddressOfStudents of rows FROM StudentsBackup WHERE the Country value is Philippines. Then this AddressOfStudent column values will be used in the WHERE condition of the Outer query. 
+The Outer query will give the StudentName and ParentName of the rows whose AddressOfStudent column values is IN the AddressOfStudent table of the SubQuery.

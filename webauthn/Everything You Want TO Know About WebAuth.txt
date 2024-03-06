@@ -1,0 +1,226 @@
+Everything You Want TO Know About WebAuth
+
+SOURCE:
+https://www.youtube.com/watch?v=mjHIt9lDBgA&t=368s&ab_channel=OktaDev
+
+CONTENTS:
+1. What is WebAuthn?
+2. How WebAuthn works
+3. Advantages
+4. Obstacles
+5. How to get started with WebAuthn
+6. Best Practices
+
+
+1. What is WebAuthn?
+
+WebAuthn
+ > short for "Web Authentication"
+ > a Browser API for passwordless authentication
+ > Strong authentication using "public key cryptography"
+	- creates a key pair, a private and public key, known as a credential
+ > "Specification" developed by W3C and FIDO Alliance
+ > Scoped, site specific credentials
+	- eliminates phishing since it only works in one website
+
+Authenticator types
+1. Platform Authenticator
+  	> Authenticator that is BUILT into the computer/phone
+	> includes Windows Hello, fingerprint reader, Face ID, etc
+2. Roaming Authenticator
+	> Authenticator that are EXTERNAL SECURITY KEYS, hence roaming authenticator
+	> inlcudes Yubikey, Titan Security Key
+
+FIDO Alliance
+ > stands for Fast IDentity Online
+ > develops technical specifications for non-password based authentication
+ > certifies technology that meets specs
+
+Terminologies
+1. Relying party (RP)
+	> business / organization / website that implements authentication to their website
+2. CTAP
+	> Client to Authenticator Protocol
+	> defines how a platform or roaming authenticator talks to the browser
+3. U2F
+	> also called CTAP1, first evolution of CTAP
+	> stands for Universal second factor
+		- this specification is designed to be used in 2fa in addition to passwords or another factor
+4. FIDO2
+	> combination of WebAuthn and CTAP2 (second evolution of CTAP)
+	> with CTAP2, it allows you to use the authenticator as both the first and second factor
+		- you essential have 2fa wihtout having to use a different type of device
+		- this is because you can combine the biometric authentication with the device itself so you essential have
+			1. possession factor - with device
+			2. inheritance factor - with biometric
+
+
+
+
+2. How WebAuthn Works
+
+Registration flow
+ > Client 	- User initiates new account registration
+ > Server 	- Server sends data to connect website + user to the credential
+ > Client	- WebAuthn API prompt user to create a key pair, user chooses authenticator
+		- Authenticator generates key pair bund to website + user data sends public key to the server
+ > Server	- Server confirms registration, stores public key
+
+NOTES:
+1. Server is going to send details about the website 
+	- that is to help scope the authnetication credentials to in order to only work with that website
+	- thus creating a scoped credential
+2. Only the public key from the key pair created by WebAuthn is sent back to the Server
+
+
+Registration Demo
+ > webauthn.io
+1. When registering, the Browser will prompt the user to authenticate based on the Authenticator Type you specified
+	> if Platform, it will look for Authenticator built in to the device you are using (Windows Hello, Touch ID etc)
+	> if Cross platform, it may ask you to setup a security key
+2. After successful registration, it will show a prompt that Register is successful
+	> at this state the Server now have the Public key created in key pair
+
+
+Registration security
+ > Private key NEVER leaves authenticator
+ > Biometric data NEVER leaves authenticator
+ > Only PUBLIC KEY and ATTESTATION are send to the server
+
+
+Attestation
+ > refers to information about the authenticator being used
+ > options includes:
+	- none
+	- indirect
+	- direct
+	- enterprise
+ > not required by default
+	- Yubico's developer docs event actively discourage collecting attestation information unless you have specific need for it	
+	- this is because its more work for the relying party and can LIMIT the types of authenticators that your customers could use
+ > Attestation enables us to
+	1. allow-list of approved authenticators
+	2. deny-list of known flawed authenticators
+
+
+Authentication flow
+ > Client	- User initiates login
+ > Server	- RP's Server initiates challenge 
+ > Client	- Authenticator signs challenge with private key and sends to the server
+ > Server	- verifies signature with the public key
+		- Login approved or denied
+
+
+Authentication Demo
+1. Login using the same username you used
+2. You will be prompted to authenticate using the available Authenticator based on the Authenticator type you used
+3. You will be navigated to another page where you can see the 
+	- Raw ID
+	- Public Key used to authenticate you
+
+
+
+
+
+
+
+
+
+3. Advantages
+
+Advantages
+1. Fewer passwords to manage
+	> Authenticator act as both possessive and inheritance factor
+2. Phishing resistance
+	> scoped credentials protect phishing targets
+	> credentials are tied to a specific domain
+3. Speedy
+	> U2F has fastest median authentication time
+	> Compared to SMS, U2F saves 18.2 minutes annually
+
+
+
+
+
+
+
+
+4. Obstacles
+
+Obstacles
+1. Incomplete browser support
+  	> currently have 87.39% support to all browser
+2. Limited authenticator availability
+	> Roaming authenticators are expensive
+	> Platform authenticators are not ubiquitous
+	> Users right now prefers 2FA with SMS 
+3. New Technology
+	> limited documentation and sample apps
+	> Nascent library support
+	> Cryptography can be scary
+4. Factor registration	
+	> Onboarding UX impacts users' success
+5. Factor usability
+	> "Faster authentication does not necessarily mean higher usability"
+
+NOTE:
+1. To check browser and device compatibility go to:
+	- twil.io/webauthn
+
+
+Compatibility Demo
+1. Check if Browser supports WebAuthn
+	> check if the windows.PublicKeyCredential is NOT NULL
+	> if not, then WebAuthn is supported 
+
+EX:
+window.PublicKeyCredential
+
+2. Check if Browser support Platform Authenticators
+	> check the PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() Promise returns true
+	> if not null, then Platform Authenticators are support in the browser
+
+EX:
+PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(available => {
+  if(available){
+    console.log("Supported")
+  }else {
+    console.log("No PA found")
+  }
+})
+
+
+
+
+
+
+
+5. How to get started with WebAuthn
+
+How to get started with WebAuthn
+1. webauthn.guide
+	> contains documentation with regards to webauthn
+ 	> includes some links to existing libraries that we can use if you are going to be implementing webauth
+2. codelabs.developers.google.com/codelabs/webauthn-reauth
+	> codelab that gives us hands on opportunity to create webauthn app
+		- client side only, skips server
+ 	> provides a step-by-step tutorial on how to implement webauthn
+
+
+
+
+
+
+
+
+
+6. Best Practices
+
+Best Practices
+1. Embrace fallback options
+	> Prepare for:
+		- Lost/Unavailable authenticator
+		- Biometric authenticator not working when a user's finger is wet or wearing a mask
+2. Account Recovery
+	> Encourage adding multiple authenticators
+	> DONT FORCE users to fallback to less secure channels, but offer fallback options to TOTP, security codes, or (GASP) even SMS

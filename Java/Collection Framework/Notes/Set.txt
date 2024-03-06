@@ -1,0 +1,204 @@
+Set
+	> refers to a collection that CANNOT contain DUPLICATE elements
+		- if we add data that is a DUPLICATE of one of its elements, it will not be added
+	> it is mainly used to model the mathematical set abstraction
+	> have THREE implementation in various classes
+		1. HashSet
+		2. LinkedHashSet
+		3. TreeSet 
+
+
+HashSet
+	> creates a collection that use a hash table for storage
+	> HashSet only contain unique elements
+	> It INHERITS the AbstractSet class and IMPLEMENTS the Set interface
+	> uses a mechanism hashing to store the elements
+		- means that data is not added in INDEXING approach
+		- inside, it uses HashCodes for elements which are being added
+	> to create one, use
+
+		HashSet<String> set = new HashSet();
+
+	> some of its methods include:
+		
+		Iterator 	iterator()
+		boolean 	add(Object c)
+		void 		clear()
+		int 		size()
+		boolean 	remove(Object o)
+		boolean 	isEmpty()
+		boolean 	contains(Object o)
+		Object 		clone()
+
+
+
+LinkedHashSet
+	> a Hash table and Linked List implementation of the Set interface
+	> contains only UNIQUE elements
+	> provides all optional set operations and MAINTAINS insertion order
+	> to create one, use
+
+		LinkedHashSet<String> al = new LinkedHashSet();
+
+	> this class inherits methods from other classes such us
+		
+		HashSet
+		AbstractCollection
+		Object
+		AbstractSet
+		Set
+
+
+
+TreeSet
+	> implements the Set interface that uses a tree for storage
+	> the objects of this class are unique and are stored in the ascending order
+	> INHERITS AbstractSet class and IMPLEMENTS NavigableSet interface
+	> to create one, use
+
+		TreeSet<String> al = new TreeSet<String>(); 
+
+
+
+ITERATING THROUGH A SET
+	> since Set's element is not added in INDEXING fashion, we cannot use the for loops in order to iterate to the element
+	> the only way to do it is to use Iterator class
+		1. Create Iterator object using iterator() of Set object
+		2. use while loop with hasNext() and next() of the Iterator object
+
+
+
+
+1. Create a new class
+	> SetDemo name
+
+
+2. Import the following package
+	java.util.HashSet
+	java.util.TreeSet
+	java.util.Iterator
+
+
+2. Inside the main(), do the followibg
+	> create a HashSet of type String
+	> add the following inside the HashSet
+		- "John", "Jennie", "John", "Jim", "Jack", "John", "Joe"
+	> printout the HashSet
+		- as we can see, all the elements inside the HashSet is UNIQUE even though we added multiple "John"
+		
+ 
+INSIDE main()
+
+	public static void main(String[] args) {
+
+		HashSet<String> set = new HashSet<String>();
+		
+		set.add("John");
+		set.add("Jennie");
+		set.add("John");
+		set.add("Jim");
+		set.add("Jack");
+		set.add("John");
+		set.add("Joe");
+		
+		System.out.println("The Set is: " + set);
+	}
+
+
+CONSOLE OUTPUT
+
+The Set is: [Joe, John, Jack, Jennie, Jim]
+
+
+
+3. Iterate through all of the element inside the HashSet
+	> create an Iterator object with type String using result of iterator() of HashSet
+	> using while loop with condition of hasNext() of Iterator, do the following
+		- create a String variable and assign its value to the next() result of Iterator
+		- print out the String variable
+	> as we can see, we are able to print out the elements inside the HastSet
+
+INSIDE main()
+
+		Iterator<String> itr = set.iterator();
+		
+		while(itr.hasNext()){
+			String str = itr.next();
+			System.out.println(str);
+		}
+
+
+CONSOLE OUTPUT
+
+The Set is: [Joe, John, Jack, Jennie, Jim]
+Joe
+John
+Jack
+Jennie
+Jim
+
+
+
+
+7. Do the following inside main()
+	> remove the "Jim" element inside HashSet using remove()
+	> print the Set after remove the "Jim"
+	> check if "John" is one of the element of HashSet
+		- use contain() method
+		- if it is, print "John is in the Set"
+	> print the size of HashSet
+
+INSIDE main()
+
+		set.remove("Jim");
+		System.out.println("Set after removing Jim: " + set);
+		
+		if(set.contains("John")){
+			System.out.println("John is in the Set");
+		}
+		
+		System.out.println("Set size is: " + set.size());
+
+
+CONSOLE
+
+The Set is: [Joe, John, Jack, Jennie, Jim]
+Joe
+John
+Jack
+Jennie
+Jim
+Set after removing Jim: [Joe, John, Jack, Jennie]
+John is in the Set
+Set size is: 4
+
+
+
+8. Run the main()
+	> as we can see, Jim is removed in the Set
+	> also John is in the Set
+	> and Set size is reduced by 1
+
+
+
+
+9. Change the set variable from HashSet to a TreeSet
+
+
+10. Run the main()
+	> as we can see, the elements inside TreeSet are SORTED in ascending order
+	> we can try to add some String to the TreeSet to observe the Sorting behavior
+
+CONSOLE OUTPUT
+
+The Set is: [Jack, Jennie, Jim, Joe, John]
+Jack
+Jennie
+Jim
+Joe
+John
+Set after removing Jim: [Jack, Jennie, Joe, John]
+John is in the Set
+Set size is: 4
+
+ 

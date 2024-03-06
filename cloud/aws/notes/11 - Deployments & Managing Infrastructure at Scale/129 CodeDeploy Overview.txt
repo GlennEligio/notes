@@ -1,0 +1,22 @@
+129 CodeDeploy Overview
+
+AWS CodeDeploy
+ > We want to deploy our application automatically
+ > Works with EC2 Instances (Cloud)
+ > Works with On-Premises Servers
+ > Hybrid service (since it works in both Cloud and On-premises)
+ > Servers/Instances must be provisioned and configured AHEAD of time with CodeDeploy Agent
+
+
+
+EX:
+EC2 Instance
+v1 -> v2
+v1 -> v2
+v1 -> v2
+v1 -> v2
+
+
+On-premises
+
+Server v1 -> Server v2

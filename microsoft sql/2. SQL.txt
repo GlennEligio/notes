@@ -1,0 +1,21 @@
+STRUCTURED QUERY LANGUAGE (SQL)
+	> standardized programming language which is used for managing relational databases.
+	> with SQL, you can modify databases, add, update, or delete rows of data, retrive subsets of information from a database, and many more.
+	
+EXAMPLE OF SQL DATABASE
+1. Relational databases
+	> MySQL Databases, oracle, Ms SQL Server, Sybase etc uses SQL
+
+EXAMPLE QUERIES and OTHER SQL operations
+1. SELECT
+2. INSERT
+3. ADD
+4. UPDATE
+5. DELETE
+6. CREATE
+7. ALTER
+8. TRUNCATE
+9. Integrity checking
+10. Embedded DML for gender purpose programming languages
+
+

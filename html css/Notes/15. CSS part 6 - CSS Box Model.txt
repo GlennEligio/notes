@@ -1,0 +1,169 @@
+CSS part 6 CSS Box model
+
+CSS Box Model
+	> model that defines the space that each of the element occupies and takes up in the webpage/screen.
+	> composed of the following parts
+		a. Content
+			> the actual value of the element
+			> can be either a text, image or the space the element occupies itself
+		b. Padding
+			> the space BETWEEN the content and the border
+			> envelops the space the Content takes up
+		c. Border
+			> envelops both the Padding and Content
+			> can be styled up to change its appearance
+		d. Margin
+			> space that the element takes up OUTSIDE the border
+			> envelops all of the previous spaces (Content, Padding, Border)
+
+
+MARGIN AND PADDING SHORTHAND PROPERTIES
+	> Margin and Padding can have their occupied space defined
+	> We can use either:
+		a. margin: or padding: property
+		b. margin-top, margin-bottom, margin-left, margin-right and its padding equivalent
+	> When using the margin: or padding: shorthand property, we have four options based on values given
+		a. Four values given (margin: Tpx Rpx Bpx Lpx)
+			> 1st indicates top margin
+			> 2nd indicate right margin
+			> 3rd indicate bottom margin space
+			> 4th indicate left margin space
+		b. Three values given (margin: Tpx, RLpx, Bpx)
+			> 1st indicate top margin
+			> 2nd indicate both right and left margin
+			> 3rd indicate bottom margin
+		c. Two values given (margin: TBpx RLpx)
+			> 1st indicate both top and bottom margin/padding
+			> 2nd indicate both right and left margin
+		d. One value given (margin: TRBLpx)
+			> the value indicate margin in all sides
+
+
+EX:
+paragraph with margin of 100px at top, 20px at right, 20px at bottom, 50px at left
+
+p {
+margin: 100px 20px 20px 50px;
+}
+
+
+
+BORDER MODIFICATION/PROPERTIES
+
+NOTE: Same as the margin/padding, we can customize the border properties (style, width, color) for EACH side of the element. We can either call the border property for a specific side (border-bottom-style) or use the shorthand property (border:) and give the property necessary. 
+
+border:
+	> property of element that defines the appearance of its border
+	> can be defined in two ways
+		a. using the border-width, border-style, and border-color attributes
+		b. using the border: shorthand property
+	> for first method	
+		a. border-width
+			= takes a unit distance value
+		b. border-style
+			= takes one of the following values
+				1. none		- default value
+						- specifies no border
+				2. hidden	- same as "none"
+						- except in border conflict resolution for table elements
+				3. dotted	- specifies a dotted border
+				4. dashed	- specifies a dashed border
+				5. solid	- specifies a solid border
+				6. double	- specifies a double border
+				7. groove	- specifies a 3D grooved border
+						- effect depends on the border-color value
+				8. ridge	- specifies a 3D grooved border
+				9. inset	- specifies a 3D inset border
+				10. outset	- specifies a 3D outset border
+		c. border-color
+			= takes a color value (name, rgb, rgba, hex)
+
+		
+	> for second method (shorthand)
+		- as for the syntax of the shorthand property, it goes as follows
+
+			border: border-width border-style border-color
+
+		- the syntax or order at which we pass the values of each properties is IMPORTANT
+		- each of the properties can be passed as "inherit" or "initial" values
+
+
+EX:
+h1 {
+border-style: solid;
+  border-width: 10px;
+  border-color: green;
+}
+
+
+
+border-radius
+	> giving this a value will make the corners of the border rounded
+	> defines how much is the radius of the corners of of the element
+	> in Mechanics, it is often referred to as "fillet"
+	> this property can take values in four different ways
+		a. FOUR VALUES given (border-radius: TLpx, TRpx, BRpx, BLpx)
+			- first value applies to top left corner
+			- second value applies to top right corner
+			- third value applies to bottom right corner
+			- fourth value applies to bottom left corner
+		b. THREE VALUES given (border-radius: TLpx, TRBLpx, BRpx)
+			- first value applies to top left corner
+			- second value applies to top right and bottom left corner
+			- third value applies to bottom right corner
+		c. TWO VALUES given (border-radius: TLBRpx, TRBLpx)
+			- first value applies to top left and bottom right corner
+			- second value applies to top right and bottom left corner
+		d. ONE VALUE given (TLTRBRBLpx)
+			- value applies to all corners
+
+EX:
+Here, h1 will have rounded corner, and their radius will be 20px
+
+h1 {
+border: 2px black solid;
+border-radius:20px
+}
+
+
+
+
+NEGATIVE MARGIN
+	> when we supply a negative value in margin property, the margin goes INWARD to the element	
+
+EX: 
+	Element A have margin-bottom of -20px
+	Element B have margin-top of 0
+	If Element B is positioned at bottom of Element A, the top of B and bottom of A will have OVERLAP, and they will overlap by 20px INWARDS to the Element A's center
+
+
+
+
+outline
+	> the outline is placed BETWEEN the margin and border
+	> works the same way as the border in terms of customizing it
+	> for shorthand-property, the structure goes as following
+
+		outline: outline-width outline-style outline-color
+
+	> the difference with outline and border is that outline can have an OFFSET to the element (or border specifically)
+	> to add offset to the outline, use the 
+
+		outline-offset
+
+
+
+outline-offset
+	> takes a unit distance value
+	> defines the distance between the border and offset
+	> POSITIVE value will offset the outline OUTWARD
+	> NEGATIVE value will offset the outline INWARDS
+
+EX:
+Here, elements with class of "two" will have outline with width of 0.2rem, solid, and color of #222
+Also, it has offset to the actual content by 20px
+
+#two {
+  outline: 0.2rem solid #222;
+  outline-offset: 10px;
+}

@@ -1,0 +1,44 @@
+Dynamic Config props in Spring Boot
+
+
+Problem:
+1. Config Clients need to restart to have their Config props from Config Server be updated as well
+
+
+Solution
+1. Use Spring Boot Actuator
+	> In Spring Boot Actuator, theres an endpoint that is a hook
+	> This endpoint's purpose is to be a hook for triggering config props refresh
+	> To do this, we will need to send a POST request to the said endpoint
+
+
+
+
+Steps
+1. Add Spring Boot Actuator dependency
+2. Expose all endpoints of Actuator
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+3. Mark all classes and @Beans that have dependencies which uses Config Props
+	-> mark with @RefreshScope
+
+EX:
+@Service
+@RefreshScope
+public class JwtUtil {
+
+	// Fetch JWT in Config props
+	@Value("${user-service.jwt}")
+	private String SECRET_KEY;
+
+}
+
+4. Send a POST request to the /actuator/refresh
+	> no need for body
+	> will return a response of the config props updated

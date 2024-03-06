@@ -1,0 +1,15 @@
+11 Tour of the Console & Services in AWS
+
+
+Changing Region
+ > to change region, look at the top right corner to scan for the Region dropdown
+ > choose the one closest to you to reduce latency
+ > this will affect:
+	- what services is available
+	- where the service will be hosted/created
+ > for Global Services like Route 53, the region name will change to Global to signify that the service is indeed Global
+
+
+AWS Regional Services List
+ > https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/
+ > the link above will show you all the services offered by a specific region

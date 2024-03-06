@@ -1,0 +1,82 @@
+Hibernate Advance Mapping
+
+
+
+We will learn how to deal with
+1. Multiple tables
+2. Relationships between Tables
+3. Modeling this with Hibernate
+
+
+Types of Relationships between Tables
+1. One-to-One
+2. One-to-Many, Many-To-One
+3. Many-to-Many
+
+Examples of Table Relationships
+1. One-to-One mapping
+	> an instance can have an "instructor details" entity
+	> similar to an "instructor profile"
+
+2. One-to-Many mapping
+	> an instructor can have many courses
+
+3. Many-to-Many mapping
+	> a course can have many students
+	> a student can have many courses
+
+
+IMPORTANT DATABASE CONCEPTS
+1. Primary Key and Foreign Key
+2. Cascade
+
+
+PRIMARY KEY AND FOREIGN KEY
+1. Primary Key
+	> identify a unique row in a table
+2. Foreign key
+	> link tables together
+	> a field in one table that refers to primary key in another table
+
+
+CASCADE
+	> you can "cascade" operation
+	> apply the same operation to related entities
+
+EXAMPLE OF CASCADE operation scenario
+1. CASCADE DELETE
+	> if we delete an instructor, we should also delete their instructor_detail
+	> depends on the use case
+		- ex: in Course-Student many-to-many relationship, we should not delete the Course if we delete a Student
+
+
+FETCH TYPES: EAGER VS LAZY LOADING
+1. Eager loading
+	> will retrieve everything
+2. Lazy loading
+	> will retrieve on request
+
+EX: Instructor with One-to-Many relationship with Course
+
+Eager loading will load all Courses the Instructor have even if WE DONT RETRIEVE ON REQUEST
+Lazy loading will only load the Courses that is RETRIEVED ON REQUEST
+
+
+
+
+TYPES ON RELATIONSHIP BASED ON DIRECTION OF RETRIEVING/LOADING
+1. Uni-Directional relationship
+	> will load/retrieve the data in a relationship in one-way direction only
+2. Bi-Directional relationship
+	> will load/retrieve the data in a relationship in two-way direction
+
+Example scenario:
+Instructor with One-to-Many relationship with Instructor_Detail
+
+With Uni-Directional, 
+	> after we load the Instructor, we can access the Instructor Details. 
+	> if we try to access the Instructor Detail, we CANT retrieve or access the Instructor entity it is mapped to
+
+With Bi-Directional	
+	> after we load the Instructor, we can access the Instructor Details. 
+	> also, if we load the Instructor details, we can gain access and retrieve the Instructor entity it is mapped to

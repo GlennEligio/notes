@@ -1,0 +1,525 @@
+Persisting entities with MongoDB
+
+Topics to Discuss:
+1. How to implement a simple MongoDB repository
+2. How to run MongoDB as a docker container
+3. How to use Postman to interact with a REST API
+
+Tools needed:
+1. Docker
+2. Postman
+
+
+Persistence
+	> a characteristic of data to persist / stay alive even if the application is closed
+
+Persistence options
+	a. Files
+	b. Database
+		- Relational 
+		- No - SQL
+
+
+includes:
+
+MongoDB
+	> a NO-SQL database
+	
+Collection
+	> how the MongoDB associates all the Entities
+	> similar to a Table in SQL database
+
+
+
+1. Create a new Concrete Implementation of the Repository interface
+	> this will be used for our REST API to interact to MongoDB
+	> this will implement the Repository Interface
+	> also, implements the methods from our Repository interface
+
+
+INSIDE MongoDbItemsRepository.cs file
+
+using System;
+using System.Collections.Generic;
+using Catalog.Entities;
+
+namespace Catalog.Repositories
+{
+    public class MongoDbItemsRepository : IItemRepository
+    {
+        public void CreateItem(Item item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteItem(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Item GetItem(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Item> GetItems()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateItem(Item item)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+
+
+
+
+2. Install the MongoDB.Driver nuget package to our project
+	> in the terminal, type the following
+
+		dotnet add package MongoDb.Driver
+
+
+
+
+3. Inject the MongoDB Client in our MongoDB Repository class
+	> add a IMongoClient parameter to our MongoDB repo class constructor
+
+
+
+
+4. Add a IMongoCollection property to our MongoDB Repository class
+	> private access, readonly modifier
+	> set the type of the IMongoCollection to our Entity class
+		= in our case, the Item class
+
+
+        private readonly IMongoCollection<Item> itemsCollection;
+
+
+
+5. Add two string properties in our MongoDB Repository class
+	> private, const modifier
+	> this will define the name for the following component of MongoDB
+		a. databaseName
+			= assign "catalog" as value
+		b. collectionName
+			= assign "items" as value
+
+INSIDE MongoDbItemsRepository class
+
+        private const string databaseName = "catalog";
+        private const string collectionName = "items";
+
+
+6. Create our MongoDB database and collection
+	> inside the MongoDB class repository, do the following
+		a. Create a new IMongoDatabase instance and assign a value to it
+			= call GetDatabase() of IMongoClient parameter and pass the string for databaseName
+		b. Assign a value to our IMongoCollection<Item> property 
+			= call GetCollection<Item>() of the IMongoDatabase, and pass the string property for collectionName
+	> if theres no Database or Collection that corresponds to the Strings we passed, it will create a new one for us
+
+
+INSIDE MongoDbItemsRepository class's constructor
+
+        public MongoDbItemsRepository(IMongoClient mongoClient)
+        {
+            IMongoDatabase database = mongoClient.GetDatabase(databaseName);
+            itemsCollection = database.GetCollection<Item>(collectionName);
+        }
+
+
+
+
+
+7. Modify the CreateItem() method in our MongoDB repo class
+	> inside the method, call the InsertOne() of the IMongoCollection property
+		= pass the Item that we want to add (which in this case is the Item parameter) 
+
+INSIDE CreateItem() of MongoDbItemRepository class
+
+        public void CreateItem(Item item)
+        {
+            itemsCollection.InsertOne(item);
+        }
+
+
+
+
+8. Using Docker, create a Docker image for our MongoDB and run the said image in Docker Container
+	> in terminal, type the following line
+
+		docker run -d --rm --name mongo -p 27017:27017 -v mongodbdata:/data/db mongo
+
+	docker run
+		> run a docker container
+	-d --rm
+		> -d , runs the container in background and print container id
+		> --rm , automatically removes the containter when it exits
+	--name mongo
+		> defines the name of the Docker Container
+	-p 27017:27017
+		> publish a container's port(s) to the host
+		> defines the tcp connection between the docker container and the local machine that runs it
+		> first port is from the local machine, can be anything as long as its free
+		> second port is from the docker container, will depend on application being run (and what port it listens)
+			= in our case, MongoDB listens to port 27017
+	-v mongodbdata:/data/db
+		> optional volume driver for the container
+		> this is to save the Docker Container (and therefore, the MongoDB and its contents)
+
+
+
+
+
+9. Add two Configuration variables in the appsettings.json file
+	> inside appsettings.json, add this item
+		a. MongoDbSettings
+	> MongoDbSettings item will have two items inside it
+		a. Host, whose value is localhost
+		b. Port, whose value is 27017
+
+INSIDE appsettings.json file as one of its item
+
+  "MongoDbSettings": {
+    "Host": "localhost",
+    "Port": 27017
+  }
+
+
+
+
+
+10. Create a folder to store a Class
+	> folder name: Settings
+	> file name: MongoDbSettings.cs
+	> this Class will hold the two Config variables we made as its properties
+	> this class will have the following properties
+		a. name: MongoDbSettings
+		b. properties
+			> Host
+				= public, string type
+			> Port
+				= public int type
+			> ConnectionString
+				= public, string type
+				= only have get method, remove the set
+				= the get will be define as the ConnectionString necessary to connect the REST API to MongoDb
+				= get method body will be
+
+					return $"mongodb://{Host}:{Port}"
+
+INSIDE MongoDbSettings.cs
+
+namespace Catalog.Settings
+{
+    public class MongoDbSettings
+    {
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public string ConnectionString 
+        { 
+            get
+            {
+                return $"mongodb://{Host}:{Port}";
+            }
+        }
+    }
+}
+
+
+
+
+
+10. Add the IMongoClient service in the IServiceCollection parameter of ConfigureServices() of StartUp class
+	> call AddSingleton<>() of the IServiceCollection param
+		= set type of Singleton to IMongoClient
+	> inside the AddSingleton, create a lambda expression in order to add Configuration to our IMongoClient service
+	> inside the expression, do the following
+		a. Create a MongoDbSettings object using the Configuration.GetSection().Get<>()
+			= pass nameof(MongoDbSettings) to GetSection()
+				>> defines the section in Configuration places (launchSettings, appSettings, userSecret, etc.) that we will use as reference/source to object creation
+			= pass MongoDbSettings class from Catalog.Settings
+				>> defines the template of the object
+		b. Return a new instance of MongoClient()
+			= pass the ConnectionString property of the MongoDbSettings object
+
+INSIDE ConfigureServices() of StartUp class
+
+            services.AddSingleton<IMongoClient>(serviceProvide =>
+            {
+                var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+                return new MongoClient(settings.ConnectionString);
+            });
+
+
+
+
+11. Register two Serializer settings to our BsonSerializer
+	> the two Serializer is for serializing the Guid and DateTimeOffset to String
+	> to add Serializer:
+		a. Call RegisterSerializer() of BsonSerializer
+		b. Pass a new instance of the following to RegisterSerializer()
+			- GuidSerializer()
+			- DateTimeOffsetSerializer()
+		c. Pass BsonType.String to both of the Serializers
+
+
+INSIDE ConfigureServices() of StartUp class
+
+
+            BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+            BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+            
+
+
+
+12. Change the Concrete implementation of the Repository interface in ConfigureServices
+	> change the 2nd parameter of AddSingleton<>() when we added our Repository as services before
+	> from InMemItemsRepository to the MongoDbItemRepository
+
+INSIDE ConfigureServices() of StartUp class
+
+            services.AddSingleton<IItemRepository, MongoDbItemsRepository>();
+
+
+
+
+
+13. Test the rest api
+	> since we only have the CreateItems() in MongoDbItemRepository class defines, we will only use Route endpoint of our Controller class that only uses CreateItems() method
+	> which in our case, the POST endpoint
+	> save all, run and debug
+	> make sure the mongodb container is running
+	> call the POST endpoint of our REST API	
+		= we will use POSTMAN to send http request, since we need to populate the request body	
+	> add a request body to our POST endpoint with a CreateItemDto object
+		= Name and Price
+	> check the response
+
+
+HTTPS POST request url
+
+https://localhost:5001/items
+
+
+
+HTTPS POST request body
+
+{
+    "name": "Greataxe",
+    "price": 32
+}
+
+
+
+HTTPS POST response
+
+{
+    "id": "2bd387a3-cb0e-4b19-b357-88ccba17b9f4",
+    "name": "Greataxe",
+    "price": 32,
+    "createdDate": "2021-08-16T15:14:38.1096125+00:00"
+}
+
+
+
+
+
+13. Install MongoDb extension in VSCode
+	> go to extension and choose the MongoDb for Visual Studio Code
+
+
+
+
+14. Connect to our MongoDb Docker container
+	> to connect to MongoDb, we can either 
+		a. Use connection string
+		b. Fill up Connection Form
+	> both the options will use the Host and Port variable we added in appsettings.json file
+	> in our case, the Hostname and Port will be
+		
+		Host: localhost
+		Port: 27017
+
+
+
+
+15. Check the contents of the MongoDb instance running in Docker container
+	> after connection to the MongoDb, we can see the Database hierarchy in the MongoDb extension
+	> the hierarchy goes as follows
+		1. MongoDb instance
+			2. Databases
+				3. Collection
+					4.1. Document
+						5. Data
+					4.2. Schema	
+					4.3. Indexes
+	> Collection is like Tables for SQL
+	> Document represents the Rows inside Table in SQL
+
+
+
+
+
+16. Modify the other methods inside the MongoDbItemRepository class
+	a. GetItems()
+		> return the result of Find().ToList() of our IMongoCollection<Item> property
+		> pass new BsonDocument() to Find()
+			= this will return all BsonDocument stored in the items Collection
+	b. GetItem(Guid id)
+		> before we modify the method body, lets do the following
+			- we will first create a FilterDefinitionBuilder<>
+			- set type of FilterDefinitionBuilder<> to Item entity class
+			- set value of it to Builders<Item>.Filter
+		> back in method body, do the following
+			- create a variable that will hold the finalized FilterDefinitionBuilder
+			- set value to the result of Eq() method of FilterDefinitionBuilder property
+			- inside Eq(), pass two parameter
+				= equality expression, item => item.Id
+				= value of the left variable in equality expression => Guid parameter of GetItem() 
+			- the item represents the value the we will compare
+			- item.Id represents the item document we that check 1by1 in the itemsCollection
+			- return the result of Find().SingleOrDefault() of itemsCollection class variable
+				= pass the finalized FilterDefinitionBuilder to the Find() method
+	c. DeleteItem(Guid id)
+		> in method body do the following
+			- create a variable that will hold the finalized FilterDefinitionBuilder
+			- set value to the result of Eq() method of FilterDefinitionBuilder property
+			- inside Eq(), pass two parameter
+				= equality expression, item => item.Id
+				= value of the left variable in equality expression => Guid parameter of GetItem() 
+			- call DeleteOne() of itemsCollection property
+				= pass the finalized FilterDefinitionBuilder object
+	d. UpdateItem(Guid id)
+		> in method body do the following
+			- create a variable that will hold the finalized FilterDefinitionBuilder
+			- set value to the result of Eq() method of FilterDefinitionBuilder property
+			- inside Eq(), pass two parameter
+				= equality expression, item => item.Id
+				= value of the left variable in equality expression => Guid parameter of GetItem() 
+			- call ReplaceOne() of the itemCollection
+				= pass the filter and the Item object that we want to replace it with (which in this case, the Item parameter)
+				
+INSIDE MongoDbItemsRepository class
+
+FilterDefinitionBuilder property
+
+        private readonly FilterDefinitionBuilder<Item> filterBuilder = Builders<Item>.Filter;
+
+
+Modified methods
+
+public void CreateItem(Item item)
+        {
+            itemsCollection.InsertOne(item);
+        }
+
+        public void DeleteItem(Guid id)
+        {
+            var filter = filterBuilder.Eq(item => item.Id, id);
+            itemsCollection.DeleteOne(filter);
+        }
+
+        public Item GetItem(Guid id)
+        {
+            var filter = filterBuilder.Eq(item => item.Id, id);
+            return itemsCollection.Find(filter).SingleOrDefault();
+        }
+
+        public IEnumerable<Item> GetItems()
+        {
+            return itemsCollection.Find(new BsonDocument()).ToList();
+        }
+
+        public void UpdateItem(Item item)
+        {
+            var filter = filterBuilder.Eq(existingItem => item.Id, item.Id);
+            itemsCollection.ReplaceOne(filter, item);
+        }
+
+
+
+
+
+
+17. Test the new MongoDbItemsRepository methods
+	> save all, run and debug
+	> call GetItems() to see current Items in Catalog
+	> send a DELETE request with existing item in Catalog
+	> send a PUT request with existing item in Catalog
+	> send a POST request with new Item
+	> send a GET request to check all item and check changes
+
+
+CURRENT Item list
+
+[
+    {
+        "id": "2bd387a3-cb0e-4b19-b357-88ccba17b9f4",
+        "name": "Greataxe",
+        "price": 32,
+        "createdDate": "2021-08-16T15:14:38.1096125+00:00"
+    },
+    {
+        "id": "98488104-cee8-42c7-b94e-0e3ceeb2635f",
+        "name": "Scythe",
+        "price": 22,
+        "createdDate": "2021-08-16T16:51:26.7425205+00:00"
+    }
+]
+
+
+DELETE request url
+	> Greataxe item GUID is used
+
+	https://localhost:5001/items/2bd387a3-cb0e-4b19-b357-88ccba17b9f4
+
+
+PUT request url and body
+	> Scythe will be replaced
+	
+	https://localhost:5001/items/98488104-cee8-42c7-b94e-0e3ceeb2635f
+
+	{
+    		"name": "Huge Scythe",
+    		"price": 60
+	}
+
+
+
+POST request
+
+{
+    "name": "Dagger",
+    "price": 20
+}
+
+
+
+NEW ITEM LIST
+
+[
+    {
+        "id": "98488104-cee8-42c7-b94e-0e3ceeb2635f",
+        "name": "Huge Scythe",
+        "price": 60,
+        "createdDate": "2021-08-16T16:51:26.7425205+00:00"
+    },
+    {
+        "id": "91552666-681c-408b-8476-e4a615badf79",
+        "name": "Dagger",
+        "price": 20,
+        "createdDate": "2021-08-16T17:03:22.8886112+00:00"
+    }
+]
+
+
+
+
+
+					

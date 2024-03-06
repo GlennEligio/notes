@@ -1,0 +1,257 @@
+03 Node.js Module System (Notes App)
+
+09 Importing Node.js Core Modules
+10 Importing your own files
+11 Importing npm Modules
+12 Printing in Color
+13 Global npm Modules and nodemon
+
+
+
+09 Importing Node.js Core Modules
+
+Module system
+ > most important feature of the Node.js
+ > some of this module includes
+	- FileSystem or fs
+
+Importing a Module from Node.js Core Module
+ > to import a module, we will use the function "require"
+ > then, in require() call, we will pass the location of the object/method/variable you want to import
+	- for Core Module, they are global variables, so you only need to pass the core module identifier
+	- ex: require('fs') for FileSystem
+ > the result of the require() call is then stored in a variable so we can use it to access properties and functions
+	- by convention, we typically have specific variable names for each Node.js Core Module that everyone follows
+	- ex: const fs = require('fs');
+
+require(path: string)
+ > used to import the exported variables/function inside the path/file
+
+FileSystem
+ > module used to read/write/append files or directories
+ > site: https://nodejs.org/dist/latest-v16.x/docs/api/fs.html
+ > can be accessed in node using the string "fs" with require() and assigning the result to a variable
+	- ex: const fs = require('fs'); fs.writeFileSync('notes.txt', 'This file was created by Node.js!')
+
+
+FileSystem function/variables
+fs.writeFileSync(path: string, data: string)
+ > used to write content to the specified file in path
+ > file can take url object string as input
+	- ex: ./src/note.txt
+ > OVERWRITES the content of the file
+
+fs.appendFileSync(path: string, data: string)
+ > used to APPEND content to the specified file in path
+ > file can take url object string as input
+	- ex: ./src/note.txt
+ > APPENDS the data input at the end of file's content
+
+
+
+
+
+
+
+
+
+
+
+
+10 Importing your own files
+
+Importing your own file
+ > we can also import our own files using the require() function
+ > inside the require(), we will pass the path directory of the file
+	- ex: require("./utils.js")
+ > all the imported files will be evaluated when passed in require()
+	- meaning all code inside the imported file will be executed
+
+EX:
+// utils.js
+console.log("./utils.js")
+
+// app.js
+require("./utils.js")
+const name = "Andrew";
+console.log(name)
+
+CONSOLE OUTPUT
+utils.js
+Andrew
+
+
+Exporting function/variables inside a JS file
+ > normally, we cant access variables/function from one JS file to another
+ > to expose a variable/function inside a JS file, we will need to export them
+ > and to export a variable/function inside a JS file, we will use the "module.exports"
+ > then we will assign the variable/module that we want to be exported to the "module.exports"
+
+EX:
+// utils.js
+console.log("utils.js");
+const name = "Glenn";
+module.exports = name;
+
+// app.js
+const name = require("./utils.js");
+console.log(name);
+
+CONSOLE LOG
+utils.js
+Glenn
+
+NOTES:
+1. Each of the files that their OWN SCOPE
+	> this means that all variables inside a file CANT BE ACCESSED by other file
+	> for the variables/function inside a file to be exported, we will need to use module.exports
+		- we will then assign the variable/function that we want to export to the module.exports
+	> with this, other files can now access the variable
+
+
+
+
+
+
+
+
+
+
+11 Importing npm Modules
+
+npm Modules
+ > npm stands for Node Package Modules
+ > these modules are available as open-source packages
+ > we can use these packages so that we dont have to create them as well
+
+Using npm in project
+ > to use npm, we need to first initialize the npm
+	- to do this, we will use the command "npm init"
+	- you will be prompted questions, and for now, we will just use the default values
+	- this will also create a file named "package.json"
+ > after initializing, we can now add packages in the node project
+	- the command to use is "npm install <packageName>@<version>"
+	- ex: npm install validator@10.8.0
+
+package.json
+ > used to manage all the packages that we are using
+
+package-lock.json
+ > "locks" the package version
+ > contains the following information of packages added
+	1. name
+	2. exact version
+	3. source where package is installed
+	4. some hash id
+
+node_modules
+ > folder that contains the source code of node package modules
+
+
+Importing a package in a JS file
+ > to use a package from npm, we typically go to its DOCUMENTATION
+ > inside the documentation, it guides us on how to 
+	1. import it
+	2. use it, all its classes/objects/functions
+ > ex: https://www.npmjs.com/package/validator
+
+
+commands
+npm init
+ > used to initialize npm in project
+ > creates package.json
+
+npm install <packageName>@<version>
+npm i <packageName>@<version>
+ > used to add package in the node project
+ > not passing a version will install the latest version by default
+ > if first package is added, it will create two things
+	1. node_modules
+	2. package-lock.json
+
+npm install
+ > if no package/version is passed, it will install all packages in the depdencies of package.json
+
+
+EX:
+// Using validator package
+const validator = require("validator");
+const getNotes = require("./notes.js");
+
+console.log(getNotes());
+
+console.log(validator.isURL("https://localhost:8000")); // returns true
+
+
+
+NOTE:
+1. package-lock.json and node_modules folder modification is NOT RECOMMENDED
+	- they are automatically created by npm so we dont need to modify it
+2. Delete the node_modules folder is recommended when trying to transfer the node project
+
+
+
+
+
+
+
+
+
+
+
+
+12 Printing in Color
+
+chalk
+ > a node package module
+ > used for styling the logs in consoles
+
+ex:
+const chalk = require("chalk");
+
+/*
+ChallengeL Use the chalk library in your project
+1. Install version 2.4.1 of chalk
+2. Load chalk into app.js
+3. Use it to print the string "Success!" to the console in green
+4. Test your work
+*/
+
+const greenMsg = chalk.green.bold("Success!");
+console.log(greenMsg);
+
+
+
+
+
+
+
+
+
+
+
+13 Global npm Modules and nodemon
+
+Global npm Modules
+ > right now, we are install the node package modules LOCALLY
+ 	- this means that they are only accessible in that specific node project
+ > to globally install a package, we will use the same command as for installing package locally, but with additional "-g" 
+	- ex: npm install nodemon@1.18.5 -g
+ > Global npm Modules are install INTO THE OPERATING SYSTEM, and not to the project
+	- we can see this by looking for changes in local node project's package-lock.json, package.json, and node_modules
+
+nodemon
+ > nodemon is a tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected.
+ > nodemon does not require any additional changes to your code or method of development. 
+ > nodemon is a replacement wrapper for node. 
+	- To use nodemon, replace the word node on the command line when executing your script.
+	- ex: nodemon app.js
+
+Check nodemon version
+ > use "nodemon -v"
+
+Usage
+1. nodemon <filename>
+	> will compile and execute the JS file given
+ 	> unlike "node <filename>", the nodemon will be running in "watch mode"
+		- this means that it will watch for changes, and if theres one, it will compile and execute the JS file again

@@ -1,0 +1,127 @@
+66 RHCSA RHEL 8 - Practice Exam - Questions 1-6
+
+Exam
+ > Ensure all tasks are implemented with firewalld and SELinux enabled. 
+ > Your server should be able to survive a reboot. Good luck!
+
+1. Interrupt the boot process and reset the root password. Change it to "wander" to gain access to the system
+2. Repos are avilable from the repo server at http://repo.eigth.example.com/BaseOS and http://repo.eight.example.com/AppStream for you to use during the exam
+3. The system time should be set to your (or nearest to you) timezone and ensure the NTP sync is configured
+4. Add the following secondary IP addresses statically to your current running interface. Do this in a way that doesn't compromise your existing settings:
+	a. IPV4 - 10.0.0.5/24
+	b. IPV6 - fd01::100/64
+5. Enable packet forwarding on system1. This should persist after reboot.
+6. System1 should boot into the multiuser target by default and boot messages should be present (not silenced)
+
+
+
+ANSWERS:
+Interrupt the boot process and reset the root password. Change it to "wander" to gain access to the system
+1. Reboot the system
+2. Interrupt the boot by pressing the up and down
+3. Select the first kernel in GRUB
+4. Press e to edit the boot config
+5. Remove the "rhgb quite" and replace with "rd.break enforcing=0"
+6. Start the boot process
+7. When presented with switch_root Shell, mount the /sysroot
+	$ mount -o remount,rw /sysroot
+8. Change root directory to /sysroot
+	$ chroot /sysroot
+9. Check the user and if root, change password
+	$ whoami
+	$ passwd
+10. Exit the Shell and Switch root
+	$ exit
+	$ exit
+11. Login using the new password
+12. Restore context and set SELinux to enforcing again
+	$ restorecon /etc/shadow
+	$ setenforce 1
+
+
+
+
+
+
+Repos are avilable from the repo server at http://repo.eigth.example.com/BaseOS and http://repo.eight.example.com/AppStream for you to use during the exam
+
+1. Check if config-manager command is present
+	$ dnf config-manager
+2. If not present, install dnf-utils package
+	$ dnf install dnf-utils
+3. Add the said package repo urls with dnf config-manager
+	$ dnf config-manager --add-repo http://repo.eight.example.com/BaseOS 
+	$ dnf config-manager --add-repo http://repo.eight.example.com/AppStreams
+4. Apply the updates in dnf
+	$ dnf update
+
+
+
+
+
+The system time should be set to your (or nearest to you) timezone and ensure the NTP sync is configured
+
+1. Check if chrony is installed (and running if installed)
+	$ man chronyd
+	$ systemctl status chronyd
+2. Install chronyd and start if it is not
+	$ dnf install chronyd
+3. Check if sources as available for chronyd to fetch latest time
+	$ chronyd sources
+	$ vi /etc/chrony.conf
+3. Set timezone of system to your timezone
+	$ timedatectl list-timezones	list the timezones, use grep to filter
+	$ timedatectl set-timezone Asia/Singapore
+	$ timedatectl				check the time info
+4. Make NTP sync active	
+	$ timedate set-ntp yes
+
+
+
+
+
+
+
+
+Add the following secondary IP addresses statically to your current running interface. Do this in a way that doesn't compromise your existing settings:
+	a. IPV4 - 10.0.0.5/24
+	b. IPV6 - fd01::100/64
+
+1. Check the current active network interface
+	$ ifconfig			take note of the connection with 192.168.x.x as ipv4 address or the highest Rx packets
+2. Check the connection name of the one using the active NIC
+	$ nmcli connection show	will show the connection names
+2. Modify the connection by adding ipv4 and ipv6 address and reload the connection
+	$ nmcli connection modify "System eth1" +ipv4.address 10.0.0.5/24
+	$ nmcli connection modify "System eth1" ipv6.method manual ipv6.addresses \\Pngsfsdg06.r1-core.r1.aig.net\Aigdata\AIG_APAC\AppV\TH\1620_ORION_UAT_TH\TH-ORN_ORN.FRE.5.0.0.0_v1.02_MSIfd01::100/64
+		- will make the specified ipv6 the active one, but the previous ipv6 will still be present
+	$ nmcli connection reload		reloads the connections to apply changes
+	$ nmcli connection show "System eth1"		check the ipv4 and ipv6 addresses
+	
+
+
+
+
+Enable packet forwarding on system1. This should persist after reboot.
+
+1. Open /etc/sysctl.conf file and add a setting "net.ipv4.ip_forward" and set to 1
+	$ echo "net.ipv4.ip_forward >> /etc/sysctl.conf"
+2. Check the current value of the said setting, reboot, and check again
+	$ cat /proc/sys/net/ipv4/ip_forward
+	$ reboot
+	$ cat /proc/sys/net/ipv4/ip_forward
+
+
+
+
+
+
+System1 should boot into the multiuser target by default and boot messages should be present (not silenced)
+1. Set multi-user.target as default target when booting up
+	$ systemctl set-default multi-user.target
+2. Open the /etc/default/grub, go to "GRUB_CMDLINE_LINUX", and remove the "rhgb quiet" portion of the string value
+	$ vi /etc/default/grub		
+ 	> remove "rhgb quiet" to the GRUB_CMDLINE_LINUX value
+3. Apply changes by using the "grub2-mkconfig" command to the /boot/grub2/grub.cfg
+	$ grub2-mkconfig -o /boot/grub2/grub.cfg
+	

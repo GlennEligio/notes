@@ -1,0 +1,90 @@
+WCS V9 Spring Framework
+
+HCL Commerce Spring Framework - Use case
+	> The Spring Framework is a lightweight, open source programming and configuration model for developing Java based enterprise application.
+	> This framework is used in HCL Commerce for building and configuring Management Center, including the managing of URL requests from Management Center to retrieve and process object data. With Management Center built with the Spring framework, which includes built-in best practices and design patterns, your site developers can customize Management Center more easily. 
+	> Developer can focus more on application-level programming to meet business needs when customizing Management Center and less on the underlying infrastructure of Management Centers
+	
+	
+HCL Commerce Spring Framework - Modularity and Components
+	> The Spring framework is a modular framework for building enterprise applications and includes many different modules.
+	> Within HCL Commerce, the following Spring framework layers and modules are used to build Management Center
+		1. The Core Container
+			- spring-core
+			- spring-beans
+			- spring-context
+			- spring-expression modules
+	> The spring-core and spring-beans modules are the fundamentals parts of the Spring framework
+		- All other Spring framework modules are built upon these core modules
+		- These modules provide the Inversion of Control (IoC), dependency injection, and Spring bean features of the framework, which are used in HCL Commerce
+	
+	
+HCL Commerce Spring framework - Spring Web layer
+	> The Spring web layer, specifically the spring-web, and spring-webmvc modues
+	> The spring-web module provides the basic web-specific integration features that are required by Management Center. 
+		- The framework uses this module to initialize the Spring IoC container
+	> The spring-webmvc module, which is also known as the Spring Web-Servlet module, provides the Spring Model-View-Controller (MVC) framework that HCL Commerce uses with Management Center. 
+		- The Spring framework MVC can be used with a servlet or portlet environment. The MVC framework that is used in HCL Commerce is:
+			1. non-portlet
+			2. uses the Spring dispatcher servlet
+			
+		
+Spring MVC Framework
+	> The Spring MVC Framework is a request-driven framework that uses a central dispatcher servlet to handle the URL request from Management Center
+	> This Spring DispatcherServlet dispatches request to the controller classes that are identified within bean definition controller configurations for retrieving and processing data
+	
+	
+Customizing the Management Center Spring framework
+	> All major aspects of the Management Center web application are configured within Spring framework configuration files. HCL Commerce uses Spring definition files to configure Management Center.
+		- A different configuration file is used for mapping the configurations for each Management Center component
+	> There is also an extension configuration file for you to use to define your own custom mappings for custom object or to override existing mappings in the configuration files that are provided by HCL Commerce
+	
+	
+Extension File
+	> The spring-extension.xml file is provided for you to use to override existing URL mappings or to define new mappings.
+		- When you need to change or create a URL mapping within the Spring framework, always use this spring-extension.xml extension file to define your custom mappings.
+		- DO NOT MODIFY any spring-ibm-component.xml files that are provided by default for each Management Center component.
+	> The Spring extension file takes precedence over all other Spring configuration files when you add configurations for objects that are defined in the other files. By including all of your custom configurations within this file, you can ensure that your customizations are not overwritten when you apply maintenance or upgrade HCL Commerce
+	
+EX:
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.springframework.org/schema/bean
+s http://www.springframework.org/schema/beans/spring-beans.xsd">
+<!-- To enable Single Sign On, uncomment the following Logon, Logout and ResolveIdentity controller configurations. -->
+<bean id="/Logon" 
+<!--
+class="com.ibm.commerce.foundation.client.lobtools.spring.Authentic
+ationClientLibraryController">
+	<property name="urlObject" value="Person"/>
+	<property name="contextParameters">
+		<props>
+			<prop key="channelId">channelId</prop>
+		</props>
+	</property>
+	<property name="clientLibrary" value="com.ibm.commerce.member.facade.client.MemberFacadeClient"/>
+	<property name="clientLibraryMethod" value="authenticatePassword"/>
+	<property name="aliasParameters">
+		<props>
+			<prop key="password">logonPassword</prop>
+		</props>
+	</property>
+	<property name="generateLTPAToken" value="true"/>
+	<property name="successView" value="/jsp/commerce/shell/restricted/AuthenticationSuccess.jsp"/>
+	<property name="failureView" value="/jsp/commerce/shell/restricted/AuthenticationFailed.jsp"/>
+</bean>
+-->
+
+
+CUSOMTIZING CONTROLLER CONFIGURATIONS
+	> If you are creating your own custom objects or tools in Management Center or customize existing objects and tools, you might need to define or extend Spring framework configurations.
+	> These configurations define how URL requests from Management Center map to controller classes and JSP files to handle the requests
+	
+EX:
+<SearchService name="findAllCatalogEntries" 
+url="/cmc/FindCatalogEntries-All">
+	<ServiceParam name="storeId"/>
+	<ServiceParam name="masterCatalogId"/> 
+	<ServiceParam name="defaultLanguageId"/>
+</SearchService>

@@ -1,0 +1,67 @@
+05. EcmaScript5 (ES5)
+
+
+~~~~~ ECMAScript ~~~~~~~
+1. Arrow function expression
+	> An arrow function expression is a compact alternative to a traditional function expression, but is limited and can't be used in all situations.
+	> Anonymous to the lambda functions in other languages
+	> For the Arrow function to be used as alternative to a traditional function expression, the function to be replaced must be an ANONYMOUS FUNCTION
+
+EX:
+// function to determine if 1st param is greater than 2nd para
+function (x,y)
+	return x > y;
+}; 
+
+// arrow function expression
+(x,y) => x > y;
+
+// function to display message to console
+function (name) {
+	console.log(name)
+}
+// as arrow function
+(name) => console.log(name)
+
+
+USAGE:
+var add = (x,y) => x+y;
+console.log(add(2,4));
+
+
+2. Function.prototype.bind()
+	> The bind() method creates a new function that, when called, has its "this" keyword set to the provided value, with a given sequence of arguments preceding any provided when the new function is called.
+	> if we dont call
+
+
+
+3. setTimeout()
+	> The global setTimeout() method sets a timer which executes a function or specified piece of code once the timer expires.
+
+
+
+
+4. let
+	> keyword used to declare variable
+	> these variables have
+		a. block level scroping
+		b. not available outside block it is contained
+	> used typically for
+		a. local variables
+		b. for loop for declaring iterator value
+
+EX:
+for(let i=0; i>10; i++){
+	console.log(i);
+}
+
+
+5. const
+	> keywords used to create CONSTANT variables
+	> constant variable are IMMUTABLE which means we can NOT REDECLARE the variable
+	> constant variable's properties CAN STILL BE CHANGED
+
+EX:
+var family = {
+	
+}

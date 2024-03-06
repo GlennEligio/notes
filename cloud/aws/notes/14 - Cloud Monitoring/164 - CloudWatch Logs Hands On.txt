@@ -1,0 +1,25 @@
+164 - CloudWatch Logs Hands On
+
+Parts:
+1. CloudWatch Logs dashboard
+2. Demo using Lambda
+
+
+CloudWatch Logs dashboard
+1. go the CloudWatch Dashboard
+2. At the left side, go tO "Log groups"
+	> this is where we can see all the log groups, which can be created by CloudWatch log agent or some AWS resource (ex: Lambda)
+	
+	
+Demo of CloudWatch Logs using Lambda
+1. Go to AWS Lambda
+2. Create a Lambda where the script/code will print something in the console
+	> for python script, we can use print() function
+	> by default, the Lambda will create a Log group for itself
+	> for each test/run of the AWS Lambda, it will create a Log stream for the Log group that it assigned to itself
+3. Run/Test the AWS Lambda
+4. Check the Log group created by the Lambda
+	> go to the CloudWatch dashboard > Log groups
+		- we should see the Log group for the Lambda
+	> click the Log group
+		- inside, we can see the Log stream generated for each Run/Test of the AWS Lambda that we just created

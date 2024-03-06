@@ -1,0 +1,6 @@
+134 CodeStart Overview
+
+AWS CodeStart
+ > Unified UI to easily manage software development activies in one place
+ > "Quick way" to get started to correct set-up CodeCommit, CodePipeline, CodeBuild, CodeDeploy, Elastic Beanstalk, EC2, etc ...
+ > Can edit the code "in-the-cloud" using AWS Cloud9

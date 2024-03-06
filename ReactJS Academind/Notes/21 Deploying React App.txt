@@ -1,0 +1,255 @@
+21 Deploying React App - From Development To Production
+
+Contents
+001 Module Introduction
+002 Deployment Steps
+003 Adding Lazy Loading
+004 Building The Code For Production
+005 Getting Started With Deployment
+006 Exploring Routing Issues & Finishing Deployment
+
+
+001 Module Introduction
+
+Module Content
+1. Deployment Steps & Pitfalls
+2. Server-side Routing vs Client-side Routing
+
+
+
+
+
+
+
+
+
+002 Deployment Steps
+
+Deployment Steps
+1. Write Code
+2. Test Code
+3. Optimize Code
+	- Lazy loading
+4. Build App for Production
+	- React includes script for us to build the React app as small as possible
+5. Upload Production Code to Server
+6. Configure Server
+
+
+
+
+
+
+
+
+003 Adding Lazy Loading
+
+Lazy Loading
+ > loading code only when it is needed
+
+Why use Lazy Loading in React?
+ > if we add Lazy Loading in React app, user can access the application faster since it doesnt need to load everything
+	-> we typically lazy load the Pages Components 
+ > by default, ALL the Code inside React app is bundled into one big JavaScript code
+ 	-> this means that if a user used the React app, all the code needs to be downloaded
+	-> but user may not need some parts of the React code immediately (ex: Pages)
+ > for small app with small codebase, its find. 
+ > but for bigger apps with multiple Components/Pages that user may not even need at the start, this result in performance inefficiency
+
+Adding Lazy Loading in React
+ > to add Lazy Loading in React, we will need two thigns
+	1. React.lazy()
+		-> allows us to lazily load the imports inside React (ex: Components)
+		-> takes a function that returns an import
+		-> the import syntax is different in this case
+	2. Suspense
+		-> component from 'react' library
+		-> provide a fallback ui to display while the Component is being downloaded
+		-> have several props which are children, key, fallback (important)
+		-> for this to work, it must wrap the Component that are lazy loaded
+
+NOTE:
+1. We can see this loading in action when we used the React app.
+	> if we navigate to a Page Component for the first time, if we take a look at the "Network" section in Browser devtools, we can see a chunk.js file being downloaded
+
+
+EX:
+In example below, we used the React.lazy() and Suspense to lazy load the Page Components.
+With React.lazy(), we passed a function that returns a JSX element using the import function
+With Suspense component, we defined the fallback UI to display while the Components is loaded and wrapped the Lazy loaded Component inside it.
+
+// App.js
+import React, { Suspense } from "react";
+import { Route, Switch, Redirect } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import LoadingSpinner from "./components/UI/LoadingSpinner";
+
+const AllQuotes = React.lazy(() => import("./pages/AllQuotes"));
+const NewQuote = React.lazy(() => import("./pages/NewQuote"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
+const QuoteDetail = React.lazy(() => import("./pages/QuoteDetail"));
+
+function App() {
+  return (
+    <Layout>
+      <Suspense
+        fallback={
+          <div className="centered">
+            <LoadingSpinner />
+          </div>
+        }
+      >
+        <Switch>
+          <Route path="/" exact>
+            <Redirect to="/quotes" />
+          </Route>
+          <Route path="/quotes" exact>
+            <AllQuotes />
+          </Route>
+          <Route path="/quotes/:quoteId">
+            <QuoteDetail />
+          </Route>
+          <Route path="/new-quote">
+            <NewQuote />
+          </Route>
+          <Route path="*">
+            <NotFound />
+          </Route>
+        </Switch>
+      </Suspense>
+    </Layout>
+  );
+}
+
+
+
+
+
+
+
+
+004 Building The Code For Production
+
+Building the Code For Production
+ > to build our React code for production, we need to run the script "build"
+ > this "build" script in location inside package.json in "scripts" property
+ > to execute this script, we will run in command line
+	- npm run build
+ > this command will automatically create a "build" folder in root directory which contains the files to be exported
+
+
+build folder
+ > created when we execute "npm run build"
+ > contains the following files/folder
+	1. static/css
+		- contains optimized CSS code	
+	2. static/js
+		- contains optimized JS code
+	3. misc files like favicon.ico, index.html, robots.txt (for SEO)
+ > we MUST NOT modify the files inside static/css and static/js
+	- instead, modify the source code and build again since it will just override the build folder
+
+EX:
+// contents of build folder
+D:.
+|   asset-manifest.json
+|   favicon.ico
+|   index.html
+|   logo192.png
+|   logo512.png
+|   manifest.json
+|   robots.txt
+|
+\---static
+    +---css
+    |       3.77187ca3.chunk.css
+    |       3.77187ca3.chunk.css.map
+    |       4.c8c94a76.chunk.css
+    |       4.c8c94a76.chunk.css.map
+    |       5.b4f78fe6.chunk.css
+    |       5.b4f78fe6.chunk.css.map
+    |       main.451e3919.chunk.css
+    |       main.451e3919.chunk.css.map
+    |
+    \---js
+            2.4a9e3f42.chunk.js
+            2.4a9e3f42.chunk.js.LICENSE.txt
+            2.4a9e3f42.chunk.js.map
+            3.86349314.chunk.js
+            3.86349314.chunk.js.LICENSE.txt
+            4.97e50448.chunk.js
+            4.97e50448.chunk.js.LICENSE.txt
+            4.97e50448.chunk.js.map
+            5.a536eea5.chunk.js
+            5.a536eea5.chunk.js.LICENSE.txt
+            5.a536eea5.chunk.js.map
+            6.8e0ca604.chunk.js
+            6.8e0ca604.chunk.js.map
+            main.bb286bfb.chunk.js
+            main.bb286bfb.chunk.js.map
+            runtime-main.bb8a0250.js
+            runtime-main.bb8a0250.js.map
+
+
+
+
+
+
+005 Getting Started With Deployment
+
+Hosting React SPA to Firebase
+1. Install Firebase CLI
+	> npm install -g firebase-tools
+2. Login using firebase CLI
+	> firebase login
+3. Initialize Firebase
+	> firebase init 
+4. Use the hosting feature
+	> For Firebase feature, choose "Hosting: Configure files fore Firebase hosting"
+	> For project setup, choose "Use an existing project" and choose the project
+	> For Hosting setup's public directory, choose the "build" folder we just created earlier
+	> On "Configure as a single page app", choose yes
+	> For CI/CD stuff with Github, choose no
+	> For overwriting build/index.html, choose no
+5. Deploy the React app
+	> firebase deploy
+6. Undeploy the React app
+	> firebase hosting:disable
+
+
+Server-side Routing vs Client-side Routing
+
+Server-side Routing
+ > with Server-side routing, 
+	1. the Client (user browser) sends a request and Server takes a look at the route (ex: "/quotes") and then sends the response with HTML, CSS, JS Ciode with the route url path passed
+	2. whenever the Client navigates to a different url, it will again send request to server
+	3. subsequent response for different Url will send different response
+ > this means that DIFFERENT URL trigger DIFFERENT ACTIONS in the server
+
+Client-side Routing
+ > with Client-side routing, 
+	1. the Client sends a request and Server will send response with HTML,CSS,JS back to the Client	
+	2. then whenever the Client navigates to a different url, the Client will NOT SEND request to server
+	3. instead, the Client will do the Routing, and based on the URL, will display the appropriate Content
+	3. subsequent response for different Url will send THE SAME response
+ > this means that different url trigger THE SAME ACTIONS in the server
+
+
+
+NOTES:
+1. A React SPA is a "Static Website"
+	> only HTML, CSS & JavaScript
+	> this means that we only need to use a Static Site Host to run this React SPA
+	> theres multiple options to choose for Static Site Host, but Firebase off
+2. React SPA uses client-side routing (via React Router DOM)
+	> important to remember since we might need to configure the hosting server when it comes to the routing part of the React SPA
+
+
+
+
+
+
+
+
+
+006 Exploring Routing Issues & Finishing Deployment

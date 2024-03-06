@@ -1,0 +1,337 @@
+What is JSP?
+
+JSP
+	> it is used to create web application just like Servlet technology
+	> can be also called as extension of Servlet
+	> provides more functionality than Servlet like expression language
+	> consist of HTML tags and JSP tags
+
+Features of JSP
+	
+1. Fast development
+2. Tracking User
+3. Easy to maintain
+	> separate the designing and development
+4. Flexible
+5. Powerful
+6. Portable 
+
+Advantages of JSP over Servlets
+JSP
+	> extension of Servlet
+	> easy to maintain
+		- separate business logic to presentation logic 
+	> no need to recompile and redeploy
+	> less code than Servlet
+
+Servlets
+	> more complicated
+	> code needs to be recompiled
+	> more code comparatively 
+
+
+WHY JSP?
+	> In Servlet, in order to create an HTML page, we will need to print the HTML code in response.getWriter() 
+	> This means that all of the HTML codes will be inside the response.getWriter()
+	> This will make the source code inside for the Websites messy
+	> With JSP, we can "integrate" Java codes inside the HTML of JSP
+		- it will either provide value to the HTML elements
+		- or design the business logic of the said HTML page
+
+
+
+LIFE CYCLE OF JSP
+jspInit()
+	> called ONCE at the start of the JSP intialization
+jspService()
+	> called when theres scriptlet <% > that has code in it
+jspDestroy()
+	> called when JSP is garbage collected
+
+
+
+JSP -> Servlet Process
+
+1. JSP Translation
+	> JSP page is translated into Servlet using JSP Translator
+2. Servlet Compilation
+	> Servlet from JSP translation is then compiled
+3. Class Loading
+4. Class Instaniation
+5. Class Initialization
+6. Request Processing
+7. Servlet Destroy
+
+
+
+STEPS TO CREATE JSP
+1. Create dynamic web project
+2. Create JSP file
+	> inside ProjectFolder > WebContent
+3. Start Apache Tomcat
+4. Deploy the project and get the output
+
+
+
+JSP SCRIPTING & DIRECTIVE ELEMENTS
+
+JSP Scripting Elements
+
+1. scriptlet
+	> used to execute java source code in JSP
+	> will be put INSIDE the service() of the auto-generated Servlet
+		- this is the reason why you cant declare method inside scriplet
+	> all variables declared inside scriptlets are LOCAL variables
+
+SYNTAX:
+	<% java-source-code %>
+EX:
+	<% out.println("the name is " + uname) %>
+
+2. expression
+	> the code that is written in the expression tag is return to the output stream of the response
+	> output is PRINTED DIRECTLY in output writer
+	> with this, you dont need to use out.print() in scriptlet
+	> use to print values of method and variables
+
+SYNTAX:
+	<%= statement %>
+EX:
+	<%= a+b>
+	<%= add(20,30) %>
+
+3. declaration
+	> used to declare a field variable or method
+	> code that is placed in declaration tag is placed OUTSIDE the service() of the auto-generated Servlet
+	> with this, the declaration will not use memory in each request unless they are used
+
+SYNTAX:
+	<%! field or method declaration %>
+EX:
+	<%!String uname = "admin";%>
+	<%!int add(int a, int b) {
+		return a + b;
+	}%>
+
+
+IMPLICIT OBJECTS OF JSP
+	> these objects corresponds to a specific class in a typical Servlet or HttpServlet class
+	> JSP automatically creates this object
+
+out		JspWriter or HttpServletRequest.getWriter()
+request		HttpServletRequest
+response	HttpServletResponse
+config		ServletConfig
+application	ServletContext
+session		HttpSession
+pageContent	PageContext
+page		Object
+exception	Throwable
+
+
+
+
+JSP DIRECTIVE ELEMENTS
+	> tell the server how to translate the JSP into Servlets
+
+1. Page directive
+	> defines the attributes that applies to the ENTIRE JSP page	
+	> can define different attribute:
+		- import="import1,import2"
+			> defines the packages imported in JSP
+			> ex: import="java.util.List,java.util.Calendar"
+		- language="scripting-language"
+			> defines the language used
+			> by default its java
+		- contentType="ctinfo"
+			> defines the content-type of the response
+			> we will pass the MIME type of response
+			> ex: "text/html"
+		- pageEncoding		
+		- isErrorPage
+			> define if a page is an errorPage
+			> the page will then be able to access the "exception" Implicit object
+		- ErrorPage
+			> defines the jsp file that the user will be redirected when an Error happens in original JSP 
+		- extends="className"
+			> defines the class that HttpServlet extends too
+		- session="true|false"
+			> defines if the JSP will create a session on the client on its request
+		- info="information"
+			>
+		- isELIgnored="true|false"
+			> defines if the Expression Language in JSP is ignored
+		- isThreadSafe="true|false"
+		- autoFlush="true|false"
+
+SYNTAX:
+	<%@ page attribute="value" %>
+EX:
+	<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" import="java.util.Calendar"%>
+
+2. Include directive
+	> used to include the contents of any resources
+	> can be either
+		- JSP file
+		- HTML file
+		- Text file
+	> includes the original content of the included resource at each page translation time
+	> the included file will be inside the JSP file before any of its <body> content
+	> advantage is the code-reusability
+
+SYNTAX:
+	<%@ include file="resourceName" %>
+EX:
+	<%@ include file="menu.jsp" %>
+
+3. Taglib directive
+	> define a tag library that defines many tags
+
+SYNTAX:
+		<%@ taglib uri="uriOfTheTagLibrary" prefix="prefixOfTagLibrary" %>
+
+
+
+
+JSP ACTION TAGS
+
+forward
+include
+useBean
+
+USEBEAN RELATED TAG
+1. useBean (<jsp:>)
+	> used to add an instance of a specific Class into the JSP <body>
+	> have the properties
+		a. id="StringId"
+			-> defines how the said class will be called
+			-> same as the instance name of the Class object in Java
+		b. class="class-file-location"
+			-> defines the location of the said class relative to src folder
+		c. scope="scope"
+			-> defines the scope of usage of useBean
+			-> by default, it is set to "page"
+			-> have FOUR different values
+				= page
+				= request
+				= session
+				= application
+		
+
+SYNTAX:
+<jsp:useBean id="instanceName" class="class-file-location"></jsp:useBean>
+
+EX: inside <body>
+	<jsp:useBean id="cal" class="com.beans.Calculator"></jsp:useBean>
+	<% out.println(cal.add(4,5)); %>
+
+
+
+2. setProperty (<jsp:setProperty>)
+	> used to add Property in the JSP just like adding properties in Class
+	> same as SETTER in Java
+	> have attributes:
+		a. property="request-parameter-name"
+			-> set the property of the jsp:useBean of THE SAME NAME to the request-parameter-name passed in property
+			-> passing "*" will map ALL OF THE REQUEST PARAMETERS OF SAME NAME to the jsp:useBean property
+		b. name="useBean-name"
+			-> define the useBean destination of the property
+		c. value="property-value"
+			-> defines the value of the property
+		d. param="param-name"
+			-> defines which parameter of request we will get to assign to useBean property
+	> there are THREE WAYS on how
+
+SYNTAX:
+	<jsp:setProperty property="request-parameter-name" name="useBean-name"/>
+
+EXAMPLE:
+Account Class
+
+public class Account {
+	private String uname;
+	private String pass;
+}
+
+Inside JSP file <body>
+
+	<jsp:useBean id="account" class="com.beans.Account"></jsp:useBean>
+
+For single property assignment
+	<jsp:setProperty property="uname" name="account"/>
+	<jsp:setProperty property="pass" name="account"/>	
+
+For multiple property assignment
+	<jsp:setProperty property="*" name="account"/>
+
+
+
+
+
+3. getProperty (<jsp:getProperty>)
+	> used to get a property of a useBean Class instance
+	> the same as GETTERS in Java
+	> have two attribute
+		a. property="useBean-property"
+			- specify what property we will fetch from useBean
+		b. class="useBean-name"
+			- specify the useBean where we will fetch the property
+
+SYNTAX:
+	<jsp:getProperty property="useBean-property" name="useBean-name"/>
+
+EX: using the Setup in setProperty example
+INSIDE JSP file <body>
+	<jsp:getProperty property="uname" name="account"/>
+
+
+FORWARD
+1. forward (<jsp:forward>)
+	> used to forward a request to another webpage
+	> have the attribute
+		a. page="url/jsp/servlet-url"
+			- defines the forward destination of the request
+	> with jsp:forward, the buffer is CLEARED before the forward
+
+SYNTAX:
+	<jsp:forward page="url/jsp/servlet-url"></jsp:foward>
+EX:
+	<jsp:forward page="menu.jsp"></jsp:forward>
+
+
+
+2. param (<jsp:param>)
+	> element nested inside jsp:forward
+	> used for adding query parameters to the forward destination
+	> have the attributes:
+		a. value="param-value"
+			- defines the value of query parameter
+		b. name="param-name"
+			- defines the name of query parameter
+
+
+SYNTAX:
+	<jsp:param value="Manila" name="city"/>
+
+EX:
+	<jsp:forward page="menu.jsp">
+		<jsp:param value="Manila" name="city"/>
+	</jsp:forward>
+
+
+
+INCLUDE
+2. include (<%@ include>)
+	> used to include the contents of any resources
+	> can be either
+		- JSP file
+		- HTML file
+		- Text file
+	> includes the original content of the included resource at each page translation time
+	> the included file will be inside the JSP file before any of its <body> content
+	> advantage is the code-reusability
+
+SYNTAX:
+	<%@ include file="resourceName" %>
+EX:
+	<%@ include file="menu.jsp" %>

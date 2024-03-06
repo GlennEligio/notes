@@ -1,0 +1,127 @@
+OAuth terminologies and flows explained - OAuth tutorial
+
+Table of Contents:
+1. Terminologies
+2. Drawbacks
+3. Big use case
+4. Authorization between microservices
+
+Analogy before
+Service A = Photo printing services
+Service B = Google drive
+Service A wants to access photos from Service B
+
+
+Terminologies
+Entities
+1. Resource
+	> referred to as the protected Resource
+	> sought by the different actors/services in the OAuth space
+	> in the analogy, it will be the photos stored in the Google Drive
+2. Resource Owner
+	> the owner of the resource, the one who has access to the resource right now
+	> it is an entity capable of granting access to a protected resource
+	> in the analogy, it will be the User that have access to photos in Google drive right now
+3. Resource Server
+	> the server hosting the protected resource
+	> in the analogy, it will be the Google drive
+4. Client
+	> an application making protected resource requests on behalf of the resource owner and with its authorization
+	> in the analogy, it is the Photo printing services
+5. Burden of security
+	> task/responsibility of securing the resource
+	> in this case, it will be the person who has the resource, the resource holder/server
+6. Authorization server
+	> the server issuing access tokens to the client
+	> this takes care of authorization of resources
+	> in OAuth process flow, the Resource server is typically coupled with an Authorization server
+	> this server can be separate or combined with the resource server
+	
+	
+In Summary
+User = Resource owner
+Photo printing service = Client
+Google drive = Resource server
+Photos in google drive = Resource
+	
+	
+OAuth Flow 1 - Authorization Code Flow
+ > safest options
+ > you do this if you have services that you can trust
+ > you want maximum security
+ 
+Steps
+1. Resource owner authenticated to the Client, and resource owner wants to use the Resource from Resource server by having the Client get access to it
+2. Client talk to the Authorization server, to get limited access to specific Resources in Resource server
+3. Authorization server talks to the Resource owner to verify and grant access to the Client on specific Resources
+	> this notification includes informations such as
+		a. The Client that ask for the resources
+		b. The Resources they want to access
+		c. Permissions that they need to the Resources (ex: Read, Write, etc)
+4. Resource Owner replies to the Authorization server whether they grant or deny the requested access/permissions to the Resources
+5. If Client is granted access, the Authorization server sends an Authorization Token
+	> these tokens are typically short-lived
+6. Client uses the Authorization token to the Authorization Server get get an Access Token
+7. The Authorization Server verifies if the Auth Token received is authentic or not
+	> the analogy that we can use for the Access Token is the "Room key" when going to a hotel
+8. Client uses the Access Token directly to the Resource Server via API call to gain access and permission to specific resources
+9. Resource server returns the requested Resources to the Client
+
+
+
+OAuth Flow 2 - Implicit Flow
+ > works similarly with Flow 1, but a little bit simplified
+ 
+Steps:
+1. Resource owner authenticated to the Client, and resource owner wants to use the Resource from Resource server by having the Client get access to it
+2. Client talk to the Authorization server, to get limited access to specific Resources in Resource server
+3. Authorization server talks to the Resource owner to verify and grant access to the Client on specific Resources
+	> this notification includes informations such as
+		a. The Client that ask for the resources
+		b. The Resources they want to access
+		c. Permissions that they need to the Resources (ex: Read, Write, etc)
+4. Resource Owner replies to the Authorization server whether they grant or deny the requested access/permissions to the Resources
+5. Authorization Server sends an Access Token directly
+6. Client uses the Access Token directly to the Resource Server via API call to gain access and permission to specific resources
+7. Resource server returns the requested Resources to the Client
+
+
+
+
+Drawbacks
+1. Someone can steal the Access Token from the Clients and impersonate as them
+	> this is very apparent in the Implicit flow, where the way the Access Token is exchanged from Client to Authorization server is not secured
+	> this is solved by the Authorization Code flow, where we need to use an Authorization token in order to get an Access Token
+2. For Implicit flow, it is not as secure as the Authorization Code flow
+	> for this type of flow, we only use this primarily with short-lived access tokens
+	> typically used with JavaScript apps
+	
+	
+
+Big Use Case
+"OAuth for authorization between services"
+
+
+
+Authorization between Microservices
+ > a good application of OAuth
+ 
+ 
+OAuth Flow 3 - Client Credentials Flow
+ > used when the client is well trusted (confidential clients)
+ > example of this are custom application you have made that are deployed in a microservice
+ 
+In this flow: Employee managament microservice system
+Microservice 1 (Frontend) = Client
+Microservice 2 (Bakend API with DB access) = Resource Server
+Auth Server = Authorization Server
+User information = Resource to access
+Payroll information = Restricted information
+ 
+Steps:
+1. Client communicates with the Authorization server
+2. Authorization server replies an Access Token back to the Client
+	> in this flow, the Authorization knows who the Client is
+	> the Access Token will contain the requested access/permissions that the client need (ex: User information)
+3. Client uses the Access token to the Resource Server with the Access Token
+4. Resource Server replies with the Resource requested in Access Token

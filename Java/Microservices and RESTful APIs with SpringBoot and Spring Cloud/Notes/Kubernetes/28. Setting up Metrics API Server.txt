@@ -1,0 +1,48 @@
+28. Setting up Metrics API Server
+
+Metrics Api server
+	> collects resource metrics from Kubelets and exposes them in Kubernetes api
+
+
+Steps on creating Metric Server in K8s
+1. Download the yaml file
+	> https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+2. Edit the following lines inside the yaml
+	> - --kubelet-preferred-address-types=InternalIP
+	> - --kubelet-insecure-tls
+
+
+ containers:
+
+      - name: metrics-server
+
+        image: k8s.gcr.io/metrics-server/metrics-server:v0.3.7
+
+        imagePullPolicy: IfNotPresent
+
+        args:
+
+          - --cert-dir=/tmp
+
+          - --secure-port=4443
+
+          - --kubelet-preferred-address-types=InternalIP
+
+
+          - --kubelet-insecure-tls
+
+
+3. Create namespace "kubernetes-infra"
+	> kubectl create ns kubernetes-infra
+
+
+4. Set current namespace of current Context to the newly created namespace
+	> kubectl config set-context --namespace=kubernetes-infra --current
+
+
+5. Apply the modified yaml file that we downloaded
+	> kubectl create -f components.yaml
+	> use apply command if you already created this
+
+6. Check if kubectl top command works
+	

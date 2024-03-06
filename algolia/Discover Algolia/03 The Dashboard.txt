@@ -1,0 +1,131 @@
+03 The Dashboard
+
+Parts:
+1. Dashboard
+2. Dashboard layout
+3. General dashboard
+4. Indices
+5. Analytics
+6. API keys
+7. Infra
+8. Team
+
+
+Dashboard
+ > used in order to interact with Algolia using UI menu
+ > for developers, it allows for easier configuration and relevance debugging
+ > for everyone, it allows to tweak settings and ranking with no coding skills required
+ > also provides the following:
+	1. Powerful Tool set
+	2. Analytics
+	3. Access control
+	4. Performance and usage graphs
+	
+	
+Dashboard layout
+ > composed of the following parts
+	1. Header
+	2. Side bar
+	3. Content area
+ > in the Side bar, the following items are located:
+	- Dashboard
+	- Indices
+	- Analytics
+	- API Keys
+	- Infra
+	- Team
+ > In the Header, we can see the following:
+	- App hierarchy list
+	- Search bar to search in documentations
+	- Pricing plan
+	- Docs & Support
+	- Account
+ > In the content area, it will be different based on the Side panel item you are in
+
+
+Dashboard tab
+ > displayed by default when accessing the dashboard
+ > here, we have the following panels
+	- Overview
+	- Records & Operations
+	- Performance
+	- Cluster
+	- API status
+	- Alerts
+
+
+Indices
+ > here, we can see informations related to Indexes
+ > we can also do different actions such as create new Index, or configure/manage the current Index
+ > we can see which index to look at, alongside their informations like
+	1. Data size
+	2. Index size
+	3. Avg. record size
+	4. Last Build time
+ > there are also different panels here which are:
+	1. Browse
+		- here, we can browser the documents inside the indices
+		- it also have a search bar where we can simulate searching and observe the live results
+		- we can also see as to why a specific result/hit is ranked based on the ranking information
+	2. Ranking
+		- here, we can specify the following	
+			a. Searchable attributes
+			b. Ranking formula and Custom Ranking
+	3. Synonyms
+	4. Display
+		- here, we can configure the following	
+			a. Faceting, where we can set "facets" to allow for search refinement on textual or numerical attributes
+			b. Display & Pagination
+	5. Replicas
+	6. Logs
+	7. Stats
+	8. UI Demos
+	
+	
+
+Analytics
+ > here, we can get some sense on how the users behaves and interact with our search
+ > all the data displayed in the panel can be extracted via API\
+ > this panel displays the following information:
+	1. Top searches
+	2. Top searches returning N hits
+	3. Searches, Unique IP Addresses, Searches per IP
+	4. Searches by Country
+	
+	
+API Keys
+ > this is where our API credentials are set and accessible
+ > here, we can see the following
+	1. Application ID
+	2. Search-Only API Key
+		- public API key to use in your frontend code
+		- this key is only usable for search queries
+	3. Admin API Key
+		- needs to be kept secret and is used only from the backend
+		- this key is used to create, update, and DELETE your indices,
+		- we can also usethis to manage other API keys
+	4. Monitoring API Key
+		- used to access the Monitoring API
+		
+		
+		
+Infrastructure
+ > this section allows us to monitor the main location from where searches are performed
+ > the farther the group of user is to the server, the more latency will occur, increasing the response time of our search queries
+	- to solve this, we can use DSN or Distributed Search Network
+ > this tab contains the following panels
+	1. DSN - Distributed Search Network
+		- with DSN, it will replicate all of our data our index to different data centers around the globe, making the latency for each uses low
+	2. VAULT
+	
+	
+Team
+ > in this section, we can specify the Team members and their permissions
+ > we can specify the permission of the team member for the following parts of the Algolia	
+	1. Dashboard
+	2. Config
+	3. Search
+	4. Analytics
+	5. Billing
+	6. API keys
+	7. Team

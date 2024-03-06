@@ -1,0 +1,110 @@
+05. Puppet Resources
+
+
+Resources
+	> Resources are one of the key fundamental units of Puppet used to design and build any particular infrastructure or a machine
+	> They are mainly used for modeling and maintaining system configurations
+	> Each Resource describe the desired STATE for some aspect of a system (file, user, package, service, etc)
+	> When Puppet applies a Catalog to the target system, it manages every resource in the catalog, ensuring the actual state MATCHES the desired state.
+
+
+
+When Puppet applies the compiled catalog, it:
+	1. Reads the actual state of the resource on the target system.
+	2. Compares the actual state to the desired state.
+	3. If necessary, changes the system to enforce the desired state.
+	4. Logs any changes made to the resource. These changes appear in Puppet agent's log and in the run report, which is sent to the primary server and forwarded to any specified report processors.
+
+
+
+
+Resource Declaration
+	> adds a Resource to the Catalog and tells Puppet to manage that Resource's state
+	> Each resource must be unique (having unique 'title' for each Resource declaration)
+		- This is to prevent multiple conflicting values from being declared for the same attribute
+	> EX: You can have BOTH a package and a service titled "ntp," but you can only have ONE service titled "ntp." Duplicate titles cause compilation to fail.
+
+
+Resource Declaration Syntax:
+
+<TYPE> { '<TITLE>': 
+	<ATTRIBUTE> => <VALUE>, 
+	}
+
+	> this is composed of the following
+		<TYPE> 		Resource type
+		'<TITLE>'	Resource Parameter / Title
+		<ATTRIBUTE>	Attribute
+		<VALUE>		Value of the said Attribute
+
+Resource Type
+	> each resource is associated with a resource type, which determines the kind of configuration it manages.
+	> Puppet has built-in resource types such as file, service, package, user, etc.
+	> To check for list of Resource types and their details use the command 
+		puppet describe --list
+
+
+Title
+	> A resource's title is a string that uniquely identifies the resource to Puppet. 
+	> Titles must be unique per resource type
+	> In a resource declaration, the title is the identifier after the first curly brace and before the colon. 
+	> For example, in this file resource declaration, the title is /etc/passwd:
+	
+file  { '/etc/passwd':
+  owner => 'root',
+  group => 'root',
+}
+
+
+
+Attributes
+	> Attributes describe the desired state of the resource; each attribute handles some aspect of the resource. 
+		- EX: the file type has a mode attribute that specifies the permissions for the file.
+	> Each resource type has its own set of available attributes
+		- handful of this are CRUCIAL attributes;
+		- a larger number of them are OPTIONAL
+			= for optional attribute, they have default value which can be OVERRIDEN
+	> Declared attribute MUST HAVE value, and these can be of datatype:	
+		- strings
+		- numbers
+		- hashes
+		- arrays
+	> Most resource types contain an "ensure" attribute
+		- This attribute generally manages the most basic state of the resource on the target system, such as
+			= whether a file exists, 
+			= whether a service is running or stopped, or 
+			= whether a package is installed or uninstalled
+
+
+
+Resource Abstraction Layer
+	> In Puppet, Resource Abstraction Layer (RAL) can be considered as the core conceptualized model on which the whole infrastructure and Puppet setup works. 
+	> In RAL, each alphabet has its own significant meaning which is defined as follows.
+
+
+Resource [R]
+	> A resource can be considered as all the resources which are used to model any configuration in Puppet. 
+	> They are basically in-built resources which are by default present in Puppet. 
+	> They can be considered as a set of resources belonging to a pre-defined resource type. 
+	> They are similar to OOP concept in any other programming language wherein the object is an instance of class. 
+	> In Puppet, its resource is an INSTANCE of a resource type.
+
+
+
+Abstraction [A]
+	> Abstraction can be considered as a key feature where the resources are defined independently from the target OS. 
+	> In other words, while writing any manifest file the user need not worry about the target machine or the OS, which is present on that particular machine. 
+	> In abstraction, resources give enough information about what needs to exist on the Puppet agent.
+
+ 	> Puppet will take care of all the functionalities or magic happening behind the scene. 
+	> Regardless of the resources and OS, Puppet will take care of implementing the configuration on the target machine, wherein the user need not worry how Puppet does behind the scenes.
+	> In abstraction, Puppet SEPARATES out the resources from its implementation. This platformspecific configuration exists from providers. We can use multiple subcommands along with its providers.
+
+
+
+Layer [L]
+	> It is possible that one defines an entire machine setup and configuration in terms of collection of resources, and it can be viewed and managed via Puppet’s CLI interface.
+
+Example for User Resource Type
+
+   puppet describe user --providers 

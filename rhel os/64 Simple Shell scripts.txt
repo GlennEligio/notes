@@ -1,0 +1,105 @@
+64 Simple Shell scripts
+
+1.myfirstscript.sh
+	> types "Hello world", then writes it to a log file whose name is the formatted current date
+
+#!/bin/bash
+
+echo "Hello World!" >> myfirstscript-`date +%Y%m%d-%H%M`.log
+
+exit
+
+
+
+
+
+
+2. if - ping-automation.sh
+	> takes a single input, the ip address
+	> pings the ip address
+	> based on output of ping command, we will output either "IP is reachable" or "IP is not reachable"
+
+#!/bin/bash
+
+ping -c 1 $1
+
+if [ "$?" -eq "0" ] ; then
+	echo -e "\n$1 IP is reachable"
+else
+	echo -e "\n$1 IP is not reachable"
+fi
+
+exit
+
+
+
+
+
+
+
+3. For - log-handler.sh
+	> gets all the files in current directory and subdirectories that have .txt extension
+	> for each of them, we will replace the .txt extension to .log extension and save them in the same directory of .txt file
+
+#!/bin/bash
+
+for file in ./*.txt
+do
+	file1=`echo "${file}" | sed s/\.txt$//g`
+	echo $file1
+	echo $file
+	mv "${file}" $file1.log
+done
+
+exit
+
+
+
+
+
+
+
+
+4. While - kafka.sh
+	> read each line in the /home/cengland/kafka.log
+	> for each line, echo it
+
+#!/bin/bash
+
+input="/home/cengland/kafka.log"
+
+while IFS= read -r line
+do
+	echo "$line"
+done < "$input"
+
+exit
+
+
+
+
+
+
+
+
+5. Case - backuptype.sh
+	> check the locale's abbreviated weekday name today (Sun, Mon, etc)
+
+now=$(date +"%a")
+
+case $now in
+	Mon)
+		echo "Full Backup"
+		/home/cengland/fullbackup.sh >
+		;;
+	Tue|Wed|Thu|Fri)
+		echo "Partial Backup"
+		/home/cengland/partbackup.sh
+		;;
+	Sat|Sun)
+		echo "No Backup"
+		;;
+	*) ;;
+esac
+
+exit

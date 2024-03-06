@@ -1,0 +1,104 @@
+08. Pods in K8s
+
+
+Pods
+	> a Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts
+		- from "kubectl explain pod" command
+	> smallest deployable Unit
+	> we can only create a Container in K8s without a Pod
+	> each Pods have a unique IP address
+	> Pods provides a way to group Containers together
+		- we can provide "categorization" to these Container by associating them with Labels
+	> inside a Pod, we can have one or more Containers running inside
+		- these Containers have assigned Ip address to themselves
+	> these Pods can communicate through each others using localhost
+		- "localhost" in this case refers to Pod's localhost
+
+Kubernetes Architecure
+Cluster
+	> Master Node 1,2,3,...
+	> Worker Node 1,2,3,...
+		> Pod 1,2,3,...
+			> Container 1,2,3,...
+
+
+kubectl get pods
+	> used to get the list of pods
+kubectl explain pod
+	> used to see the definition and field of a Pod
+	> by field, it refers to the fields when we 
+kubectl describe pod <pod-name>
+	> used to see the informations about the Pod
+
+Example output of kubectl describe pod 
+Name:         hello-world-rest-api-687d9c7bc7-kj4gw
+Namespace:    default
+Priority:     0
+Node:         docker-desktop/192.168.65.4
+Start Time:   Mon, 04 Apr 2022 21:55:04 +0800
+Labels:       app=hello-world-rest-api
+              pod-template-hash=687d9c7bc7
+Annotations:  <none>
+Status:       Running
+IP:           10.1.0.241
+IPs:
+  IP:           10.1.0.241
+Controlled By:  ReplicaSet/hello-world-rest-api-687d9c7bc7
+Containers:
+  hello-world-rest-api:
+    Container ID:   docker://4724fa37719a7b9c234b000c0962f0d377a4da52da18e109510917d23090fe3f
+    Image:          in28min/hello-world-rest-api:0.0.1.RELEASE
+    Image ID:       docker-pullable://in28min/hello-world-rest-api@sha256:00469c343814aabe56ad1034427f546d43bafaaa11208a1eb0720993743f72be
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Mon, 04 Apr 2022 21:55:13 +0800
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-pllmx (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  kube-api-access-pllmx:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  12m   default-scheduler  Successfully assigned default/hello-world-rest-api-687d9c7bc7-kj4gw to docker-desktop
+  Normal  Pulled     12m   kubelet            Container image "in28min/hello-world-rest-api:0.0.1.RELEASE" already present on machine
+  Normal  Created    12m   kubelet            Created container hello-world-rest-api
+  Normal  Started    12m   kubelet            Started container hello-world-rest-api
+
+
+Informations
+Name
+	> refers to the name of Pod
+Namespace
+	> refers to which namespace the Pod is under
+Node
+	> refers to which node Pod is currently running
+Labels
+	> refers to the labels the Pod have
+	> will be used in the "selector" field of many K8s resources (ReplicaSet, Deployment, Service) in order to apply things in Pods with specific labels
+Ip
+	> refers to Ip assigned to Pod
+Annotations
+	> meta information of the Pod
+	> includes build id, release id, author name, etc
+Status
+	> refers to the Status of Pod (scheduled/running/exited/ etc,)
+ 

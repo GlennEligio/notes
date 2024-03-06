@@ -1,0 +1,11 @@
+27 Exam question
+
+Question: From AWS
+What term best describes the AWS pricing model?
+a. Pay all up front
+b. Pay as you go
+c. Pay all at end
+d. Non of the above
+
+My Answer: B
+Only B make sense since A will be similar to on-prem solution, and C can be similar if you pay for monthly basis, but in most Cloud Provider, all of their services are measured so you're essentially paying all the resources as you go but is only quoted for specific intervals

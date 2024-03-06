@@ -1,0 +1,89 @@
+Spring Framework Overview
+
+www.spring.io
+	> official Spring Website
+
+
+Why Spring?
+	Simplify Java Enterprise Development
+
+
+Goals of Spring
+	> Lightweight development with Java POJOs
+	> Dependency inject to promote loose coupling
+	> Declarative programming with Aspect-Oriented-Programming (AOP)
+	> Minimize boilerplate Java code
+
+
+Core Container
+	> factory for creating beans
+	> manage bean dependencies
+	> can reconfig files for setting properties, independencies
+	> contains the following components
+		1. Beans
+		2. Core
+		3. SpEL 
+			> Spring Expression Language
+			> language that we can use within the config files to refer to other Beans
+		4. Context
+			> Spring container that holds the Beans in memory  
+
+
+AOP Section of Spring Framework
+
+Infrastructure
+	> contains the following component
+		1. AOP	
+			> Aspect Oriented Programming
+			> Add functionality to object declaratively
+				- Logging
+				- Security
+				- Transactions
+				- Instrumentation
+		2. Aspects
+		3. Instrumentation
+			> we can make use of class loader implementation
+			> Java agents to remotely monitor your app with JMX (Java Management Extension)
+		4. Messaging
+
+Data Access Layer / Integration
+	> used for communicating with a database
+		- either a relational database, or a NoSQL database
+	> contains the following
+		1. JDB
+			> Spring provides JDBC Helper classes		
+			> Reduces your JDBC code by 50%
+		2. ORM
+			> Object to Relational Mapping
+			> Integration with Hibernate and JPA 
+		3. Transactions
+			> Add transaction support
+			> Makes heavy use of AOP behind the scene
+		4. OXM
+		5. JMS
+			> Java Message Service
+			> For sending async messages to a Message Broker
+			> Spring provides helper classes for JMS
+
+
+Web Layer
+	> All Web related classes
+	> home of the Spring MVC Framework
+	> can make use of Spring Controllers and Spring View 
+	> contains modules that we can interface with other web technologies like
+		- JSF
+		- Struts
+	> contains the following components:	
+		1. Servlet
+		2. WebSocket
+		3. Web
+		4. Portlet
+
+
+Test Layer
+	> Supports Test-Driven-Development (TDD)
+	> Mock objects and out-of-container testing
+	> contains the following component
+		1. Unit
+		2. Integration
+		3. Mock

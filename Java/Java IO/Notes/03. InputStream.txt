@@ -1,0 +1,96 @@
+03. InputStream
+
+InputStream
+	> abstract class
+	> superclass of all classes representing an input stream of bytes
+	> applications that need to define a subclass of InputStream must always provide a method that returns the next byte of input
+	> used that allows us to take input from some source 
+
+
+int available()
+	> returns an estimate of the number of bytes that can be read (or skipped over) from this input stream without blocking by the next invocation of method for this input stream
+
+void close()
+	> closes this input stream and releases any system resources associated with the stream
+
+void mark(int readlimit)
+	> marks the current position in this input sream
+
+boolean markSupported()
+	> tests if this input stream supports the mark and reset methods
+
+abstract int read()
+	> reads the next byte of data from the input stream
+
+int read (byte[] b)
+	> reads some number of bytes from the input stream and stores them into the buffer array b
+
+int read (byte[] b, int off, int len)
+	> reads up to len bytes of data from the input stream into an array of bytes
+
+byte[] readAllBytes()
+	> reads all remaining bytes from the input stream
+
+int readNBytes (byte[] b, int off, int len)
+	> reads the requested number of bytes from the input stream into the given byte array
+
+void reset()
+	> repositions this stream to the position at the time the mark method was last called on this input stream
+
+long skip (long n)
+	> skips over and discards n bytes of data from this input stream
+
+long transferTo (OutputStream out)
+	> reads all bytes from this input stream and writes the bytes to the given output stream in the order that they are read
+
+
+System.in
+	> create an InputStream instance
+
+
+InputStream usage
+1. Create instance of InputStream
+2. Use any of the method to read the data in InputStream buffer
+	> this includes the read() methods
+	> this will cause the console to wait for an input
+		-> input will be accepted once a NewLine character is sent
+3. We can also use the mark methods to reposition the cursor where the data will be read
+	> we can use reset method to reset the position of cursor
+4. Use close() to close the InputStream
+
+
+FileInputStream
+	> subclass of InputStream
+	> used to read data inside a file
+	> to define the file to be read, pass the filename to the constructor
+		-> ex: new FileInputStream("booty.txt")
+	> NOTE: Files must be located in the root folder
+		-> use System.out.println(new java.io.File("").getAbsolutePath()) to know the location
+
+
+NOTE:
+1. NewLine is counted as one byte in the InputStream
+2. "-1" is the output of the read() if it reaches the end of the InputStream's buffer
+	> ex: End of a text file for FileInputStream
+3. For chunks of data to be read by InputStream
+	> create a byte[] array variable
+	> pass the said variable into one of the read() methods of InputStream that have byte[] as parameter
+
+
+
+read() + forloop VS read(byte[] b)
+	> read(byte[] b) of InputStream subclasses are OPTIMIZED for fetching data in chunks
+
+
+
+Reading characters of an InputStream with UNKNOWN CHARACTER LENGTH
+	> in this cases, the available() method of InputStream will be handy
+
+1. Create the InputStream object
+2. Create a byte[] array
+	> pass the available() method result of the InputStream
+	> available() returns the estimated byte amount in the InputStream
+		-> this means that the byte[] array will be able to hold all bytes inside the InputStream
+3. Read the InputStream using read(byte[] b) method
+	> this will populate the byte[] array we pass with the data inside the InputStream
+4. Use the byte[] to do something

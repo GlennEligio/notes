@@ -1,0 +1,111 @@
+Static keyword and Innerclasses
+
+includes:
+1. Static keyword
+-> uses
+-> syntax
+-> example
+
+package com.glenneligio.innerclass;
+
+public class Main {
+
+      /* breakdown of main method
+            1. public access modifier
+            2. static method
+                -> there can only be one instance of main method in
+                entire application
+            3. void return type
+            4. main as method name
+            5. string dataType as argument
+       */
+
+    //static keyword can be used in method
+    /*
+        Why use static keyword
+        1. you want to have constant field or method
+        Ex: Employees in company have different information, but same company name
+        2. memory friendly
+            --> static field or method will occupy single space regardless on
+                how many instances of object you have
+
+        Downside of static keyword
+        1. You can not call a non-static fields or methods inside a static method
+     */
+    public static void main(String[] args) {
+        TestClass testClass = new TestClass(25, "White");
+        TestClass.name = "Glenn";
+        System.out.println("Name: " + testClass.name);
+
+        TestClass secondTestClass = new TestClass(30, "Black");
+        System.out.println("Name: " + secondTestClass.name);
+        TestClass.printSomething();
+        secondTestClass.printSomething();
+    }
+}
+
+TestClass class
+
+package com.glenneligio.innerclass;
+
+public class TestClass {
+    //static keyword can also be used when declaring variable
+    /*
+        If used in this way, the variable name becomes italic.
+        If the static variable is a field of a class, this variable
+        belong to the object, and not the instance of class.
+        This means that the static variable is the same to all instances
+        of object or class.
+        To set a value of static field variable, the syntax is
+            objectName.staticField = value;
+            objectInstanceName.staticField = value;     ---> this will result in an error
+        To get the value of static field variable, used both of syntax above will work,
+        but will produce same value, and will get warning from IDE.
+     */
+
+    public static String name;
+    public int age;
+    public String skinColor;
+
+    //static field variable is not included in constructor
+    public TestClass(int age, String skinColor) {
+        this.age = age;
+        this.skinColor = skinColor;
+    }
+
+    /*
+        static method have the same concept as static fields
+        1. belong to Object and not to the instance of object
+        can be called using object or objectInstance, but will produce same value
+        ** though if called using instance, will give warning in IDE
+     */
+
+    public static void printSomething(){
+        System.out.println("Printing....");
+    }
+
+    //static field will still be included in getters and setters
+    public static String getName() {
+        return name;
+    }
+
+    public static void setName(String name) {
+        TestClass.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getSkinColor() {
+        return skinColor;
+    }
+
+    public void setSkinColor(String skinColor) {
+        this.skinColor = skinColor;
+    }
+}

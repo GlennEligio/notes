@@ -1,0 +1,250 @@
+30. Prometheus and Spring Boot Actuator for Sending Metrics to Prometheus and Grafana
+
+SOURCE:
+https://tanzu.vmware.com/developer/guides/spring-prometheus/
+
+
+I. Export Metrics for Prometheus from Spring Boot
+II. Adding Custom Metric
+III. Deploying the Application in Kubernetes
+
+
+
+I. Export Metrics for Prometheus from Spring Boot
+
+Dependencies needed
+1. Spring Boot Actuator
+	> exposes endpoints that sends information about the Spring Boot app
+2. Prometheus
+	> exposes additional endpoint in Actuator that outputs information specifically for Prometheus
+	> "/actuator/prometheus"
+	> autoconfigure some @Bean related to prometheus
+
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+
+
+
+Export Metrics for Prometheus from Spring Boot
+1. Add the dependencies
+2. Configure the application.properties
+	> expose health, info, and prometheus endpoints
+	> add tag in the metric of data that we will send
+
+
+spring:
+  application:
+    name: spring-prometheus-demo
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+
+OR
+
+spring.application.name=currency-exchange
+management.endpoints.web.exposure.include= health,metrics,prometheus
+management.metrics.tags.application: ${spring.application.name}
+
+
+
+
+Check the exposed Actuator endpoint
+	> typing "http://ip:port/actuator/" should show all the exposed endpoints
+	> health, metrics, and prometheus should be included
+
+"/actuator" endpoint output
+
+{
+"_links": {
+"self": {
+"href": "http://localhost:8000/actuator",
+"templated": false
+},
+"prometheus": {
+"href": "http://localhost:8000/actuator/prometheus",
+"templated": false
+},
+"health": {
+"href": "http://localhost:8000/actuator/health",
+"templated": false
+},
+"health-path": {
+"href": "http://localhost:8000/actuator/health/{*path}",
+"templated": true
+},
+"metrics-requiredMetricName": {
+"href": "http://localhost:8000/actuator/metrics/{requiredMetricName}",
+"templated": true
+},
+"metrics": {
+"href": "http://localhost:8000/actuator/metrics",
+"templated": false
+}
+}
+}
+
+
+
+II. Adding a Custom Metric
+	> for now, we will use a simple Counter
+	> this Counter will increase each time a specific Endpoint is visited
+1. Add a Counter property in the @RestController class
+2. Inject the MeterRegistry @Bean in @RestController class through Constructor
+3. Inside the Constructor, build the Counter, and registry the data in the MeterRegistry
+	> to test if its working, run the Spring Boot app	
+	> visit the url path of Spring Boot app that calls Counter.increment()
+	> observe the output of "/actuator/prometheus" output
+		- locate the "visit_counter" information and observe it changing on each visit
+		- ex: visit_counter_total{application="currency-exchange",} 5.0
+
+
+EX:
+@RestController
+public class CurrencyExchangeController {
+	
+	private Logger logger = LoggerFactory.getLogger(CurrencyExchangeController.class);
+	
+	private CurrencyExchangeRepository repository;
+
+	private Counter visitCounter;
+	
+	private Environment environment;
+
+	public CurrencyExchangeController(CurrencyExchangeRepository repository, Environment environment, MeterRegistry registry){
+		this.repository = repository;
+		this.environment = environment;
+		visitCounter = Counter.builder("visit_counter")
+				.description("Number of visits to the site")
+				.register(registry);
+	}
+	
+	@GetMapping("/currency-exchange/from/{from}/to/{to}")
+	public CurrencyExchange retrieveExchangeValue(
+			@PathVariable String from,
+			@PathVariable String to) {
+		visitCounter.increment();
+		
+		logger.info("retrieveExchangeValue called with {} to {}", from, to);
+		
+		CurrencyExchange currencyExchange 
+					= repository.findByFromAndTo(from, to);
+		
+		if(currencyExchange ==null) {
+			throw new RuntimeException
+				("Unable to Find data for " + from + " to " + to);
+		}
+		
+		String port = environment.getProperty("local.server.port");
+		
+		//CHANGE-KUBERNETES
+		String host = environment.getProperty("HOSTNAME");
+		String version = "v13";
+		
+		currencyExchange.setEnvironment(port + " " + version + " " + host);
+		
+		return currencyExchange;
+	}
+}
+
+
+III. Deploying the Application in Kubernetes
+1. Create the yaml file for the Spring Boot Application
+	> Deployment and Service resource for creating and exposing the application
+	> ServiceMonitor for monitoring a Service
+
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: currency-exchange
+  name: currency-exchange
+  namespace: default
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: currency-exchange
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: currency-exchange
+    spec:
+      containers:
+      - image: shuntjg/mmv2-currency-exchange-service:0.0.13-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        name: mmv2-currency-exchange-service
+        readinessProbe:
+          httpGet:
+            port: 8000
+            path: /actuator/health/readiness
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            port: 8000
+            path: /actuator/health/liveness
+          periodSeconds: 80
+      restartPolicy: Always
+---
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: currency-exchange
+  name: currency-exchange
+  namespace: default
+spec:
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+    name: currency-exchange-traffic
+  selector:
+    app: currency-exchange
+  sessionAffinity: None
+  type: LoadBalancer
+
+---
+# Service monitor
+# for Prometheus to pull/scrape metrics on this app
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: currency-exchange
+spec:
+  selector:
+    matchLabels:
+      app: currency-exchange
+  endpoints:
+    - port: currency-exchange-traffic
+      path: "/actuator/prometheus"
+
+
+2. Check if Prometheus is scraping/pulling metrics and the new endpoint
+	> visit the Prometheus site
+		- http://localhost:9090
+	> query the custom metric that we added earlier
+		- visit_counter_total
+

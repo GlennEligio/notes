@@ -1,0 +1,44 @@
+52 RHCSA RHEL 8 - Configure superuser access
+
+Superuser
+ > similar to root user, where it have unlimited access to the system, and can make system level changes, unlike the standard users
+
+
+/etc/sudoers
+ > A superuser in Linux is managed via the sudoers file, this is a file that stores the list of the users that can escalate their privileges and what they can escalate it to.
+ > Editing that file can only be done by a privileged user and only using "visudo" if you don’t use that application you can irreparably damage your Linux installation.
+	$ sudo bash
+ 	$ visudo /etc/sudoers
+
+
+/etc/sudoers content syntax
+ > user and group have different syntax
+ > for user
+	User Host = (Runas) Command
+ > for group
+	(percentsign)Group Host = (Runas) Command
+ > ex:
+	root ALL=(ALL) ALL
+		- this means the root user can run ALL command as ANY user in ANY host
+	%wheel ALL=(ALL) ALL
+		- this means that all users in group "wheel" can run any command as any user in all host
+	user2 ALL=(root) /bin/ls, /bin/df -h, /bin/date, /sbin/useradd
+		- this means that "user2" can execute commands ls,df,date, and useradd as root in all host
+		- ex: sudo useradd user5
+
+
+Giving superaccess to a standard user
+1. Add "wheel" as secondary group of the standard user
+	$ usermod -aG wheel user5
+2. Check if you have permissions of the "wheel" group in the standard user5
+	$ su - user1
+		- user1 is another privilege user, so this command can only be done by another privilege user
+
+
+
+Commands
+visudo /etc/sudoers
+ > used to open the sudoers file properly
+ > any commands to use for editing this sudoers file may cause issues with linux
+
+

@@ -1,0 +1,33 @@
+84 S3 Replication Hands On
+
+
+Creating the Source and Destination Buckets
+1. Create two Buckets
+	> name them appropriately
+		- glenneligio-ccp-2022-source-replication
+		- glenneligio-ccp-2022-destination-replication
+	> also, enable versioning on both
+	> you can also host them in different region to demonstrate CRR (Cross Region Replication)
+
+
+Enabling Replication
+1. Go to the Source Bucket
+2. Go to Management Tab > Replication Rules
+3. Create a Replication Rule
+	> name: DemoReplicationRule
+	> status: enabled
+	> rule scope: apply to all objects
+	> destination: the destination bucket earlier
+	> iam role: let S3 create new role
+	> leave other options
+	> Create replication rule
+	> when prompted with replicate existing objects, select No
+		- this feature is outside S3, so you might be charged
+
+
+
+Demonstrate Replication
+1. Upload a file in the Source bucket
+2. Wait for the file to be present as well in the Destination
+3. Check the version IDs of the Object in both Source and Destination
+	> they should be the same

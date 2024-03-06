@@ -1,0 +1,13 @@
+06.07. Utilities - Interactions
+
+VII. Interactions
+1. Text selection
+	> specifies the way in which the content is SELECTED when the user interacts with it
+
+NOTATION
+user-select-{value}
+
+Values
+all
+auto
+none

@@ -1,0 +1,35 @@
+AOP Ordering Aspects
+
+Order of the Advices are UNDEFINED by default.
+	> randomized
+
+
+To Control Order
+I. Refractor: Place Advices in separate Aspects
+II. Control order on Aspects using the @Order annotation
+	> these two will guarantees order of when Aspects are applied
+
+
+
+
+I. Refractor: Place Advices in separate Aspects
+1. Create different @Aspect classes to group up and contain the Advices
+2. Annotate the class with @Order() annotation and pass an Integer
+	> this Integer defines the precedence of the @Aspect class
+		- Lower the number, higher the precedence
+	> this Integer can be POSITIVE or NEGATIVE integer
+
+EX:
+Assuming we have define @Aspect classes with the following @Order
+	- @Order(1)
+	- @Order(2)
+	- @Order(-40)
+	- @Order(6)
+	- @Order(6)
+	- @Order(20)
+
+	> the precedence or execution order will be
+		-40 -> 1 -> 2 -> 6,6 -> 20
+	> the two @Aspect classes with @Order(6) will have undefined order
+		- their order will be randomized
+	 

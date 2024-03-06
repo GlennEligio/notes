@@ -1,0 +1,19 @@
+User service
+	> only have User entity
+	> have its own Db to store accounts
+	> Db will only contain
+		- User
+
+Account service
+	> have Account and User
+	> have its own Db to store user and account
+	> Db will only contain
+		- User
+		- Account
+
+Transaction server
+	> have User, Account, Transaction
+	> have its own Db to store
+		- User
+		- Account
+		- Transaction

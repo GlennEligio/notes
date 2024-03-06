@@ -1,0 +1,92 @@
+13 RHCSA RHEL 8 - List, set, and change standard ugo/rwx permissions
+
+
+           UUUGGGOOO
+[d | - | l]rwxrwxrwx
+
+d, -, or l
+ > d means the items is a directory
+ > - means the items is a file
+ > l means a symbolic link (soft link)
+
+UGO
+ > stands for the target of permissions
+ > U for User, the owner of the file
+ > G for Group, the users that belongs to the same group as owner
+ > O for Others, other users outside the owner's group
+
+RWX permission
+ > stands for the permissions given to the targets
+ > R for read, permission to read a file or contents of a directory
+ > W for write, permission to write or modify contents of a file or directory
+ > X for execute, permission to execute scripts or applications or traverse the said directory
+
+
+Changing permissions to a file
+ > to change permissions to a file, we will need to use the "chmod" command
+ > on chmod command, we will pass two inputs
+	1. three digit which represents the permissions to pass
+	2. file/directory to change permissions
+ > for the three digits, each digit represents the permission assigned to UGO
+	- first digit for U, second for G, third for O
+ 	- each digit is the SUM of the assigned number for RWX permission
+		1 for Read
+		2 for Write
+		4 for Execute
+	- ex: chmod 750 file1 will 
+		-> give rwx to user
+		-> give rx for group
+		-> give no permission to others
+
+
+Changing owner of file/directory
+ > to change owner of file or directory, we will use the command "chown"
+ > ex: sudo chown user1:root file.txt
+
+setuid and setguid bit
+ > Set UID stands for Set User ID, and setguid stands for Set Group ID
+ > present for files which have executable permissions
+ > setuid bit simply indicates that when running the executable, it will set its permissions to that of the user who created it (owner), instead of setting it to the user who launched it
+	- ex: /usr/bin/passwd is user owned by root, and any user executing this command will have permission of the owner (root)
+ > setguid is similar to setuid, typically applied to a directory. When a directory have setguid bit, all files created inside will have the SAME group ownership as the directory's group ownership
+ > to located the setuid, look for an 's' instead of an 'x' in the executable bit of the file permissions
+	- example of this is the /etc/passwd or /bin/passwd executable
+		-> -rwsr-xr-x. 1 root root 33424 Feb  8  2022 /bin/passwd
+ > to add setuid bit to a file, we will need to do the following
+	1. set the ownership of the file to root user and root group
+	2. use chmod to add "s" permission to user
+		- for the setguid, we will add the "s" to G instead of U target
+ > locating and setting setguid is similar to setuid process
+ > main use of this is to provide permission to user to modify/view files/directories that are meant only for ROOT user and group
+
+
+
+Commands
+chmod [01234567][01234567][01234567] FILE
+ > defines the permissions set to a file
+ > takes a two inputs
+	1. three digit, where each digit can range from 0-7
+	2. the file/directory to change permission
+ > ex: chmod 750 file1
+	- U will have rwx (1+2+4 = 7)
+	- G will have r-x (1+0+4 = 5)
+	- O will have 
+
+chmod [ugoa][+ | -][rwxXst] FILE
+ > defines the permissions set to a file
+ > takes four input
+	1. the target, either U,G,O, or A for All
+	2. add or remove permission with + or -
+	3. permission to remove or add with rws
+	4. the file to modify permission
+ > ex: chmod go+rw file.txt
+	- this will add read and write permissions to the group and others
+
+
+chown USER:GROUP FILE
+ > used to change the ownership and group of the file
+ > for changing the group or user to root, we need to use sudo
+ > ex: sudo chown user1:root file.txt
+
+chown --reference=REFFILE FILE
+ > used to change the ownership of a file based on the ownership of the reference file

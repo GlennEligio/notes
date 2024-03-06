@@ -1,0 +1,115 @@
+PROBLEMS
+
+pom.xml file not working properly / importing necessary files
+
+Add this element under <project><properties> elements in pom.xml
+<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+
+
+
+add JAVA_HOME and path in the System Env Vars
+
+path
+	> jdk folder > bin
+JAVA_HOME
+
+
+Updating Eclipse IDE
+Help > Check for Updates
+
+
+
+javax.sql.DataSource
+
+Add these in the maven dependencies
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+
+@Aspect NOT WORKING
+
+Add @EnableAspectJAutoProxy(proxyTargetClass = true) in AppConfig
+
+
+
+port 8080 is already taken
+
+add in application.properties
+	
+	server.port=8090
+
+kill the application that runs on specific port
+
+try this one
+run cmd run as administrator
+type: netstat -ano | findstr 8080
+Enter
+then type: tasskkill (enter the number)
+
+
+
+logging.level.org.springfamework.web: DEBUG
+
+
+<dependency>
+		<groupId>org.apache.tomcat.embed</groupId>
+		<artifactId>tomcat-embed-jasper</artifactId>
+		<scope>runtime</scope>
+		</dependency>
+
+
+ClasSfOUNDEXECPTION IN SpringApplication.run()
+
+project clean tapos update project, hinde ko na muna ni run yung maven build kasi nag eerror
+
+
+
+Not a manager entity JPA
+
+Change @EntityScan parameter from "com.model" to "com.model.*"
+
+
+
+org.hibernate.tool.schema.spi.CommandAcceptanceException: Error executing DDL via JDBC Statement in SpringBoot with h2 and JPA
+> change column names of Entity, some of them may resemble SQL keywords
+
+
+
+
+BeanCreationException: Error creating bean with name 'configurationPropertiesBeans' defined in class path resource
+	> occurs in spring cloud related dependencies
+		- zuul
+		- hystrix
+
+	> add these in the pom.xml
+
+Under <properties>
+
+<spring-cloud.version>2020.0.4</spring-cloud.version>
+
+same level as <dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
+
+
+EUREKA CLIENT DEREGISTERING AND SHUTTING DOWN UNEXPECTEDLY
+	> add spring boot starter web dependency

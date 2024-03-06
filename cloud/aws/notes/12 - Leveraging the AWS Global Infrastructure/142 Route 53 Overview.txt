@@ -1,0 +1,65 @@
+142 Route 53 Overview
+
+Amazon Route 53 Overivew
+ > Route53 is a Managed DNS (Domain Name System)
+ > DNS is a collection of rules and records which helps clients understand how to reach a server through URLs
+ > Similar to a PHONEBOOK
+
+Common Records in AWS
+1. A record (IPv4)
+ 	> links a hostname to an IPv4 address
+	> ex: www.google.com => 12.34.56.78
+2. AAAA record (IPv6)
+	> links a hostname to an IPv6 address
+	> ex: www.google.com => 2001:0db8:85a3:0000:0000:8a2e:0370:7334
+3. CNAME
+  	> links a hostname to another hostname
+	> ex: search.google.com => www.google.com
+4. Alias 
+	> links a hostname to an AWS resource (ex: ELB, CloudFront, S3, RDS, etc...)
+	> ex: example.com => AWS resource
+
+
+
+Route 53 - Diagram for A Record
+1. Web browser sends a DNS Request to Route 53.
+2. The Route53 replies with the IP address of specific DNS Request
+3. Using the DNS information, the Web browser can send the request using the specified hostname to the correct server
+4. Web browser receives response from Application server
+
+
+   DNS Request (myapp.mydomain.com)
+ |--------------------------------------> Route 53
+ |      |--------------------------------
+ |	| Send back IP: 32.45.67.85 
+ |	V (A record: hostname to IP)
+Web browser
+ ^	|
+ |	| HTTP Request IP: 32.45.67.85 
+ |	| Host: myapp.mydomain.com
+ |	|------------------------------->
+ |-------------------------------------- Application Server
+	HTTP Response			  IP: 32.45.67.85
+
+
+
+
+Route 53 Routing Policies
+ > need to know them at a high-level for the Cloud Practitioner Exam
+ 
+1. Simple Routing Policy
+	> no health checks done to the application server
+	> when web browser sends a DNS request, Route 53 will reply with the corresponding IP address
+2. Weighted Routing Policy
+	> used to distribute traffic/load
+	> each Application Server have specified 'weight'
+	> using this 'weight', Route 53 will determine which App Server will the request be redirected to
+3. Latency Routing Policy
+	> used to minimize latency
+	> checks the location of Request and EC2 instances
+	> redirects the request on the closest EC2 instance available
+4. Failover Routing Policy
+ 	> used for Disaster Recovery
+	> in this Policy, a Primary and Failover server exist
+	> Route 53 will do a health check on Primary periodically
+	> when health check failed, it will redirect the request to Failover servers

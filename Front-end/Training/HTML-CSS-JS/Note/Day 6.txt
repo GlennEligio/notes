@@ -1,0 +1,199 @@
+Day 6
+
+React
+	> used to create application
+	> created by facebook
+	> SINGLE PAGE WEBAPP
+
+
+Installation
+
+
+React Folder Structure
+1. App folder name
+	> defined when use command create-react-app <app-name>
+
+Inside App folder name
+1. node_modules
+	> contains all node modules
+2. public
+	> contains all static files used to create the single page React app
+		1. index.html
+			= contains the webpages to show (hence single page application)
+		2. logo images
+		3. manifest.json
+			= contains app packages information, all react modules, project configurations, etc
+3. src
+	> source folder
+
+
+React can be written:
+1. with JSX - Javascrip XML
+2. without JSX
+
+
+Methods of including HTML element in 
+
+
+Features in React
+1. HTML and JS injection using JSX
+	> we can inject HTML elements as values of variables in React JS using JSX
+	> we can also inject JS inside HTML elements
+
+ex:
+const element = <h1>Hello, world!</h1>;
+
+
+Two ways of importing/including HTML elements in a JavaScript
+1. Import function that returns html elements
+2. Import a Class that extends React.Component
+	- class must override the render() from React.Component
+	- render() must return HTML elements
+
+1. Imporing function that returns html elements
+	> the function must
+		- start with UPPERCASE letter
+		- must return HTML elements
+			= the HTML element to return must only have ONE parent element
+EX:
+export default function ProductList() {
+    return <div>
+        <h1>This is Product List functional component</h1>
+    </div>
+}
+
+
+2. Importing React.Component class
+
+React.Component
+	> class of React Framework
+	> used to contain html elements to render	
+	> have method to override called render();
+	> classes that extends to React.Component 
+		- must IMPORT the React from 'react' npm
+		- must OVERRIDE the render();
+		- must start with UPPERCASE letter
+
+render()
+	> method of React.Component class
+	> must return an HTML element to display
+
+
+Syntax:
+CREATING A React.Component
+import React from 'react';
+
+class ExampleClass extends React.Component {
+
+	// logic, typically constructing the element to display
+	const element = <h1>Element</h1>
+
+	render(){
+		return element;
+	}
+}
+
+
+TWO WAYS OF EXPORTING A React.Component
+1. Add export keyword in the Class
+EX:
+import React from 'react';
+
+export default class ExampleClass extends React.Component {
+
+	// logic, typically constructing the element to display
+	const element = <h1>Element</h1>
+
+	render(){
+		return element;
+	}
+}
+
+2. Create an export function to return the Class itself
+
+import React from 'react';
+
+class ExampleClass extends React.Component {
+
+	// logic, typically constructing the element to display
+	const element = <h1>Element</h1>
+
+	render(){
+		return element;
+	}
+}
+
+export ExampleClass;
+
+
+
+
+Importing JavaScript Class/Function
+	> use import keyword at the import section
+SYNTAX:
+import ClassName from "jsfilepath";
+
+EX:
+import AddUpload from "./AddUpload";
+
+
+
+
+State, Props, and Events
+	> these three are typically added in a React.Component
+	> these three represents the Properies/Behavior/State of a React.Component
+
+State
+	> refers to the state of the React.Component
+	> you can modify or change the State of React.Component using Events
+	> to add State in Class<?> extends React.Component class, add it as properties of the Class itself
+		- typically done in the constructor() function
+
+Event
+	> refers to the event that will happen in the React.Component Class
+	> Events are functions inside the Class, and is called in one of the HTML element events (onClick, onHover, onFocus, etc)
+	> to add Event in React.Component Class, add functions inside the Class by
+		- defining Anonymous Function inside the Class
+		- adding a function inside and setting it as Property of the Class itself
+
+Props
+	> defines the properties of the React.Component or Function that returns HTML elements
+	> this is how we will pass the Data that we will display in an element
+		- ex: Data used to fill up the Product Element 
+	>  Like HTML attributes for React.Component
+
+SYNTAX:
+<ClassFunction prop1=value1, prop2=value2>
+
+EX:
+import AddUpload from "./AddUpload";
+
+INSIDE JS file
+<AddUpload itemToUpload=item>
+
+
+
+
+PASSING PROPERTIES AND FETCHING PROPERTIES of React.Component and Functions
+	> to access the properties we passed into a Function or React.Component, we will need to
+		1. add "props" parameter to the Function or React.Component's constructor function
+
+ex:
+export default class Main extends React.Component {
+  constructor(props) {
+
+or 
+
+export default function Product(props)
+
+
+		2. from "props" parameter, fetch the attributes we passed when we used the imported React.Component or function
+
+ex:
+Import usage
+<UserList users={this.state.users} />
+		
+function property fetching	
+            {props.users.map((user, index) => (
+              <User key={index} user={user} />
+            ))}

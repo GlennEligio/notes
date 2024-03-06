@@ -1,0 +1,72 @@
+01. Setting Up Limits Microservice
+
+Limit Service
+	> used for getting the limitation for the number of instances for a given service
+	> this will be a config client, which will fetch the data from a config server
+	> the loadbalancer services will get its instance number data from this service
+
+
+Limits Service dependencies
+1. Spring Web
+2. Srping Boot DevTools
+3. Spring Boot Actuator
+4. Config Client	
+	> client that connects to a Spring Cloud Config Server to fetch the application's configuration
+	> by default, it will need a "spring.config.import" in the application.properties for the Spring Boot app to run
+	> to make the config server optional, give this property a value of "optional:configserver:"
+
+EX:
+	spring.config.import=optional:configserver:
+
+
+Classes and Interface
+
+Annotation
+
+@ConfigurationProperties
+	> added a Class
+	> Annotation for externalized configuration. Add this to a class definition or a @Bean method in a @Configuration class if you want to bind and validate some external Properties (e.g. from a .properties file). 
+	> Binding is either performed by calling setters on the annotated class or, if @ConstructorBinding is in use, by binding to the constructorparameters. 
+	> Note that contrary to @Value, SpEL expressions are not evaluated since propertyvalues are externalized.
+	> using this, we can bind the config props to the properties of the Class
+	> NOTE: We MUST have GETTERS and SETTERS on Class' properties for binding to work
+	> NOTE: Config Properties and Class' properties names MUST MATCH
+
+EX:
+Inside application.properties
+# Configuration
+limits-service.minimum=2
+limits-service.maximum=998
+
+Configuration Class where we will bind the configprops
+@Component
+@ConfigurationProperties("limits-service")
+public class Configuration {
+
+	private int minimum;
+	private int maximum;
+
+
+
+
+Creating Limits Service
+1. Create a Limits class
+	> have two properties
+		- int minimum
+		- int maximum
+1. Create a @RestController
+	> create request mapping
+		
+
+@RestController
+public class LimitsController {
+	
+	@Autowired
+	private Configuration configuration;
+
+	@GetMapping("/limits")
+	public Limits retrieveLimits() {
+		return new Limits(configuration.getMinimum(), configuration.getMaximum());
+//		return new Limits(1,1000);
+	}
+}

@@ -1,0 +1,81 @@
+Agile Software Development
+
+Week 1
+Course Introduction
+01 Welcome and Course Intro
+02 Course Learning Plan
+03 What software development looks like?
+04 Intro to Software Development Models
+
+Agile Values and Principles
+05 Why Agile?
+06 Video: Agile Manifesto: Values
+07 Agile Manifesto: Principles
+08 Video: Agile Manifestor Explained
+09 Agile Values and Principles
+
+Applying Agile Mindset
+10 Benefits and Challenges of Agile
+11 Agile: When to Use and When NOT to!
+12 Using Agile Methods
+13 Applying an Agile Mindset to a Project
+14 Agile Frameworks
+15 Applying an Agile Mindset
+16 Agile Fundamentals
+
+
+Week 2
+User Stories and Requirement Gathering
+17 Gathering Requirements: The agile way
+18 User Stories: The currency of agile development
+19 Characteristics of good user stories
+20 User Stories - Practice Quiz
+21 Generating User Stories
+22 Gathering User Needs - Practice Quiz
+
+Agile Estimation and Planning
+23 Agile Estimation and Planning
+24 Estimation Styles and Process
+25 Agile Estimation - Practice Quiz
+26 Velocity
+27 Release Planning
+28 Release Tracking
+29 Release Planning and Tracking - Practice Quiz
+30 Requirements and Planning - Quiz
+
+
+Week 3
+Scrum Overview
+31 Scrum Overview
+32 Scrum Overview - Practice Quiz
+
+Sprint Planning and Trackig
+33 Sprint Planning
+34 Sprint Tracking
+35 Spring Planning and Tracking - Practice Quiz
+
+Spring Review, Retrospective and Sprint Execution
+36 Sprint Execution and Daily Standups
+37 Sprint Review
+38 Sprint Retrospective
+39 Sprint Review, Retrospective and Execution - Practice Quiz
+40 Scrum 10 questions - Quiz
+
+Mid course assessment
+41 Applying the Agile Mindset and Techniques - Peer graded Assignment
+42 Applying the Agile Mindset and Techniques - Review your Peers
+
+
+Week 4
+XP
+43 XP Overview
+44 XP Values
+45 XP Practices - Part 1
+46 XP Practices - Part 2
+47 XP Process Model
+48 Scrum vs XP - Reading
+49 XP - Quiz
+
+Course Project
+50 Story Mapping - Peer-graded Assignment
+51 Story Mapping - Review your Peers

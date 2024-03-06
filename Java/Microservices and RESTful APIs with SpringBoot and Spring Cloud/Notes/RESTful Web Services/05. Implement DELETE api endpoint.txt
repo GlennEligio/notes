@@ -1,0 +1,38 @@
+IMPLEMENTING DELETE FUNCTION
+
+NOTE: By default, @RestController class's methods will return a ResponseEntitay will status code of 200 OK if nothing is returned
+
+1. Update the Service layer
+2. Update the Controller layer
+
+Service layer
+
+	public User deleteById(int id) {
+		Iterator<User> iterator = users.iterator();
+		
+		while(iterator.hasNext()) {
+			User user = iterator.next();
+			if(user.getId().equals(id)) {
+				users.remove(user);
+				return user;
+			}
+		}
+		return null;
+	}
+
+
+Controller layer
+
+	// input - id of user as path variable
+	// output - 200 OK if user deleted, else 404 NOT FOUND
+	@DeleteMapping(path = "/users/{id}")
+	public void deleteUser(@PathVariable("id") int id) {
+		User user = service.deleteById(id);
+		
+		if(user == null) {
+			throw new UserNotFoundException("id-" + id);
+		}
+		
+		// by default, if no return value, @RestController will create ResponseEntity
+		// with status code of 200 OK
+	}

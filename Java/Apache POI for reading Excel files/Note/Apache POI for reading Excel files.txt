@@ -1,0 +1,201 @@
+Writing/Reading Excel files using Apache POI
+
+Apache POI
+	> Apache POI, a project run by the Apache Software Foundation, and previously a sub-project of the Jakarta Project, provides pure Java libraries for reading and writing files in Microsoft Office formats, such as 
+		- Word, 
+		- PowerPoint and 
+		- Excel.
+	> has Office Open XML (OOXML) support 
+
+
+
+Apache POI Components
+
+POIFS (Poor Obfuscation Implementation File System) 
+	– This component reads and writes Microsoft's OLE 2 Compound document format. 
+	- Since all Microsoft Office files are OLE 2 files, this component is the basic building block of all the other POI elements. 
+	- POIFS can therefore be used to read a wider variety of files, beyond those whose explicit decoders are already written in POI.
+HSSF (Horrible SpreadSheet Format) 
+	– reads and writes Microsoft Excel (XLS) format files. 
+	- It can read files written by Excel 97 onwards; this file format is known as the BIFF 8 format. 
+	- As the Excel file format is complex and contains a number of tricky characteristics, some of the more advanced features cannot be read.
+XSSF (XML SpreadSheet Format) 
+	– reads and writes Office Open XML (XLSX) format files. 
+	- Similar feature set to HSSF, but for Office Open XML files.
+HPSF (Horrible Property Set Format) 
+	– reads "Document Summary" information from Microsoft Office files. 
+	- This is essentially the information that one can see by using the File|Properties menu item within an Office application.
+HWPF (Horrible Word Processor Format) 
+	– aims to read and write Microsoft Word 97 (DOC) format files. 
+	- This component is in initial stages of development.
+XWPF (XML Word Processor Format) 
+	– similar feature set to HWPF, but for Office Open XML files.
+HSLF (Horrible Slide Layout Format) 
+	– a pure Java implementation for Microsoft PowerPoint files. 
+	- This provides the ability to read, create and edit presentations (though some things are easier to do than others)
+HDGF (Horrible DiaGram Format) 
+	– an initial pure Java implementation for Microsoft Visio binary files. It provides an ability to read the low level contents of the files.
+HPBF (Horrible PuBlisher Format) 
+	– a pure Java implementation for Microsoft Publisher files.[8]
+HSMF (Horrible Stupid Mail Format) 
+	– a pure Java implementation for Microsoft Outlook MSG files.[10]
+DDF (Dreadful Drawing Format) 
+	– a package for decoding the Microsoft Office Drawing format.
+
+
+
+Classes related to XSSF
+
+1. XSSFWorkbook
+	> one of many implementation of WorkBook class
+	> represents an OOXML Excel file
+	> High level representation of a SpreadsheetML workbook. 
+	> This is the first object most users will construct whether they are reading or writing a workbook. 
+	> It is also the top level object for creating new sheets/etc.
+
+Constructors includes:
+XSSFWorkbook()		
+	- creates a new empty SpreadsheetML workbook.
+XSSFWorkbook(java.io.File file)
+	- creates a XSSFWorkbook from a given file
+XSSFWorkbook(java.io.InputStream is)
+	- craetes a XSSFWorkbook object, by buffering the whole stream into memory and then opening an OPCPackage object for it. 
+
+
+Methods include
+createSheet(String name)
+	> unique to XSSFWorkbook class
+	> create a XSSF Sheet with a specified name
+write(OutputStream stream)
+	> inherited from Workbook class
+	> used to write the content of the Workbook and a specific OutputStream
+getSheetAt(int sheetnum)
+	> returns a Sheet based on the Sheet content of the said Workbook
+
+
+
+2. XSSFSheet
+	> implementation of Sheet
+	> represents a Sheet in an Excel file 
+	> High level representation of a Excel worksheet.
+	> Sheets are the central structures within a workbook, and are where a user does most of his spreadsheet work. 
+	> The most common type of sheet is the worksheet, which is represented as a grid of cells. 
+	> Worksheet cells can contain text, numbers, dates, and formulas. Cells can also be formatted.
+	> To create an XSSFSheet object, we will need to use the methods of XSSFWorkbook or Workbook 
+		- createSheet() 
+		- getSheetAt(int sheetnum)
+
+Methods:
+createRow(int rownum)
+	> creates a new Row object, based on the index specified
+	> index starts at ZERO (0)
+getRow(int rownum)
+	> fetches the data in a row index, and creates a Row object based on it
+autoSizeColumn(int colnum)
+	> automatically adjust width of column to containing the longest content in the said column
+getPhysicalNumberOfRows()
+	> returns the number of rows in sheet that have AT LEAST ONE CELL not empty
+
+
+3. Row / XSSFRow
+	> High level representation of a row of a spreadsheet.
+	> XSSFRow implemention is for OOXML files
+	> To create a Row object, we will need to use the methods in Sheet which are
+		- createRow(int rownum)
+		- getRow(int rownum)
+
+Methods:
+getPhysicalNumberOfCells()
+	> returns the number of cells in the Row that have values in them
+createCell(int columnIndex)
+	> creates a Cell object in index cellnum of Row
+	> index starts at ZERO
+getCell(int cellnum)
+getCell(int cellnum, Row.MissingCellPolicy policy)
+	> fetches the data in the Cell, and creates a Cell object based on it
+	> we can also define the MissingCellPolicy in case the cell is missing/no value
+getRowNum()
+	> returns the row number of Row
+setRowNum()
+	> sets the row number of Row in a Sheet
+
+
+4. Cell / XSSFCell
+	> High level representation of a cell in a row of a spreadsheet.
+	> Cells can be numeric, formula-based or string-based (text). 
+	> The cell type specifies this. 
+		- String cells cannot contain numbers and 
+		- numeric cells cannot contain strings (at least according to our model). 
+	> Client apps should do the conversions themselves. Formula cells have the formula string, as well as the formula result, which can be numeric or string.
+	> Cells should have their number (0 based) before being added to a row. Only cells that have values should be added.
+	> To create a Cell, we will need to use the methods of Row / XSSFRow, which are
+		- createCell(int columnNum)
+		- getCell(int cellnum)
+
+Methods
+String getRawValue()
+	> returns the raw value of cell in String 
+String getStringCellValue()
+	> returns the String value of the cell
+double getNumericValue()
+	> returns numeric value of the cell
+setCellValue(Object o)
+	> sets the value of the cell specified
+
+
+
+
+READING EXCEL FILE IN SPRING MVC
+1. Fetch the Excel file	
+	> we can receive the Excel file in one of RequestMapping as MultipartFile object 
+		- we will receive the data as @RequestParam
+2. Create the XSSFWorkbook from the MultipartFile
+	> use the Workbook constructor that takes a File input and pass the MultipartFile
+3. Create a Sheet object from the Workbook
+	> use the getSheet() of the Workbook and pass the index of the Sheet you want to use
+4. Iterate through all the rows of the Sheet
+	> Fetch the maximum rows the Sheet have
+	> Create a Row object to each row
+	> Fetch all the data inside the Cell of the Row
+	> From the Cell values, create the Object you want to create (ex: Item object)
+
+
+
+SENDING EXCEL FILE FROM SPRING MVC
+I. Converting List of Objects inside ByteInputArrayStream
+1. Fetch the List of Objects you want to write in Excel file
+	> can be from Database
+2. Create an empty Workbook
+	> use the Constructor with empty parameter
+3. Create an empty Sheet from Workbook
+	> use the createSheet() and pass the index where you want to create it
+4. Iterate through each Object to create a Row and populate it
+	> create variable outside foreach loop to denote the row index
+	> for each Object
+		- create a Row using the row index variable outside the loop
+		- using each of Object's property, populate the cells on the said Row
+		- after populating the Row, increment the row index variable outside the loop
+5. Create a ByteArrayOutputStream object
+6. Using write() method of Workbook, write its content to the ByteArrayOutputStream
+7. Create a ByteArrayInputStream object	
+	> pass the ByteArrayOutputStream.toByteArray() result to the Constructor
+8. Return the ByteArrayInputStream
+
+II. Creating RequestMapping for sending Excel file
+9. In the @RequestMapping, add HttpServletResponse parameter
+10. Set Content type of HttpServletResponse to "application/octet-stream"
+	> denote that content type is a BYTE STREAM
+11. Add a Header with key value of
+	> key: "Content-Disposition"
+	> value: "attachment; filename=bills.xlsx"
+12. Create the ByteInputArrayStream from the earlier (no. 8)
+13. Copy the ByteArrayInputStream to the output stream of HttpServletResponse
+	> we can use IOUtils.copy() method to do this
+	> pass the ByteArrayInputStream as first parameter, and HttpServletResponse.getOutputStream() as second parameter
+	> the Spring MVC will AUTOMATICALLY FLUSH AND CLOSE the outputstream after the RequestMapping method is done
+	
+
+
+
+
+

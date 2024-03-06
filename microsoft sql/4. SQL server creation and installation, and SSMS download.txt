@@ -1,0 +1,47 @@
+Installing SQL Server
+
+1. Install SQL Server Developer Edition
+	> initiate the installation
+	> after the installation has completed successfully, you will be prompty with a screen that contains the following
+		TEXTBOXES
+		a. Connection String
+		b. SQL Server Install Log Folder
+		c. INSTALLATION MEDIA FOLDER
+		d. INSTALLATION RESOURCE FOLDER
+		
+		TEXTVIEWS
+		a. Instance name
+		b. SQL Administrators
+		c. Features Installed
+		d. Version
+		
+		BUTTONS
+		a. Connect Now
+		b. Customize
+		c. Install SSMS
+		d. Close
+
+	> Lets click the CUSTOMIZE. 
+	> When we clicked this, a window will pop up that will show the SQL Server 2019 Setup
+	> Assuming we are in Microsoft Update section, lets click Next. This will put us to the next section which is the Install Rules
+	> Lets just keep pressing Next until we reach the Installation type
+	> In Installation type section, we will choose the "Perform a new installation of SQL Server 2019. Then click next
+	> In Product key, select Developer Edition and click Next
+	> In License Terms, read it and after reading it, accept the terms and click Next
+	> In the Feature Selection, lets add the Database Engine Services and keep the Instance root directory the same.
+	> In the Instance Configuration, lets change the Named Instance into something we want (preferrably all small caps).
+	> In Server Configuration, just click on Next
+	> In the Database Engine Configuration, lets choose the Mixed Mode and specify the password of our System Admin account. (adyaro). Then Click Add Current User. We can see that a User has been added to the SQL Server administrators. After this, click on next.
+	> In Ready to Install, we can see the summary of the Installation, the features we will add, prerequisites, Instance ID, etc. You can go through this and see if you missed something. After checking, click Install.
+	> After the installation has been completed. You can now close the Setup. 
+
+
+Now that we are done creating and installing the SQL Server, we will now connect it to the SQL Server Management Studio or SSMS. In case you dont have SSMS installed in your computer, you can check the SQL Server Installer and you can see the Install SSMS option. It will take you to the website where you can download it. Also you can go to the website yourself by search SSMS download.
+
+Installation of the Microsoft SSMS will be simple. After installting SSMS. 
+
+
+
+
+		
+		

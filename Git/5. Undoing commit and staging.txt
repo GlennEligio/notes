@@ -1,0 +1,196 @@
+Undoing a Git
+
+  
+
+I. Git reset for undoing STAGING
+
+1. Add a change in the README.md of quick-test branch
+	> add this code in line 12
+
+		2. Have fun
+
+
+
+2. Check status using git status
+
+On branch quick-test
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+
+
+
+3. Add the changes we made in README.md to be staged
+	> use git add README.md to add the changes
+
+
+
+4. Check the status again
+
+On branch quick-test
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   README.md
+
+
+
+
+5. Undo the staging we made using the git add. command earlier
+	> to undo the staging that we made, use the command
+
+	FOR MULTIPLE FILES UNSTAGING
+
+		git reset
+
+	FOR SINGLE FILE UNSTAGING
+
+		git reset <file-name>
+
+	> for now, we will do the default git reset command
+
+
+6. Check status of git repo once again
+
+On branch quick-test
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+
+
+
+II. Git reset for undoing COMMIT
+
+7. Stage the changes in README.md once again
+	> use git add README.md
+
+
+8. Commit the changes 
+	> use git commit -m "added install step"
+
+
+9. Check status
+	> use git status
+	> output is
+
+On branch quick-test
+nothing to commit, working tree clean
+
+	> as we can see, theres to staging to be committed
+
+
+
+10. Reset the commit we've made earlier
+	> to undo a commit, use the command
+
+	FOR PREVIOUS COMMIT UNDO
+
+		git reset HEAD
+
+	FOR PREVIOUS nth to the last COMMIT TO UNDO
+
+		git reset HEAD~n
+
+	> HEAD pertains to the last commit we have made in the git branch
+	> for the second option in undoing commit, it will also undo all the commits after the nth commit
+		= EX: if we undo the 3rd to the last commit, it will also undo the 2nd, 1st, and last commit we made
+	> for now, lets use git reset HEAD~1, this will undo the previous commit and the previous commit before that
+	> we should get an output like this
+
+Unstaged changes after reset:
+M       README.md
+
+
+
+
+11. Check status of git branch once again
+	> use git status
+
+On branch quick-test
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+
+
+
+12. Check the difference from initial quick-test state to the quick-test now
+	> use git diff command
+	> we should get an output like this
+
+diff --git a/README.md b/README.md
+index a0ee969..5e7bc36 100644
+--- a/README.md
++++ b/README.md
+@@ -8,4 +8,5 @@ Watch tutorial on Youtube!
+
+ ## Local Development
+
+-1. Open index.html in your browser
+\ No newline at end of file
++1. Open index.html in your browser
++2. Have fun
+\ No newline at end of file
+
+
+
+III. Undo a specific Commit in the local git using Commit unique hash
+
+13. Check the logs of commit we have made in local git repo of our folder
+	> to do this we will use the command
+
+		git log
+
+	> the commit shown in git log are arrange in chronological order, the latest commit at top and oldest commit at bottom
+	> you can use SPACEBAR to navigate the logs
+
+
+
+14. Undo the commits we have made on the commit where we added the world
+	> get the hash of the commit for the added world commit
+	> use the command to undo the specific commit
+
+	FOR UNDOING COMMIT USING HASH
+
+		git reset <commit-hash>
+
+	> in our case, it will be 
+
+		git reset 7a629f1d15d84daf4ebcf7b80cd2255ca83afa5b
+
+	> we should get an output like this
+
+Unstaged changes after reset:
+M       README.md
+M       index.html
+
+
+
+15. Check status of the git
+	> as we can see, the codes that the commits we've reset are STILL there
+	> but these changes are removed in the git's history of commits/changes
+	> so we will still to add them to be staged for a commit
+	> we can see this by using the git status command
+	
+On branch quick-test
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+        modified:   index.html
+
+
+
+IV. Remove all changes made by commits in the local git repo
+	> with these, the changes are not only unstaged BUT ALSO removed in code
+
+16. Undo the code where we updated the readme
+	> get the hash of the commit
+	> use the command to undo the staging and the codes
+
+		git reset --hard <commit-hash>
+
+	> in our case it will be
+
+		git reset --hard cca785e29668e56d91a8c2db92141a147e56cdf9

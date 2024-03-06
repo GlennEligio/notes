@@ -1,0 +1,46 @@
+23. Eureka Client to register Currency Conversion and Currency Exchange MicroService
+
+Eureka Discovery Client
+	> A REST based service for locating services for the purpose of load balancing and failover of middle-tier servers
+	> we can use this to register the Spring App Service to a Eureka Server 
+	> also, with this, we would NOT NEED to use the absolute URLs to call other MicroServices
+		- instead we can use the names other MicroServices used to register to Eureka Naming Server
+		- ex: instead of 
+
+			@FeignClient(name = "currency-exchange", url = "localhost:8000")
+			public interface CurrencyExchangeProxy {
+		
+		- we will use
+
+			@FeignClient(name = "currency-exchange", url = "localhost:8000")
+			public interface CurrencyExchangeProxy {
+
+Dependency
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+
+Properties to define
+
+eureka.client.serviceUrl.defaultZone
+	> defines the magic string fallback value that provides the service URL for any client that does not express a preference (in other words, it is a useful default).
+	> The default application name (that is, the service ID), virtual host, and non-secure port (taken from the Environment) are ${spring.application.name}, ${spring.application.name} and ${server.port}, respectively.
+	> we typically give this the value of 
+		{eureka.server.url}/eureka
+	> ex: http://localhost:8761/eureka
+
+
+
+Usage / Registering a Service to a Naming Server
+1. Add Eureka Discovery Client dependency
+	> in case the Spring Boot app is running, we will need to restart it for the Eureka Client to work
+	> at this point, it will try to find a Eureka Server that is also located in network (e.g. localhost in same machine, 192.168.254.1 for same router, etc)
+2. Define some properties related to Eureka Client
+	> eureka.client.serviceUrl.defaultZone
+		- pass the host url of Eureka Server to register and append "/eureka" or "eureka"
+3. Now, whenever we try to call another MicroService, if we are registered to the same Eureka Naming Server, we can just pass the name of the Service that it used to register
+
+# Eureka properties
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka

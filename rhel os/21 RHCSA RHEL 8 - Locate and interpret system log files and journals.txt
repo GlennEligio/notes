@@ -1,0 +1,73 @@
+21 RHCSA RHEL 8 - Locate and interpret system log files and journals
+
+/var/log
+ > contains most of the log files created by system and applications
+	- ex: /var/audit/audit.log for system logins, or boot.log for booting-related logs
+ > needs administrator privilege
+
+Example logs
+secure
+ > contains logs about security like SSH logins
+audit/audit.log
+ > logs about system logins
+boot.log
+ > logs about boot up like services starting, mounting, etc
+
+
+Creating file to store logs
+1. Create a new directory in "/var/log" directory named "journal"
+	$ mkdir /var/log/journal
+2. Add a new configuration setting in the journald.conf of systemd to limit file size of logs to be saved
+	$ echo "SystemMaxUse=50M" >> /etc/systemd/journald.conf
+3. Check if it is added
+	$ grep SystemMaxUse /etc/systemd/journald.conf
+4. Restart the systemd service
+	$ systemctl restart systemd-journald
+5. Check if a directory with a log file inside is created
+	$ ls -l /var/log/journal
+		> there should be a directory with random string, where a system.journal file sits in
+
+
+NOTE:
+1. Before, we need to install "serviceslog" daemon to log all services on boot process
+
+
+Commands
+systemd
+ > builtin application in RedHat
+ > manage the boot process and provide information about it
+ > ex:
+	$ systemd-analyze
+		- shows information about how long each boot process took (kernel, initrd, userspace)
+	$ systemd-analyze blame
+		- list all services ran in boot process, ordered by how long it took
+
+journalctl
+ > Journalctl is a program for viewing and manipulating the event log, called the journal, of the Linux operating system. 
+ > The journal is a record of system activity that can be used for debugging purposes or to investigate a system crash.
+ > Journalctl enables you to query and display logs from journald, which is the systemd journal
+ > includes
+	- Linux version
+	- Firmware issues
+	- BIOS memory
+	- kernel messages
+ > SYNTAX:
+	journalctl [OPTIONS...] [MATCHES...]
+ > options:
+	-u			For specifying specific service
+	-b			For query logs since LAST BOOT
+	--since=DATE	For querying logs since specific date (ex: --since=today)
+	-f			Follow the logs, outputs the last 10 logs
+ > EX:
+	$ journalctl /sbin/crond
+		> shows all events/logs that corresponds with crond app
+	$ journalctl -u crond.service
+		> shows all events/logs that is related to crond.service
+
+
+crond
+ > daemon to execute scheduled commands
+ > SYNTAX:
+	crond [-c | -h | -i | -n | -p | -P | -s | -m<mailcommand>]
+	crond -x [ext,sch,proc,pars,load,misc,test,bit]
+	crond -V

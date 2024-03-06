@@ -1,0 +1,106 @@
+LocalHost Setup
+
+includes:
+
+Kestrel Web Server
+	> a Development Web Server
+	> typically, when running a webapi, it will create a WebServer based on the applicationUrl item inside the ProjectName json item (in our case, its the HttpsTest item and the applicationUrl item inside it)
+
+
+
+1. Create a webapi
+	> assuming you are in directory you want the webapi to be, create a webapi by typing in terminal
+
+		dotnet new webapi -n <ProjectName>
+
+	> for now we will name it HttpsTest, so
+
+		dotnew new webapi -n HttpsTest
+
+
+2. Open the webapi
+	> code -r HttpsTest
+
+
+
+3. Modify the launchSetttings.json file inside the Properties folder of HttpsTest project
+	> remove the https kestrel webserver inside the applicationUrl item inside the HttpsTest item
+
+INSIDE launchSettings.json
+
+FROM
+
+"applicationUrl": "https://localhost:5001;http://localhost:5000"
+
+TO
+
+"applicationUrl": "http://localhost:5000",
+
+
+
+4. Save the project
+
+
+5. Run the project
+
+
+6. Test the webapi project
+	> since we removed the https server, we will try to call one of its endpoint using http
+	> enter this link into the postman/web browser
+
+		http://localhost:5000/WeatherForecast
+
+
+
+7. Turn off the webapi app
+
+
+8. Add the https server url again in the applicationUrl of HttpsTest item
+
+
+9. Test the application. Build and run
+	> if we already have a self signed certificate for https before, we will not encounter an error here
+	> but if we dont, then we will get an error that says
+
+System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.
+
+	> to solve this, we will need to create a self-signed certificate for https server of Kestrel, to do this, type the following in terminal
+
+		dotnet dev-certs https --trust
+
+	> this will:
+		a. create a self-signed certificate for the https localhost webserver of kestrel
+		b. trust this certificate, and install this certificate in our local machine
+
+
+
+10. Check the localhost self-signed certificate in the Certificate Manager 
+	> search "Manage user certificates" in windows search
+	> Go to the following directory
+		= Certificates - Current User > Trusted Root Certification Authorities > Certificates
+	> we should see our localhost self signed certificate there which have following properties
+		
+		Domain Name: localhost
+		Issuing Authority: localhost
+		Certificate Purpose: Server Authentication
+		Validity: 7/26/2021 to 7/26/2022
+		
+
+
+11. Test the webapi again
+	> if you got an error earlier, this time you should not get it
+	> this time, we will call the webapi using the https kestrel webserver
+
+		https://localhost:5001/WeatherForecast
+
+	> if we run this on a webbrowser, we can see that our connection to this url is secure and certificate is valid
+
+
+
+Drawbacks of Localhost
+	1. Some application doesn't accept localhost as a webserver domain
+	2. They either need a valid ip address or a valid domain name
+
+
+
+		

@@ -1,0 +1,393 @@
+JPA Inheritance Strategies
+
+SOURCE:
+https://thorben-janssen.com/complete-guide-inheritance-strategies-jpa-hibernate/#4_Inheritance_Strategies
+https://www.youtube.com/watch?v=Ci2OUVISxTw&list=PLzS3AYzXBoj9MTlLz7XoKBj1v_QqIdu6L&index=6
+
+
+Classes / Interface / Annotations used
+
+@Inheritance
+	> Class annotation
+	> added in Superclass / Root entity of Class Hierarchy
+	> Specifies the inheritance strategy to be used for an entity classhierarchy. 
+	> It is specified on the entity class that is the root ofthe entity class hierarchy. 
+	> If the Inheritance annotation is not specified or if no inheritance type is specified for an entityclass hierarchy, the SINGLE_TABLE mapping strategy is used. 
+	> we can define a single property of this annotation
+		1. strategy = InheritanceType
+			- specifies which Interitance strategy JPA/Hibernate will use to map concrete entity objects
+			- ex: @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+
+
+InheritanceType
+	> enum
+	> have following values
+		1. SINGLE_TABLE
+			- A single table per class hierarchy
+		2. TABLE_PER_CLASS
+			- A table per concrete entity class.
+		3. JOINED
+			- A strategy in which fields that are specific to a 
+     			- subclass are mapped to a separate table than the fields 
+     			- that are common to the parent class, and a join is 
+     			- performed to instantiate the subclass
+
+
+
+@DiscriminatorColumn
+	> Class annotation
+	> added in Superclass / Root entity of Class Hierarchy
+	> defines the properties of the Discriminator column to be created for SINGLE_TABLE and JOINED inheritance strategy
+	> this Discrimator column 
+		-> determine which Concrete Entity a row of data will be mapped to
+		-> which columns is related to specific Concrete Entity
+	> we can define two properties of these annotation
+		1. name
+			-> takes String input
+			-> defines the name of discriminator column (default is D_TYPE)
+		2. discriminatorType
+			-> takes DiscriminatorType enum value		
+			-> defines the dataType of the discriminator column data (default is String)
+
+
+@DiscriminatorValue
+	> Class annotation
+	> added in any Entity class in Class Hierarchy
+	> defines the value to be used to distinguish which Entity a row of data will be mapped to for SINGLE_TABLE and JOINED inheritance strategy
+	> Properties:
+		1. value
+			-> takes String input
+			-> defines the value in the discriminator column for this specific entity
+			-> ex: @DiscriminatorValue(value = "person_type") will have a "person_type" value in discriminator column for this Entity
+
+
+
+
+
+Inheritance
+	> one of the key concepts of Java OOP, and is used mostly in domain models that is stored in database
+	> JPA provides strategies in order to map these models into a relational database
+
+
+
+Four Inheritance Strategies
+	> JPA and Hibernate supports 4 inheritance strategy which map the domain objects to different table structures
+
+1. Mapped Superclass
+2. Table per Class
+3. Single Table
+4. Joined
+
+
+
+
+Default Behavior of JPA Inheritance
+	> stores all the Superclass and its Subclass/Concrete class into a SINGLE TABLE
+	> creates a new column named "D_TYPE"
+		- this will serve as a discriminatory type used to determine which implementation a row of data will be serialized and made an Object
+	> whenever we add an object in the Class Hierarchy, whatever column the table have that Object doesn't, it will pull a NULL VALUE
+
+
+
+
+1. Mapped Superclass
+	> The mapped superclass strategy is the simplest approach to mapping an inheritance structure to database tables. 
+	> It maps each concrete class to its own table.
+	> Each Concrete class have their own Table
+		-> these Concrete class shared the attribute definition from their Superclass
+	> in this strategy, the Mapped Superclass in NOT AN ENTITY
+	> SETUP:
+		1. Create Classes with inheritance
+		2. Add @MappedSuperclass annotation in Superclass / Root element
+		3. Add @Entity to the Concrete classes
+	> ADVANTAGE:
+		1. Simple
+	> DISADVANTAGE
+		1. Superclass is not an entity, therefore it cant be stored in database
+
+
+
+
+
+2. Single Table
+	> default inheritance strategy if @Inheritance is not defined in superclass
+	> The single table strategy maps all entities of the inheritance structure to the same database table.
+	> SETUP:
+		1. create a Classes (they must have inheritance)
+		2. add a @Inheritance annotation to ROOT entity
+		3. define the strategy property of @Inheritance to InheritanceType.SINGLE_TABLE
+		4. for customization of discriminator column, add @DiscriminatorColumn and define its properties 
+		5. for customization of discriminator column value for each Entity in Class Hierarchy, add @DiscriminatorValue in those Entities
+	> ADVANTAGE:
+		- This approach makes polymorphic queries very efficient
+		- Provides the best performance.
+	> DISADVANTAGE:
+		- Non-normalized
+		- Cant use @NotNull constrained since there may be columns that is null for other rows
+
+EX:
+
+Root Element
+@Entity
+@Table(name="person_table")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="record_type",discriminatorType=DiscriminatorType.STRING)
+@DiscriminatorValue(value = "person_type")
+public class Person {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	
+	@Column(name="name",length=100)
+	private String name;
+	
+	@Column(name="gender",length=10)
+	private String gender;
+}
+
+Child Elements
+@Entity
+@Table(name="person_table")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="record_type",discriminatorType=DiscriminatorType.STRING)
+@DiscriminatorValue(value = "person_type")
+public class Person {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	
+	@Column(name="name",length=100)
+	private String name;
+	
+	@Column(name="gender",length=10)
+	private String gender;
+}
+
+
+@Entity
+@Table(name="student_table")
+@DiscriminatorValue(value = "student_type")
+public class Student extends Person {
+
+	@Column(name="school_name",length=50)
+	private String schoolName;
+	
+	@Column(name="fee")
+	private float fee;
+	
+	@Column(name="section_name",length=50)
+	private String sectionName;
+}
+
+
+
+
+
+3. Table Per Class
+	> similar to the mapped superclass strategy. 
+	> The main difference is that the superclass is now also an Entity
+	> Each Concrete classes still have their own table
+	> SETUP
+		1. Create classes with inheritance
+		2. Add @Entity to each of them
+		3. Add @Inheritance to the Root element or Superclass
+	> NOTE:
+		1. GenerationType.IDENTITY will not work for PrimaryKey in this strategy
+			-> we can use AUTO so that database will take care of PK
+	> ADVANTAGE
+		1. Kinda normalize
+		2. Each Concrete class have their own table
+		3. Allows @NotNull constraint
+	> DISADVATANGE
+		1. Not fully normalized 
+			-> Concrete classes and Superclass have the same column
+	
+
+
+EX:
+Superclass
+@Entity
+@Table(name="person_table")
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+public class Person {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="id")
+	private int id;
+	
+	@Column(name="name",length=100)
+	private String name;
+	
+	@Column(name="gender",length=10)
+	private String gender;
+}
+
+
+Sub classes
+@Entity
+@Table(name="person_table")
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+public class Person {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="id")
+	private int id;
+	
+	@Column(name="name",length=100)
+	private String name;
+	
+	@Column(name="gender",length=10)
+	private String gender;
+}
+
+
+
+@Entity
+@Table(name="student_table")
+public class Student extends Person {
+
+	@Column(name="school_name",length=50)
+	private String schoolName;
+	
+	@Column(name="fee")
+	private float fee;
+
+	@Column(name="section_name",length=50)
+	private String sectionName;
+}
+
+
+
+
+4. JOINED
+	> The joined table approach maps each class of the inheritance hierarchy to its OWN database table. 
+	> This sounds similar to the table per class strategy. 
+		-> But this time, also the abstract superclass Publication gets mapped to a database table. 
+		-> This table contains columns for all shared entity attributes. 
+			=> table here refers to the OUTPUT table when we are doing query
+			=> table in the database is still only the Entities in Class hierarchy
+	> The tables of the subclasses are much smaller than in the table per class strategy. 
+		-> They hold only the columns SPECIFIC for the mapped entity class and a primary key with the same value as the record in the table of the superclass.
+	> SETUP
+		1. Create class hierarchy
+		2. Add @Entity to all Classes
+		3. Add @Inheritance to the Superclass
+			-> pass Inheritance.JOINED in the strategy
+	> NOTE:
+		1. GenerationType.IDENTITY will work
+	> ADVANTAGE:
+		1. Fully normalize database
+	> DISADVANTAGE
+		1. Polymorphic queries are harder to do
+		2. Lots of JOIN commands to use, impacts performance
+
+
+EX:
+
+Superclass
+
+@Entity
+@Table(name="person_table")
+@Inheritance(strategy=InheritanceType.JOINED)
+public class Person {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id")
+	private int id;
+	
+	@Column(name="name",length=100)
+	private String name;
+	
+	@Column(name="gender",length=10)
+	private String gender;
+}
+	
+
+
+
+Sub classes
+
+@Entity
+@Table(name="employee_table")
+public class Employee extends Person{
+	
+	@Column(name="salary",columnDefinition="DECIMAL(7,2)")
+	//Here 7 is the Integer part, and 2 is the decimal part of the number so:
+	//1234567.12,80000.29 are the supported number
+	private Double salary;
+	
+	@Column(name="date_of_joining")
+	private Date doj;
+	
+	@Column(name="dept_name",length=30)
+	private String deptName;
+	
+	@Column(name="bonus",precision=6,scale=3)
+	//Precision: Total number of significant digits
+	//Scale: Number of digits to the right of the decimal point
+	private BigDecimal bonus;
+	
+	@Column(name="email",length=30,unique=true)
+	private String email;
+}	
+
+
+@Entity
+@Table(name="student_table")
+public class Student extends Person {
+
+	@Column(name="school_name",length=50)
+	private String schoolName;
+	
+	@Column(name="fee")
+	private float fee;
+
+	@Column(name="section_name",length=50)
+	private String sectionName;
+}
+	
+
+
+
+Choosing a Strategy
+	> Polymorphic queries most likely means custom queries where you will use JOINS
+
+1. Single Table
+	+ best performance
+	+ can use polymorphic queries and relationships
+	- cant use @NotNull constraint in subclass attributes
+	- increased risk of data inconsistencies dues to reason above
+
+2. Joined
+	+ data consistency
+	+ can use polymorphic queries
+	+ @NotNull is allowed
+	- decreased performance
+
+3. Table per class
+	+ allows @NotNull
+	+ provides data consistency
+	+ provides option for polymorphic queries
+		-> very very VERY complex to do in this strategy to the point of avoiding them
+	
+
+
+
+
+Fetching Data in each Inheritance Strategy
+	> we can use the Superclass as a placeholder of the data we get from queries
+	> we can then do a Downcast to Concrete classes to access the properties/methods unique to those subclasses
+	> the only difference is how queries of Hibernate differs to fetch a data in each strategy
+
+EX:
+Person person = session.get(Person.class, 1);
+Student student = (Student) person;
+student.getSectionName();
+ 

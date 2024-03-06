@@ -1,0 +1,25 @@
+34 Exam question
+
+Question: AWS Certification
+What is the relationship between AWS global infrastructure and the concept of high availability?
+A. AWS is centrally located in one location and is subject to widespread outages if something happens at that one location
+B. AWS regions and Availability Zones allow for redundant architecture to be placed in isolated parts of the world
+C. Each AWS region handles a different AWS services, and you must use all regions to fully use AWS
+D. None of the above
+
+
+Answer: B
+Option B is the what best describes the relationship between the AWS global infrastructure and the concept of high availability. Because of how AWS regions and Availability zone are built in specific parts of the world, or part of the region, we can ensure a redundant architecture all around the world, even in most isolated places.
+
+
+Correct: B
+
+
+Explanations:
+A. AWS is centrally located in one location and is subject to widespread outages if something happens at that one location	
+	> not true since AWS data centers are spread around the world
+B. AWS regions and Availability Zones allow for redundant architecture to be placed in isolated parts of the world
+	> correct
+C. Each AWS region handles a different AWS services, and you must use all regions to fully use AWS
+	> while there are services that is not available in other regions, you dont need to use all regions to fully use all AWS services
+D. None of the above

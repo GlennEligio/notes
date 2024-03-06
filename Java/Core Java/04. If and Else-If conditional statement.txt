@@ -1,0 +1,18 @@
+	int a = 0;
+        int b = 3;
+
+        boolean answer = a>3;
+        // if condition inside parenthesis is TRUE, run the function inside curly braces
+        // if condition is false, skip the functions inside the curly braces
+        // adding exclamation point (!) before boolean variable will make the value of it opposite, TRUE to FALSE and vice versa
+        // you can have as many else if statement as you can
+        // else is a default case when no conditions in ifs and elseifs is TRUE
+        if (a>0){
+            System.out.println("A is Positive");
+        } else if (a<0){
+            System.out.println("A is Negative");
+        }else {
+            System.out.println("A is Zero");
+        }
+
+        System.out.println("Continue....");

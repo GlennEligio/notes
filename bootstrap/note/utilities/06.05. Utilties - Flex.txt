@@ -1,0 +1,138 @@
+06.05. Utilties - Flex
+
+V. Flex
+1. Flex direction
+	> defines the flex direction of the element
+	> will only take effect if element have "d-flex"
+
+NOTATION:
+flex-{breakpoint}-{direction}
+
+Directions
+row
+column
+
+
+	
+2. Justify content
+	> used to change the alignment of the flex items on the main axis 
+		-> x axis if flex-row
+		-> y axis if flex-column
+
+NOTATION:
+justify-content-{breakpoint}-{value}
+
+Values
+start
+end
+center
+between
+around
+evenly
+
+
+
+3. Align items	
+	> similar to CSS Flexbox "align-items"
+	> defines how the flex items is arranged inside flex container
+
+NOTATION:
+align-items-{position}
+align-items-{breakpoint}-{position}
+
+Positions
+start
+end
+center
+baseline
+stretch
+
+
+
+4. Align self
+	> added in a flex item
+	> align a flex-item inside the flex container
+
+NOTATION:
+align-self-{position}
+align-self-{breakpoint}-{position}
+
+Positions
+start
+end
+center
+baseline
+stretch
+
+
+
+5. Flex fill
+	> added in a flex item
+	> makes the flex item occupy ALL THE REMAINING SPACES
+		-> if added in one or more flex item, they will share the remaining space
+
+NOTATION:
+flex-fill
+
+
+6. Flex grow
+	> defines the ability of a flex-item to grow to fill available space
+	> 1 will allow the flex item to grow to occupy the remaining space
+
+NOTATION:
+flex-{breakpoint}-grow-{0|1}
+
+Number
+Any positive non-zero integer
+
+
+
+7. Flex shrink
+	> defines the ability of a flex-item to shrink 
+	> 1 will allow the flex-item to shrink for other flex-item to occupy the given space
+	> 0 will NOT ALLOW the flex-item to shrink
+
+NOTATION
+flex-{breakpoint}-shrink-{0|1}
+
+
+
+
+8. Flex wrap
+	> defines the behavior of the flex-items in case they overflow in flex-container
+	> nowrap will have the flex-items overflow in container
+	> wrap will have the flex-items go to the next flex row/column
+	> wrap will have the flex-items go to the next flex row/column but in reverse
+
+NOTATION:
+flex-{breakpoint}-{wrap|no-wrap|wrap-reverse}
+
+
+
+9. Flex item order
+	> defines the order of flex item arrangement
+	> lowest will appear nearer at START
+
+NOTATION:
+order-{number|first|last}
+
+Number:
+Any integer
+
+
+
+
+10. Align content
+	> added in flex-container
+	> defines how the flex-row/columns will be arranged in the container
+	> WILL NOT HAVE AN EFFECT in a flex-container with single row/column
+
+NOTATION:
+align-content-{breakpoint}-{position}
+
+Positions:
+start
+end
+center
+around
+stretch

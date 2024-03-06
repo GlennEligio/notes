@@ -1,0 +1,382 @@
+Cross Site Request Forgery (CSRF)
+
+Content:
+I. AppSec Tutorials - Cross-Site Request Forgery
+01. Welcome
+02. Introduction
+03. Objectives
+04. Module outline
+
+II. CSRF Overview
+05. Introduction
+06. Impacts of CSRF
+07. Scenario
+08. Vulnerable code
+
+III. CSRF - Example
+09. Introduction
+10. Example
+11. CSRF executed
+12. Remediation
+
+IV. Conclusion
+13. Best practices
+14. Problem identification
+15. Scenario resolution
+
+V. Summary
+16. Module Summary
+
+
+
+
+
+
+
+
+
+
+
+
+I. AppSec Tutorials - Cross-Site Request Forgery
+01. Welcome
+02. Introduction
+
+Cross-Site Request Forgery (CSRF)
+ > type of vulnerability that allows attackers to influence the interaction between a web application and its trusted browser
+ > also known as
+	1. XSRF
+	2. sea surf
+	3. one-click attack
+	4. session-riding
+
+
+
+
+
+
+
+
+
+
+
+03. Objectives
+
+Objectives
+1. Describe the CSRF
+2. Identify sample code that contains the CSRF vulnerability
+3. List methods to eliminate the vulnerability
+
+
+
+
+
+
+
+
+
+04. Module outline
+
+Module outline
+Section 1: CSRF Overview
+Section 2: CSRF - Example
+Section 3: Conclusion
+
+
+
+
+
+
+
+
+
+
+II. CSRF Overview
+05. Introduction
+
+CSRF attacks
+ > with this, an attacker can access various functionalities of a victim's web application account through a CSRF attack
+	- ex: transfer funds, change email, change password, etc
+
+EX:
+// POST request used to transfer money to another account
+POST /transfer HTTP/1.1
+Host: abcxyz.com
+Content-Type: application/x-www-form-urlencoded
+
+account=Person&amount=$1000
+
+
+CSRF steps
+1. Attacker creates a FORGED request
+	> this forged request is sent by an HTML form, typically inside a malicious website sent by the attacker to victims
+
+POST /transfer HTTP/1.1
+Host: abcxyz.com
+Content-Type: application/x-www-form-urlencoded
+account=MaliciousPerson&amount=$1000
+
+2. The attacker embeds the forged request into an HTML form, as shown here
+	> the form that will send the forged request is typically submitted AUTOMATICALLY as soon as the malicious site loads using the "onload" eventListener of the <body>
+		- in the onload, it will fetch the form that contains the forged request
+		- it will then call the submit() event
+	> the form typically includes the data of forged request using input with type "hidden"
+
+<body onload="document.forms[0].submit()">
+  <h1>You won</h1>
+  <form action="http://abcxyz.com/transfer" method="post">
+    <input type="hidden" name="account" value="Malicious"/>
+    <input type="hidden" name="amount" value="$1000"/>
+    <input type="submit" value="Click to collect your prize!"/>
+</body>
+
+
+3. Attacker sends the malicious hyperlink to the victim's email
+
+4. Victim clicks on the malicious hyperlink
+
+5. If the victim is logged in on the vulnerable web application, the forged request is sent to the web application
+
+6. The forged request gets executed
+
+
+
+
+
+
+
+
+
+
+
+06. Impacts of CSRF
+
+Impacts of CSRF attack
+ > the general impacts of CSRF attack is the compromise of
+	1. Confidentiality
+	2. Integrity
+	3. Availability
+	4. Non-repudiation
+	5. Access control
+ > the impact of a CSRF attack also depends upon the PRIVILEGES that the victim is entitled to, on the target web application
+	- for e-commerce site, an attacker can use CSRF to add items to the shopping basket or change the delivery
+	- for financial transactions, an attacker can use CSRF to perform financial transactions for their own benefit
+	- if victim is an administrative account, CSRF can empower the attacker to perform administractive functions
+
+
+
+
+
+
+
+
+
+
+07. Scenario
+
+Scenario
+ > John and his team manage the online learning management application at Technologies inc.
+ 	- this allows anyone to enroll and follow short courses online
+ > One of the application features allows users to update their profiles while they are logged into the application
+ > Recently, some users complained about seeing unkown email address and names being set in their profiles
+	- the users think their accounts might have been accessed by a malicious attacker
+
+
+
+
+
+
+
+
+
+08. Vulnerable code
+
+Vulnerable code
+<form asp-action="SaveProfile" asp-antiforgery="false">
+  <div class="form-group">
+    <label for="name">Enter your name</label>
+    <input type="text" class="form-control" asp-for="Name" id="name"/>
+  </div>
+  <div class="form-group">
+    <label for="email">Enter your email</label>
+    <input type="text" class="form-control" asp-for="Email" id="email"/>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+[HttpPost]
+public IActionResult SaveProfile(StudentProfile model)
+{
+  // do something with the model
+  return View();
+}
+
+
+
+
+
+
+
+
+
+
+
+III. CSRF - Example
+09. Introduction
+10. Example
+
+Example of CSRF attack
+ > the "abc" online banking website allows users to perform online fund transactions
+ > When a user successfully logs into the website, the server authenticates by issuing a valid response
+	- the response includes an AUTHENTICATION COOKIE, which creates risk for abc online banking
+ > because all cookies are included in the HTTP request, including the valid authentication cookies, users are at risk of CSRF
+ > with this feature, 
+	1. a user can visit a malicious website, while being logged into the banking website
+	2. the malicious website has the HTML form which will be used to send forged request
+		- this request will just use the AUTHENTICATION COOKIE to appear valid
+
+
+
+
+
+
+
+
+11. CSRF executed
+
+
+CSRF executed
+ > when user clicks the Submit button on the malicious website, a cross-site request is sent to the abc online banking website
+ > if the user is logged in before, then the request AUTOMATICALLY INCLUDES the authentication cookie for the request domain
+ > the abc online banking website then trust that the request is being performed by the authenticated user
+	- this allows the attacker to perform any action that the valid user is allowed to perform
+ > and that is how forged fund transfers can be executed
+
+
+
+
+
+
+
+CSRF executed
+12. Remediation
+
+Remediation
+1. Build custom token generation systems
+2. Use built-in synchronizer token defense systems
+	> for .NET framework, the action methods handled by the URL can add/turn on the anti-forgery validation by using the attribute ValidateAntiForgeryToken
+3. Use external components
+
+
+Framework and the External Components for CSRF remediation
+Java		OWAS CSRF Guard, Spring Security
+PHP, Apache	CSRFProtector Project
+Angular JS	Cross-Site Request Forgery Protection
+
+
+
+
+
+
+
+
+
+
+IV. Conclusion
+13. Best practices
+
+Best practices suggested by OWASP
+1. Use token
+2. Verify origin with standard headers
+3. Use SameSite cookie attribute
+4, Use double submit cookie
+
+
+Use token
+ > CSRF token use is the most recommended method to prevent CSRF attacks
+	- minimize attacker ability to forge malicious requests
+ > to implement token-based mitigation, maintain state in the server, or use stateless request
+	- synchronizer token pattern stores the token in the session
+	- encryption-based token pattern does not store the token on the server
+
+
+Verify origin with standard headers
+ > steps to verify origin with standard headers:
+	1. check if source origin and target origin matches
+		- if it match, accept the request
+		- if it does not match, reject the request
+
+
+Use SameSite cookie attribute
+ > SameSite cookie attribute helps the browser decied whether to send cookies along with cross-site requests
+ > possible values for SameSite cookies
+	1. None 	- The browser will send cookies with both cross-site and same-site requests
+	2. Strict 	- The browser will only send cookies for same-site requests
+	3. Lax 		- Cookies will be withhelp on cross-site request. However, cookies will be sent when a user navigates to the URL from an external site.
+			- typically used for calls to load images or frames	
+ > Use SameSite cookie attribute for session cookies
+
+
+Use double submit cookie
+ > technique where a random value is sent in BOTH a cookie and a request parameter
+ > the values are then matched at the server-side
+	- if values match, request is allowed
+	- if values DOES NOT match, request is blocked
+
+
+
+
+
+
+
+
+
+
+
+14. Problem identification
+
+Problem identification
+ > John's team discovered that the code used for user profile updates was vulnerable to CSRF attacks.
+ > They think that a CSRF attack was causing the user profiles to be altered because the anti-forgery tokens in the code were DISABLED
+
+
+
+
+
+
+
+
+
+
+15. Scenario resolution
+
+Scenario resolution
+ > John's team removed the "antiforgery" attribute
+	- by default, when this attribute is NOT EXPLICITLY defined, it will be added and be set to TRUE
+ > They also added the ValidateAntiForgeryToken to the server endpoint that receives the form's POST request
+	- this is to ensure that the generated token is not altered and is return to the server to be validated
+
+
+
+
+
+
+
+
+
+
+
+V. Summary
+16. Module Summary
+
+Module Summary
+1. CSRF attack allows an attacker to force victim users to carry out actions on the attacker's behalf
+2. CSRF attacks allow an attacker to access a functionality in a vulnerable web application via the victim's already authenticated browser
+3. CSRF attacks can compromise the confidentiality, integrity, availability, non-repudiation, and access control of the target web application
+4. In order to prevent CSRF attacks
+	> Use CSRF
+	> Verify origin with standard headers
+	> Use SameSite cookie attribute
+	> Use double submit cookies
+
+

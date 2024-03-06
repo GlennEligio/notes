@@ -1,0 +1,20 @@
+20. useNavigate hook
+
+useNavigate hook
+	> function in 'react-router-dom'
+	> hook used to navigate use to redirect request to different route
+	> replacement to the useHistory hook in react router v6
+	> similar to push(url path) of useHistory hook
+
+
+Usage:
+1. Create variable and assign result of useNavigate hook
+	> this variable is a function variable
+
+const navigate = useNavigate()
+
+
+2. Call the function variable and pass the url path to redirect request to
+	> similar to push() of history DOM
+
+navigate("/home") 

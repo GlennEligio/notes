@@ -1,0 +1,38 @@
+24. Load Balancing with Eureka, Feign and Spring Cloud LoadBalancer
+
+Spring Cloud Starter LoadBalancer
+	> used to do client-side loadbalancing
+	> included in the Spring Cloud Starter Netflix Eureka Client by default	
+
+	
+How LoadBalancing works in Eureka Client
+	> first, the Service Invoker will send a "Service Name" to the Eureka Naming Server
+	> then, the Eureka Naming server will find a Service instance URL that corresponds to the Service Name it received
+		- note that there can be TWO OR MORE Service that corresponds to a single Service Name
+		- the Eureka Naming server will choose an AVAILABLE Service instance at that moment of time
+	> after choosing a Service instance URL, it will send it back to the Service Caller/Invoker
+	> the Service caller will then use the Service instance URL it receive to call the Service it want to invoke
+	
+
+Using FeignClient for LoadBalancing
+1. In @FeignClient, pass the Service name we want to call
+	> earlier, we also passed the absolute URL of the Service
+	> but now, since we have Eureka Naming Server, it will be the one who will designate the URl for us to call
+
+EX:
+
+@FeignClient(name = "currency-exchange")
+public interface CurrencyExchangeProxy {
+
+
+
+Demonstrating LoadBalancing
+1. Create new configuration of Service we want to LoadBalance
+	> we will at least TWO instance of same Service to see the LoadBalancing in action
+	> these two configuration of Service MUST HAVE DIFFERENT server port to listen
+		- to do this, add "-Dserver.port=xxxx" in the var
+2. Configure the Service so that it will also return the Server port it is listening to
+	> to fetch the Server port, use the Environment object
+	> autowire this Environment object and call the getProperty()
+		- pass "local.server.port" to the method call
+	> add the result to the response of API endpoint to test

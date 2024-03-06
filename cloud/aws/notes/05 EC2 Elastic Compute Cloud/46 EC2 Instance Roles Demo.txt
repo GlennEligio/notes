@@ -1,0 +1,37 @@
+46 EC2 Instance Roles Demo
+
+
+EC2 Instance Roles
+ > used to provide permission to the AWS CLI installed inside the EC2
+ > by default, AWS CLI in installed in the EC2 instance and is connected to the AWS of the IAM user that created it and have NO EC2 Instance Role attached to it
+ > with this, it can access all the resources of the AWS, assumming that it has necessary permission to do so
+
+
+
+Creating IAM Role
+1. Go to IAM dashboard > Access Management > Roles
+2. Create a Role, and assign it a Policy of IAMReadOnlyAccess
+
+
+Assigning IAM Role to an EC2 instance
+1. Go to EC2 Dashboard >  Instances 
+2. Select the instance you want the IAM role to attach
+3. Click "Actions" > Security > Modify IAM Role
+4. Select the IAM role created earlier
+5. Update IAM Role
+6. Connect to the EC2 instance through SSH
+7. Execute "aws iam list-users"
+	> there should be output
+
+
+Checking IAM Role removal effect
+8. Remove the IAM Role assigned earlier
+9. Execute the aws iam list-users command again
+	> there should be no output now
+
+
+NOTES:
+1. NEVER enter your AWS Secret Access keys inside the EC2 instance
+	> by default, EC2 instance have AWS CLI pre-installed
+	> but we should never configure it
+2. Instead, use IAM Roles to provide permissions to teh AWS CLI inside EC2 instance

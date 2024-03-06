@@ -1,0 +1,398 @@
+Java Collections Interview Questions and Answers
+
+
+01 Why do we need Collections in Java?
+
+ANSWER:
+ > Arrays are not dynamic 
+	- size cannot be modified once array of a particular size is declared
+	- to add a new element to the array, a new array has to be created with bigger size and all the elements from the old array is copied to new array
+ > Collections are used in situation where data is dynamic
+	- Collection allow add, deleting and host of other operations to be done to an element.
+	- There are number of Collections in Java allowing to choose the right Collection for the right context
+
+
+
+
+
+02 What are the important interfaces in the Collection Hierarchy?
+
+ANSWER
+1. Collection
+
+interface Collection<E> extends Iterable<E> {}
+
+
+2. Set
+ > unique elements only - does not allow duplication
+ > if obj1.equals(obj2), then only one of them can be in the Set
+
+interface Set<E> extends Collection<E> {}
+
+
+3. List
+ > cares about which position each object is in
+ > elements can be added in by specifying postion - where it should be added
+ > if element is added without specifying position - it is added at the end
+
+interface List<E> extends Collection<E> {}
+
+
+4. Queue
+ > Arranged in order of processing 
+	- ex: A to-do list for example
+ > Queue interface extends Collection. So it supports all Collection methods
+
+interface Queue<E> extends Collection<E> {}
+
+
+5. Map
+ > Key - Value Pair
+ 	- ex: {["key1": value1], ["key2": value2]}
+ > Key acts as the key identifier
+
+interface Map<K,V> {}
+
+
+
+
+
+
+
+03 What are the important methods that are declared in the Collection Interface
+
+ANSWER:
+ > add and remove, 
+ > size, isEmpty, clear, 
+ > contains and containsAll, 
+ > addAll, removeAll, and retainAll
+
+inteface Collection <E> extends Iterable<E> {
+  boolean add(E paramE);
+  boolean remove(E paramE);
+  int size();
+  boolean isEmpty();
+  void clear();
+  boolean contains(Object paramObject);
+  boolean containsAll(Collection<?> paramCollection);
+  boolean addAll(Collection<? extends E> paramCollection);
+  boolean removeAll(Collection<?> paramCollection);
+  boolean retainAll(Collection<?> paramCollection);
+  Iterator<E> iterator();
+  // A NUMBER OF OTHER METHODS AS WELL...
+}
+
+
+
+
+
+
+04 Can you explain briefly about the List interface?
+
+ANSWER:
+ > List interface extends Collection interface
+	- this means List inherits all methods of Collection
+ > List interface allows operation SPECIFYING the poistion of the element in the Collection
+ > Any implementation of the List interface would maintain the INSERTION ORDER
+ > When a new element is inserted without specifying a position, it is inserted at the end of the list of elements
+ > TLDR: In List, Position is important and Insertion Order is maintained
+ 
+interface List<E> extends Collection<E> {
+  boolean addAll(int startIndex, Collection<? extends E> collection);
+  E get(int index);
+  E set(int index, E paramE);
+  void add(int index, E paramE);
+  E remove(int index);
+  int indexOf(Object paramObject);
+  int lastIndexOf(Object paramObject);
+  ListIterator<E> listIterator();
+  ListIterator<E> listIterator(int startIndex);
+  List<E> subList(int startIndex, int endIndex);
+}
+
+Implementation of List includes
+1. ArrayList, implementas List<E> and RandomAccess
+	> implements RandomAccess, a marker interface, meaning they support fast - almost constant time - access
+	> insertion and deletion are slower compared to LinkedList
+2. Vector, implements List<E> and RandomAccess
+	> Thread Safe - Synchronized methods (most methods contains "synchronized" modifier)
+3. LinkedList, implements List<E>, Queue
+ 	> elements are doubly linked - forward and backward - to one another
+ 	> ideal choice to implement Stack or Queue
+	> Iteration is slower than ArrayList
+ 	> Fast Insertion and Deletion
+ 	> Implements Queue interface also, so it have methods like peek(), poll(), and remove()
+
+
+
+
+
+
+05 Set Interface
+
+Set
+ > extends to Collection
+ > unique elements, no duplication allowed
+ > extensions include
+	- SortedSet
+	- NavigableSet, extends to SortedSet
+ > implementatinos include
+	- HashSet
+	- LinkedHashSet
+	- TreeSet
+
+SortedSet
+ > implementation of SortedSet maintains its elements in a SORTED ORDER
+ > Set interface does not guarantee sorted
+
+interface SortedSet<E> extends Set<E> {
+  SortedSet<E> subSet(E fromElement, E toElement);
+  SortedSet<E> headSet(E toElement);
+  SortedSet<E> tailSet(E fromElement);
+  E first();
+  E last();
+}
+
+
+NavigableSet
+ > extended to SortedSet with navigation methods reporting closes matches for given search targets
+ > Methods lower, floor, ceiling, and higher return elements respectively less than, less than or equal, greater than or equal, and greater than a given element, returning null if there is no such element
+
+interface NavigableSet<E> extends SortedSet<E> {
+  E lower(E e);
+  E floor(E e);
+  E ceiling(E e);
+  E higher(E e);
+  E pollFirst();
+  E pollLast();
+}
+
+HashSet, implements Set
+ > unordered, unsorted - iterates in random order
+ > uses hashCode() to ensure uniqueness
+ > ex:
+	- Order of Insertion: A,X,B
+	- Possible Order of Storing: X,A,B 
+
+LinkedHashSet, implements Set
+ > ordered - iterates in order of insertion
+ > unsorted
+ > uses hashCode as well
+ > ex:
+	- Order of Insertion: A,X,B
+  	- Order of Storing: A,X,B
+
+TreeSet, implements NavigableSet
+ > sorted - natural order (ex: 3,5,7)
+ > implements NavigableSet
+ > ex:
+	Order of Insertion: A,C,B
+	Order of Storing: A,B,C
+
+
+
+
+
+
+06 Map
+
+Map
+ > composed of list of Key-Value pairs
+ > Key will act as the unique identifier on this Key-value pairs
+	- means it must be unique 
+ > ex:
+	{["key1", value1], ["key2", value2], ["key3", value3]}
+ > extensions include
+	- SortedMap
+	- NavigableMap, extends SortedMap
+ > implementations include
+	- HashMap
+	- Hashtable
+	- LinkedHashMap
+
+interface Map<K, V> {
+  int size();
+  boolean isEmpty();
+  boolean containsKey(Object paramObject);
+  boolean containsValue(Object paramObject);
+  V get(Object key);
+  V put(K key, V value);
+  V remove(Object key);
+  void putAll(Map<? extends K, ? extends V> paramMap);
+  void clear();
+  Set<K> keySet();
+  Collection<V> values();
+  Set<Entry<K, V>> entrySet();
+  boolean equals(Object paramObject);
+  int hashCode();
+  
+  public static abstract interface Entry<K,V> {
+    K getKey();
+    V getValue();
+    V setValue(V paramV);
+    boolean equals(Object paramObject);
+    int hashCode();
+  }
+}
+
+
+SortedMap, extends Map
+ > a Map that orders based on the Keys. Comparator can be provided at map creation time
+ > similar to SortedSet in terms of new methods, but now it refers to the Keys 
+
+NavigableMap, extends SortedMap
+ > a SortedMap extended with navigation methods reporting closest matches for given search key
+
+
+HashMap, implements Map
+ > unsorted, unordered
+ > Key's hashCode() is used to ensure uniqueness in Key
+
+HashTable, implements Map
+ > Synchronized - Thread safe - version of Hashmap
+ > unsorted, unordered
+ > uses hashCode()
+ > HashMap allows a key with null value. Hashtable doesn't
+
+LinkedHashMap, implements Map
+ > insertion order is maintained (optionally can maintain access order as well)
+ > slower insertion and deletion
+ > faster iteration
+
+TreeMap, implements NavigableMap
+ > sorted order is maintained (through Keys, in natural order)
+ > implements NavigableMap
+ 
+
+
+
+07 Queue
+
+Queue
+ > Arranged in order of processing (ex: A to-do list for example)
+ > Queue interface extends Collection. So, it supports all Collection Methods
+ > extensions include
+	- Deque
+	- BlockingQueue
+ > implementations include
+	- PriorityQueue
+ 	- ArrayDeque	
+	- ArrayBlockingQueue
+	- LinkedBlockingQueue
+
+interface Queue<E> extends Collection<E> {
+  // inserts elements into this queue
+  // throws exception in case of failure
+  boolean add(E paramE); 
+
+  // inserts elements into this queue
+  // returns false in case of failure
+  boolean offer(E paramE);
+
+  // Retrieves and removes the head of the queue
+  // throws Exception if Queue is empty
+  E remove();
+
+  // Retrieves and removes the head of this queue
+  // returns null if queue is empty
+  E poll();
+  
+  E element();
+  
+  E peek();
+}
+
+
+Deque
+ > a linear collection that supports element insertion and removal at both ends
+
+interface Deque<E> extends Queue<E> {
+  void addFirst(E e);
+  void addLast(E e);
+  boolean offerFirst(E e);
+  boolean offerLast(E e);
+  E removeFirst();
+  E removeLast();
+  E pollFirst();
+  E pollLast(0;
+  E getFirst();
+  E getLast();
+  E peekFirst();
+  E peekLast();
+  boolean removeFirstOccurrence(Object o);
+  boolean removeLastOccurrence(Object o);
+} 
+
+BlockingQueue, extends Queue
+ > a queue that additionally supports operations that wait for the queue to be become non-empty when retrieving an element, and wait for space to become available in the queue when storing an element
+ 
+interface BlockingQueue<E> extends Queue<E> {
+	//Same as in Queue Interface
+	//Inserts the specified element into queue IMMEDIATELY 
+	//Throws exception in case of failure	
+	boolean add(E e);
+
+	//Same as in Queue Interface
+	//Inserts the specified element into queue IMMEDIATELY 
+	//Returns false in case of failure	
+	boolean offer(E e); //Same as in Queue Interface
+
+	//Inserts the specified element into this queue, waiting 
+	//if necessary for space to become available.
+	void put(E e) throws InterruptedException;
+
+	//waiting up to the specified wait time
+	boolean offer(E e, long timeout, TimeUnit unit) throws InterruptedException;
+
+	//waits until element becomes available
+	E take() throws InterruptedException;
+
+	//waits for specified time and returns null if time expires
+	E poll(long timeout, TimeUnit unit) throws InterruptedException;
+
+	int remainingCapacity();
+
+	boolean remove(Object o);
+
+	public boolean contains(Object o);
+
+	int drainTo(Collection<? super E> c);
+
+	int drainTo(Collection<? super E> c, int maxElements);
+}
+
+
+PriorityQueue, implements Queue
+ > elements of the priority queue are ordered according to their natural order
+ > sorted - natural order
+ > smaller number have higher priority
+
+ArrayDeque, implements Deque
+ > Resizable-array implementation of the Deque interface. Array deques have no capacity restrictions
+
+ArrayBlockingQueue, implements BlockingQueue
+ > Resizable-array implementation of the BlockingQueue interface. ArrayBlockingQueues have no capacity restrictions
+ > uses Array internally, optionally-bounded
+
+LinkedBlockingQueue
+ > uses Linked List - optionally-bounded	
+ > Linked queues typically have higher throughput than array-based queues but
+ > less predictable performance in most concurrent applications.
+
+
+
+
+
+
+09 Static methods present in the Collections
+
+Static methods
+static int binarySearch(List, key)
+ > can be used only on sorted list
+static int binarySearch(List, key, Comparator)
+static void reserve(List)
+ > reverse the order of elements in a List
+static Comparator reverseOrder()
+ > return a Comparator that sorts the reverse of the collection current sort sequence
+static void sort(List)
+static void sort(List, Comparator)

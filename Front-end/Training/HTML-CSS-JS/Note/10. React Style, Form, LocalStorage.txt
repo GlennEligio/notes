@@ -1,0 +1,61 @@
+10. React Style, Form, LocalStorage
+
+Day 7
+
+includes
+Bootstrap inside React
+Font awesome library inside React
+
+
+React Style
+	> to add CSS style inside the ReactJS HTML elements, we can either
+		1. add the style inline of HTML element inside JS file
+			- add "style" attribute and pass the CSS properties inside it
+		2. define a variable or const and define the CSS properties inside
+			- we can then usethis as value of the "style" attribute
+		3. create a CSS file externally and import it inside a ReactJS file
+			- we can import the file in import section
+			- ex: import "./style.css"
+			
+
+
+React Form
+	> to add forms in the ReactJS, we will need to
+		1. create a <form> inside the ReactJS file
+			- add several <input>s and a <button> for submission
+		2. define the onSubmit attribute of <form>
+			- pass a function for this attribute
+			- the function we pass in this attribute will be EXECUTED when we submit the form
+	> there are several React Events that we can define the behavior	
+		Forms:
+			1. onSubmit
+		Inputs:
+			1. onChanged
+		Buttons
+			1. onClick
+	> 
+
+
+React Events
+	> dataType that defines an Event happening in ReactJS app
+	> typically attached to an HTML element (onClick on button, onChanged on inputs, onSubmit on forms)
+	> contains the following
+		.
+
+
+
+
+React Local Storage
+	> localstorage of webpage
+	> used when storing data in client's browser
+	> typically stores cacheable data like images, banner, scripts, css, etc
+	> localStorage is ACCESSIBLE throughout the web application (from one page to another)
+	> to use localStorage, we will need to call the "localStorage" global variable
+		- global variable means its accessble everywhere in html page
+		- and since React application are SINGLE PAGE apps, we can easily access and modify the localStorage contents
+
+
+
+componentDidMount()
+	> method used for mounting data to update the State
+	> called in post mounting process of lifecycle

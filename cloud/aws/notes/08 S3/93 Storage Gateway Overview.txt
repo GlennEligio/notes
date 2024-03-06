@@ -1,0 +1,46 @@
+93 Storage Gateway Overview
+
+
+Hybrod Cloud for Storage
+ > AWS is pushing for 'hybrid cloud'
+ 	- part of your infrastructure is on-premises
+	- part of your infrastructure is on the cloud
+ > This can be due to
+	- Long cloud migrations
+	- Security requirements
+	- Compliance requirements
+	- IT strategy
+ > S3 is a proprietary storage technology (unlike EFS/NFS), so how do you expose the S3 data on-premises?
+	- using AWS Storage Gateway!
+
+
+
+
+AWS Storage Cloud Native Options
+1. Block - Amazon EBS, EC2 Instance Store
+2. File - Amazon EFS
+3. Object - Amazon S3 Glacier
+
+
+
+
+AWS Storage Gateway
+ > Bridge between on-premises data and cloud data in S3
+ > Hybrid storage service to allow on-premises to seamlessly use the AWS Cloud
+ > Use cases:
+	- disaster recovery
+	- backup and restore
+	- tiered storage
+ > Types of Storage Gateways:
+	1. File Gateway
+	2. Volume Gateway
+	3. Tape Gateway
+ > No need to know the types at the exam
+	- not included in Scope, Solution Architect are more involved with this
+
+
+Diagram
+
+Files	->|				|----> Amazon EBS
+Volumes ->|---> AWS Storage Gateway --->|----> S3
+Tapes	->|				|----> Glacier

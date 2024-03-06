@@ -1,0 +1,1985 @@
+Agile Software Development
+
+Week 1
+Course Introduction
+01 Welcome and Course Intro
+02 Course Learning Plan
+03 What software development looks like?
+04 Intro to Software Development Models
+
+Agile Values and Principles
+05 Why Agile?
+06 Video: Agile Manifesto: Values
+07 Agile Manifesto: Principles
+08 Video: Agile Manifestor Explained
+09 Agile Values and Principles
+
+Applying Agile Mindset
+10 Benefits and Challenges of Agile
+11 Agile: When to Use and When NOT to!
+12 Using Agile Methods
+13 Applying an Agile Mindset to a Project
+14 Agile Frameworks
+15 Applying an Agile Mindset
+16 Agile Fundamentals
+
+
+Week 2
+User Stories and Requirement Gathering
+17 Gathering Requirements: The agile way
+18 User Stories: The currency of agile development
+19 Characteristics of good user stories
+20 User Stories - Practice Quiz
+21 Generating User Stories
+22 Gathering User Needs - Practice Quiz
+
+Agile Estimation and Planning
+23 Agile Estimation and Planning
+24 Estimation Styles and Process
+25 Agile Estimation - Practice Quiz
+26 Velocity
+27 Release Planning
+28 Release Tracking
+29 Release Planning and Tracking - Practice Quiz
+30 Requirements and Planning - Quiz
+
+
+Week 3
+Scrum Overview
+31 Scrum Overview
+32 Scrum Overview - Practice Quiz
+
+Sprint Planning and Trackig
+33 Sprint Planning
+34 Sprint Tracking
+35 Spring Planning and Tracking - Practice Quiz
+
+Spring Review, Retrospective and Sprint Execution
+36 Sprint Execution and Daily Standups
+37 Sprint Review
+38 Sprint Retrospective
+39 Sprint Review, Retrospective and Execution - Practice Quiz
+40 Scrum 10 questions - Quiz
+
+Mid course assessment
+41 Applying the Agile Mindset and Techniques - Peer graded Assignment
+42 Applying the Agile Mindset and Techniques - Review your Peers
+
+
+Week 4
+XP
+43 XP Overview
+44 XP Values
+45 XP Practices - Part 1
+46 XP Practices - Part 2
+47 XP Process Model
+48 Scrum vs XP - Reading
+49 XP - Quiz
+
+Course Project
+50 Story Mapping - Peer-graded Assignment
+51 Story Mapping - Review your Peers
+
+
+
+Week 1
+Course Introduction
+01 Welcome and Course Intro
+
+Structure of this Course
+Module 1: Agile Fundamentals
+Module 2: Agile requirements and planning
+Module 3: SCRUM
+Module 4: XP and Wrap up
+
+Projects:
+ > both peer reviewed
+1. Applying Agile Mindset
+2. Creating a Story Map
+
+After completing this course, you will be able to:
+1. Ability to participate effectively in agile practices/process for software development.
+2. Explain the purpose behind common agile practices
+3. Ability to apply agile principles and values to a given situation
+4. Ability to identify and address most common problems encountered in adopting Agile methods.
+
+
+
+
+
+
+02 Course Learning Plan
+
+Course Learning Plan
+1st module
+ > focuses on reason why Agile methodologies exist
+ > also include 
+	- the Agile mindset, 
+	- where to use Agile, 
+	- benefits and challenges in using Agile	
+	- how to apply the Agile mindset to software development
+2nd module
+ > focuses on User Stories
+ > how to generate User stories like
+	- Story workshop
+	- User story mapping
+ > also includes estimating and release planning using the agile mindset
+3rd module
+ > focues on Scrum, one of the most popular agile frameworks
+ > this will include
+	- spring planning and tracking
+	- Sprint retrospective
+	- Spring review
+	- Standups
+	- what happens during Spring execution
+4th module
+ > we will learn about XP (eXtreme Programming)
+ > XP is also an agile framework
+ > we will focus specifically on its values and primary practices
+
+
+
+
+
+03 What software development looks like?
+
+What Software Development looks like and how it evolved over the years?
+
+Real life example of process (Creating a house)
+1. Buyer meets builder to specify needs
+2. List buyer needs
+3. Home layout design
+4. Home detail design
+5. Build home
+6. Local city approval
+7. Home inspection with the buyer
+8. Buyer starts living in the house
+9. Maintenance
+
+
+Analogy to Software development (WATERFALL)
+1. Requirements
+	> Fetching Requirements, 
+	> Analysis of different options, 
+  	> Prototyping of software to show to Users
+2. Design
+	> Architecture
+	> High level design
+	> Low level design
+	> involves the Software architects and developers
+	> here, we define the components to be created
+3. Implementation
+	> Coding the components
+	> Unit testing the components
+4. Verification
+	> Integration Testing
+		- test how each components are working together
+	> User Acceptance Testing (UAT)
+		- users are involved
+5. Operations and Maintenance
+	> User start using the product 
+	> here, Users might provide changes or request for fixes
+
+
+Waterfall methodologies issues
+1. Requirements changes from time to time
+	> hard to predict requirements ahead of time
+	> if theres a requirement changes, all stages will need to be repeated again
+	> One of the issues the software industry saw was that once a product was given to users after several years of development, users responded saying "This is not what i want".
+2. Misintepretation of the requirements by the Software architects and developers
+	> this issues will propagate down the chain
+	> Since waterfall methods has no way to get early feedback from users, the issues go undetected for long time.
+3. Integration issues undetected
+	> these issues with component integration may not be detected for a long time since we will be able to do this only if the components are finished
+	> Sub-components of software are built in silos and are not integrated till the end. This causes late defect detection and costly changes in the end.
+
+
+Variants of Waterfall to address issues
+1. V Model
+2. Sashimi model
+3.  RUP model
+4. Incremental model
+5. Spiral model
+
+
+
+Agile
+ > not a model, but a mindset 
+ > specific software developers created "Agile Manifesto & Principle"
+ > many models are created based on the Agile Manifesto like
+	- SCRUM
+	- XP
+ > main idea is that instead of creating a long single cycle of software development, we will do the development in SHORT CYCLES. We code, build, test each cycle and apply what we learn in next cycles
+
+
+How to response quickly and confidently
+1. Continuous Integration
+	> changes is automatically applied to the codebase
+2. Automated Testing
+	> testing of the app's components and their integration is automated
+3. Automated Deployment
+	> software is automatically deployed and propagated to the deployment environment
+
+
+
+
+
+04 Intro to Software Development Models
+
+Software Development Models
+ > putting the pieces of the puzzle together
+
+Why theres many software development models?
+ > each team have different needs
+ > each model will solve different needs
+
+
+Classifications of the Software Development models
+1. Predictive vs Adaptive
+2. Incremental vs Iterative
+
+Predictive
+ > the client/customer have a good understanding of the product that you are building
+ > here, you get the product in one shot
+ > since we have concrete idea about what product to build, theres no incentive to change the source code drastically during the development phase
+
+Adaptive
+ > the customer/client have a general idea on what product to build but not a concrete one
+ > starts with an idea, then build a prototype / low-fidelity version of the software
+ > based on the feedback from the prototype, we will create a new version of the product
+ > Adjust based on the feedback of the customer/client
+
+
+Incremental
+ > customer/client have good idea of what product to build
+ > instead of building the product in one-shot, we will do it INCREMENTALLY by its components
+ > real-life analogy: creating a car, where we might want to create the wheels, then engine, then chasis, and assemble them in increments
+ 
+Interative
+ > customer/client have good idea of what product to build
+ > instead of building the product incrementally by its components, we will create a whole product
+ > then based on the feedback from the product, we might modify the product or create a new one to satisfy the need
+ > real-life analogy: travelling from one place to another, we might initially use a bike, but we might change it into a motorcycle, or a car if bike is not enough
+	
+
+
+
+
+Agile Values and Principles
+05 Why Agile?
+
+Assumptions behind Predictive Model (ex: Waterfall)
+1. We can predict the requiments accurately. It won't change much
+	> if we predict requirement incorrectly, this will propagate down the line
+	> in practice, they see that the customer/clients requirements changes from time to time, or that the market has shifted
+2. Translation is going to be perfect
+	> we assume that going from each stages like requirements -> design -> implementation will be smooth sailing
+	> and the further down we find issue in the predictive model, the more costly the change is
+
+
+Solutions provided by the different models created
+1. Reduce the learning cycle by:
+	- deliverying in short iterations
+	- adapt based on what you learn
+2. Keep the cost of change down by:
+	- following engineering rigor
+	- encouraging close collaboration among team members
+
+
+Agile Manifesto
+ > created in 2001 by group of software visionaries
+ > not a specific model/process but a mindset
+
+
+
+
+06 Video: Agile Manifesto: Values
+
+The Agile Manifesto - 4 Agile Values
+
+01 Individuals and Interactices over Processes and Tools
+ > face-to-face and chat with individual should come over the rigid workflow and processes
+
+02 Working Software over Comprehensive Documentation
+ > prioritize creating a working software over a documentation
+ > before, software developers focuses in documentation first before creating the software itself
+
+03 Customer Collaboration over Contract negotiation
+ > customer collaboration helps both developers and customer find the best solution to a need
+
+04 Responding to Change over Following to Plan
+ > plans are more likely to not be static and changes
+ > making adjustments based on the changes of requirements is important
+
+
+
+
+
+07 Agile Manifesto: Principles
+
+Agile Manifesto:
+"We are uncovering better ways of developing software by doing it and helping others do it. Through this work we have come to value: 
+
+Inviduals and interactions over processes and tools.
+Working software over comprehensive documentation.
+Customer collaboration over contact negotiation.
+Responding to change over following a plan.
+
+That is, while there is value in the items on the right, we value the items on the left more."
+
+
+Values
+01 Individuals and Interactices over Processes and Tools
+ > face-to-face and chat with individual should come over the rigid workflow and processes
+
+02 Working Software over Comprehensive Documentation
+ > prioritize creating a working software over a documentation
+ > before, software developers focuses in documentation first before creating the software itself
+
+03 Customer Collaboration over Contract negotiation
+ > contact is important to define boundaries on work
+ > customer collaboration helps both developers and customer find the best solution to a need
+
+04 Responding to Change over Following to Plan
+ > plans are needed to help you stay on track
+ > plans are more likely to not be static and changes
+ > making adjustments based on the changes of requirements is important
+
+
+Principles behind Agile Manifesto
+1. Our highest priority is to satisfy the customer through early and continuous delivery of valueable software
+	> focus on what customer requirements/needs
+2. Welcoming changing requirements, even late in development. Agile processes harness change for the customer's competitive advantage
+	> embracing the changes and adapting to them
+3. Deliver working software frequently, from a couple of weeks to a couple of months, with a preference to the shorter timescale
+	> continuously learn based on customer's feedback, hence the shorter timescale
+4. Business people and developers must work together daily throughout the project
+	> collaboration between people to easily convey the ideas/needs/feedback
+5. Build projects around motivated individuals. Give them the environment and support they need, and trust them to get the job done.
+6. The most efficient and effective method of conveying information to and within a development team is face-to-face conversation
+	> talks about the invididual and interactions
+7. Working software is the primary measure of process
+8. Agile processes promote sustainable development. The sponsors, developers, and users should be able to maintain a constant pace indefinitely
+9. Continuous attention to technical excellence and good design enhances agility - cost of exploration
+10. Simplicity - the art of maximizing the amount of work not done - is essential
+11. The best architectures, requirements, and design emerge from self-organizing teams
+12. At regular intervals, the team reflects on how to become more effective, then tunes and adjust its behavior accordingly
+
+
+Agile Development main ideas
+1. Adaptive
+ > deliver working software frequently
+ > welcome changes
+ > technical excellence and good design
+ > continuous improvement
+2. People and Interaction
+ > business and developer work together
+ > face-to-face conversation
+ > self organizing teams
+ > motivated individuals
+
+
+How does it solve problems of waterfall model?
+1. With the Adaptiveness, we can detect transaction issues earlier, validate user needs earlier, and detect integration issues early
+2. With People and Interaction, we can detect transaction issues early
+ > promote sustainable development
+
+
+
+New Problems Agile Methodologies bring?
+1. Architecture/Design/Database modling is challenge due to frequent changes
+2. Lack of control / Unpredictable Journey - Very uncomfortable for Leaders/Organizations
+3. Requires participation from customers through out the developments process
+
+
+
+
+
+
+08 Video: Agile Manifesto Explained
+
+1. Our highest priority is to satisfy the customer through early and continuous delivery of valueable software
+	> focus on what customer requirements/needs
+ 	> waste is anything the customer does not need
+2. Welcoming changing requirements, even late in development. Agile processes harness change for the customer's competitive advantage
+	> embracing the changes and adapting to them
+	> guarantees that we will be more knowdgeable through the project
+	> customers will learn more about their needs
+3. Deliver working software frequently, from a couple of weeks to a couple of months, with a preference to the shorter timescale
+	> continuously learn based on customer's feedback, hence the shorter timescale
+	> the more frequently you add features in the software, the lesser risks you have in each features and also must faster we receive feedbacks from users
+4. Business people and developers must work together daily throughout the project
+	> collaboration between people to easily convey the ideas/needs/feedback
+	> may introduce micro-management, which may be bad
+5. Build projects around motivated individuals. Give them the environment and support they need, and trust them to get the job done.
+	> three things that motivates a person: autonomy, mastery, and purpose
+	> as scrum master, giving greater autonomy to the team might be beneficially
+	> allows spaces for changes to the requirements by everyone
+6. The most efficient and effective method of conveying information to and within a development team is face-to-face conversation
+	> talks about the invididual and interactions
+	> high quality interaction and communication between people
+7. Working software is the primary measure of process
+	> no value can be captured by the company until a working software is pushed into the production
+8. Agile processes promote sustainable development. The sponsors, developers, and users should be able to maintain a constant pace indefinitely
+	> software development should feel like a long marathon rather than fast back-to-back sprint
+9. Continuous attention to technical excellence and good design enhances agility - cost of exploration
+	> access to good code management, integration, testing, and deployment will rapidly compromises a team's performance
+ 	> poor design decisions can paint a team into a corner and failing to address bugs and technical debt often due to delivery pressures from stakeholders will rapidly makes a codebase unmanageable, let alone easy to develop against
+10. Simplicity - the art of maximizing the amount of work not done - is essential
+	> more features for poor architectural deceisions make a software more complex
+	> highly complex code are harder to test, maintain, and develop against
+ 	> many products have features that are so rarely used that the development and maintenance likely result a negative return on investment
+	> in general, its better to have a TARGETED product that does a few things extraordinarily well, being everything to someone, rather than one that attempts to cash in the entire market or pleases no one
+11. The best architectures, requirements, and design emerge from self-organizing teams
+	> the two most common arguments are that 
+		a. a company's teams don't have the necessary skills to do this work and 
+		b. someone needs to ensure standardization between teams. 	> For A., the company should invest in its employees and then the employees invest in themselves so they can both remain competitive
+	> For B., standardization foten does not have positive ROI. Why not have the teams talk to one another for this
+12. At regular intervals, the team reflects on how to become more effective, then tunes and adjust its behavior accordingly
+	> most important principle 
+
+
+
+
+09 Agile Values and Principles
+
+
+
+
+
+
+Applying Agile Mindset
+10 Benefits and Challenges of Agile
+
+Predictive Model Recap
+Assumptions by Predictive model
+1. We can predict the requirements
+2. Translation is going to be perfect
+
+
+Agile Principles Recap
+Adaptive
+ > deliver working software frequently
+ > welcome changes
+ > technical excellence and good design
+ > continuous improvement
+People and Interaction
+ > business and developer work together
+ > face-to-face conversation
+ > self organizing teams
+ > motivated individuals
+
+
+Benefits of Adopting Agile 
+ > Source: 11th State of Agile, Version One
+1. Ability to manage changing problems
+2. Project visibility
+3. Increased team productivity
+4. Delivery speed/time to market
+5. Team morale
+6. Business/IT Alignment
+7. Better Software quality
+8. Project risk reduction
+9. Engineering discipline
+10. Software maintainability
+11. Managing distributed teams
+12 Project cost reduction
+
+
+
+
+
+11 Agile: When to Use and When NOT to!
+
+Claim: Agile Works in Small projects
+
+Standish Chaos Report - 2015
+ > shows the chose resolution by Agile versus Waterfall
+ > in all sizes, Agile is more successful than Waterfall
+
+
+Will Agile work for big projects? Mission Critical Projects? Govt Projects?
+ > the ff. companies uses Agiles
+	- Lockheed Martin
+	- Google
+	- Microsoft
+	- SpaceX
+
+
+Prerequisites to use Agile Methods:
+1. Requires close collaboration with business, and users
+2. Team should be setup to digest change 
+	> follows Engineering practices
+
+
+Barriers to Agile adoption
+ > from 11th State Of Agile, Version One
+
+1. Company philosophy or culter at odds with core agile values 63%
+2. Lack of experience with agile methods 47
+3. Lack of management support 45
+4. General organization resistance to change 43
+5. Lack of business/customer/product owner 41
+6. Insufficient training 34
+7. Pervasiveness of traditional development 34
+8. Inconsistent agile practices and process 31
+9. Fragmented tooling, data, and measurements 20
+10. Ineffective collaboration 19
+11. Regulatory compliance and governance 15
+12. Don't know 2
+
+
+
+
+12 Using Agile Methods - QUIZ
+
+13 Applying an Agile Mindset to a Project
+
+1. Big Batch vs Small Bite Size Chunks
+ > for Waterfall/Predictive model, we do a big batch of the process, where in the end we will release one big product
+ > for Agile methodologies, we finish the product through small bite-size chunks, until we finish all bite-size chunks and build into the whole product
+ > for Agile, we do the "Plan, Build, Learn --- Repeat"
+
+
+2. Handoff vs Collaboration
+ > in Agile, we encourage collaboration 
+ > for Waterfall, we do handoff of the final product of each phase to the next phase (ex: requirements to developers/architect) and so on
+ > for Agile, we have all the people collaborating each other (ex: developers/architect working with business/customers with regards to requirements)
+
+
+3. Culture Change
+ > there must be a strong engineering culture where
+ > in the Adaptive side of Agile
+	a. automated build and deployment
+	b. continuous integration
+	c. automated tests
+	d. collective ownership
+ > theres also an Adaptive planning, which changes based on the needs
+ > in the Poeple and Interaction side of the Agile
+	a. Psychological Safety
+	b. Partner with customer
+	c. Collaborative environment, instead of commanding
+	d. Cross functional teams, rather than handing off to each team
+
+
+Typically Agile Project Journey
+ > these steps will repeat as a cycle
+
+1. Chartering - 1 to 2 days
+ > Alignment
+ > Team building
+ > Spot issues
+
+2. Discover User needs - 1 week
+ > Story workshop
+ > Story mapping
+
+3. High level Architecture - 2 to 3 days
+ > Make some of the architectural decisions that must be made before proceeding further
+
+4. Release Planning - 1 to 2 days
+ > plan our next stop
+
+5. Delivery - 2 to 3 weeks
+ > define/build/test/learn collaboratively
+ > improve
+
+6. Optional - UAT/Business Readiness/Communication
+ > Final check
+ > SOPs
+ > Newsletters etc
+ > Training etc
+
+7. Deployment
+
+
+
+
+14 Agile Frameworks
+
+Agile Frameworks 
+ > How do I apply agile mindset?
+
+Agile Frameworks
+1. SCRUM
+2. Kanban
+3. Scrumban
+4. XP - Extreme Programming
+5. Scrum XP hybrid
+6. Lean Startup
+
+SCRUM
+ > based on 1 to 4 week cycle
+ > product is develop incrementally
+ > most popular
+
+Kanban
+ > tries to improve existing software development processes
+
+Scrumban
+ > combination of the SCRUM and Kanban
+ > uses Scrum as primary framework and use Kanban to optimize the flow within the Spring
+
+XP
+ > contains most of the practices of SCRUM
+ > defines some engineering practices which are very crucial in an Agile team
+
+Lean Startup
+ > helps with unpredictable market
+ > helps with proving solution before implementing it
+
+
+NOTE:
+1. More often than not, companies often customize/modify existing agile framework to fit its needs
+2. Key of using Agile is to stay true to its main core idea instead of being bugged down by the specific processes of each Agile frameworks
+
+
+
+15 Applying an Agile Mindset
+16 Agile Fundamentals
+
+
+
+
+
+
+Week 2
+User Stories and Requirement Gathering
+17 Gathering Requirements: The agile way
+
+What Good User Requirement Process looks like
+1. If User requirement hels you build what user really needed
+ > typically customer/client doesn't have concrete idea what they want
+2. If everyone have a shared idea/understand as to what we are trying to build
+
+
+Agile Approach
+1. Conversation
+	> conversation as primary form of communication
+	> talk to the Customer/Client to know the User Requirement
+2. Adaptive
+	> discover user needs vs collect user needs
+	> ex: we might discover that we want to have specific feature based on the user requirements passed
+
+
+Agile approach - Conversation
+ > recommended to have developers and the business work together toward the development process througout the development process
+ > recommends face-to-face communication between the team members
+ > takes care of issue with regards to "Document-based coomunication for requirements"
+
+Hand-off requirements document
+ > happens where the User/Business hands off a Document detailing list of requirements to be fulfulled
+ > with this, they might be a misinterpretation of the requirements from the developers/architect side, where they understand it differently 
+ > this results in developers/architect building app that is different from what user wants
+ 	- ex: Mars Climate orbiter, where two teams the numbers in pounds and other in Newton
+
+Just enough - Just in time
+ > approach when it comes to product documentation
+ > also called progressive refinement
+
+Story Process
+1. Card -> Product owner / Client writes "card" to define high level functionalitiy that they want
+2. Conversation -> Client have conversation with developers and discuss the card created by client, and refine/modify them when necessary
+3. Confirmation -> Client and developers write down all the points/idea that they agree upon. Also specify when we functionality specified is "done"
+
+
+Agile Approach - Adaptive
+ > in Agile, we accept that we do not know the needs UPFRONT
+ > instead, we will discuss it with the Client and may discover them along the process
+ > here, we allow the requirements to change overtime 
+ > what we build in the end is what the user exactly needed
+
+
+
+
+
+18 User Stories: The currency of agile development
+
+User Stories
+ > the currency of Agile Development
+
+User Stories - 3C's
+1. Card 
+	> token for conversation
+	> client write the functionalities in a high-level manner
+2. Conversation to build Shared understanding
+	> Who (wants) What (and) Why?
+		- who refers to the User/Client
+		- what refers to the features/requirements/functionality
+		- why refers to how the requirements
+	> Record Facts/Info to help you recall the conversation
+		- ex: screenshot, flowchart
+	> Discuss what happens outside the software
+	> Discuss what can go wrong
+		- not just the happy path
+3. Confirmation
+ 	> includes Acceptance Tests (UAT)
+	> verify Stories
+
+
+Template to Capture Who/What/Why?
+ > As a <role type>, I want to <perform a task> so that <achieve this goal>
+ > <Persona> wants to <perform a task> to <achievethis goal>
+ > Create your own ...
+ > NOTE: 
+	1. It doesn't need to be written in a template to be considered a story
+	2. Templates are used to remember the who,what,why?
+
+
+Story Example
+#0001 USER LOGIN Fibonacci Size #3
+As a [registered user], I want to [log in], so I can [access subscriber content]
+
+Other info that can be attached to the story
+1. Title
+2. Estimate
+3. Sketches, relevant notes, and details
+4. Happy path, and wrong paths
+
+
+How to Write Acceptance Tests
+1. Another way to think about them:
+	> Once the story is done, what Client/Product Owner will check to validate that it is indeed done
+	> What will we test to confirm that this story is done
+	> How will we demonstrate this software at a product review?
+	> ex: demonstrating a new feature (login), we will need to list all the steps to take in order to demonstrate that the login feature is complete
+2. Use simple business/user lingo that team members can understand
+3. Specify "What" not "How"
+	> ex: "A manager can approve or disapprove an audit form" rather than "A manager can click an 'Approve/Disapprove' radio button to approve an audit form"
+
+
+Example of Acceptance Test
+User story: As an Administrator, I want to be able to create User Accounts so that I can grant users access to the system
+
+Acceptance tests:
+1. If I am an Administrator, I can create User Accounts
+2. I can create a User Account by entering the following information about the User:
+	- Name
+	- Email Address
+	- Phone number
+	- Licence number (Power, Basic, None)
+	- Account Status (Active/Inactive)
+	- Reports to (from a list of "Active" Users)
+3. I cannot assign a new User to report to an "Inactive" User
+4. I cannot assign a new User to report to a User if it creates a cyclical relationship (e.g. User 1 reorts to User 2 who reports to User 1)
+5. The system notifies me that it sent an email to the new User's email address, containing a system-generated initial password and instruction for the person to login and change their password
+6. I am able to verify with the intended recipience of the mail that it was received 	
+
+
+Why Write Acceptance Tests?
+As Product Owner
+1. Helps you think through if the Story is complete/enough
+
+As a Team
+1. Helps build common/shared understanding between team members (esp. PO, Dev, and Tester)
+2. Team response time will improve
+3. Helps the testers write test cases to confirm that story is done
+4. Helps you slice out work/story if the story is too big
+
+
+Stories can be written at many levels of Abstractions
+1. Epic / Feature / Capability
+	> right sized for business
+2. User story
+	> right sized for users
+	> refers to specific capabilities that users will use
+3. Dev Story, Small User story
+	> right sized for development
+	> story that can be finished within a day or two
+
+
+Spikes
+ > Knowledge Gathering Story
+ > These are stories needed for research/exploratory work
+ > Used when we need to choose the software/technology to use to build what you are building
+ > Time-boxed, only specific time span
+ > Clear definition of done
+ > work done in a Spike is not part of the production code
+
+
+Non-Functional Requirements
+ > Handle them in two ways
+	1. Definition of done (applicable to all stories)
+		- ex: does app work in different browser like Chrome, Firefox
+	2. Create specific stories (applicable to small part of the system)
+ > Make sure you have measurements for the "ilities" (faster, more accurate, quickly)
+	- use more quantitative approach for measurements
+	- ex: for faster, check for how fast the response time in seconds
+
+
+
+
+
+19 Characteristics of good user stories
+
+What Good User Stories look like?
+ > Remember to "INVEST" in User Stories
+
+Characteristics of a Good User Story
+ > remember the acronym "INVEST"
+ 	- Independent, user Story must be independent with each other
+ 	- Negotiable, we want to leave some details to be discussed later. We might find a way to make the User Story much better
+ 	- Valuable, user Story must be important to be the User
+ 	- Estimable
+ 	- Small, user Story must be small enough to deployed easily, faster
+ 	- Testable, user Story must be testable and validatable
+ > these are general guidelines. Don't let it come int he way of building right stuff effectively
+
+
+Bad Examples:
+1. As a developer, I want to finalize the database table changes.
+	> Invalidates Valuable
+	> Not important to the user
+	> Can be deleted, or converted into a Task
+2. As a Manny's food service customer, I want to see different food item types displayed in different colors - RGB = #FF0000 for meats, #A52AFA for grains, and #808000 for vegetables and fruits - so that I can quickly identify my food items by food types
+	> invalidates Negotiable
+	> provide too much details (colors for each food), which leaves no room for this to be changed
+	> "As a Manny's food service customer, I want my custom item code to stand out so that I can find it on the screen more quickly"
+3. As a business user, I would like to report of item profitability so that I can identify and highlight profitable items and consider what to do about underperforming items
+	> invalidates Testable and Small
+	> "As a marketing manager considering how to spend limited marketing dollars, I need a report of the most/least profitable items so that I can identify and highlight profitable items and consider what to do about the underperformaing items"
+4. As a customer ordering food, I want to located provious food order list so that I can see all the lists that I have
+	> invalidates Valuable
+	> does not specify how the story will benefit the User
+	> "As a customer ordering food, I want to see my saved food order lists so that I can reuse the list for future orders, making ordering faster and more accurate"
+5. As a tester, I want to have detailed test plans so that when the system is completed, I can test the system
+	> more like a task
+	> preferrably delete it, and convert into a task
+6. A company can pay for a job posting with a Visa card
+   A company can pay for a job posting with a Master card
+   A company can pay for a job posting with an American express card
+ 	> invalidate Independent
+	> can be refactored into two User Story
+		- "A company can pay for a job posting with one type of card"
+		- "A company can pay for a job posting with two additional type of card"
+7. A user must find the software easy to use
+	> invalidate Testable
+	> "A novice user can use the software without a need of training"
+
+
+20 User Stories - Practice Quiz
+21 Generating User Stories
+
+Generating User Stories
+ > Where do use stories come from!
+
+Two methods
+1. User Story writing workshop
+2. Story mapping
+
+
+User Story Writing Workshop - LOGISTICS
+Goal 
+ > Write as many stories as you can for the selected theme.
+Who to invite?
+ > Product owner and other stakeholders who knows user needs
+ > Scrum master
+ > Development team
+How long?
+ > Few hours to a few days
+
+User Story Writing Workshop - AGENDA
+1. Identify Users, then User analysis
+	> example users: Customers, Developers
+	> create analysis to these Users
+2. Create personas
+3. Everybody start writing stories silently around the selected theme. These Stories can be written three approaches
+	a. Top Down
+		- Big functionality -> ... -> Stories
+	b. Bottom up
+		- Write Stories, and group them later to specific themes or epics they belong
+	c. Free form
+		- Write Stores, and either Group them in specific themes or epics or Split them into subStories in case they are too big
+
+Characteristics of Good product backlog
+1. Detailed Appropriately
+	> the more nearer the Story's deadline, the more detailed
+2. Emergent
+	> always evolving based on user needs
+3. Estimated
+	> allows to predict or plan your releases
+4. Prioritized
+	> allows us to prioritize specific Stories in each Sprint
+
+
+Story Mapping
+ > the better way to understand user needs
+ > popularized by Jeff Patton
+ > Technique to:
+	- Discover user needs
+	- Organize and prioritize story backlog
+	- Understand and communicate user needs
+	- Plan releases and development
+
+Story Map Structure
+ > composed of two axis
+	- time (chronological, from left to right)
+	- priority (specifies how important a User Activity/Task/Story, Story in the top have more priori)
+ > the Structure consist of three things
+	- User Activity (Backbone)
+	- User Tasks (Walking Skeleton)
+	- User Stories
+ > Things are the top have most priority (User Activity > Task > Story)
+ > Stories at the top have more priority than the bottom
+ > Each section of User Stories are divided by "Releases" which is based on its priority
+ > User Activity are the big things that the User wants to achieve in one sitting
+ > User Tasks are the steps that will be done in order to achieve the User Activity
+ > we can also add diagrams at the top to specify the functionality a specific User Activities represents
+ > we can also add non-functional requirements at the right
+
+
+Creating a Story Map
+Step 1: Frame the Problem
+Story
+ > product teaser/story
+What
+ > name of the product, problem we are trying to solve
+Who
+ > who are the users and what benefit they get
+ > personas, users and their specific context
+Why
+ > benefit to organization. What users do and how it results in benefits
+
+Step 2: Map the big picture: Activities
+1. Tell a big story of the product by starting with the major user activities the system will be used for
+2. Arrange activities left to right in the order you'd explain them to someone when asked the question: "What do people do with this system"
+ > ex: Register -> Login -> Browser Item -> Add to Cart -> Checkout
+3. Add task-centric stories in under each activity in workflow order left to right. If you were to explain to someone what a person typically does in this activity, arrange tasks in the order you'd tell the story. Don't get too uptight about the order
+ > ex for Register: User fillup form -> User sends the form -> User receives prompt about the registration status 
+
+
+Step 3: Explore: Variations
+1. Overlap user tasks vertically if a user may do one or several tasks at approximately the same time
+ > Or -> Vertical
+ > And then -> Horizontal
+ > ex: User enter valid input on form OR User enter invalid input on form AND THEN User submits the form
+2. Record details so they're not lost, and it helps acknowledge to participants that details are not lost
+ > consider tucking them under tasks cards to "hide them" from discussion
+
+Step 3: Explore: Go Crazy
+1. Discuss, fill in, refine the map, and test for completeness
+2. Sky is the limit... go crazy.. Don't worry, things will be prioritized/sliced out
+3. Look for exceptions, don't just focus on happy path
+4. Consider other users
+5. Involve others
+
+
+Step 4: Slice out viable releases
+1. Slice map to holistic meaningful releases
+2. Focus on outcome. Slice away what's not needed
+3. For each release identify:
+	- outcome and impact
+	- success criteria
+
+
+Why Create Story Maps?
+1. Discover user needs - especially help discover missing pieces
+2. Understand and communicate user needs
+	> Helps communicate at multiple levels
+	> Helps tell a story
+3. Planning
+	> provide a useful context for prioritization
+	> plan releases in complete and valuable slices of functionality
+	> organize and prioritize story backlog
+3. Foster co-ownership
+4. Flexible, can customize the Story map
+
+
+
+
+22 Gathering User Needs - Practice Quiz
+
+
+
+
+
+Agile Estimation and Planning
+23 Agile Estimation and Planning
+
+Agile Planning
+ > multi-level
+ > less upfront planning but frequent planning down the line
+ > just enough, just in time
+ > adapt and replan
+
+Levels of Agile Planning from top to bottom
+1. Strategy
+2. Portfolio
+3. Product
+4. Release
+5. Iteration
+6. Day
+
+
+Agile Planning Steps
+1. Vision/Strategy
+	> create a general idea of the product
+	> here, we can either do Story Workshop or Story map
+2. Release Planning
+	> we can create a Release plan from either Product backlog or Story Map
+	> this creates a Release backlog or Product backlog
+3. Spring Planning
+	> from the Release plan, we can create multiple Sprint iterations
+	> each Sprint will cover specific User Stories from the Release
+	> this creates a Sprint backlog
+4. Daily Standups
+	> in daily standups, we can specify each Tasks to do for specific User Stories, this includes the To-Do, In Progress, and Done Tasks
+
+
+Agile Approach to Estimation
+Three Concepts
+1. Effort vs Duration
+2. Accuracy vs Precision
+	> we prefer accuracy
+3. Relative vs Absolute
+
+Effort vs Duration
+ > real life analogy: painting a piece
+	- Duration: 3 days
+	- Effort: 1 day
+		-> 0.25 day for preparing materials
+		-> 0.5 day for painting
+		-> 0.25 day for finishing touches
+ > Ideal days, refers to how many work days will it take to complete a story if you work on it uninterrupted
+
+Accuracy over Precision
+ > example: estimating ideal days for each User Story
+ > the Developers can either give precise ideal day estimate for each User Story, example	
+	- User Story 1 = 0.5 days
+	- User Story 2 = 2.6 days
+	- User Story 3 = 4.1 days
+ > we can also create several buckets to specifix the max Ideal days to spend for specific User Story
+	- <1 Ideal day	= User Story 1
+	- <3 Ideal days = User Story 2
+	- <5 Ideal days = User story 3
+ > in the first estimation, we used precision, while in second, we used accuracy
+
+Sizing Buckets - Estimation Scale
+1. Popular Scales used for Estimations
+ > 1,2,4,8
+ > Fibonacci Series: 1,2,3,5,8,13,...
+ > 1,5,10,20
+ > XS, S, M, L, XL
+ > Small, Medium, Large
+2. What if I can't estimate a story? Add "?" as an option
+3. How Many Buckets? Depends
+	> less buckets -> faster estimation, less precision
+	> more buckets -> slow estimation, more precision
+ 	> diminishing return with more precision you get
+	> recommended to have 4 to 5 buckets
+
+
+Relative vs Absolute Sizing
+ > we are better at measuring size relative to each other
+
+Relative Sizing examples
+1. If Story A is 1 point, then Story B is 5 points (in agile, you will hear "story points")
+2. Story A is 5 apples, Story B is 15 apples, Story C is 10 apples
+3. Small, Medium Large
+4. T-Shirt sizing: XS, S, M, L, XL
+
+Absolute Sizing Examples:
+1. Story A will take 1 day, Story B will take 5 day
+2. Story A will take 4 hours, Story B will take 2 hours 
+
+Relative vs Absolution
+Story Point (Relative)
+ > difficult to get accustomed to
+ > faster (once you get used to)
+ > No "My ideal days are not you Ideal days" issue
+ > Difficult to explain outside the team or to new member
+ > Makes it hard for management to behave badly
+
+Ideal Day Buckets (Absolute)
+ > Natural
+ > Tedious
+ > "My ideal days are not you Ideal days" issue is present
+ > Very Natural to explain
+ > Management may try to drive team to ideal days = regular day
+
+
+
+
+
+
+24 Estimation Styles and Process
+
+Estimation Process
+ > Who Estimates?
+	- Development team
+ > How long does ot takes?
+	- Depends on style, method, number of stories, understanding, knowledge, expertise, number of team members
+ > Estimation styles
+	1. Simple - Free form
+		- each developers discuss how long a Story takes
+	2. Planning Poker
+	3. Card Sorting
+
+
+Planning Poker
+1. Everybody gets the estimation cards
+	> these card have ideal days written on them
+2. Explain the story
+3. Understand the story
+4. Estimate and put one card down
+5. All card that is put down will be opened
+	- developers will discuss about the cards put in the Story
+6. If consensus is reached, move to next item
+7. Else discuss variations and go back to step 3
+
+Planning Poker Pros and Cons
+ > Time consuming
+ > Uncover misunderstanding
+ > Collective ownership
+ > Engaged
+ > Good for backlog grooming session
+
+
+Card Sorting
+1. Place smallest (left) and largest story (right)
+2. Silently, everybody start placing stories between these two cards
+	> separate column for stories with questions
+	> stack same size stories vertically
+	> disagree? move the story silently
+3. Discuss changes
+	> discuss stories with question and put them on the board
+	> Take another look
+	> Discuss disagreements and move stories if needed
+4. Create buckets
+5. Assign size to buckets
+6. Team can/should use existing buckets team currently use. Can start with those in step 1
+
+EX:
+Small			Large	WithQuestion
+XS	S	M	L	
+Story1	Story2	Story4	Story5	Story1
+	Story3			Story4
+
+
+Card Sorting Pros and Cons
+1. Useful for estimating large number of stories together
+
+
+
+
+25 Agile Estimation - Practice Quiz
+26 Velocity
+
+Velocity - in Agile context
+ > roughly, amount of work getting done in a sprint
+ > changes based on team, project, and many other factors
+
+Calculating Velocity
+ > for a given sprint, if you finish three stories with estimate of 5,3,10, then your velocity for that sprint is 18 (sum of three stories)
+ > to calculate velocity to use for planning upcoming sprint:
+	- Last Sprint Velocity -> 23
+	- Average of last X sprints
+		-> for Sprint 28, using the last 3, we might predict the velocity to be 25 (25+27+23)
+	- Velocity Range of last X sprints
+		-> for Sprint 28, using the last 3, we are seing velocity range of 23-25
+ > calculating velocity of future sprint is use to select specific Story that is close to predicted Sprint velocity
+ > Skip anomalies
+	- skip Spring 23 if its included in calculation, since it velocity is abnormally high
+
+Sprint table
+Sprint 		Velocity
+Sprint 23	17
+Sprint 24	54
+Sprint 25	25
+Sprint 26	27
+Sprint 27	23
+Sprint 28	?
+
+
+Adjusting Velocity/Estimates scenarios
+I. Calculating velocity for first sprint?
+ > Take few sample stories from backlog that team think they can deliver in a Spring
+	- Team may want to task out the story to understand the work involved
+ > Sum up the estimate of stories
+
+II. More people joining the next spring? Few people leaving the team? People are going on vacation?
+ > Continue to use velocity of previous sprints (except if most of the team is going -- like holidays)
+	- it takes time for people get up to speed and it is difficult to predict the impact of a personal change on team's productivity
+
+III. What if your estimates were off?
+ > Generally it averages out. No need to worry about one-offs. If there is a new learning and bunch of similar stories are going to move from one estimate bucket to another then update their estimates
+
+
+
+
+
+
+27 Release Planning
+
+Types of Release Planning
+1, Fixed Scope
+	> how long will it take to finish?
+2. Fixed Date/Time
+	> what can we deliver within the timeframe
+
+Fixed Scope Release
+ > Fixed Scope, Variable Date
+ > When will you deliver Release#1? Calculation steps include:
+	1. Decide sprint length
+	2. Calculate Velocity (or velocity range)
+	3. Total up estimate for selected stories
+	4. Total Estimate / Velocity ~= # sprints
+	5. # sprints X sprint length = duration
+
+Fixed Scope release example
+ > Total of story points of Release #1 = 120 points
+ > Uses 2 weeks sprints, Cost of team is 50K dollars per week
+ > From sprint table below, using last 3 sprints, we can say that Velocity Range is between 15 to 20
+ > At high velocity, it will take 6 Sprints (120/20)
+ > At low velocity, it will take 8 springs (120/15)
+ > Duration will be 12 to 16 weeks (6-8 times 2 weeks)
+ > Cost will be 600K-800K US dollars (12-16 times 50K per week)
+
+
+Sprint table
+Sprint 		Velocity
+Sprint 21	15
+Spring 22	17
+Sprint 23	18
+Sprint 24	19
+Sprint 25	15
+Sprint 26	20
+Sprint 27	18
+
+
+Selecting Stories for Fixed Scoped Release
+1. Use Story map
+	> craft the Release so that its usable to User
+2. Short feedback loop
+	> emphasizes the Continuous delivery of Agile
+3. Learning, about the product to create
+4. Value to users / Market position, stories that have more value
+5. Risk mitigation, stories that helps mitigate risk
+6. Dependencies, prioritize Stories that are dependencies to other Stories
+
+
+Fixed Date Release
+ > Date fixed so scope changes
+ > What are you going to deliver? Calculate using steps below
+	1. Groom backlog (if not done so), arrange by priority
+	2. Calculate Velocity Range
+	3. Select sprint length
+	4. Calculate no. of sprints
+	5. Calculate Release Capacity = no. of sprints * velocity (use two times to get range)
+	6. Include items from backlog (starting at top) until total point exceed points range: will have, might have
+
+Fixed Date Release example
+ > Next release is in 8 weeks
+ > 2 week sprints duration, velocity range is 15 to 20 (last 2 from ordered Sprints)
+ > Number of sprints is 4 sprints (8 weeks / 2 weeks per sprint)
+ > Min scope finished is 60 points (15 from vel. range * 4 sprints)
+ > Max scope finished is 80 points (20 from vel. range * 4 sprints)
+ > From the ordered Sprints, most likely, we will only be able to finish the first 5 sprints (totals to 60 points), and the subsequent sprints may be or not likely to be done
+ 
+Ordered Sprints based on priority (shows velocity)
+---------- Priority ------>
+10 5 15 20 10 5 5 5 5 15 20
+
+
+
+
+28 Release Tracking
+
+Release Tracking methods
+1. Release Burn up
+2. Story Board
+3. Cumulative flow
+
+Release Burn up
+ > shown typically using a line graph
+	- x axis is the time
+	- y axis is the total work (story point, or ideal days)
+ > two lines are shown here
+	- work done by team throughout the timeline
+	- work specified by the client
+
+
+Story Board
+ > contains columns with specifies the status of the Stories
+	- Backlog
+	- Development
+		-> ongoing
+		-> done
+	- Testing
+	- Done
+ > this can give us a gut sense if we will be able to make it
+
+
+Cumulative Flow Diagram
+ > similar to the Release burn up chart
+ > two axis is included
+	- x axis is the time
+	- y axis is the work units (story points, ideal days)
+ > in the graph, we will be able to see different lines plotted
+	- backlog
+	- analysis
+	- development
+	- test
+	- deployed
+ > intersection of deployed line and work units line is the expected finish date
+ > the y-axis difference between backlog and deployed line in a specific point of time is the work in progress (WIP)
+ > the x-axis difference between backlog and deployed line in a specific point of work units is the cycle time
+
+
+
+29 Release Planning and Tracking - Practice Quiz
+30 Requirements and Planning - Quiz
+
+
+
+
+
+Week 3
+Scrum Overview
+31 Scrum Overview
+
+Scrum - The Celebrity of Agile World
+
+Scrum
+ > works in 1-4 week sprint
+ > takes a part of the product to define, design, build, and test
+ > the built product will be shown to the stakeholders to get feedback
+ > we will do the cycle again, and apply the feedback received from stakeholders
+ > with this, we will build the product incrementally
+
+
+Scrum Framework
+ > three roles defined in scrum
+	1. Product Owner, defines what needs to be done and in what order
+	2. Scrum master, helps the team stay true to the Scrum values and principles. Help facilitate meetings in the team. If theres a roadblock, he will be the one to drive the resolution of it
+	3. The team, self organizing and the one that builds the software. Includes the developers, testers, etc
+ > several Ritual done
+	1. Sprint Planning meeting
+	2. Daily Scrum meeting
+	3. Sprint Review
+	4. Sprint Retrospective
+ > several artifacts include:
+	1. Product backlog
+	2. Sprint backlog
+	3. Burndown/up charts
+
+Example: Creating Job Website using Scrum Framework
+1. Create a Product Backlog
+	> Product owner will talk to Executives, Team, Stakeholders, Customers, Users	
+	> we will use the input to define what exactly needs to be built
+	> this will result in a Product Backlog, which are User stories ranked by priority, which defines the features, requirements, etc
+	> Product backlog is different from Requirement Document. It can change overtime, and very high level
+2. Conduct Sprint planning meeting
+	> the team will gather for a Sprint Planning meeting
+	> the team will gather and discuss the Product backlog	
+	> they will look for the User Stories that can be done
+	> the team can also ask questions to Product Owner for clarifications
+3. Create Sprint backlog
+	> the team gets together and do a task it out of the User Stories
+		- the team prints out specific details with regards to User Story like the specific tasks needs to be done to finish it	
+		- this includes: creating database schema, filling up test data for the test database, creating UI screen
+4. Sprint Execution
+	> the team gets together to finish a Sprint and implement the software
+ 	> Sprint end date and team deliverable do not change
+	> Sprint last from 1 to 4 week
+	> Every 24 hours, theres a Daily Scrum meeting, where they might talk:
+		- roadblocks
+		- permissions and access to certain things (ex: database)
+		- what they have done and what they will do tomorrow
+4.1 Burndown/up Charts
+	> used during Sprint Execution to predict if we will be able to finish the Sprint
+5. Finished Work
+	> at the end of the Sprint, there must be a finished Work
+	> ex: feature to be able to Post a Job, or Apply for a Job in a Job Website
+6. Sprint Review
+	> happens at the end of the Sprint
+	> everyone, including the team, the client, the stakeholder, is in the meeting
+	> the product is demonstrated to the client and stakeholder
+	> feedback from the client and stakeholder will be recordeds
+7. Sprint Retrospective
+	> unlike Sprint Review, we will talk about the process here like:
+		- what went well in the last Sprint
+		- what didn't go well in the last Sprint
+		- how can we do the Sprint better
+
+
+How Scrum supports Agile?
+1. Iterative and Incremental building of the Product
+	> in Scrum, we are only creating portion of it
+2. Adaptive
+	> for each Sprint Review, we may reflect from the client/stakeholder feedback and from the product backlog changes to modify our sprint
+3. Support meetings/collaboration
+	> a lot of interaction and collaboration
+
+
+
+32 Scrum Overview - Practice Quiz
+
+Sprint Planning and Tracking
+33 Sprint Planning
+
+Sprint Planning
+ > focuses Sprint Planning meeting, Sprint Backlog, and Burndown/up charts
+
+
+Sprint Planning Prep Work
+1. Backlog grooming
+2. Selecting & Preparing Stories
+
+Backlog Grooming
+ > make sure the backlog is up to date
+ > removeing user stories that no longer appear relevant
+ > creating new user stories in response to newly discovered needs
+ > Re-assessing the relative priority of stories
+ > Assigning estimates to stories which have yet to receive one
+ > Correcting estimates in light of newly discovered information
+ > Splitting user stories which are high priority but too coarse grained to fit in an upcoming Sprint
+
+Selecting & Preparing Stories
+ > How do you select potential stories?
+	1. Story map
+	2. Prioritized backlog and and pick based on velocity
+	3. Alternatives:
+		- Theme?
+		- Anything team wants to learn?
+ > Make sure stories are ready to be worked upon (who, what, why, acceptance tests, any major dependencies)
+
+
+Sprint Planning Start
+ > Two possible methods to do this
+   1. One step 
+	- select one story at the time, task it out until capacity reached
+   2. Two step
+	- select stories based on velocity
+	- task out and gain confidence (some teams stop at step 1)
+
+Sprint Planning Steps
+1. Determine Sprint capacity
+2. Review Sprint goal (if any)
+3. Review Potential Stories
+4. Acquire Confidence: Design, Discussion, and Task out stories
+5. Refine sprint goals if required
+6. Make commitment to finish Sprint
+7. Put the stories and tasks on the task wall
+
+Determine Capacity
+ > for determining capacity, several things are needed
+	1. Team member name
+	2. Team member days for
+		- DAY A: Days available minus the day offs
+		- DAY B: Days for other scrum activities
+	3. Team member hours per day
+ > For getting available Effort Hours for each Team member
+	1. we will subtract the days available with the days spent on other scrum activities. 
+	2. Then we will multiple it to the hours per day
+	3. This will result in the available effort hours
+ > We will total each team member's available effort hours to get the team's capacitity
+ > Simple alternatives include:		
+	1. Total task estimates from last sprint
+	2. Avg. of total task estimates from last three sprints
+
+EX:
+	Day A	Day B	Hours/day	Available effort hours
+John	9	2	5-6		35-42
+Erik	4	2	5-6		10-12
+Kevin	8	2	3-4		18-24
+Josh	7	2	2-3		10-15	
+			Total		73-101
+
+Sprint Planning Continuation:
+Step 2: Define Spring Goal
+ > at the end of Sprint X, persona will be able to do <xyz>
+ > Something that team can rally around
+
+Step 3: Review stories
+ > Product Owner goes through selected stories
+ > TIP: Elicit feedback. People not asking questions is generally a bad sign
+ > TIP: Setup a "definition of ready" for stories
+
+Step 4: Acquire Confidence - Design discussion  and tasking out
+ > Not everybody has to stick around. PO to asnwer questions is helpful (could be IM based or interrup basis)
+	- mostly the dev teams are needed
+ > Face-to-face conversation helps
+ > TIP: Time box activity / discussions
+	- so that discussion doesn't drag for too long
+ > TIP: Estimate tasks in Ideal days/hours
+
+Step 5: Refine goal if needed
+
+Step 6: Make commitment
+ 
+Step 7: Create Task board
+
+
+Sprint Planning Logistics
+1. Who to invite?
+	> TIP: Setup a recurring meeting
+	> Core team members (Product Owner, Scrum Master, Dev, Test, Analysts)
+	> Users/Clients/Business people who can answer questions if any
+2. How long?
+	> It depends on complexity/preparedness/team's maturity but general guideline - If you include "tasking-out" activity - around 4 hrs for a 2 week sprint
+
+
+FAQ about Sprint Planning
+1. How do we handle PTOs time? Do you update velocity to handle the effect of people leaving or joining the team?
+	> Generally no, unless people are going in bulk (ex: holiday)
+2. How to handle interruptions? New additions during sprint?
+	> Involve/Ask the Product owner to inform them
+	> Product owner will determine if the interruptions / new addition to sprint is aligned or not to the Sprint
+3. Do we estimate Defects?
+	> Some teams may estimate Defect and include them in the estimates of Sprint. But generally, if there are defect, the team will not be able to do other Stories so the velocity will go down. This will result in less work being assign to the team due to lower velocity and with it, less work being done
+	> Recommendation is not to estimate defects
+4. Difference between velocity and capacity?
+	> Velocity is based on Story unit you use
+	> Capacity is based on the availability of hours/days of individual team members
+5. How do you account for setup time when project starts?
+	> Theres a concept of Iteration 0, where we
+	  	- setup workstations
+	  	- setup Continuous integration environment
+  	  	- version control. etc
+	> TIP: Takes 1-2 real stories to finish by the end of Iteration 0
+	  	- this stories should be very simple
+
+
+
+
+34 Sprint Tracking
+
+Sprint Tracking methods
+1. Burn down - work left
+2. Burn up - work done + total work
+3. Task board
+
+Burn down - work left 
+ > A chart showing the trend of work remaining across time in a sprint.
+ > composed of a line graph
+ > y axis represents sum of time estimates in days
+ > x axis represents iteration timeline in days
+ > two lines exist
+	1. ideal tasks remaining line, a straight downward line
+		- starts with the total number, ends with zero
+	2. actual tasks remaining line
+
+Burn up - Work done + Total work
+ > A chart showing the trend of work accomplished across time in a sprint.
+ > a line graph
+ > two axis
+	1. X-axis, timeline
+	2. Y-axis, work units
+ > three lines
+	1. Total work for the Sprint
+	2. Ideal work line, starts from 0 work and ends with total work units
+	3. Actual work line
+ > if actual work line is below ideal work line, we are BEHIND schedule
+ > if actual work line is abobe ideal work line, we are AHEAD schedule
+
+Task board
+ > Task-board visible during standup
+ > Definition of done
+ > Too many in-progress smell
+ > board that consist of column and rows
+ > columns include
+	1. Story
+	2. To do
+	3. In progress
+	4. Done
+ > each row will have
+	1. Specific story
+	2. Story's Tasks, places on either To Do, In progress, or Done
+
+
+35 Spring Planning and Tracking - Practice Quiz
+
+Spring Review, Retrospective and Sprint Execution
+36 Sprint Execution and Daily Standups
+
+Sprint Execution
+ > Who works on what?
+	- Order the cards in priority
+ > Limit work in progress
+	- Find the right balance
+	- specifies that Tasks should be small enough to be digested easily
+ > Parallel work vs Swarming
+	- Swarming refers to many team members focusing on a single story
+	- Swarming may be useful if a team member's skill is not suited for their Tasks
+	- Practical? Skill A helping Skill B to finish story
+ > Generalists vs Specialists
+	- Tip: Skill map, Pairing (two people working together)
+ > Discipling... Discipline... Discipline	
+	- To follow what team decides to do
+ > Enginerring Practices 
+
+
+Daily Standup
+1. What
+ > Common: Three question
+	- What did I do yesterday?	
+	- What do I do today?
+	- Are there any roadblocks on my tasks?
+ > Aternatives: Work Items Attend / Story focused stand-up
+2. Who
+ > Core team + any stakeholder who wants to attend
+3. Purpose?
+ > Daily team planning
+ > Collaborate
+ > Identify blockers
+ > Status Check?
+4. Tips
+ > Show the board 
+ > Parking lot
+ > Keep it short
+
+
+
+
+37 Sprint Review
+
+Sprint Review
+Purpose
+ > Review work done and learning's from the sprint
+ > Get feedback and adjust future direction
+ > Celebrate
+Who?
+ > Core team
+ > Stakeholders
+ > Anybody and everybody
+How long?
+ > 1-2 hours
+What happens?
+ > Summarize
+	- what you planned, what you finished, what are the learnings, what are the roadblocks
+ > Demo
+	- demo the work that you have done
+	- individual team may demo that work that they have done
+ > Discuss
+	- discuss with stakeholders/clients, and get their feedback
+ > Adapt
+	- from feedbacks
+
+
+Sprint Review - Tips
+1. Don't wait for review to show your work 
+	> Early and regular feedback
+2. Some teams following this rule
+	> Demo done things only, don't show in-progress stuff
+3. Make effort to get stakeholders to attend
+4. Presentations by individuals
+	> provides motivations to each individuals to show off their work
+5. Prep work
+
+
+
+
+38 Sprint Retrospective
+
+Sprint Retrospective
+ > happens at the end of Sprint
+ > talks about the process of Sprint and not the product
+	- how to improve/modify the process of the Sprint
+ > most important activity in Scrum
+
+Sprint Retrospective - Most common format
+1. Who? Core team
+2. When? At the end of each iteration
+3. Purpose? Continuous Improvement
+4. What Happens? Commonly its discussion about
+	> What's working?
+	> What's not working?
+	> Action items?
+
+
+Sprint Retrospectives
+ > Alternative: Focused Retro
+ > Steps
+	1. Set the atmosphere
+	2. Share context
+	3. Determine Actions
+	4. Close the retrospective
+ > Follow through
+ > Change the retro format
+
+
+Sprint Retrosepctive - TIPS
+1. Avoid fingerpointing
+	> makes the environment not conducive for open discussion
+2. Select few (may be one) action items...
+3. Get people talking
+	> Non work question
+	> Round robin
+	> Manager opt out
+4. Individual -> Group -> All
+
+
+39 Sprint Review, Retrospective and Execution - Practice Quiz
+40 Scrum 10 questions - Quiz
+
+Mid course assessment
+41 Applying the Agile Mindset and Techniques - Peer graded Assignment
+42 Applying the Agile Mindset and Techniques - Review your Peers
+
+
+Week 4
+XP
+43 XP Overview
+
+XP
+ > introduced in 1996
+ > stands for eXtreme Programming
+ > The basis for XP came from a project at Chrysler managed by Kent Beck. 
+ > What made this project popular was that a dozen or so programmers implemented a financial system in two years that a team of 30 failed to implement over many years.
+
+XP application examples
+1. Code review with XP	
+ > normally, we will only do code review at the end
+ > but with XP, we can do pair programming, where two developers review each others code and provide each other's feedbacks
+2. Testing
+ > normally, only testers are involved in the testing phase
+ > but with XP, we can involve all people like developers for testing
+3. Design
+ > normally, we will only do designing one time at the start
+ > but with XP, we can do designing and modifying more often like daily
+
+
+What XP is about?
+1. Social change
+2. Engineering practices
+3. Lightweight
+4. Adaptive to changing requirements
+5. Defines a set of 
+	- Values
+	- Principles
+	- Practices 
+
+
+XP Controversies
+1. Prescriptive
+	> compared to the lightweight agile practices
+2. Pair programming
+	> too much, too extreme of a practice
+3. Incremental design
+4. Scalabilility of XP methods
+	> they say that it cant scale to bigger teams
+	> much better used for small/medium teams
+
+
+
+
+44 XP Values
+
+XP Values
+1. Simplicity
+2. Communication
+3. Courage
+4. Feedback
+5. Respect
+
+Simplicity
+ > we will do only what is necessary and nothing more
+ > maximizes value for every effort we give
+ > "What is the simplest thing that could possible work?"
+	- dont try to over-engineer the solution
+ > We will take smaller steps to our goals and iterate
+
+Communication
+ > a lot of problem can be resolved quickly if we are communicating properly
+ > everyone is part of the team and we communicate face to face daily
+ > we will work together on everything from requirements to code
+ > Communication is imporatnt for creating a sense of team and effective cooperation
+ > EX:
+	- team member A is stuck in a problem and member B knows the solution
+	- since they are not communicating enough, A wasted time solving
+
+Courage
+ > how team act in face of fear
+ > we will tell the truth about the progress
+
+Feedback
+ > XP team accepts that they will not get the solution the first time
+ > Getting feedback is important if you want to iterate and improve
+ > Generate as much feedback as a team can handle as quickly as possible
+ > Slow down feedback if you can't adapt
+ > Feedback comes in many forms
+	- are the test running?
+	- are the test successful?
+	- feedback from the customer
+
+Respect
+ > foundation of previous four
+ > respecting each other is key for XP to success
+ > No one is intrinsically worth more than anyone else
+
+
+
+
+
+45 XP Practices - Part 1
+
+XP Practices Overview
+ > Do practices while keeping their true purpose in mind
+	- dont do them as a ritual
+	- ex: dont pair programming with your boss to get close to them
+	- eX: do pair programming to communicate and provide feedbacks
+ > Practices were written with ideal state in mind. Keep making progress towards them
+	- you dont have to achieve the practices in day 1
+ > Experiment and see if it helps
+ > Practices works well together
+	- practices is preferred to be used alongside each other
+ > Primary and Corollary practices
+
+
+Primary Practices
+1. Sit together
+	> open working environment (no wall between the members)
+	> highly collabeorative environment
+	> not before team is ready (in all aspect, like psychologically ready)
+2. Whole team
+	> everyone needed for project success is part of the team
+		- ex: for database related issue, we need database admin
+ 	> team composition is Dynamic
+	> No fractional people
+		- people that arepart of multiple team at the same time
+		- cause lack of focus and multi tasking
+3. Informative workspaces
+	> setup workspace with ideas on wall, like sticky notes
+	> any must have an idea on whats going on with the project in less than 15 seconds when they look at your workspace
+	> dynamic information. Keep the information area of workspace uptodate
+ 	> keep workspace clean and ordered
+4. Energized work
+	> working hours must be productive
+	> for sick person, it is suggested to stay out and get rest and get well
+	> this is to prevent burn outs which lowers team members productivity
+	> incremental improvement. Recommended during the time you are with your team. For example, trying to restrict email or phone when you are trying to focus on a specific issue
+5. Pair programming
+	> a practices where two team members are working together
+		- these two will work alone when needed still
+		- but majority of the work will be done in pairs
+ 	> benefits includes:
+		- keep each other on task
+		- brainstorm refinements to the system
+		- clarify ideas
+		- take initiative when their partner is stuck, thus lowering frustration	
+		- hold each other accountable to the team's practices
+
+
+
+
+46 XP Practices - Part 2
+
+Other XP Practices:
+1. Stories
+	> unit of functionality
+	> stories must be flexible
+	> estimated early on, so it can be decided to be prioritized or not
+	> Keep stories visible - don't computerize
+2. Weekly cycle
+	> plan weekly, where in each week
+		a. review progress
+		b. select week's worth work
+		c. break stories into tasks
+	> gradually reduce planning time
+		- planning time does not directly provide value to clients
+3. Quarter cycle
+	> plan work quarterly at a time
+	> focuses on the big picture, where the project fits within the organization
+	> plan the theme or themses for the quarter
+	> pick a quarter's worth of stories to address those themes
+	> identify bottlenecks, especially those controlled outside the team
+4. Slack
+	> build some slack into the process
+	> slack time refers to a buffer time in the planning so you do not feel rushed to finish something
+	> if you are stuck on something, then you can always catch up
+	> How?
+	  - add few lower priority tasks that can be skipped
+	  - one week every 8th week as geek week
+	  - 20% time for programmer-chosen tasks
+	> Avoid aggressive timelines or commitment
+5. Ten minute build
+	> team must be able to build and run all the tests within 10 minutes
+	> New to agile
+		- Automated builds
+		- Key tests and continue to evolve
+	> gives teams confidence and reduces stress that they can make changes comfortable and see if they've broken something immediately
+6. Continuous Integration
+	> developers can integrate the changes they have made to the source code automatically
+	> integrate and test changes after no mroe than a couple of hours
+	> Asynchronous integrations
+		- once the developer is done with the changes, a separate process will integrate the changes to the source code and notifies the developer if there is anything broken
+		- here, the developers can make changes while it waits for the integration results
+	> Synchronous integration
+		- the developer makes a change, and constantly integrates with the system
+		- the developer waits for a feedback, through integration test result, before continuing with the next functionality
+7. Test First Programming
+	> also called Test Driven Development
+	> here, we are:
+		a. write test
+		b. run tests to see it fail
+		c. write the code necessary to pass test
+		c. test again and write until test passes
+	> benefits includes:
+		- Avoid scope creep
+		- build trust in team members
+		- reduce coupling
+8. Incremental design
+	> invest a little in design everyday
+	> excess complexity -> refactor to make it more simpler
+	> architecture emerges over time
+
+
+
+
+
+
+
+47 XP Process Model
+
+XP - Process Model
+1. Start with Release Planning
+	> Release contains a set of feature that team will deliver
+	> release planning is create using either User Stories (from Requirements) or using Architectural Spike or both
+	> User stories are small functionality to be built
+	> Architectural spike type of Story where the goal is to answer or solve tough technical or design problems. It is also used to explore potential solutions. Spike only addresses the problem under examination and ignore all other concern. So expect to throw away most of the work done under the spike
+2. Creating Spike to explore uncertain estimates
+	> when theres a Story with uncertain estimates, team create Spikes to explore, gather or research information to gain better understanding to Story
+	> this gives us a confident estimate to a specific Story
+3. Start an Iteration
+	> release planning will result in Release Plan
+	> Release plan is used to create an Iteration and start it
+	> Iteration is 1-2 week cycle where team select specific stories to work on and commits to finish them in given iteration
+	> Iteration starts with iteration planning, where team selects the work for next iteration from the release plan
+	> During iteration, 
+	  - team meets daily for daily stand-up meetings
+	  - team follows XP practices like pair programming, task force programming, continuous integration, incremental design, and all other XP practices
+4. Acceptance tests
+	> output of Iteration is the latest version of the product
+	> this product will undergo Acceptance tests for validation
+	> Acceptance tests is created using User stories and its Test scenarios
+	> A story can have one more Acceptance test
+5. Bug fixing
+	> if any of the acceptance tests fail, a detect or a bug is created
+	> these are incorporated in the next iteration to be fixed
+6. Project velocity update
+	> after each iteration, based on the work completed, the project velocity is updated
+7. New User Story
+	> after each iteration, based on customer feedback, new stories could be created to represent new functionality that we need to create or build
+8. Next Iteration
+	> after all the steps, we will do an Iteration again to finish a part of the product
+9. Product release
+	> once there is enough functionality to make a release, and team has customer's approval, updated software is release to production 
+
+
+
+
+
+
+
+48 Scrum vs XP - Reading
+	> https://www.mountaingoatsoftware.com/blog/differences-between-scrum-and-extreme-programming
+
+
+49 XP - Quiz
+
+Course Project
+50 Story Mapping - Peer-graded Assignment
+51 Story Mapping - Review your Peers
+
+

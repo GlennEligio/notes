@@ -1,0 +1,141 @@
+Day 15 Chat
+
+Francis Jan S Dimata  to  Everyone 9:04 AM
+yes sir
+rohit  to  Everyone 9:09 AM
+<?xml version="1.0" encoding="UTF-8"?>
+
+<command>
+     <profiles>
+          <profile name="Rating_Details">
+               <inputs>
+                    <input inputName="product_id" methodName="setProduct_id"/>
+                    <input inputName="rating" methodName="setRating"/>
+               </inputs>
+               <outputs>
+                    <output outputName="ratingId" methodName="getRatingId" />
+               </outputs>
+          </profile>
+     </profiles>
+</command>
+rohit  to  Everyone 9:10 AM
+@POST
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_ATOM_XML })
+	public Response processRequest(@PathParam("storeId") String storeId,
+	  @QueryParam(value = "responseFormat") String responseFormat)
+result = executeConfigBasedCommandWithContext(SaveProductRatingCmd.class.getName(), PROFILE_NAME, responseFormat, storeId, null );
+Response result = prepareAndValidate(storeId, getResourceName(), "POST", request, responseFormat);
+    if (result != null) {
+    	if (LoggingHelper.isEntryExitTraceEnabled(LOGGER)) {
+    		LOGGER.exiting(CLASSNAME, "renderOrder", "SSL validation failed");
+    	}
+    	return result;
+    }
+Richard Anderson Capua  to  Everyone 9:25 AM
+brb
+Richard Anderson Capua  to  Everyone 9:29 AM
+Back
+Francis Jan S Dimata  to  Everyone 9:34 AM
+brb
+Francis Jan S Dimata  to  Everyone 9:46 AM
+back
+rohit  to  Everyone 10:49 AM
+https://localhost/wcs/resources/store/1/rating/byProductId/14324
+https://localhost/wcs/resources/store/1/rating?productId=1243324
+Francis Jan S Dimata  to  Everyone 11:12 AM
+yes sir
+Francis Jan S Dimata  to  Everyone 11:34 AM
+brb
+rohit  to  Everyone 11:46 AM
+// without config
+    try {
+   	    TypedProperty requestProperties = initializeRequestPropertiesFromRequestMap(responseFormat);
+		
+   	   	    
+		result = executeControllerCommandWithContext(storeId, SaveProductRatingCmd.class.getName(), requestProperties, responseFormat);
+		
+	    
+   } catch (Exception e) {
+	   result = handleException(responseFormat, e, "save rating");
+	}
+Francis Jan S Dimata  to  Everyone 11:48 AM
+back
+rohit  to  Everyone 11:58 AM
+@GET
+	@Path(FIND_BY_PRODUCTID)
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_ATOM_XML })
+	public Response getRatingByProduct(@PathParam("storeId") String storeId,
+	  @QueryParam(value = "responseFormat") String responseFormat,
+	  @PathParam(value = "product_id") String product_id)
+TypedProperty requestProperties = initializeRequestPropertiesFromRequestMap(responseFormat);
+     	requestProperties.put("product_id", product_id);
+		
+		result = executeControllerCommandWithContext(storeId, SaveProductRatingCmd.class.getName(), requestProperties, responseFormat);
+rohit  to  Everyone 12:20 PM
+https://help.hcltechsw.com/commerce/8.0.0/tutorials/tutorial/twv_restconfig.html
+rohit  to  Everyone 12:51 PM
+<%@include file="../Common/EnvironmentSetup.jspf" %>
+   
+    <Html>    
+    <Head>  
+   		<%@include file="../Common/CommonCSSToInclude.jspf" %>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Sample JSP </title>
+        <!-- Include script files -->
+		<%@include file="../Common/CommonJSToInclude.jspf" %>
+         
+   
+    </Head>  
+    <Body>
+<%-- This file includes the progressBar mark-up and success/error message display markup --%>
+		<%@ include file="../Common/CommonJSPFToInclude.jspf"%>
+    
+    				<%out.flush();%>
+				<c:import url = "${env_jspStoreDir}Widgets/Header/Header.jsp">
+					<c:param name="overrideLazyLoadDepartmentsList" value="${overrideLazyLoadDepartmentsList}" />
+				</c:import>
+				<%out.flush();%>
+<%-- This file includes the progressBar mark-up and success/error message display markup --%>
+		<%@ include file="../Common/CommonJSPFToInclude.jspf"%>
+    
+    				<%out.flush();%>
+				<c:import url = "${env_jspStoreDir}Widgets/Header/Header.jsp">
+					<c:param name="overrideLazyLoadDepartmentsList" value="${overrideLazyLoadDepartmentsList}" />
+				</c:import>
+				<%out.flush();%>
+rohit  to  Everyone 12:57 PM
+<div id="footerWrapper">
+				<%out.flush();%>
+				<c:import url="${env_jspStoreDir}Widgets/Footer/Footer.jsp"/>
+				<%out.flush();%>
+			</div>
+    </Body>  
+    </Html>
+	
+From Homer Garnet Cabilla to Everyone 03:12 PM
+https://help.hcltechsw.com/commerce/9.0.0/webservices/tasks/twvCORSconfig.html
+From Presmelito Rapatan Villanueva to Everyone 03:14 PM
+.header("Access-Control-Allow-Headers", "origin, content-type, accept, authorization")
+            .header("Access-Control-Allow-Credentials", "true")
+            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+            .header("Access-Control-Max-Age", "1209600")
+From Jeorge Emprese to Everyone 03:28 PM
+$.ajax({
+				type : 'POST',
+				url : 'https://cors-anywhere.herokuapp.com/https://localhost:443/wcs/resources/store/1/rating',
+				contentType: 'application/json',
+				dataType : 'json',
+				data : JSON.stringify(data),
+				success : function(response) {
+					alert(response.ratingId);
+				},
+				error : function(jqXHR, status, error) {
+
+				}
+			});
+
+		})
+From Presmelito Rapatan Villanueva to Everyone 03:32 PM
+"https://localhost:8443"
+

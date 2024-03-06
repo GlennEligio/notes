@@ -1,0 +1,9 @@
+05. Enabling Emmet Abbreviation in React Javascript files
+
+
+
+Enabling Emmet Abbreviation in React Javascript files
+1. Go to a JS file in React App src folder
+2. Look at the bottom, you should see "Javascript"
+3. Change to "Javascript React"
+	- with this, emmet should now work

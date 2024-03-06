@@ -1,0 +1,32 @@
+06. Maven Repository and types
+
+
+Types of Maven Repository
+1. Local Repository
+	> can be treated as local cache for libraries
+	> located on developer's computer
+		- MS Windows: 		c:\Users\<users-home-dir>\.m2\repository
+		- Mac and Linux:	~/.m2/repository
+	> Maven will search this local repository before going to Maven Central Repository
+
+
+2. Central Repository
+	> by default, Maven will search Maven's Central Repository (remote)
+		- https://repo.maven.apache.org/maven2/
+	> requires an Internet connection
+	> once files are downloaded, they are stored in local repository
+
+
+3. Private Repositories
+	> some company may have created a secret code modules for its developers to use
+	> NOT AVAILABLE TO THE PUBLIC
+	> everyone can set up their own private Maven Repository
+		- we can secure it with credentials (id/password)
+	
+
+SOME MAVEN repository manager products
+
+PRODUCT		COMPANY		WEBSITE
+Archiva		Apache		archiva.apache.org
+Artifactory	JFrog		www.jfrog.com
+Nexus		Sonatype	www.sonatype.com

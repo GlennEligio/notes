@@ -1,0 +1,67 @@
+79 S3 Website Hands On
+
+
+Prerequisites
+1. An HTML file. We will upload this on S3 for website hosting later
+
+
+Uploading HTML file
+1. Go to the root of the S3 Bucket
+2. Upload the HTML file
+	> you can also upload it in other folders beside root folder
+	> but you will need to specify these folder path later
+
+
+Setting S3 Website hosting
+1. Go to the S3 Bucket
+2. Go to the Properties tab
+3. Scroll until you see the "Static website hosting"
+4. Press Edit
+5. Select 'Enable'
+6. Hosting type - 'Host a static website'
+7. For index document, select the HTML file
+	> if its in the root directory, just pass the HTML file
+		- ex: index.html
+	> if its in a folder, specify the folder path
+		- ex: html/index.html
+8. Pass something in the Error document
+	> if does not have to exist, just pass error.html 
+	> but if you can upload an HTML file for it, you can do it
+9. Leave the redirection rules to empty
+10. Save changes
+11. Check the 'Static website hosting' section of S3 Bucket Properties again
+	> you should see the 'Bucket website endpoint' created by AWS
+	> navigate to it, you should see the HTML file rendered
+
+
+
+NOTES:
+1. All files used inside the HTML hosted in S3 Static Website hosting will be pulled from the S3 bucket as well
+	> this means that all the files used inside the index.html SHOULD BE PUBLICLY ACCESSIBLE AS WELL
+	> in example below, inside the index.html, we used "img/coffee.jpg" file
+	> the browser will look for <current-url> + /img/coffee.jpg
+	> in this case, there must be an img folder with coffee/jpg file inside and it should be public
+
+
+EX:
+S3 Bucket directory
+root
+ - index.html
+ > img
+  	- coffee.jpg
+	- cat.jpeg
+
+
+Index.html
+
+<html>
+    <head>
+        <title>My First Webpage</title>
+    </head>
+    <body>
+        <h1>I love coffee</h1>
+        <p>Hello world!</p>
+    </body>
+
+    <img src="img/coffee.jpg" width=500/>
+</html>

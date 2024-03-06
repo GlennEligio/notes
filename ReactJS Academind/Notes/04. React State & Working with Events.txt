@@ -1,0 +1,536 @@
+02. React State & Working with Events
+
+001. Module Introduction
+
+Module Content
+1. Handling Events
+2. Updating the UI & Working with "State"
+3. A Closer Look at Components and State
+
+
+
+
+
+002 Listening to Events & Working with Event Handlers
+
+Events
+	> Events, or DOM events, are process that happens in a DOM element
+	> In these DOM element, we can attach "Event Listeners" that will be triggered when a specific event happens
+	> These events include
+		- onclick (onClick in React)
+			-> applicable to all DOM elements
+		- onsubmit (onSubmit in React)
+			-> applicable only in <form> elements
+		- onchange (onChange in React)
+			-> application only in <input> elements
+
+
+Event Handlers
+	> in Event listeners, we can add logic/function that will be executed when the said Event happen
+	> this is called Event Handlers
+	> Event Handlers typically consist of a function that do something
+
+EX:
+function ExpenseItem(props) {
+  const clickHandler = () => {
+    console.log("Clicked!!!");
+  };
+
+  return (
+    <Card className="expense-item">
+      <ExpenseDate date={props.date} />
+      <div className="expense-item__description">
+        <h2>{props.title}</h2>
+        <div className="expense-item__price">${props.amount}</div>
+      </div>
+      <button onClick={clickHandler}>Change Title</button>
+    </Card>
+  );
+}
+
+
+NOTE:
+1. End the name of Event Handlers with "Handlers"
+	- naming convention
+
+
+
+
+
+003 How Component Functions Are Executed
+
+How Component Functions are Executed
+1. When we add a Component inside a JSX code, it essentially mean that the Functional Component will be executed when React app is rendered
+2. This Functional Component is only executed ONCE per render
+3. The only way to executed the Functional Component again is to trigger it rerender process, which can be either
+	- refresh browser (this rerender EVERY COMPONENT in the React app)
+	- change the "State" value of a Component
+
+
+
+
+
+
+004 Working with State
+005 A Closer Look at the useState hook
+
+State
+	> data attached to a Component
+	> updating this data will trigger the Functional Component to be executed again (rerender)
+	> for Functional Component, we will need to use "useState" functional hook to add State to Component
+
+useState hook
+	> a function inside 'react' dependency
+	> we will do a named import to import this function
+		- ex: import React, { useState } from 'react';
+	> used to register for a specific Component instance
+		- meaning each Component instance have their OWN State
+		- changing State of a Component DOES NOT affect other Component's State
+	> takes an Object as parameter
+		- this will serve as the "default" value of the State data
+	> returns an array of Object
+		- 1st array element is a variable that serves as a POINTER to the State data
+		- 2nd array element is a function that lets us modify/set new value to the State data
+		- we can use Array destructuring to the result of the useState()
+	> ex: const [title, setTitle] = useState("Default title");
+
+
+Using useState functional hook
+1. Call the useState() function
+	> we can only call this hook inside a React Component function
+		- cant be called outside Component function
+		- also cant be called in nested functions inside Component function
+2. Pass the default value in useState() parameter
+3. Use array destructuring to the result of the useState() call
+	> first variable will be the State data pointer
+	> second variable will hold the function to update the State data value
+4. Use the second variable in array when we want to modify State
+	> ex: setTitle("New Title")
+
+
+NOTE:
+1. Naming convention for array member for useState() array destructuring is as follows:
+	> first element must refer to the State to define
+		- ex: title, name, age, password
+	> second element must start with "set", followed by State name capitalized
+		- ex: setTitle, setName, setAge, setPassword
+2. Updating State will cause the Component to be executed again (rerender)
+	> only rerender Component instance that it is registered
+3. Modifying the State will NOT IMMEDIATELY update the State value
+	> in essence, it will just queue the modification, and apply it AFTER the Component rerender
+	> so, if you immediately access the State after using setter of the State, it will receive the OLD VALUE
+
+
+
+
+
+007 Adding Form Inputs
+
+Create NewExpense section
+	> will contain ExpenseForm used to create new Expense Item
+	> Add the ExpenseForm inside
+
+// NewExpense.js
+import "./NewExpense.css";
+import ExpenseForm from "./ExpenseForm";
+
+const NewExpense = () => {
+  return (
+    <div className="new-expense">
+      <ExpenseForm />
+    </div>
+  );
+};
+
+export default NewExpense;
+
+
+
+Create ExpenseForm
+	> contains Form with three Inputs and a Button
+
+// ExpenseForm.js
+import "./ExpenseForm.css";
+
+const ExpenseForm = () => {
+  return (
+    <form>
+      <div className="new-expense__controls">
+        <div className="new-expense__control">
+          <label>Title</label>
+          <input type="text" />
+        </div>
+        <div className="new-expense__control">
+          <label>Amount</label>
+          <input type="number" min="0.01" step="0.01" />
+        </div>
+        <div className="new-expense__control">
+          <label>Date</label>
+          <input type="date" min="2019-01-01" max="2022-12-31" />
+        </div>
+      </div>
+      <div className="new-expense__actions">
+        <button type="submit">Add Expense</button>
+      </div>
+    </form>
+  );
+};
+
+export default ExpenseForm;
+
+
+Adding NewExpense Component in App.js
+	> replace the h2 tag with NewExpense Component
+
+Return JSX of App.js
+
+  return (
+    <div>
+      <NewExpense />
+      <Expenses items={expenses} />
+    </div>
+  );
+
+
+
+
+
+
+
+008 Listening to User Input
+
+onChange
+	> one of EventListener
+	> equivalent of onchange in Native DOM events listeners
+	> triggered whenever the value of Input CHANGES
+
+React Synthetic Event
+	> similar to Native DOM event
+	> parameter that is exposed/passed in the function passed as Event Handler
+	> this SyntheticEvent Object contains many information with regards of the Event, some of them includes
+
+target.value
+	> refers to the value of target DOM element
+	> used in Input elements event handlers
+	> ex: const name = e.target.value;
+
+currentTarget.checked
+	> refers to the value of the current target DOM element
+	> used in Input element of type "checkbox"
+
+preventDefault
+	> a function used to prevent default behavior	
+	> typically used for onSubmit event handler and called at start of event handler function
+	> ex: e.preventDefault();
+
+EX:
+input with event listener
+
+<input type="text" onChange={titleChangeHandler} />
+
+
+Event handler function
+
+  const titleChangeHandler = (e) => {
+    console.log(e.target.value);
+  };
+
+
+
+
+
+
+
+009 Working with Multiple States
+
+NOTE:
+1. Components can have MULTIPLE States
+2. These States must have different names
+
+EX:
+  const [enteredTitle, setEnteredTitle] = useState("");
+  const [enteredAmount, setEnteredAmount] = useState("");
+  const [enteredDate, setEnteredDate] = useState("");
+
+  const titleChangeHandler = (e) => {
+    setEnteredTitle(e.target.value);
+  };
+  const amountChangeHandler = (e) => {
+    setEnteredAmount(e.target.value);
+  };
+  const dateChangeHandler = (e) => {
+    setEnteredDate(e.target.value);
+  };
+
+
+
+
+
+
+010 Using One State Instead 
+
+One State approach
+	> similar on managing State in Class Component type
+	> will require the use of Spread operator
+
+EX:
+ const [userInput, setUserInput] = useState({
+    enteredTitle: "",
+    enteredAmount: "",
+    enteredDate: "",
+  });
+
+  const titleChangeHandler = (e) => {
+    setUserInput({
+      ...userInput,
+      enteredTitle: e.target.value,
+    });
+  };
+  const amountChangeHandler = (e) => {
+    setUserInput({
+      ...userInput,
+      enteredAmount: e.target.value,
+    });
+  };
+  const dateChangeHandler = (e) => {
+    setUserInput({
+      ...userInput,
+      enteredDate: e.target.value,
+    });
+  };
+
+
+
+
+
+011 Updating State that depends on the Previous State
+
+NOTE:
+1. Setter method/function of useState can access the previous State data value
+	> we can do this by passing a function to setter method instead of the new value itself
+	> we can then add a parameter in the input function that will hold the previous state
+	> this way, whenever we update a State, we can also receive the LATEST PREVIOUS State value
+
+Ex:
+
+  const [userInput, setUserInput] = useState({
+    enteredTitle: "",
+    enteredAmount: "",
+    enteredDate: "",
+  });
+
+  const titleChangeHandler = (e) => {
+    setUserInput((prevState) => {
+      return {
+        ...prevState,
+        enteredTitle: e.target.value,
+      };
+    });
+  };
+
+
+2. State changes are SCHEDULED
+	> for this reason, trying to modify the value of State then immediately accessing it in SAME RENDER CYCLE will return the old value
+
+
+
+
+
+
+
+012 Handling Form Submission
+
+onSubmit
+	> event listener only available in form element
+	> triggered when we submit a form
+		-> by clicking input of type submit, or button of type submit
+	> when we pass a event handler function, we will receive a SubmitEvent object
+
+SubmitEvent
+	> contains data/functions related to Submit Event
+	> includes the following
+
+e.target.<variable-name>.value
+	> returns the value of a specific variable name
+	> when submitting form, we are submitting a list of key value pairs
+		- this key is defined by the "name" attribute of the 
+	> when we want to fetch a value of specific key, change the <variable-name> to the corresponding key
+	> ex: const name = e.target.name.value
+
+preventDefault
+	> function in SubmitEvent
+	> prevents the default behavior of the form submission
+		- navigate to the url specified in "action" of form element
+		- add the input data in the query parameter of the url to be navigated
+	> if we want to perform the data submission by ourselves (ex: fetch api), we will need to call this
+
+
+Handling Submit of Form
+1. Make sure the values of input is tied to a State
+	> we can do this by adding onChange eventListener of input
+2. Add eventHandler to onSubmit of form
+3. Call preventDefault()
+4. When accessing the data of form, use the States
+
+
+EX:
+form element with onSubmit eventListener
+
+<form onSubmit={submitHandler}>
+
+
+Submit Event Handler function
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    const expenseData = {
+      title: enteredTitle,
+      amount: enteredAmount,
+      date: new Date(enteredDate),
+    };
+
+    console.log(expenseData);
+  };
+
+
+
+
+
+
+013 Adding Two-way binding
+
+
+Two way binding
+	> this refers to the binding of State and Input values
+	> right now, we have one way binding where we bind value of Input to the State whenever we change it
+	> for two way binding, we can the bind the value of State to the Input itself
+	> no infinite looping will happen in this case since it will reach equilibrium and therefore will not cause rerenders
+	
+How to do Two way binding
+	> we can use the input attribute "value" to bind the State value to the Input value
+
+EX:
+// State
+const [enteredTitle, setEnteredTitle] = useState("");
+
+// Input element
+          <input
+            type="text"
+            value={enteredTitle}
+            onChange={titleChangeHandler}
+          />
+
+
+
+
+
+
+
+014 Child-to-Parent Component Communication (Bottom-up)
+
+Parent-to-Child Component Communication
+	> Top down communication
+	> Done through passing values in props
+
+Child-to-Parent Component Communication 
+	> Bottom up communication
+	> Done through passing POINTERS of functions
+		- remember that in JS, functions are also Objects
+		- and if we assign a function as value of another variable (e.g. Component "props"), then we are passing the POINTER of the said function
+
+
+EX:
+1. In App.js, we defined a function "addExpenseHandler"
+	- takes a expense Object
+2. We then pass it in NewExpense Component  as one of its prop named "onAddExpense"
+3. In NewExpense, we defined a function "saveExpenseDataHandler"
+	- takes an expense Object as well
+	- here, we added a properties "id"
+	- we also used the "onAddExpense" function in the props
+4. Pass the saveExpenseDataHandler function to ExpenseForm Component as prop named "onSaveExpenseData"
+5. In ExpenseForm, we used "onSaveExpenseData" function in the props
+
+
+// Inside App.js
+
+  const addExpenseHandler = (expense) => {
+    console.log("In App js");
+    console.log(expense);
+  };
+
+  return (
+    <div>
+      <NewExpense onAddExpense={addExpenseHandler} />
+      <Expenses items={expenses} />
+    </div>
+  );
+
+
+// Inside NewExpense
+
+  const saveExpenseDataHandler = (expense) => {
+    const expenseData = {
+      ...expense,
+      id: Math.random().toString(),
+    };
+    props.onAddExpense(expenseData);
+  };
+
+  return (
+    <div className="new-expense">
+      <ExpenseForm onSaveExpenseData={saveExpenseDateHandler} />
+    </div>
+  );
+
+
+// Inside ExpenseForm
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    const expenseData = {
+      title: enteredTitle,
+      amount: enteredAmount,
+      date: new Date(enteredDate),
+    };
+
+    props.onSaveExpenseData(expenseData);
+    setEnteredTitle("");
+    setEnteredAmount("");
+    setEnteredDate("");
+  };
+
+
+
+
+
+
+
+
+015 Lifting The State Up
+
+Lifting State up
+	> process where we pass/lift the State/Data up from Child Component to its Parent Component
+		- can be done by passing functions from Parent to Child as props
+	> the State/Data lifted can then be used by the Parent or other Child Components of the Parent Component
+		- can be done by passing data from Parent to Child as props
+	> in this case, the State is stored in the Parent Component
+		
+
+
+
+
+
+
+016 Controlled vs Uncontrolled Components & Stateless vs Stateful Components
+
+Controlled vs Uncontrolled Components
+	> Controlled Components are Components whose content is controlled by another Component, typically the Parent Component
+		- ex: Table Component that receives its content from the Parent Component through props
+	> Uncontrolled Components are Components whose content is independent and only Controlled by the Component itself
+
+
+Stateless Components vs Stateful Components
+	> Stateless Components are Components that doesnt have internal State to manage
+		- typically Components that are used to display information from props
+	> Stateful Components are Components that does have State to manage

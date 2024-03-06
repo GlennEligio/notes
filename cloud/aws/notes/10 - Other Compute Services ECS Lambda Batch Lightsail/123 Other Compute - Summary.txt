@@ -1,0 +1,35 @@
+123 Other Compute - Summary
+
+
+Docker
+ > container technology to run applications
+
+ECS
+ > run Docker containers on EC2 instances
+
+Fargate
+ > run Docker containers without provisioning the infrastructure
+ > Serverless offering (no EC2 instances)
+
+ECR
+ > private Docker Images Repository
+
+Batch
+ > run batch jobs on AWS across managed EC2 instances
+
+Lightsail
+ > predictable & low pricing for simple application & DB stacks
+
+
+
+Lambda Summary
+ > Lambda is Serverless, Function as a Service (FaaS), seamless scaling, reactive
+ > Lambda Billing:
+	- By the time run x by the RAM provisioned
+	- By the number of invocations
+ > Language Support: supports many programming languages except (arbitrary) Docker
+ > Invocation time: up to 15 minutes (max before timeout)
+ > Use cases:
+	- Create thumbnails for images uploaded onto S3
+	- Run a Serverless cron job
+ > API Gateway: used as a way to expose Lambda functions as HTTP API

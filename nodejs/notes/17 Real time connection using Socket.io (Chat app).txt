@@ -1,0 +1,1222 @@
+17 Real time connection using Socket.io (Chat app)
+
+Contents
+1. What is WebSockets
+2. ExpressJS setup 
+2.1 Integrating Socket.io to the ExpressJS app
+3. Custom/Broadcasting Events
+4. Acknowledging Events
+5. Geolocation
+6. Mustache JS & Moment
+7. Chat Room form
+8. Passing Data & Creating Rooms
+9. ES6 Classes
+10. Displaying Users
+
+
+
+
+
+
+
+
+
+
+1. What is WebSocket
+
+WebSocket API
+ > The WebSocket API is an advanced technology that makes it possible to open a TWO-WAY interactive communication session between the user's browser and a server. 
+	- the two-way communication is typically called FULL-DUPLEX in telecommunications
+ > With this API, you can send messages to a server and receive event-driven responses without having to poll the server for a reply.
+
+
+Creating WebSocket communication
+1. Client sends an http request to the Server asking to open a WebSocket connection
+
+# EX: REQUEST
+GET ws://some-url HTTP/1.1
+Connection: Upgrade
+Upgrade: websocket
+
+2. If Server agrees, it will response with a 101 SWITCHING PROTOCOLS response
+	> at this point the "handshake" is complete
+
+# RESPONSE
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+
+
+3. The connection will stay open until one of the party drops off. Then the tcp resources will be unallocated
+
+
+
+
+
+
+
+
+
+
+
+2. ExpressJS setup 
+
+Setting up ExpressJS
+1. Setup the Express server
+	> serves the index.html in "public" folder as one of the static files
+		- displays "Welcome to chat app"
+	> starts the Express app inside ./src/index.js
+		- runs on port 3000
+
+// project structure
+public
+ - index.html
+src
+ - index.js
+
+// ./src/index.js
+const express = require("express");
+const path = require("path");
+const app = express();
+
+const publicPath = path.join(__dirname, "/../public");
+const port = process.env.PORT;
+
+app.use(express.json());
+app.use(express.static(publicPath));
+
+app.get("/chat", (req, res) => {
+  res.send("Chat app");
+});
+
+app.listen(process.env.PORT, () => {
+  console.log("Server listening to port 3000");
+});
+
+// ./public/index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Welcome to chat app</h1>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+2.1 Integrating Socket.io to the ExpressJS app
+
+socket.io
+ > Socket.IO enables real-time bidirectional event-based communication. It consists of:
+	1. a Node.js server (this repository)
+	2. a Javascript client library for the browser (or a Node.js client)
+
+socket.io Functions/Objects
+// Server side
+socketIO
+ > top level object exposed by the "socket.io" module
+ 
+socketIO.Server(server: Server): socketIO.Server
+ > constructor function used to create socketIO.Server
+ > takes one input, 
+	1. server: Server
+		- typically from "http.createServer()"
+ > returns a socketIO.Server instance
+	- this will be the Server instance input, but with WebSocket support
+
+socketIO.Server.prototype.on(event: string, listenerFn: (socket: socketIO.Socket) => {})
+ > on() is used to add event listeners to specific Server events
+ > takes two inputs
+	1. event: string
+		- the name of the event to listen to
+	2. listenerFn: (socket) => {}
+		- the function to execute when the said event happens	
+		- receives the Socket instance that emitted the said event
+
+socketIO.Socket.on(event: string, listenerFn: (reason: string) => {})
+ > on() is used to add event listener to specific Socket events
+ > takes two inputs
+	1. event: string
+		- the name of the event to listen to
+	2. listenerFn: (reason: string) => {}
+		- the function to execute when the said event happens
+		- receives the reason as string as to why it happened
+
+
+http
+ > core Node.js module
+ > The HTTP core module is a key module to Node.js networking.
+
+http 
+ > top level object "http" module exposes
+
+http.createServer(requestListener?: RequestListener): Server
+ > used to create an Http server
+ > if we pass a ReqeustListener instance (i.e. Express Application instance), it will include all the configuration of that RequestListener like
+	- Route/Endpoints configurations and the Route request handlers
+ > takes one input
+	1. requestListener
+		- OPTIONAL
+		- passes all configuration of the requestListener to the Server instance to create
+ > returns a Server instance
+
+
+// Client side
+io(serverUrl: string)
+ > top level function exposed globally by socket.io.js
+ > takes a server url as string input
+	- if no url is passed, it will default to the server url that renders the said Client HTML page
+ > ex: const socket = io("ws://localhost:3000")
+
+
+
+
+Adding Socket.io in the Express app as Server and index.html as Client
+ > GUIDE: https://socket.io/get-started/chat
+1. Integrating WebSocket support to the ExpressJS server
+2. Create WebSocket client to the index.html page
+
+
+Integrating WebSocket support to the ExpressJS server
+ > right now, we have the Express to create the server
+ > but Express doesnt have support for WebSockets, therefore we will use the Node.js' "http" module for that
+	- we will still create an Express server with Routes but with "http", we will integrate websocket support to it by using socket.io functions
+ 	- with this setup, the server that we will use to listen to is NOT the one from Express, but FROM the "http" module
+
+1. Create an http server using "http" module and passing the Express server
+2. Attach the socket.io to the http server using the top level function "socket.io" module exposes
+3. Define the eventHandlers for specific Server and Socket events
+
+EX:
+// src/index.js
+// import necessary dependencies
+const express = require("express");
+const path = require("path");
+const socketIO = require("socket.io");
+const http = require("http");
+
+const port = process.env.PORT;
+const app = express();
+const publicPath = path.join(__dirname, "/../public");
+
+// setup the Express server
+app.use(express.json());
+app.use(express.static(publicPath));
+
+// create a Server instance using http.createServer() with Express Application
+const server = http.createServer(app);
+// add WebSocket support to the Server instance
+const io = new socketIO.Server(server);
+
+// define eventListener handlers of Server and sockets
+// when a Client connected to Server
+io.on("connection", (socket) => {
+  console.log("A user connection");
+  
+  // when the client disconnected
+  socket.on("disconnect", () => {
+    console.log("The user was disconnected");
+  });
+});
+
+// make the Server instance listen to specific port
+server.listen(port, () => {
+  console.log("Server listening to " + port);
+});
+
+
+
+Integrating WebSocket support to the HTML/JS/CSS index.html client
+ > to create a WebSocket client to the index.html page, we will need the JavaScript file which contains code to create WebSocket client
+ > this JavaScript file (socket.io.js) can be fetch by either
+	1. calling to specific endpoint to the Server that serves the index.html file itself
+		- if we used the socket.io in the Server, it will automatically expose the socket.io.js via "/socket.io/socket.io.js" Route
+	2. get from the local node_modules folder of socket.io
+		- it is located in the "node_modules/socket.io/client-dist/socket.io.js" directory
+ > by default, if we create an instance of the Socket client, it will connect to the Socket Server created by the Server serving the .html page
+ > using the global function exposed by "socket.io.js" which is io(), we can create WebSocket client
+
+1. Fetch the "socket.io.js" file
+2. Create a WebSocket client and connect to the Server
+3. Setup few eventHandlers to the WebSocket client with logs inside
+
+// public/index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="./js/app.js" defer></script>
+  </head>
+  <body>
+    <h1>Chat app</h1>
+  </body>
+</html>
+
+
+// public/js/app.js
+const socket = io();
+socket.on("connect", () => {
+  console.log("Connected");
+});
+
+
+
+
+3. Custom/Broadcasting Events
+
+EMIT CHEATSHEET: https://socket.io/docs/v4/emit-cheatsheet/
+
+Functions/Objects used
+Socket.prototype.on(event: string, listenerFn: (payload: any[]) => {})
+ > used to make the Socker listen to specific events
+ > takes two input
+	1. event
+		- the name of the event to listen to
+		- must be the SAME name as the event we are listening to
+	2. listenerFn
+		- function to be executed when the Event is received
+		- function receives the Event payloads as arguments
+
+
+socketIO.Socket.prototype.emit(event: string, payload: any[])
+ > used to make the Socket emit an event
+	- by default, "connect" and "disconnect" events are emitted when Socket connects or disconnect
+ > we can also emit CUSTOM events using this function
+	- but, for the other Socket to listen to this custom event, it must have the SAME NAME
+ > takes two input
+	1. event
+		- the name of the event to emit
+		- if the Client wants to listen to this event, it must use the same name on the Client.on() call
+	2. payload
+		- takes an array of data
+		- can be access by the client in the eventListener handler function
+
+
+Socket.prototype.broadcast.emit(event: string, payload: any[])
+ > used to broadcast an event to EVERYONE connected to Server EXCEPT the Client that emitted it
+ > takes two input
+	1. event
+		- name of the event to emit/broadcast
+	2. payload
+		- takes an array of any data
+
+
+socketIO.Server.emit(event: message, payload: any[])
+ > used to emit an event to EVERY Client connected to the Server
+ > called using the socketIO.Server instance
+ > takes two input
+	1. event:
+		- name of the event emitted/broadcasted
+	2. payload:
+		- the payload included in the event
+
+
+
+Custom Events and Broadcasting the Events
+Custom Events
+ > by default, "connect" and "disconnect" events of Socket is available, which are emitted when the Socket connect and disconnect
+ > but we can also define custom events that we can emit, which the Socket can also listen to by using same custom event name
+
+Broadcasting Events
+ > in WebSocket communication, broadcasting is where we send events to MULTIPLE recipients
+ > both the WebSocket client and server can broadcast events
+ 	- with Server, all Client connected to it will receive the said event
+	- with Client, we can also make it so that all except self will receive the event
+
+
+GOAL:
+1. Recreate event in group chat where we send a message 
+	- using socket.on() and io.emit()
+	- use custom event "createMessage"
+2. Recreate event in group chat where we join a gc for the first time
+	- use socket.on(), socket.emit(), socket.broadcast.emit()
+	- use custom event "newMessage"
+
+EX:
+// ./src/index.js
+// define eventListener handlers of Server and sockets
+io.on("connection", (socket) => {
+  console.log("A user connected");
+  socket.on("disconnect", (reason) => {
+    console.log(reason);
+  });
+
+  // message sent to new User
+  socket.emit("newMessage", {
+    from: "Admin",
+    text: "Welcome to the chat app",
+    createdAt: new Date().getTime(),
+  });
+
+  // meesage sent to all User except the new User
+  socket.broadcast.emit("newMessage", {
+    from: "Admin",
+    text: "New user joined the chat",
+    createdAt: new Date().getTime(),
+  });
+
+  // listens to createMessage event and then broadcast the message to all
+  socket.on("createMessage", (message) => {
+    console.log("Message: ", message);
+    io.emit("newMessage", {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime(),
+    });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User was disconnected");
+  });
+});
+
+
+// ./public/js/app.js
+// define eventListener handlers of Server and sockets
+io.on("connection", (socket) => {
+  console.log("A user connected");
+  socket.on("disconnect", (reason) => {
+    console.log(reason);
+  });
+
+  // message sent to new User
+  socket.emit("newMessage", {
+    from: "Admin",
+    text: "Welcome to the chat app",
+    createdAt: new Date().getTime(),
+  });
+
+  // meesage sent to all User except the new User
+  socket.broadcast.emit("newMessage", {
+    from: "Admin",
+    text: "New user joined the chat",
+    createdAt: new Date().getTime(),
+  });
+
+  // listens to createMessage event and then broadcast the message to all
+  socket.on("createMessage", (message) => {
+    console.log("Message: ", message);
+    io.emit("newMessage", {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime(),
+    });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User was disconnected");
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+4. Acknowledging Events
+
+Functions/Objects used
+Socket.prototype.on(event: string, listenerFn: (...args: any[], callbackFn: (ack?: any) => {}) => {})
+ > another overload of the Socket.prototype.on() method
+ > this time, we added new parameter to the listenerFn argument of on()
+	- this callback parameter function will be called IF we want to send an acknowledgement to the sender/emitter of the event
+	- we have the option to add data to the acknowledgement or not
+
+Socket.prototype.emit(event: string, payload: any[], callbackFn: (ack: any) => {})
+ > another overload of the Socket.prototype.emit(), method
+ > this time, we added new argument to the emit() call
+	- this callback will be executed once acknowledgement is received
+	- this callback will receive the acknowledgement data as argument
+
+
+Acknowledging Events
+ > with socket.io, we can make the receiver ACKNOWLEDGE the event and sends back a "reply"
+ 	- this reply can then be accessed by the sender/emitter
+ > to do this, we need to do the following
+	1. add a new parameter to listenerFn of Socket.prototype.on()
+		- this parameter is a callback function
+		- what we pass to this callback function when we call it will be received by the emitter as "acknowledgement"
+	2. add new function argument to the Socket.prototype.emit()
+		- this function argument will receive the "acknowledgement" from the other side
+
+
+GOAL:
+1. Add acknowledgement when we createMessage
+	-> add acknowledgement in Server when we received the event from one of the Client
+
+EX:
+// Client side ./public/js/app.js
+// emits the createMessage
+socket.emit(
+  "createMessage",
+  {
+    from: "Mean",
+    text: "Created message",
+  },
+  () => {
+    console.log("Server got the message");
+  }
+);
+
+// inside the io.on("connection", callback) callback function
+  // listens to createMessage event and then broadcast the message to all
+  socket.on("createMessage", (message, callback) => {
+    console.log("Message: ", message);
+    io.emit("newMessage", generateMessage(message.from, message.text));
+    callback();
+  });
+
+
+
+
+
+
+
+5. Geolocation
+
+GOAL:
+1. Create a form with one text input 
+2. Send a message by emitting createMessage WebSocket event using submitEvent of form
+3. Create a div to contain all messages in group chat
+4. In newMessage eventListener of Client Socket in HTML script, we will add new list item inside the div container
+5. Create a button to send the geolocation of Client to other Clients in Server
+6. Add the new geolocation message to the ul as a link
+
+
+EX:
+// CLIENT
+// index.html with form and ul container for message and location links
+  <body>
+    <header>
+      <h1>Chat app</h1>
+    </header>
+    <main>
+      <section>
+        <form id="message-form">
+          <input type="text" name="message" id="message-input" />
+          <button type="submit">Submit message</button>
+        </form>
+        <button id="send-location">Send Location</button>
+      </section>
+      <section>
+        <ul style="list-style: none" id="message-list"></ul>
+      </section>
+    </main>
+  </body>
+
+
+// elements declared in /public/js/app.js
+const messageForm = document.querySelector("#message-form");
+const messageInput = document.querySelector("#message-input");
+const messageList = document.querySelector("#message-list");
+const sendLocationBtn = document.querySelector("#send-location");
+
+
+// form submitEventHandler and sendLocationBtn clickHandler
+messageForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+  const enteredMessage = messageInput.value;
+
+  socket.emit("createMessage", {
+    from: "User",
+    text: enteredMessage,
+  });
+
+  console.log("Message sent");
+});
+
+sendLocationBtn.addEventListener("click", (e) => {
+  console.log("Location btn clicked");
+  e.preventDefault();
+  if (!navigator.geolocation) {
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      socket.emit("newLocationMessage", {
+        from: "User",
+        lat: pos.coords.latitude,
+        long: pos.coords.longitude,
+      });
+    },
+    (e) => {
+      console.log(e);
+    }
+  );
+});
+
+
+// eventListener for newMessage and newLocationMessage in index.html's app.js
+// newLocationMessage listener
+socket.on("newLocationMessage", (message) => {
+  console.log("New location received");
+  const li = document.createElement("li");
+  const a = document.createElement("a");
+  a.setAttribute("target", "_blank");
+  a.setAttribute("href", message.url);
+  a.innerText = "Location";
+  li.appendChild(a);
+  messageList.appendChild(li);
+});
+
+// listens to newMessage
+socket.on("newMessage", function (message) {
+  console.log("New message: ", message);
+  const li = document.createElement("li");
+  li.innerText = `${message.from}: ${message.text}`;
+  messageList.appendChild(li);
+});
+
+
+
+// SERVER
+// generateGeolocation for creating geolocation payload of newLocationMessage in server
+const generateGeolocation = (from, lat, long) => {
+  return {
+    from,
+    url: `https://google.com/maps?q=${lat},${long}`,
+    createdAt: new Date().getTime(),
+  };
+};
+
+// creating eventListener in Socket for newLocationMessage, which then broadcast it to all Client in Server
+  // listens to Client's newLocationMessage, and broadcast it
+  socket.on("newLocationMessage", (message) => {
+    const { from, lat, long } = message;
+    io.emit("newLocationMessage", generateGeolocation(from, lat, long));
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6. Mustache JS & Moment
+
+Goal:
+1. Use MustacheJS (or any templating engine) to create templates for message text, and message title (user and timestamp)
+	> for now, we will just use the built-in <template> elements and JavaScript methods for templating
+2. Use Moment library to format the date in the message payload of events to just show the time portion only
+	> we can either install it in Client side by importing the moment.js or in Server by installing moment npm module
+
+EX:
+// Client index.html
+// template for message and messageLocation
+      <template id="message-template">
+        <li class="message">
+          <div class="message__title">
+            <h4></h4>
+            <span></span>
+          </div>
+          <div class="message__body">
+            <p></p>
+          </div>
+        </li>
+      </template>
+      <template id="message-location-template">
+        <li class="message">
+          <div class="message__title">
+            <h4></h4>
+            <span></span>
+          </div>
+          <div class="message__body">
+            <a target="_blank">My current location</a>
+          </div>
+        </li>
+      </template>
+
+// app.js functions to add message list item to the message-list
+const createMessage = (from, createdAt, text) => {
+  const messageTemp = messageTemplate.content.querySelector("li");
+  const messageEl = document.importNode(messageTemp, true);
+  messageEl.querySelector("h4").innerText = from;
+  messageEl.querySelector("span").innerText = createdAt;
+  messageEl.querySelector("p").innerText = text;
+  messageList.appendChild(messageEl);
+};
+
+const createLocationMessage = (from, createdAt, url) => {
+  const messageTemp = messageLocationTemplate.content.querySelector("li");
+  const messageEl = document.importNode(messageTemp, true);
+  messageEl.querySelector("h4").innerText = from;
+  messageEl.querySelector("span").innerText = createdAt;
+  messageEl.querySelector("a").setAttribute("href", url);
+  messageList.appendChild(messageEl);
+};
+
+
+
+// Server
+// using "moment" library to format the date time
+const moment = require("moment");
+const generateMessage = (from, text) => {
+  return {
+    from,
+    text,
+    createdAt: moment(new Date()).format("LT"),
+  };
+};
+
+const generateGeolocation = (from, lat, long) => {
+  return {
+    from,
+    url: `https://google.com/maps?q=${lat},${long}`,
+    createdAt: moment(new Date()).format("LT"),
+  };
+};
+
+
+
+
+
+
+
+
+
+
+
+7. Chat Room form
+
+Function/Objects used
+HTMLElement.lastChildElement
+ > returns the last child element nested inside the HTMLElement
+
+HTMLElement.scrollIntoView()
+ > function used to scroll the scroll bar into the said HTMLElemenet
+
+
+GOAL:
+1. Replace the index.html into a new one, to be used for Join Form
+	> join form takes two inputs, the name and Socket.io room name
+	> redirects you to chat.html
+2. Rename old index.html into the chat.html
+3. In the message-list, make it so that whenever we receive new message, it will automatically scroll to the bottom, which will contain the new message
+
+
+// Client - chat.js
+// scrollToBottom function
+const scrollToBottom = () => {
+  const latestMessageEl = messageList.lastElementChild;
+  latestMessageEl.scrollIntoView();
+};
+
+// newLocationMessage listener
+socket.on("newLocationMessage", (message) => {
+  console.log("New location received");
+  const { from, createdAt, url } = message;
+  createLocationMessage(from, createdAt, url);
+  scrollToBottom();
+});
+
+// listens to newMessage
+socket.on("newMessage", function (message) {
+  console.log("New message: ", message);
+  const { from, createdAt, text } = message;
+  createMessage(from, createdAt, text);
+  scrollToBottom();
+});
+
+
+// chat.html
+  <body>
+    <div class="chat-container">
+      <div class="card">
+        <div class="card-title">
+          <h1>Join Room</h1>
+        </div>
+        <div class="card-body">
+          <form action="/chat.html">
+            <div class="form-control">
+              <label for="name">Display name</label>
+              <input type="text" name="name" id="name" />
+            </div>
+            <div class="form-control">
+              <label for="room">Room name</label>
+              <input type="text" name="room" id="room" />
+            </div>
+            <div class="form-control"><button type="submit">Enter</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+8. Passing Data & Creating Rooms
+
+SOURCE:
+https://socket.io/docs/v4/rooms/
+
+Function/Objects used
+Socket.prototype.join(roomId: string)
+ > used to make the a Socket join to a specific room
+ > takes one input
+	1. rooomId
+		- the name of the room
+
+Socket.prototype.leave(roomId: string)
+ > used to make the a Socket leave a specific room
+ > takes one input
+	1. rooomId
+		- the name of the room
+
+Server.prototype.to(roomId: string)
+Socket.prototype.to(roomId: string)
+ > used to specify the room where an event will be emitted
+ > typically method chain called with an .emit() call
+	- ex: io.to("some room").emit("some event")
+ > we can also emit event to multiple room by calling .to() method multiple times through method chaining
+	- ex: io.to("room1").to("room2").to("room3").emit("some event");
+ > when we emit an event to a specific room, all Socket EXCEPT the sender will get the event
+ > in case of emitting event to multiple room, all Socket will just receive the event ONCE, even if they are joined in multiple rooms
+
+
+
+Room
+ > Room is a concept in Socket.io where sockets can join and leave
+ > This can be used to broadcast events to a subset of clients
+
+Joining a Room
+ > to make a client join a room, we need to call the join() of the Socket instance, and pass the room
+ > we typically do this by 
+	1. In Server side, setting up an eventListener on Socket instance for custom event for joining (ex. "join")
+		- we will also access the roomId in the payload of the event
+		- inside the eventListener, we will call the join() and pass the roomId from the event payload
+	2. In Client side, we will emit the custom event for joining, and passing along the roomId to the payload
+
+
+EX:
+// Client side - chat.js
+// fetching display and room name
+const params = new URLSearchParams(location.search);
+
+// emit an event to join with name and room query params
+socket.on("connect", () => {
+  console.log("Connected");
+  socket.emit("join", {
+    name: params.get("name"),
+    room: params.get("room"),
+  });
+});
+
+
+// Server side - index.js
+// listen to "join" event to join the socket in the specified room
+  socket.on("join", (payload) => {
+    const { name, room } = payload;
+    socket.join(room);
+    console.log("User " + name + " has joined the room " + room);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+9. ES6 Classes
+
+GOAL:
+1. Create a class to handle the Users and several functionalities
+	> each User will have property like 
+		- id, from socket.id
+		- name, from the name prop of payload when we joined
+		- room, from the room prop of payload when we joined
+	> inside the Class, we will have methods for
+		- adding user	
+		- getting users inside a room
+		- getting a user with id
+		- removing a user with id
+
+// Server side - ./src/utils/users.js
+class Users {
+  constructor() {
+    this.users = [];
+  }
+
+  addUser(id, name, room) {
+    let user = { id, name, room };
+    this.users.push(user);
+    return user;
+  }
+
+  getUserList(room) {
+    let usersInRoom = this.users.filter((user) => user.room === room);
+    let namesArray = usersInRoom.map((user) => user.name);
+
+    return namesArray;
+  }
+
+  getUser(id) {
+    return this.users.find((user) => user.id === id);
+  }
+
+  removeUser(id) {
+    const userToRemove = this.users.find((user) => user.id === id);
+
+    if (userToRemove) {
+      this.users = this.users.filter((user) => userToRemove.id !== user.id);
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+10. Displaying Users
+
+Function/Objects used
+Socket.prototype.join(roomId: string)
+ > adds a specific Socket instance to a room
+
+Socket.prototype.leave(roomId: string)
+ > removes a specific Socket instance to a room
+
+
+GOAL:
+I. Server side
+1. When a user connected to WebSocket server, 
+	> the client will be registered to a room
+	> a user is added to Users' user array
+	> server will send "newMessage" to notify that new user has joined
+	> send a "updateUserList" event to have the clients update the user list
+2. When a user disconnected to Server, we will
+	> remove the user in the Users' user array
+	> send an "updateUserList" event
+	> send a "newMessage" event to notify chat room about user leaving
+3. When a user sends a "createMessage" event in Client (which we listen to in Server)
+	> make sure that "from" is the name of the user that sent the message
+		- we can do this by finding the user inside the Users' user array using the getUser(id) function
+ 	> the message will only be sent to the room where the user is located
+3. When a user sends a "newLocationMessage" event in Client (which we listen to in Server)\
+	> make sure that only the room where the client is located will be sent
+
+II. Client side
+1. When client receives an updateList, it will update the UI
+	> specifically the people section
+
+
+EX:
+// Server side - ./utils/validation.js
+const moment = require("moment");
+const generateMessage = (from, text) => {
+  return {
+    from,
+    text,
+    createdAt: moment(new Date()).format("LT"),
+  };
+};
+
+const generateGeolocation = (from, lat, long) => {
+  return {
+    from,
+    url: `https://google.com/maps?q=${lat},${long}`,
+    createdAt: moment(new Date()).format("LT"),
+  };
+};
+
+module.exports = {
+  generateMessage,
+  generateGeolocation,
+};
+
+
+// index.js
+// import necessary dependencies
+const express = require("express");
+const path = require("path");
+const socketIO = require("socket.io");
+const http = require("http");
+const { generateMessage, generateGeolocation } = require("./utils/utils");
+const { Users } = require("./utils/users");
+const { isRealString } = require("./utils/validation");
+
+// initialize necessary variables
+const port = process.env.PORT;
+const app = express();
+const publicPath = path.join(__dirname, "/../public");
+const users = new Users();
+
+// setup the Express server
+app.use(express.json());
+app.use(express.static(publicPath));
+
+// create a Server instance using http.createServer() with Express Application
+const server = http.createServer(app);
+// add WebSocket support to the Server instance
+const io = new socketIO.Server(server);
+
+// define eventListener handlers of Server and sockets
+io.on("connection", (socket) => {
+  console.log(`Socket id ${socket.id} connected`);
+
+  // listens to Client's newLocationMessage, and broadcast it
+  socket.on("newLocationMessage", (message) => {
+    const { name, room } = users.getUser(socket.id);
+    if (!isRealString(name) || !isRealString(room)) {
+      return;
+    }
+
+    const { lat, long } = message;
+    io.to(room).emit(
+      "newLocationMessage",
+      generateGeolocation(name, lat, long)
+    );
+    console.log("newLocationMessage", name, lat, long);
+  });
+
+  // socket join eventListener
+  socket.on("join", (payload) => {
+    const { name, room } = payload;
+    if (!isRealString(name) || !isRealString(room)) {
+      return;
+    }
+
+    users.removeUser(socket.id);
+    users.addUser(socket.id, name, room);
+    socket.join(room);
+
+    // newMessage emit to the Client Socket
+    socket.emit(
+      "newMessage",
+      generateMessage("Admin", "Welcome to the chat app")
+    );
+
+    socket.broadcast
+      .to(room)
+      .emit("newMessage", generateMessage("Admin", `${name} joined the chat`));
+
+    console.log("User " + name + " has joined the room " + room);
+
+    io.to(room).emit("updateUsersList", {
+      users: users.getUserList(room),
+    });
+  });
+
+  // listens to createMessage event and then broadcast the message to all
+  socket.on("createMessage", (message) => {
+    const user = users.getUser(socket.id);
+    if (!isRealString(message.text)) {
+      return;
+    }
+
+    if (user) {
+      console.log("createMessage ", message);
+      io.to(user.room).emit(
+        "newMessage",
+        generateMessage(user.name, message.text)
+      );
+    }
+  });
+
+  // socket disconnect eventListener
+  socket.on("disconnect", () => {
+    const removedUser = users.removeUser(socket.id);
+    if (removedUser) {
+      io.to(removedUser.room).emit(
+        "newMessage",
+        generateMessage("Admin", `User ${removedUser.name} has disconnected`)
+      );
+      io.to(removedUser.room).emit("updateUsersList", {
+        users: users.getUserList(removedUser.room),
+      });
+      console.log(`User ${removedUser.name} has disconnected`);
+    }
+  });
+});
+
+// make the Server instance listen to specific port
+server.listen(port, () => {
+  console.log("Server listening to " + port);
+});
+
+
+
+// Client side - chat.js
+// fetching display and room name
+const params = new URLSearchParams(location.search);
+
+// fetch elements in chat.html
+const messageForm = document.querySelector("#message-form");
+const messageInput = document.querySelector("#message-input");
+const messageList = document.querySelector("#message-list");
+const peopleList = document.querySelector("#people-list");
+const sendLocationBtn = document.querySelector("#send-location");
+const messageTemplate = document.querySelector("#message-template");
+const messageLocationTemplate = document.querySelector(
+  "#message-location-template"
+);
+const peopleItemTemplate = document.querySelector("#people-template");
+
+const scrollToBottom = () => {
+  const latestMessageEl = messageList.lastElementChild;
+  latestMessageEl.scrollIntoView();
+};
+
+const createMessage = (from, createdAt, text) => {
+  const messageTemp = messageTemplate.content.querySelector("li");
+  const messageEl = document.importNode(messageTemp, true);
+  messageEl.querySelector("h4").innerText = from;
+  messageEl.querySelector("span").innerText = createdAt;
+  messageEl.querySelector("p").innerText = text;
+  messageList.appendChild(messageEl);
+};
+
+const createLocationMessage = (from, createdAt, url) => {
+  const messageTemp = messageLocationTemplate.content.querySelector("li");
+  const messageEl = document.importNode(messageTemp, true);
+  messageEl.querySelector("h4").innerText = from;
+  messageEl.querySelector("span").innerText = createdAt;
+  messageEl.querySelector("a").setAttribute("href", url);
+  messageList.appendChild(messageEl);
+};
+
+const createPeopleItems = (names) => {
+  peopleList.innerHTML = "";
+  names.forEach((name) => {
+    const peopleTemp = peopleItemTemplate.content.querySelector("li");
+    const peopleEl = document.importNode(peopleTemp, true);
+    peopleEl.querySelector("h4").innerText = name;
+    peopleList.appendChild(peopleEl);
+  });
+};
+
+const socket = io({ transports: ["websocket"], upgrade: false });
+
+socket.on("connect", () => {
+  console.log("Connected");
+  socket.emit("join", {
+    name: params.get("name"),
+    room: params.get("room"),
+  });
+});
+
+socket.on("disconnect", () => {
+  console.log("Disconnected");
+});
+
+// newLocationMessage listener
+socket.on("newLocationMessage", (message) => {
+  console.log("New location received");
+  const { from, createdAt, url } = message;
+  createLocationMessage(from, createdAt, url);
+  scrollToBottom();
+});
+
+// listens to newMessage
+socket.on("newMessage", function (message) {
+  console.log("New message: ", message);
+  const { from, createdAt, text } = message;
+  createMessage(from, createdAt, text);
+  scrollToBottom();
+});
+
+// listens to updateUserList
+socket.on("updateUsersList", function (payload) {
+  console.log("Users", payload.users);
+  createPeopleItems(payload.users);
+});
+
+messageForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+  const enteredMessage = messageInput.value;
+
+  if (enteredMessage.trim().length === 0) {
+    return;
+  }
+
+  socket.emit("createMessage", {
+    from: "User",
+    text: enteredMessage,
+  });
+
+  messageInput.value = "";
+
+  console.log("Message sent");
+});
+
+sendLocationBtn.addEventListener("click", (e) => {
+  console.log("Location btn clicked");
+  e.preventDefault();
+  if (!navigator.geolocation) {
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      socket.emit("newLocationMessage", {
+        from: "User",
+        lat: pos.coords.latitude,
+        long: pos.coords.longitude,
+      });
+    },
+    (e) => {
+      console.log(e);
+    }
+  );
+});
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,167 @@
+WCS V9 Architecture Part 2
+
+Model View Controller Design Pattern
+	> consist of a data model, presentation information, and control information
+	> each is separated as different object
+		1. Model
+			- Contains only the pure application data
+		2. View
+			- presents the model's data to the user
+			- knows how to access the models data
+		3. Controller
+			- exists between the view and the model
+			- listens to events triggered by the view and executes the appropriate reaction to these events
+
+
+MVC Design Pattern diagram
+	> consist of the following components
+		1. Model
+		2. Controller
+		3. View
+	> Model consist of the following
+		1. Controller and Task commands
+		2. Entities
+		3. Database
+	> View consist of the following
+		1. Response Engine
+		2. Data bean
+	
+	
+Process flow
+1. Controller invokes Controller command (Model) or Response engine (View)
+2. For Model, the Controller command may either do data retrieval and update directly to Entities or invoke Task commands which may also do data retrieval and update
+3. Entities also do data retrieval and update to Database
+4. For View, Response engine interacts/forwards with the Databean inside JSP templates. This Databean interacts with the Entities directly for data retrieval
+
+
+Command Design Pattern
+	> Commands implement the business rules of your site
+	> There are two types of commands
+		1. Controller commands
+			- implements business tasks such as user registration and allocation of inventory
+		2. Task commands
+			- implements discrete pieces of a business task such as address verification or ensuring passwords comlpy to the defined password policies
+	> Command beans following a Command design pattern
+	> Every command includes both an interface class and an implementation class
+	> The key mechanism that are enabled within this level of indirection include:
+		- The ability to invoke an access control policy manager that determines if the user is allowed to invoke the command
+		- The ability to execute a different command implementation for different stores, based on the store identifier
+		
+	
+Display Design Pattern
+	> Display pages return a response to a client
+	> Display pages are implemented as JSP pages
+	> To support multiple device types, a URL access to a page should use a view name, not the name of the actual JSP file
+	> Due to JSP page representing a particular view:
+		- The ability to select the appropriate view is highly desirable
+		- For example: Two shoppers requesting the home page of a store
+			-> One shopper using a typical Web browser and the other using a cellular phone. Clearly, the same home page should not be displayed to each shopper
+			-> The Web controller's responsibility is to accept the request, then based upon information in the command registration framework, determine the view that each shopper receives
+			
+			
+Persistent object model
+	> HCL Commerce deals with a large amount of persistent data
+	> There are numerous tables defined in the current database schema
+	> Even with this extensive schema, however, you might need to extend or customize the database schema for your particular business needs.
+	> Replacement of the following components happen on HCL Commerce Version 9:
+		1. EJB entity beans are replaced by JPA object
+		2. Existing EJB-based access beans are replaced by JPA-based access Beans
+		3. Existing 2.x session beans have been replaced with 3.x session beans using JPA annotations, instead of XML, for configuration
+		
+		
+HCL Commerce Enterprise Beans	
+	> The persistence layer within the HCL Commerce architecture is implemented according to the JPA component architecture
+	> Howevery, a small number of stateless session beans are used to handle intensive database operations, such as performing a sum of all the rows in a particular column
+	> Public enterprise beans are used by commerce applications, and can be both used and extended. These public enterprise beans are organized into the following EJB modules:
+	
+HCL Commerce Enterprise Beans
+	> Catalog-ProductManagementData
+	> ContentManagement-WorkspaceFlowData
+	> Enablement-BaseComponentsData
+	> Enablement-RelationshipManagementData
+	> Enablement-TicklerData
+	> GiftRegistry-BaseComponentsData
+	> GiftRegistry-OrderIntegrationData
+	> Marketing-CampaignsAndScenarioMarketingData
+	> Marketing-CustomerProfilingAndSegmentationData
+	> Member-MemberManagementData
+	> Merchandising-PromotionsAndDiscountsData
+	> Order-OrderCaptureData
+	> Order-OrderManagementData
+	> WebSphereCommerceServerExtensionsData
+	> Trading-AuctionsAndRFQsData
+			
+
+Object life cycles
+	> The enterprise beans in the object model include both independent and dependent objects
+	> An independent object has its own life cycle, controller directly by the create or remove requests of the business lgoic invoking the object
+	> A dependent object has a life cycle that is attached to another object, known as the owner object (which may also in turn be a dependent object, but further up the association hierarchy, an independent object exist)
+	> When the owner object is deleted, ALL dependent objects are ALSO DELETED. The actual deletes are controlled by cascading delete specifications within the database
+	> For example, given a user object that returns an address book object and a list of order objects, if the user object is deleted, its address book object is also deleted (since the book is owned by the user), and so are all the address objects within the book (since the address are owned by the book). However, the order objects are not deleted because the owner of orders is a store object, not the user object.
+	> A specific design pattern is used for the creation of dependent objects. The create method of a dependent object must supply a reference to its owner object; therefore, the owner object must exist before the dependent object can be created
+
+Primary keys
+	> A primary key ina unique key that is aprt of the definition of a table. It can be used to distinguish one record from others
+	> All records must have a primary key. When you create a new record in a table, you may need to generate a unique primary key for the record
+	> In the HCL Commerce programming model, the persistence layer includes JPA entities that interact with the database. As such, database records may be created when an JPA entity is instantiated.
+	> Therefore, before a new JPA entity becomes persistent, it may need to include logic to generate a primary key for new records.
+	> When an application requires information from the database, it indirectly uses the JPA entities by instantiating the entity and then getting or setting various field
+	
+Access beans
+	> HCL Commerce commands interact with access beans rather than directly with entity beans. EJB access beans can greatly simplify client access to enterprise beans and alleviate the performance problems that are associated with remote class for multiple enterprise bean attributes
+	
+Extending the HCL Commerce object model
+	> Application requirements may lead you to extend the existing HCL Commerce object model. The HCL Commerce object model can be extends in two ways
+		1. Extending the HCL Commerce object model with session beans	
+			- HCL Commerce has implemented core commerce objects using JPA entities
+		2. Create new session beans
+			- When creating new sessions beans, create them in the WebSphereCommerceServerExtensionsData project
+			
+			
+Access Beans
+	> HCL Commerce commands interact with access beans rather than directly with entity beans
+	> EJB access beans can greatly simplify client access to enterprise beans and alleviate the performance problems that are associated with remote calls for multiple enterprise bean attributes
+	> Example process flow 
+		1. Controller command
+			- get x, get y, get z
+		2. Access bean for entity x,y,z
+			- get(x,y,z)
+			- set(x,y,z)
+		3. JPA entities x,y,z
+		4. Database
+		
+		
+Business logic layer
+	> Business Logic layer supports two methods of command processing:
+		1. Traditional name-value pair processing
+		2. SOA-compliant processing of Business Object Documents (BODs)
+		3. Or both 1 and 2
+	> Both methods use the WebSphere Commerce command framework
+	> Name-value pair processing includes:
+		1. Controller commands
+		2. Task commands
+	> BOD processing (recommended) includes:
+		1. Get, Change, Process, Sync
+		
+		
+Legend for data models
+	> Database tables within the HCL Commerce database schema are organized into functional groups called data models
+	> The referential integrity relationship between related database tables are illustrated by using the following crow's foor notation
+	> ex:
+		1. -|----
+			- one and only one. An object is related to one object and only one object
+			- 1-1 relationship, NOT NULLABLE
+		2. ->|---
+			- one or many. An object can be related to one object or many objects
+			- 1-N relationship, NOT NULLABLE/EMPTY
+		3. ->o---
+			- zero or one or many. An object can be related to one object, or to no object
+			- 1-N relationship, NULLABLE
+		4. -|o---
+			- zero or one. An object can be related to one object or to no objects
+	> A solid line represents an identifying relationship. The existence of each child table object is DEPENDENT upon the parent table object. The primary key of each child table object includes the primary key of the parent table object
+		- ex: Table1 -|---------o<- Table 2
+	- A dotted line represents a non-identifying relationship. The existence of the objects in each table in the relationship is INDEPENDENT of the other object. The primary key of each table does not need to include the primary key of the other table. The following diagram shows a non-identifying foreign key relationship
+		- ex: Table1 -|o- - - - - -o<- Table 2
+		
+			

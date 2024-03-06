@@ -1,0 +1,21 @@
+WCS Solr Migration
+
+
+Search Migration from V7/V8
+	> For search component, the big changes on search component from WebSphere Commerce V8 tO V9 are as follows:
+		1. Introduced a new Search server deployment option that should reduce the overall operational cost. From V9, Search server will use Docker for rapid deployment and orchestration
+		2. Search customization programming model need be changed as consequence to satisfy the new build and deployment requirement
+			- The principle of such programming model is to separate customer asset and configuration setting from product code with less customization and easy deployment, which is to reduce the maintenance effort and operation effort.
+		3. JPA 2.1 provider is EclipseLink. In V8, search use direct JDBC call through DSL (data service layer) to WC database. From V9, we use JPA native query, but it does not mean the query customer developed in V8 could not be used anymore, we do port the query service over, so the query worked on V8 is still compatible, we just replace the technology underneath
+		4. In REST layer, from V9 we move to JAX-RS 2.0 FROM JAX-RS 1.1, which is WINK based. Also the documentation API is Swagger 2.0
+		5. Solr runtime move to 5.5.4
+		6. Liberty 8.5.5, application server platform is switched to use Liberty from WebSphere
+		7. Scheduler, from V9, Seacrch server will enable common foundation based on scheduler
+		
+
+Search Migration Process
+
+Step 2.1 Migrate Index Cores
+	> From V9, no need to run setupSearchIndex manually. Instead, customer only need to maintain SRCHCONF/SRCHCONFEXT table to register how you want to setup index distribution
+	> To migrate main CatalogEntry/CatalogGroup core:
+		1. After database was migrated, customer need to manually update SRCHCONF table to updat

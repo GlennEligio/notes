@@ -1,0 +1,25 @@
+03. Version Control System (VCS)
+
+
+Version Control System
+	> VCS allows you to track the history of a collection of files
+	> Each version captures a snapshot of the files at a certain point in time
+	> VCS allows you to switch between these versions
+	> two types
+		1. Centralized Version Control System
+		2. Distributed Version Control System
+
+
+Centralized Version Control System
+	> uses a CENTRAL SERVER to store all the files
+	> every operations is performed DIRECTLY on the repository
+	> in case the centra server crashes, entire data of the project will be LOST. 
+		- hence, Distributed VCS was introduced
+
+Distributed Version Control System
+	> same as Centralized where it uses a Central Server
+	> but here, every system has access to all the files
+	> every programmer has a COPY of ALL the version of the code on their local system
+	> Distributed VCS moves from client-server approarch of Central VCS to peer-to-peer approach
+	> They can update their local repository with new data from central server AND changes gets reflected to the main repository
+	> Git is one such Distributed VCS tool

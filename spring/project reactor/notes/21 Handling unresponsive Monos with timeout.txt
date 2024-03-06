@@ -1,0 +1,16 @@
+21 Handling unresponsive Monos with timeout
+
+
+Unresponsive Monos
+ > there are cases where the Mono will become unresponsive and hang forever
+ > then, if we are blocking this Mono and waiting for an item, we will never get it
+ > to fix this, we will need to define a timeout for the blocking to end
+ > once this duration is up, it will throw an Exception related to the timeout
+
+
+Mono.block(Duration timeout)
+ > another method signature of block() where it takes a Duration to define the timeout
+
+EX:
+String foo = ReactiveSources.unresponsiveMono().block(Duration.ofSeconds(5));
+

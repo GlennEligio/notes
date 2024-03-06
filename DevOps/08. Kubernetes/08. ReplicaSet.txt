@@ -1,0 +1,138 @@
+08. Replica Set
+
+ReplicaSet (RS)
+	> main purpose is to maintain a STABLE SET of replica Pods running at any given time
+	> as such, it is often used to guarantee the availability of a specific number of IDENTICAL Pods
+
+
+ReplicationController (Equality based) vs ReplicaSet (Set Based)
+1. Operator
+ReplicationController 	- Equality Operator (=, ==, !=)
+			- ex: env=prod, env!=stage
+ReplicaSet		- Set Operator (in, notin, exists)
+			- ex: env in (prod)
+
+2. Command line for searching Pods
+ReplicationController	- kubectl get pods -l env=prod
+ReplicaSet		- kubectl get pods 'env in (prod,qa,test)'
+
+
+3. Manifest
+ReplicationController	- uses selector: to define the selection criteria
+ReplicaSet		- uses either 
+				a. selector: matchLabels: 
+					= similar to RC's selector:
+				b. selector: matchExpression
+					= uses Set based operators
+					= needs to define several fields
+						- key:
+						- operator:			
+						- values:
+
+
+
+ReplicaSet Manifest Guide
+	> creating ReplicaSet is SIMILAR to ReplicationController
+		- difference is their selector: field for Pod selection
+		- ReplicaSet can use Set-based operator for defining selection criteria
+	> to create a ReplicaSet, we will need to have the following
+		1. kind must be ReplicaSet
+		2. inside the spec: of ReplicaSet, we must have three things
+			- replicas:
+			- template:
+			- selector:
+		3. in replicas field, we will pass the number of replica Pods that we want
+		4. in template field, we will pass the Pod Template where we will define
+			- Pod's metadata (Pod name and labels)
+			- Pod's spec (containers)
+		5. in selector field, we can define the selection criteria for the Pods that RS will monitor
+			> we can either use the following for defining selectors:
+				- equality based (similar to ReplicationController)
+				- set based (unique to ReplicaSet)
+			> to create either equality or set based criteria, we can use the following fields
+				a. matchLabels:
+					- equality based
+				b. matchExpressions:
+					- set based
+					- inside this, we can define three fields for expression
+						= key, operator, values
+
+
+
+EX: ReplicaSet Manifest
+
+# nginx-rs.yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-app
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+  selector:
+    matchLabels:
+      app: nginx-app
+    matchExpressions:
+      - {key: tier, operator: In, values: [frontend, backend]}
+
+
+	> In this Manifest, we created a ReplicaSet
+		- named "nginx-rs" (metadata: name:)
+	> This ReplicaSet will create THREE replica Pods
+	> Each replica Pod have:
+		- name "nginx-pod"
+		- labels "app=nginx-app", "tier=frontend"
+		- runs a Container with "nginx" image and Port 80 exposed
+	> This ReplicaSet also monitors Pods that passes the criteria in the selector:
+		- must have label "app=nginx-app"
+		- the "tier" label must be either "frontend" or "backend"
+
+
+
+
+Commands:
+Creating ReplicaSet
+kubectl create -f <MANIFEST FILE>
+	> used to create a K8s resource using a Manifest file
+	> in this case, we will create a ReplicaSet
+
+
+Displaying ReplicaSet
+kubectl get <RESOURCE TYPE> <NAME...>
+kubectl get rs <NAME...>
+	> used to show one or more specific replicaSet
+	> not passing NAME will show ALL ReplicaSets
+
+kubectl get pods -l <MATCH EXPRESSION>
+	> used to show pods whose label passes the matchExpression passed
+	> ex: kubectl get po -l 'tier in (frontend)'
+
+kubectl describe <RESOURCE TYPE> <NAME>
+kubectl describe rs <NAME>
+	> used to get all information of a specific ReplicaSet
+
+
+Scaling ReplicaSet's replica Pods
+kubectl scale rs <RS NAME> --replicas=<INTEGER>
+	> scales the ReplicaSet (by creating/deleting replica Pods) based on the amount passed in "--replicas" command flag
+
+
+
+Deleting ReplicaSet
+kubectl delete <RESOURCE TYPE> <NAME...>
+kubectl delete rs <NAME...>	
+	> used to delete one or more replicaSets
+
+
+

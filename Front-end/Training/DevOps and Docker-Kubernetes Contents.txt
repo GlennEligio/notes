@@ -1,0 +1,40 @@
+DevOps
+
+Day 1
+DevOps
+Git and Github
+
+Day 2
+Maven
+Docker Overview
+
+Day 3
+Puppet, Ansible
+
+Day 4
+Jenkins
+
+Day 5
+Nagios, Terraform
+
+
+
+Docker and Kubernetes
+
+Day 1 - 2.5
+Docker
+
+Day 2.5 - 5
+Kubernetes
+
+
+
+Tools, Credentials necessary
+1. AWS 	- free tier account
+	- free for 12month
+	- you will have access to AWS' VMs
+		= VMs are called EC2 instances
+		= limit is 3 instances for free tier account
+		= limit runtime per month is 750hrs/month
+		= limit storage per month is 30GB/month
+2. LMS - userid/password

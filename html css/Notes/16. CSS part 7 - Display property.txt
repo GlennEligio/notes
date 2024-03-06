@@ -1,0 +1,219 @@
+CSS part 7
+
+includes:
+
+CSS properties:
+	1. display
+	2. box-sizing
+	3. list-style-type
+	4. visibility
+	5. opacity
+
+01
+display:
+block
+inline
+
+02
+box-sizing:border-box
+creating mobile navbar
+list-style-type:property
+descendant selectors
+
+03
+inline-block
+
+04
+border-box
+
+05
+display: none   
+visibility
+opacity
+
+
+01
+Default display: Property
+1. block
+	> always starts a new line and takes full width of screen
+	> elements with display: block as default are
+		- Header
+		- Paragraph
+		- Div
+	> top and bottom margin of block elements are RESPECTED
+		- this means that these two properties WILL TAKE EFFECT
+2. Inline
+	> does not start and only take up as much as content space
+	> elements with display: inline as default are:
+		- Span
+		- Image
+		- Link tag
+	> top and bottom margin of inline elements are NOT RESPECTED
+		- this means that these two properties WILL NOT TAKE EFFECT
+		- reason is that inline element may have DIFFERENT CONTENT HEIGHT and it might make mess of the elements alignment for each lines
+
+
+Horizontal centering with block and inline elements
+1. Using text-align: center 
+	> if we set this property to the body {}, we can see that
+		- block element have their CONTENT CENTERED
+			= only the text is centered horizontally since a block element occupies a single line
+		- inline elements are GROUPED UP and CENTERED
+			= all of the inline elements are connected end-to-end and centered in that line
+2. Using margin-left:auto and margin-right:auto
+	> used for centering a block element
+	> by default, block element have margin-right:auto
+		- this means that if a block element have width less than viewport's width, it will be PLACE AT RIGHT SIDE of viewport
+	> to center a block element who's width is less than viewport's width, use these two properies
+		- margin-left:auto
+		- margin-right:auto
+	> this will center a block element
+		- similar to ConstraintLayout in Android where we set left and right constraints 
+
+
+
+BROWSER'S TREATMENT IN TOP-BOTTOM MARGIN TO BLOCK AND INLINE ELEMENTS
+	> for block elements (display:block), the top-bottom margin WILL be respected
+		- this means that these properties (margin-top and margin-bottom) will have an effect
+	> for inline elements (display:inline), the top-bottom margin WILL NOT be respected
+
+
+
+CREATING NAVBAR
+Navbar
+	> a navigation bar
+	> used to navigate throughout the application
+	> typically used with hamburger icon (icon with three horizontal line stack on each other)
+	> composed of a <ul> with <a> inside its <li> elements
+	> to create a Navbar list
+		1. Set list-style-type of <li> elements to NONE
+		2. Set the following properties of <a> inside <li> elements
+			a. text-decoration to none
+				= by default, link tags are underlined
+			b. color to any color
+				= link tags are colored blue by default
+			c. display to block
+				= Navbar list are block level elements by convention
+				= with list items of Navbar being display:block, we can adjust the spaces between items
+
+
+list-style-type
+	> attribute added in a list <li> element inside <ul> or <ol>
+	> defines the style of how we show a list item
+	> can have different values like
+		- decimal
+		- circle
+		- square
+		- lower roman (i, ii, iii)
+		- upper roman (I, II, III)
+		- none (used for NavBar)
+
+
+
+DESCENDANT SELECTOR
+	> used to select a specific child element in a parent element	
+	> theres no limit on how deep you want the descendant selector would go
+	> syntax would be
+
+Syntax
+e1 e2 e3 e4 {
+
+}
+	> where e2 is Child element of e1, e3 is Child element of e2, e4 is Child element of e3, and so on
+
+EX:
+Selector below will select <li> that are nested inside <ul>
+ul li {
+
+}
+
+Selector below will select <a> that is inside a <ul>
+ul a {
+
+}
+
+Selector below that will select <a> that is inside <li> that is inside <ul>
+ul li a {
+
+}
+
+
+
+
+INLINE-BLOCK 
+	> one of the values of display CSS property
+	> combination of inline and block where:
+		- margin top and bottom are RESPECTED and takes effect
+		- element's width DOES NOT span across the viewport
+	> used in order to add margin top or bottom to otherwise an inline level element by default
+
+EX:
+index.html
+
+  <link rel="stylesheet" href="style.css" />
+
+  <body>
+    <h1>Hello world</h1>
+    <a href="#">link</a>
+    <a href="#">link</a>
+    <a href="#">link</a>
+    <a href="#">link</a>
+  </body>
+
+
+style.css
+
+/* inline-block */
+a {
+  font-size: 60px;
+  background: red;
+  margin-top: 60px;
+  /* Removing display property will have the margin top not take effect */
+  display: inline-block;
+}
+
+
+
+box-sizing
+	> CSS property to defines how the width and height of an element is calculated
+		- should they include padding and borders? or not?
+	> this CSS property can have following values
+		a. content-box
+			- default value
+			- the width and height properties (and min/max properties) includes ONLY the content
+			- borders and padding are NOT included
+		b. border-box
+			- width and height properties (and min/max properties) INCLUDE content, padding, and border
+
+EX:
+.box {
+   width:200px;
+   height:200px;	
+   padding:20px;
+}
+
+With this CSS selector, the .box elements will have
+	- content size of 200x200
+	- padding of 20x20
+If we set box-sizing of this selector to border-box, the .box elements will have
+	- content size of 160x160
+	- padding of 20x20x
+	- this brings the total dimension of .box element to 200x200
+
+
+
+05. Ways to hide element
+
+display:none
+	> by setting the display CSS property to none, the element will NOT be displayed in screen
+	> the element will also NOT TAKE SPACE in the viewport, hence affecting the arrangement of elements
+
+opacity:0
+	> opacity can have value from 0 (fully transparent) to 1 (fully opaque)
+	> by setting the opacity property to 0, we essentially hidden the element in screen
+	> unlike display:none, the element will STILL TAKE SPACE in the viewport
+
+visibility: hidden
+	> visibility property defines the visibility of the element
+	> setting the value to hidden will make the element INVISIBLE
+	> the same with opacity:0, the element will STILL TAKE SPACE in the viewport

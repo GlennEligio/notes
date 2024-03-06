@@ -1,0 +1,348 @@
+Day 5 Spring
+
+includes:
+@RequestHeader
+@Mapping additional parameters
+ResponseEntity
+Unit Testing
+DATA JPA
+Excetion Handling using @ControllerAdvice and @ExceptionHandling
+
+
+
+@RequestHeader()
+	> added in the parameter of the Route method
+	> represents the Request header inside the HttpRequest received
+	> the value of Request header is then "binded" to the String parameter it is attached to
+	> ex: public void loadAll(@RequestHeader())
+	> have the following parameters
+		1. name = ""
+			> defines the name of the RequestHeader we are fetching from the received Request
+			> we pass the name of the said RequestHeader
+		2. required = 
+			> defines if the said RequestHeader is required for the Request to be processed
+			> takes a boolean value
+		3. defaultValue = Object o
+			> defines the default value of the said Header if no value is provided
+	
+EX:
+
+	@GetMapping("/showEmp")
+	public List<Employee> showEmployees(
+			@RequestHeader(name="X-COM-PERSIST", required=true) String header1,
+			@RequestHeader(name="X-COM-LOCATION", defaultValue="ASIA") String header2
+			) {
+		System.out.println(service.showEmp());
+		return service.showEmp();
+	}
+
+
+
+Additional @PostMapping/@GetMapping/ .... parameters
+1. consumes=""
+	> defines what content-type of the request body can the route method receive
+	> ex: consumes="application/json"
+2. produces=""
+	> defines what content-type of the response body the route method will send back
+	> ex: produces="application/json"
+
+
+NOTE: Adding these additional parameter requires you to add path="" and pass the Route relative-url as input		
+
+
+
+ResponseEntity
+	> added as return type of a RouteMethod
+	> wraps around the Class type of the Response body (original return type)
+		- similar to ActionResult of .NET
+	> to return this Object, we can either
+		- pass a new instance of ResponseEntity and passing two parameters
+			-> ResponseBody content
+			-> HttpStatus[] enum
+		- call static method of ResponseEntity class
+			-> ResonseEntity.ok(Object responseBody)
+
+EX:
+
+	@PostMapping(path="/addEmp", consumes="application/json", produces="application/json")
+	public ResponseEntity<Employee> addEmployee(@RequestBody Employee emp) {
+		Employee newEmp = service.addEmp(emp);
+		System.out.println(newEmp);
+		return ResponseEntity.ok(newEmp);
+	}
+
+
+	@ExceptionHandler(ServletRequestBindingException.class)
+	public ResponseEntity<Object> handleHeaderException(Exception e, WebRequest request){
+		List<String> details = new ArrayList<String>();
+		details.add(e.getLocalizedMessage());
+		ErrorResponse errorResponse = new ErrorResponse("Bad Request... provide Headers", details);
+		return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+
+
+@ControllerAdvice
+	> added in a Class
+	> same as the @Component
+		- will be detected with @ComponentScan
+	> contains @ExceptionHandler method which handles Exception errors that happens in the Spring Boot
+
+
+
+@ExceptionHandler
+	> added in a method
+	> takes a Exception class object	
+		- this parameter will decide what kind of Exception this @ExceptionHandler will catch
+	> also, those with this @ExceptionHandler parameter can add an Exception parameter to be able to catch the said Exception
+
+EX:
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Object> handleAllException(Exception e, WebRequest request){
+		List<String> details = new ArrayList<String>();
+		details.add(e.getLocalizedMessage());
+		ErrorResponse errorResponse = new ErrorResponse("Bad Request... provide Headers", details);
+		return new ResponseEntity<Object>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+
+
+
+@RunWith(SpringRunner.class)
+	> added to a Class
+	> When a class is annotated with @RunWith or extends a class annotatedwith @RunWith, JUnit will invoke the class it references to run thetests in that class instead of the runner built into JUnit.
+	> we pass SpringRunner
+
+@SpringBootTest
+	> added in a Class
+	> Annotation that can be specified on a test class that runs Spring Boot based tests.Provides the following features over and above the regular Spring TestContextFramework:
+	> have the following parameters
+		1. webEnvironment = ""
+			- The type of web environment to create when applicable. Defaults to WebEnvironment.MOCK.
+			- takes one of the values of WebEnvironment enum
+WebEnvironment[] values
+
+1. MOCK
+	= Creates a WebApplicationContext with a mock servlet environment i servlet APIs are on the classpath, a ReactiveWebApplicationContext if Spring WebFlux is on the classpath or a regular ApplicationContext otherwise.
+
+2. RANDOM_PORT
+ 	= Creates a web application context (reactive or servlet based) and sets server.port=0 Environment property (which usually triggers listening on a random port). Often used in conjunction with a LocalServerPort @LocalServerPort injected field on the test.
+	= we can assign this LocalServerPort value to an int field using injection
+
+3. DEFINED_PORT
+ 	= Creates a (reactive) web application context without defining any server.port=0 Environment property.
+
+4. NONE
+	= Creates an ApplicationContext and sets SpringApplication.setWebApplicationType(WebApplicationType) to WebApplicationType.NONE
+
+
+@Test
+	> added in the methods of Test class
+	> included in the Junit library
+	> denotes that the method will be included in the JUnit test
+
+
+@LocalServerPort
+	> added in an int field member of Test Class
+	> used to inject the LocalServerPort choosen by @SpringBootTest() with webEnvironment set to RANDOM_PORT to the Class' field
+ 
+
+Exception Handling in SpringBoot
+1. Create Class
+	> annotation with @ControllerAdvice
+		- denotes that all Route method in @Controller that results in Exception should be redirected here
+2. Add methods for handling different Exceptions
+	> add @ExceptionHandler
+		- takes an Exception Class
+		- all request in @Controller that resulted in Exception whose type is the same as the one we passed in @ExceptionHandler will be redirected here
+	> add Exception parameter
+		- method with @ExceptionHandler can access the Exception generated by the Request
+	> use the Object we created for storing Exception messages
+	> send this message as ResponseEntity response body alongside the property HttpStatus Error code
+
+EX:
+
+@ControllerAdvice
+public class CustomException {
+	
+	@ExceptionHandler(ServletRequestBindingException.class)
+	public ResponseEntity<Object> handleHeaderException(Exception e, WebRequest request){
+		List<String> details = new ArrayList<String>();
+		details.add(e.getLocalizedMessage());
+		ErrorResponse errorResponse = new ErrorResponse("Bad Request... provide Headers", details);
+		return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Object> handleAllException(Exception e, WebRequest request){
+		List<String> details = new ArrayList<String>();
+		details.add(e.getLocalizedMessage());
+		ErrorResponse errorResponse = new ErrorResponse("Bad Request... provide Headers", details);
+		return new ResponseEntity<Object>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+}
+
+
+Unit Testing with Spring Boot
+1. Create Class
+	> should be inside src/test/java, same package as the @SpringBootTest class
+	> annotate the Class with @RunWith and @SpringBootTest
+2. Add int field variable to access server port the test is running
+	> annotate with @LocalServerPort
+3. Create Test method
+	> annotate with @Test for the JUnit to recognize this is a Test method
+	> inside the method:
+		- setup the following
+			> RestTemplate
+			> URI
+				- create a String that will hold the http url and pass it to new instance of URI
+			> HttpEntity
+				- created using an HttpHeaders and an Object that will serve as Request body
+		- execute the said method by calling it using RestTemplate
+			> call exchange() of RestTemplate
+			> pass the following
+				= uri, HttpMethod[] enum, HttpEntity
+		- assert the result of RestTemplate execution using Assert Class
+
+Ex:
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+public class MyAppTest {
+
+	@LocalServerPort
+	int randomServerPort;
+	
+	@Test
+	public void testGetMethod() throws URISyntaxException {
+		
+		// Arrange
+		RestTemplate template = new RestTemplate();
+		String baseurl = "http://localhost:" + randomServerPort + "/showEmp";
+		URI uri = new URI(baseurl);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("X-COM-LOCATION", "USA");
+		HttpEntity<Employee> entity = new HttpEntity<>(null, headers);
+		
+		// Act
+		try {
+			template.exchange(uri, HttpMethod.GET, entity, String.class);
+			
+			// Assert
+			Assert.fail();
+		}catch(HttpClientErrorException e) {
+			Assert.assertEquals(400, e.getRawStatusCode());
+		}
+	}
+	
+	@Test
+	public void testAddMethod() throws URISyntaxException {
+		
+		// Arrange
+		RestTemplate template = new RestTemplate();
+		String baseurl = "http://localhost:" + randomServerPort + "/addEmp";
+		URI uri = new URI(baseurl);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("X-COM-PERSIST", "true");
+		Employee emp = new Employee("admin", "manager", "aa@gmail.com");
+		HttpEntity<Employee> entity = new HttpEntity<>(emp, headers);
+		
+		// Act
+		ResponseEntity<String> result = template.postForEntity(uri, entity, String.class);
+		
+		// Assert
+		Assert.assertEquals(200, result.getStatusCodeValue());
+	}
+}
+
+
+
+
+Using SpringBoot Data JPA for Database CRUD
+1. Import the necessary dependencies
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+
+2. Create an interface that will inherit the CrudResposity<T, ID> interface of Data JPA api
+
+3. Inject the Interface in the @Service class using @Autowire
+
+4. Call the Interface methods for doing CRUD operations
+
+
+
+DATA JPA CLASSES
+
+CrudRepository<T, ID>
+	> Interface for generic CRUD operations on a repository for a specific type
+	> CrudRepository<T,ID> contains the following
+		- creation of connection to database
+		- creating SessionFactory and Session
+		- creating method for doing CRUD operations
+	> T parameter represents the Element Class to be stored
+	> ID parameter represents the Class of the Element's @Id parameter / Primary Key Class Type
+
+
+CrudRepository<T, ID> abstract methods
+
+T save(T entity)
+	> takes an Object and insert it to the database
+	> must have same Class type as the T parameter
+	> returns the given Entity
+
+Iterable<T> saveAll(Iterable<T> entities)
+	> takes a Iterable of Entity objects
+	> save all the said Entities in Database
+	> return the saved Entities
+
+
+Iterable<T> findAll()
+	> returns an Iterable of all the Entity class
+	> these Entity object's parameters are from the ResultSet row values mapped into their property behind the scene
+
+Optional<T> findById(ID id)
+	> return whether an entity with the given id exist
+	> we can use the the following method of Optional object like
+		- get() to get the value
+		- isPresent() to check if theres a value we got
+		- isEmpty() to check if Optional is empty
+
+boolean existById(ID id)
+	> return true if Entity exist with id that we passed 
+
+
+void deleteById(ID id)
+	> deletes a given entity based on the Id passed
+	
+void deleteAllById(Iterable<ID> ids)
+	> deletes all the Entity whose id matches the one inside the Iterable<ID> parameter
+
+void deleteAll(Iterable<T> entities)
+	> deletes all the entities passed in database
+
+void deleteAll()
+	> deletes all entities
+
+long count()
+	> returns the number of entities available
+
+
+
+DATA JPA @Annotations
+
+@EntityScan("package-location-of-entities")
+	> defines the location where we will scan Class that have @Entity in them
+	> takes a string parameter that denotes the package location of the said classes
+
+@EnableJpaRepositories("package-location-of-entities")
+	> defines the location where we will scan the interface that extends to CrudRepository interface of Data JPA
+	> takes a string parameter that denotes the package location of the said interface
+	> before of this, we dont need to use @Repository classes and write codes for CRUD operations

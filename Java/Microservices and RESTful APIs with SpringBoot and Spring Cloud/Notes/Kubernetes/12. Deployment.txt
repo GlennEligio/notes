@@ -1,0 +1,80 @@
+12. Deployment
+
+Deployment
+	> Deployment enables declarative updates for Pods and ReplicaSets.
+		- from "kubectl explain deployment"
+	> Built upon a ReplicaSet, but with new features like
+		1. Rolling update strategy
+			- we can define how we roll the update in Deployment which includes
+				a. number of Pods to down when we scale down previous ReplicaSet
+				b. number of Pods to up when we scale up the newer ReplicaSet
+	> When migrating from one version to another (Image), Deployment will create a NEW ReplicaSet that contains Pod that runs new Docker images
+
+
+
+Kubernetes Deployments architecture
+Deployment
+	> ReplicaSet 1 (Previous version)
+		> Pod 1
+		> Pod 2
+	> ReplicaSet 2 (New version)
+		> Pod 1
+		> Pod 2
+
+
+Commands
+kubectl get deployment
+	> used to get deployments running in K8s cluster
+kubectl get rs
+	> we can use this to get replicaset running under a deployment
+kubectl set image deployment <deploymentName> <podName>=<imageName>
+	> used to set the Image running in Pods under a Deployment
+	> ex: kubectl set image deployment hello-world-rest-api hello-world-rest-api=in28min/hello-world-rest-api:0.0.2.RELEASE
+
+
+Migration process of Deployment
+1. When we migrate the deployment from one version to another (e.g. changing Image in the Pods), deployment will create new ReplicaSet under it
+	- this replicaSet will same Desired State as previous replicaSet but with new Image running in Pods
+2. Depending on the Strategy set in the Deployment Specs, it will do the following
+	a. Recreate	
+		> scale down the previous ReplicaSet to 0
+		> after the current state of prev RS to 0, it will scale up the newer ReplicaSet to the prev RS's desired state
+	b. RollingUpdate
+		> scale down the previous RS based on maxUnavailable and scale up the newer RS based on the maxSurge 
+			- maxUnavailable and maxSurge are properties under rollingUpdate
+		> do the scale down and scale up repeatedly until desired and current State of prev RS is 0, and desired and current state of newer RS is equal to prev RS's initial desired and current state
+
+NOTE: The previous ReplicaSet of Deployment will still be up, but the Desired and Current State is ZERO.
+
+
+Example output of "kubectl get events --sort-by=.metadata.creationTimestamp" AFTER migration of Deployment
+
+LAST SEEN   TYPE     REASON              OBJECT                                       MESSAGE
+9m37s       Normal   Scheduled           pod/hello-world-rest-api-7ddff5dfc6-mkqrt    Successfully assigned default/hello-world-rest-api-7ddff5dfc6-mkqrt to docker-desktop
+9m37s       Normal   SuccessfulCreate    replicaset/hello-world-rest-api-7ddff5dfc6   Created pod: hello-world-rest-api-7ddff5dfc6-mkqrt
+9m37s       Normal   ScalingReplicaSet   deployment/hello-world-rest-api              Scaled up replica set hello-world-rest-api-7ddff5dfc6 to 1
+9m36s       Normal   Pulling             pod/hello-world-rest-api-7ddff5dfc6-mkqrt    Pulling image "in28min/hello-world-rest-api:0.0.2.RELEASE"
+9m25s       Normal   Pulled              pod/hello-world-rest-api-7ddff5dfc6-mkqrt    Successfully pulled image "in28min/hello-world-rest-api:0.0.2.RELEASE" in 10.9678229s
+9m25s       Normal   Created             pod/hello-world-rest-api-7ddff5dfc6-mkqrt    Created container hello-world-rest-api
+9m24s       Normal   ScalingReplicaSet   deployment/hello-world-rest-api              Scaled up replica set hello-world-rest-api-7ddff5dfc6 to 2
+9m24s       Normal   SuccessfulCreate    replicaset/hello-world-rest-api-7ddff5dfc6   Created pod: hello-world-rest-api-7ddff5dfc6-rzjqq
+9m24s       Normal   Killing             pod/hello-world-rest-api-687d9c7bc7-wqqcv    Stopping container hello-world-rest-api
+9m24s       Normal   SuccessfulDelete    replicaset/hello-world-rest-api-687d9c7bc7   Deleted pod: hello-world-rest-api-687d9c7bc7-wqqcv
+9m24s       Normal   Started             pod/hello-world-rest-api-7ddff5dfc6-mkqrt    Started container hello-world-rest-api
+9m24s       Normal   Scheduled           pod/hello-world-rest-api-7ddff5dfc6-rzjqq    Successfully assigned default/hello-world-rest-api-7ddff5dfc6-rzjqq to docker-desktop
+9m24s       Normal   ScalingReplicaSet   deployment/hello-world-rest-api              Scaled down replica set hello-world-rest-api-687d9c7bc7 to 2
+9m23s       Normal   Pulled              pod/hello-world-rest-api-7ddff5dfc6-rzjqq    Container image "in28min/hello-world-rest-api:0.0.2.RELEASE" already present on machine
+9m22s       Normal   SuccessfulDelete    replicaset/hello-world-rest-api-687d9c7bc7   Deleted pod: hello-world-rest-api-687d9c7bc7-g5kfd
+9m22s       Normal   Killing             pod/hello-world-rest-api-687d9c7bc7-g5kfd    Stopping container hello-world-rest-api
+9m22s       Normal   ScalingReplicaSet   deployment/hello-world-rest-api              Scaled down replica set hello-world-rest-api-687d9c7bc7 to 1
+9m22s       Normal   Created             pod/hello-world-rest-api-7ddff5dfc6-rzjqq    Created container hello-world-rest-api
+9m22s       Normal   Started             pod/hello-world-rest-api-7ddff5dfc6-rzjqq    Started container hello-world-rest-api
+9m22s       Normal   ScalingReplicaSet   deployment/hello-world-rest-api              Scaled up replica set hello-world-rest-api-7ddff5dfc6 to 3
+9m22s       Normal   SuccessfulCreate    replicaset/hello-world-rest-api-7ddff5dfc6   Created pod: hello-world-rest-api-7ddff5dfc6-pkz4t
+9m22s       Normal   Scheduled           pod/hello-world-rest-api-7ddff5dfc6-pkz4t    Successfully assigned default/hello-world-rest-api-7ddff5dfc6-pkz4t to docker-desktop
+9m21s       Normal   Pulled              pod/hello-world-rest-api-7ddff5dfc6-pkz4t    Container image "in28min/hello-world-rest-api:0.0.2.RELEASE" already present on machine
+9m20s       Normal   Started             pod/hello-world-rest-api-7ddff5dfc6-pkz4t    Started container hello-world-rest-api
+9m20s       Normal   Created             pod/hello-world-rest-api-7ddff5dfc6-pkz4t    Created container hello-world-rest-api
+9m20s       Normal   SuccessfulDelete    replicaset/hello-world-rest-api-687d9c7bc7   Deleted pod: hello-world-rest-api-687d9c7bc7-kj4gw
+9m20s       Normal   Killing             pod/hello-world-rest-api-687d9c7bc7-kj4gw    Stopping container hello-world-rest-api
+9m20s       Normal   ScalingReplicaSet   deployment/hello-world-rest-api              Scaled down replica set hello-world-rest-api-687d9c7bc7 to 0

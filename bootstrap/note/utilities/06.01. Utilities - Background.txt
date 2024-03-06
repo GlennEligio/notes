@@ -1,0 +1,27 @@
+06.01. Utilities - Background
+
+I. Background
+1. Background color
+	> set the background color, NOT the text color
+
+NOTATION:
+bg-{color}
+
+Colors
+.bg-primary
+.bg-secondary
+.bg-success
+.bg-danger
+.bg-warning
+.bg-info
+.bg-light
+.bg-dark
+.bg-body
+.bg-white
+.bg-transparent
+
+
+2. Background-gradient
+	> adds a LINEAR gradient as background image to the backgrounds
+	> we can do this by adding "bg-gradient" class at element with background color class
+		-> ex: "bg-warning bg-gradient"

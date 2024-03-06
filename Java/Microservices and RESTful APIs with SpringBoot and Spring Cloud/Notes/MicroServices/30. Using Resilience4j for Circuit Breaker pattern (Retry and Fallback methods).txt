@@ -1,0 +1,140 @@
+30. Using Resilience4j for Circuit Breaker pattern (Retry and Fallback methods)
+
+Annotation used
+
+@Retry
+	> This annotation can be applied to a class or a specific method. 
+		- Applying it on a class isequivalent to applying it on all its public methods. 
+	> The annotation enables backend retry for all methods where it is applied. 
+		- Backend retry is performed via a retry. 
+	> If using Spring, name and fallbackMethod can be resolved using Spring Expression Language (SpEL).
+	> this annotation have several parameters to define
+
+name
+	> takes a String 
+	> Name of the sync retry.
+		- It can be SpEL expression. 
+	> If you want to use first parameter of the method as name, you can express it #root.args[0], #p0 or #a0. And method name can be accessed via #root.methodName
+	> ex: @Retry(name = "sample-api")
+
+fallbackMethod
+	> takes a String value
+	> Name of the method to execute IN CASE of Exception occurrance in the method @Retry is applied
+	> the fallbackMethod MUST HAVE:
+		- Class<?> extends Throwable parameter in it
+			= not adding this will have the Application throw an UndeclaredException 
+			= the Class define will be the one this fallbackMethod "responds/react/catches"
+		- same Return type as the method where @Retry is applied
+	> in example below, if sampleApi() where to throw an Exception, hardcodedResponse() will be executed in place of the sampleApi()
+
+EX:
+	@GetMapping("/sample-api")
+	@Retry(name = "sample-api", fallbackMethod = "hardcodedResponse")
+	public String sampleApi() {
+		logger.info("Sample Api call received");
+		ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8080/some-dummy-url", 
+				String.class);
+		return forEntity.getBody();
+	}
+	
+	public String hardcodedResponse(Exception e) {
+		return "hardcodedResponse";
+	}
+
+
+
+Properties to define
+
+resilience4j.retry.instances.{value of @Retry of a method/class}.maxRetryAttempts
+	> defines the maximum retry the Resilience4j will do to a method / class' methods
+	> pass the name attribute value of the @Retry inside the {}
+	> @Retry instance with name attribute value is "default" have maxRetryAttempts of 3
+
+OTHER Properties that you can define in yaml format
+
+resilience4j.retry:
+    instances:
+        {@Retry instance name}:
+            maxAttempts: 3
+            waitDuration: 10s
+            enableExponentialBackoff: true
+            exponentialBackoffMultiplier: 2
+            retryExceptions:
+                - org.springframework.web.client.HttpServerErrorException
+                - java.io.IOException
+            ignoreExceptions:
+                - io.github.robwin.exception.BusinessException
+        backendB:
+            maxAttempts: 3
+            waitDuration: 10s
+            retryExceptions:
+                - org.springframework.web.client.HttpServerErrorException
+                - java.io.IOException
+            ignoreExceptions:
+                - io.github.robwin.exception.BusinessException
+
+EX:
+INSIDE a @RestContoller class
+
+	@GetMapping("/sample-api")
+	@Retry(name = "sample-api")
+	public String sampleApi() {
+		logger.info("Sample Api call received");
+	}
+
+application.properties
+
+# Resilience4j properties
+resilience.retry.instance.sample-api.maxRetryAttempts=5
+
+CONSOLE LOGS
+2021-12-24 20:09:29.149  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:09:29.666  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:09:30.169  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:09:30.681  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:09:31.186  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+
+
+resilience4j.retry.instances.{@Retry's instance name}.waitDuration
+	> takes a "ns", where n is an Integer
+		- ex: 1s for 1 second
+	> defines the waitDuration of each of the Retry operation
+		- default value is 0.5s if not defined
+
+EX:
+application.properties
+# Resilience4j properties
+resilience4j.retry.instances.sample-api.maxRetryAttempts=5
+resilience4j.retry.instances.sample-api.waitDuration=1s
+
+CONSOLE LOGS
+2021-12-24 20:27:15.085  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:27:16.093  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:27:17.110  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:27:18.122  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:27:19.139  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+	> we can see that each of Retries have 1 sec space between them
+
+
+resilience4j.retry.instances.{@Retry instance name}.enableExponentialBackoff
+	> takes a boolean value (true/false)
+		- by default, this is set to false
+	> changes the duration of each Retry to grow EXPONENTIALLY
+		- if false, time between Retries is constant and equals to waitDuration value
+
+EX:
+# Resilience4j properties
+resilience4j.retry.instances.sample-api.maxRetryAttempts=5
+resilience4j.retry.instances.sample-api.waitDuration=1s
+resilience4j.retry.instances.sample-api.enableExponentialBackoff=true
+
+CONSOLE LOGS
+	> we can see below that it starts at 1sec duration (the waitDuration value)
+	> then it becomes 1.5s, 2.2, 3.4s for next Retries
+
+2021-12-24 20:34:30.269  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:34:31.295  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:34:32.805  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:34:35.069  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-24 20:34:38.446  INFO 18140 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+

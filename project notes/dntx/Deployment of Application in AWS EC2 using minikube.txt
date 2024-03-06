@@ -1,0 +1,26 @@
+Deployment of Application in AWS EC2 using minikube
+
+SOURCES:
+https://crishantha.medium.com/running-minikube-on-aws-ec2-e845337a956
+https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-ec2-instance.html
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html
+https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/
+
+Steps
+0. Configure EC2
+	> change hardware
+		- t2.large
+		- 32gb space
+1. Install the following
+	> Docker
+	> Kubectl
+	> Minikube
+2. Configure Docker
+	> add the current user you are using in the 'docker' group created
+		- this is so that we don't need to use prepend 'sudo' on future docker commands
+3. Configure Minikube
+	> add ingress addons
+		- minikube addons enable ingress
+	> change default namespace, if you are using different namespace
+		- kubectl config set-context --current --namespace=K21.
+4. Add elastic ip address and assign it to the AWS EC2

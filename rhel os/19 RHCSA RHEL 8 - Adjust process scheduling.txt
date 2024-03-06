@@ -1,0 +1,38 @@
+19 RHCSA RHEL 8 - Adjust process scheduling
+
+Scheduler
+ > built into the Kernel
+ > decides which runnable processes will be executed by the CPU next
+ > offers scheduling policies
+	SCHED_FIFO 	= first in, first out, real-time processes	
+	SCHED_RR		= round robin real-time processes
+	SCHED_OTHER	= normal sharing, default
+	SCHED_BATCH	= almost the same as SCHED_OTHER, but the process is considered always the most CPU consuming
+
+NOTE:
+1. Be cautious when it comes to changing scheduling policies and priorities of the applications
+
+
+Commands
+chrt [option] -p [priority] pid
+chrt [options] priority command [arg...]
+ > can be used for scheduling policy related task like
+	- checking scheduling policy of an application
+	- checking the list of scheduling policies and the max number of priority we can assign
+ > options:
+	-p PID	checks the scheduling policy and priority of the process with specified PID
+	-m		checks the scheduling policy and range of priority number we can assign
+	-o		set scheduling policy to SCHED_OTHER
+	-f		set scheduling policy to SCHED_FIFO
+	-r		set to SCHED_RR, will be the default value
+	-b		set to SCHED_BATCH
+	-i 		set to SCHED_IDLE
+	-d		set to SCHED_DEADLINE
+ > ex:
+	$ chrt -p 2577
+		- list the process with PID 2577's scheduling process and priority
+	$ chrt -m
+	$ chrt -b -p 0 2577	
+		- sets process with PID 2577 to SCHED_BATCH with priority of 0
+	$ chrt -f -p 50 2577
+		- sets process with PID 2577 to SCHED_FIFO with priority of 50

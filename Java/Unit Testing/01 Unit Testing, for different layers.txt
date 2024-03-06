@@ -1,0 +1,371 @@
+Spring Boot Starter Test
+
+
+Spring Boot Starter Test
+	> Starter dependency for Unit Testing
+	> contains several dependency for Unit Testing like
+		- junit-jupiter
+		- mockito-core
+		- mockito-junit-jupiter
+		- jsonassert
+
+Mokito
+	> Mockito library enables mock creation, verification and stubbing
+
+
+
+Annotations to Use
+
+@SpringBootTest
+	> added in a Class	
+	> Annotation that can be specified on a test class that runs Spring Boot based tests.
+
+
+@MockBean
+	> creates a Mock of a specific Bean object
+	> this MockBean can be configured using the Mockito methods
+
+
+@Test
+	> specifies that the method is a Test method
+
+
+@BeforeEach
+	> added in method
+	> calls this method BEFORE EACH @Test
+		- ex: 5 test = 5 @BeforeEach method calls
+
+@BeforeAll
+	> added in method
+	> calls ONCE before all @Test methods
+		- ex: 5 test -  1 @BeforeAll method call
+
+@DisplayName
+	> added in a @Test method
+	> changes the name of the Test method in JUnit window
+	> we can define the "value" parameter
+		- takes a String value
+		- determines the name of Test method
+
+
+@Disabled
+	> added in a Test method
+	> Test method will not be included in the Test to run
+
+
+@DataJpaTest
+	> added in the class that test JpaRepository<T, ID> interfaces
+	> Annotation for a JPA test that focuses only on JPA components. 
+	> Using this annotation will disable full auto-configuration and instead apply only configuration relevant to JPA tests. 
+	> By default, tests annotated with @DataJpaTest are transactional and roll back at the end of each test. 
+		- They also use an embedded in-memory database (replacing any explicit or usually auto-configured DataSource). 
+		- The @AutoConfigureTestDatabase annotation can be used to override these settings. 
+	> By default, uses in-memory database
+		- with this, we will need h2 database for database
+
+H2 database dependency
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+
+
+
+@WebMvcTest
+	> added in Test Class that test Controller classes (Classes that have @Controller or @RestController)
+	> Annotation that can be used for a Spring MVC test that focuses only onSpring MVC components.
+	> to specify the Controller classes to Test, we will define the "controllers" parameter
+		- "controllers" takes an array of Class as input
+
+
+
+Mokito
+	> class inside Mockito library
+	> reponsible for Mocking the functionality of the Mock/Stubs
+	> have the following method
+		
+
+<T> OngoingStubbing<T> when (T methodCall)
+	> Enables stubbing methods. Use it when you want the mock to return particular value when particular method is called.
+	> takes a methodCall
+		- this method will then be Mocked
+		- we can call thenReturn() to specify what this method will return
+
+OngoingStubbing<T> thenReturn(T value)
+	> sets a return value to be return when the method is called
+	> takes a Value
+	> the value should MATCH the return type of the method inside when()
+
+EX:
+
+	@BeforeEach
+	void setUp() {
+		Optional<Employee> employee = Optional.of(new Employee (1, "John", "Glenn", "jg@gmail.com"));
+		Mockito.when(employeeRepository.findById(1)).thenReturn(employee);
+	}
+
+
+TestEntityManager
+	> Alternative to EntityManager for use in JPA tests. 
+	> Provides a subset of EntityManager methods that are useful for tests as well as helper methods for common testing tasks such as persist/flush/find.
+
+METHODS of TestEntityManager
+E persist(E entity)
+	> save the data in the persistence context
+	> we can later fetch it
+clear()
+	> clear the persistence context
+	> causes all the Entity/Data to be detached
+detach(Object entity)
+	> detaches an entity in persistence context
+E find(Class<E> entityClass, Object primaryKey)
+	> find a specific entity in the persistence context
+	> takes two parameter
+		- class of the Entity
+		- primary key
+Object getId(Object entity)
+	> returns the primary key / id of the said entity
+
+
+
+MockMvc
+	> mocks the Spring Mvc Controller Classes
+	> Main entry point for server-side Spring MVC test support. 
+	> have several methods to mock an MVC endpoint
+
+ResultActions perform(RequestBuilder)
+	> takes a RequestBuilder input
+		- but in this case, we will use MockMvcRequestBuilders
+	> defines the request to send (endpoint, content, headers, etc)
+
+ResultActions andExpect(ResultMatchers)
+	> takes a ResultMatchers input
+		- ResultMatchers have Assertions function inside it
+		- same as perform, we will use the MockMvc version of this (MockMvcResultMatchers)
+	> do Assertion functions internally to determine if Response received from perform() match the ResultMatchers input
+
+
+
+
+
+Unit Testing Spring Boot Application
+
+I. Service Layer
+
+1. Create Class
+	> add @SpringBootTest to the Class
+
+@SpringBootTest
+public class EmployeeServiceTest {
+
+
+2. Inject the Service Class into the @SpringBootTest 
+	> use @Autowired
+
+	@Autowired
+	private EmployeeService employeeService;
+
+
+3. Mock the Repository layer
+	> use the @MockBean to create a Mock of the Repository
+
+	@MockBean
+	private EmployeeRepository employeeRepository;
+
+
+4. Create a @BeforeEach method
+	> here, we will setup up the Mocks/Stubs
+		- specify the return value of methods of Mocks/Stubs
+
+	@BeforeEach
+	void setUp() {
+		Optional<Employee> employee = Optional.of(new Employee (1, "John", "Glenn", "jg@gmail.com"));
+		Mockito.when(employeeRepository.findById(1)).thenReturn(employee);
+	}
+
+
+5. Create a Test method
+	- annotate with @Test to specify the method is a Test
+	- annotate with @DisplayName() and define "value" parameter to change display name
+	- inside, do three things
+		a. ARRANGE
+			- arrange all data needed for testing
+		b. ACT
+			- execute the method
+		c. ASSERT
+			- assert the result of the method execution
+
+
+	@Test
+	@DisplayName("Get Employee based on Valid Employee Id")
+	public void findEmployee_withExistingEmployee_returnEmployee() {
+		// Arrange
+		Integer id = 1;
+		
+		// Act
+		Employee employee = employeeService.findById(id); 
+		
+		// Assert
+		assertEquals(id, employee.getId());
+	}
+
+
+
+
+II. Repository Layer
+	> here, we will try to insert a data into database
+	> then we will use that data to test the Repository behavior/method
+	> to do this, we will 
+		- use @DataJpaTest
+			= we must have h2 database dependency in Maven
+		- use the TestEntityManager from Jpa library
+
+1. Create class
+	> annotate with @DatJpaTest
+
+@DataJpaTest
+public class EmployeeRepositoryTest {
+
+	
+2. Add H2 database dependency in Maven
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+
+3. Inject EmployeeRepository interface (which extends JpaRepository interface) into the class
+	> use @Autowired
+	
+	@Autowired
+	private EmployeeRepository employeeRepository;
+
+
+4. Inject TestEntityManager into the class
+	> use @Autowired
+
+	@Autowired
+	private TestEntityManager entityManager;
+
+
+5. Create a setUp() method
+	> add @BeforeEach
+	> inside the method
+		- create Employee to persist in persistence context
+		- persist the Employee using TestEntityManager
+
+	@BeforeEach
+	void setUp() {
+		// define object we want to persist
+		Employee employee = new Employee ("John", "Glenn", "jg@gmail.com");
+		// persist the Employee in the EntityManager
+		entityManager.persist(employee);
+	}
+
+
+6. Create a Test method
+	> annotate with @Test
+	> use AAA
+		- Arrange
+			= set Integer id to use for finding Employee
+			= set the String of expected firstName of Employee
+		- Act
+			= call findById of the employeeRepository
+		- Assert
+			= check if Employee is not null
+			= check if Employee's firstName is equal to the String in Arrange
+
+
+	@Test
+	@DisplayName("Find existing Employee using Id")
+	public void fingById_withExistingEmployee_returnsExpectedEmployee() {
+		// Arrange
+		Integer id = 1;
+		String expectedName = "John";
+		
+		// Act
+		Optional<Employee> employee = employeeRepository.findById(id);
+		
+		// Assert
+		assertNotNull(employee.get());
+		assertEquals(expectedName, employee.get().getFirstName());
+	}
+
+
+
+III. Controller Layer
+	> here since we are Unit Testing Controller, we will use @WebMvc
+		- @WebMvc have a "controllers" parameter that takes an array of Class
+		- These Class are the controller (typically have @RestController or @Controller) 
+
+
+1. Create class
+	> annotate with @WebMvcTest
+	> pass the classes you want to do Unit Testing to the "controllers" parameter of @WebMvcTest
+
+@WebMvcTest(controllers = EmployeeRestController.class)
+public class EmployeeRestControllerTest {
+
+
+
+2. Inject MockMvc into the Test Class
+	> use @Autowired
+
+	@Autowired
+	private MockMvc mockMvc;
+
+
+3. Create a Mock Bean of the EmployeeService
+	> use @MockBean
+	> reason is that EmployeeRestController class uses EmployeeService
+		- we want to Mock the behavior of this EmployeeService
+
+	@MockBean
+	private EmployeeService employeeService;
+
+
+4. Create an Employee field in Test Class
+
+	private Employee employee;
+
+
+5. Create a setup() method to setup the Employee field
+	> add @BeforeEach annotation to setup()
+
+	@BeforeEach
+	void setUp() {
+		employee = new Employee (1, "John", "Glenn", "jg@gmail.com");
+	}
+
+
+6. Create the Test method
+	> annotate with @Test
+	> here, we will test the saveEmployee() endpoint of EmployeeRestController
+	> inside the method
+		- define the inputEmployee to save in DB using saveEmployee() endpoint
+		- Mock the employeeService's save() method
+			= using inputEmployee, return the employee we created in setUp()
+		- perform an HttpRequest to endpoint
+			= call perform() to MockMvc and pass a configured MockMvcRequestBuilders
+		- assert the result of Request
+			= call andExpect() after perform()
+			= pass a configured MockMvcResultMatchers (this will hold the expected response)
+
+	@Test
+	@DisplayName("Save new Employee in Controller")
+	public void saveEmployee_withUnexistingEmployee_returnOk() throws Exception {
+		Employee inputEmployee = new Employee(1, "John", "Glenn", "jg@gmail.com");
+		
+		Mockito.when(employeeService.save(inputEmployee)).thenReturn(employee);
+		
+		mockMvc.perform(MockMvcRequestBuilders.post("/employees")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\r\n"
+						+ "	\"id\": 1,\r\n"
+						+ "    \"firstName\":\"John\",\r\n"
+						+ "    \"lastName\":\"Glenn\",\r\n"
+						+ "    \"email\":\"jg@gmail.com\"\r\n"
+						+ "}"))
+				.andExpect(MockMvcResultMatchers.status().isOk());
+	}

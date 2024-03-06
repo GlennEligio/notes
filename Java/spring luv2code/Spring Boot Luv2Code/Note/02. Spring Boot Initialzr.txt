@@ -1,0 +1,29 @@
+02. Spring Boot Initialzr
+
+Spring Initialzr
+	> used to create Spring Boot application quickly
+
+
+
+Create Spring Boot project in Spring Initialzr
+1. Define the Project Properties
+	> Maven project
+	> Java
+	> Spring Boot latest stable version
+	
+2. Define Project metadata
+	> GAV
+	> Jar packaging
+	> Java 11
+
+3. Add the dependencies
+	> Spring Boot devtool
+	> Spring Boot web starter	
+
+4. Generate the project
+	> extract the project inside the zip file
+
+
+Importing the Spring Boot project
+5. In the Eclipse IDE, do the following
+	> File - Import - Maven - Import existing Maven project

@@ -1,0 +1,120 @@
+Java IO - Overview
+
+Java I/O use cases
+1. Reading and writing files
+2. Communicating over network sockets
+3. Filtering Data
+4. Compress and Decompress data
+5. Writing objects to streams
+
+
+
+Streams
+	> A stream is an "ordered sequence of bytes of indeterminate length."
+		-> this includes both input and output streams
+	> Input streams read data from some source
+	> Output streams 'write' data
+
+
+Stream Classes
+
+Subclasses of InputStream and OutputStream
+
+InputStream
+	> FileInputStream
+	> PipedInputStream
+	> FilterInputStream
+		-> DataInputStream
+		-> BufferedInputStream
+		-> LineNumberInputStream
+		-> PushbackInputStream
+	> ByteArrayInputStream
+	> SequenceInputStream
+	> StringBufferInputStream
+
+OutputStream
+	> FileOutputStream
+	> PipedOutputStream
+	> FilterOutputStream
+		-> DataOutputStream
+		-> BufferedOuputStream
+		-> PrintStream
+	> ByteArrayOutputStream
+
+
+Data
+	> Streams transmit data in bytes
+
+Bit
+	> a 0 or 1
+
+Byte
+	> composed of 8 bits
+	> with a byte, the number size limit for bits is 2^8 or 256
+		-> 0 to 255 for unsigned
+		-> -128 to 127 for signed
+		-> first bit is used to know whether the number is positive or negative, remaining 7 is for number
+
+
+Data types
+1. Bit
+	> hold either 0 or 1
+2. Byte
+	> composed of 8 bits
+	> max number it can hold is 255
+3. Int
+	> composed of 4 bytes
+		-> 32 bits
+		-> 4294967296 for unsigned
+		-> -2147483648 to 2147483647 for signed
+4. Long 
+	> composed of 8 bytes
+		-> 64 bits
+		-> 1.844674407x10^19 
+		-> -9223772036854775808 to 9223772036854775807
+
+
+
+Character Set
+	> bytes transmitted in streams represents a character
+	> to know which character a byte represents, we will need to use a Character Set
+	> examples of these Character Sets are:
+		1. ASCII
+			-> 7 bit Character set (127)
+			-> contains most of English letters
+		2. Latin-1
+			-> 8 bit Character set (256)
+			-> contains most of Latin characters
+		3. Unicode
+			-> 32 bit character set (4million +)
+			-> contain most of the characters from other languages (Chinese, Japanese, Thai, etc)
+			-> currently only occupies a million
+			-> sub types includes the UTF-8 and UTF-16
+
+
+
+Readers and Writers
+	> Readers will convert bytes from the underlying stream into characters
+	> Writers will convert characters back into bytes then put those values into the underlying stream
+
+
+
+IOExceptions
+	> Signals that an I/O exception of some sort has occurred. 
+	> This class is the general class of exceptions produced by failed or interrupted I/O operations.
+
+
+Class Tree
+
+Throwable
+	> Error
+	> Exception
+		> RunTimeException
+			> ArtihmeticException
+			> ArrayStoreException
+			> IndexOutOfBoundsException
+		> IOException
+			> EOFException
+			> FileSystemException
+			> FileNotFoundException
+			> NullPointerException

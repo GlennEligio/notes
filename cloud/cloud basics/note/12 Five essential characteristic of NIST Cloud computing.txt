@@ -1,0 +1,46 @@
+12 Five essential characteristic of NIST Cloud computing
+
+Five essential characteristic
+1. On-demand self service
+2. Broad Network Access
+3. Resource pooling
+4. Rapid Elasticity
+5. Measured Service
+
+
+
+Essential Characteristic
+On-demand self service
+ > evident in current Cloud providers today
+ > this means that there is 
+	- no provisioning of hardware or looking at prices, calling the hardware dealer to get a quote, ordering the hardware, shipping the hardware
+ > on-demand as in you can get it when you need it
+ > self service as in you don't need anyone to get the hardware resources to you
+
+
+
+Broad Network Access
+ > essentially boils down to having all the Services available and accessible in the Internet
+ > common exception includes some Enterprises that don't want to their cloud solution or applications to be available online and public
+	- ex: firewalls
+
+
+Resource pooling
+ > in On Prem, there's no such thing as Resource pooling, the hardware is entirely yours
+ > in Cloud, they do Resource pooling where in the resource of a single hardware is shared to different Users
+ 	- this doesn't mean that other Users can access your resources (ex: data)
+	- theres a strict separation as to what you provision
+	- the underlying hardware itself is pooled
+
+
+
+Rapid elasticity
+ > elasticity means that we can change the resources used based on what user wants
+ > with Cloud computing, it must be able to quickly/rapidly adapt to the changes the User did to the provisioned hardware resource
+
+
+
+Measured service
+ > typically seen in the pay-as-you-go model that is used by most cloud providers
+ > all Services that Users consume is metered
+ > different Cloud providers have different way of measuring the services (ex: time, resource used)

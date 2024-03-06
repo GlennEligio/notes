@@ -1,0 +1,27 @@
+Microsoft SQL server
+	> a RELATIONAL DATABASE MANAGEMENT systen
+	> supports the STRUCTURED QUERY LANGUAGE and comes with its own implementation of the SQL language which is the transact-sql (t-sql)
+	> has an integrated environment to handle SQL databases, which is the SQL SERVER MANAGEMENT STUDIO
+
+Key components of SQL Server are:
+1. Database Engine
+	> handles storing, processing, and securing the data
+2. SQL Server
+	> used to start, stop, pause, or continue the instance of the microsoft sql server
+3. SQL Server Agent
+	> windows service that enables database developers and database administrators to schedule jobs on the SQL Server machine (task scheduler)
+	> jobs can be simple T-SQL scripts, stored procedures, SSIS packages or SSAS databases
+4. SQL Server Browser
+	> connect the incoming request to the desired SQL server instance
+5. SQL Server Full-Text Search
+	> allows full text search queries
+6. SQL Server VSS Writer
+	> allows backups and restoration of data files when the SQL server doesnt run
+7. SQL Server Analysis Service (SSAS)
+	> used for data analysis, data mining, and machine learning capabilities
+	> integrated with phython and R for advance data analytics
+8. SQL Server Reporting Servies (SSRS)
+	> used to feature
+9. SQL Server Integration Services (SSIS)
+
+	

@@ -1,0 +1,162 @@
+08. Event Handling
+
+
+~~~~~ EVENT HANDLING ~~~~~~
+
+Handling Events in React
+	> Handling events with React elements is very similar to handling events on DOM elements. 
+	> There are some syntax differences:
+		1. React events are named using camelCase, rather than lowercase.
+		2. With JSX you pass a function as the event handler, rather than a string.
+		3. To prevent default behavior of event, preventDefault() must be called explicitly
+			- compared to plain HTML where we can return false to do so
+
+EX:
+in HTML
+<button onclick="activateLasers()">
+  Activate Lasers
+</button>
+
+in React
+<button onClick={activateLasers}>
+  Activate Lasers
+</button>
+
+
+Creating Event Handler function for React Components
+	> There are two ways of supplying Function as Event Handler in a React Component's JSX
+		1. Passing the function variable
+      			<button onClick={this.handleClick}></button>
+		2. Defining the function inline
+			<button onClick={() => console.log('Click')}></button>
+	> There are two ways of supplying Function as Event Handler in React Component
+		1. Through props
+		2. Through Class methods
+	> Class method are NOT BOUND by default
+	> Because of this, we cannot use a method for event handling unless we bind it to the Class
+	> There are two ways to do the binding
+		1. Add a Class field in the constructor, and then call the bind() of the function of Class, and pass "this"
+			- ex: this.handleClick = this.handleClick.bind(this)
+		2. Use the experimental public class fields syntax
+			-> this syntax ensures 'this' is bound within handleClick
+			- ex: handleClick = () => {console.log('this is:', this)}
+
+EX: Event Handler through binding method 1
+
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
+  }
+}
+
+
+EX: Event Handler through binding method 2
+class LoggingButton extends React.Component {
+  // This syntax ensures `this` is bound within handleClick.
+  // Warning: this is *experimental* syntax.
+  handleClick = () => {
+    console.log('this is:', this);
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        Click me
+      </button>
+    );
+  }
+}
+
+
+EX: Event Handler through props
+// In Header.js
+  const onClick = () => {
+    console.log("Click");
+  };
+
+  return (
+    <header className="header">
+      <h1>{title}</h1>
+      <Button color="green" text="Add" onClick={onClick} />
+    </header>
+  );
+
+
+// In Button.js
+const Button = ({ color, text, onClick }) => {
+  return (
+    <button
+      onClick={onClick}
+      style={{ backgroundColor: color }}
+      className="btn"
+    >
+      {text}
+    </button>
+  );
+};
+
+
+EX: Event handler provided INLINE
+class LoggingButton extends React.Component {
+
+  render() {
+    return (
+      <button onClick={() => }>
+        Click me
+      </button>
+    );
+  }
+}
+
+
+SyntheticEvent
+	> a cross-browser wrapper around the browser's native event
+	> It has the same interface as the browser's native event, including stopPropagation() and preventDefault(), except the events work identically across all browsers
+	> Event handler function will be passed instances of the SyntheticEvent
+		- we can access this by adding a parameter to the event handler function
+	> Each SyntheticEvent object has the following attributes
+		boolean bubbles
+		boolean cancelable
+		DOMEventTarget currentTarget
+		boolean defaultPrevented
+		number eventPhase
+		boolean isTrusted
+		DOMEvent nativeEvent
+		void preventDefault()
+			> used to prevent default behavior
+		boolean isDefaultPrevented()
+		void stopPropagation()
+		boolean isPropagationStopped()
+		void persist()
+		DOMEventTarget target
+			> returns the HTML element that is the target of Event
+		number timeStamp
+		string type
+
+
+EX:
+// Inside Header.js
+  const onClick = (e) => {
+    console.log(e.target);
+    console.log(" Click");
+  };
+
+

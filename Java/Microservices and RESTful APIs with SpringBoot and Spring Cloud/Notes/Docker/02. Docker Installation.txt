@@ -1,0 +1,32 @@
+02. Installing Docker
+
+For Windows and Mac
+1. Download the Docker Desktop
+2. Run the Docker Desktop and following instructions
+
+For Linux
+Installing Docker Engine on Ubuntu
+
+Prerequisites
+OS requirements
+To install Docker Engine, you need the 64-bit version of one of these Ubuntu versions:
+	> Docker Engine is supported on x86_64 (or amd64), armhf, and arm64 architectures.
+	
+	Ubuntu Focal 20.04 (LTS)
+	Ubuntu Eoan 19.10
+	Ubuntu Bionic 18.04 (LTS)
+	Ubuntu Xenial 16.04 (LTS)
+
+
+Uninstalling old versions
+	> older versions of Docker were called docker, docker.io, or docker-engine
+	> to uninstall them, use the command
+
+	$ sudo apt-get remove docker docker-engine docker.io containerd runc
+
+
+Installing Docker
+1. Update the apt package index
+	sudo apt-get update
+2. Install docker.io package using apt
+	sudo apt-get install docker.io -y

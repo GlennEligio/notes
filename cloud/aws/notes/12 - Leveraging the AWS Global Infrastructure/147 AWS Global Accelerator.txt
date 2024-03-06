@@ -1,0 +1,61 @@
+147 AWS Global Accelerator
+
+
+AWS Global Accelerator
+ > improve global application availability and performance using the AWS global network
+ > Leverage the AWS internal network to optimize the route to your application (60% improvement)
+ > 2 Anycast IP are created for your application and traffic is sent through Edge Locations
+	- Anycast IP refers to the IP that is shared between MULTIPLE servers
+ > The Edge locations send the traffic to your application
+
+
+
+Diagram with Edge locations
+
+		|- - - - - - Private AWS -- - - - - - |
+		|
+User	------>	Edge Location	----|
+(USA)				    |
+				    |
+User	------>	Edge location 	----|---> India
+(AUS)				    |	  (Public ALB)
+				    |
+User	------> Edge location	----|
+(EU)
+
+
+
+AWS Global Accelator Diagram
+
+Without Global Accelerator
+ > here, the request hops to multiple network which introduces latency
+
+User ---> Local ISP ----> Network A ----> B ---> C --> AWS Region
+
+
+With Global Accelerator
+ > here, the request goes to the Edge location ASAP in order to go to private AWS network, which makes the request much faster
+
+User ---> Local ISP ---> Edge ---------------> AWS Region		
+				AWS Network
+
+
+
+
+AWS Global Accelerator vs CloudFront
+ > they both use the AWS global network and its edge locations around the world
+ > both services integrate with AWS Shield for DDoS protection
+
+CloudFront - Content Delivery Network
+ > improves performance for your cacheable content (such as images and videos)
+ > content is SERVED AT THE EDGE
+
+Global Accelerator
+ > no caching, PROXYIN PACKETS at the edge to applications running in one or more AWS Regions
+ > Improves performance for a wide range of applications over TCP or UDP
+ > Good for HTTP use cases that require static IP address
+ > Good for HTTP use cases that required deterministic, fast regional failover
+
+
+Testing Performance increase with AWS Global Accelerator
+ > https://speedtest.globalaccelerator.aws/#/

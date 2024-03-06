@@ -1,0 +1,201 @@
+12. Dockerfile
+
+Building Docker Image from Dockerfile
+
+docker build . -t <image name>
+	> creates a Docker image using the Dockerfile found in current directory of CLI
+
+docker build -f <Dockerfile name> -t <image name>
+	> creates a Docker image using the Dockerfile name specified
+	> used to specify the name and location of Dockerfile
+		- ex: docker build -f */*/Dockerfile -t myapp
+
+
+
+Dockerfile
+	> file that is used to build Docker images
+	> is a text document that contains all the commands a user could call on the command line to assemble a Docker Image
+	> using "docker build" command, users can create an automated build that executes several command-line instructions in succession
+	> inside Dockerfile, we can use several "Reserved" keyword to define an instructions
+
+
+
+FROM
+	> used to define the BASE IMAGE on which we are building upon
+	> syntax are
+		FROM [--platform=<platform>] <image> [AS <name>]
+		FROM [--platform=<platform>] <image>[:<tag>] [AS <name>]
+		FROM [--platform=<platform>] <image>[@<digest>] [AS <name>]
+	> "--platform" defines which platform the DockerContainer will run, OPTIONAL
+	> AS add a name to the Stage so we can refer it on Stages after this (for multistaged Dockerfile)
+	> ex: FROM ubuntu AS base
+		- here, we will fetch the "ubuntu" docker image
+		- we can also refer to this Stage using "base" word
+	
+
+
+WORKDIR
+	> changes the working directory of the Container
+	> The WORKDIR instruction sets the working directory for any RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile
+	> syntax is:
+		WORKDIR <directory>
+
+
+
+ADD
+	> used to add files from source to the docker container to be built
+	> syntax is
+
+		ADD [--chown=<user>:<group>] <src>... <dest>
+
+	> <src>'s root folder is the folder where Dockerfile is located
+	> <src> can also take wildcards characters (*, ?)
+	> "--chown" is only availabe to linux platform
+	> have several function like
+		- can accept URL for source
+		- if compressed file added is from local directory, it will be AUTOMATICALLY EXTRACTED
+	> ex: ADD password.txt /tmp/files
+		- here, we copy the password.txt into the /tmp/files folder of Container
+
+
+
+COPY
+	> used to COPY files from source to destination in container
+	> syntax is 
+		
+		COPY [--chown=<user>:<group>] <src>... <dest>
+	
+	> unlike ADD, COPY's main purpose is to copy files
+	> Optionally, COPY accepts a flag "--from=<name>" before <src>... <dest>
+		- <name> refers to the name assigned to a Stage using AS (e.g. FROM ubuntu AS base)
+		- with "--from=<name>", we can use the Stage's directory as the source instead of the directory where Dockerfile is located
+		- ex: COPY --from=base /tmp /tmp/db will copy the /tmp directory of "base" stage to this stage's /tmp/db directory
+
+
+
+RUN
+	> used to ADD layers to the base image, by installing components
+	> each RUN statement add a new layer to the docker image
+	> using RUN, we can run commands as well
+	> syntax is:
+		RUN <commands>					(shell form, the command is run in a shell)
+		RUN ["executable", "param1", "param2"] 		(exec form)
+	> EX:
+		RUN mvn clean package
+
+
+
+LABEL
+	> adds a metadata (in form of key value pair) to an image
+	> syntax is:
+	
+		LABEL <key>=<value> <key>=<value> <key>=<value> ...
+
+	> ex:
+		LABEL version="1.0"
+		LABEL "com.example.vendor"="ACME Incorporated"
+
+
+
+CMD
+	> The main purpose of a CMD is to provide DEFAULTS for an executing container
+	> There can only be one CMD in the Dockerfile
+		- last CMD will take effect
+	> These commands run when there is NO ARGUMENT specified while running the container
+	> syntax is:
+
+		CMD command param1 param2 			(shell form)
+
+	> ex: CMD java -cp /myproj-1.0-SNAPSHOT.jar com.raman.App will execute the command when
+		- no argument passed when running the container
+		- argument passed and ENTRYPOINT instruction is defined
+
+
+
+ENTRYPOINT
+	> is used to strictly run the commands the moment the container intializes. 
+	> The difference between CMD and ENTRYPOINT is, ENTRYPOINT runs irrespective of the fact that whether the argument is specified or not.
+	> syntax is:
+
+		ENTRYPOINT command param1 param2	(shell form)
+
+	> ex: docker run javaapp Sofija will
+		- pass "Sofija" as one of argument of ENTRYPOINT
+		- will OVERRIDE CMD instruction
+
+
+ENV
+	> used to add environment variables in the container
+	> syntax is:
+		ENV <key>=<value>
+	> Docker Container can access this variables directly
+		- ex: echo $name in the Linux/Ubuntu with ENV name=dev in Dockerfile will result in output of "dev"
+		- ex: setting DEBIAN
+
+
+
+EXPOSE
+	> used to expose a TCP/UDP port of the Container
+	> syntax is
+
+		EXPOSE <port> [<port>/<protocol>...]
+
+	> mostly serves as type of documentation between the person who builds the image and the person who runs the container, about which ports are intended to be published
+	> to actually publish the port when running the container, use the "-p" flag of docker run
+	> ex: 
+		EXPOSE 80/tcp
+		EXPOSE 80/udp
+		- this expose tcp and udp port 80
+
+
+EXAMPLES OF Dockerfile contents
+
+FROM maven:latest
+WORKDIR /
+COPY src /src
+COPY pom.xml /
+RUN mvn  clean package
+CMD java -cp /target/myproj-1.0-SNAPSHOT.jar com.raman.App
+
+1. Uses maven:latest docker image as base image
+2. Changes working directory to root (similar to "cd /")
+3. Copy the src folder of source and assign it as /src folder of container
+4. Copy the pom.xml into the root directory of container
+5. Run mvn clean package
+6. Run java command to run a specific Java class inside jar file
+
+
+
+
+Multistaged Dockerfile
+	> stages as separated by FROM keyword
+	> main purpose of multistaging is to reduce the final Docker image size created
+	> utilizes the AS keyword to refer to previous stages and its directory
+
+EX:
+FROM maven:latest AS build
+WORKDIR /
+COPY src /src
+COPY pom.xml /
+RUN mvn  clean package
+
+
+FROM openjdk:alpine
+COPY --from=build /target/myproj-1.0-SNAPSHOT.jar /myproj-1.0-SNAPSHOT.jar
+EXPOSE 8080
+CMD java -cp /myproj-1.0-SNAPSHOT.jar com.raman.App
+
+
+1st stage
+1. Uses maven:latest docker image as base image
+2. Changes working directory to root (similar to "cd /")
+3. Copy the src folder of source and assign it as /src folder of container
+4. Copy the pom.xml into the root directory of container
+5. Run mvn clean package
+
+2nd stage
+1. Uses openjdk:alpine as base image
+	- this also be the final base image defined therefore there wont be space used compared to maven + java app
+2. Copy from the directory of 1st stage (build) the jar file to the containers root dir as jar file
+3. Expose port 8080
+4. Run java command to run a specific Java class inside jar file

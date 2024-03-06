@@ -1,0 +1,60 @@
+Config First and Discovery First
+
+Two ways for fetching Config props using Config Client
+1. Config First Bootstrap
+2. Discovery First Bootstrap
+
+Config First Bootstrap
+	> the default behavior for any application that has the Spring Cloud Config Client on the classpath is as follows
+		1. When a config client starts, it binds to the Config Server (through the spring.cloud.config.uri bootstrap configuration property)
+		2. Initializes Spring Environment with remote property sources.
+
+
+Discovery First Bootstrap
+	> only available if we have DiscoveryClient implementation
+		- Spring Cloud Netflix and Eureka Service Discovery
+		- Spring Cloud Consul
+	> with this, we can have the Config Server register with the Discovery Server
+	> However, in the default “Config First” mode, clients cannot take advantage of the registration.
+
+
+Setting up DiscoveryClient for locating Config Server
+1. Set up DiscoveryClient config
+	> ex: in Eureka Discovery Client, defining eureka.client.serviceUrl.defaultZone
+2. Disable the Config First Bootstrap check
+	> either
+		a. define spring.config.import to "optional:configserver:"
+		b. define spring.cloud.config.import-check.enabled=false.
+	> use method A, method B doesnt work for some reason
+2. Enable Discovery First Bootstrap
+	> spring.cloud.config.discovery.enabled=true
+	> default value is false
+3. Define the serviceId where Config Server is registered
+	> spring.cloud.config.discovery.service=config-server
+	> default value is configserver
+	> can be changed by defining spring.application.name of the Config Server application
+4. Define the filename of the properties file that the Config Client can access
+	> spring.cloud.config.name=user-service
+5. Define the profile that the Config Client will use
+	> spring.cloud.config.profile:dev
+	> default value is "default"
+
+
+EX:
+spring:
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: config-server
+      name: user-service
+      profile: dev
+
+In this setup
+1. We will disable Config first and enable Discovery First
+2. Service where Config Server is registered is "config-server"
+3. We can only access filename that starts with "user-service"
+4. We can only access the said filename with profile "dev"
+	> ex: user-service-dev.properties

@@ -1,0 +1,41 @@
+Filter
+
+Filter
+	> used to "filter" request that is coming to the Servlet
+	> acts like a Servlet where they receive ServletRequest and send ServletResponse
+	> but they dont have a routing in the server and we can only define specific Servlet for it to watch
+
+Creating Filter
+	> Create class
+	> Extend to Filter
+	> Implement 3 methods
+		1. init()
+		2. doFilter()
+		3. destroy() 
+
+Configuring which Servlet the Filter will "filter"
+	> inside the web.xml
+
+METHODS
+
+public void init(FilterConfig fConfig) throws ServletException {}
+	> used to initialize the Filter
+	> using FilterConfig, we can access the <init-param> elements we nested inside the Filter in web.xml
+
+public void destroy() {}
+	> mainly used for cleaning up and releasing resources
+
+public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {}
+	> process the client requst that will be going to a Servlet
+	> the Servlets whose doFilter() will process will be based on what Servlets the Filter is mapped on
+
+
+FilterChain
+	> represents a chain of Filters that will process the ServletRequest
+	
+doFilter(ServletRequest request, ServletResponse response)
+	> method of FilterChain
+	> when called, will pass the request and response input to the next Filter
+	> if called on the last Filter in FilterChain, it will call the Servlets
+	> in practice, we will only call it after the request has "passed" the Filter
+		- ex: the User credentials passed is valid

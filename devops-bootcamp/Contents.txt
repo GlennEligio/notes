@@ -1,0 +1,374 @@
+The Ultimate DevOps Bootcamp - 2023
+
+Contents:
+Section 1: Introduction
+1. Introduction
+2. DevOps Tools
+3. Support
+
+Section 2: Linux Basics
+4. Working your way through the CLI
+5. About KodeKloud Labs
+6. A Quick Reminder
+7. Lab Introduction
+8. Accessing the Labs
+9. Labs - Working your way through the CLI
+10. VI Editor
+11. More Linux Commands
+12. Labs - More Linux Commands
+13. Package Management
+14. Labs - Package Management
+15. Services
+16. Labs - Services
+
+Section 3: Networking Basics
+17. Networking Basics
+18. Labs - Switching and Routing
+19. DNS
+20. Labs - DNS
+
+Section 4: Applications Basics
+21. Introduction
+22. Java - Introduction
+23. Labs - Java Introduction
+24. Java - Build & Packaging
+25. Labs - Java - JARs
+26. Labs - Java - Build & Packaging
+27. NodeJS - Introduction
+28. Labs - NodeJS - Introduction
+29. Node JS - NPM
+30. Labs - Node JS - NPM
+31. Python - Introduction
+32. Labs - Python - Introduction
+33. Python - PIP
+34. Labs - Python - PIP
+
+Section 5: GIT Introduction
+35. GIT Course Introduction
+36. GIT Introduction
+37. Local and Remote Repositories
+38. Install GIT
+39. Lab Install GIT
+40. Initialize a GIT Repository
+41. Demo: Initialize a GIT Repository
+42. Lab: Initialize a GIT Repository
+43. GIT Log
+44. Lab: GIT Log
+
+Section 6: GIT Branches
+45. Git branches
+46. Lab: Branches - checkout, push branches
+47. GIT Merging branches
+48. Lab: Merging branch
+
+Section 7: GIT Initializing Remote Repositories
+49. Initialize Remote Repositories
+50. Pushing to remote repositories
+51. Lab: Remote repositories
+52. Cloning remote repositories
+53. Lab: Cloning Remote repositories
+54. Pull Requests
+55. Lab: Pull Requests
+56. Fetching and Pulling
+57. Lab: Fetching and Pulling
+58. GIT - Merge Conflicts
+59. Lab: Merge Conflicts
+60. Fork
+61. Lab: Fork
+
+Section 8: Jenkins Introduction
+62. Application Details
+63. Working with the Application
+64. Get Familiar with the Application
+
+Section 9: Prerequisites
+65. What is CICD?
+66. Why Jenkins?
+67. Jenkins Getting Started
+
+Section 10: Installing Jenkins
+68. Installing Jenkins
+69. Install Jenkins on a VM
+70. Searching through Plugins
+71. Install Jenkins on a VM - Notes
+72. Jenkins CLI
+73. Using Jenkins CLI
+74. Jenkins CLI - Notes
+
+Section 11: Jenkins Plugins and Integrations
+75. What are plugins
+76. Installing a Plugin
+77. Restarting Jenkins For Plugins That Require Restarts
+
+Section 12: Systems Administration with Jenkins
+78. Administering Jenkins
+79. Backup and restoring Jenkins
+80. Backup Jenkins
+81. Restore Jenkins
+82. Backup and Restore Jenkins - Notes
+
+Section 13: Pipelines
+83. What is a Jenkinsfile
+84. Build a Jenkins file
+85. Run a sample pipeline
+86. Build a multistage pipeline
+87. Build a CI pipeline
+88. Building a CD pipeline
+89. Full pipeline deployment
+90. Building a CD pipeline
+
+Section 14: Docker Overview
+91. Introduction
+92. Docker Overview
+93. Getting started with Docker
+94. Demo - Setup and Install Docker
+
+Section 15: Docker Commands
+95. Basic Docker Commands
+96. Demo - Docker Commands
+97. Demo - Docker Labs
+98. labs: Basic Docker Commands - Beta - Notes
+
+Section 16: Docker Run
+99. Docker Run
+100. Demo - Advanced Docker Run Features
+101. Labs: Docker Run Commands
+
+Section 17: Docker Images
+102. Docker Images
+103. Demo - Creating a new Docker image
+104. Labs: Docker Images - File
+105: Environment Variables
+106. Labs - Environment Variables
+107. Commands vs Entrypoint
+108. Labs - Command vs Entrypoint - File
+
+Section 18: Docker Engine - Storage and Networking
+109. Docker Engine
+110. Docker Storage
+111. Labs: Docker Storage
+112. Docker Networking
+113. Labs: Docker Networking
+
+Section 19: Docker Registry
+114. Docker Registry
+
+Section 20: Kubernetes Overview
+115. Introduction
+116. Containers Overview
+117. Container Orchestration
+118. Kubernetes Architecture
+
+Section 21: Setup Kubernetes
+119. Kubernetes Setup - Introduction and Minikube
+120. Demo - Minikube Setup
+121. Reference - File
+
+Section 22: Kubernetes Concepts
+122: PODs
+123: Demo - PODs
+124: A note about creating Pods
+
+Section 23: YAML Introduction
+125. Introduction to YAML
+126. Labs on YAML - File
+
+Section 24: Kubernetes Concepts - PODs, ReplicaSets, Deployments
+127. PODs with YAML
+128. Demo - PODs with YAML
+129. Demo - YAML - Tips
+130. Labs: PODs with YAML - File
+131. Lab Solution
+132. Replication Controllers and ReplicaSets
+133. Demo - ReplicaSets
+134. Labs: ReplicaSets - File
+135. Lab Solution
+136. Deployments
+137. Demo: Deployments
+138. Labs: Deployments - File
+139. Deployments - Update and Rollback
+140. Demo - Deployments - Update and Rollback
+
+Section 25. Networking in Kubernetes
+141. Basics of Networking in Kubernetes
+
+Section 26: Services
+142. Services - NodePort
+143. Demo - Services
+144. Services - ClusterIP
+145. Services - Load balancer
+146. Labs: Services - File
+
+Section 27: Microservice Architecture
+147. Microservice Architecture
+148. Deploying voting app on Kubernetes
+149. Demo - Deploying voting app on Kubernetes
+150. Demo - Deploying voting app on Kubernetes with Deployments
+151. Article: Demo lecture manifest files
+
+Section 28: Ansible Introduction and Lab setup
+152. Introduction
+153. Ansible Introduction
+154. Demo: Setup Ansible Local Environment - Using VirtualBox
+155. Demo: Install Ansible
+
+Section 29: Ansible Concepts
+156. Ansible Inventory
+157. Lab - Inventory - File
+158. Ansible Playbooks
+159. File: Lab - Playbooks
+160. Ansible Modules
+161. File: Lab - Modules
+162. Ansible Variables
+163. File: Lab - Variables
+
+Section 30: Ansible Conditionals, Loops & Roles
+164. Ansible Conditionals
+165. File: Lab - Conditionals
+166. Ansible Loops
+167. File: Lab - Loops
+168. Ansible Roles
+
+Section 31: Terraform Introduction
+169. Course Introduction
+
+Section 32: Introduction to Infrastructure as Code
+170. Challenges with Traditional IT Infrastructure
+171. Type of IAC Tools
+172. Why Terraform?
+
+Section 33: Getting Started with Terraform
+173. Installing Terraform
+174. HashiCorp Configuration Language (HCL) Basics
+175. Update and Destroy Infrastructure
+176. File: Lab: HCL Basics
+
+Section 34: Terraform Basics
+177. Using Terraform Providers
+178. File: Lab: Terraform Providers
+179. Configuration Directory
+180. Multiple Providers
+181. Lab: Multiple Providers
+182. Using Input Variables
+183. Understanding the Variable Block
+184. Lab: Variables
+185. Using Variables in Terraform
+186. Lab: Using Variables in Terraform
+187. Resource Attributes
+188. Lab: Using Variables in Terraform
+189. Resource Attributes
+190. Lab: Resource Dependencies
+191. Output Variables
+192. Lab: Output Variables
+
+Section 35: Terraform State
+193. Introduction to Terraform State
+194. Purpose of State
+195. Lab: Terraform State
+196. Terraform State Consideration
+
+Section 36: Working with Terraform
+197. Terraform Commands
+198. Lab: Terraform Commands
+199. Mutable vs Immutable Infrastructure
+200. LifeCycle Rules
+201. Lab: LifeCycle Rules
+202. Datasources
+203. Lab: Datasources
+204. Meta-Arguments
+205. Count
+206. for-each
+207. Lab: Count and for each
+209. Version Constraints
+
+Section 37. Python - Introduction
+210. Course Introduction
+211. Objectives
+
+Section 38: Python - Basics
+212. Print Function
+213. Test your knowledge
+214. Literals
+215. Test your knowledge
+216. Operators
+217. Test your knowledge
+218. Variables
+219. Test your knowledge
+220. Comments
+221. Test your knowledge
+222. Input
+223. Test your knowledge
+224. String Methods
+225. Test your knowledge
+
+Section 39: Python - Making Decisions
+226. Comparison Operators
+227. Test your knowledge
+228. Conditional Statement
+229. Test your knowledge
+
+Section 40: Python - Loops
+230. Loops - while
+231. Test your knowledge
+232. Loops - for
+233. Test your knowledge
+
+Section 41: Python - Logic and Bit Operations
+234. Operators
+235. Test your knowledge
+236. Bitwise Operators
+237. Test your knowledge
+
+Section 42: Python - Lists
+238. Lists
+239. Test your knowledge
+240. Lists - Methods
+241. Test your knowledge
+242. Iterating Lists
+243. Test your knowledge
+244. Understanding Lists
+245. Test your knowledge
+246. Slicing Lists
+247. Test your knowledge
+248. Finding in Lists
+249. Test your knowledge
+250. Nested Lists - 2D
+251. Test your knowledge
+252. Nested Lists - 3D
+253. Test your knowledge
+
+Section 43: Python - Functions
+254. Functions
+255. Test your knowledge
+256. Arguments
+257. Test your knowledge
+258. Return Statement
+259. Test your knowledge
+260. List as Arguments
+261. Test your knowledge
+262. Scopes
+263. Test your knowledge
+264. Arguments Explained
+265. Test your knowledge
+
+Sectopm 44: Python - Tuples and Dictionaries
+266. Tuples
+267. Test your knowledge
+268. Dictionaries
+269. Test your knowledge
+
+Section 45: Lab Setup
+270. Virtual Box
+271. Demo - Install VirtualBox on MacOS
+272. Demo - Install VirtualBox on Windows
+273. VirtualBox Connectivity
+274. Demo - Connecting to VM on Mac
+275. Demo - Connecting to VM on Windows
+276. Virtual Box Networking
+277. Demo - Multiple VMs & Networking
+278. Vagrant
+279. Demo - Vagrant
+
+Section 46: Conclusion
+280. Course Resource
+281. Conclusion

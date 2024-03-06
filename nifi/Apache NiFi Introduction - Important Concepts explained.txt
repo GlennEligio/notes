@@ -1,0 +1,58 @@
+Apache NiFi Introduction - Important Concepts explained
+
+FlowFile
+ > basically the data
+ > comprised of two elements
+	1. Content - the data itself
+	2. Attributes 	- key:value pairs associated with the data (creation date, )
+					- basically the metadata of the flowfile
+ > this gets PERSISTED to disk after creation
+	- wont be stored in memory, instead it get straight to the disk
+	
+	
+Processor
+ > applies a set of transformations and rules to FlowFiles, to generate NEW FlowFiles
+ > any processor can process any FlowFile
+ > Processors are passing FlowFile references to each other to advance the data processing
+ > They are all running in parallel (different threads)
+ 
+Process graph
+
+						flowfile 1					FlowFile 2
+Data ----> Processor 1 ------------> Processor 2 ------------> Processor N
+
+
+
+
+Connector
+ > its basically a queue of all the FlowFiles that are YET to be processed by Processor (in graph below, by Processor 2)
+ > it defines rules about how FlowFiles are prioritized (which ones first, which ones not at all)
+ > can define backpressor to avoid overflow in the system
+	- EX: if backpressure defined is 10000, after 10000 FlowFile it will stop creating new FlowFiles
+ 
+Process graph
+
+			Connector
+Processor 1	------------> Processor 2
+				^
+				|
+			FlowFile 1
+			FlowFile 2
+			FlowFile N
+			
+			
+			
+
+NiFi basics: FlowFIle, Processor, Connector graph
+
+											Connector
+											|---------> Processor
+					Connector				| FlowFIle
+Data ---> Processor --------> Processor ----|
+					FlowFile				|
+					FlowFile				|----------> Processor
+					FlowFile				FlowFile		|
+															|
+												   Connector| FlowFile
+															V
+														Processor

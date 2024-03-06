@@ -1,0 +1,29 @@
+152 Leveraging the AWS Global Infrastructure Summary
+
+
+Global Applications in AWS - Summary
+
+Global DNS: Route 53
+ > Great to route users to the closest deployment with least latency
+ > Great for disaster recovery strategies
+
+Global Content Delivery Network (CDN): CloudFront
+ > Replicate part of your application to AWS Edge Locations - decrease latency
+ > Cache common requests - improved user experience and decrease latency
+
+S3 Transfer Acceleration
+ > Accelerate global uploads & downloads into Amazon S3
+
+AWS Global Accelerator
+ > Improve global application availability and performance using the AWS global network
+
+AWS Outposts
+ > Deploy Outposts Racks in your own Data Centers to extend AWS services
+
+AWS WaveLength
+ > Bring AWS services to the edge of the 5G networks
+ > Ultra-low latency applications
+
+AWS Local Zones
+ > Bring AWS resources (compute, database, storage,...) closer to your users
+ > Good for latency-sensitive applications

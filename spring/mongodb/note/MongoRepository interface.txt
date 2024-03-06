@@ -1,0 +1,3 @@
+MongoRepository interface
+
+Mongo

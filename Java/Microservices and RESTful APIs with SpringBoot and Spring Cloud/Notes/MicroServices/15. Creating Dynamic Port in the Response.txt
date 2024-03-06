@@ -1,0 +1,65 @@
+15. Creating Dynamic Port in the Response
+
+Classes / Interfaces used
+
+Environment
+	> Interface representing the environment in which the current application is running.Models two key aspects of the application environment: profiles and properties. Methods related to property access are exposed via the PropertyResolver superinterface. 
+	> using this, we can fetch Environment variables and properties
+	> has methods like
+
+String getProperty(String key)
+	> Return the property value associated with the given key,or null if the key cannot be resolved.
+
+
+
+Adding the Server Port of the CurrencyExchange we used to process the request in Response Body
+1. Add String environment in the CurrencyExchange class
+	> add Getters and Setters for it
+1. Use Environment Bean to fetch the property
+	> autowire this in the Controller
+	> property name for the Local Server port where the Application is running is
+		"local.server.port"
+	> call getProperty() of the Environment object and pass the "local.server.port"
+		- this will return a String that contains the TCP port
+	> set it as the environment Property of the CurrencyExchange that we will return
+2. Create two configuration for running the CurrencyExchange application
+	> press the dropdown icon next to Run icon (green circle with white arrow at top)
+	> press "Run Configuration"
+	> right click the CurrencyExchangeService under Java Application
+	> choose Duplicate
+	> on the new Configuration
+		- go to Arguments
+		- in VM arguments pass "-Dserver.port=8001" without quotation marks
+		- press apply	
+	> run both Configuration
+3. Call the CurrencyExchangeService
+	> first in port 8000
+	> second in port 8001
+
+
+CurrencyExchange class
+public class CurrencyExchange {
+
+	private Long id;
+	private String from;
+	private String to;
+	private BigDecimal conversionMultiple;
+	private String environment;
+
+
+Controller Class
+@RestController
+public class CurrencyExchangeController {
+	
+	@Autowired
+	private Environment environment;
+
+	@GetMapping("/currency-exchange/from/{from}/to/{to}")
+	public CurrencyExchange retrieveExchangeValue(
+			@PathVariable("from") String from, 
+			@PathVariable("to") String to) {
+		CurrencyExchange currencyExchange = new CurrencyExchange(1000L, from, to, BigDecimal.valueOf(50));
+		String port = environment.getProperty("local.server.port");
+		return currencyExchange;
+	}
+}

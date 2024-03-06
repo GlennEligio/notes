@@ -1,0 +1,59 @@
+01. Docker Overview
+
+
+Monolithic vs Microservices
+Monolithic
+	> a Single Unified Unit
+	> it becomes too large in size with time and hence, DIFFICULT to manage
+	> Horizontal Scaling is not possible
+	> Single bug in the application will bring down ENTIRE application
+
+Microservice
+	> Microservices are self-contained and hence, deployed INDEPENDENTLY
+	> It is EASY to manage the individual Microservice application because most of the time, it is running independently and not large in size
+	> In most of the cases, if the Microservice is running independently, then bug in the application will NOT bring down entire application, you only need to remove that particular microservice and after bug fix, you can attach to the main application again.
+
+
+
+The Docker Platform
+	> Docker is an open source platform which allows application to package and run loosely isolated environment called CONTAINER
+	> You can run MULTIPLE containers on Physical or Virtual Machine
+	> Orchestrate container based application can be used to manage containers in a cluster
+		- ex: Kubernetes, Docker Swarm
+
+
+
+Docker Engine
+	> Docker Engine is an open source containerization technology for building and containerizing your applications. 
+	> Docker Engine acts as a client-server application with:
+		1. A server with a long-running daemon process "dockerd" (docker-daemon)
+		2. APIs which specify interfaces that programs can use to talk to and instruct the Docker daemon
+		3. A command line interface (CLI) client docker
+	> The CLI uses Docker APIs to control or interact with the Docker daemon through scripting or direct CLI commands
+		- Many other application can use the underlying API and CLI
+	> The daemon creates and manage Docker objects, such as:
+		- images
+		- containers
+		- networks
+		- volumes
+
+
+
+Docker Architecture
+1. Client
+	> Users that sends commands to Docker daemon using Docker CLI like
+		- docker build
+		- docker pull
+		- docker run
+2. Docker Host
+	> contains the following components
+		a. dockerd - Docker daemon
+			- a long running-daemon process that creates and manages Docker objects like container, images, network, volums
+			- it is also responsible for pulling images from registry (local or global) for the containers to use
+		b. Docker objects (Containers, Images, Network, Volumes)
+
+3. Registry
+	- place where Docker images are stored and pulled from by the Docker daemon
+	- can be a local registry or a global registry (dockerhub)
+
+	

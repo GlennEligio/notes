@@ -1,0 +1,168 @@
+Object Oriented Programming
+includes:
+	Object Oriented Programming definition
+	Classes
+	Class properties = instance field and methods
+	Class syntax
+	How to call, define a class and its instance fields and methods
+	Method syntax
+	Access Modifiers
+	Getters and Setters
+	Constructor
+	Polymorphism definition
+
+
+
+Main Class
+
+package com.glenneligio.oop;
+
+public class Main {
+    public static void main(String[] args) {
+        /*
+        Object oriented programming
+            -> main feature/component is "Class"
+            -> Class is a complex data type, with properties like instance field and methods
+
+        Class Syntax
+            -> accessModifier class className{}
+                accessModifier = {public, private, protected, global, undefined}
+
+                types of accessModifiers
+                public => accessible outside its own class
+                private => accessible only inside its own class, used mostly in inner classes
+                protected => access to classes its own classes extends
+
+            -> example
+                public class Car{}
+
+            -> starts with Uppercase
+
+        Calling / defining a class
+            -> Class className = new Class
+
+        Calling properties (instance field or method) of class
+
+        className.instanceField;
+        className.method(argument);
+
+         */
+
+        Phone iPhone = new Phone("iPhone 11", 5, 8, 8);
+
+
+        System.out.println(iPhone.getName());
+
+        iPhone.playMusic("Our wing are burning");
+        iPhone.playMusic("Lamenting Kiss");
+
+        Phone pixel = new Phone ("Pixel 3", 16);
+
+
+
+
+
+    }
+}
+
+
+
+Sub class
+
+package com.glenneligio.oop;
+
+public class Phone {
+
+    //instance field, properties of an Object
+
+    private String name;
+    private int screenSize;
+    private int memoryRam;
+    private int camera;
+
+    //Constructor
+    /*
+     to generate a Constructor
+        right click -> generate -> constructor -> get all instance field of class
+
+        -> access modifier is always public
+        -> parameters of constructor method is the instance fields
+        -> class can have more than one constructor
+
+     */
+    public Phone(String name, int screenSize, int memoryRam, int camera) {
+        this.name = name;
+        this.screenSize = screenSize;
+        this.memoryRam = memoryRam;
+        this.camera = camera;
+    }
+
+    //Polymorphism
+    /*
+        -> behavior where a class have two different kind of constructor
+     */
+    public Phone(String name, int memoryRam) {
+        this.name = name;
+        this.memoryRam = memoryRam;
+    }
+
+    //method of object, also properties of an Object
+    /*
+    method syntax
+        accessModifier returnType methodName (parameters1, parameters2, parameters3){}
+
+            parameters syntax
+                dataType dataName
+
+            return type void = doesn't return anything;
+     */
+
+    public void playMusic (String trackName){
+        System.out.println("Playing "+ trackName);
+    }
+
+    //setName method, used to set name or value of an instance field of an object
+
+    public void setName (String name){
+        //this keyword, refers to the class the method is calling
+        this.name = name;
+    }
+
+    //getName method, used to get name of an instance field of an object
+    public String getName (){
+        return this.name;
+    }
+
+    //getters and setters can also be generated as an IDE feature
+    // Right click -> Generate -> Getters and Setters -> Choose an instance field to set and get
+    /*
+        why make getters and setters
+        1. Encapsulation
+            -> restrict and manage permission to get and set value of instance field of objects
+        2. Validation of change of instance field
+            -> validate the change of instance field when setting an instance field
+     */
+    public int getCamera() {
+        return camera;
+    }
+
+    public void setCamera(int camera) {
+        this.camera = camera;
+    }
+
+    public int getScreenSize() {
+        return screenSize;
+    }
+
+    public void setScreenSize(int screenSize) {
+        this.screenSize = screenSize;
+    }
+
+    public int getMemoryRam() {
+        return memoryRam;
+    }
+
+    public void setMemoryRam(int memoryRam) {
+        this.memoryRam = memoryRam;
+    }
+}

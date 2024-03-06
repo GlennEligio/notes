@@ -1,0 +1,19 @@
+	//Loops are useful, to prevent DRY (Don't Repeat Yourself)
+        /*
+		For loop, used for running function for specific amount of times
+
+            	For (declaration of iterator/counter: condition for loop; increment or decrement iterator){
+                	// logic or function
+                }
+         */
+
+        //Hello will be printed 10 times
+        for (int i=0; i<10; i++){
+            System.out.println("Hello");
+        }
+
+        //Hello will be printed 'a' times
+        int a = 5;
+        for (int i=0; i<a; i++) {
+            System.out.println("Hello");
+        }

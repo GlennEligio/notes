@@ -1,0 +1,149 @@
+Aspect Oriented Programming (AOP)
+	> programming technique based on concept of an Aspect
+	> Aspect encapsulates CROSS-CUTTING LOGIC
+	> talks about CROSS-CUTTING CONCERNS
+	> "Concern" means logic / functionality
+
+
+Aspects
+	> Aspect can be reused at multiple locations
+	> same aspect/class can be applied based on configuration
+
+
+AOP Solution
+	> we can apply the Proxy design pattern
+	> ex: Main App uses a Target object
+	> but behind the scene, an AOP Proxy is monitoring the call of Main App to Target object
+
+
+
+Benefits of AOP
+1. Code for Aspect is defined in a single class
+	> much better than being scattered everywhere
+	> promotes code reuse and easier to change
+2. Business code in your application is cleaner
+	> only applies to business function
+		- ex: addAccount
+	> reduces code complexity
+3. Configurable
+	> based on configuration, apply Aspects SELECTIVELY to different parts of app
+	> no need to make changes to main application code		
+		- very important
+
+
+Additional AOP Use Cases
+Most Common
+	- logging, security, transaction
+Audit Logging
+	- who, what, when, where
+Exception handling
+	- log exception and notify DevOps team via SMS / Email
+API Management
+	- how many times has a method been called user
+	- analytics: what are peak times? what is average load? who is top user?
+
+
+
+
+AOP: Advantages and Disadvantages
+Advantages
+1. Reusable modules
+2. Resolve code tangling
+3. Resolve code scatter
+4. Applied selectively based on configuration
+
+Disadvantages
+1. Too many aspects and app flow is hard to follow
+	> use Aspects in moderation
+	> have some rules and governance in team to have a good idea as far as the aspect development
+		- who's creatinig them
+		- who's applying them
+2. Minor performance cost for aspect execution (run-time weaving)
+
+
+AOP Terminology
+Aspect
+	> module of code for cross-cutting concern (logging, security...)
+Advice
+	> what action is taken and when it should be applied
+Join Point
+	> when to apply code during program execution
+Pointcut
+	> A predicate expression for where advice should be applied
+
+
+ADVICE TYPES
+1. Before advice
+	> run before the method
+2. After finally advice
+	> run after the method (finally)
+3. After returning advice
+	> run after the method (success execution)
+4. After throwing advice
+	> run after method (if exception thrown)
+5. Around advice
+	> run before and after method
+
+
+
+Weaving
+	> connecting aspects to target objects to create an advised object
+	> different types of weaving
+		1. compile-time
+		2. load-time
+		3. run-time
+	> regarding performance: run-time weaving is the slowest
+
+
+AOP Frameworks for Java
+1. Spring AOP
+	> Spring provides AOP support
+	> Key component of Spring
+		- Security, transactions, caching, etc
+	> uses run-time weaving of aspects
+2. AspectJ
+	> original AOP framework, released in 2001
+	> provides complete support for AOP
+	> rich support for
+		- join points: method-level, constructor, field
+		- code weaving: compile-time, post compile-time, and load-time
+
+
+Spring AOP Comparison
+Advantages
+1. Simpler to use than AspectJ
+2. Uses Proxy pattern
+3. Can migrate to AspectJ when using @Aspect annotation
+
+Disadvantages
+1. Only supports method-level join points
+2. Can only apply aspects to beans created by Spring app context
+3. Minor performance cost for aspect executing (run-time weaving)
+
+
+AspectJ Comparison
+Advantages
+1. Support all join points
+2. Works with any POJO, not just beans from app context
+3. Faster performance compared to Spring AOP
+4. Complete AOP support
+
+Disadvantages
+1. Compile-time weaving requires extra compilation step
+2. AspectJ pointcut syntax can become complex
+
+
+Spring AOP Roadmap
+1. Create Aspects
+2. Develop Advices
+	- Before, After returning, After throwing
+	- After finaly, Around
+3. Create Pointcut expression
+4. Apply it to the project
+
+
+BEST PRACTICES: Aspect and Advices
+1. Keep the code small
+2. Keep the code fast
+3. Do not perform any expensive / slow operations
+4. Get in and out as QUICKLY as possible

@@ -1,0 +1,24 @@
+WCS V9 Business Models
+
+Business Model
+	> Before starting to develop your site with HCL Commerce, you need to determine the business model supported by HCL Commerce that best represents the purpose of your site.
+	> usually sites created with HCL Commerce will be implemented based on of one of these business models
+	> HCL Commerce supports the following types of direct sales business models:
+		1. B2C
+			- A store that supports commerce transaction involving products, services, or information directly between businesses and consumers
+		2. B2B
+			- A store that supports commerce transactions involving products, services, between two businesses or parties
+	> HCL Commerce provides the architectural infrastructure to put online businesses that fit into one of the follwing business models:
+		1. Consumer direct (B2C)
+			- HCL Commerce Enterprice Extended Sites
+		2. B2B
+			- HCL Commerce Enterprise Extended Sites
+			- HCL Commerce Enterprise B2B view of the HCL Commerce Accelerator
+			
+HCL Commerce Enterprise Hub
+	> HCL Commerce Enterprise is a site that enables its customers or partners to access products or services available from one or more partners or clients of the hub owner, through the user of other stores on the site
+	
+HCL Commerce Enterprise Extended Site
+	> A site that allow your selling organization to provide unique storefront for different enterprise customers or showcase a number of branded storefronts. Creation and management of the extended sites is through the hub in Commerce Accelerator.
+	> These extended sites may share much of the data, such as master catalog and list prices, and presentation information. 
+	> An extended site store can be a B2B or B2C store

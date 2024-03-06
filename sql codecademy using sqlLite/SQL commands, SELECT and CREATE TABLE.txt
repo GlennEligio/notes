@@ -1,0 +1,46 @@
+SELECT, CREATE TABLE Commands
+
+SQL COMMANDS/CLAUSES
+	> Clauses perform specific tasks in SQL
+	> By convention, clauses are written in capital letters
+
+SELECT
+	> used to select a column and row in a table
+
+FROM
+	> used to select the table where the SELECT command will be applied
+
+EX:
+	 SELECT * FROM celebs; 
+
+This line/statement will:
+	> Select everything, which is denoted by symbol "*", inside the "celebs" table
+
+
+CREATE TABLE
+	> used to create a table inside a database
+	> the naming convention of CREATE TABLE is
+
+CREATE TABLE table_name (
+   column_1 data_type, 
+   column_2 data_type, 
+   column_3 data_type
+);
+
+where in:
+CREATE TABLE 
+	> clause
+table_name 	
+	> refers to the name of table that the command is applied to
+(column_1 data_type, column_2 data_type, column_3 data_type)
+	> parameters, contains columns, data types, or values that are paased to a caluse as an argument
+
+EXAMPLE:
+
+ CREATE TABLE celebs(
+   id INTERGER,
+   name TEXT,
+   age INTEGER
+ );
+
+Here, we create a table named "celebs". Then we created columns and its corresponding datatypes (id with INTEGER datatype, name with TEXT datatype, age with INTEGER datatype).

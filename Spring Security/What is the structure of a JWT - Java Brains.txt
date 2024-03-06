@@ -1,0 +1,67 @@
+What is the structure of a JWT - Java Brains
+
+JWT 
+ > stands for JSON Web Token
+ > it is a token with JSON value
+ 
+Sample JWT:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+Structure of JWT
+ > as you can see in the sample JWT, it is divided into three parts, separated by periods (.)
+ > these three parts are:
+	1. Header
+		- contains the Algorithm and Token type
+		- the Algorithm here is the one used for signing the JWT
+	2. Payload
+		- contains the Data of the Token that you want to send
+		- we typically dont add confidential data here like passwords, secret keys, etc
+	3. Signature
+		- used to verify if the JWT is valid
+ > both Header and Payload are JSON string encoded in Base64
+	- with Base64 encoding, we can encoding any string (ex: JSON string) into a random string that dont have special characters
+ > the Signature is used not for encryption, but for validation
+	- with Signature, the server can verify if the JWT token, specifically the Header and Payload, is valid and created by them
+	- when creating the JWT token, the Server uses the "secret key" it have, alongside the header and payload in order to create the Signature part
+		-> with this, if any malicious person tries to tamper the payload, the Server can detect if the JWT is invalid by validating the header and payload using the secret key
+
+
+Validation/Verification of the JWT
+ > Contents of JWT (Header and Payload) is visible to anyone by decoding them using base64
+ > But, in order for the server to verify if the JWT is valid and created by them, they use a SECRET KEY for it	
+	- we also use this secret key to construct the JWT itself
+ > calculation for JWT validation is:		
+	HMACSHA256(
+	  base64UrlEncode(header) + "." +
+	  base64UrlEncode(payload),
+	  your-256-bit-secret
+	)
+		
+
+JWT Authorization process flow
+1. Client authenticates to the Server using any identification mechanism (ex: username/password)
+2. Server authenticates the credentials Client has sent
+3. Server will create the JWT to be used by the Client
+	> the JWT payload will most likely contain information to IDENTIFY the Client like user id, username, etc
+4. Server sends the JWT back to Client
+5. Client will save the JWT received for future uses
+	> it can be stored in either Local Storage or Cookie
+	> since most JWT have expiration, the Client must ensure that JWT is not expired before usage
+6. JWT is added in the every request sent to the Server through HTTP Header	
+	> the Header is named "Authorization", and the value should be "Bearer ${JWT}", where ${JWT} should be the access token
+
+
+Questions:
+1. How secure is a JWT if it is readable by anyone?
+	> in order to solve this, we SHOULD NOT add confidential/sensitive information in a JWT like passwords, social security number, tax id, birthday, etc
+	> payload should contain just enough information for the server to KNOW WHO the user is
+2. What if someone steals my JWT and uses it themselves?
+	> things that we can do to prevent this is
+		a. secure how the JWT is given from Server to Client
+			- use HTTPS when sending JWT
+			- OAuth solves this by using Authorization Token first before sending the Access Token
+		b. make sure Client stores the JWT properly
+3. How do you disable a JWT?
+	> we can add expiration to the JWT
+	> we can also maintain a list of invalid JWT in the server side to be used in order to determine which JWT are blacklisted or not
+		

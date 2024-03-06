@@ -1,0 +1,46 @@
+02. Linux File Commands
+
+cat <file-name>
+
+	> used to read a file
+	> adding "-n" will show line number
+	> ex: cat note.txt
+
+cat > <file-name>
+	> used to write contents a file
+	> ex: cat > note.txt
+
+cat <file1> > <file2>
+	> used to copy the content of source file to destination file
+		- ex: copy file1 to file2
+	> we can specify more than one files to copy contents to file2
+		- ex: cat file1 file2 file3 > file4
+
+cat >> <file-name>
+	> used to APPEND the content we written to the file specified
+
+rm <file-name>
+	> used to delete a file
+	> can take ant matchers as value
+		- ex: rm *.txt will delete all files that ends with .txt
+
+rm -ifr <directory-name>
+	> used to delete a directory and its contents
+
+cp <file-name> <directory-destination>
+	> used to copy the file and paste it on the specified directory destination
+
+mv <file-name> <directory-destination>
+	> used to move or rename a file from souce to destination directory
+
+vi <file-name>
+nano <file-name>
+	> used to open a text editor to edit the specified file
+
+touch <file-name>
+	> used to create a empty file with specified name
+	> we can create more than one file in single command
+		- ex: touch file1 file2 file3
+
+echo "text-content to append" >> <file-name>
+	> append the text content specified to the file specified

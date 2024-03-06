@@ -1,0 +1,22 @@
+160 - Cloud Integrations Summary
+
+Integration Section - Summary
+
+1. SQS
+	> Queue service in AWS
+	> Multiple Producers, messages are kept up to 14 days
+	> Multiple Consumers share the read and delete messages when done
+	> Used to DECOUPLE applications in AWS
+
+2. SNS
+	> Notification service in AWS
+	> Subscribers can include Emal, AWS Lambda, SQS, HTTP, Mobile,...
+	> SNS can have MULTIPLE subscribers, send all messages to all of them
+	> No message retention
+
+3. Kinesis
+	> real-time data streaming, persistence, and analysis
+	
+4. Amazon MQ
+	> managed Apache MQ in the cloud
+	> is used when migrating to cloud and need to use open protocols such as MQTT, AMQP, etc

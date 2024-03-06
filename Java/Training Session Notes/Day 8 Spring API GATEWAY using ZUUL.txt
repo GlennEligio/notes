@@ -1,0 +1,47 @@
+Day 8 Spring
+
+
+API Gateway
+	> offers DYNAMIC ROUTING
+		- does the following
+			a. Reroutes the Request
+			b. Takes care of security
+				- Authentication
+				- Authorization
+
+TOOLS FOR API Gateway
+
+ZUUL NETFLIX API
+
+
+ADDING ZUUL IN PROJECT
+1. Add the dependency			
+			
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+    <version>2.2.9.RELEASE</version>
+</dependency>
+
+
+2. Add @EnableZuulProxy in the MainApp Class
+
+3. Define the following in the application.properties
+
+server.port=8070
+zuul.routes.mycomp.url=http://localhost:8090/loadAll
+	> 8070
+		= initial location
+	> mycomp
+		= name of the route url to be added in 8070
+	> http://localhost:8090/loadAll
+		= reroute url location of zuul reroute
+		
+
+NOW, if we go to http://localhost:8070/mycomp, we will be REROUTED to http://localhost:8090/loadAll
+
+
+
+spring.application.name=zuul-service
+	> added inside the Eureka Client that have Zuul Proxy enabled
+	> used to register to Eureka Server

@@ -1,0 +1,14 @@
+07. Git Client-Server
+
+
+
+Git Client-Server configuration
+	> composed of two things
+		1. Git Client with Git Bash installed
+		2. Git Server
+	> for a Git Client to have access to Git Server, it must
+		- be authenticated
+		- be authorized to access
+	> for authentication, we have two methods
+		1. HTTPS authentication with username-password combination
+		2. SSH authentication using SSH keys

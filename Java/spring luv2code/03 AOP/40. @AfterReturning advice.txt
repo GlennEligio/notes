@@ -1,0 +1,94 @@
+@AfterReturning Advice
+	> this advice will run after the method call (success execution)
+	> have the following properties to define
+		a. pointcut = ""
+			-> defines the method it will advice
+		b. returning = ""
+			-> defines which of the Advice method parameter will contain the method's return value that it advices
+	> with this Advice, we can either
+		- read the return value and use it
+		- modify the return value
+	
+
+EX:
+
+@AfterReturning("execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))")
+public void afterReturningFindAccountsAdvice(){
+	System.out.print("Executing @AfterReturning advice");
+}
+
+
+USE CASES OF @AfterReturning
+
+MOST COMMON
+	> logging, security, transactions
+AUDIT LOGGING
+	> who, what, when, where
+POST-PROCESSING DATA 
+	> post process the data before returning to caller
+	> format the data or enrich the data 
+		- be careful with this one
+
+
+ACCESSING RETURN VALUE OF METHOD IN @AfterReturning Advice
+	> add returning="" property in @AfterReturning
+		- this means that we will also have to add pointcut="" property and pass the pointcut expression there
+	> we can then add a parameter in the Advice method
+		- the parameter name must be EQUAL to the string we passed in the returning="" property
+		- the parameter type must MATCH the expected return type (or at least a subclass of it)
+
+
+EX:
+
+	// add a new advice for @AfterReturning on the findAccounts method
+	@AfterReturning(
+			pointcut = "execution(* com.dao.AccountDAO.findAccounts(..))",
+			returning = "result")
+	public void afterReturningFindAccountsAdvice(
+			JoinPoint theJoinPoint, List<Account> result) {
+		
+		// print out which method we are advising on
+		String method = theJoinPoint.getSignature().toShortString();
+		System.out.println("\n=====> Executing @AfterReturning method: " + method);
+		
+		// print out the results of the method call
+		System.out.println("\n=====> Result is: " + result);
+	}
+
+
+
+MODIFYING RETURN VALUE OF METHOD USING @AfterReturning Advice
+	> alongside the ability of fetching the original return value of method and using them, we can also modify them
+
+
+EX: 
+
+	// add a new advice for @AfterReturning on the findAccounts method
+	@AfterReturning(pointcut = "execution(* com.dao.AccountDAO.findAccounts(..))", returning = "result")
+	public void afterReturningFindAccountsAdvice(JoinPoint theJoinPoint, List<Account> result) {
+
+		// print out which method we are advising on
+		String method = theJoinPoint.getSignature().toShortString();
+		System.out.println("\n=====> Executing @AfterReturning method: " + method);
+
+		// print out the results of the method call
+		System.out.println("\n=====> Result is: " + result);
+
+		// lets post-process the data... lets modify it
+
+		// convert the account names to uppercase
+		convertAccountNamesToUpperCase(result);
+		
+		System.out.println("\n=====> Result: "+result);
+	}
+
+	private void convertAccountNamesToUpperCase(List<Account> result) {
+		// loop through accounts
+		for (Account account : result) {
+			// get uppercase version of name
+			String theUpperName = account.getName().toUpperCase();
+			
+			// update name of the account
+			account.setName(theUpperName);
+		}
+	}

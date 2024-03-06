@@ -1,0 +1,312 @@
+04. JavaScript
+
+
+JAVASCRIPT
+Variables
+	> used to hold data
+	> composed of keyword + name + data	
+		syntax: keyword name = data
+	> ex: var name = "Glenn"
+
+Objects
+	> used to represent an Object
+	> variable whose value is an associative array
+		- composed of key + value
+	> in example below, 
+		- family is the object, and 
+		- father, mother, sister, brother are the properties
+EX:
+var family = {
+	father: "a",
+	mother: "b",
+	sister: "c",
+	brother: "d"
+}
+
+
+Function
+	> used to create a logic in the JavaScript
+	> needs components like
+		- function keyword
+		- function name
+		- parameters
+		- logic
+		- return value (OPTIONAL)
+
+Syntax of Function
+function name(param1, param2){
+	// put logic here
+	var result = param1 + param2;
+	return result;
+}
+
+
+Variable in Console
+1. console	
+	> represents the console
+	> have the following method
+		a. write()
+			- used to write something in console
+
+
+Variables in HTML document
+1. document
+	> refers to the HTML document
+	> have several functions like
+		a. write()
+			- used to write something in the HTML document
+			- will break whatever you pass into it
+			- can take HTML elements
+		b. getElementById()
+			- used to fetch an element by its id
+
+
+
+Defining a Reference Type
+
+Creating a Constructor function
+	> function used to create Javascript Objects
+	> similar to creating a Constructor to a Java Object
+		- contains Constructor and method
+	> have the following syntax
+	> parameter and parenthesis is OPTIONAL if Constructor function DOES NOT have parameters
+
+SYNTAX:
+function Object(prop1, prop2){
+	// properties
+	this.prop1 = prop1; 
+	this.prop2 = prop2;
+	var prop3; // private property, can only be accessed using getter
+
+	// some method
+	this.method = function(){
+	
+	}
+
+	// getter
+	this.getProp3 = function(){
+		return prop3;
+	}
+	
+	// setter
+	this.setProp1 = function(argProp1) {
+		this.prop1 = argProp1;
+	}
+}
+
+EX:
+function Employee(id, name){
+	this.id = id;
+	this.name = name;
+	this.work = function(){
+		console.log("I am working");
+	}
+}
+
+
+
+"delete" keyword
+	> We can delete an Javascript object's property by using "delete" keyword
+SYNTAX:
+delete Object.propName
+
+EX:
+delete family.sister // this will delete the sister property to the family Object
+
+
+
+
+"in" keyword
+	> We can check if property exist in an Object by using "in" keyword
+	> returns a boolean value (true or false)
+SYNTAX:
+propName in Object
+
+EX:
+son in family // returns false
+
+
+
+for in loop	
+	> use to iterate properties of an Object
+	
+SYNTAX:
+for (tempProp in Object){
+	// logic
+}
+
+	> where tempProp is a placeholder for each property to use
+
+EX:
+for (people in family){
+	// will write each property of family in console
+	console.log(people)
+}
+
+
+
+prototype
+	> used to add a new property in an existing object
+
+SYNTAX:
+Object.property.name = value
+
+EX:
+var
+
+
+
+PROTOTYPAL INHERITANCE
+	> we can either user
+		1. Object.create()
+			= we will pass the Javascript object we want to use as value
+		2. __proto__
+			= we will call this method is the Javascript object we passed as value
+
+EX:
+var person = {
+	name: "John",
+	email: "jg@gmail.com"
+}
+var john1 = person.__proto__;
+var john2 = new Object.create(person);
+
+
+
+
+
+NOTE: 
+1. In Javascript, everything is an object. 
+	> object have method, properties, and constructor function to create it
+
+EX:
+var name = "Harsh"
+// or
+var name = new String("Harsh") // same output as above
+
+
+2. If Constructor method doesn't have any argument, parenthesis is OPTIONAL
+
+Ex:
+var name = new String();
+// or
+var name = new String;
+
+
+
+3. We can ADD properties to a Javascript object by defining the new property
+
+EX:
+var family = new Object();
+family.father = "a";
+family.mother = "b";
+family.sister = "c";
+family.brother = "d";
+console.log(family);
+
+
+
+4. Assign Javascript object to a variable as value have pass-by-reference behavior
+	> if we dont assign the Javascript object to a variable as NEW INSTANCE, it will do a pass-by-reference
+
+Ex:
+var family = {
+	father:"a",
+	mother:"b"
+} 
+var newFamily = family; // object value passed as reference
+newFamily.son = "c";
+console.log(newFamily); // will have son as property
+console.log(family);	// will also have son as property
+
+
+
+
+
+
+STRICT EQUAL OPERAND (===)
+	> same as EQUAL operand (==), but it also checks the data type of the values it compares
+
+EX:
+var x = 2;
+var y = '2';
+
+
+
+prompt, alert, and confirm
+	> used to display pop-up in browser to do something
+
+confirm
+	> give a yes or no prompt to user
+	> constructor function takes a String object as argument
+		- this will be the display message for the pop-up window
+	> returns a boolean value based on what button user used
+
+prompt
+	> give a textbox for user to enter information
+	> constructor function takes a String object as argument
+		- this wil be the display message for the pop-up window
+	> returns the value entered by the user in textbox
+
+alert
+	> gives a display alert to the user with a message and OK button
+	> constructor function takes a String object as parameter
+		- this will be the display message for the pop-up window	
+	> returns nothing
+
+
+
+VARIABLE SCOPES
+1. global
+	> variables that can be used or references throughout the Javascript file
+	> to create global variable
+		- create variable at root level of Javascript file
+		- create variable WITHOUT KEYWORDS inside a function
+
+2. local
+	> variable that can be used in a specific scope (e.g. inside a function)
+		- access local variable outside of their scope will give out an error
+	> to create local variable
+		- create variable inside function WITH KEYWORD (var or let)
+
+
+
+ANONYMOUS FUNCTIONS
+	> functions which do NOT have any names
+	> function that are SELF INVOKING
+		- means they automatically call themselves
+	> we use these functions for initialization purpose
+		- similar static {} of Java
+	> does not return a value
+
+SYNTAX:
+(function (param1, param2) {
+	// logic	
+}) (arg1, arg2)
+
+where
+param1, param2 are parameters of anonymous function
+arg1, arg2 are arguments to be passed in the function
+
+
+
+
+JSON (Javascript Object Notation)
+Creating a JSON
+	> create a JSON using the syntax below will still be considered as Javascript Object
+		- will have same value as if we didnt used double quotes to the properties name
+
+SYNTAX:
+var name = {
+	"prop1":"value",
+	"prop2":"value",
+	"prop3":"value"
+}
+
+
+JSON.stringify(Object o)
+	> converts a Javascript object into a JSON string
+
+
+JSON.parse(String s)
+	> converts a String input into a Javascript object

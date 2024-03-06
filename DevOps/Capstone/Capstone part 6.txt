@@ -1,0 +1,90 @@
+Capstone part 6
+
+Creating Production Server
+1. Open an additional Linux, Ubuntu, or RedHat server
+
+
+
+Setting up SSH communication for Jenkins (Master) and Production Server
+1. In Master server (with Ansible), generate an SSH key
+	ssh-keygen
+2. Copy the public key (file that ends with .pub)
+	cat /root/.ssh/id_rsa.pub
+3. In Production Server, paste the public SSH key of Master Server to the "authorized_keys" file on NEXT LINE
+	sudo su
+	vi /root/.ssh/authorized_keys
+
+
+
+Installing Ansible
+1. Before installing Ansible package, add Ansible repository to your system
+	sudo apt-add-repository ppa:ansible/ansible
+2. Update the list of packages
+	sudo apt-get update
+3. Install Ansible	
+	sudo apt-get install ansible
+4. Check Ansible version for installation verification
+	ansible --version
+
+
+
+
+Configuring Ansible
+1. Add the Production in the host groups of Ansible Master server
+	vi /etc/ansible/hosts
+2. Copy inside the hosts file
+
+[prodserver]
+<private ip of production server>
+
+EX:
+[prodserver]
+172.31.25.140
+
+
+
+
+Create Playbook to prepare production server
+1. Create yaml file for playbook
+	cd /etc/ansible
+	vi prod.yaml
+2. Paste inside the yaml file
+
+---
+ - name: Preparing production server
+   hosts: prodserver
+   tasks:
+     - name: Update package list (apt-get update)
+       apt:
+        update_cache: yes
+     - name: Install Java
+       apt:
+        name: default-jdk
+        state: latest
+     - name: Install apache
+       apt:
+        name: apache2
+        state: present
+
+
+
+
+Setup Jenkins Job for executing the Ansible Playbook
+1. Create a New Item
+	> "PrepareProdServer"
+	> Freestyle Project
+2. Configure the job
+	> in Build, add "Execute Shell"
+	> enter the following command
+
+cd /etc/ansible
+sudo ansible-playbook prodserver.yaml
+
+
+
+
+
+Test the Job
+1. Build the Job
+2. Check Build History and console logs
+3. Check java version and apache2 status in Production Server

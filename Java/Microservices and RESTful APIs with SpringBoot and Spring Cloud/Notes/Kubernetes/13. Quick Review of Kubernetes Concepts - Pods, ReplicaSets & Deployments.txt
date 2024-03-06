@@ -1,0 +1,15 @@
+13. Quick Review of Kubernetes Concepts - Pods, ReplicaSets & Deployments
+
+
+Pods
+	> wrapper for a set of Containers
+	> have ip address, label annotations
+
+ReplicaSet
+	> ensures that specific number of Pods are always running
+	> in practice, a ReplicaSet is always tied with a specific RELEASE VERSION
+		- ex: ReplicaSet V1 will maintain a specific instances of V1 release
+
+Deployment
+	> ensures that a release update, a switch from V1 to V2, happens without a problem
+		- refers to Zero Downtime Policy

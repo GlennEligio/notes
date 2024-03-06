@@ -1,0 +1,72 @@
+Fetch Types: Eager vs Lazy Loading
+
+
+Eager will retrieve everything
+Lazy will retrieve on request
+
+
+
+EAGER LOADING
+	> will load all dependen entities
+	> load the Parent Entity and its Child Entities
+		- ex: in Eager loading, when we load the Instructor, it will also load all the Courses associated with it
+	> could easily turn into a performance decrease, especially in Many-to-Many relationships
+		- ex: When we are searching for a course by keyword, we dont want to load Students associated with it
+
+BEST PRACTICE
+	> Only load data when absolutely needed
+	> PREFER Lazy loading over Eager loading
+
+
+LAZY LOADING
+	> will load the Parent/Main entity first
+	> load dependent entities on demand (lazy)
+		- ex: in Lazy loading, when we load the Courses, it will not load the Student associated with it UNLESS we demand it
+	> the data (which is the dependent entities) is only retrieved on demand
+	> HOWEVER, this requires an OPEN Hibernate session
+		- needs a connection to database to retrieve data
+	> if the Hibernate session is closed and you attempt to retrieve lazy data
+		- the Hibernate will THROW an exception
+	> to retrieve lazy data, we have TWO options
+		1. use session.get() to fetch Main Entity and call its getter method(s) to fetch lazy dependent entities
+		2. use Hibernate query language (HQL)
+
+
+1. Use session.get()
+	> after fetching the Parent Entity, we can call the getter method of Child/Dependent Entity
+2. Use Hibernate query language (HQL)
+	> create a JOIN query using the Parent Entity as 1st table and Child Entity as 2nd table	
+
+
+REAL WORLD USE CASE
+	> here, the Main Entity will be the Instructor and the Dependent Entities will be the Courses
+If we have a webpage to search for Instructors
+1. In Master view, we will use lazy loading to load the search result for Instructor
+	> will only load the Instructors, not the Courses they offer
+2. In Detail view, retrieve the entity and its dependent entities
+	> will load the Instructor and the Courses they offer
+
+
+fetch=FetchType[]
+	> added as parameter of the mapping annotation (@OneToOne, @OneToMany, @ManyToOne, @ManyToMany)
+	> takes a FetchType enum value
+	> these value includes
+		1. FetchType.LAZY
+			- specify that the fetch type of the said dependency will be LAZY
+		1. FetchType.LOADING
+			- specify that the fetch type of the said dependency will be LOADING
+	> each of the mapping annotation have their own default fetch type
+		1. For @OneToOne and @ManyToOne
+			> FetchType.EAGER
+		2. For @OneToMany and @ManyToMany
+			> FetchType.LAZY
+	> we can override the default fetch="" values by explicitly  defining it
+
+
+
+OBSERVING LAZY VS EAGER
+1. Change the fetch="" of mapping annotation
+2. Use breakpoints and debug the program
+3. Check in the console to see the SQL queries the hibernate sent
+
+		

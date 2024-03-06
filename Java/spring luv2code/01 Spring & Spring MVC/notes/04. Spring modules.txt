@@ -1,0 +1,24 @@
+Spring modules
+
+
+What are Spring "Projects"?
+	> Additional Spring modules built-on top of the core Spring Framework
+	> Only use what you need
+		- Spring Cloud
+			> for Cloud Development
+		- Spring Data
+			> for Database Integration
+		- Spring Batch 
+			> for creating batch processes
+		- Spring Security
+			> for securing your application
+		- Spring for Android 
+			> for Android Development
+		- Spring Web Flow
+			> for doing web flow over x number of pages
+		- Spring Web Services
+			> for doing RESTful and SOAP web services
+		- Spring LDAP
+			> for accessing LDAP servers
+	> to see other projects, go to the site
+		https://spring.io/projects

@@ -1,0 +1,58 @@
+02. The Underlying Technology - Docker
+
+
+Programming Language of Docker
+	> Docker is written in Go and takes advantage of several features of the Linux kernel to deliver its functionality
+	> with Go, you can create a Linux "container" which have its own Namespaces and Control Groups SEPARATE from its Host machine
+
+Linux Container
+High level approach
+	> can be seen as "Application Container"
+	> Chroot on steriods
+	> have the following properties
+		a. normal process, but isolated
+		b. share kernel with the host
+		c. no device emulation (neither Paravirtualization or Hardware Virutual Machine)
+
+Low level approach
+	> can be seen as "Machine Container"
+	> a Lightweight Virtual Machine where it:
+		a. have its own process space
+		b. own network interface
+		c. can run stuff as root
+		d. can have its own /sbin/init (different from the host)
+
+
+Namespaces
+	> Docker uses a technology called "namespaces" to provide the isolated workspace called the "container"
+	> When you run a container, Docker creates a set of namespaces for that container
+	> These namespaces provide a LAYER OF ISOLATION
+		- each aspect of a container runs in a separate namespace and its access is limited to that namespace
+	> Docker Engine uses namespaces such as the following on Linux
+		1. pid (ProcessID)
+			- for process isolation
+		2. net (Networking)
+			- for managing network interfaces
+		3. ipc (InterProcess Communication)
+			- managing access to IPC resources
+		4. mnt (Mount)
+			- managing filesystem mount points
+		5. uts (Unix Timesharing System)
+			- isolating kernel and version identifiers
+
+
+Control groups
+	> Docker Engine on Linux also relies on another technology called "control groups" (cgroup)
+	> A cgroup limits an application to a specific set of resources like:
+		1. CPU
+		2. Memory
+		3. Disk I/O
+		4. Device permissions (/dev)
+	> Control groups allow Docker Engine to share available hardware resources to containers and optionally enforce limits and constraints
+		- eX: limiting memory available to a specific container
+
+
+SOURCE: 
+http://www.devopsworld.co.in/p/docker-underlying-technology.html
+https://www.slideshare.net/jpetazzo/docker-and-go-why-did-we-decide-to-write-docker-in-go
+https://www.youtube.com/watch?v=Utf-A4rODH8

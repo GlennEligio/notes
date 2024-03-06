@@ -1,0 +1,120 @@
+Section 9 - Prerequisites
+
+65. What is CICD?
+
+CI/CD
+ > stands for Continuous Integration - Continuous Delivery/Deployment
+ > it is a process where we package our codebase, and deliver/deploy it to a system
+	- this system can be a serverless, lambda function, vm, container, or even bare metal
+	
+Continuous Integration (CI)
+ > in simple terms, CI is where we take our code, maybe do some testing, and then package it up
+ > we can use an analogy of wrapping a toy to describe CI
+	a. initially, we will need to build the toy first
+		- this represents the step where we build the code
+	b. then we may test if the toy is functioning properly
+		- this represent the step where we test the build
+	c. lastly, we will wrap the toy with a gift wrapper
+		- this represents the step where we package our application
+ > key pieces of CI includes:
+	1. Clone/Copy the source code
+	2. Test the code (Unit test, Integration test, etc)
+		- this should be done automatically, so that we can automate it inside CI pipeline
+	3. Security Checks (ex: Security linter like SonarQube, Veracode)
+	
+Continuous Delivery/Deployment (CD)
+ > CD process is where we deliver/deploy the code into a system.
+ > This system can be serverless, lambda function, vm, container, or even bare metal like on-prem servers
+ > continuing our gift analogy, we will describe the CD process
+	a. we will take the wrapped gift, and put it in the car
+	b. you drive the car to the house to deliver the gift
+		- for Continuous Delivery, we will need to manually drive the car when we receive the gift
+		- for Continuous Deployment, as soon as the gift is wrapped, it will automatically put the gift in car, and the car will automatically drive to the house
+ > key pieces of CD includes:
+	1. User is AUTHENTICATED to the system during the CD processes
+	2. Ensure that the code is working as expected once deploy
+		- for this, a lot of people add additional step in the CD process where inside, you have tests to actually run a test against the system to make sure that the application is running
+		- if its not running the way that it's supposed to, the CD process would fail
+
+Continuous Delivery vs Continuous Deployment
+ > for Continuous Delivery, there is a 'button' somewhere to deploy the code.
+	- important note here is that we still need manually deploy the application. 
+	- its not manual as in going inside the system and downloading the package. those are automated as well. the only manual process here is the button itself
+	- ex: codebase -> CI -> button -> system
+ > for Continuous Deployment, the code gets automatically deploy after the CI process
+	- this means that as soon as we pass the CI process, it will do the deployment automatically
+	- ex: commit changes in GitHub -> CI process -> passes CI -> deploy to system automatically
+
+
+
+
+66. Why Jenkins?
+
+Why Jenkins?
+1. Open source
+	- you can create plugins by yourself if you want
+2. 1000+ plugins to choose from
+	- there are different plugins to use for different use case
+	- some of these plugins are created by other people as well
+3. Free
+	- Jenkins itself, the full CI/CD suite, all of the plugins, the ability to deploy it anywhere (ex: VM, container, local), the ability to host it yourself, it is all 100% free
+4. Paid, Enterprise
+	- theres an option for you to choose a paid, enterprise version of Jenkins if you want to
+	
+Enterpise Options for CI/CD
+ > there are number of cases where you want to choose an enterprise option for your CI/CD solution, these includes:
+	1. Support
+		- these means that you would have a number to call to in case things go wrong
+	2. Managed service
+		- some CI/CD solutions provides a SAS-style platform where you dont have to host the CI/CD yourself
+	
+	
+	
+	
+67. Jenkins Getting Started
+
+www.jenkins.io
+ > website for Jenkins
+ 
+Blog section
+ > contains news or blog posts related to jenkins
+ > this includes:
+	- news
+	- patches
+	- tutorials/how-to guides
+	
+Documentation
+ > Jenkins have a really solid documentation
+ > these includes:
+	- installing Jenkins in different platforms
+	- deploying jenkins in different platforms
+
+Plugins
+ > there are many use cases for these plugins
+ > these includes
+	- connecting Jenkins to other systems (ex: Azure)
+	
+Community
+ > here, we have community for different stuff
+ > these includes:
+	- connecting to different channels
+	- meeting up other Jenkins users
+	- code contribution
+	- testing
+	- documentation
+	- helping
+	- design
+	
+Subprojects
+ > these contains projects that Jenkins are working on
+ > includes:
+	- Evergreen
+	- Google summer of code
+	- Infrastructure
+	- CI/CD and Jenkins Area Meetups
+	- Jenkins Configuration as Code
+	- Jenkins Operator
+	- Jenkins Remoting
+	
+About
+ > contains info on stuff like Roadmap, Security, etc.

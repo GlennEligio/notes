@@ -1,0 +1,192 @@
+22. CSS part 13 - Selectors
+
+
+Basic Selectors
+	> used to select elements to apply CSS properties to
+
+*
+	> universal selector
+	> selectors all the element inside the document
+	> have the LOWEST SPECIFICITY, easily overridable
+
+SYNTAX:
+* {
+	/* CSS Properties */
+}
+
+#elementId
+	> used to select an HTML element with specific ID value
+	> to use this, we will attach the id name to the hash symbol
+	> have the HIGHEST SPECIFICITY, same as inline css
+
+SYNTAX:
+#elementId {
+	/* CSS Property */
+}
+
+
+.elementClass
+	> used to select an HTML element with specific Class value
+	> to use this, we will use period (.) followed by class name
+
+SYNTAX:
+.elementClass {
+	/* CSS Property */
+}
+
+element
+	> used to select a specific HTML element type
+	> to use this, just use the name of the HTML element type
+
+SYNTAX:
+elementName {
+	/* CSS property */
+}
+EX:
+h1 {
+	color:red;
+}
+
+
+SPEFICITY RANKING
+*		0
+element		1
+.class		100
+#id		1000
+
+
+
+
+DESCENDANT and CHILD Combinators
+
+DESCENDANT
+	> elements that are can found inside an element
+	> the element target may be a descendant of a descendant of the another element
+	> the syntax will be 
+SYNTAX:
+element1 element2 {
+	// CSS Property
+}
+EX:
+div h1 {
+	/* Will be applied to all h1 under div */
+}
+
+
+CHILD 
+	> element that are DIRECT DESCENDANT of an element
+	> only the first Descendant will be applied
+SYNTAX:
+element1 > element2 {
+	/* CSS property */
+}
+EX:
+div > h1 {
+	/* will only be applied to h1 that is directly under div */
+}
+
+
+
+EX:
+    <div class="header">
+      <h1>im child and descendant</h1>
+    </div>
+    <div class="header">
+      <ul>
+        <li><h1>i am descendant</h1></li>
+      </ul>
+    </div>
+
+In this case, if we do (div > h1) selector, only the first <h1> will be applied, This is because:
+1. the two h1 element are BOTH descendants of the div.
+2. But, only the h1 is a Child or Direct Descendant of the div
+
+
+
+PSEUDO-ELEMENT Selector
+	> mostly a specific part of an element (portion of element)
+	> uses two colons, followed by the specified part of element
+
+::first-line
+	> only the first line of text of element is where the CSS properties will be applied
+
+SYNTAX:
+element|class|id :: first-line {
+	/* CSS properties */
+}
+
+
+::first-letter
+	> only select and applies CSS property to the first letter of text of element
+
+SYNTAX:
+selector::first-line {
+	/* CSS properties */
+}
+
+
+
+PSEUDO-CLASS selector
+	> applies CSS property on a certain STATE of element (e.g. cursor hovering on it, element on focus, element onclick, etc.)
+	> uses one colon, followed by the State of the element
+
+
+:hover
+	> apply CSS property to an element when the cursor is HOVERING to the element
+SYNTAX:
+selector::hover {
+	/* CSS properties */
+}
+
+
+:link
+	> apply CSS property to a element that is a link (e.g. <a>)
+SYNTAX:
+a:link{
+	/* CSS properties */
+}
+
+
+:visited
+	> apply CSS property to <a> element whose website link is already visited/redirected
+SYNTAX:
+a:visited {
+	/* CSS properties */
+}
+ 
+
+:active 
+	> apply CSS property to an element whose being actively used (currently being pressed and hold)
+SYNTAX:
+a:active {
+	/* CSS properties */
+}
+
+
+
+:root
+	> used to apply CSS property to the root element of the HTML document, which is the body
+	> mostly used to initialize root element values like
+		a. font-size
+		b. CSS properties
+
+SYNTAX:
+:root {
+	/* CSS properties */
+}
+
+EX:
+:root {
+  /* 1rem === 16px */
+  font-size: 150%;
+}
+.absolute {
+  font-size: 24px;
+}
+.responsive {
+  font-size: 1.5em;
+}
+
+Here, we are changing the value of 1rem from 16px (default-medium) to 16px*150%, which is 24px.
+With this, we can create responsive text that changes font-size based on the rem value of browser.
+In this case, the elements with absolute class will not respond to the changing webbrowser settings unlink the elements with responsive.

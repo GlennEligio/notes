@@ -1,0 +1,32 @@
+21. CSS part 12 - pseudo elements ::before and ::after 
+
+includes:
+::before
+::after
+
+::before
+	> The ::before selector inserts something before the content of each selected element(s).
+	> Use the content property to specify the content to insert.
+	> we can also define other CSS property inside this selector
+		- the CSS property will modify the content we pass in ::before selector
+
+::after
+	> The ::after selector inserts something after the content of each selected element(s).
+	> Use the content property to specify the content to insert. 
+	> we can also define other CSS property inside this selector
+		- the CSS property will modify the content we pass in ::after selector
+
+
+NOTES:
+1. content property is MANDATORY for ::before and ::after to work
+	> must pass at least an empty string ""
+2. ::before and ::after DOES NOT WORK with img elements
+	> theory behind this is that the image we inside is the Content itself
+	> to remedy this, 
+		a. we can insert the img inside a div
+		b. make the img responsive
+			= width is 100% (whole width of div container)
+			= display is block (to occupy the whole div container height)
+		
+
+

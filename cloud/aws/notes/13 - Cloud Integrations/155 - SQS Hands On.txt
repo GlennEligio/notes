@@ -1,0 +1,94 @@
+155 - SQS Hands On
+
+
+Amazon SQS
+ > A message queueing service
+ > Amazon SQS provides queues for high-throughput, system-to-system messaging.
+ > You can use queues to decouple heavyweight processes and to buffer and batch work.
+ > Amazon SQS stores messages until microservices and serverless applications process them
+
+
+Creating SQS
+1. Go to AWS Dashboard
+2. Search for Amazon SQS
+3. Click "Create queue"
+4. In Create queue dashboard
+	> Type
+		- Standard
+	> Leave everything as default, out of scope of the tutorial
+	> Finalize creating queue
+
+
+SQS Dashboard
+ > composed of the following
+	1. Overview details of the SQS like
+		- Name
+		- Type
+		- ARN
+		- Encryption enabled?
+		- URL
+		- Messages available
+	2. Action buttons for SQS like
+		- Edit
+		- Delete
+		- Purge
+		- Send and receive messages
+	3. Tabs for the additional details like
+		- SNS subscription
+		- Lambda triggers
+		- Dead-letter queue
+		- Monitoring
+		- Tagging
+		- Access policy
+		- Encryption
+		
+		
+Send and Receive messages in SQS Dashboard 
+ > in SQS Dashboard, we can send and receive messages to and from the SQS itself
+ > by default, the message body is encoded in MD5
+ 
+ 
+Sending a message
+1. In the SQS Dashboard, click the Send and receive message
+2. In the Send message panel of Send and receive message dashboard
+	> enter the message to send to the queue
+	> select the delivery delay
+	> modify the message attributes that you want 
+		- optional
+	> send the message
+3. After sending the message, you can view the details of the message which includes:
+	> ID
+	> MD5 of message body
+	> MD5 of the message attributes
+	
+	
+Receiving messages
+1. In the SQS Dashboard, click the Send and receive message
+2. In the Receive messages panel of Send and receive message dashboard, we can see the following informations:
+	> Messages available
+	> Polling duration
+	> Maximum message count
+	> Polling progress
+	> Messages polled
+3. In the Receive message panel as well, we can see several action buttons for:
+	> Edit poll settings
+	> Poll for messages
+	> Stop polling
+4. Click Poll for messages	
+	> this will poll all the messages that we have sent
+	> if we sent a message earlier, we can see them in the panel when we poll for messages.
+	> we can click them to see the Messages informations like:
+		- Details:
+			-> ID
+			-> Size
+			-> MD5 of message body
+			-> Date sent
+			-> Sender account ID
+		- Body:
+		- Attributes
+		
+		
+Cleaning up
+1. Go to Amazon SQS > Queues dashboard
+2. Delete the SQS that you have created
+

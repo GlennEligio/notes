@@ -1,0 +1,73 @@
+Jenkins Beginner Tutorial
+
+
+Table of contents
+1. Introduction and Getting Started
+2. How to setup Jenkins on Tomcat
+3. How to change Home Directory
+4. How to use CLI (Command Line Interface)
+5. How to create Users + Manage + Assign Roles
+6. Basic Configurations
+7. Getting started with JOBS
+8. Jenkins Integration with GIT (SCM)
+9. How to add GitHub Credentials
+10. How to use CATLIGHT (Jenkins Build Monitor)
+11. What is Automated Deployment (Step by Step)
+12. How to do Automated Deployment (Step by Step)
+13. Notifications - How to send Email from Jenkins
+14. What is Pipeline in Jenkins (DevOps)
+15. How to setup DELIVERY PIPELINE in Jenkins (Step by Step)
+16. How to setup BUILD PIPELINE in Jenkins (Step by Step)
+17. What is BLUE OCEAN (How to get started)
+18. How to Trigger Job with Email | Poll Mailbox Trigger Plugin
+19. How to create Build Monitor View
+20. How to install Jenkins on Amazon AWS EC2 Linux | 8 steps
+21. What is Jenkinsfile | How to create jenkinsfile | Step by Step
+22. How to get Jenkinsfile from Git SCM
+23. Jenkins Pipeline | How to clone a git repo using Jenkinsfile
+
+
+
+
+
+
+
+
+
+
+
+1. Introduction and Getting Started
+
+
+
+
+
+
+
+
+
+
+
+
+2. How to setup Jenkins on Tomcat
+3. How to change Home Directory
+4. How to use CLI (Command Line Interface)
+5. How to create Users + Manage + Assign Roles
+6. Basic Configurations
+7. Getting started with JOBS
+8. Jenkins Integration with GIT (SCM)
+9. How to add GitHub Credentials
+10. How to use CATLIGHT (Jenkins Build Monitor)
+11. What is Automated Deployment (Step by Step)
+12. How to do Automated Deployment (Step by Step)
+13. Notifications - How to send Email from Jenkins
+14. What is Pipeline in Jenkins (DevOps)
+15. How to setup DELIVERY PIPELINE in Jenkins (Step by Step)
+16. How to setup BUILD PIPELINE in Jenkins (Step by Step)
+17. What is BLUE OCEAN (How to get started)
+18. How to Trigger Job with Email | Poll Mailbox Trigger Plugin
+19. How to create Build Monitor View
+20. How to install Jenkins on Amazon AWS EC2 Linux | 8 steps
+21. What is Jenkinsfile | How to create jenkinsfile | Step by Step
+22. How to get Jenkinsfile from Git SCM
+23. Jenkins Pipeline | How to clone a git repo using Jenkinsfile

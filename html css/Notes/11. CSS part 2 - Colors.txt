@@ -1,0 +1,273 @@
+CSS part 2
+
+includes:
+color, background-color, background
+color names
+rgb rgba
+hex
+visual studio color options
+external resources
+
+
+COLOR PROPERTIES
+	> property name is "color"
+	> responsible for color of text
+
+COLOR BACKGROUND-COLOR
+	> property name is "background-color"
+	> responsible for background color of the text
+
+BACKGROUND-IMAGE
+	> "background-image"
+	> used to assign an image as a background
+
+BACKGROUND	
+	> "background"
+	> can accept either a color or an image
+
+COLOR NAMES
+	> when specifying color value, we can pass these pre-defined colors with names
+	> as of now, theres 140 HTML COLOR NAMES available 
+	
+EX:
+h1{
+	color:red;
+}
+
+
+COLOR RGB (RED, GREEN, BLUE)
+	> we can assign color that is represented by three numbers
+	> these numbers represents the intensity of either red, green, or blue (based on position of number)
+	> you can only assign intensity number of red, green, or blue from (0-255)
+	> for black, reduce the RGB to 0. for WHITE. max out the RGB to 255
+		- black = rgb(0,0,0)
+		- white = rgb(255,255,255)
+
+EX:
+h1{
+	color:rgb(255, 0, 0);
+}
+
+	> this will be a color red
+
+
+
+COLOR RGBA
+	> same as RGB but with additional parameter (opacity/transparency)
+	> the A takes a decimal number from 0 to 1
+	> 0 meaning the color is transparent/invisible, 1 meaning full visibility
+
+
+
+
+COLOR HSL
+	> HSL stands for Hue, Saturation, Lightness
+		- Hue is for what color it is
+			> takes 0-360 as value
+		- Saturation is how saturated the color is
+			> takes 0-100 as value
+		- Lightness is how bright the color is
+			> takes 0-100 as value
+
+
+
+COLOR HEX VALUE
+	> format is #RRGGBB
+	> uses Hexadecimal to determine the intensity of RGB	
+	> lowest number is #000000 while highest is #ffffff
+	> divided by 3 parts
+		- first two characters defines the Red
+		- second two characters defines the Green
+		- third two characters defines the Blue
+	> Black can be fetch by only #000 or #222
+	> White can be fetch by only #fff
+
+
+coolors.co
+	> a website for generating random color palette
+
+
+
+
+I. COLOR PROPERTIES AND COLOR BACKGROUND DEMONSTRATION
+
+1. Clean the styles.css and index.html body
+
+
+2. Create two h3 with different id attributes in index.html body
+
+INSIDE index.html   
+  <body>
+    <h3 id="first">im heading number one</h3>
+    <h3 id="second">im heading number two</h3>
+  </body>
+
+
+
+3. Create css rules for each id of h3 elements
+	> for first id
+		- color = lightslategrey
+		- background-color = chocolate
+	> for second id
+		- color = crimson
+		- background = yellow
+
+INSIDE styles.css
+
+#first{
+    color:lightslategray;
+    background-color: chocolate;
+}
+#second{
+    color: crimson;
+    background: yellow;
+}
+
+	> if we look at the Live Server, we can see that the background and background-color property works the same way.
+
+
+
+II. COLOR RGB 
+
+4. Add another h3 element in the index.html body
+
+INSIDE index.html body
+
+  <body>
+    <h3 id="first">im heading number one</h3>
+    <h3 id="second">im heading number two</h3>
+    <h3 id="third">im heading number three</h3>
+  </body>
+
+
+
+5. Modify the styles.css
+	> #first 
+		- color to rgb 255 0 0 
+		- background color to rgb 0 0 0 
+	> #second	
+		- color to rgb 0 255 0
+		- background to rgb 255 255 255
+
+
+
+6. Add css rule for the third id and body
+	> #third
+		- color to rgb 0 0 255
+		- background to rgb 100 100 100
+	> body
+		- background to rgb 100 34 210
+
+INSIDE styles.css
+
+#first{
+    color:rgb(255, 0, 0);
+    background-color: rgb(0, 0, 0);
+}
+#second{
+    color: rgb(0, 255, 0);
+    background: rgb(255, 255, 255);
+}
+#third{
+    color: rgb(0, 0, 255);
+    background: rgb(100, 100, 100);
+}
+body{
+    background: rgb(100, 34, 210);
+}
+
+	> if we take a look at the Live Server, we can see the rgb take effect
+
+
+
+
+III. COLOR RGBA
+
+7. Add new h3 element in the index.html body
+
+INSIDE index.html body		
+
+  <body>
+    <h3 id="first">im heading number one</h3>
+    <h3 id="second">im heading number two</h3>
+    <h3 id="third">im heading number three</h3>
+    <h3 id="fourth">im heading number four</h3>
+  </body>
+
+
+
+8. Clean the styles.css
+
+
+
+9. Inside the styles.css for each of the id attributes of h3
+	> #first
+		- any color property
+		- background color black opacity 1
+	> for each succeeding css rule, lower opacity by 0.25
+	> last css rule will have 0 opacity
+
+INSIDE styles.css
+
+#first {
+  color: rgb(255, 255, 0);
+  background: rgba(0, 0, 0, 1);
+}
+#second {
+  color: rgb(0, 255, 0);
+  background: rgba(0, 0, 0, 0.75);
+}
+#third {
+  color: rgb(0, 0, 255);
+  background: rgba(0, 0, 0, 0.5);
+}
+#fourth {
+  color: rgb(255, 255, 0);
+  background: rgba(0, 0, 0, 0);
+}
+
+
+	> if we take a look at the Live Server, the black background of the h3 elements is getting less opaque the further it goes down
+
+
+
+
+IV. COLOR HEX
+
+10. Modify the color and background properties of the ID selectors in the styles.css
+	> #first
+		color #ff0000
+		background #000
+	> #second 
+		color #fff
+		background #00ff00
+	> #third
+		color #0000ff
+		background #f15025
+	> #fourth
+		color #f234ad
+		background #222
+
+INSIDE styles.css
+
+#first {
+  color: #ff0000;
+  background: #000;
+}
+#second {
+  color: #fff;
+  background: #00ff00;
+}
+#third {
+  color: #0000ff;
+  background: #f15025;
+}
+#fourth {
+  color: #f234ad;
+  background: #222;
+}
+
+	> now if we take a look at the Live Server, we can see the Color HEX take effect
+
+	
+

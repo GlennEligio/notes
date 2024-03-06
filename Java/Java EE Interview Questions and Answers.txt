@@ -1,0 +1,314 @@
+J2EE (Java EE) Interview Questions and Answers  
+
+01 What is JEE?
+02 What are tomcat, web sphere and web logic?
+03 What is war?
+04 What is ear?
+05 What are containers? what are the different types of containers?
+06 What is Java EE api? https://docs.oracle.com/javaee/7/api/
+07 Java EE 7 contains 14 new and updated JSRs. Java specifications are available at http://www.jcp.org.
+08 JSR 338: Java Persistence API 2.1
+09 JSR 339: Java API for RESTful WebServices2.0
+10 JSR 340: Java Servlet 3.1
+11 JSR 341: Expression Language 3.0
+12 JSR 342: Java Platform, Enterprise Edition 7
+13 JSR 343: Java Message Service 2.0
+14 JSR 344: JavaServer Faces 2.2
+15 JSR 345: Enterprise JavaBeans 3.2
+16 JSR 346: Contexts and Dependency Injection for JavaEE 1.1
+17 JSR 349: Bean Validation 1.1
+18 JSR 352: Batch Applications for the Java Platform 1.0
+19 JSR 353: Java API for JSON Processing 1.0
+20 What is JPA? https://github.com/in28minutes/HibernateJPAStepByStep
+21 What are important Java EE Design Patterns? https://github.com/in28minutes/Java-EE-Design-Patterns
+23 What is maven? What does it do? https://github.com/in28minutes/MavenIn28Minutes
+24 Introduction to Transaction Management : https://www.youtube.com/watch?v=HcjHJLEbtRs
+
+
+
+
+
+
+01 What is JEE
+
+Java EE
+ > stands for Java Enterprise Edition
+ > contains specification that defines how to develop/create enterprise applications
+	- ex: Java Servlet (defines how to create Servlets), JPA
+
+
+
+
+
+02 What are tomcat, web sphere and web logic?
+
+Tomcat
+ > Java EE compliant web server
+ > only supports and run .war files (Web Archive)
+ > cant run .ejb files
+
+Web sphere and web logic
+ > complete implementations of Java EE
+ > implement Servlets, EJB, JAX-RS
+
+
+
+
+
+
+03 What is war?
+
+war
+ > stands for Web Archive
+ > defines how our application should be constructed
+ > contains all the files needed to run an application
+ > project structure inside consist of
+	- META-INF
+	- WEB-INF
+		- classes, programmer defined classes
+		- common
+		- lib, dependencies
+		- views, jsp and html files
+		- web.xml
+ > deployed in Tomcat
+
+
+
+
+
+04 What is ear?
+
+ear
+ > stands for Enterprise Archive file
+ > similar to war file, but one level above the war
+ > can contain multiple war file, ejb module
+ > deployed in web sphere and web logic
+
+
+
+
+
+
+05 What are containers? what are the different types of containers?
+
+Containers
+ > used to run/host Java applications
+ > two kinds of containers
+	- server side
+	- client side, very few uses this containers
+ > Server side containers includes Java EE Servers like
+	- Web Container, can run things like Servlets
+	- EJB Container, can deploy EJB
+ > Client side includes 
+	- Application Client Container
+	- Applet Container
+
+
+
+
+
+
+06 What is Java EE api? 
+
+JAVA EE api
+ > set of specifications defined to create enterprise applications
+ > we can see all the API in the link below
+	- https://docs.oracle.com/javaee/7/api/
+
+
+
+
+
+07 Java EE 7 contains 14 new and updated JSRs.
+
+JSR
+ > stands for Java Specification Request
+ > request made by a specific community to create a Java specification for specific standard
+
+
+Java Community Process
+ > website where the Java community gathers
+ > we can also see all the JSRs or Java specificatins created in this site
+ > http://www.jcp.org.
+
+
+
+
+
+
+08 JSR 338: Java Persistence API 2.1
+
+JPA
+ > stands for Java Persistence API
+ > based on the Hibernate
+ > specification that is concerned with persistence, which loosely means any mechanism by which Java objects outlive the application process that created them. 
+	- Not all Java objects need to be persisted, but most applications persist key business objects. 
+ > The JPA specification lets you 
+	- define which objects should be persisted, and 
+	- how they are persisted in your Java applications.
+
+
+
+
+
+09 JSR 339: Java API for RESTful WebServices2.0
+
+JAX-RS
+ > stands for Java API for RESTful webServices
+ > Jakarta RESTful Web Services, is a Jakarta EE API specification that provides support in creating web services according to the Representational State Transfer (REST) architectural pattern
+ > its main competitor is the Spring MVC from Spring
+
+
+
+
+
+
+10 JSR 340: Java Servlet 3.1
+
+Java Servlet
+ > specification that defines how you create, initialize, execute a Servlet, and also the annotations that are available for us to use
+ > also includes the JSPs
+
+
+
+
+
+
+11 JSR 341: Expression Language 3.0
+
+Expression Language (EL)
+ > available as part of JSP specification since JSP 2.0
+ > but expert group in JSP 2.0 realized EL's useful and decided to make it a separate specification
+ > syntax of the Expression language includes dollar sign and curly braces
+	- ex: @Value("${server.port}")
+ > widely used in JSP, where you want to access Request or Model properties
+
+
+.
+
+
+
+
+12 JSR 342: Java Platform, Enterprise Edition 7
+
+JSR 342: Java Platform, Enterprise Edition 7
+ > This JSR is to develop Java EE 7, the next release of the Java Platform, Enterprise Edition.
+ > the goal of this next release is as follows	
+	1. Include support for latest web standard (
+		- ex: HTML5, Web Sockets, JSON
+	2. Ease of development 
+		- includes a revised and simplified JMS 2.0 APIP
+		- also includes enhancement of CDI dependency injection facility 
+	3. Infrastructure for cloud support
+		- In Java EE 7 we expect to lay groundwork for enhancements to the platform for use in cloud environments in a future Java EE 8 release
+		- Areas that we expect to address encompass some of those mentioned above, and include 
+			a. resource definition metadata, 
+			b. improved security configuration, and 
+			c. database schema generation.
+
+
+ 
+
+
+
+
+13 JSR 343: Java Message Service 2.0
+
+JMS
+ > stands for Java Message Service
+ > allows us to do asynchronous and synchronous communication
+ > uses Messages and MessageQueue to store the data to be sent to Users
+
+
+
+
+
+14 JSR 344: JavaServer Faces 2.2
+
+JavaServer Faces technology includes:
+ > A set of APIs for 
+	- representing UI components and managing their state, 
+	- handling events and input validation, 
+	- defining page navigation, and 
+	- supporting internationalization and accessibility.
+ > A JavaServer Pages (JSP) custom tag library for expressing a JavaServer Faces interface within a JSP page.
+
+
+
+
+
+15 JSR 345: Enterprise JavaBeans 3.2
+
+EJB
+ > stands for Enterprise Java Beans
+ > subset of Java EE specifications
+ > It shouldered the Java developers' burden of 
+	- concurrency, 
+	- security, 
+	- persistence, 
+	- transaction processing, and more
+ > not much preferred back then because of 
+	- its amount of configuration required and the 
+	- performance bottleneck it introduces
+ > programmers preferred the Spring framework with its Spring Beans nowadays
+ > newer version of EJB are more simpler to use compare to the previous versions
+
+
+
+
+
+
+16 JSR 346: Contexts and Dependency Injection for JavaEE 1.1
+
+CDI for Java EE
+ > specification that defines a powerful set of complementary services that helps improve the structure of application code
+ > this includes
+	- A well-defined lifecycle for stateful objects bound to lifecycle contexts, where the set of contexts is extensible
+	- A sophisticated, typesafe dependency injection mechanism, including the ability to select dependencies at either development or deployment time, without verbose configuration
+	- Support for Java EE modularity and the Java EE component architecture - the modular structure of a Java EE application is taken into account when resolving dependencies between Java EE components
+	- Integration with the Unified Expression Language (EL), allowing any contextual object to be used directly within a JSF or JSP page
+	- The ability to decorate injected objects
+	- The ability to associate interceptors to objects via typesafe interceptor bindings
+	- An event notification model
+	- A web conversation context in addition to the three standard web contexts defined by the Java Servlets specification
+	- An SPI allowing portable extensions to integrate cleanly with the container
+
+
+
+
+
+
+17 JSR 380: Bean Validation 2.0
+
+JSR 380: Bean Validation 2.0
+ > JSR 380 is a specification of the Java API for bean validation, part of Jakarta EE and JavaSE. 
+ > This ensures that the properties of a bean meet specific criteria, using annotations such as @NotNull, @Min, and @Max.
+ > This version requires Java 8 or higher, and takes advantage of new features added in Java 8, such as type annotations and support for new types like Optional and LocalDate.
+ > For full information on the specifications, go ahead and read through the JSR 380.
+	- https://jcp.org/en/jsr/detail?id=380
+ > when it first created (with JSR 349 Bean Validation 1.1), it uses Hibernate Bean validation as its reference implementation
+
+
+
+
+
+
+
+18 JSR 352: Batch Applications for the Java Platform 1.0
+
+JSR 352: Batch Applications for the Java Platform 1.0
+ > based on Spring Batch
+ > allows us to develop batch applications in Java platform
+
+
+
+19 JSR 353: Java API for JSON Processing 1.0
+
+JSR 353: Java API for JSON Processing 1.0
+ > The Java API for JSON Processing (JSR 353) provides portable APIs to 
+	- parse, 
+	- generate, 
+	- transform, and 
+	- query JSON using object model and streaming APIs.
+ > The object model API creates a random-access, tree-like structure that represents the JSON data in memory. 
+ > The tree can then be navigated and queried.

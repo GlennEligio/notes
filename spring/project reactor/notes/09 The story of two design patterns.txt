@@ -1,0 +1,27 @@
+09 The story of two design patterns
+
+
+Two patterns
+ > Iterator pattern 
+ > Observer pattern
+
+
+Iterator pattern 
+ > the iterator pattern is a design pattern in which an iterator is used to traverse a container and access the container's element
+ > the iterator pattern DECOUPLES algorithm from containers
+ > with this, REGARDLESS of how the Container's element is fetch, it will still behave the same way
+ > Iterator's job is to "iterate" the Container,
+	- its implementation provides a way to iterate the next element (ex: next() from Iterable interface)
+
+Observer pattern
+ > The observer pattern is a design pattern where the subject maintains a list of its dependents, called observers, and notifies them automatically of any state changes, usually by calling one of their methods
+ > observer pattern was in use at that time, especially when people is still doing front end development in Java
+ > in this pattern, theres two parts
+	1. Source
+	2. Observer
+ > when the Source's data changes, it notifies the Observer, and sends the new data as well
+ > the Observer's defined callback or function will then be executed with the new data received	
+ > in short,
+	1. Observer defining a behavior to a Source
+	2. Source emits an event when its data changes
+	3. Source sends the new data to Observer

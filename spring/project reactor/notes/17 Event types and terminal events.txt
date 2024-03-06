@@ -1,0 +1,15 @@
+17 Event types and terminal events
+
+
+Mono vs Flux
+ > Mono: 0 or 1 time
+ > Flux: 0 or N times
+
+What Mono or Flux emits
+1. An item
+2. A complete event
+3. A failure event
+
+
+NOTES:
+1. When a terminal event (complete or failure) is emitted, the Flux or Mono will NOT emit anything afterward (item or another event)

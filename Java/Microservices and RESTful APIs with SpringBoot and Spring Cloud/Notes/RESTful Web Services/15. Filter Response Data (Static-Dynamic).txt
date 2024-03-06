@@ -1,0 +1,189 @@
+15. Filter Response Data (Static/Dynamic)
+
+Filtering
+	> acts of pre-processing data to be sent back as response
+	> two ways of filtering
+		1. Static filtering
+			> cant be changed, static
+			> uses @JsonIgnore or @JsonIgnoreProperties
+		2. Dynamic filtering
+			> can be changed and configure for specific use case
+			> uses these following classes
+				a. PropertyFilter
+				b. FilterProvider
+				c. MappingJacksonValue
+
+
+@JsonIgnore
+	> added in a field of some Bean class
+	> Marker annotation that indicates that the logical property that the accessor (field, getter/setter method or Creator parameter[of JsonCreator-annotated constructor or factory method]) is to be ignored by introspection-based serialization and deserialization functionality.
+		- makes it so that the property annotation will not be included in final serialization output
+
+@JsonIgnoreProperty
+	> added in a Bean class
+	> Annotation that can be used to either suppress serialization ofproperties (during serialization), or ignore processing ofJSON properties read (during deserialization). 
+	> have parameters like
+		a. value
+			- takes an array of String
+			- this Strings should match the name of the properties
+
+
+
+PropertyFilter
+	> used to create a Filter definition
+		- like what fields or properties to include (or not include) in the final serialized output
+	> have one implementation class called SimpleBeanPropertyFilter
+
+SimpleBeanPropertyFilter
+	> implementation of PropertyFilter
+	> have static methods to configure the filtering
+
+filterOutAllExcept(Set<String> properties)
+filterOutAllExcept(String... properties)
+	> INCLUSION filtering
+	> filters all properties except those that MATCHES the String Collection input
+
+serializeAllException(Set<String> properties)
+serializeAllException(String... properties)
+	> EXCLUSION filter
+	> serialize all properties except those that MATCHES the String Collection input
+
+
+
+FilterProvider
+	> Interface for objects that providers instances of PropertyFilterthat match given ids. A provider is configured to be used during serialization,to find filter to used based on id specified by com.fasterxml.jackson.annotation.JsonFilterannotation on bean class.
+
+SimpleFilterProvider
+	> implementation of FilterProvider
+	> have methods in order to define Filter to add/set in the FilterProvider
+	> methods are
+
+METHODS
+SimpleFilterProvider	addFilter (String id, SimpleBeanPropertyFilter filter)
+				> add a ID that corresponds to a specific Filter function
+				> returns a SimpleFilterProvider that is modified
+
+
+
+MappingJacksonValue
+	> A simple holder for the POJO to serialize via MappingJackson2HttpMessageConverter along with further serialization instructions to be passed in to the converter.
+		- serialization instructions include Filters 
+	> On the server side this wrapper is added with a ResponseBodyInterceptor after content negotiation selects the converter to use but before the write. 
+	> On the client side, simply wrap the POJO and pass it in to the RestTemplate.
+	> for its usage, we can just return the MappingJacksonValue (or a modified one in case of doing further filtering)
+	> to create one, we will one its constructor
+
+CONSTRUCTOR
+MappingJacksonValue(Object pojo)
+	> takes the POJO object that will be subject for serialization
+
+METHODS
+MappingJacksonValue	setFilter(FilterProvider filterProvider)
+				> takes a FilterProvider object to provide futher serialization instructions
+				> returns a modified MappingJacksonValue object
+
+
+@JsonFilter
+	> added in a Bean Class (typically DTOs class or Class that is used in endpoints)
+	> Annotation used to indicate which logical filter is to be usedfor filtering out properties of type (class) annotated;association made by this annotation declaring ids of filters,and com.fasterxml.jackson.databind.ObjectMapper (or objectsit delegates to) providing matching filters by id. 
+	> Filters to use are usually of type com.fasterxml.jackson.databind.ser.PropertyFilter andare registered through com.fasterxml.jackson.databind.ObjectMapper 
+	> Since 2.3, this annotation can also be used on properties (fields, methods,constructor parameters).
+	> have properties like
+		a. value
+			- takes a String value
+			- this String value refers to the ID of the PropertyFilter that will be fetch from FilterProvider
+			- the PropertyFilter will then be used to add further serialization process to the POJO
+
+
+
+Static Filtering
+1. Add @JsonIgnore or @JsonIgnoreProperties to the Bean class
+
+public class SomeBean {
+
+	private String field1;
+	private String field2;
+	@JsonIgnore
+	private String field3;
+
+OR
+
+@JsonIgnoreProperties(value = {"field3"})
+public class SomeBean {
+
+	private String field1;
+	private String field2;
+	private String field3;
+
+2. Return a SomeBean in one of the RequestMapping
+
+	@GetMapping("/filtering")
+	public SomeBean retrieveSomeBean() {
+		return new SomeBean("field1", "field2", "field3");
+	}
+
+3. Check the response
+
+{
+    "field1": "field1",
+    "field2": "field2"
+}
+
+
+
+
+
+DYNAMIC FILTERING
+1. Create a SimpleBeanProperty
+	> use its static method to create one	
+	> use filterOutAllExcept() and pass the names of the properties to serialize as String
+
+		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("field1", "field2");
+
+2. Create a FilterProvider
+	> create a new SimpleFilterProvider
+	> call addFilter() and pass a String ID, alongside the SimpleBeanPropertyFilter object we created earlier
+
+		FilterProvider filterProvider = new SimpleFilterProvider().addFilter("someBeanFilter", filter);
+
+3. Create a MappingJacksonValue
+	> create a new MappingJacksonValue
+	> pass the POJO to serialize in its constructor
+	> call setFilters() and pass the FilterProvider object we create
+	
+		MappingJacksonValue mapping = new MappingJacksonValue(someBean);
+		mapping.setFilters(filterProvider);
+
+4. Return the MappingJacksonValue object
+
+		return mapping;
+
+5. Add @JsonFilter to the SomeBean class
+	> pass the String ID we passed in addFilter() when creating FilterProvider object
+
+		@JsonFilter(value = "someBeanFilter")
+		public class SomeBean {
+
+
+WHOLE METHOD
+
+	@GetMapping("/filtering")
+	public MappingJacksonValue retrieveSomeBean() {
+		SomeBean someBean = new SomeBean("field1", "field2", "field3");
+		
+
+		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("field1", "field2");
+		FilterProvider filterProvider = new SimpleFilterProvider().addFilter("someBeanFilter", filter);
+		
+		MappingJacksonValue mapping = new MappingJacksonValue(someBean);
+		mapping.setFilters(filterProvider);
+		
+		return mapping;
+	}
+
+
+RESPONSE
+
+{
+    "field3": "field3"
+}

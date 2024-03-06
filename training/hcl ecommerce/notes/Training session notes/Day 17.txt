@@ -1,0 +1,104 @@
+Day 17
+
+crs-web/WebContent/<StoreName>/javascript
+	> contains all the javascript files used for specific StoreName
+	
+crs-web/WebContent/<StoreName>/javascript/store.js
+	> minified, bundled js file of all the javascript present in the store
+	> when creating new javascript file for the store, we will need to regenerate this file again
+	
+	
+OrderProcess Command
+	> theres a method called "approve"
+	> approve will say if the payment is successful or not
+	> if successful, it will now interact with payment plugin
+	
+NOTES:
+1. WCS will provide us with interface, and based on the payment provider we will use, we will provide different implementation for each of them
+2. Payment providers will give you API / Ready-made plugin to you. You can use this in your WebSphere Commerce
+
+
+Punchout method for payment
+1. User is redirected to external page provided by Payment Provider. This page is maintained by Payment Provider and handles the sensitive information of users. Then the page will return the payment transaction information to the previous page (merchandise page) whether it is successful or not
+
+
+Payment tokenization
+1. Payment method where we will use tokens
+
+
+IFrame
+	> used to display different HTML from external URL inside an HTML itself
+	> 
+	
+	
+WC/xml/config/payments/edp/groups/default
+	> contains all the files related to payment plugin
+	
+	
+Early Approval
+	> with this, in Order Placement, the money is deducted
+	> but in certain places, the money will be only deducted when the Order is shipped
+	
+PaymentMappings.xml
+	> contains all the mapping to the actionRule and configurations for specific payment methods
+
+AVSRules.xml
+	> contains information related to Address Verification Service for credit cards
+	
+PaymentMethodConfigurations.xml
+	> 
+	
+	
+Loyalty cards integration system
+
+PluginDeployment.xml plugin properties
+1. authenticationBaseURL is the URL of the Payment Provider
+2. callback_url is the URL callback that the Punchout page payment provider will call for payment transaction result
+
+
+PaymentMethodConfiguration
+	> name should match the folder in the edp/config/default
+	> paynebtSystem
+	
+	
+Plugin interface methods
+approve
+deposit
+approveAndDeposit
+
+
+Tables updated/related to the Payment plugin
+ORDERS
+ORDERITEM
+Tables related to Payment subsystem data model
+	> PPCPAYMENT
+	> PPCPAYINST
+	> PPCEXTDATA
+
+Payment process - punch out
+1. Shopper created an order
+	> initially, the Order status is P for payment pending
+2. When Shopping clicked "Pay" in order Configuration, the Order status will become W for submit order
+3. When Order is approved, the status will become M
+
+
+PPCPAYINST
+	> contains all the payment instructions for a specific Order
+	
+PPCEXTDATA
+	> contains extension data which goes beyond the standard attributes/data defined in the payment instruction
+	> It can be associated with a payment instruction or a financial transaction. When associated with a payment instruction, it can be used by all the financial transactions executed against the same payment instruction. 
+	> When associated with a financial transaction, this extra data can be used by this same transaction and subsequent transactions.
+	> data contained in this table is ENCRYPTED
+	
+	
+EDP tables
+	> manipulated by the Payment Rule Engine module in the Payments subsystem
+	
+PPC tables
+	> The Payment Plug-in Controller module in Payments subsystem manipulates the data in database tables that are prefixed with "PPC".
+
+
+PROBLEM CUSTOM PAYMENT Plugin
+1. Socket timeout
+	> only checkHealth and checkPaymentInstruction of TestPayBean is called

@@ -1,0 +1,79 @@
+117 Lambda Overview
+
+Why AWS Lambda - Amazon Lambda vs EC2
+Amazon EC2
+ > Virtual Servers in the Cloud
+ > Limited by RAM and CPU
+ > Continuously running
+ > Scaling means intervention to add/remove servers
+
+
+Amazon Lambda
+ > Virtual functions - no servers to manage!
+ > Limited by time - intended short executions
+ > Run on-demand, the Lambda function will only run when demanded
+ > Scaling is automated as part of Lambda service
+
+
+
+Benefits of AWS Lambda
+1. Easy Pricing
+	> pay per request and compute time
+	> free tier of 1,000,000 AWS Lambda requests and 400,000 GBs of compute time
+2. Integrated with the whole AWS suite of services
+3. Event-Driven: functions get invoked by AWS when needed
+	> make the AWS Lambda REACTIVE
+4. Integrated with many programming languages
+5. Easy monitoring through AWS CloudWatch
+6. Easy to get more resources per functions (up to 10GB of RAM!)
+7. Increasing RAM will also improve CPU and network!	
+
+
+
+AWS Lambda language support
+1. Node.js (JavaScript)
+2. Python
+3. Java (Java 8 compatible)
+4. C# (.NET Core)
+5. Golang
+6. C# / Powershell
+7. Ruby
+8. Custom Runtime API (community supported, example Rust)
+9. Lambda Container image
+	> the container image specifically MUST implement the Lambda Runtime API
+	> ECS/Fargate is preferred for running arbitrary Docker images
+
+
+
+Example: Serverless Thumbnail creation
+						push
+						|------> S3 
+       	trigger					|  (Stores new thumbnail)
+S3	--------> AWS Lambda Function ----------|
+(New image	(Creates a Thumbnail)		|
+in S3 is					|-----> DynamoDB
+added)						push	(Stores metadata of
+							Thumbnail)
+
+
+
+Example: Serverless CRON Job
+
+			Trigger every 1 hour
+CloudWatch Events -----------------------------> AWS Lambda Function
+EventBridge					(Perform a Task)
+
+
+
+AWS Lambda Pricing: Example
+ > You can find the overall pricing information here:
+	- https://aws.amazon.com/lambda/pricing/
+ > Pay per calls:
+	- First 1,000,000 requests are free
+	- $0.20 per 1 million requests thereafter ($0.0000002 per request)
+ > Pay per duration: (in increment of 1ms)
+	- 400,000 GB-seconds of compute time per month if FREE
+	- == 400,000 seconds if function is 1GB ram
+	- == 3,200,000 seconds if function is 128MB ram
+	- After that, $1.00 for 600,000 GB-seconds
+ > It is usually very cheap to run AWS Lambda so its very popular

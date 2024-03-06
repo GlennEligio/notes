@@ -1,0 +1,472 @@
+CSS - Introduction
+
+Tools that will be useful
+
+1. Bracket Pair Colorizer
+	> CSS will have many brackets and being able to distinguish the pairs will help us in writing CSS code
+
+2. indent-rainbow
+	> in CSS, there will be a lot of indention and with the formatter, we can be able to easily read the code we are working
+
+3. Highlight Matching Tag
+	> highlights the matching tags in the HTML more
+
+
+
+CSS - Cascading Style Sheets
+	
+CSS
+	> responsible for styling the web
+	> if HTML is to Structure as CSS is to LAYOUT AND LOOK
+	
+Structure of a CSS code
+
+selector{
+	property:value;
+	property:value
+}
+
+EX:
+
+h1{
+	color:red;
+}
+
+	This CSS code will 
+		1. Select the h1 element
+		2. Declare the h1 element will have the following property
+			a. color = red
+
+
+Parts of CSS code
+
+CSS rule
+	> the whole code
+
+Selector
+	> the one CSS rule will modify
+	> can be either an html element or a class
+
+Declaration
+	> every line in between the two curly braces
+	> each declaration is separated by semi-colon
+	> composed of property and value and is separated by semi-colon
+
+Property
+	> the first word in declaration
+
+Value
+	> the second word in declaration
+
+
+
+Includes:
+
+Types of Styling elements in HTML
+	a. inline css
+		> styling where the modification in element in done at the tags or INLINE of the element itself
+		> NOT PREFERRED since the html file gets clogged up easily
+
+Example of inline css
+
+    <h1 style="color: olive; font-size: 3rem">hello world</h1>
+
+
+	b. internal css
+		> styling on the element is defined INSIDE the html file
+		> the styling is created, defined, and assigned inside the <style> element inside the <head> element of html file
+		> BETTER than inline wherein we can define element appearance in one place
+	c. external css
+		> styling is created and defined OUTSIDE the html file
+		> the external css file is then reference inside the html file using the href attribute of <style> of <head>
+		> for these type of styling, it is PREFERRED to have ONE FOLDER that contains all the css files
+
+
+
+Conflicting Internal and External CSS
+	> in terms of style prioritization, the hierarchy will be
+
+		INLINE CSS > INTERNAL CSS > EXTERNAL CSS
+
+	> EX: if Internal and External CSS modify the same selector (i.e. h1), the properties of the selectors of Internal will override the one in External
+
+EX:
+
+Internal
+h1{
+	color:red;
+}
+
+External
+h1{
+	color:blue
+	font-size:0.5rem	
+}
+
+Final style
+h1{
+	color:red
+	font-size:0.5rem
+}
+
+
+rem
+	> unit of size in html
+	> size is relative to the font size of the root or <html> element
+
+
+
+HTML <link> tag
+	> used to define the relationship between the current document and the external resource
+	> most often used to link to external style sheet	
+	> is an empty element, it contains attributes only
+	> have the following attribute
+		a. rel	- required
+			- specifies the relationship between the current document and the linked document
+		b. href	- specifies the location of the linked document
+
+
+I. CSS preparation
+
+1. Create new project folder for the CSS tutorial
+
+
+
+2. Create a new html file
+	> name it whatever you want
+
+
+3. Add a default html structure inside it
+	> use ! emmet
+
+
+4. Change title to appropriate one
+	> CSS Tutorial title
+
+
+5. Open the Live Server
+
+
+6. Add an h1 element inside the body
+	> add hello world as its value
+
+
+
+
+II. Inline CSS demonstration
+
+7. Add a style attribute in the h1 element we added earlier
+	> in the style attribute, give it the value of 
+
+INSIDE body of index.html
+
+    <h1 style="color: olive">hello world</h1>
+
+	> if we observer the Live Server, we can see that the h1 element has changed its color to olive
+
+
+
+8. Add font size value in the style attribute of the h1 element
+	> give the font-size the value of 3rem
+
+INSIDE body of index.html
+
+    <h1 style="color: olive; font-size: 3rem;">hello world</h1>
+
+	> if we look at the Live Server, we can see that the font size of h1 element has changed
+
+
+
+III. Internal css 
+
+9. Add new elements inside the body of index.html
+	> two additinal h1 and one h2
+
+INSIDE index.html body
+
+  <body>
+      <h1>Hello world</h1>
+      <h1>Hello world</h1>
+      <h1>Hello world</h1>
+      <h2>Hello world</h2>
+  </body>
+
+
+
+
+10. Add a <style> tag inside the <head> of index.html
+	
+INSIDE index.html body
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Tutorial</title>
+    <style>
+    
+    </style>
+  </head>
+
+
+
+
+11. Inside the index.html file, add the following json text
+
+INSIDE index.html head
+
+    <style>
+        h1{
+            color: blue;
+            font-size: 3rem;
+        }
+    </style>
+
+	> now, if we observe the Live Server, we can see that ALL h1 elements has been modified
+	> where in all of them have become color blue and fontsize being 3rem
+
+
+
+12. Add another json text to modify the h2 element
+	> give it the following properties
+		- color = red
+		- font-size = 0.5rem
+
+INSIDE index.html head
+
+    <style>
+      h1 {
+        color: blue;
+        font-size: 3rem;
+      }
+      h2 {
+        color: red;
+        font-size: 0.5rem;
+      }
+    </style>
+
+	
+	> now, if we observer the Live Server, we can see that changed has been made to the h2 element in body
+
+
+
+
+
+EXTERNAL CSS
+
+13. Create another html file
+	> name it about.html
+	
+
+14. Create basic structure of html
+	> use ! emmet
+	> also, change the title element of head to About Page
+
+
+
+15. Inside body, add the following elements
+	> three h1 element and three h2 elements
+
+INSIDE about.html body
+
+<body>
+    <h1>Hello world</h1>
+    <h1>Hello world</h1>
+    <h1>Hello world</h1>
+    <h2>Hello people</h2>
+    <h2>Hello people</h2>
+    <h2>Hello people</h2>
+</body>
+
+
+
+
+16. Inside the index.html, add a linktag to navigate us to about.html
+
+INSIDE index.html body
+
+  <body>
+    <a href="about.html">about page</a>
+    <h1>Hello world</h1>
+    <h1>Hello world</h1>
+    <h1>Hello world</h1>
+    <h2>Hello world</h2>
+  </body>
+
+
+
+
+17. Inside about.html, add a linktag to navigate us to index.html
+
+INSIDE about.html body
+
+<body>
+    <a href="index.html">home page</a>
+    <h1>Hello world</h1>
+    <h1>Hello world</h1>
+    <h1>Hello world</h1>
+    <h2>Hello people</h2>
+    <h2>Hello people</h2>
+    <h2>Hello people</h2>
+</body>
+
+
+
+
+18. Remove the <style> tags and its content in index.html
+
+
+
+19. Create a CSS file in the project folder
+	> name it styles.css
+
+
+
+20. Inside the styles.css, add the json text that will modify the colors of h1 and h2
+
+INSIDE styles.css
+
+h1{
+    color: crimson;
+}
+h2{
+    color: yellow;
+}
+
+
+
+21. Inside the index.html, add a <link> tag
+	> inside the link tag, define its following attributes
+		a. rel = "stylesheet"
+		b. href = "./styles.css"
+
+INSIDE index.html head
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Tutorial</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+
+
+	> if we observe the index.html webpage, we can see that the code we've written inside the styles.css file has taken effect to the elements inside the body
+
+
+
+
+22. Add styles.css as stylesheet of the about.html file
+
+INSIDE about.html head
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+	> as we can see, both the about.html and index.html now have the same style of h1 and h2
+
+
+
+
+23. Change the styles.css
+	> change the following
+		h1
+			= color to blue	
+			= fontsize to 4rem
+		h2
+			= color to cadetblue
+
+INSIDE styles.css file
+
+h1{
+    color: blue;
+    font-size: 4rem;
+}
+h2{
+    color: cadetblue;
+}
+
+	> if we look at the index.html and about.html webpage, we can see the changes that has taken effect to it
+
+
+
+
+24. Create a folder for containing the css files
+	> name it css
+	> add the styles.css inside it
+	> modify the file path of the styles.css files in the link tags of index.html and about.html
+
+INSIDE the head of index.html and about.html
+
+    <link rel="stylesheet" href="./css/styles.css">
+
+
+
+
+IV. Testing styling priority of HTML
+
+25. Do the following
+	a. Modify the styles.css
+		> remove the h2 element
+		> remove fontsize of h1
+	b. Move styles.css from css folder to root folder
+	c. Delete css folder
+	d. Delete about.html folder
+
+	> with this only index.html and styles.css should be remaining in root folder
+
+
+
+26. Add an internal css inside the index.html
+	> the internal css must do the following
+		- change color of h1 to red
+
+INSIDE index.html head
+
+    <style>
+        h1{
+            color: red;
+        }
+    </style>
+
+INSIDE styles.css
+
+h1 {
+  color: blue;
+  font-size: 0.5rem;
+}
+
+
+
+
+27. Observer the Live Server
+	> as we can see, the HTML PRIORITIZED the Internal css selector's property over the External css selector's property
+	> the Internal overriden the color of the h1 but left the font-size of external css alone
+
+
+
+
+28. Add an inline css in one of the h1 in index.html body
+	> change the color of h1 to green
+
+INSIDE index.html body
+
+  <body>
+    <a href="about.html">about page</a>
+    <h1 style="color: green">Hello world</h1>
+    <h1>Hello world</h1>
+    <h1>Hello world</h1>
+    <h2>Hello world</h2>
+  </body>
+
+	> if we observe Live Server, we can see that the inline css OVERRIDEN both the Internal and External css
+ 
+
+
+
+	

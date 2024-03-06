@@ -1,0 +1,99 @@
+Collections
+1. Request
+	- guid		Request Id
+	- list<string>	Item id
+	- datetime	CreatedTime
+	- string	Student name
+	- string	Professor Name
+	- boolean	Status
+	- string	Code
+2. Account info
+	- Account Name
+	- Username
+	- Password
+3. Item info
+	- Item name
+	- Item id (BARCODE)
+
+
+Request has MANY Item
+Account has MANY Request
+
+
+
+Dtos
+
+RequestDto
+	- Request Id
+	- List of Item name (Got from Item Collection using Item id prop of Request)
+	- Created time
+	- Student name
+	- Professor name (Got from Account info Collection using Prof id of Request)
+	- Status 
+	- Code
+	- Description
+
+CreateRequestDto
+	- list of items
+	- Student name
+	- Professor name
+
+UpdateRequestDto
+	- Status
+
+
+AccountDto
+	- Username
+	- Password
+
+CreateAccountDto
+	- Username
+	- Password
+
+UpdateAccountDto
+	- Name
+	- Username
+	- Passowrd
+
+ItemDto
+	- ItemName
+	- ItemDescription
+
+CreateItemDto
+
+
+
+
+Important Queries
+Professor app
+1. Get all Request to a specific Professor (using Account Id) with following properties
+INPUT
+	> account id
+
+OUTPUT	
+	> id
+	> list of item ids
+	> student name
+	> description of request
+	
+
+2. Get a specific item in the items list
+INPUT
+	> list of item id
+OUTPUT
+	> list of items with following properties
+		> item name
+		> item description
+
+3. Change status of the request
+INPUT
+	> request id
+
+
+4. Get the Account Id in order to login
+INPUT
+	> user
+	> pass
+
+OUTPUT
+	> account id

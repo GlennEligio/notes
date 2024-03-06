@@ -1,0 +1,85 @@
+Abstract Class
+
+Main class
+
+package com.glenneligio.abstractclasses;
+
+public class Main {
+    public static void main(String[] args) {
+        TestAbstractClass testAbstractClass = new TestClass();
+        testAbstractClass.print("Hello");
+    }
+}
+
+
+TestAbstractClass
+
+package com.glenneligio.abstractclasses;
+
+public abstract class TestAbstractClass {
+    public abstract void printName(String name);
+    /*
+        Abstract methods / classes
+        to make a class abstract
+        > put abstract keyword between accessModifier and class keyword
+        syntax
+        > accessModifier abstract class className
+        if class is an abstract class, the icon in project tab will change
+     */
+
+    private String name;
+    /*
+        abstract method
+        > have same syntax as abstract class
+        > doesn't have a body, will get error if have one
+     */
+
+    //non-abstract method inside an abstractClass
+    public void print(String text){
+        System.out.println(text);
+    }
+
+}
+
+
+TestClass
+
+package com.glenneligio.abstractclasses;
+
+public class TestClass extends TestAbstractClass{
+
+
+    @Override
+    public void printName(String name) {
+
+    }
+
+    /*
+            abstractClasses vs interfaceClass
+            1. "extends" keyword is used to inherit an abstractClass
+                "implement" keyword is used to inherit an interFace
+            2. abstractClasses DOES NOT support multiple inheritance
+                interFace DOES support multiple inheritance
+            3. abstractClass CAN have non-abstract method, instance fields, and constructions
+                interFace CAN only have abstract method inside
+
+            BOTH need to IMPLEMENT the neccessary fields and methods, or constructor
+	if interface being implemented has one
+
+	            BOTH need to IMPLEMENT the necessary fields and methods
+
+            Used Abstract Classes when:
+            > classes are related to each other
+            > expect that classes that extend your abstract class have many common methods
+              or fields, or require access modifier other than public (such as protected and private)
+            > you want to declare non-static or non-final fields.
+              (this enables you to define methods that can access and modify the state of the object
+               to which they belong.)
+            
+            Use Interface when
+            > when classes are not related to each other
+            > in cases when you want to use multiple inheritance
+         */
+
+}
+

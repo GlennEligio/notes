@@ -1,0 +1,9 @@
+Day 16
+
+WebSphere Commerce JSTL tag libraries
+	> tag libraries that is provided by HCL Commerce for various operations
+	
+	
+	
+<fmt:message bundle="${storeText}" key="PRODUCT_ID" />
+<fmt:message bundle="${storeText}" var="RecurringOrderFrequencyText1" key="SCHEDULE_ORDER_INTERVAL_1" />

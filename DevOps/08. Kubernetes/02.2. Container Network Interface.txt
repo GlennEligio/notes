@@ -1,0 +1,38 @@
+02.2 Container Network Interface (CNI)
+
+
+
+Continer Network Interface (CNI)
+	> specification to configure network interfaces in Linux Containers
+	> Concerned with connecting (adding) and disconnecting (deleting) containers to the network
+	> it is a Network Model with connectivity rules:
+		1. POD to POD communication is possible WITHOUT using Network Address Translation (NAT)
+		2. Node to Pod communication is possible without NAT
+		3. IP that a Pod sees itself as is the same IP that others see it as
+	> CNI comes with networking plugins like
+		- BRIDGE
+		- VLAN
+		- IPVLAN
+		- MACVLAN
+		- DHCP
+		- host-local
+	> Third-part plugins can be used as well like
+		- Calico
+		- Weave network
+		- flannel
+		- NSX
+
+
+Why CNI
+	> Networking can be highly environment-specific
+	> Different projects seek to solve the networking challenges - with potential overlap
+	> Makes standards for common networking
+
+
+CNI in Kubernets
+/opt/cni/bin/ 
+	> show all the supported cni pluggins executeables
+ls /etc/cni/net.d/ 
+	> shows which plugin is used
+cat /etc/cni/net.d/10-calico.conflist 
+	> (if you are using calico plugin) gives more information about the plugin

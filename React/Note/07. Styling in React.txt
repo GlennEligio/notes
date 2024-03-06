@@ -1,0 +1,22 @@
+07. Styling in React
+
+Styling in React
+	> to style in React App, we can do it in two ways
+		1. inline css 
+		2. external css using index.css
+	> for inline css, we can either
+		1. add the style as is in the element of JSX
+		2. create a JS object which hold CSS, then assign the said object to style parameter
+
+Inline 1
+
+<h1 style={{ color: "red", background: "black" }}>{title}</h1>
+
+
+Inline 2 using JS object for holding CSS style
+
+<h1 style={headingStyle}>{title}</h1>
+const headingStyle = {
+  color: "red",
+  background: "black",
+};

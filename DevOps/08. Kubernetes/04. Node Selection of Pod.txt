@@ -1,0 +1,208 @@
+04. Assigning Pods to Nodes
+
+Assigning Pods to Nodes
+	> we can constraint a Pod to only be able to run on a particular Node(s), or prefer to run on particular Node
+	> to do this, we can either
+		a. nodeName:
+			- only nodes with specific Name will run the Pods
+		b. nodeSelector
+			- only nodes with specific label(s) will run the Pods
+		c. nodeAffinity
+			- sets the affinity of the Pods to a specific Nodes
+			- can either be a REQUIREMENT or just a PREFERENCE of Node to run a Pod
+	> we can specify these properties in the Manifest yaml file to run the Pod/Deployment
+	> use cases include:
+		- running Pods in a specific environments (Dev, Test, Prod)
+
+PROCESS:
+1. Add certain properties in Node 
+	- name	(change hostname of Node)
+	- label (use "kubectl label node <NODE NAME>" command)
+2. Use Manifest yaml file with either of the fields
+	- spec: 
+		affinity: 
+			nodeAffinity
+	- spec:
+		nodeSelector:
+	- spec:
+		nodeName:
+
+
+1. nodeName
+
+EX:
+#nodeName.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: podonkwn1
+spec:
+   containers:
+   - name: nginx-container
+     image: nginx
+   nodeName: kwn1
+
+In this case, the Pod "podonkwn1" created will only run in Node whose name is "kwn1" (stands for K8s Worker Node 1)
+
+
+
+2. nodeSelector
+
+#nodeselector.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+ name: podnodeselector
+spec:
+  containers:
+   - name: container1
+     image: nginx
+  nodeSelector:
+     env: “prod”
+
+	> In this case, the Pod "podnodeselector" will only run on Node whose labels include "env=prod". 
+	> And to add a label to a Node, we can use the command	
+		kubectl label nodes <NODE NAME> <LABEL>
+	> LABEL are in form of key=value pair
+		ex: kubectl label nodes kwn2 env=prod
+
+
+
+3. nodeAffinity
+	> can be either of the two
+		1. requiredDuringSchedulingIgnoredDuringExecution
+			- affinity (label is present in Node) is a MUST (required) during Pod Scheduling in Nodes
+			- after scheduling, if Pod fails, Pod will IGNORE affinity and run on any Nodes
+		2. preferredDuringSchedulingIgnoredDuringExecution
+			- affinity (label is present in Node) is PREFERRED (will try) during Pod Scheduling in Nodes
+			- after scheduling, if Pod fails, Pod will IGNORE affinity and run on any Nodes
+			- to define the said "preferability", we can define "weight:" field (higher the number, higher the preferability)
+
+# nodeaffinity1.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: podaffinity
+spec:
+   containers:
+   - name: nginx-container
+     image: nginx
+   affinity:
+     nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: env
+                operator: In
+                values:
+                - test
+                - stage
+
+	> In this case, for a Node to run this Pod during Pod Scheduling, it MUST have label "env" with values of either "test" or "stage"
+
+
+#nodeAffinity2.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+     name: pod1
+spec:
+   containers:
+   - name: c1
+     image: nginx
+   affinity:
+           nodeAffinity:
+                   preferredDuringSchedulingIgnoredDuringExecution:
+                    - preference:
+                            matchExpressions:
+                             - key: size
+                               operator: In
+                               values:
+                                 - extralarge
+                      weight: 1
+
+
+	> in this case, it will prefer Nodes with label "size" whose value is "extralarge"
+	> also, it has weight preference field of 1
+
+
+
+
+
+Preventing a Node to run a specific Pod
+	> opposite of the one above, where here we "taint" a Node to have it run on specific Pod only
+	> to do this, we will need to add Taint to a Node
+		a. taint
+			- marks the Node to not run a specific Pods whose "tolerance" doesnt match the taint
+	> we can also define the effects of these taints
+		a. NoSchedule
+			- this will make it so the Pods that doesnt pass the tolerance will NOT BE SCHEDULED in this Node
+		b. NoExecute
+			- this will make it so that Pods that doesnt pass the tolerance will NOT BE EXECUTED in this Node
+
+
+PROCESS:
+1. Add "taint" on a Node
+	> use "kubectl taint nodes <NODE NAME> key=value:effect"
+	> ex: kubectl taint nodes node1 key1=value1:NoSchedule
+2. Create a Manifest yaml file 
+	> manifest must have field
+		spec:
+			tolerations:
+
+EX:
+
+#taint.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+  tolerations:
+  - key: app
+    operator: "Equal"
+    value: "web"
+    effect: "NoSchedule"
+
+
+kubectl taint nodes kwn1 app=web:NoSchedule
+
+
+	> in this case, the Pod "myapp-pod" will be scheduled in the Node "kwn1" since its tolerance matches the Node taint
+
+
+
+
+Commands
+
+NODE LABEL RELATED
+
+kubectl get nodes --show-labels
+	> show all Nodes information with their labels
+
+kubectl get nodes --show-labels <NODE NAME>
+	> show node information of a specific Node with their labels
+
+kubectl label nodes <NODE NAME> <LABEL>
+	> adds a label in a specific node
+	> LABEL must be in key=value form
+	> ex: kubectl label nodes kwn2 env=prod
+
+kubectl label node <NODE NAME> <key>-
+	> removes a label in with specified key in the Node
+
+
+
+
+NODE TAINT
+
+kubectl taint nodes <NODE NAME> <TAINT>:<EFFECT>
+	> used to add a Taint in the Node
+	> TAINT should be in form of key=value pair
+	> ex: kubectl taint nodes kwn1 app=web:NoSchedule
+
+kubectl taint nodes <NODE NAME> <key>-
+	> used to remove a Taint with specified key

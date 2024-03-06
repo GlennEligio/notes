@@ -1,0 +1,82 @@
+16 Testing with Typescript with Jest - Node
+
+Steps:
+01. Install dependencies
+02. Prepare jest.config.js
+03. Prepare tsconfig.json
+04. Prepare package.json
+05. Adding the .test.ts files
+
+
+01. Install dependencies
+Dependencies
+ > we typically have test-related dependencies as dev dependencies
+
+ts-jest
+ > A Jest transformer with source map support that lets you use Jest to test projects written in TypeScript.
+jest
+ > testing framework, needed
+@types/jest
+ > for adding type support to Jest
+
+
+
+02. Prepare jest.config.js
+
+Prepare jest.config.js
+ > in jest.config.js, we will define the following
+	1. the root directory where we will search the .ts files
+	2. create a logic to match the files that we will count as test case files	
+	3. define how we will transform the matched file
+
+EX:
+// jest.config.js
+module.exports = {
+  roots: ["<rootDir>/src"],
+  testMatch: [
+    "**/__tests__/**/*.+(ts|tsx|js)",
+    "**/?(*.)+(spec|test).+(ts|tsx|js)",
+  ],
+  transform: {
+    "^.+\\.(ts|tsx)$": "ts-jest",
+  },
+};
+
+
+
+
+
+
+
+
+
+03. Prepare tsconfig.json
+
+NOTE:
+1. the roots in the jest.config.js must match the rootDir/rootDirs in the tsconfig.json
+
+
+
+
+
+
+
+04. Prepare package.json
+
+NOTE:
+1. Based on the "type" property of the package.json, we will change how we export the JSON object inside jest.config.js
+	> if type of module, we will use module.exports
+	> if type of commonjs, we can use export default
+
+
+
+
+
+
+
+05. Adding the .test.ts files
+
+NOTE:
+1. In the TypeScript documentation, it is recommended to add the .test.ts files INSIDE "src" which is typically the rootDir
+2. Add the .test.ts file inside the folders that must match to the regex in the jest.config.js's testMatch
+

@@ -1,0 +1,179 @@
+Day 15
+
+
+Creating REST handler and the logic
+
+WebSphereCommerceServerExtensionsLogic
+	> project that contains the logic with regards to handling REST request
+	
+REST
+	> project that contains 
+	
+Steps to create REST API
+1. In WebSphereCommerceServerExtensionsLogic project
+	> create a package to contain Handler class
+	> create a class to be the REST handler
+2. In in REST project
+	> create a new folder in the Rest/WebContent/WEB-INF/config named "commandMapping-ext"
+		- this will contain all the commandMapping for custom Controller Command and the profiles available to the said Controller command
+	> create a new xml file under the folder created
+		- name should be the <package-name>.<ControllerCmdName>.xml
+	> populate the xml file with command's profiles
+	> create a new entry in the "resource-ext.properties" file under Rest/WebContent/WEB-INF/config
+		- this contains all the custom ControllerCommand mapping xml files
+		- pass the filename of the xml file created under commandMapping-ext folder
+3. In the WebSphereCommerceServerExtensionsLogic project again
+	> make sure that input and output methods specified in the command profile used 
+		
+		
+EX:
+/WebSphereCommerceServerExtensionsLogic/src/com/abc/commerce/rest/rating/handler/RatingHandler.java
+
+package com.abc.commerce.rest.rating.handler;
+
+import java.util.logging.Logger;
+
+import javax.ws.rs.Encoded;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import com.abc.commerce.orders.command.SaveRatingCmd;
+import com.ibm.commerce.foundation.common.util.logging.LoggingHelper;
+import com.ibm.commerce.rest.classic.core.AbstractConfigBasedClassicHandler;
+
+@Path("store/{storeId}/rating")
+@Encoded
+public class RatingHandler extends AbstractConfigBasedClassicHandler {
+
+	private static final String CLASSNAME=RatingHandler.class.getName();
+	private static final Logger LOGGER = LoggingHelper.getLogger(RatingHandler.class);
+	
+	private static final String RESOURCE_NAME = "rating";
+	private static final String PROFILE_NAME = "Rating_Details";
+	
+	@Override
+	public String getResourceName() {
+		// TODO Auto-generated method stub
+		return RESOURCE_NAME;
+	}
+	
+	@POST
+    @Path("create")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,MediaType.APPLICATION_XHTML_XML, MediaType.APPLICATION_ATOM_XML })
+	public Response processRequest(@PathParam("storeId") String storeId,
+	  @QueryParam(value = "responseFormat") String responseFormat,
+	  @QueryParam(value = "profileName") String profileName)
+    {
+    final String METHODNAME = "processRequest" ; 
+    
+    Response result = prepareAndValidate(storeId, getResourceName(), "POST", request, responseFormat);
+    if (result != null) {
+    	if (LoggingHelper.isEntryExitTraceEnabled(LOGGER)) {
+    		LOGGER.exiting(CLASSNAME, "renderOrder", "SSL validation failed");
+    	}
+    	return result;
+    }
+    
+    try {
+    	result = executeConfigBasedCommandWithContext(SaveRatingCmd.class.getName(), 
+    			    PROFILE_NAME, responseFormat, storeId, null);
+    } catch (Exception e) {
+    	e.printStackTrace();
+    }
+    
+    return result;
+  }
+}
+
+
+EX:
+/Rest/WebContent/WEB-INF/config/resources-ext.properties
+
+com.abc.commerce.rest.rating.handler.RatingHandler
+
+
+
+EX:
+/Rest/WebContent/WEB-INF/config/commandMapping-ext/com.abc.commerce.orders.command.SaveRatingCmd.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<command>
+   <profiles>
+      <profile name="Rating_Details">
+         <inputs>
+            <input inputName="productId" methodName="setProductId"/>
+            <input inputName="rating" methodName="setRating"/>
+         </inputs>
+         <outputs>
+            <output methodName="getResult" outputName="result"/>
+            <output methodName="getRatingId" outputName="ratingId"/>
+         </outputs>
+      </profile>
+   </profiles>
+</command>
+		
+		
+Testing the REST API endpoint
+URL: https://localhost:443/wcs/resources/store/1/rating/create
+
+
+SEO compliancy with URL
+	> Search Engines like Google crawls all the website available in the Web
+	> anything after the ? will be ignored by the Web crawlers
+	
+	
+	
+SEO friendly urls
+	> urls that are easier for Search engines like Google to crawl
+
+
+JSTL tags
+Scriptlet tags - <% %>
+	> used to execute Java code
+	
+JSP
+	> java + html mixed
+	
+JSPF
+	> JSP fragment
+	> can be inserted inside another JSP using <%@include file="jspf location"/>
+	> two types of JSPF
+		1. dynamic
+			
+		2. static
+	> the line in which the JSPF is included will be replaced by the JSP fragment
+	> Static : can not accept parameters
+	> dynamic : can accept parameters.
+	> Static include are faster than dynamic includes
+	> Static include can not have dynamic file name because the container needs the file on translation phase, where as in dynamic container need file at run time.
+	> in static include the content of the file will be included at translation phase. like copy and paste, in dynamic include the response of the included file be included to the original response at run time.
+	> The syntax for static include is <%@ include file=�file.jsp� %> and the syntax for dynamic include is <jsp:include page=�file.jsp� />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

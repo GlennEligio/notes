@@ -1,0 +1,27 @@
+05. Playing with Docker Images and Container
+
+Docker commands
+
+1. docker container run <REPOSITORY>:<TAG>
+	> used to run a Docker Container based on the Image
+	> we can define several command flags to this
+		-p {HostPort}:{ContainerPort}
+			-> maps a Host port to the Container's Port
+			-> with this, we can send request to the Container through the Host port it is mapped
+		-d
+			-> makes the application inside Docker Container DETACHED to the Container's lifecycle
+			-> this means that if we close the app running inside, it will not affect the Container itself
+
+2. docker container ls
+	> list the Containers in Docker Engine
+	> command flags include:
+		-a
+			-> shows all Container, including those that are EXITED
+
+3. docker container stop <ContainerID>
+	> used to stop a Docker container
+
+3. docker images
+	> shows all the Docker images in LOCAL Docker Registry
+	
+	

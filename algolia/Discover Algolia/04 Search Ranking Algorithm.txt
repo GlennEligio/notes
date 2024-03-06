@@ -1,0 +1,45 @@
+04 Search Ranking Algorithm
+
+Ranking 1 - Search Ranking Algorithm
+
+Ranking
+ > transform the pool of unsorted results that matched the search query into an ordered list of results, showing the most relevant hits first
+ > the traditional way of ranking results in most search solutions today is INHERITED from "Lucene" technology
+	- for a given query, a Lucene based engine will use its algorithm to compute a single score per result
+	- it then order all of the results according to those values
+	- pure textual relevance and other parameters are mixed into this hard-to-debug numeric value
+ > Algolia has a radically different approach
+	- wherein instead of computing a single global score to solve the result once, Algolia's engine uses a "tie-breaking algorithm" to calculate N scores and applies up to N sorting successively
+	- this tie-breaking algorithm, where "n" Rules applied in succession is named "The Ranking Formula"
+	
+	
+The Ranking Formula
+ > another name of the Algolia's Tie-Breaking Algorithm
+ > composed of EIGHT Rules/Criteria applied in succession, making up eight different scores to solve the search results
+ > the Ranking Formula works by:
+	1. Running the data set in the first Criterion, and sorting them by the scores it got for that Rule
+	2. If there's a tie in scores for the first Criterion, it will run the data that have a tie in first Criterion score using the next Rule to "break the tie" and sort them again
+	3. If there's a tie again in the second Criterion, it will run the said tie in the next Criterion to again break the tie. It will do this until all ties in the data set is broken and each data in the set has a distinct position
+ > the 8 rules in the Ranking Formula of Algolia is as follows
+	1. Typo
+	2. Geo
+	3. Word
+	4. Filters
+	5. Proximity
+	6. Attribute
+	7. Exact
+	8. Custom
+ > each of the Rules looks at a different signal such as the number of typos, best matching attributes, and so on
+	- it will then assign a score to the record that will then be used for sorting as described
+ > the last one, Custom, for custom ranking is key for good relevance as it lets you inject your own business data into the ranking
+ > Ranking and Ranking Relevance are iterative processes you can't get a 100% right from the get-go
+	- this is where the tie-breaking solution shines as it gives you too many advantages over the other algorithm
+	
+
+Tie-Breaking Algorithm Strengths
+1. Easy to understand
+	> ranking is not a black box anymore
+	> ranking is clear and easy to understand
+2. More customization
+	> modify rules order
+	> add custom rules

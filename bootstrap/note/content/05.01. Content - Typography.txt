@@ -1,0 +1,249 @@
+05.01. Content - Typography
+
+Headings
+	> Headings in Bootstrap are RESPONSIVE
+		-> font size changes based on the screen size (width)
+	> Bootstrap also offers utility classes to make an element to look like Heading
+
+
+Heading class
+	> provides properties similar to a heading element (ex: <h1>)
+	> these properties include:
+	  	margin-top: 0;
+  		margin-bottom: 0.5rem;
+  		font-weight: 500;
+  		line-height: 1.2;
+	
+NOTATION:
+h{size}
+
+Size
+1-6	1 being the BIGGEST, and 6 being the SMALLEST
+
+EX:
+<p class="h1">h1. Bootstrap heading</p>
+<p class="h2">h2. Bootstrap heading</p>
+<p class="h3">h3. Bootstrap heading</p>
+<p class="h4">h4. Bootstrap heading</p>
+<p class="h5">h5. Bootstrap heading</p>
+<p class="h6">h6. Bootstrap heading</p>
+
+
+
+Dispay heading class
+	> Traditional heading elements are designed to work best in the meat of your page content. 
+	> When you need a heading to STAND OUT, consider using a display heading — a larger, slightly more opinionated heading style.	
+
+NOTATION
+display-{size}
+
+Sizes
+$display-font-sizes: (
+  1: 5rem,
+  2: 4.5rem,
+  3: 4rem,
+  4: 3.5rem,
+  5: 3rem,
+  6: 2.5rem
+);
+
+EX:
+<h1 class="display-1">Display 1</h1>
+<h1 class="display-2">Display 2</h1>
+<h1 class="display-3">Display 3</h1>
+<h1 class="display-4">Display 4</h1>
+<h1 class="display-5">Display 5</h1>
+<h1 class="display-6">Display 6</h1>
+
+
+
+
+
+Lead
+	> used to make a paragraph stand out
+	> we do this by adding "lead" class in a paragraph element
+
+ex:
+<p class="lead">
+  This is a lead paragraph. It stands out from regular paragraphs.
+</p>
+
+
+
+
+Inline text element
+	> in Bootstrap, they offer several classes for inline text element styling
+	> these classes (or element tags) should be used for SEMANTIC PURPOSE
+
+HTML tags
+<mark> 		represents text which is marked or highlighted for reference or notation purposes.
+<small> 	represents side-comments and small print, like copyright and legal text.
+<s> 		represents element that are no longer relevant or no longer accurate.
+<u> 		represents a span of inline text which should be rendered in a way that indicates that it has a non-textual annotation.
+<b>		meant to highlight words or phrases without conveying additional importance
+<i>		mostly for voice, techinical terms, etc
+
+Bootstrap Classes equivalent
+"mark"				<mark>
+"small"				<small>
+"text-decoration-underline"	<u>
+"text-decoration-line-through"	<s>
+
+
+EX:
+<p>You can use the mark tag to <mark>highlight</mark> text.</p>
+<p><del>This line of text is meant to be treated as deleted text.</del></p>
+<p><s>This line of text is meant to be treated as no longer accurate.</s></p>
+<p><ins>This line of text is meant to be treated as an addition to the document.</ins></p>
+<p><u>This line of text will render as underlined.</u></p>
+<p><small>This line of text is meant to be treated as fine print.</small></p>
+<p><strong>This line rendered as bold text.</strong></p>
+<p><em>This line rendered as italicized text.</em></p>
+
+
+
+
+
+Abbreviations
+	> Stylized implementation of HTML’s <abbr> element for abbreviations and acronyms to show the expanded version on hover. 	> Abbreviations have a default underline and gain a help cursor to provide additional context on hover and to users of assistive technologies.
+	> Add "initialism" class to an abbreviation for a slightly smaller font-size.
+
+EX:
+<p><abbr title="attribute">attr</abbr></p>
+<p><abbr title="HyperText Markup Language" class="initialism">HTML</abbr></p>
+
+
+
+
+Blockquotes
+	> for quoting blocks of content from another source within your document.
+	> Wrap <blockquote> around any HTML as the quote AND add "blockquote" class
+
+EX:
+<blockquote class="blockquote">
+  <p>A well-known quote, contained in a blockquote element.</p>
+</blockquote>
+
+
+Naming a source of quote of blockquote
+	> The HTML spec requires that blockquote attribution be placed outside the <blockquote>. 
+		-> Attribution means citing the source of a thing (i.e. quote)
+	> When providing attribution, 
+		1. wrap your <blockquote> in a <figure> and 
+		2. use a <figcaption> or a block level element (e.g., <p>) with the .blockquote-footer class. 
+	> Be sure to wrap the name of the source work in <cite> as well.
+
+EX:
+<figure>
+  <blockquote class="blockquote">
+    <p>A well-known quote, contained in a blockquote element.</p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Someone famous in <cite title="Source Title">Source Title</cite>
+  </figcaption>
+</figure>
+
+
+
+Alignment of Blockquote
+	> we can align the text of blockquote using the text utilities
+		-> we will add these text utilities in the <figure> element that encapsulates the blockquote and figcaption
+	> these text utilities for alignment includes
+		
+
+EX: text center
+<figure class="text-center">
+  <blockquote class="blockquote">
+    <p>A well-known quote, contained in a blockquote element.</p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Someone famous in <cite title="Source Title">Source Title</cite>
+  </figcaption>
+</figure>
+
+EX: text end
+<figure class="text-center">
+  <blockquote class="blockquote">
+    <p>A well-known quote, contained in a blockquote element.</p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Someone famous in <cite title="Source Title">Source Title</cite>
+  </figcaption>
+</figure>
+
+
+
+
+List
+Unstyling a List
+	> we can remove the styles (symbol and indentation) of list in Bootstrap
+	> with this, we will need to use "list-unstyled" class
+
+"list-unstyled"
+	> remove the style of a list
+		-> similar to "list-style: none"
+	> only applies to IMMEDIATE CHILDREN
+		-> will not apply to the list item of a nested list
+
+EX:
+<ul class="list-unstyled">
+  <li>This is a list.</li>
+  <li>It appears completely unstyled.</li>
+  <li>Structurally, it's still a list.</li>
+  <li>However, this style only applies to immediate child elements.</li>
+  <li>Nested lists:
+    <ul>
+      <li>are unaffected by this style</li>
+      <li>will still show a bullet</li>
+      <li>and have appropriate left margin</li>
+    </ul>
+  </li>
+  <li>This may still come in handy in some situations.</li>
+</ul>
+
+
+
+
+Inline list
+	> we can also make an inline list
+		-> difference is that in default list, list-items are block level. 
+		-> here, the list items are inline level
+	> to do this, we will need to use the combination of "list-inline" and "list-inline-item"
+		-> "list-inline" for <ul> element
+		-> "list-inline-item" for <li> element
+
+
+
+Truncating text content
+	> if somehow a text goes beyond the area it is nested, we can use "text-truncate" class
+
+"text-truncate"
+	> will truncate the text that goes over the border of element it is nested
+	> the text, if it overflows, will be concatenated by "..." at the end
+	> ex: This text is trunca...|
+
+EX:
+<dl class="row">
+  <dt class="col-sm-3">Description lists</dt>
+  <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
+
+  <dt class="col-sm-3">Term</dt>
+  <dd class="col-sm-9">
+    <p>Definition for the term.</p>
+    <p>And some more placeholder definition text.</p>
+  </dd>
+
+  <dt class="col-sm-3">Another term</dt>
+  <dd class="col-sm-9">This definition is short, so no extra paragraphs or anything.</dd>
+
+  <dt class="col-sm-3 text-truncate">Truncated term is truncated</dt>
+  <dd class="col-sm-9">This can be useful when space is tight. Adds an ellipsis at the end.</dd>
+
+  <dt class="col-sm-3">Nesting</dt>
+  <dd class="col-sm-9">
+    <dl class="row">
+      <dt class="col-sm-4">Nested definition list</dt>
+      <dd class="col-sm-8">I heard you like definition lists. Let me put a definition list inside your definition list.</dd>
+    </dl>
+  </dd>
+</dl>

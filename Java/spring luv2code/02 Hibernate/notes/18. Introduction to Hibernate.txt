@@ -1,0 +1,46 @@
+Hibernate
+
+Topics
+What is Hibernate?
+Benefits of Hibernate
+Code Snippets
+
+
+What is Hibernate?
+	> A framework for persisting / saving Java objects in a database
+
+Benefits of Hibernate
+	> Hibernates handles all of the low-level SQL
+	> Minimizes the amount of JDBC code you have to develop
+	> Hibernate provides the Object-to-Relational Mapping (ORM)
+
+
+Object-To-Relational Mapping (ORM)
+	> The developer defines mapping between Java class and database table
+
+
+SAVING A JAVA OBJECT WITH HIBERNATE
+	
+// create Java object
+Student theStudent = new Student("John", "Doe", "john@luv2code.com");
+
+// save it to database
+int theId = (Integer) session.save(theStudent);
+
+
+RETRIEVING A JAVA OBJECT WITH HIBERNATE
+
+// now retrieve from database using the primary key
+Student myStudent = session.get(Student.class, theId);
+
+
+
+QUERYING FOR JAVA OBJECTS
+
+Query query = session.createQuery("from Student");
+List<Student> students = query.list();
+
+
+
+Hibernate and JDBC
+	> Hibernate uses JDBC for all database communications

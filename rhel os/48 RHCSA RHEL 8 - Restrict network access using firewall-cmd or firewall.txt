@@ -1,0 +1,97 @@
+48 RHCSA RHEL 8 - Restrict network access using firewall-cmd/firewall
+
+Firewall
+ > piece of software that allows or blocks traffic
+ > goes in between a bunch or service or network and then restrict access only to specific IPs or ports in the servers
+	- ex: a webservice with http running in server, we can use firewall to restrict access to the server through port 80 (HTTP) or 443(HTTPS)
+ > Firewall is composed of different ZONES
+	- each Zones can contain one or more services/NIC 	
+	- each Zones can also have different rules
+
+
+GOALS:
+1. Create a new zone with firewall
+2. List the current zones
+3. Add services into the zone
+4. Add network interface cards into the zones
+
+
+
+Commands
+firewall-cmd
+ > firewalld command line client
+ > sypnosis:
+	firewall-cmd [OPTIONS...]
+
+
+firewall-cmd --get-zones
+ > prints all the firewall zones currently present
+
+
+firewall-cmd --zone ZONENAME --list-all
+ > list all configuration/information about the zone specified
+ > these informations includes target, icmp-block, interfaces (NIC or Network Interface Card), sources, services, ports, protocols, masquerade, forward-ports, source-ports, icmp-blocks, rich rules
+ > ex:
+	$ firewall-cmd --zone work --list-all
+		- list all the information/configuration about the zone "work"
+
+
+firewall-cmd --new-zone NEWZONENAME --permanent
+ > used to create a new zone
+ > --permanent option is needed for the --new-zone option
+ > ex:
+	$ firewall-cmd --new-zone servers --permanent
+
+
+firewall-cmd --reload
+ > used to reload the configuration of firewall and apply the changes made
+
+
+firewall-cmd --zone ZONENAME --add-service=SERVICENAME --permanent
+ > adds a service into the firewall zone
+ > ex:
+	$ firewall-cmd --zone ZONENAME --add-service=ssh --permanent
+
+
+firewall-cmd --zone ZONE --remove-service=SERVICE --permanent
+ > removes a service managed by a specific ZONE
+ > ex:
+	$ firewall-cmd --zone servers --remove-service=http --permanent
+
+
+firewall-cmd --zone ZONE --change-interface=INTERFACE --permanent
+ > change the NIC or interface where the firewall zone is applied
+ > ex:
+	$ firewall-cmd --zone server --change-interface=enp0s3 --permanent
+
+
+firewall-cmd --zone ZONE --add-port PORT/PROTOCOL --permanent
+ > adds a port and protocol managed by a specific firewall zone
+ > ex:
+	$ firewall-cmd --zone servers --add-port 8080/tcp --permanent
+
+
+firewall-cmd --zone=ZONE --add-port PORT/PROTOCOL --permanent
+ > removes a port and protocol managed by a specific firewall zone 
+ > Ex:
+	$ firewall-cmd --zone servers --remove-port 8080/tcp --permanent
+
+
+firewall-cmd --get-active-zones
+ > shows all firewall zones that are currently applied to the NIC or interfaces present in the system
+ > list all firewall zones along with the interfaces they are applied to
+ > ex:
+	$ firewall-cmd --get-active-zones
+
+
+firewall-cmd --set-default-zone=ZONE
+ > used to set a default firewall zone
+ > all commands like add-service or change-interface will be applied to this zone if no zone specified in the commands
+ > ex:
+	$ firewall-cmd --set-default-zone=server
+
+
+firewall-cmd --get-services
+ > print all the services managed by the firewall
+ > ex:	
+	$ firewall-cmd --get-services

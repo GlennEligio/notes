@@ -1,0 +1,87 @@
+138 SSM Session Manager
+
+System Manager - SSM Session Manager
+ > Allows you to start a secure shell on your EC2 and on-premises servers
+ > No SSH access, bastion hosts, or SSH keys needed
+ > No port 22 needed (better security)
+ > Support Linux, maxOS, and Windows
+ > Send session log data to S3 or CloudWatch Logs
+
+
+Diagram
+EC2 Instance
+^
+|
+| Execute commands
+|
+|
+Session Manager
+^
+|
+| IAM Permissions
+|
+User
+
+
+Demonstration
+Create EC2 Instance with SSM agent
+1. Create EC2 Instance
+2. Select Amazon Linux as image
+3. No keypair attached
+4. For Security group, create one, but dont allow ANY traffic to all ports
+5. In the Advanced Details
+	> attach an IAM instance profile
+	> for this, create an IAM Role to attach to the EC2
+	> in the IAM Role, add the 'AmazonSSMManagedInstanceCore' as one of the policies
+	> give the IAM Role a name (DemoEC2RoleForSSM)
+	> create the IAM Role and assign it to the EC2 instance that we are creating
+	> finish creating the EC2 instance and start it
+
+ex: Policy
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Principal": {
+                "Service": [
+                    "ec2.amazonaws.com"
+                ]
+            }
+        }
+    ]
+}
+
+
+
+Using Systems Manager to connect to EC2 instance's Shell
+1. Search 'Systems Manager' in AWS Dashboard
+2. Go to Fleet Manager section at left side
+	> the EC2 instance will only show here if it successfully boots up
+3. Go to Session Manager
+4. Select the EC2 instance where you want to start a Session
+5. Click 'Start session'
+6. Execute the commands below
+	> whoami
+		- this should print 'ssm-user'
+	> hostname
+		- this should print the private ip of the EC2
+
+
+
+Cleanup
+1. Terminate the Session
+2. Terminate the EC2 instance
+
+
+
+
+NOTES:
+1. Right now, we have three ways of connecting to EC2 instance Shell
+	> Using 3rd party SSH with private key
+	> Using EC2 Instance connect
+	> Using SSM Session Manager
+	> only SSM Session Manager does not need the EC2 port 22 to be open to connect

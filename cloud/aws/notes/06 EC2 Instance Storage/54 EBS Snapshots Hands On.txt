@@ -1,0 +1,60 @@
+54 EBS Snapshots Hands On
+
+
+Creating a EBS Snapshot
+1. Go to EBS Volume dashboard
+2. Select an EBS Volume to snapshot
+3. Click Action > Create Snapshot
+4. Provide the name, then click Create
+
+
+Actions that we can do to EBS Snapshot
+1. Copy EBS snapshot to a different Region
+2. Create an EBS Volume from an EBS Snapshot
+
+
+
+Create an EBS Volume from a Snapshot
+1. Go to EC2 Dashboard > Elastic Block Store section > Snapshots
+2. Click the Snapshot you want to use
+3. Click Actions > Create volume from Snapshot
+4. Provide the necessary information, and finish creating the Volume
+5. Check the EBS Volumes to see if the Volume is successfully created
+	> the Volume should have the value in the "Snapshot" column info, which refers to the Snapshot ID used to create it
+
+
+
+
+Recycle Bin
+ > protects your Amazon EBS Snapshots and Amazon Machine Images (AMIs) from accidentail deletion
+ > to create the Recycle Bin, we will need to configure this by creating a Retention Rule
+
+
+Creating Retention Rule
+1. Go to Snapshot dashboard
+2. Click the Recycle Bin
+3. Click Create Retention Rule
+4. Specify the name, the resources affected, and the retention period
+	> DemoRetentionRule
+	> Affect all resources 
+	> 1 day
+5. Create
+
+
+
+Testing Recycle Bin
+1. Delete a Snapshot in Snapshot dashboard
+2. Check the Recycle Bin
+3. Recover the Snapshot
+4. Check the Snapshot dashboard if its restored
+
+
+
+Moving Snapshot to Archive tier
+1. Select the Snapshot
+2. Click Actions > Archive snapshot
+
+
+
+NOTE
+1. Deleting a Snapshot will NOT affect the Volume where the said Snapshot is used to create it

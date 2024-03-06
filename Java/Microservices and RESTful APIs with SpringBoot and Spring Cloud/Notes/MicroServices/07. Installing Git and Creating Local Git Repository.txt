@@ -1,0 +1,31 @@
+07. Installing Git and Creating Local Git Repository
+
+Installing Git in local machine
+	> search Git Bash for Windows and download it
+
+Creating a local Git repo
+	> create a folder inside the workspace where LimitServer and ConfigServer service is located
+	> save the file directory path
+	> open a CLI (ex: command prompt)
+	> go to the folder we created earlier
+	> initialize a local git repo there
+
+Add properties file inside the local Git repo
+	> create a file inside it named "limits-service.properties"
+	> inside the file, add the properties we added in the application.properties in limits-service
+
+limits-service.minimum=2
+limits-service.maximum=997
+
+	> open CLI
+	> if you havent initialized a local git repo, enter "git init"
+	> add the limits-service.properties file in git repo using "git add ."
+	> commit the changes using "git commit -m "add limits-service.properties file""
+
+Git Commands
+	> can be executed in Command Prompt or any other console with CLI
+
+git --version
+	> checks the version of Git installed	
+git init
+	> initializes a local git repo in the directory that we are in

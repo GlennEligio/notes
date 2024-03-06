@@ -1,0 +1,240 @@
+Mock Interview Script
+
+Introduce yourself
+	> Slide 1
+	> Name, Past Experience, Qualifications, Career Summary
+	
+EX:
+Good evening everyone. I am one of the trainees under HCL Commerce training and here I am to present to you my capstone project in the said training.
+
+-- Slide 1 - Personal information
+	> Before I start, I would like to briefly introduce myself. I am John Glenn Eligio, you can call me Glenn for short. 
+	> My past work experience includes me being a team member on Cloud Migration team. Here, we provided support in order to ensure that the migration of the services to cloud goes smoothly. 
+	> For my qualifications, I am familiar with technologies such as Java, Javascript, HTML, CSS, Spring, and ReactJS which I use to create Web apps
+	> My career can be summarized into two sentences. I am a programmer that specializes in Web Development, where I use Spring and ReactJS for backend and frontend development. As a programmer, I am up to date with current trends with regards to Web development and the updates with regards to the tools I use which are the Spring and ReactJS
+
+
+-- Slide 2,3 - Key Takeaways/Learning
+	> During the training, I learned a lot with regards to HCL Commerce. Here are my key takeaways/learnings from the Program (HTD)
+		1. Similarities between the HCL Commerce and the technologies that I am familiar/using
+		2. HCL Commerce utilities such as Dataload, Management centers and Administration, Organization, and Accelerator consoles
+		3. Customization/Extension of OOTB features like Controller/Task commands and UI to suit business needs
+		4. Some introduction to E-Commerce like different e-commerce business models
+		5. General programming development flow for HCL Commerce
+			- ex: Use/observe the OOTB Source code as reference for creating new extension codes
+		6. General troubleshooting like checking logs, and using breakpoints
+		7. Managing Access Control Policy of Resources like Commands
+		8. HCL Commerce prerequisite knowledge
+			- Java, Spring, Struts
+			
+			
+-- Slide 5 - Problem Statement of the Capstone Project
+	> HCL Commerce is a software platform framework for e-commerce, including marketing, sales, customer, and order processing functionality in a tailorable, integrated package. It supports B2B and B2C E-commerce business models and is multi-channelled whether in Web, Mobile, Kiosk, etc
+	> While HCL Commerce provide out of the box Store (Aurora Store), this might not fit the business need of the client.
+	> In this capstone, we will be able to go through the utilities and customization points available to us in order to make the OOTB features fit the business/client needs
+	
+	
+	
+-- Slide 6,7 - Capstone Problem Statement
+	> Capstone is divided into 2 Parts. Part 1 have 6 steps and Part 2 have 2 steps
+	> Part 1 Step 1, we will use the Dataload utility to populate Field3 and Field4 of the CATENTRY table that will store the Product rating and Rating company
+	> Step 2, we will	
+		- add new fields in the Solr index
+		- configure Search server to populate these custom indexes
+		- create Search profile to query these custom field, map them in UserData, and display the data in the Search Result and Product display page
+	> Step 3, we will use Dataload utility again to add new Attribute for Catalog Entries and add these Attribute to some Catalog entries and assign values for these attributes
+	> Step 4, in the PDP page, we will add the product to the basket
+	> Step 5, we will add Gift wrap service where we can assign gift messages to the order item if the catalog entry is a gift wrappable item
+	> Step 6, on confirmation page, we will display the gift message for the order items that are gift wrapped.
+	> Part 2 Step 1, here we will add another form in the personal information page for the users to be able add their favourite food and color
+	> Step 2 involves us displaying the favourite food and color information in the profile page
+	
+	
+-- Slide 8 Part 1 Step 1
+	> Here we can see the files that we used for dataloading
+	> We can also see the input file, which is in CSV format, that we used to specify the Catalog entry and the field3 and field4 values to assign
+	
+-- Slide 9
+	> Here, we can see in the table the values in the CSV input file
+	
+	
+-- Slide 10 Part 1 Step 2
+	> In Part 1 Step 2, we will need to edit several xml configuration files located inside search-config-ext and WC project folders in order to	
+		1. Add custom fields in the Solr index
+		2. Create search profile, and map the response values to UserData
+		3. Display the UserData values in UI
+	> These includes	
+		- x-schema.xml
+		- x-data-config.xml
+		- wc-search.xml
+		- wc-component.xml
+		- wc-dataimport-preprocess-x-finalbuild.xml
+		
+-- Slide 11 Part 1 Step 2
+	> Here, we can see the how we create a View that will contain all the data that we will be using. We will then map the column from this view to the Solr index fields
+	> We can see that for Catentry's field3 and field4, we named them PRODUCT_RATING and RATING_COMPANY
+	
+-- Slide 12
+	> Inside x-schema.xml, we created the custom fields that we will add in the Solr index
+	> Inside x-data-config.xml, we will map the values from the View column to the custom index fields
+	> Inside wc-component.xml, we will map the search query response value to the fields of UserData
+	
+-- Slide 13
+	> wc-search.xml is used to create the Search profile. Essentially, we are specifying which fields in specific Solr index we want to get
+	> CatalogEntryDisplay_grid.jspf is a jsp fragment used to display the product in grid view. We edited this in order to display the data from UserData, if they exist. If not, it will not display new UI
+	
+-- Slide 14
+	> Here are the SQL commands that we used in order to populate the Search related tables with data related to the custom Fields we created earlier
+	
+-- Slide 15
+	> After all of that, we will need to send two CURL http request. One is for the buildIndex, which will rebuild the index in Solr again. The other one is for fetching the status of the buildIndex operation
+	
+-- Slide 16
+	> The Solr index query output should now contain the custom fields that we created, alongside the value that we specified
+	
+-- Slide 17
+	> We can also see the values of the UserData that we populated using the Search query response values to the grid view of the products in Search result page
+	
+-- Slide 18 Part 1 Step 3
+	> In Step 3, we will be using Dataload utility again to do the following
+		1. Add new Attribute "Gift wrappable" to the products
+		2. Assign this attribute to several products, and assign a value for this attribute, either a "YES" or "NO"
+		
+-- Slide 19
+	> Two CSV inputs are necessary to this step.
+		1. CSV input for the attribute that we will be added
+		2. CSV input to assign an attribute and its value to a product
+		
+-- Slide 20
+	> Here, we can see the output of the Dataload earlier
+	> ATTR table contains the Attributes that we can assign to the Catalog entries
+	> ATTRVAL table contains the values that are allowed for the specific Attribute
+	> ATTRVALDESC table contains the description of all the allowed attribute values
+	
+-- Slide 21
+	> CATENTATTRVAL is a join table that maps specific CATENTRY value to an Attribute and the assigned value
+	
+-- Slide 22
+	> Here, we can see that the gift wrappable attribute to the UI. This should be the case as the UI will fetch all the descriptive attributes attached to a specific catalog entry
+	
+-- Slide 23 Part 1 Step 5
+	> In Step 5, we will be adding Gift wrap service to the Catalog entries that are gift wrappable. If the catalog entry is not gift wrappable, the UI will not show.
+	> Here, we can specify if we want to gift wrap the order item, and if we want to, we can specify gift message to add
+	
+-- Slide 24
+	> The ShopperActions_UI.jspf is responsible for displaying shopper actions like Add to Cart and Add to Wishlist buttons
+	> I added the gift wrap service here. We will first check if the gift wrappable attribute is present in the catalog entry's descriptive attribute map. If its present, we will display the UI responsible for specifying if the order item is gift wrapped, and the text area for providing gift message
+	
+-- Slide 25, 26
+	> In the Order summary and Order confirmation page, we can see the if the order item is gift wrapped, and the gift message attached to it
+	
+-- Slide 27
+	> OrderItemDetailSummary.jsp is responsible for displaying the order items details summary in Order Summary and Order Confirmation page.
+	> Here, we are checking if the first element in orderItemExtendAttributes of the order item has attributeName of GIFT_MESSAGE. If it does, we will display that it is gift wrapped and the gift message
+	
+-- Slide 28
+	> ORDITEMEXTATTR table is responsible for storing extension attribute of order items.
+	> In this case, we used it to store the gift wrap message of the order item
+	
+-- Slide 29 Part 2 Step 1
+	> In Part 2, we will be doing the following
+		1. Allow user to add their favourite food and favourite color in the Personal Information page using a form
+		2. Display the favourite food and colour of user in the My Account Summary page
+
+-- Slide 30
+	> AccountSummary_UI.jspf is responsible for displaying the summary information of the account.
+	> We displayed the favourite food and colour here and we did this by using a REST API call to the url specified in the wcf:rest url property. We will create a custom handler that will be exposing this url later to serve the favourite food and colour data
+	
+-- Slide 31
+	> Here, we are displaying a form in the Personal Information page. Users will input their favourite food and colour in this form.
+	> We will be sending the data in this form through AJAX REST call
+
+-- Slide 32
+	> Here is the location of the custom jspf file that contains the logic and view for user to input their favourite food and colour
+	
+-- Slide 33
+	> This is the content of the FavouriteInfoForm.jspf. In this section, we can see the AJAX REST call that we declare using wcService object
+	> It also contains the logic that we will execute if the AJAX REST call is successful or not
+
+-- Slide 34
+	> In this section, we declared another function which will invoke the AJAX REST call that we created earlier.
+	> This function will take several inputs through parameters, and use it to populate the params of the AJAX REST call
+	
+-- Slide 35
+	> Here, we customize the onSubmit event of the favourite food and colour form.
+	> We first prevent the default behaviour of the form. Then we fetched all the input values and did a null check on them. Lastly, we will invoke the SaveFavouriteData method and pass the inputs
+	
+-- Slide 36,37
+	> In this section, we first fetch the current favourite food and colour data in database through REST call.
+	> Then we created the form that will take the favourite food, and favourite colour
+	
+-- Slide 38
+	> Inside PersonalInformation_UI.jspf, we included the FavouriteInfoForm.jspf so it will be rendered as well
+	
+-- Slide 39
+	> Here, we are doing the URL mapping for the AJAX REST call to the bean that will handle and process it.
+	
+-- Slide 40
+	> This is the rest-template-config.xml for Favourite save request. This is what the bean from earlier uses to map the parameters of the AJAX request it receives to the parameters of the request that it will send to the Transaction server
+	
+-- Slide 41
+	> This is the custom table that we used to store the favourite food and colour data. These data are attached using the User id of the user itself
+	
+-- Slide 42
+	> Here, we can see all the files that we created in WeSphereCommerceServerExtensionsData and Logic project
+	> This will contain all the logic that will be running in the Transaction server
+	
+-- Slide 43
+	> This Favourite class is used to represent the favourite data that we store in the database
+	
+-- Slide 44
+	> This FavouriteDaoImpl class is used to execute the namedqueries for fetching the data from the database
+	
+-- Slide 45
+	> FavouriteDataBean class, the data access bean that we will be using for accessing Favourite data
+	
+-- Slide 46
+	> This SaveFavouriteControllerCmd interface is an extension of ControllerCmd that we will be using to save the favourite food and colour
+	
+-- Slide 47
+	> SaveFavouriteControllerCmdImpl is the implementation class of the interface earlier.
+	
+-- Slide 48
+	> In this class, we overriden the performExecute() method and creating the logic for saving the favourite or updating it if favourite data for specific user id already exist
+	
+-- Slide 49
+	> Here is the xml file that we used for changing the access control of the SaveFavouriteCmd using acpload
+	
+-- Slide 50
+	> FavouriteHandler class is the custom Handler that we will be using to expose URL endpoints in Transaction server for accessing and saving or updating the favourite data
+	
+-- Slide 51
+	> This @POST endpoint is responsible for getting the request for saving/updating favourite data and it uses the SaveControllerCmd
+	
+-- Slide 52
+	> This @GET point is responsible for handling the request for accessing the favourite data and it uses the FavouriteDataBean
+	
+-- Slide 53
+	> Here are the custom bean and command mapping files used to map the request parameters to inputMethods of the bean or command, and the response to the output methods of the bean or command
+	
+-- Slide 54
+	> “getFavouriteDetailsDataBean” profile definition of FavouriteDataBean is for mapping request parameter and response body to/from FavouriteDataBean methods
+
+-- Slide 55
+	> “saveFavouriteDetails” profile definition of SaveFavouriteCmd is for mapping request parameter and response body to/from SaveFavouriteControllerCmd methods
+	
+-- Slide 56
+	> In resources-ext.properties, we register the custom handler class that we created earlier
+	> After this, we can restart the Transaction and Store server and test the save favourite and get favourite logic either through the UI we created earlier or through Postman
+
+-- Slide 57
+	> During the training, we learn a lot about the HCL Commerce, which includes but not limited to:
+		- HCL Commerce history, uses and benefits
+		- WCS V8 and V9
+		- Brief introduction to E-commerce
+		- Frameworks and Techonologies used in HCL Commerce
+		- Utilities and Management consoles available
+		- Extension and Customization points
+	> While doing the capstone, I was able to utilize most, if not all, of the knowledge I gained during the training. And the trainers also guided us during training by answering all of our queries with regards to capstone
+	> Overall, I am satisfied with the result of the training and I feel like I have enough knowledge to develop, and face issues related to HCL Commerce development
+		

@@ -1,0 +1,88 @@
+<html>
+                <head>
+                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+                <title>032 FAQ For TO DO list example Im able to enter empty items. How to fix this</title>
+                </head>
+                <body>
+                <div class="container">
+                <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <p class="lead"><p><strong class="redactor-inline-converted">FAQ:  For TO DO list example, I'm able to enter empty items. How to fix this?
+
+</strong></p>
+
+<p><strong class="redactor-inline-converted">Answer:</strong></p>
+
+<p>Very good question. The code has a bug in it ... yikes!!!</p>
+
+
+
+<p>We basically need to check for null or empty input string. if null/empty then don't add to the TODO list.</p>
+
+
+
+<p>Here's the snippet</p>
+
+
+
+<p>---</p>
+
+
+
+<p>String theItem = request.getParameter("theItem");</p>
+
+
+
+<p>if ( (theItem != null) &amp;&amp; (!theItem.trim().equals("")) ) {<br>   items.add(theItem);<br>}</p>
+
+
+
+<p>---</p>
+
+
+
+<p>And here's the complete code:</p>
+
+<p>&lt;%@ page import="java.util.*" %&gt;</p>
+
+
+
+<p>&lt;html&gt;</p>
+
+
+
+<p>&lt;body&gt;</p>
+
+
+
+<p>&lt;!-- Step 1: Create HTML form --&gt;<br>&lt;form action="todo-demo.jsp"&gt;<br>    Add new item: &lt;input type="text" name="theItem" /&gt;<br>    <br>    &lt;input type="submit" value="Submit" /&gt;<br>&lt;/form&gt;</p>
+
+
+
+<p>&lt;!-- Step 2: Add new item to "To Do" list --&gt;<br>&lt;%<br>    // get the TO DO items from the session<br>    List&lt;String&gt; items = (List&lt;String&gt;) session.getAttribute("myToDoList");</p>
+
+
+
+<p>    // if the TO DO items doesn't exist, then create a new one<br>    if (items == null) {<br>        items = new ArrayList&lt;String&gt;();<br>        session.setAttribute("myToDoList", items);<br>    }<br>    <br>    // see if there is form data to add<br><strong>    String theItem = request.getParameter("theItem");<br>    <br>    if ( (theItem != null) &amp;&amp; (!theItem.trim().equals("")) ) {<br>       items.add(theItem);<br>    }</strong><br>%&gt;</p>
+
+
+
+<p>&lt;!-- Step 3: Display all "To Do" item from session --&gt;<br>&lt;hr&gt;<br>&lt;b&gt;To List Items:&lt;/b&gt; &lt;br/&gt;</p>
+
+
+
+<p>&lt;ol&gt;<br>&lt;%<br>    for (String temp : items) {<br>        out.println("&lt;li&gt;" + temp + "&lt;/li&gt;");<br>    }<br>%&gt;<br>&lt;/ol&gt;</p>
+
+
+
+<p>&lt;/body&gt;</p>
+
+
+
+<p>&lt;/html&gt;</p></p>
+                </div>
+                </div>
+                </div>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+                </body>
+                </html>

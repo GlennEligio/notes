@@ -1,0 +1,45 @@
+CORS configuration in Spring Cloud API Gateway
+
+CORS configuration
+	> by default, prevents CORS in origin other than self
+
+
+Configuring CORS in Spring Cloud API Gateway
+	> can only be done in yml format of application config props file
+		- ex: application.yml
+
+
+1. Define the spring.gateway.globalcors.corsConfiguration
+	> similar to addCorsMapping of WebMvcConfigurer or CorsFilter @Bean of the WebSecurityConfigurerAdapter
+
+EX:
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+
+
+2. Define several CORS configuration for specified /routes of Spring Cloud API Gateway
+	> we must define the following properties of the CORS config for a Gateway route (/** specifies ALL Gateway routes)
+		1. allowedOrigins
+		2. allowedMethods
+		3. allowedHeaders
+
+EX:
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders:
+              - Authorization
+              - content-type
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+ 

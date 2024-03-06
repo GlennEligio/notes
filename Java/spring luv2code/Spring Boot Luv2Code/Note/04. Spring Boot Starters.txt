@@ -1,0 +1,37 @@
+04. Spring Boot Starters
+
+Spring Boot Starters
+	> A curated list of dependencies
+	> A collection of dependencies grouped together
+	> Tested and verified by the Spring Development team
+	> Makes it much easier for the developer to get started with Spring
+	> Reduces the amount of Maven configuration
+	> This also makes sure the all the dependencies grouped up have version that are compatible with each other
+
+Spring MVC
+	> to create a Spring MVC app, we would need several dependencies like
+		a. spring-webmvc
+		b. hibernate-validator
+	> in order to make it easier, Spring grouped up these dependencies into spring boot starter web
+
+Spring Boot Starter Web
+	> spring boot provides: spring-boot-starter-web
+	> this contains
+		a. spring-web
+		b. spring-webmvc
+		c. hibernate-validator
+		d. json
+		e. tomcat
+
+
+
+Spring Boot Starters
+	> There are 30+ Spring Boot starters from the Spring Development team
+	> These are some of the example
+
+NAME				DESCRIPTION
+spring-boot-starter-web		Building weba pps, includes validation, REST
+				Uses Tomcat as default embedded server
+spring-boot-starter-securty	Adding Spring Security support
+spring-boot-starter-data-jpa	Spring database support with JPA and Hibernate
+spring-boot-starter-aop		Starter for aspect-oriented programming

@@ -1,0 +1,19 @@
+01 Course Introduction
+
+SOURCE: https://www.youtube.com/watch?v=EExlnnq5Grs&list=PLqq-6Pq4lTTYPR2oH7kgElMYZhJd4vOGI&ab_channel=JavaBrains
+
+Agenda:
+1. The "default" blocking programming model and its limitations
+2. Understanding Reactive programming
+3. Build scalable reactive code using Project Reactor
+4. Learn operators and transform reactive streams
+5. Learn patterns, common best practices, and pitfalls with reactive programming
+6. Learn how Reactive programming fits with Spring Boot application development architecture
+
+Prerequisites
+1. Some Java knowledge including Collections and streams basics
+2. A computer with Java 11 installed (preferrably Java 17+)
+3. Java IDE (ex: IntelliJ IDEA)
+
+GitHub repo
+ > https://github.com/koushikkothagal/reactive-java-workshop

@@ -1,0 +1,63 @@
+05. SonarQube and its Features
+
+
+
+SonarQube
+	> it is an open source static testing analysis software
+	> it is used by developers to manage source code quality and consistency
+	> some of the code quality checks are:
+		1. Potential bugs
+		2. Code defects to design inefficiencies
+		3. Code duplication
+		4. Lack of test coverage
+		5. Excess complexity
+
+
+
+Features of SonarQube
+1. It can work with 25 DIFFERENT languages
+	- Java, .NET, JS, COBOL, php, Python, C++, Ruby, Kotlin, Scala
+2. Can fix Tricky Issues like
+	a. Detect Bugs
+		> SonarQube can detect tricky bugs or can raise issues on pieces of code that it thinks is faulty
+	b. Code Smells
+		> Code smells are the characteristics of a code that indicates that there might be a problem caused by the code in the future
+		> But smells arent necessarily bad, sometimes they are how a functionality works and theres nothing that can be done about it
+	c. Security Vulnerability
+		> SonarQube can detect security issues that a code may face
+		> e.g. If a developer forgets to close an open SQL database OR if important details like username and password have been directly written in the code
+	d. Activate Rules Needed
+		> You can create and maintain different sets of rules that are specific to particular projects,
+		> These are known as QUALITY PROFILES
+	e. Execution Path
+		> Whenver there is Data flow in your program, and theres a lot of involvement between the different Modules, SonarQube can figure out if there are any tricky bugs in these execution paths
+3. Enhanced Workflow (Ensure Better CI/CD)
+	a. Automated Code Analysis
+		> Keeps working in the background from the development phase itself, monitoring and identifying errors, code smells, and technical debt
+	b. Get access through Webhooks & API
+		> To initiate tests, we do NOT need to come to SonarQube directly, we can do that through an API call
+	c. Integrate with Version Control Softwares
+		> It can be directly integrated with your choice of version control software
+			- e.g. GitHub
+	d. Analyze branches and Decorate pull request
+		> It gives us a branch level analysis
+		> It doesn't just analyze the master branch, but also analyzes the other branches, identifying any errors
+4. Built-in metholodogy
+	a. Discover memory leaks
+		> It can show the memory leak in your application, if the application has a tendency to fail or go out of memory
+		> This generally will happen slowly over a period of time
+	b. Good visualizer
+		> It has a good way of visualizing information about the source code
+		> It gives us simple overviews of the overall health of the code
+		> SonarQube can create visual reports based on the source code and it will be presented in the dashboard
+	c. Enforces a quality gate
+		> It can enfore a quality gate
+		> Developers can tell SonarQube, based on your requirements and practices, what code is wrong and what is correct
+	d. Digs into issues
+		> If it shows that there is a problem, SonarQube allows you to go and directly check it out from the summary report or from one code file to another
+		> In the Dashboard, when you click the error shown, it will directly navigate you to the said line of code
+	e. Plugins for IDEs 
+		> SONARLINT is a plugin that we can install in some IDEs
+		> SonarLine helps SonarQube to integrate itself with an IDE
+			- This means theres no need to install the whole SonarQube package
+

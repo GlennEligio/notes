@@ -1,0 +1,41 @@
+08. GitHub authentication using SSH key
+
+
+SSH key generation
+	> the process will create two files
+		1. public key
+		2. private key
+
+How to generate SSH public and private key
+1. Open Windows PowerShell
+2. Type the following command in CLI
+	> ssh-keygen -t rsa -C glenneligio@gmail.com		
+		= -t flag defines the encryption type
+		= -C flag defines the username
+3. It will prompt you to define which file to save the keys 
+	> pass the filename of the key that you want
+4. Then it will prompt you for the "passphrase"
+	> passphrase stands for password passphrase
+	> this is needed to recreate the SSH private-public key
+5. Type the same passphrase to finish the generation
+6. After the SSH keys generation, go to the location of SSH keys
+	> by default, it is in C://User/<username>/.ssh/
+	> but in case the file is not there, check the directory you are in when you executed the ssh-keygen command
+7. Open the file with same filename as the one you specified earlier AND uses .pub file extension
+	> use notepad to open
+8. Copy the contents
+
+
+Adding SSH public key in GitHub
+1. Go to GitHub settings
+2. Go to SSH and GPG keys
+3. Press "New SSH key"
+4. Paste the content of ssh-filename.pub to the SSH key section
+
+
+Authenticating to GitHub
+1. Open Windows PowerShell
+2. Type the command
+	> ssh -T git@github.com
+3. If prompted with authenticity of host 'github.com (192.30.253.113)', just say YES
+4. Enter the passphrase earlier

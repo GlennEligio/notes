@@ -1,0 +1,93 @@
+SSH Keys 
+
+SSH Keys
+	> used for security purposes
+	> in GitHub, theres an option to use SSH keys in order to authenticate yourself for pushing repository
+	> in this part, we will make our own SSH key that we will add to the GitHub SSH keys
+
+
+I. Creating SSH Key
+
+1. Create an SSH Key
+	> to create an SSH, use the following format for command in PowerShell
+
+		ssh-keygen -t <encryption-type> -b <encryption-strength> -C <user-name>
+
+	> for now, we will use the following values in the flags
+		= rsa for encryption type
+		= 4096 for encryption strength
+		= glenneligio@gmail.com for the username
+
+		ssh-keygen -t rsa -b 4096 -C "glenneligio@gmail.com"
+
+	> make sure that you are in the C:\Users\user\.ssh folder before you do this
+
+	> it will then prompt you to enter the file name to where we will save the key and its passphrase
+		= for now, we will use the filename "testkey" and give to passphrase
+	> passphrase stands for "password phrase"
+		- use MUST remember this in case you want to create public keys again 
+
+	> after creating the SSH keys, inside the folder where we created them, we can see two filess
+		a. testkey		-> PRIVATE KEY
+		b. testkey.pub		-> PUBLIC KEY, we will add this to our GitHub interface
+	
+	> PRIVATE KEY is used in order to authenticate ourselves to the one who holds the PUBLIC KEY which in this case, the GitHub
+	> so using the PRIVATE KEY, we can say to github that we are the owner of GitHub and therefore authorize to push commits to its repositories
+
+
+
+
+2. Printout the PUBLIC key in the console
+	> to do this, use the command
+
+		cat <file-name>
+	
+	> in our case, it will be 
+		
+		cat testkey.pub
+
+	> this is the result
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDaXxncbblJ8JViOd3XgQ3c8UErKeqR5MtVzjMbj9cdsKkTBvqwGcvp5UbkauJHawZinXS/Eskp8+2QZIfuFyEGru97p5eknHHDwovFdeIFJJpm0maxa22e38rIFy/I0GnlJ6MWjqRZ1y+q3601Xoybu4n0zrSnazkIVe+S2j8NK6agrzNS6CCvKRTj//RHqO/mifehiAE1zFurj+bseHli3CFnJnuAtlsz3fKZq60I5P2NMAwwFQZuzOXfmcZGNSlSUhWIFBy5C5ccWegCVWQYNzbelMwIaphBfZ87mMcoZjYcqe6LkbFoTAKoYpBlmA3Gs71U9CeQTIodzoLmQZP1OMmwD2KRz/5vdvCnlx2EIc3TRFZqReImR0HtCNU08KYh1SodA7Q7X7C31eE+9ij5IFDsy4JnqwEV34ooM7xTYWwqoy5oXu9Ij3GCFIk12qYDdOphdyaCBmotJps5hMqyboDV4EMlQA7RxtzXrtwu8oHsOheurdmH8O7PSbBHd8RSjAlwSNzJXzkNg+vt9u1a6BUPtUhCRwFOUu082Ciiz+Rtsvs92gAGtVd8xxFGflU9O9GbmX/QfmGbPQFp/X4bpCL5sdV9xABSne6xjDbHBFEMi0CPsTGNMtF48I4tO4f4aUggqDrzpzNCydRse4/wubVub3cnqWO77L/fSRK9mw== glenneligio@gmail.com
+
+
+
+3. Add the PUBLIC SSH key in the GitHub account
+	> go to GitHub account setting
+	> go to SSH and GPG keys section
+	> click New SSH key
+	> you will need to pass a title and the PUBLIC key to it
+	> you may need to enter your credentials again in adding the SSH key
+
+
+
+
+II. Enabling SSH-agent
+
+1. Open Manage optional features from the start menu and make sure you have Open SSH Client in the list. If not, you should be able to add it.
+
+2. Open Services from the start Menu
+
+3. Scroll down to OpenSSH Authentication Agent > right click > properties
+
+4. Change the Startup type from Disabled to any of the other 3 options. I have mine set to Automatic (Delayed Start)
+
+5. Open cmd and type where ssh to confirm that the top listed path is in System32. Mine is installed at C:\Windows\System32\OpenSSH\ssh.exe. If it's not in the list you may need to close and reopen cmd.
+
+6. Optional step/troubleshooting: If you use git, you should set the GIT_SSH environment variable to the output of where ssh which you ran before (e.g C:\Windows\System32\OpenSSH\ssh.exe).
+
+7. Start ssh-agent by typing this command in CMD
+
+	eval $(ssh-agent -s)
+	
+
+8. Add the ssh key we generated in the ssh-agent by using this command
+
+	ssh-add <private-key-file-location>
+
+	C:\Users\glenn\.ssh>ssh-add C:\Users\glenn\.ssh\testkey
+	Identity added: C:\Users\glenn\.ssh\testkey (glenneligio@gmail.com)
+
+
+
+

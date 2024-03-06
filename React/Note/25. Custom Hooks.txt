@@ -1,0 +1,23 @@
+25. Custom Hooks
+
+
+Custom Hooks rules
+1. By convention, functional hook's name starts with "use".
+	> This is so that the React linting tools know this function is a hook, and it also makes it easier to understand which functions are hooks and which are not
+	> ex: useState(), useHook(), etc
+2. When using the custom hook, 
+	a. the format of variable that will hold the result of custom hook should be SIMILAR to the format of return value of the said hook
+		> if return type is an Array of variables, that one that will hold the result of hook must be Array of variables as well
+			-> must also have same number of variables inside the array
+	b. the format of input parameter and the values of argument passed in hook must be the same as well
+
+
+EX:
+Custom hook
+
+function useCustomHook(param1, param2){
+	return [variable1, variable2]
+}
+
+Inside a Component
+const [variable1, variable2] = useCustomHook("param1", "param2")

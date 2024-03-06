@@ -1,0 +1,24 @@
+05. Linux Grep Command
+
+grep command
+	> the grep filter search a FILE	for a particular PATTERN of characters, and displays all lines that contain that pattern
+	> the pattern that is searched in the file is referred to as the REGULAR EXPRESSION
+	> grep stands for globally search for regular expression and print out
+
+
+grep <option> <regexp> <file-name | directory>
+	> used to filter search a specific file using the regexp specified
+	> options / flags includes
+		"-i" 	= for CASE INSENSITIVE search ("UNix" accepts "unIx" and "UniX")
+		"-c"	= display the COUNT of number MATCHES
+		"-l"	= display the file names that matches the pattern
+		"-w" 	= checks for the whole words in a file ("unix" accepts only "unix" and not "unixicorn" or "lunix")
+		"-n"	= shows line number while displaying the output
+
+
+grep + cat command
+	> using cat command, we can specify the body of text to filter search using grep command
+
+EX:
+cat /etc/password | grep testuser
+	> find a username from /etc/password file

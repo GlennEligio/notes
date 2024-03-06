@@ -1,0 +1,30 @@
+08.06. Floating Labels
+
+
+~~~~~ FORMS - FLOATING LABELS ~~~~~~
+Creating the Floating label effect
+	> works only in Inputs with textbox
+	> what this does is 
+		a. Add the Label inside the Input
+		b. When Input is focus or not empty, the Label will be shift to the top right, and font-size gets smaller
+1. Create a div to wrap the input
+	> add .form-floating class to the wrapping div
+2. Add the input and label elements inside the .form-floating div
+	> input must be defined FIRST before the label
+	> input must have PLACEHOLDER attribute
+
+NOTE: Can work with .form-select as well for select elements
+
+EX:
+                      <div class="form-floating mb-3">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="floating-label"
+                          placeholder=""
+                        />
+                        <label for="exampleInputPassword1"
+                          >Floating label</label
+                        >
+                      </div>
+

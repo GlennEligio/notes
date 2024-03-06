@@ -1,0 +1,46 @@
+148 AWS Outposts
+
+AWS Outputs
+ > Hybrid Cloud: businesses that keep an on-premises infrastructure alongside a cloud infrastructure
+ > Therefore, two ways of dealing with IT systems
+	- One for the AWS cloud (using the AWS console, CLI, and AWS APIs)
+	- One for their on-premises infrastructure
+ > AWS Outposts are "server racks" that offers the same AWS infrastructure, services, APIs & tools to build your own applications on-premises just as in the cloud
+ > AWS will setup and manage "Outposts Racks" within your on-premises infrastructure and you can start leveraging AWS services on-premises
+ > You are responsible for the Outposts Rack physical security
+
+
+Diagram
+ > here, the Outputs Racks (from AWS) is installed in the Corporate data center alongside the On-prem servers
+
+- - - - --|                 |- - - - - - - - - - - - - -
+AWS Cloud |		    |	Corporate data center
+	  |	            |		 
+	  |		    |	On-Prem servers
+  	  | Extension of    |
+        <-|-----------------|->	Outpost Racks (AWS)
+- - - - - |  AWS services   |- - - - - - - - - - - - - -
+
+
+
+Benefits of AWS Outposts
+1. Low latency access to on-premises systems
+2. Local data processing
+3. Data residency
+4. Easier migration
+5. Fully managed service
+
+Services that work on Outposts
+1. Amazon EC2
+2. Amazon EBS
+3. Amazon S3
+4. Amazon EKS
+5. Amazon ECS
+6. Amazon RDS
+7. Amazon EMR
+
+ 
+
+
+NOTE:
+1. With Hybrid cloud, managing IT system will be COMPLICATED since you may be dealing with two APIs, one for the AWS Cloud and one for the Corporate On Premises

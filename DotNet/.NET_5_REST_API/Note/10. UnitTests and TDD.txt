@@ -1,0 +1,1181 @@
+Unit Testing and Test Driven Development (TDD)
+
+Topics to discuss:
+1. What is unit testing
+2. What is Test Driven Development (TDD)
+3. Unit test a REST API controller via xUnit
+4. Mock dependencies via Moq
+5. Write better assertions via FluentAssertions
+6. TDD in practice
+
+
+What is unit testing?
+	Unit testing is a way to test every piece of code in isolation without external dependencies.
+
+Why unit test?
+	- Quickly validate your code
+	- Make changes without fear
+	- Reduce the cost of bug fixes
+	- Provide live documentation
+
+What is test driven development (TDD)?
+	TDD is a software development approach where you write a test before you write just enough production code to make the failing test pass.
+
+
+Why TDD?
+	- Focus on requirement, not on implementation
+	- Increased test coverage
+	- Forces clean design
+
+
+Unit testing frameworks in .NET
+	1. nunit
+	2. MSTest
+	3. xUnit
+
+Includes:
+
+[Fact] annotation
+	> used to declare that a method is a Test method
+	> this means that whenever we do a dotnet test, it will execute all method that have this annotation
+
+UnitOfWork_StateUnderTest_ExpectedBehavior()
+	> naming convention for the Test method names
+	> UnitOfWork
+		- what unit will be tested (in our case, the route endpoints)
+	> StateUnderTest
+		- under which condition are we testing the UnitOfWork
+	> ExpectedBehavior
+		- expected result when we put the UnitOfWork under a specific State
+
+Arrange - Act - Assert
+	> framework used in order to create the method body of the Test methods
+	> Arrange
+		- set up everthing to be ready to execute the test
+		- includes moqs, variables for input in order to execute the test
+	> Act
+		- execute the test, the one action
+	> Assert
+		- we will verify the result of the Act if it passes the test given a specific requirement
+
+
+Stubs
+	> fake versions of the classes
+	> we will need moq package in order to create this
+	> when creating Stubs, we will define the specific changes we will do in classes which includes
+		a. Expected Return value of specific class' method given a specific input parameters
+
+
+
+
+I. Cleaning our project folder structure
+
+1. Create a new folder in root folder named Catalog.Api
+	> this is where we will contain all the source code of our Catalog REST API
+
+2. Add everything inside the Catalog.Api except the following folders
+	- .vscode
+	- bin
+	- obj
+
+3. Delete the bin and obj folders in root directory
+
+
+
+II. Refractor the codes in the Catalog REST API
+	> due to new folder hierarchy, we would need to do some refractoring
+
+4. Rename the csproj file
+	- from Catalog.csproj into Catalog.Api.csproj file
+
+5. Refractor the following names into the new values
+	> to refractor, use the magnifying glass icon at left tab
+	> enter old value at Find and new value at Replace
+	> press icon beside the Replace textbox to Replace All
+	> replace the following names into these new values
+		- Catalog.csproj 		-> Catalog.Api.csproj
+		- Catalog.dll 			-> Catalog.Api.dll
+		- namespace Catalog		-> namespace Catalog.Api
+		- using Catalog			-> using Catalog.Api
+	
+
+6. Refractor some lines inside the .vscode files
+	> using the Find - Replace function, do the following
+	INSIDE tasks.json
+		> ${workspaceFolder} 	-> ${workspaceFolder}/Catalog.Api
+	INSIDE launch.json
+		> ${workspaceFolder} 	-> ${workspaceFolder}/Catalog.Api
+		
+
+
+
+7. Build a new Docker Image of our Catalog REST API
+	> since we changed the folder structure of our REST API, we would want to check whether we can still build a Docker Image and have the same functionality as before
+	> before building the Docker Image, make sure you are in the REST API folder root 
+	> to build a Docker Image, use the command
+
+		docker build -t <DockerHubId>/<DockerHubRepo>:<Version> <FileDirectory>
+
+	> in our case, it will be 
+
+		docker build -t shuntjg/catalog:v4 .
+
+
+
+8. Check if the new Docker Image is built
+	> to check, use the command
+
+		docker images
+
+
+
+
+III. Create the xUnit project for our Unit Testing
+
+9. Go back to one step back in our Directory
+	> from Catalog.Api folder to Catalog
+	
+
+10. Create the xUnit project
+	> to create an xUnit project, type the following in the terminal
+
+		dotnet new xunit -n Catalog.UnitTests
+	
+	> if we look at the Catalog folder, we can see a new folder is created named Catalog.UnitTests
+
+
+
+IV. Building the REST API and xUnit csproj
+	> we will use Build Traversal SDK to build both of them
+	> this is an alternative to creating a Solution file for both of the REST API and xUnit
+
+11. Create a new proj file in the Catalog folder
+	> name it build.proj file
+
+
+12. Inside the build.proj file, add the following
+	> Project tags, inside define the following
+		- Sdk="Microsoft.Build.Traversal/3.0.23"
+	> inside the Project tags, add an ItemGroup tags
+	> inside the ItemGroup tags, add a ProjectReference
+	> inside ProjectReference, define the following property
+		- Include="**\*.*proj"
+	> these will look for all files that end in proj inside all of the folders of Catalog folder
+
+
+13. Change the proj file argument of the build task in task.json of .vscode
+	> "${workspaceFolder}/Catalog.Api/Catalog.Api.csproj" -> "${workspaceFolder}/build.proj"
+
+INSIDE tasks.json
+
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/build.proj",	<<<<<<<<<<
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+
+
+
+14. Run the tasks.json file
+	> press CTRL+SHIFT+B
+	> check the result of terminal
+	> we should see both the Catalog.Api.dll and Catalog.UnitTests.dll files created
+
+
+
+
+V. Modify the xUnit project
+
+15. Add a Catalog.Api REST API into the xUnit
+	> first, change directory to the xUnit project folder
+	> to do this, type in the terminal
+
+		dotnet add reference <FileLocationOfCsprojFile>
+
+	> in our case, it will be
+
+		dotnet add reference ..\Catalog.Api
+
+	> with this, the xUnit project can use any files or dependen cies in the REST API project
+
+
+INSIDE Catalog.UnitTests.csproj file of Catalog.UnitTests
+
+  <ItemGroup>
+    <ProjectReference Include="..\Catalog.Api\Catalog.csproj" />
+  </ItemGroup>
+
+
+
+
+16. Add the following dependencies/nuget packages in our xUnit project
+	> change directory to the xUnit project
+	> to add package in the project, use the template
+
+		dotnet add package <PackageName>
+	> add these following package in xUnit project
+		a. Microsoft.Extensions.Logging.Abstractions
+			-> since our ItemsController class uses the ILogger interface, we would need to have this
+		b. moq
+			-> help you "mock" the classes that you want to emulate and use
+
+
+
+17. Rename the UnitTest class
+	> convention of naming Test class is ControllerClassName + -Tests suffix
+	> so in our case, we would want to test the ItemsController class
+	> for file name
+		 UnitTest1.cs	---->	ItemsControllerTests.cs.
+	> for class name
+		UnitTest1 ---->  ItemsControllerTests
+
+
+
+18. Build the Catalog projects again
+	> CTRL+SHIFT+B
+
+
+
+19. Remove any error we have in the ItemsControllerTest class
+	> right now theres a red squigle line in [Fact] annotation
+	> to remove it, use OmniSharp: Restart OmniSharp command in the Command Palette
+	> to access Command Palette, use CTRL+SHIFT+P, then search for Restart OmniSharp command
+
+
+
+
+VI. Preparing the First Test methods of our ItemsControllerTests class
+
+20. Rename the default Test method
+	> use these naming convention in naming the Test method
+		
+		UnitOfWork_StateUnderTest_ExpectedBehavior()
+
+	> in our case
+		- we will test the GetItemAsync() 
+		- we will test it on state where theres no matching Item based on the given Guid parameter
+		- we should expect a NotFound() ActionResult
+
+	> the method name will be 
+
+		GetItemAsync_WithUnexistingItem_ReturnsNotFound()
+
+
+
+VII. Creating the method body of the first Test method	
+	> we will use the Triple AAA framework
+		- Arrange
+		- Act
+		- Assert
+	> in our case, we will test the following in GetItemAsync()
+		- if item return from repo is null, it will return a NotFound()
+		- if item return is present from repo, it will return an Item with same Guid
+	> as much as possible, we dont want to include dependencies used inside the GetItemAsync() method
+	> we only want to test teh functionalities inside the Route endpoint method
+
+
+
+21. Use a "mock" of the ItemsController parameter
+	> we call these "mock" objects Stubs
+	> inside the Arrange Section of method body, do the following
+		a. create a "mock" versions of the object parameters of ItemsController class
+
+			var repositoryStub = new Mock<IItemsRepository>();
+			var loggerStub = new Mock<ILogger<ItemsController>>();
+		
+		b. modify the GetItemsAsync() of repositoryStub so it will return a null whenever we give it a Guid
+
+			repositoryStub.Setup(repo => repo.GetItemAsync(It.IsAny<Guid>()))
+				.ReturnsAsync((Item)null)
+
+		c. create a new instance of ItemsController class and pass the Mock parameters to it
+			- convert the Mock object dataType into their Type dataType by calling Object
+
+                	var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
+
+
+	> inside the Act, we will execute the UnitOfWork given a specific input
+		a. create a variable that will hold the result of the GetItemsAsync() of controller object we made earlier
+			- since the UnitOfWork is an async method, we will need to add an "await" keywork before it
+			- and since we have await in the method, we would need to change the Test method properties
+				= add "async" modifier and change return type to Task
+			- pass a new Guid into the GetItemAsync()
+
+		INSIDE method body
+
+			var result = await controller.GetItemAsync(Guid.NewGuid())
+
+		IN method signature
+
+			public async Task GetItemAsync_WithUnexistingItem_ReturnsNotFound()
+
+
+	> inside the Assert, using the variable that holds the result, we will check if it passes the test or not
+		a. using Assert.IsType<>(), we will check if the Result of the variable is equal to the NotFoundResult dataType
+		
+			Assert.IsType<NotFoundResult>(result.Result);
+
+
+
+
+22. Test the GetItemAsync Test method
+	> to run a Test, we can either
+		a. click Run Test in the top of the method
+			- this will Test just run a single Test method
+		b. using dotnet test command in CLI
+			- this will Test all the Test method inside the class
+
+
+
+VIII. Add a .NET Core Test Explorer extension
+	> this will make the testing much easier since we will be able to see which Test method failed visually
+
+23. Add .NET Core Test Explorer extension
+	> choose the one created by Jun Han
+
+
+24. Set up the .NET Core Explorer extension
+	> tell the extension where to find the xUnit test that we want to monitor
+	> in order to do it, do the following
+		- click the Gear icon in the Extension window of .NET Core Test Explorer
+		- choose Extension Setting
+		- change the tab from User to Workspace
+			= this will make it so that the Setting will be stored in the project instead of a file in local machine
+		- scroll all the way down until you see the Dotnet-test-explorer: Test Project Path
+		- add this file directory in the section
+			
+			**/*Tests.csproj
+	> check the extension by clicking the Flask icon in the left tab
+		- we should see the one Test method we made earlier
+		- clicking the Play icon at top will execute all the Test method
+		- clicking the Play icon at the right of Test method will just execute that specific Test
+
+
+
+IX. Creating additional Test method
+	a. GetItemAsync with Existing Item return expected Item
+
+
+25. Create a new Test method
+	> this is for when GetItemAsync send request with existing item and returns the expected item
+	> the name of the Test method will be
+
+		GetItemAsync_WithExistingItem_ReturnsExpectedItem()
+
+	> add the Arrange - Act - Assert template as well
+
+
+
+26. Move the repositoryStub and loggerStub from inside 1st Test method to the ItemsControllerTests properties
+	> reason is that we will use these two in every Test method and we dont want to write these again and again
+		= Don't Repeat Yourself (DRY)
+	
+INSIDE ItemsControllerTests as properties
+
+        private readonly Mock<IItemsRepository> repositoryStub = new();
+        private readonly Mock<ILogger<ItemsController>> loggerStub = new();
+
+
+
+
+27. Create a helper method in order to create new random Item
+	> the method will have following properties
+		- private access
+		- Item return type
+		- CreateRandomItem() name
+	> the method body will do the following
+		- create an Item with following properties
+			= Id is a new Guid
+			= Name is a new Guid converted into string
+			= Price is a random number using random object within 1-1000 range
+				=> for these, we will add a new Random object property in ItemsControllerClass 
+			= CreatedDate will be DateTimeOffSet.UtcNow
+
+
+INSIDE ItemsControllerTest class
+
+        private Item CreateRandomItem()
+        {
+            return new (){
+                Id = Guid.NewGuid(),
+                Name = Guid.NewGuid().ToString(),
+                Price = rand.Next(1000),
+                CreatedDate = DateTimeOffset.UtcNow
+            };
+        }
+
+
+
+
+
+27. Create the body of GetItemAsync WithExistingItem Test method
+	> here, our goal is to check if the Item object that we got from repository is equal to the result's Value of the GetItemAsync return
+	> we will setup the Arrange - Act - Assert
+	> inside the method body, do the following
+		a. INSIDE Arrange section
+			- create a random Item object using the helper method and place it in a variable
+			- setup the repositoryStub so that if it receives any Guid, it will return the random Item we created
+			- create an ItemsController object and pass the modified repositoryStub and the loggerStub
+		b. INSIDE Act section
+			- execute the GetItemAsync, pass a new Guid into it
+			- add await modifier in the GetItemAsync call
+			- store the result in a variable
+		c. INSIDE Assert section
+			- using Assert.IsType<>(), check if the Value of result is ItemDto
+			- create a variable that will hold the Value of result  casted into ActionResult<ItemDto>
+			- using Assert.Equal(), check if the properties of the expectedItem and the result.Value is equal
+
+
+INSIDE GetItemAsync_WithExistingItem_ReturnsExpectedItem()
+
+        [Fact]
+        public async Task GetItemAsync_WithExistingItem_ReturnsExpectedItem()
+        {
+            //Arrange
+                var expectedItem = CreateRandomItem();
+
+                repositoryStub.Setup(repo => repo.GetItemAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(expectedItem);
+
+                var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
+
+            //Act
+                var result = await controller.GetItemAsync(Guid.NewGuid());
+
+            //Assert
+                Assert.IsType<ItemDto>(result.Value);
+                var dto = (result as ActionResult<ItemDto>).Value;
+                Assert.Equal(expectedItem.Id, dto.Id);
+                Assert.Equal(expectedItem.Name, dto.Name);
+                Assert.Equal(expectedItem.Price, dto.Price);
+                Assert.Equal(expectedItem.CreatedDate, dto.CreatedDate);
+        }
+
+
+
+
+
+28. Add FluentAssertions package into the xUnit project
+	> FluentAssertions is for making Assertions of Object and Values better
+	> to add FluentAssertions into the xUnit project, type the following into the terminal
+
+		dotnet add package FluentAssertions
+
+	
+
+
+29. Using FluentAssert, compare the expectedItem from the Value of the result of GetItemAsync in GetItemAsync withExistingItem Test method
+	> do compare the expectedItem to the result.Value, we will use the following method of FluentAssertions
+		a. Should()
+			-> means that the following condition after this must be true in order to pass the Test
+		b. BeEquivalentTo()
+			-> this method will check if the object we passed into this method is equivalent to the object we called this mean
+	
+	> use the FluentAssertions to compare expectedItem and result.Value
+
+
+INSIDE GetItemAsync_WithExistingItem_ReturnsExpectedItem()
+
+                result.Value.Should().BeEquivalentTo(expectedItem);
+
+
+
+
+30. Add an option in the BeEquivalentTo() so that it will compare the Item and ItemDto class object properly
+	> since they are different objects (Record and a standard Class), we want it so that it will compare the members as long as they have the same name
+	> for this, we will define the options arg of BeEquivalentTo() so that it will be able to compare the two object as long as its members is the same name as the members of Item class
+	> since Item and ItemDto class have same names in their member, this will remove confusion to the comparing method
+
+INSIDE GetItemAsync_WithExistingItem_ReturnsExpectedItem
+
+            //Assert
+                result.Value.Should().BeEquivalentTo(
+                    expectedItem,
+                    option => option.ComparingByMembers<Item>());
+
+
+
+
+31. In cases where the result.Value returns a null, make it so that the it will be manually transformed into ItemDto
+	> to do this, follow these steps
+		a. Convert result.Result into an OkObjectResult
+		b. Convert the Value of the one above into an ItemDto
+		c. Assign the ItemDto object into a variable
+		d. Use that variable into FluentAssertions methods
+			- check if the variable is null
+			- check if the variable is equivalent to the expected item
+
+INSIDE GetItemAsync_WithExistingItem_ReturnsExpectedItem, in Assert section
+
+            var itemDtoResult = (result.Result as OkObjectResult).Value as ItemDto;
+            itemDtoResult.Should().NotBeNull();
+            itemDtoResult.Should().BeEquivalentTo(expectedItem, options => options.ComparingByMembers<Item>());
+	
+
+
+
+
+
+31. Use FluentAssertions in GetItemAsync_WithUnexistingItem Test method
+	> with FluentAssertions, use the following method
+		a. Should()
+		b. BeOfType<>()
+
+INSIDE GetItemAsync_WithUnexistingItem_ReturnsNotFound() 
+
+            //Assert
+            result.Result.Should().BeOfType<NotFoundResult>();
+
+
+
+
+32. Run the test once again
+	> check if theres any error in Test run
+
+
+
+
+
+X. Creating additional Test method
+	> GetItemsAsync with existing items , returns all items
+
+33. Create a new Test method
+	> public access, async, Task return type
+	> GetItemsAsync_WithExistingItems_ReturnsAllItems() method name
+	> add the Arrange - Act - Assert template
+
+INSIDE ItemsControllerTest class
+
+        [Fact]
+        public async Task GetItemsAsync_WithExistingItems_ReturnsAllItems()
+        {
+            //Arrange
+    
+            //Act
+
+            //Assert
+        }
+
+
+
+
+34. Create the method body for the GetItems with existing items method
+	> inside Arrange section:
+		- create a variable that is a List of Items and populate it using CreateRandomItem
+		- modify the GetItemsAsync() of repositoryStub so that
+			= it returns the list of Items we defined earlier
+		- create the ItemsController object and pass the repositoryStub and loggerStub
+	> inside Act section
+		- execute the GetItemsAsync() of ItemsController object
+		- assign the result of call into a variable
+	> inside Assert section
+		- compare the result of the GetItemsAsync() call to the expectedItems
+		- add options into the BeEquivalentTo() so that it will compare its members by name of Item class
+
+
+INSIDE ItemsControllerTest class
+
+        [Fact]
+        public async Task GetItemsAsync_WithExistingItems_ReturnsAllItems()
+        {
+            //Arrange
+            var expectedItems = new [] {CreateRandomItem(), CreateRandomItem(), CreateRandomItem()};
+            repositoryStub.Setup(repo => repo.GetItemsAsync()).ReturnsAsync(expectedItems);
+
+            var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
+
+            //Act
+            var actualItems = await controller.GetItemsAsync();
+
+            //Assert
+            actualItems.Should().BeEquivalentTo(
+                expectedItems,
+                options => options.ComparingByMembers<Item>());
+        }
+
+
+
+
+
+XI. Create additional Test methods
+	> CreateItemAsync
+		- check if with CreateItemDto provided, it returns an ItemDto with 
+			a. same Name and Price
+			b. Id is a Guid
+			c. CreateDate of input and expected item is close to each other
+
+
+35. Create a new Test method
+	> this is for testing the CreateItemAsync() of ItemsController
+	> we will create a method will following property
+		- public access, async modifier, Task return type
+		- CreateItemAsync_WithItemToCreate_ReturnsCreatedItem()
+	> also lets add the Arrange - Act - Assert template
+
+INSIDE ItemsControllerTest class
+
+        [Fact]
+        public async Task CreateItemAsync_WithItemToCreate_ReturnsCreatedItem()
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
+        }
+
+
+
+
+36. Create the body for the CreateItem withItemToCreate method
+	> INSIDE Arrange section:
+		- create the CreateItemDto with following members
+			a. Name, created using a New Guid converted into String
+			b. Price, created using Random object, max value is 1000
+		- create the ItemsController object
+			= we dont need to modify the repositoryStub since we are only concern in comparing the CreateItemDto input and the ItemDto return value
+			
+	> INSIDE Act section:
+		- call the CreateItemAsync()
+		- add "await" modifier before calling it
+		- assign the result of the call in a variable
+
+	> INSIDE Assert section:
+		- cast the Result of result as CreateAtActionResult
+		- cast the Value of the Result from above into an ItemDto
+		- assign it on a variable
+		- using FluentAssertions, compare it to the itemToCreate input
+			= add options to 
+				a. CompareByMembers using ItemDto class members
+				b. Exclude the missing members in both class
+					- since CreateItemDto only have 2 members while ItemDto has 5
+		- assert if the createdItem object's Id should not be empty
+		- assert if the CreatedDate of createdItem object is close to the DateTimeOffSet.UtcNow
+
+INSIDE ItemsControllerTests class
+
+        [Fact]
+        public async Task CreateItemAsync_WithItemToCreate_ReturnsCreatedItem()
+        {
+            //Arrange
+            var itemToCreate = new CreateItemDto()
+            {
+                Name = Guid.NewGuid().ToString(),
+                Price = rand.Next(1000)
+            };
+
+            var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
+
+            //Act
+            var result = await controller.CreateItemAsync(itemToCreate);
+
+            //Assert
+            var createdItem = (result.Result as CreatedAtActionResult).Value as ItemDto;
+            createdItem.Should().BeEquivalentTo(
+                itemToCreate,
+                options => options.ComparingByMembers<ItemDto>().ExcludingMissingMembers()
+            );
+            createdItem.Id.Should().NotBeEmpty();
+            createdItem.CreatedDate.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromMilliseconds(1000));
+        }
+
+
+
+
+
+
+XII. Create additional Test methods (UpdateItemAsync)
+	- we will check whether the UpdateItemAsync() will return a NoContent given a correct Guid id and UpdateItemDto
+	- we can also test if no match Item given the Guid parameter, but for now we will just test the NoContent
+
+
+37. Create a new Test method
+	> the method will have the following properties
+		a. public access, async modifier, Task return type
+		b. UpdateItemAsync_WithExisting
+
+INSIDE ItemsControllerTests class
+
+        [Fact]
+        public async Task UpdateItemAsync_WithExistingItem_ReturnsNoContent()
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
+        }
+
+
+
+
+38. Create method body of the UpdateItemAsync test
+	> INSIDE Arrange section
+		- create the existingItem using CreateRandomItem()
+		- modify the GetItemAsync() so that if any Guid is passed to it, it will return the existingItem regardless
+		- create the ItemsController class object
+		- create a variable to hold the existingItem's Id
+		- create a new UpdateItemDto that we will use to update the existingItem's name and price
+			> for the UpdateItemDto's member
+				= Name is new Guid converted to string
+				= Price is the existingItem's price + 3
+	
+	> INSIDE Act section
+		- call the UpdateItemAsync of the ItemsController object
+		- pass the variables that represents the existingItem's ID and the UpdateItemDto that contains the new Name and Price
+		- add await in the method call
+		- assign the result of the call into a variable
+
+	> INSIDE Assert section 
+		- check if the Type of the result we got from UpdateItemAsync call is of NoContentResult type
+
+
+INSIDE ItemsControllerTests class
+
+        [Fact]
+        public async Task UpdateItemAsync_WithExistingItem_ReturnsNoContent()
+        {
+            //Arrange
+            var existingItem = CreateRandomItem();
+            repositoryStub.Setup(repo => repo.GetItemAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(existingItem);
+
+            var itemId = existingItem.Id;
+            var itemToUpdate = new UpdateItemDto()
+            {
+                Name = Guid.NewGuid().ToString(),
+                Price = existingItem.Price + 3
+            };
+
+            var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);        
+
+            //Act
+            var result = await controller.UpdateItemAsync(itemId, itemToUpdate);
+
+            //Assert
+            result.Should().BeOfType<NoContentResult>();
+        }
+
+
+
+
+XIII. Create additional Test method (for DeleteItemAsync)
+	> check if, given correct Guid, the method will return a NoContent
+
+39. Create a new Test method
+	> method will have the following properties
+		- public access, async modifier, Task return type
+		- DeleteItemAsync_WithExistingItem_ReturnsNoContent() method name
+
+INSIDE ItemsControllerTests class
+
+        [Fact]
+        public async Task DeleteItemAsync_WithExistingItem_ReturnsNoContent()
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
+        }
+
+
+
+
+
+40. Create the method body for the Test method
+	> INSIDE Arrange section
+		- create the existingItem using CreateRandomItem() method
+		- setup the repository's GetItemAsync so that it will return the existingItem regardless of input as long as its a Guid	
+		- create the ItemsController class object
+
+	> INSIDE Act section
+		- call the DeleteItemAsync() of ItemsController object
+		- add "await" to the method call
+		- store the result in a variable
+	
+	> INSIDE Assert section
+		- assert if the result is of NoContentResult type
+
+
+INSIDE ItemsControllerTests class
+
+        [Fact]
+        public async Task DeleteItemAsync_WithExistingItem_ReturnsNoContent()
+        {
+            //Arrange
+            var existingItem = CreateRandomItem();
+            repositoryStub.Setup(repo => repo.GetItemAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(existingItem);
+
+            var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);        
+
+            //Act
+            var result = await controller.DeleteItemAsync(existingItem.Id);
+
+            //Assert
+            result.Should().BeOfType<NoContentResult>();
+        }
+
+
+
+		
+
+XIV. Changing the Entities and Dtos
+
+
+41. Change the Item Entity
+	> change the type from record to class
+	> change the methods inside the field members from get; init; to get; set;
+	> add a new field member which have the following properties
+		- public access
+		- string dataType
+		- Description dataName
+
+INSIDE Item class
+
+using System;
+
+namespace Catalog.Api.Entities
+{
+    public class Item
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public DateTimeOffset CreatedDate { get; set; } 
+    
+    }
+}
+
+
+
+
+42. Change the way Dtos are placed
+	> right now, we have a file for each of the Dto
+	> lets change it so that it will only occupy a single file
+	> we will do this by defining these record object in a single file
+	> lets do the following
+		- delete the folder that contains the Dtos
+		- create a new C# file named Dtos.cs in the root folder of REST API
+		- inside the Dtos.cs do the following
+			-> set namespace to Catalog.Api.Dtos
+				= this is the previous namespace of the Dtos as to not disrupt the source code
+			-> inside namespace, define the Dtos using the following template
+				= public record DtoName(dataType dtoProp1, dataType dtoProp2)
+
+INSIDE Dtos.cs file
+
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Catalog.Api.Dtos
+{
+    public record ItemDto(Guid Id, string Name, string Description, decimal Price, DateTimeOffset CreatedDate);
+    public record CreateItemDto([Required] string Name, string Description, [Range(1,1000)] decimal Price);
+    public record UpdateItemDto([Required] string Name, string Description, [Range(1,1000)] decimal Price);
+
+}
+
+
+
+
+
+43. Check for the errors in the Catalog REST API
+	a. Extension.cs 
+		- change the new ItemDto() is created
+			= records can only be created using their constructors
+
+INSIDE Extensions.cs
+
+using Catalog.Api.Dtos;
+using Catalog.Api.Entities;
+
+namespace Catalog.Api
+{
+    public static class Extensions
+    {
+        public static ItemDto AsDto(this Item item)
+        {
+            return new ItemDto(item.Id, item.Name, item.Description, item.Price, item.CreatedDate);
+        }
+    }
+}
+
+
+	b. ItemsController.cs, in UpdateItemAsync()
+		- instead of using the with convention with record type, just modify the existingItem members directly since its already a standard class
+
+INSIDE ItemsController.cs
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateItemAsync(Guid id, UpdateItemDto itemDto)        
+        {
+            var existingItem = await repository.GetItemAsync(id);
+
+            if(existingItem is null)
+            {
+                return NotFound();
+            }
+
+            existingItem.Name = itemDto.Name;
+            existingItem.Price = itemDto.Price;
+            
+            await repository.UpdateItemAsync(existingItem);
+            return NoContent();
+        }
+
+
+	
+	c. ItemsControllerTest.cs
+		> inside UpdateItemAsync Test method
+
+			var itemToUpdate = new UpdateItemDto(Guid.NewGuid().ToString(), 
+                                                Guid.NewGuid().ToString(), 
+                                                existingItem.Price + 3);
+		> inside
+
+            		var itemToCreate = new CreateItemDto(Guid.NewGuid().ToString(), 
+                                                Guid.NewGuid().ToString(), 
+                                                rand.Next(1000));
+
+
+
+
+44. Run all the Test in ItemsControllerTests 
+	> we should get an error in the CreateItemAsync Test method
+		- this is because in CreateItemAsync() of ItemsController, when we create the Item from the CreateItemDto that we received, we don't assign a Description member in it
+		- earlier, we added a Description member in the Item class
+		- to fix this, lets add a Description member in Item creation using the CreateItemDto parameter
+		- after this, we should not get an error anymore
+
+
+
+
+45. Remove all the options argument in the BeEquivalentTo() of the Test method
+	> this is because we are not comparing Dtos to Standard class and not Dto to Dto
+		- change the ones in GetItem and GetItemsAsync Test methods
+	> run the test again to see if it works
+		
+
+
+
+
+
+XV. Test Driven Development in Practice
+
+46. Create a new Test method for the GetItemsAsync()
+	> this will Test a GetItemsAsync() with different signature
+		- this GetItemsAsync() will have a String parameter in it
+	> this method will have the following method properties
+		- public access, async modifier, Task return type
+		- GetItemsAsync_WithMatchingItems_ReturnsMatchingItems() method name
+
+INSIDE ItemsControllerTests class
+
+        [Fact]
+        public async Task GetItemsAsync_WithMatchingItems_ReturnsMatchingItems()
+        {
+            //Arrange
+
+            //Act
+
+            //Assert
+        }
+
+
+
+
+47. Create method body of the GetItemsAsync with matching items Test method
+	> INSIDE Arrange section
+		- creating a list of new Items with different names (allItems)
+			= have at least two of them have "Potion" in their name
+		- create a variable that will hold the name searched to get matching item
+			= set this value to "Potion"
+		- modify the repositoryStub
+			= have it return the list of Item we made earlier
+		- create the ItemsController class object
+
+	> INSIDE Act section
+		- call the GetItemsAsync of the ItemsController object
+			= use the method signature with String parameter in it
+			= pass the variable that holds the search name string 
+		- assign the result of the call into a IEnumerable<ItemDto> variable
+	
+	> INSIDE Assert section
+		- assert that the result should contain the Items in index 0 and 2 of allItems variable
+		- this Items contain the Potion substring which is the search string we passed in GetItemsAsync()
+
+
+INSIDE ItemsControllerTests class
+
+        [Fact]
+        public async Task GetItemsAsync_WithMatchingItems_ReturnsMatchingItems()
+        {
+            //Arrange
+            var allItems = new[]
+            {
+                new Item(){Name = "Potion"},
+                new Item(){Name = "Antidote"},
+                new Item(){Name = "Hi-Potion"}
+            };
+
+            var nameToMatch = "Potion";
+
+            repositoryStub.Setup(repo => repo.GetItemsAsync()).ReturnsAsync(allItems);
+
+            var controller = new ItemsController(repositoryStub.Object, loggerStub.Object);
+
+            //Act
+            IEnumerable<ItemDto> foundItems = await controller.GetItemsAsync(nameToMatch);
+
+            //Assert
+            foundItems.Should().OnlyContain(
+                 item => item.Name == allItems[0].Name || item.Name == allItems[2].Name
+            );
+        }
+
+
+
+
+48. Modify the GetItemsAsync() route method of ItemsController class
+	> add a new string parameter to it	
+		- string nameToMatch
+	> add an = null after the parameter
+		- this dictates that the parameter is NULLABLE	
+		- this si because we dont always expect the user to always have a search name when getting item
+	> inside the method body, do the following
+		- add a NullOrWhiteSpace check on string parameter after getting the items from repository
+		- if the string parameter is NOT NULL or Whitespace
+			a. Apply a filter into the list of Items we got from the repository
+			b. Have it so that only those item whose Name member contains the string searchName is included
+			c. Set up the filter so the search ignore Cases
+			d. Assign the filtered Item list into itself
+
+
+INSIDE the ItemsController class
+
+        [HttpGet]
+        public async Task<IEnumerable<ItemDto>> GetItemsAsync(string name = null)
+        {
+            var items = (await repository.GetItemsAsync()).Select(item => item.AsDto());
+            
+            if(!string.IsNullOrWhiteSpace(name))
+            {
+                items = items.Where(item => item.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            }
+
+            logger.LogInformation($"{DateTime.UtcNow.ToString("hh:mm:ss")}: Retrived {items.Count()} items");
+
+            return items;
+        }
+
+
+
+
+49. Run the Test once again
+	> this time, the GetItemsAsync should pass 
+
+
+
+
+50. Test the functionality of the new GetItemsAsync() with searchName query
+	> run the MongoDb Docker Container
+	> run the Catalog Rest api in VSCODE (F5)
+	> add some items in the Catalog with and without "Potion" string in their name
+	> check the Item list in Catalog without the name query
+	> check Item list in Catalog with the Potion query
+
+POST requests body
+
+    {
+        "name": "Hi-Potion",
+        "description": "Restores huge amount of HP",
+        "price": 23,
+    }
+
+    {
+        "name": "Potion",
+        "description": "Restores small amount of HP",
+        "price": 13,
+    }
+
+    {
+        "name": "Deathgivers",
+        "description": "Weapon",
+        "price": 35,
+    }
+
+
+Initial Item list catalog with GET request (https://localhost:5001/items)
+
+[
+    {
+        "id": "16206baf-3810-44da-bbef-50fe3d5c4b93",
+        "name": "Hi-Potion",
+        "description": "Restores huge amount of HP",
+        "price": 23,
+        "createdDate": "2021-09-05T02:42:52.7155699+00:00"
+    },
+    {
+        "id": "03c13552-d048-43a2-9fc2-2a31f2814720",
+        "name": "Potion",
+        "description": "restore small amount of hp",
+        "price": 13,
+        "createdDate": "2021-09-05T02:54:32.5573559+00:00"
+    },
+    {
+        "id": "f45c6e1b-a628-42ac-961e-fec9541d666e",
+        "name": "Deathgivers",
+        "description": "Weapon",
+        "price": 35,
+        "createdDate": "2021-09-05T02:54:45.0465908+00:00"
+    }
+]
+
+
+Item list output with GET request with query for name="potion" (https://localhost:5001/items?name=potion)
+
+[
+    {
+        "id": "16206baf-3810-44da-bbef-50fe3d5c4b93",
+        "name": "Hi-Potion",
+        "description": "Restores huge amount of HP",
+        "price": 23,
+        "createdDate": "2021-09-05T02:42:52.7155699+00:00"
+    },
+    {
+        "id": "03c13552-d048-43a2-9fc2-2a31f2814720",
+        "name": "Potion",
+        "description": "restore small amount of hp",
+        "price": 13,
+        "createdDate": "2021-09-05T02:54:32.5573559+00:00"
+    }
+]
+
+
+	As we can see, the new feature we added not only passed the Test in xUnit project, it also work in the Development environment.
+
+
+
+
+
+51. In the case where the new Item class structure doesn't reflect in the system
+	> remove the bin and the obj folders inside the Catalog REST API
+	> refractor some stuff (Catalog.dll to Catalog.Api.dll)
+	> run the Build Task once again to recreate the contents of bin and obj (the .dll files and .exe)
+	> check if its working

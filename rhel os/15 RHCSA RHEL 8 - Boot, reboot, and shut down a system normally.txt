@@ -1,0 +1,59 @@
+15 RHCSA RHEL 8 - Boot, reboot, and shut down a system normally
+
+Boot,reboot, and shutdown a system normally
+ > typically need bash with root access, to do so execute command below
+ 	$ sudo bash
+
+
+Command
+REBOOT commands
+reboot
+ > reboots the system
+
+systemctl reboot
+ > reboots the system
+
+shutdown -r now
+ > shutdowns the system
+ > "-r" flag denotes that it will reboot instead of complete shutdown
+ > now refers to the date on when to shutdown
+
+init RUNLEVEL
+ > init 6 will reboot
+ > init 0 will shutdown the system
+
+tellinit RUNLEVEL
+ > tellinit 6 will reboot
+ > tellinit 0 will shutdown
+
+
+SHUTDOWN commands
+halt
+systemctl halt
+ > halts the system and shut it down
+
+init 0
+tellinit 0
+ > shutdown the system
+
+shutdown -h now
+ > shutdown the system now
+ > '-h' flag refers to poweroff
+
+
+POWEROFF commands
+poweroff
+systemctl poweroff
+ > complete kill the machine, completely shut down
+ 
+
+ADDITIONAL COMMANDS
+systemctl suspend
+ > suspends the system
+
+systemctl hibernate
+ > puts the system in hibernate mode
+
+systemctl hybrid-sleep
+ > suspends and puts the system in hibernate mode
+ > similar to Windows' Sleep

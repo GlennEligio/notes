@@ -1,0 +1,215 @@
+Java 11 Features
+
+1. Single-file Source Code
+	> with Java 11, we can now run Java application using only the .java file
+	> we dont need to create the .class file using the javac command 
+	> in cases where theres two or more classes inside the .java file
+		- the class where main(String[] args) is contained must be at the TOP
+
+EX:
+package java11demo;
+/*
+ * For Single File source code to work,
+ * the class that contains the main() must be at the Top
+ */
+
+public class SingleFileDemo {
+
+	public static void main(String[] args) {
+		Print.print();
+	}
+}
+
+class Print{
+	static void print() {
+		System.out.println("Single file demo");
+	}
+}
+
+
+
+
+2. toArray(IntFunction<T>{})
+	> new method form of toArray() from Collection
+	> with this, we use lambda expression body of IntFunction to create a new Array of specific type
+
+EX:
+		// here, using the IntFunction<>, we created a Array of specific type (in this case, a String type)
+		String[] arr2 = list.toArray(String[] :: new);
+		System.out.println("Output of 2nd toArray() -> " + Arrays.toString(arr2));
+
+
+
+
+3. Local Variable Type Inference
+	> JVM has a feature called Type Inference
+	> Type Inference is the ability of JVM to "infer" or guess the Type of variable based on its usage and context
+	> now, we dont need to define the Type of the Variables that we initialize
+		- especially useful for Types that have very long name
+	
+EX:
+	String name = "JohnGlenn" 			to 	var name = "JohnGlenn"
+	ArrayList<String> list = new ArrayList<>();	to	var list = new ArrayList<>();
+
+	> we can also use this feature in lambda expression
+	> with it, we can omit the Type when declaring parameters
+		- we can even omit the var keyword
+
+EX: 
+		FunctionAdd f1 = (int a, int b) -> {return a+b;};
+		FunctionAdd f2 = (var a, var b) -> {return a+b;};
+		FunctionAdd f3 = (a, b) -> {return a+b;};
+
+
+
+
+
+4. String API Changes
+	> new methods are added in the String api
+
+boolean isBlank()
+	> will return TRUE if theres no characters (excluded the space character) inside it
+	> if its just all spaces, it will return TRUE as well
+
+Stream lines()
+	> similar with split() but with "\n" passed into it
+	> will return a Stream of type String
+
+
+String strip()
+	> removes all the whitespaces in the front and back of the String
+	> will not remove spaces that enclosed between words
+
+String stripLeading();
+	> removes all whitespaces at the front of String
+
+String stripTrailing();
+	> removes all whitespaces at the back of the String
+
+String repeat(int n)
+	> repeatedly concatenate the String into itself in n amount of times
+	> ex: repeat(2) in "Welcome" will return "WelcomeWelcome"
+
+
+
+
+5. New Optional methods
+	> Optional is a wrapper class for variables that MAY BE NULL
+	> we can define its default value in case its null using orElseGet()
+		- orElseGet() takes Supplier interface
+	
+METHODS:
+	
+ifPresent(Consumer<T>)
+	> check if the Optional object have a value
+	> if it does, will do the action() defined in the Consumer interface we passed
+
+empty()
+	> will make the Optional object empty
+
+orElseGet(T Supplier)
+	> defines the default value of variable we wrapped in case the value is NULL
+	> if NULL, will return the Supplier interface's return value
+
+Optional.isEmpty()
+	> check if value the Optional wraps is empty
+	> returns true if value is empty
+
+
+
+6. HTTP Client API
+	> Unlike HttpURLConnection, HTTP Client provides synchronous and asynchronous request mechanisms
+	> Standardize the incubated HTTP Client API introduced in JDK 9, via JEP 110, and updated in JDK 10 (JEP 321)
+	> The HTTP Client has been standardized in Java 11. As part of this work, the previously incubating API, located in the jdk.incubator.http package has been removed. 
+	> At the very minimum, code that uses types from the jdk.incubator.http package will need to be updated to import the HTTP types from the standard package name, java.net.http
+
+
+Communication Structure of Http Client and Server
+
+Client	--------- post/get/put/delete --------- http//user?id=10 ---------> Server
+Client <------------------------ Http response ----------------------------- Server
+
+POST/GET/PUT/DELETE
+	> http request VERB
+	> represent the action of their http request to the server's resources (CRUD operations)
+	
+http://url.com/user?id=10
+	> http url of the server
+	> contains the queries
+
+Http response
+	> response of Server based on client's request
+	> contains a Code that represents the status of Client's request
+		- Informational responses (100–199)
+		- Successful responses (200–299)
+			OK 200
+			CREATED 201
+			NO CONTENT 204
+		- Redirection messages (300–399)
+		- Client error responses (400–499)
+			400 BAD REQUEST
+			401 UNAUTHORIZED
+			403 FORBIDDEN
+			404 NOT FOUND
+		- Server error responses (500–599)
+
+
+
+Classes inside HTTP Client API
+
+HttpRequest
+	> represents the Http request send by the Client
+
+METHODS
+HttpRequest.newBuilder()
+	> create a Builder of HttpRequest
+	> have the following Builder methods
+		1. uri(Uri uri)
+			- takes a Uri object
+			- we can use URI.create(String uri) to create one from string
+		2. GET(), POST(), DELETE(), PUT()
+			- defines the Http VERB
+		3. version(Version version)
+			- defines the Http version to be used
+			- Version.HTTP_2 for https protocol
+		4. build()
+			- returns an HttpRequest object based on the Builder methods called
+
+
+
+HttpClient
+	> represents the Client that will send the Request
+
+METHODS of HttpClient
+	
+HttpClient.newBuilder()
+	> builds a Builder object for HttpClient
+	> have the following Builder methods
+		1. build()
+			- returns an HttpClient object
+
+HttpResponse<T> send(HttpRequest req, BodyHandler<T> bodyHandler)
+	> send the request to server
+	> will take HttpRequest and BodyHandler parameter
+	> returns a HttpResponse of the Type of BodyHandler
+	> based on type of BodyHandler used will the HttpResponse change its Type as well
+		- ex: HttpResponse<String> will be return if we pass BodyHandler.ofString()
+	> will throw IOException and InterruptedException 
+
+
+
+HttpResponse<T>
+	> represents the Http response sent back by the Server
+	> Type will depend on how we handle the response's body using BodyHandler
+	> have the following methods
+
+HttpResponse methods:
+
+int statusCode()
+	> returns the status code of response
+
+<T> body()
+	> returns the body of response whose Type is what we define the HttpResponse
+
+
+NOTE: For HttpResponse Type, its better if we use BodyHandlers.ofString(). With String as body, we can use Serialization in order to convert it into a Class object instance.

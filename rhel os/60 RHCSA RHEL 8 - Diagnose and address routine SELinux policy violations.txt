@@ -1,0 +1,87 @@
+60 RHCSA RHEL 8 - Diagnose and address routine SELinux policy violations
+
+
+Prerequisite
+1. setroubleshoot-server package
+	> comes pre-installed in Linux OS
+
+Five ways to diagnose and address routine SELinux policy violations
+1. Using "sealert" command and checking the "audit.log" file content under /var/log/audit
+	> $ sealert -a /var/log/audit/audit.log
+	> will contain avc denied message
+2. Searching the audit log using "ausearch" command and pass "AVC,USER_AVC,SELINUX_ERR" as command
+	> $ ausearch -m AVC,USER_AVC,SELINUX_ERR
+	> much less verbose than sealert method, but much easier to read since it will most only contain "avc denied" message
+3. Using "journalctl" to check the logs of "setroubleshoot"
+	> $ journalctl -t setroubleshoot
+4. Using "audit2why -a" to list all issues that were blocked and the reason as to why
+	> $ audit2why -a
+5. Using "audit2allow -w -a" to provide a tool that attempts to give you resolutions to the issues:
+	> $ audit2allow -w -a
+
+
+
+Creating temporary SELinux policy violation to generate logs for avc denied
+ > NOTE: 10/07/22 DOESNT WORK anymore, just shows an error in login "unable to get valid context"
+1. Add the following in the seusers file under /etc/selinux/targeted directory using root user
+	$ echo "user1:user_u:s0-s0:c0.c1023" >> /etc/selinux/targeted/seusers
+	> this will make the user1 have user context
+2. Configure the selinux boolean to block the execution of files within their directories
+	$ setsebool -P user_exec_content off
+3. Logout and login to the user specified in the seusers file (user1 in this case)
+4. When logging in, we should not be able to log in since when logging in, we will need to execute files in homedir and /tmp. And since we blocked it with setsebool earlier, we will be taken back to the login screen
+
+
+
+Commands
+sealert
+ > setroubleshoot client tool
+ > synopsis:
+	$ sealert  [-b]  [-f local_id] [-h] [-s] [-S] [-l id] [-a file] [-u] [-p] [-P plugin_name]
+ > options
+	-a 	scan a log file, analyze its AVCs
+ > ex:
+ 	$ sealert -a /var/log/audit/audit.log
+
+
+ausearch
+ > a tool to query audit daemon logs
+ > sypnosis:
+	$ ausearch [options]
+ > options
+	-m MESSAGE_TYPE		 Search  for  an  event matching the given message type.
+ > EX:
+	$ ausearch -m AVC,USER_AVC,SELINUX_ERR
+
+
+journalctl
+ > query the systemd journal
+ > synopsis:
+	$ journalctl [OPTIONS...] [MATCHES...]
+ > options:
+	-t, --identifier=SYSLOG_IDENTIFIER	Show messages for the specified syslog identifier SYSLOG_IDENTIFIER.
+ > ex:
+	$ journalctl -t setroubleshoot
+
+
+audit2allow
+ > generate SELinux policy allow/dontaudit rules from logs of denied operations
+ > synopsis:
+	$ audit2allow [options]
+ > options
+	-a	read input from audit and message log
+	-w	translates SELinux audit messages into a description of why the access was denied
+ > ex:
+	$ audit2allow -w -a
+
+
+audit2why
+ > translates SELinux audit messages into a description of why the access was denied (similar to audit2allow -w)
+ > synopsis:
+	$ audit2why [options]
+ > options
+	-a 	read input from audit and message log
+ > ex:
+	$ audit2why -a
+
+

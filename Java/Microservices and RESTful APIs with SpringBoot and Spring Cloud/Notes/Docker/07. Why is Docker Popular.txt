@@ -1,0 +1,15 @@
+07. Why is Docker Popular?
+
+
+Reasons why Docker is Popular
+1. Very easy to use (locally and on cloud)
+	> most of the popular hosting services (i.e. Azure, AWS) offers services related to Container Solutions (Docker)
+		- Azure	->	Azure Container Service
+		- AWS 	->	Elastic Container Service	
+2. Lightweight
+	> in traditional deployment (using VMs to run application), each VMs will host its own Guest OS
+		- these Guest OS have something called Kernel, which is the brain of OS
+		- Kernel takes up a LOT of spaces, therefore with traditional way, it takes up a lot of resources
+	> in deployment using Containers, all Containers in ran under Docker Engine
+		- this Docker Engine is running under a SINGLE OS (Host's OS)
+		- these means the theres no additional Kernel inside the Host machine

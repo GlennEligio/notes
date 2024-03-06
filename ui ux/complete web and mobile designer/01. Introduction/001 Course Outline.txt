@@ -1,0 +1,36 @@
+Complete Web & Mobile Designer Zero to Mastery
+
+Table of Contents:
+1. Getting Started
+	- Sketching
+	- Inspiration
+	- User Flows
+	- Sitemaps
+2. Explore and Iterate
+	- Wireframes
+	- Prototyping
+	- Getting Feedback
+3. Visual design
+	- Accessibility
+	- Grids + Spacing
+	- Typography
+	- Forms + UI Elements
+	- Color Theory
+	- Imagery + Iconography
+4. Design Exploration
+	- Design Patterns
+	- Mobile Design
+	- Applying Visual Design
+	- Motion
+	- Micro-interaction
+5. Putting it Together
+	- Design system
+	- Final Composition
+6. Meeting the Client
+	- Best practices
+	- Questions to ask to understand what their needs are
+7. Web Portfolio
+8. BONUS: HTML + CSS
+
+NOTES:
+1. Figma is a tool used for designing web application design

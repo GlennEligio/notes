@@ -1,0 +1,83 @@
+Configuring Authentication in Spring Security
+
+AuthenticationManager
+	> does the authentications of Users
+	> have a method called authenticate()
+	> to configure the AuthenticationManager, we will use its Builder class and method
+
+AuthenticationManagerBuilder
+	> builder class for creating AuthenticationManager
+	> we call its Builder method in order to create an AuthenticationManager
+	> have the following chain methods to use
+
+inMemoryAuthentication()
+	> sets the Authentication scheme of AuthenticationManager to InMemory
+	
+withUser(String user)
+password(String pass)
+roles(String... role)
+	> sets the username, password, and roles that are allowed to the URL mappings
+	> in roles(), we can pass multiple String roles
+
+and()
+	> called after finishing creating a Authenticated user
+	> after this call, we can call the three methods again to create new User.
+
+
+
+
+Configuring AuthenticationManager of Spring Security
+
+1. Add Spring Security dependency
+	> the Spring Security will add these behavior to the project:
+		- This will put the project behind an Authentication
+		- Create default login form
+			= we wil have to change this to a custom one
+		- Create default user credentials
+			= not preferred since we have to check user credentials in database or any other external source
+		- Handles login form
+
+
+2. Creating AuthenticationManager using AuthenticationManagerBuilder
+	
+
+3. Get access to AuthenticationManagerBuilder object
+
+
+4. Configuring the WebSecurityConfigurerAdapter
+	> after we do this steps, the Spring Security will NO LONGER create a default User for us 
+
+a. Create a class
+
+b. Extended it to WebSecurityConfigurerAdapter
+
+c. Override the configure() method
+
+d. Inside the configure() method
+	- call inMemoryAuthentication()
+		=> sets the authentication to inmemory type
+	- call withUser()
+		=> sets username of User that is authenticated
+	- call password()
+		=> sets password of User that is authenticated
+	- call roles()
+		=> set the roles of User that is authenticated and authorized
+
+
+e. Add @EnableWebSecurity to the Class
+
+
+
+
+5. Adding PasswordEncoder to the WebSecurity 
+	> these will encrypt the password in the System using Hashing
+
+a. Add a @Bean under @EnableWebSecurity Class
+	
+b. Define the Bean method
+	> return type PasswordEncoder
+	> method name getPasswordEncoder()
+	> return a subclass of PasswordEncoder()
+		- this time, we will do a NoOpPasswordEncoder;
+
+ 

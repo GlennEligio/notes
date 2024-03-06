@@ -1,0 +1,453 @@
+Webspehere Commerce V9
+Dataload and OrderFlow
+
+Agenda
+1. DataLoad Architecture
+2. DataLoad Scenario
+3. DataLoad Configuration
+4. DataLoad Command Line
+5. Loading Table with TableObjectMediator
+6. Catalog Upload Feature
+7. Best Practices
+8. Q&A
+
+
+
+
+
+DATALOAD ARCHITECTURE
+
+DataLoader Architecture
+ > composed of the following layers (besides the Data source itself)
+	- Business object builder layer
+	- Business object mediator layer
+	- Persistence layer
+ > Business object builder layer
+	- takes a Data source and outputs a Business object
+	- composed of the Data reader and Business object builder
+	- Data reader reads the data from the datasource (.csv, or .xlsx file)
+	- Business object builder creates the objects from the data reader output
+ > Business object mediator layer
+	- takes a Business object and outputs a Physical objects
+	- composed of the following		
+		-> Business object mediator
+		-> ID resolver
+		-> Business context service
+	- ID resolver is used to check if theres an ID conflict on business object and the existing data in database
+	- Business context service
+ > Persistence layer
+	- takes a Physical objects
+	- composed of a Data writer
+	- Data writer writes the physical objects into the WebSphere Commerce database to be saved
+
+
+Components in DataLoad Framework
+1. DataLoader
+ > control the overall execution flow
+ > JDBC batch execution, database transaction commit and rollback
+ > Error and summary reporting
+
+2. Custom Reader Layer
+ > Data Reader
+ > Business Object Builder
+
+3. Business Object Layer
+ > Business Object Mediator
+ > ID Resolver
+
+4. Persistence Layer
+ > Data Writer
+ > Native DB Data Writer
+ > JDBC Data Writer
+
+Business Context Service
+
+
+
+
+2. DATALOAD SCENARIO
+
+DataLoad scenarios
+1. Initial load
+	> Large input data
+	> May use native database load or JDBC load
+	> Data load mode is typically "Insert"
+	> May specify the key range
+2. Delta load
+	> Data load mode is typically "Replace"
+	> Use JDBC load
+	> The data can be loaded to either staging or production servers
+
+
+
+
+3. DATALOAD CONFIGURATION
+
+Main dataload configuration file
+ > wc-dataload.xml
+
+Dataload environment configuration file
+ > wc-dataload-env.xml
+
+Dataload business object configuration files
+ > wc-loader-catalog-group.xml
+ > wc-loader-catalog-entry.xml
+
+
+NOTES in DATALOAD CONFIGURATION FILES:
+1. Main dataload configuration file is the entrypoint
+	> inside it, the dataload environment configuration file and  dataload business object configuration file is defined
+
+
+Wc-dataload.xml example 
+<DataLoadConfiguration>
+  <DataLoadEnvironment configFile="wc-dataload-env.xml" />
+  <LoadOrder maxError=“3” commitCount="1000" batchSize="100“
+dataLoadMode="Replace" >
+    <_config:property name="firstTwoLinesAreHeader" value="true" />
+    <LoadItem name="CatalogGroup" businessObjectConfigFile=“../wc-loadercataloggroup.xml" startKey="1000001" endKey="2000000">
+      <DataSourceLocation location="CatalogGroup.csv" />
+    </LoadItem> 
+    <LoadItem name="CatalogEntry" businessObjectConfigFile="wc-loader-catalogentry.xml“>
+      <DataSourceLocation location=“${CatalogEntry_CSV} " />
+    </LoadItem>
+  </LoadOrder>
+</DataLoadConfiguration>
+
+LoadOrder elements
+1. maxError	
+	> 1: default value
+	> 0: not stop for erros
+2. commitCount
+	> 1: default value
+	> 0: not commit until this load item finishes
+3. batchSize
+ 	> 0: batches for whole load
+	> 1: default value
+4. dataLoadMode
+	> Insert, Delete, Replace
+5. Key range: startKey, endKey
+	> can be used for initial or delta load
+	> benefits: improved performance
+	> no need to grab the keys in the KEYS or SUBKEYS tables every time
+	> your responsibilities: No conflict keys existing in the database
+	> NOTE: Reset the COUNTER in the KEYS table tom make it ready for the next dataload
+
+
+Wc-dataload-env.xml EXAMPLE
+<?xml version="1.0" encoding="UTF-8"?>
+<_config:DataLoadEnvConfiguration>
+  <_config:BusinessContext storeIdentifier=“Aurora" catalogIdentifier=“Aurora“ languageId="-1" 
+currency="USD">
+  </_config:BusinessContext>
+  <_config:Database type="db2" name="mall" user=“USER“ password="PASSWORD" server="localhost" 
+port="50000“ schema=" wcsuser" />
+  <_config:IDResolver
+className="com.ibm.commerce.foundation.dataload.idresolve.IDResolverImpl"
+cacheSize="1000000"/>
+</_config:DataLoadEnvConfiguration>
+
+Environment configuration file Elements
+1. BusinessContext
+  > can be set in two levels: global level and <DataLoader> level
+2. DataWrtier
+  > JBDCDataWriter
+    - ex: <_config:DataWriter
+className="com.ibm.commerce.foundation.dataload.datawriter.JDBCDataWriter" />
+  > NativeDBDataWriter (Only for insert mode)
+    - ex: <_config:FilePath dataOutputFilePath ="C:/temp/" />
+<_config:DataWriter
+className="com.ibm.commerce.foundation.dataload.datawriter.NativeDBDataWriter" />
+
+
+Loader Configuration File 
+wc-loader-catalog-group.xml example
+<?xml version="1.0" encoding="UTF-8"?>
+<DataloadBusinessObjectConfiguration> 
+  <DataLoader className="com.ibm.commerce.foundation.dataload.BusinessObjectLoader">
+    <DataReader className="com.ibm.commerce.foundation.dataload.datareader.CSVReader“ firstLineIsHeader="true“ 
+useHeaderAsColumnName="true" />
+    <BusinessObjectBuilder
+className="com.ibm.commerce.foundation.dataload.businessobjectbuilder.BaseBusinessObjectBuilder"
+packageName="com.ibm.commerce.catalog.facade.datatypes.CatalogPackage“ dataObjectType="CatalogGroupType" >
+      <DataMapping>
+         < mapping xpath="CatalogGroupIdentifier/ExternalIdentifier/GroupIdentifier" value="GroupIdentifier" />
+         <mapping xpath="ParentCatalogGroupIdentifier/ExternalIdentifier/GroupIdentifier" 
+value="ParentGroupIdentifier" />
+         <mapping xpath="topCatalogGroup" value="TopGroup" />
+         <mapping xpath="displaySequence" value="Sequence" />
+         <mapping xpath="Description[0]/Name" value="Name" />
+         <mapping xpath="Description[0]/ShortDescription" value="ShortDescription" />
+         <mapping xpath="Description[0]/Attributes/published" value="Published" />
+         <mapping xpath="Attributes/field1" value="Field1" />
+         <mapping xpath="" value="Delete" deleteValue="1"/>
+       </DataMapping> 
+    <BusinessObjectMediator className="com.ibm.commerce.catalog.dataload.mediator.CatalogGroupMediator"
+componentId="com.ibm.commerce.catalog"/>
+    </BusinessObjectBuilder>
+  </DataLoader>
+</DataloadBusinessObjectConfiguration>	
+
+CatalogGroups.csv
+CatalogGroup
+GroupIdentifier,TopGroup,ParentGroupIdentifier,Sequence,Name,ShortDescritpion,LongDescription,Thumbnail,FullImage
+Furniture,TRUE,,1,Furniture,Furnish your home, Furnish your home...,images/catalog/...,images/catalog/...
+Tableware,TRUE,,2,Tableware,Tableware...,Tableware...,images/catalog/...,images/catalog/...
+Kitchenware,TRUE,,3,Kitchenware,Kitchenware...,Kitchenware...,images/catalog/...,images/catalog/...
+Apparel,TRUE,,4,Apparel,The latest...,The latest...,images/catalog/...,images/catalog/...
+Lounge Chairs,,Furniture,1,Lounge Chair,Make your home...,Make your home...,images/catalog/...,images/catalog/...
+
+
+NOTE in Loader Configuration file (wc-loader-catalog-group.xml) and DataSource file (CatalogGroups.csv)
+1. First line in csv file represents the table to do the data loading
+2. Second line in csv file represents the columns of the table
+3. Third and suceeding line represents the rows and its values to use for inserting/updating
+	> no value means that there will be no value to be inserted/updated
+
+
+
+
+
+4. DATALOAD COMMAND LINE OPTIONS
+
+DATALOAD COMMAND
+ > dataload.cmd <full_path_wc-dataload.xml> [-Dname=value]*
+ > Options:
+	-DXmlValidation=<false/true>
+		Turn on/off the XML file validation
+	-DLoadOrder=“CatalogGroup, CatalogEntry”
+ 		Specify a list of the LoadItem to be loaded
+	-DConsoleHandler.level=<level>
+		Set tracing level for the console display
+	-Dcom.ibm.commerce.catalog.dataload.level=<level>
+		Set tracing level for a specific package
+	-D.level=<level> 
+		Set tracing level for all 
+		- <level>: OFF, SERVER, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL
+		- ex: -D.level=SERVER
+
+
+
+
+
+5. LOADING TABLE WITH TableObjectMediator
+
+Difference between the data loading by business object and by table
+Loading by business object
+ > Map CSV columns to the XPath of the business object
+ > Business object is built by BusinessObjectBuilder
+ > BusinessOjbectMediator transfer business object into physical object
+
+Loading by table
+ > Map the CSV columns to the database table columns
+ > TableObject is built by TableObjectBuilder
+ > TableObjectMediator transfers TableObject into physical objects
+
+EX:
+wc-loader-store-configuration.xml that uses TableObjectMediator
+<?xml version="1.0" encoding="UTF-8"?>
+<_config:DataloadBusinessObjectConfiguration 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.ibm.com/xmlns/prod/commerce/foundation/config ../../../../xml/config/xsd/wc-dataload-businessobject.xsd" 
+	xmlns:_config="http://www.ibm.com/xmlns/prod/commerce/foundation/config">
+
+  <_config:DataLoader className="com.ibm.commerce.foundation.dataload.BusinessObjectLoader" >
+    <_config:DataReader className="com.ibm.commerce.foundation.dataload.datareader.CSVReader" firstLineIsHeader="true" useHeaderAsColumnName="true" />
+    <_config:BusinessObjectBuilder className="com.ibm.commerce.foundation.dataload.businessobjectbuilder.TableObjectBuilder" >
+
+      <_config:Table name="STORECONF" deleteKey="Delete" deleteValue="1">
+        <_config:Column name="STOREENT_ID" value="storeId" valueFrom="BusinessContext" />
+		<_config:Column name="Name" value="Name"/>
+		<_config:Column name="Value" value="Value"/>
+      </_config:Table>
+
+      <_config:BusinessObjectMediator className="com.ibm.commerce.foundation.dataload.businessobjectmediator.TableObjectMediator" >
+	  </_config:BusinessObjectMediator>
+    </_config:BusinessObjectBuilder>
+  </_config:DataLoader>
+
+</_config:DataloadBusinessObjectConfiguration>
+
+
+
+Loading Table with TableObjectMediator
+Advantages
+1. You know exactly which tables and columns the data will go
+2. Mapping the CSV file data is easier
+3. You can load the data to any tables
+4. Not limited by the out of the box business object mediators
+5. The performance is better
+
+Disadvantages
+1. You must have deep knowledge of the database schema
+2. If the data in the CSV file are not simply mapped to the database columns, you cannot use the table-based data loading
+
+
+
+
+6. CATALOG UPLOAD FEATURE
+
+Workstation (CSV or ZIP file)
+ |
+ |
+ |
+ V
+
+WebSphere Commerce
+ > Management Center
+    > Catalogs tool
+      - contains Catalog Upload feature
+      - can Create, Delete, Replace the Sales catalog and master catalog
+
+
+
+
+7. DATALOAD BEST PRACTICES
+
+GENERAL
+1. Use Recommended configuration for Initial Load
+	> Dataload mode as Insert Mode
+	> Specify Large commit count and batch size
+	> Specify a large ID resolver cache size and large JVM heap size
+2. Use Recommended configuration for Delta Load
+	> Specify the data load mode as Replace
+	> Specify a commit count of 1 and batch size of 1
+	> Do not specify a key range with a start key and an end key unless you are sure it would not cause key conflicts
+	> Specify the ID resolve cache size to 0 if your database is large
+3. General stuff
+	> Configure Column Exclusion List in Replace Mode
+	> Specify the commitCount to be greater than or equal to the batchSize
+	> Specify commitCount, batchSize, dataLoaderMode at the LoadOrder level, so you do not need to specify them at each LoadItem level
+	> Turn off XML validation if not required
+
+CATALOG
+1. Use the right mediator for the purpose
+2. Use the DataLoad utility in update mode to load minor changes for catalog entries and catalog entry descriptions
+3. Use the DataLoad utility to create parent product before you load the child SKU
+4. Delete the old parent category relationship before you move a catalog entry to another parent category
+
+PRICE
+1. Price Rules
+	> use Product-level pricing
+2. Price Lists
+	> Load your price list data using price list unique id instead of name to achieve the best performance
+3. Offers
+	> The offer list is loaded according to price list unique ID and catalog entry unique id
+	> Use one Currency mode in your input file to ease maintenance, and enhance performance
+
+MEMBER
+1. When you create an organization, do not specify the distinguished name (DN) for the organization. The DN is automatically generated by the OrganizationMediator.
+2. Identify the user in the input file by using the logon instead of the distinguised name (DN)
+
+INVENTORY:
+1. Load your data to one store at a time
+2. Use Fulfillment center unique ID instead of name
+3. In ATP Model Load RA and RADETAIL data separately if loading large data
+
+
+CUSTOM TABLE DATA LOAD STEPS
+1. Write SQL queries for
+	> Alter table to specify primary key
+	> Create Index on specific columns for the custom table
+	> Insert value to the custom table
+	> Commit the changes
+2. Run the SQL for DB2
+3. Define wc-dataload.xml file with following content below
+4. Define wc-loader.xml file
+5. Define an input CSV file with following content
+	> first rows of the CSV indicates field names
+
+
+STEP 1: Write SQL queries
+STEP 2: Run the SQL for DB2
+CREATE TABLE X_CUSTOM_TABLE (
+  MY_SYSTEM_ID BIGINT NOT NULL,
+  MY_CUSTOM_ID BIGINT NOT NULL,
+  column1 VARCHAR(254),
+  column2 VARCHAR(254),
+  column3 VARCHAR(254)
+);
+
+ALTER TABLE X_CUSTOM_TABLE ADD PRIMARY KEY (MY_SYSTEM_ID);
+
+CREATE UNIQUE INDEX I0000_X_CUSTOM_TABLE ON X_CUSTOM_TABLE (
+  MY_CUSTOM_ID ASC
+);
+
+INSERT INTO KEYS (KEYS_ID, TABLENAME, COLUMNNAME, COUNTER, PREFETCHSIZE, LOWERBOUND, UPPERBOUND,
+OPTCOUNTER)
+VALUES ((SELECT MAX(KEYS_ID) + 1 FROM KEYS), 'X_CUSTOM_TABLE', 'MY_SYSTEM_ID', 0000, 1, 1000, 999999, 1);
+
+COMMIT;
+
+
+STEP 3: Define wc-dataload.xml file with the following content below
+wc-dataload.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<_config:DataLoadConfiguration
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.ibm.com/xmlns/prod/commerce/foundation/config ../../../../xml/config/xsd/wcdataload.xsd"
+	xmlns:_config="http://www.ibm.com/xmlns/prod/commerce/foundation/config">
+  <_config:DataLoadEnvironment configFile="./wc-dataload-env.xml" />
+  <_config:LoadOrder commitCount="100" batchSize="1" dataLoadMode="Replace">
+    <!--_config:property name="firstTwoLinesAreHeader" value="true" /-->
+    <_config:LoadItem name="X_CUSTOM_TABLE" businessObjectConfigFile="wc-loader-custom.xml" >
+      <_config:DataSourceLocation location="MyCustomData.csv" />
+    </_config:LoadItem>
+  </_config:LoadOrder>
+</_config:DataLoadConfiguration>
+
+
+STEP 4: Define wc-loader.xml file
+<?xml version="1.0" encoding="UTF-8"?>
+<_config:DataloadBusinessObjectConfiguration
+	xmlns:_config="http://www.ibm.com/xmlns/prod/commerce/foundation/config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.ibm.com/xmlns/prod/commerce/foundation/config ../../../../xml/config/xsd/wc-dataloadbusinessobject.xsd">
+  <_config:DataLoader className="com.ibm.commerce.foundation.dataload.BusinessObjectLoader">
+    <_config:DataReader className="com.ibm.commerce.foundation.dataload.datareader.CSVReader"
+firstLineIsHeader="true" useHeaderAsColumnName="true">
+      <_config:Data>
+        <_config:column number="1" name="MY_CUSTOM_ID" />
+        <_config:column number="2" name="column1" />
+        <_config:column number="3" name="column2" />
+        <_config:column number="4" name="column3" />
+      </_config:Data>
+    </_config:DataReader>
+    <_config:BusinessObjectBuilder
+className="com.ibm.commerce.foundation.dataload.businessobjectbuilder.TableObjectBuilder">
+    <_config:Table name="X_CUSTOM_TABLE">
+      <!-- System generated primary key-->
+      <_config:Column name="MY_SYSTEM_ID" value="MY_SYSTEM_ID" valueFrom="IDResolve">
+        <_config:IDResolve tableName="X_CUSTOM_TABLE" generateNewKey="true" />
+      </_config:Column>
+      <!-- Unique key fed from the CSV file-->
+      <_config:Column name="MY_CUSTOM_ID" value="MY_CUSTOM_ID" />
+      <_config:Column name="column1" value="column1" />
+      <_config:Column name="column2" value="column2" />
+      <_config:Column name="column3" value="column3" />
+    </_config:Table>
+    <_config:BusinessObjectMediator
+className="com.ibm.commerce.foundation.dataload.businessobjectmediator.TableObjectMediator" />
+    </_config:BusinessObjectBuilder>
+  </_config:DataLoader>
+</_config:DataloadBusinessObjectConfiguration>
+
+
+STEP 5. Define an input CSV file
+Content:
+MY_CUSTOM_ID,column1,column2,column3
+1234,mydata_old,mydata_old
+1234,mydata_new, mydata_new
+2345,mydata_old,mydata_old
+
+
+STEP 6: Run the dataload now
+c:\IBM\WCDE_ENT70\bin> dataload.bat ..\samples\dataload\wc-dataload.xml
+
+
+
+8. Q&A
+
+1. What does ATP means? We saw it in the sample file for dataload utility for CategoryGroup and CategoryEntry
+

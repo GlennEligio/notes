@@ -1,0 +1,54 @@
+13. What is OAuth really all about - OAuth tutorial
+
+
+OAuth
+ > Auth here stands for Authorization
+ > OAuth is originally created for Authorization between Services
+	- this is because, mostly likely, the User is ALREADY AUTHENTICATION to the services that is suppose to be accessing each other
+ > currently theres two version of OAuth, the OAuth 1.0 and OAuth 2.0
+ > 2.0 is the most widely used version
+ 
+Example use case: Photo print app
+ > this Photo print app purpose is for users to upload the photos they want to be printed
+ > nowadays, users upload their photos or files in the cloud
+ > with this, users might ask for feature to be able to just provide their photo from Cloud (ex: Google Drive)
+ > but for you to be able to access their files in their Cloud storage, you need to ask for permission in their Cloud storage service. We can resolve this as of now using the following:
+	1. Ask for their cloud storage credentials
+		- no user will provide their credentials, even if you promise to throw it after usage
+	2. Have the users share the files from cloud using a link
+		- this would cause the other users to be able to see their photo/file, if they can get the link provided
+ > for solve this problem, a standard was created so that services access each other on BEHALF of the user which is the OAuth
+ 
+ 
+ 
+Analogy: Car Owner, Car, and the Valet
+ > in this case, the analogy goes:
+	Car Owner 		-> User
+	Car and Valet 	-> Services that need to access each other
+	Car master key	-> User credentials
+	Car valet key	-> OAuth credentials
+ > typically, high end cars comes with two keys, 
+	1. the master key which can be used to start/stop engine, access compartments, fuel tank etc
+	2. the valet key which can only be used to start/stop engine
+ > for the car owner to provide the valet service access to his car, the car owner gives the valet service LIMITED ACCESS to the car via the valet key
+ 
+ 
+OAuth flow
+1. In this flow, theres the following parties
+	> User
+	> Service A (Wordpress)
+	> Service B (Facebook)
+2. User is using both the Service A and B
+3. Service A wants to access some information from Service B (ex: Wordpress wants to access user's facebook name to display in comment section)
+4. Service B will then notify the User that Service A wants to have access to LIMITED information in Service B
+	> example of this is the Facebook pop up when using FB to login on specific websites
+5. If User approves, then Service B will provide an AUTHORIZATION TOKEN, which contains LIMITED ACCESS
+6. The next time Service A wants to access THE SAME information to Service B, the Service A can just provide the TOKEN earlier
+
+
+
+OAuth Access Token 
+ > uses JWT format
+ > contains user-allowed permissions
+ > trustable (cannot be tampered)
+ 

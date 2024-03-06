@@ -1,0 +1,739 @@
+Section 24 - Kubernetes Concepts - PODs, ReplicaSets, Deployments
+
+127. PODs with YAML
+
+YAML in Kubernetes
+ > K8s uses YAML files as inputs for the creation of objects such as pods, replicas, deployments, services, etc
+ > All of YAML of those objects following the same structure, where each of them contains the following top level keys/fields. Note that these are also REQUIRED fields, so we must have them in our configuration file
+	- apiVersion
+	- kind
+	- metadata
+	- spec
+ > apiVersion is the version of K8s API we are using to create the object
+	- takes a String value
+	- depending on what create, we must use the right apiVersion
+	- below are the example values for specific objecs
+		POD 			v1
+		Service			v1
+		ReplicaSets		apps/v1
+		Deployments		apps/v1
+ > kind refers to the type of K8s object we are trying to create
+	- takes a String value
+	- example values can be Pod, Service, ReplicaSet, Deployment
+ > metadata contains data about the object, like its name, labels, etc
+	- takes a Dictionary value
+	- metadata only expects specific fields which includes
+		1. name
+		2. labels
+	- under labels, we can pass a dictionary, with any values that we want. we can treat 'labels' as 'tags' which we can use to differentiate K8s objects to each other
+ > spec (stands for specification) is where we will provide additional information to K8s pertainin to that object
+	- spec takes a dictionary value
+	- specification template will be different for each K8s resources/objects
+	- we can refer to the documentation for the specification for each objects
+	- under spec of a POD, the following fields can be added
+		1. containers
+			= list/array field
+			= refers to the containers to be present under the pod
+ > after creating the YAML file, we can use the 'kubectl create' command with '-f' to create the resource inside the yaml
+	$ kubectl create -f pod-definition.yml
+			
+EX: pod-definition.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+	name: myapp-pod
+	labels:
+		app: myapp
+		type: front-end
+spec:
+	containers:
+	-	name: nginx-container
+		image: nginx
+		
+
+COMMANDS:
+kubectl create -f YAML_FILE
+ > used to create the K8s resources specified inside the YAML file provided
+ > ex:
+	$ kubectl create -f pod-definition.yaml
+
+kubectl get pods
+ > get all existing pods within the cluster
+ 
+kubectl describe pod PODNAME
+ > used to get a verbose information of the pod with the name given
+		
+		
+			
+
+128. Demo - PODs with YAML
+
+EX: pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+	tier: frontend
+spec:
+  containers:
+  - name: nginx
+	image: nginx
+	
+COMMANDS
+kubectl apply -f YAML_FILE
+ > used to apply the K8s resources specified inside the YAML file to the cluster
+ > after executing, it will log all the resources affected and if they are created, unchanged, or configured/updated
+ > ex:
+	$ kubectl apply -f pod.yaml
+ 
+kubectl describe RESOURCE_NAME
+ > used to print the information of specific k8s resource in a verbose way
+ > ex:
+	$ kubectl describe pod/nginx
+ 
+
+NOTES:
+1. 'kind' field is case sensitive.
+	- pod will cause error, instead use Pod
+2. under 'metadata.labels', we can add multiple fields that we want
+	> we can treat this as tags, and is typically used for selecting/grouping/filtering K8s resources
+3. 'spec.containers' can have multiple values since Pods can have multiple containers inside them
+
+
+
+
+
+129. Demo - YAML - Tips
+
+VSCode extensions for YAML file
+1. YAML
+	> created by Red Hat
+	
+Configuring the 'YAML' extension
+settings.json for making YAML extension in VSCode work
+{
+	"yaml.schemas": {
+		"kubernetes": "*.yaml"
+	}
+}
+
+
+Making the YAML extension work in VSCode for Kubernetes
+1. Edit the settings.json
+	> use the json file above
+2. When writing the YAML definition of the K8s resource, start with the 'apiVersion' field
+	> after adding this, the extension can infer that we are creating a YAML definition of a K8s object, and will give autosuggestions text for creating K8s definitions
+
+
+NOTES:
+1. Use text editor that have support for YAML file
+	> example of this is VS code with Kubernetes support (Plugin/Extension)
+	> these plugin can even provide autocompletion feature so that you don't mistype the fields of k8s yaml files
+	> also, it can help us write yaml file in general with YAML validation
+2. There will no autosuggestion feature on some fields, example of these includes:
+	- metadata.labels
+	- *.containers[].name
+	- *.containers[].image
+3. If there are no suggestion given on the field that you are expecting, there might be something wrong with the placement of the field.
+	> it can be because of bad indentation
+
+
+
+
+
+130. Labs: PODs with YAML - File
+
+Q1: How mayn pods exist on the system? In the current (default) namespace
+S: Use 'kubectl get pods -n default'
+A: 0
+
+Q2: Create a new pod with nginx image. Pod name = nginx
+S: Use command below 
+	$ kubectl run --image=nginx nginx
+	
+Q3: How many pods are created now?
+Note: We have created a few more pods. So please check again.
+S: Use same command in Q1
+	$ kubectl get pods -n default
+A: 4
+
+Q4: What is the image used to create the new pods?
+You must look at one of the new pods in detail to figure this out
+S: Use 'kubectl describe pod' command
+A: BUSYBOX
+
+Q5: Which nodes are these pods placed on?
+You must look at all the pods in detail to figure this out
+S: Use 'kubectl describe pod' again to check
+A: CONTROLPLANE
+
+Q6: How many containers are part of the pod 'webapp'?
+Note: We just created a new POD. Ignore the state of the POD for now
+S: Use 'kubectl describe pod' again, and check containers part
+A: 2
+
+Q7: What images are used in the new webapp pod?
+You must look at all the pods in detail to figure this out
+A: nginx and agentx
+
+Q8: What is the state of the container agentx in the pod 'webapp'?
+Wait for it to finish the ContainerCreating state
+S: Check Containers[].agentx.State field in 'kubectl describe pod' output
+A: Waiting
+
+Q9: Why do you think the container agentx in pod webapp is in error?
+Try to figure it out from the events section of the pod
+A: A Docker image with this name does not exist on Docker Hub
+
+Q10: What does the READY column in the output of the 'kubectl get pods' command indicate
+A: Running Containers in POD / Total Containers in POD
+
+Q11: Delete the webapp POD
+Once deleted, wait for the pod to fully terminate
+S: Use command below
+	$ kubectl delete pod webapp
+	
+Q12: Create a new pod with the name redis and the image redis123
+Use a pod-definition YAML file. And yes the image name is wrong!
+S: Use file below, and execute command below as well
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+spec:
+  containers:
+  - name: redis
+    image: redis123
+	
+kubectl apply -f FILENAME.yaml
+
+Q13: Now change the image on ths pod to 'redis'
+Once done, the pod should be in a 'running' state
+S: Change spec.containers[].image value to 'redis'. And execute command below
+	$ kubectl apply -f FILENAME.yaml
+
+
+
+131. Lab Solution
+
+COMMANDS:
+kubectl edit RESOURCE_TYPE RESOURCE_NAME
+ > used to modify the definition of the specific resource
+ > ex:
+	$ kubectl edit pod webapp
+
+NOTE:
+1. When getting k8s certification exam, you will be given ONE tab to access k8s documentation
+2. When changing definition of a specific k8s object, we can use 'kubectl edit' command
+	- ex: kubectl edit pod webapp
+
+
+
+
+
+132. Replication Controllers and ReplicaSets
+
+Course Objectives
+1. Core Concepts
+	- Kubernetes Architecture
+	- Create and Configure PODs
+2. Configuration
+3. Multi-Container PODs
+4. Observability
+5. Pod Design
+6. Services and Networking
+7. State Persistence
+
+
+Replication Controllers
+ > Controllers are the brain behind Kubernetes
+ > They are the processes that monitor Kubernetes objects and respond accordingly
+ > One example of these controllers is the Replication Controller
+
+Use of Replication Controllers
+1. High availability
+	> with more replica/instance of Pods, we can ensure that there will be a Pod that will handle specific request
+	> Replication Controllers ensures that the specified number of pods are running at all times
+2. Load Balancing & Scaling
+	> Replication Controller can also deploy additional Pods in order to scale the service hosted in Pods up and down
+	> With scaling, we can also balance the load in each Pods
+	> In order for Replication Controller to do the scaling, it will need metrics to read (e.g., Node's cpu and mem usage).
+		- with these data, Replication Controller can either scale up or down the number of Pods in the cluster
+	> load balancing and scaling also happens across different nodes	
+
+
+Replication Controller vs Replica Set
+ > Replication controller is the older technology that is being replaced by Replica Set
+ > due to this, we will stick to using Replica Set in future demos and implementations going forward
+
+
+Replication Controller YAML definition fields
+1. Add the required root level fields	
+	> which are apiVersion, kind, metadata, spec
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: myapp-rc
+  labels:
+	app: myapp
+	type: front-end
+spec:
+
+2. For 'spec' field, we will need to have two fields present; the 'template' and 'replicas' fields
+	> template field is what defines the template of the POD that the ReplicationController will create
+		- due to this, the 'template' field value is very similar to the POD yaml definition
+	> replicas field defines the number of replicas of the PODs that should be present
+	
+EX:
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: myapp-rc
+  labels:
+	app: myapp
+	type: front-end
+spec:
+  template:
+    metadata:
+	  name: myapp-pod
+	  labels:
+	    app: myapp
+		type: front-end
+	  spec:
+	    containers:
+		- name: nginx-container
+		  image: nginx
+  replicas: 3
+  
+3. Use commands below to create the ReplicationController. and check its status
+	$ kubectl create -f RC.yaml
+	$ kubectl get replicationcontroller
+	$ kubectl get pods
+	
+	
+	
+ReplicaSet YAML definition
+ > for ReplicaSet, it would be closely similar to ReplicationController, where you will need to specify template of the POD to replicate
+ > below is the sample YAML definition of the ReplicaSet
+	- apiVersion: for this, we will be using apps/v1 since thats the K8s api version where ReplicaSet is supported
+	- kind: use 'ReplicaSet'
+	- metadata: same as any k8s resource, need to provide 'metadata.name' value, and for 'metadata.labels' it can be anything
+	- spec: similar to the ReplicationController (with template and replicas) except for one additional field, the 'selector'
+		= spec.selector is used to select the PODs that will be handled by the ReplicaSet for replication purposes
+			=> this means ReplicaSet or ReplicationController can handle Pods that is outside their definition
+		= spec.selector is not required in ReplicationController, and if not provided, it assumes that it will select the PODs specified under 'spec.template' of the ReplicationController
+		= on the other hand, 'spec.selector' is REQUIRED for ReplicaSet.
+			=> spec.selector also have more feature in ReplicaSet than in ReplicationController
+		= in example below, it matches based on the labels of the Pods (type: front-end)
+		
+# replicaset-definition.yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+	app: myapp
+	type: front-end
+spec:
+  template:
+    metadata:
+	  name: myapp-pod
+	  labels:
+	    app: myapp
+		type: front-end
+	  spec:
+	    containers:
+		- name: nginx-container
+		  image: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+	  type: front-end
+	  
+ 
+ 
+ 
+Labels and Selectors 
+ > Labels are typically used to 'label' or 'tag' a Kubernetes resource/object
+ > These labels, besides labelling the resources, can also be used to selecting specific resources
+ > Example of these includes:
+	1. ReplicaSet selecting the PODs to handle
+		- using labels under the PODs, the ReplicaSet can determine the number of PODs up or down, ready or not ready with that label
+		- with this ReplicaSet can ensure the desired number of replica exist in the cluster 
+	2. Service selecting the PODs to determine where to redirect request
+ > In example below as well, we can see that this ReplicaSet ensures that there must be THREE PODs with label "type: frontend" that is running within the cluster
+ 
+# replicaset-definition.yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+	app: myapp
+	type: front-end
+spec:
+  template:
+    metadata:
+	  name: myapp-pod
+	  labels:
+	    app: myapp
+		type: front-end
+	  spec:
+	    containers:
+		- name: nginx-container
+		  image: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+	  type: front-end
+
+
+
+Scaling ReplicaSet/ReplicationController
+ > in order to scale either ReplicaSet/ReplicationController, we can do the following ways
+	1. use 'kubectl replace -f FILENAME' command and provide the updated yaml definition file
+	2. use 'kubectl scale' command, and provide value for '--replicas' flag, and either the yaml definition file
+	3. use 'kubectl scale' command, and provide value for '--replicas' flag, and ReplicaSet/ReplicationController name
+ > note that for number 2, it will NOT UPDATE the yaml definition file
+	
+EX:
+kubectl replace -f replicaset-definition.yml
+kubectl scale --replicas=6 -f replicaset-definition.yml
+kubectl scale --replicas=6 replicaset myapp-replicaset
+
+
+
+COMMANDS
+kubectl create -f YAML_FILE
+ > used to create the k8s resources specified inside the yaml file
+ > ex:
+	$ kubectl create -f rc-definition.yml
+
+kubectl get replicationcontroller
+ > used to get all replicationcontroller present in the cluster
+ 
+kubectl get replicaset
+ > used to get all replicaset present in the cluster
+ 
+kubectl get pods
+ > used to get all the pods present in the cluster\
+
+kubectl replace -f YAML_FILE
+ > used to replace the definition of k8s resource existing in the cluster to the one defined inside yaml file provided
+ 
+kubectl scale --replicas=6 -f YAML_FILE
+ > used to create either ReplicaSet/ReplicationController, and update the replicas field
+ 
+kubectl scale --replicas=6 replicaset REPLICASET_NAME
+kubectl scale --replicas=6 replicationcontroller REPLICATION_CONTROLLER_NAME
+ > used to update the definition of the existing ReplicaSet/ReplicationController in the cluster by changing the 'replicas' field
+
+
+NOTES:
+1. Pods created by either ReplicationController, ReplicaSet, or Deployment will have their name start by the wrapper's name, followed by dash and random character sequence
+	> ex: 
+		ReplicationController name = myapp-rc
+		Pod name example = myapp-rc-qwe1s
+
+
+
+133. Demo - ReplicaSets
+
+134. Labs: ReplicaSets - File
+
+
+135. Lab Solution
+
+NOTES:
+1. ImagePullBackOff status of Pod means that it failed to pull the specific image used inside the container of the pod
+2. The selector defined inside a ReplicaSet or Deployment SHOULD MATCH the labels specified in template of the Pods to be created by it
+
+
+
+
+
+
+136. Deployments
+
+Rolling Update - Deployment in Production
+ > whenever we deploy new update/feature in the Production, we typically do not want destroy all existing instances of application, then create new instances of the app with updated code
+	- this may impact user experience due to users not being able to access the app momentarily
+ > instead, we may opt to gradually deploy the application instance with updated code, wherein we will down certain number of old app instance and replace them with new app instance. 
+	- this process will happen again until all the app instance present contains the updated version
+ > this gradual rollout of new app version is called Rolling Update
+
+
+Deployment
+ > Deployment is a k8s resource that can be seen as a wrapper for Replica Set / Replication Controller
+	- all features of Replica Set is available to Deployment
+ > With Deployment, we have the capability to upgrade the underlying instances, seamless using following functions as required
+	- rolling updates
+	- undo changes
+	- pause and resume changes
+	
+	
+Creating Deployment YAML definition file
+ > for the YAML definition, it would be the same as the ReplicaSet, except for the 'kind' field, wherein instead of 'ReplicaSet', it would be 'Deployment'
+ > for the functionalities discussed above like rolling updates, Deployment have new fields dedicated to configure those functionalities
+ 
+
+K8s resource created with Deployment
+ > when creating a Deployment, it will create the following alongside it
+	1. A Deployment
+	2. A ReplicaSet
+	3. One or more Pods under the said ReplicaSet
+ > the naming of these new objects goes as follows
+	Deployment - DEPLOYMENT_NAME
+	ReplicaSet - DEPLOYMENT_NAME-RandomString1
+	Pods	   - DEPLOYMENT_NAME-RandomString1-RandomString2
+ > in addition, the Deployment will now have new information 'UP-TO-DATE', which specifies the Pods that matches the current definition of PodTemplateSpec of Deployment
+	
+
+Commands
+kubectl get all
+ > get all the k8s resources in the cluster
+
+
+
+
+137. Demo: Deployments
+
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+	app: nginx
+	type: frontend
+spec:
+  template:
+    metadata:
+	  name: nginx
+	  labels:
+	    app: myapp
+	  spec:
+	    containers:
+		- name: nginx
+		  image: nginx
+  replicas: 4
+  selector:
+    matchLabels:
+	  type: myapp
+
+
+
+
+
+138. Labs: Deployments - File
+
+Q1: How many PODs exist on the system?
+In the current (default) namespace.
+S: Use 'kubectl get pods'
+A: 0
+
+Q2: How many ReplicaSets exist on the system?
+In the current (default) namespace.
+S: Use 'kubectl get rs -n=default'
+A: 0
+
+Q3: How many Deployments exist on the system?
+In the current (default) namespace.
+S: kubectl get deployment -n=default
+A: 0
+
+Q4: How many Deployments exist on the system?
+We just created a Deployment! Check again!
+S: kubectl get deployment -n=default
+A: 1
+
+Q5: How many ReplicaSet exist on the system now?
+S: Use 'kubectl get rs -n=default'
+A: 1
+
+Q6: How many PODs exist on the system now?
+S: Use 'kubectl get pods -n=default'
+A: 4
+
+Q7: Out of all the existing PODs, how many are ready?
+A: 0
+
+Q8: What is the image used to create the pods in the new deployment?
+S: Check Deployment definition
+	$ kubectl describe deployment frontend-deployment
+A: BUSYBOX888
+
+Q9: Why do you think the deployment is not ready?
+A: The image BUSYBOX888 does not exist
+
+Q10: Create a new Deployment using the deployment-definition-1.yaml file located at /root/
+There is an issue with the file, so try to fix it.
+S: Change image name from busybox888 to busybox
+	Change kind from deployment to Deployment
+	
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: busybox-pod
+  template:
+    metadata:
+      labels:
+        name: busybox-pod
+    spec:
+      containers:
+      - name: busybox-container
+        image: busybox
+        command:
+        - sh
+        - "-c"
+        - echo Hello Kubernetes! && sleep 3600
+		
+		
+Q11: Create a new Deployment with the below attributes using your ow  deployment definition file
+Name: httpd-frontend
+Replicas: 3
+Image: httpd:2.4-alpine
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: frontend
+  template:
+    metadata:
+      labels:
+        name: frontend
+    spec:
+      containers:
+      - name: httpd-frontend
+        image: httpd:2.4-alpine
+
+
+
+
+139. Deployments - Update and Rollback
+
+Rollout and Versioning
+  > when we first create a deployment, it will initially do a ROLLOUT
+	- this rollout will be the revision 1
+  > each new rollout creates a new deployment VERSION
+	- we can see this rollout history and version using command 'kubectl rollout history DEPLOYMENT_NAME'
+ > a rollout will be triggered if the container version is updated (e.g., new image used in the container of pod)
+ > this rollout and versioning helps us keep track of the changes made to our deployment and enables us to roll back to a previous version of deployment if necessary
+ 
+ 
+Deployment Strategy
+ > when we are doing deployment, there are different strategies in order to deploy new versions of replicas and remove the old versions, these includes
+	1. Recreate strategy
+	2. Rolling update strategy (default)
+ > in Recreate strategy, we will destroy all replicas with old container version, then create new updated replicas of same number
+	- during the period between destroying old replicas and creating new replicas, the application is down and is INACCESSIBLE to users
+ > Rolling update strategy is where we will bring down a portion of replicas, then replace them with replicas of updated container version
+	- with this, we can ensure that the application will not be down during the deployment of new changes
+ > we could also see the different between Recreate and RollingUpdate in the Events of the said Deployment when we do a deployment in each
+	- for Recreate, it scales the old ReplicaSet to 0. Then it creates a new ReplicaSet with updated definition, and scales it back to the desired replicas. Lastly, it will destroy the old deployment
+	- for RollingUpdate, it will create new ReplicaSet as well. But for RollingUpdate, the old ReplicaSet will be scaled down to make room for new updated Replicas. The number of available pods will be used by new ReplicaSet, scaling up to that amount
+	
+	
+Updating Kubernetes Deployments resources
+ > when we want to update any k8s resources, we can use 'kubectl apply' command to do so
+ > one of the example use case is to update the container versions of the deployment resources
+ > ex:
+	$ kubectl apply -f deployment-definition.yml
+ > in addition, we can use 'kubectl set image DEPLOYMENT_NAME CONTAINER_NAME=IMAGE_NAME' to update the image used by a specific container
+	$ kubectl set image deployment/myapp-deployment nginx=nginx:1.9.1
+	
+	
+Rollback
+ > to do a rollback, we would use 'kubectl rollout undo DEPLOYMENT_NAME' command
+ > this will do the rollout steps in reverse, wherein it will scale down the latest ReplicaSet, then scale up the previous ReplicaSet before the latest
+ > we will be able to see this as well in the ReplicaSet info. wherein the old ReplicaSet will have the actual desired replica number, while the new ReplicaSet will have 0 desired replicas
+ 
+ 
+Kubectl run - Behind the scene
+ > when we run a 'kubectl run' command, it actually creates a deployment. it also creates the ReplicaSet alongside it
+ > It is more recommended to use a definition file, as you can save the file, and check it into the code repository and modify it later as required
+ 
+	
+	
+Upgrades - behind the scene
+ > When we upgrade a deployment, what happens behind the scene is that it create a NEW REPLICASET
+ > In this new ReplicaSet, the K8s will deploy the new updated replicas there. At the same time, the K8s will take down pods in the old ReplicaSet, following a RollingUpdate strategy
+ > We will be able to see this by checking the ReplicaSets after the RollingUpdate, where the old ReplicaSet have desired replicas of 0, and the new ReplicaSet have the correct desired replicas number
+
+
+Summarize - Commands
+Create		kubectl create -f DEPLOYMENT_YAML
+Get			kubectl get deployments
+Update		kubectl apply -f DEPLOYMENT_YAML
+			kubectl set image DEPLOYMENT_NAME CONTAINER_NAME=IMAGE_NAME
+Status		kubectl rollout status DEPLOYMENT_NAME
+			kubectl rollout history DEPLOYMENT_NAME
+Rollback	kubectl rollout undo DEPLOYMENT_NAME
+
+
+Command
+kubectl rollout status deployment/DEPLOYMENT_NAME
+ > used to check the current status of the rollout update happening currently on the specified deployment
+ > it will show the number of replicas updated, and the total number of replicas to update initially. Then after rollout is finished, it will log that it is successful
+ > ex:
+	$ kubectl rollout status deployment/myapp-deployment
+ > logs:
+	waiting for rollout to finish: 0 of 10 updated replicas are available
+	waiting for rollout to finish: 1 of 10 updated replicas are available
+	waiting for rollout to finish: 2 of 10 updated replicas are available
+	...
+	deployment "myapp-deployment" successfully rolled out
+	
+kubectl rollout history deployment/DEPLOYMENT_NAME
+ > shows the number of revisions/rollouts done, and the change-cause of it
+ > ex:
+	$ kubectl rollout history deployment/myapp-deployment
+ > logs:
+	REVISION	CHANGE-CAUSE
+	1			<none>
+	2			kubectl apply --filename=deployment-definition.yml --record=true
+	
+kubectl apply -f K8S_RESOURCE_YAML_DEFINITION
+ > used to update any k8s resources specified inside yaml file
+ > for changes with regards to deployment, it will use the deployment strategy configured (default is rolling update)
+ > ex:
+	$ kubectl apply -f deployment-definition.yml
+	
+kubectl set image DEPLOYMENT_NAME CONTAINER_NAME=NEW_IMAGE_NAME
+ > used to update the image used on a specific container inside kubernetes deployment resources
+ > ex:
+	$ kubectl set image deployment/myapp-deployment nginx=nginx:1.9.1
+	
+kubectl rollout undo DEPLOYMENT_NAME
+ > used to undo the latest rollout done on a specific Deployment
+ > it will do the reverse, where it scales down the new ReplicaSet, then scales up the previous ReplicaSet
+ > ex:
+	$ kubectl rollout undo deployment/myapp-deployment
+	
+	
+	
+	
+
+140. Demo - Deployments - Update and Rollback
+
+NOTES:
+1. To record the cause of the rollout, we can use the '--record' flag
+	> ex:
+		$ kubectl create -f deployment.yaml --record
+2. When we do a rollback, the previous rollout will become the new rollout version
+	> for example, if we are in revision 3 and we rollback to revision 2, the revision 2 will become revision 4 in the rollout history. The revision 3 will stay the same

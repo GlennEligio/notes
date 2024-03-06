@@ -1,0 +1,92 @@
+04. Puppet Installation
+
+
+Installing Puppet Master in Master Server
+
+1. Update list of packages for upgrades for packages
+	$ sudo apt-get update
+2. Install wget package
+	$ sudo apt-get install wget
+3. Using wget, fetch the Debian Software Package file of Puppet
+	$ wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+4. Depackage the Puppet .deb file
+	$ sudo dpkg -i puppet-release-bionic.deb
+5. Update list of packages for upgrades again
+	$ sudo apt-get update
+6. Install the Puppet Master
+	$ sudo apt-get install puppet-master
+7. Check status of Puppet-Master
+	$ sudo systemctl status puppet-master.service
+8. Add the following lines in the puppet-master configuration file (can use vi or nano)
+	$ sudo nano /etc/default/puppet-master
+	Content to add: JAVA_ARGS="-Xms512m Xmx512m" 
+9. Restart the Puppet Master service
+	$ sudo systemctl restart puppet-master
+10. Next open port 8140 on the Puppet Master’s firewall
+	$ sudo ufw allow 8140/tcp
+
+
+
+Installing Puppet Agent
+1. Update list of packages for upgrades for packages
+	$ sudo apt-get update
+2. Install wget
+	$ sudo apt-get install wget
+3. Fetch the .deb file of Puppet
+	$ wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+4. Depackage the Puppet's .deb file
+	$ sudo dpkg -i puppet-release-bionic.deb
+5. Install Puppet
+	$ sudo apt-get install puppet
+6. Open hosts file in the Puppet Agent using either nano or vi command
+	$ sudo nano /etc/hosts
+7. Add Puppet Master's private Ip address inside hosts file of Managed Node
+	> syntax is: <Master Private Ip> puppet
+	> ex: "172.23.232.12 puppet" WITHOUT quotation marks
+8. Start and Enable the Puppet
+	$ sudo systemctl start puppet
+	$ sudo systemctl enable puppet
+
+
+Configuring Puppet Master
+1. List all OUTSTANDING certificate request (from Puppet Agents)
+	$ sudo puppet cert list
+2. Sign ALL outstanding certificate request
+	$ sudo puppet cert sign --all
+
+
+Verify the Installation
+In Master Server, Create a test Puppet Policy file
+1. Create the directory path to contain Puppet Policy files
+	$ sudo mkdir -p /etc/puppet/code/environments/production/manifests
+2. Create a Puppet Policy file (can use touch+nano/vi or just straight nano/vi)
+	$ sudo vi /etc/puppet/code/environments/production/manifests/site.pp
+3. Paste this line of text inside the site.pp
+
+node default{
+
+package {'nginx':
+ensure => installed,
+}
+
+file { '/tmp/status.txt':
+
+content => 'installed',
+mode => '0644',
+}
+}
+
+
+
+In Puppet Agent Server, fetch the Catalog to execute from Puppet Master
+1. Fetch the Catalog from Puppet Master
+	puppet agent --test
+
+
+
+
+Check Resources available to be modified by Puppet
+1. Execute the command
+	puppet resource --types
+	puppet resource file /tmp/1.txt
+

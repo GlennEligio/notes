@@ -1,0 +1,20 @@
+88 S3 Glacier Vault Lock & S3 Object Lock
+
+S3 Object Lock
+ > Adopt a WORM (Write Once Read Many) model
+ > Block an object version deletion for a specified amount of time
+
+Glacier Vault Lock
+ > adopt a WORM (Write Once Read Many) model
+ > Lock the policy for future edits (can no longer be changed)
+ > Helpful for compliance and data retention
+
+
+Diagram
+
+Object ------> 	Vault Lock Policy
+		(Object can't be deleted)
+
+
+NOTE:
+1. Even the Admins will not be able to edit or delete objects in the Vault Lock

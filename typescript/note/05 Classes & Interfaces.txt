@@ -1,0 +1,1176 @@
+05 Classes & Interfaces
+
+Contents:
+01 Module Introduction
+02 What are Classes
+03 Creating a First Class
+04 Compiling to JavaScript
+05 Constructor Functions & The "this" keyword
+06 private and public Access Modifiers
+07 Shorthand Initialization
+08 readonly Properties
+09 Inheritance
+10 Overriding Properties & The protected Modifier
+11 Getters & Setters
+12 Static Methods & Properties
+13 Abstract Classes
+14 Singletons & Private Constructors
+15 Classes - A Summary
+16 A First Interface
+17 Using Interfaces with Classes
+18 Why Interfaces
+19 Readonly Interface Properties
+20 Extending Interfaces
+21 Interfaces as Function Types
+22 Optional Parameters & Properties
+23 Compiling Interfaces to JavaScript
+24 Wrap Up
+
+
+
+
+
+
+
+
+01 Module Introduction
+
+Module Content
+1. What & Why?
+2. Classes & Inheritance
+3. Interfaces
+
+
+
+
+
+
+
+
+
+02 What are Classes
+
+Object Oriented Programming
+ > computer programming model that organizes software design around data, or objects, rather than functions and logic
+ > focuses on the objects that developers want to manipulate rather than the logic required to manipulate them
+
+Classes
+ > "blueprint for objects" (theoretical definition)
+	- this blueprint includes the
+		1. properties
+		2. behavior
+ > define how objects look like, which properties and methods they have
+ > Classes make creation of multiple similar objects much easier
+	- these Object may differ just from the specific details about them
+	- ex: with Person class, we may create two Person object with different name, age, sex, address, etc
+
+Objects
+ > "The things you work with in code"
+ > INSTANCES of Classes (or based on classes)
+ > Class-based creation is an alternative to using object literals
+ > 
+
+EX:
+Object
+1. ProductList
+  > renders a list of products which were fetched from a server (database)
+  > object holds rendering + fetching logic
+2. Product
+  > Renders details about a product and allows addition to cart
+  > Object holds rendering + cart-adding logic
+3. Shopping cart
+  > Renders cart products and total allows user to order them
+  > Object holds rendering + ordering (server communication) logic
+
+
+
+
+
+
+
+
+03 Creating a First Class
+
+Creating a Class
+ > to create a class, we will need to use the "class" keyword
+ > then inside the Class, we will to define several things
+	1. field
+		- refers to the properties and functions (behavior) of the Class
+		- if we look at the Object instance of the class, this is what we will see
+		- to add a field to Class, use the syntax
+			-> fieldName: type;
+		- this field's value must be initialized either through either of the two or TypeScript will through an error
+			-> field declaration
+			-> constructor body
+	2. constructor 
+		- refers to the function used to create an Object instance of the said Class
+		- to create this, we will need to use the keyword "constructor"
+		- this function will typically have parameters which will be used to populate the Class' field values
+
+Creating a Class Instance (Object)
+ > to create a class instance, we will use the "new" keyword, then use the Class as if its a function
+ > this so-called function refers to the constructor function
+ > and constructor function returns an instance of the Class (Object)
+ > NOTE: Class names, by convention, must be Capitalized (i.e. Person, Department, School, etc)
+
+EX:
+class Department {
+  name: string;
+
+  constructor(n: string) {
+    this.name = n;
+  }
+}
+
+const mathDept = new Department("Math");
+console.log(mathDept);
+
+
+
+
+
+
+
+
+
+04 Compiling to JavaScript
+
+Compiling Classes in TypeScript to JavaScript
+ > based on the target, the output JS of the Class creation will be different
+
+ES6:
+"use strict";
+class Department {
+    constructor(n) {
+        this.name = n;
+    }
+}
+const mathDept = new Department("Math");
+console.log(mathDept);
+
+ES5:
+"use strict";
+var Department = (function () {
+    function Department(n) {
+        this.name = n;
+    }
+    return Department;
+}());
+var mathDept = new Department("Math");
+console.log(mathDept);
+
+
+
+
+
+
+
+
+05 Constructor Functions & The "this" keyword
+
+Constructor Functions
+ > constructor function is a utility function which is called when we instantiate a Class
+ > this function typically accept one or more parameters which we will use to populate the Class' field values
+
+Adding Functions as part of Class
+ > we can also add functions beside the properties in order to add behavior to our Class
+	-> Class' function typically involved using the Class' fields/properties
+ > to do this, we will just define a function inside a Class
+ > we can then call this function through the Class instance or Object
+
+"this" keyword
+ > "this" keyword can be tricky in JS
+ > this basically refers to the caller of the function that used the "this" keyword inside
+ > we typically see this scenario when calling one of the functions of an Object
+	- in cases like this, the Object will be the "this" of the function called
+
+NOTES:
+1. We can add caller type or class check in the Class' functions
+	> applicable to Class' function that uses the "this" keyword
+ 	> by adding a "this" parameter to function and setting the type to the Class, we can add a class check to the caller of the said function
+
+EX:
+class Department {
+  name: string;
+
+  constructor(n: string) {
+    this.name = n;
+  }
+
+  describe(this: Department) {
+    console.log("Department: " + this.name);
+  }
+}
+
+const mathDept = new Department("Math");
+console.log(mathDept);
+mathDept.describe();
+
+/*
+// will throw error since science object doesnt match Department class (no name property)
+const science = { describe: mathDept.describe}
+science.describe() 
+*/
+
+const science = { name: "Science", describe: mathDept.describe };
+science.describe(); 
+
+
+
+
+
+
+
+
+
+
+
+06 private and public Access Modifiers
+
+Access Modifiers
+ > in vanilla JS, there is not private or public keywords used to define access to field or method of Class
+ > in TypeScript, we can use these access modifier to check for access error in Class' field and method
+	- ex: if we access/modify a private field of an Object, we will get an error in TS compiler
+
+public
+ > access modifier which makes the methods/field public
+ > default value if access modifier is not defined, so we dont need to use this
+ > if a field/method is public, users can access/modify the said field/method value inside and outside the Class definition
+
+private
+ > access modifier which makes the methods/fields private
+ > this means the field/methods can only be accessed/modified inside the Class definition
+ > if a field/method is private, TypeScript will show an error if we try to access/modify them outside the Class
+
+EX:
+class Department {
+  public name: string;
+  private employees: string[] = [];
+
+  constructor(n: string) {
+    this.name = n;
+  }
+
+  describe(this: Department) {
+    console.log("Department: " + this.name);
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee);
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees);
+  }
+}
+
+const accounting = new Department("Accounting");
+
+accounting.addEmployee("Abigail");
+accounting.addEmployee("Elmer");
+
+// accounting.employees[2] = "Anna" // throws error since employees field is private
+accounting.name = "New Accounting"; // will not throw error
+
+console.log(accounting);
+accounting.describe();
+accounting.printEmployeeInformation();
+
+
+
+
+
+
+
+
+
+07 Shorthand Initialization
+
+Shorthand Initialization
+ > refers to the initialization of Class' field in the constructor
+ > typically, we define field in Class, then using the constructor parameters, we initialize those field's value
+ > but using the shorthand initialization, we can lessen the code we write
+
+NOTE:
+1. Access modifier must be defined
+2. constructor parameter name must be the same as the field name
+
+Without using the shorthand
+class Department {
+  private id: string;
+  private name: string;
+  private employees: string[] = [];
+
+  constructor(n: string, id: string) {
+    this.name = n;
+    this.id = id;
+  }
+}
+
+With shorthand
+class Department {
+  private employees: string[] = [];
+
+  constructor(private name: string, private id: string) {}
+}
+
+
+
+
+
+
+
+
+
+08 readonly Properties
+
+readonly Properties
+ > readonly Properties are properties that be only read
+ > we can not write or modify the value of this property
+ > to make a property readonly, we only need to add "readonly" keyword after the access modifier
+
+NOTE:
+1. Generally a good idea to add "readonly" to field that is supposed to be read only
+	- making code more explicit is a good practice
+
+EX:
+class Department {
+  public readonly id: string;
+  private name: string;
+  private employees: string[] = [];
+
+  constructor(n: string, id: string) {
+    this.name = n;
+    this.id = id;
+  }
+}
+
+class Department {
+  private employees: string[] = [];
+
+  constructor(private name: string, public readonly id: string) {}
+}
+
+
+
+
+
+
+
+
+
+09 Inheritance
+
+Inheritance
+ > a concept in OOP where a Class "inherits" properties and behavior of another class
+ > to make a Class inherit another Class' properties and behavior, we need to use the "extends"
+	-> ex: class Child extends Parent {}
+ 
+Extending a Class
+ > when a Class extends from another Class, by default it inherits its properties and behavior
+	- this includes the fields, methods, constructor format, etc
+ > but typically, when we create a Class by extending, we want the new Class to be different from its base/parent Class
+	- this is typically done by either adding new fields/methods or creating new constructor
+ > the constructor of the base/parent Class can also be inherited by the child/sub Class through the super function
+
+super
+ > function available in JS
+ > refers to the constructor of the parent/base class the child/sub class extending to
+ > called inside the constructor method
+
+NOTE:
+1. If we define the constructor of a child Class, we must call the super() method inside the constructor function and pass the necessary arguments to it
+2. Expressions that uses "this" keyword must be defined AFTER the super() call
+
+EX:
+Below, we can see two new Class, ITDepartment and AccountingDepartment.
+These two extends to the Department Class and by default inherits the properties of Department
+We also added new fields and methods to the subclasses.
+
+class ITDepartment extends Department {
+  admins: string[];
+
+  constructor(id: string, admins: string[]) {
+    super(id, "IT");
+    this.admins = admins;
+  }
+}
+
+class AccountingDepartment extends Department {
+  constructor(id: string, private reports: string[]) {
+    super(id, "Accounting");
+  }
+
+  addReport(report: string) {
+    this.reports.push(report);
+  }
+
+  printReport() {
+    console.log(this.reports);
+  }
+}
+
+const it = new ITDepartment("d1", ["Max"]);
+
+it.addEmployee("Abigail");
+it.addEmployee("Elmer");
+
+console.log(it);
+it.describe();
+it.printEmployeeInformation();
+
+const accounting = new AccountingDepartment("d2", []);
+accounting.addReport("Something went wrong!");
+accounting.printReport();
+
+
+
+
+
+
+
+
+
+
+10 Overriding Properties & The protected Modifier
+
+Overriding Properties
+ > in some scenarios, we typically want to override the properties/functions of the parent Class when we extends to it
+ > for this scenarios, we will need to use the keyword "protected"
+
+protected
+ > access modifier keyword, same as private and public
+ > difference is that protected fields/methods can be access/modify not only inside the Class definition, but also inside the Sub Classes definition as well
+
+EX:
+Below, we can see that Department Class have employees set to protected.
+With that, we are able to access the employees in the AccountDepartment, which extends to the Department class.
+We used this employees field inside addEmployees() function of AccountDepartment class
+
+// Department Class
+class Department {
+  //   private id: string;
+  //   private name: string;
+  protected employees: string[] = [];
+
+  constructor(private id: string, private name: string) {
+    // this.name = n;
+    // this.id = id;
+  }
+}
+
+// AccountingDepartment Class
+class AccountingDepartment extends Department {
+  constructor(id: string, private reports: string[]) {
+    super(id, "Accounting");
+  }
+
+  addEmployee(name: string) {
+    if (name === "Max") {
+      return;
+    }
+    this.employees.push(name);
+  }
+
+  addReport(report: string) {
+    this.reports.push(report);
+  }
+
+  printReport() {
+    console.log(this.reports);
+  }
+}
+
+const accounting = new AccountingDepartment("d2", []);
+accounting.addReport("Something went wrong!");
+accounting.printReport();
+
+accounting.addEmployee("Max");
+accounting.addEmployee("Manu");
+accounting.printEmployeeInformation();
+
+
+
+
+
+
+
+
+
+
+11 Getters & Setters
+
+Getters and Setters
+ > TypeScript also supports getters and setters to the fields of the Class
+ > Getters and Setters are used in order to add more logic when we access or modify the fields
+	- ex: null check when fetching fields, type check for assigning values to fields
+ > in order to create a Getter or Setter, we need to use the "get" and "set" keyword
+
+get
+ > keyword used in TypeScript to create a getter function
+ > the function used with get keyword MUST RETURN a value
+ > when we use the getter function, we will use it as if we are accessing value of a field
+	- ex: console.log(accountingDept.getReports)
+
+set
+ > keyword used in TypeScript to create a setter function
+ > the function used with set keyword MUST TAKE EXACTLY ONE parameter
+ > when we use the setter function, we will use it as if we are assigning value to a field
+	- ex: accountingDept.setMostRecentReport = "Something went wrong"
+
+NOTE:
+1. Names of the getters/setters must be related to the field we are getting/setting
+
+EX:
+class AccountingDepartment extends Department {
+  private lastReport: string;
+
+  constructor(id: string, private reports: string[]) {
+    super(id, "Accounting");
+    this.lastReport = reports[0];
+  }
+
+  get mostRecentReport() {
+    if (this.lastReport) {
+      return this.lastReport;
+    }
+    throw Error("No recent report");
+  }
+
+  set mostRecentReport(report: string) {
+    if (report) {
+      this.addReport(report);
+      return;
+    }
+    throw Error("Please enter a report");
+  }
+
+  addEmployee(name: string) {
+    if (name === "Max") {
+      return;
+    }
+    this.employees.push(name);
+  }
+
+  addReport(report: string) {
+    this.reports.push(report);
+    this.lastReport = report;
+  }
+
+  printReport() {
+    console.log(this.reports);
+  }
+}
+
+const accounting = new AccountingDepartment("d2", []);
+accounting.addReport("Something went wrong!");
+console.log(accounting.mostRecentReport);
+accounting.mostRecentReport = "Yearly report"; 
+accounting.printReport();
+
+
+
+
+
+
+
+
+
+
+12 Static Methods & Properties
+
+Static Methods & Properties
+ > if a method or property is static, this means that they can only be accessed through the Class itself and not an instance of it
+	- ex: Department.createEmployee(), Department.fiscalYear
+ > to make property or method static, we will need to add "static" keyword before it
+	- ex: static fiscalYear = 2020; or static createEmployee() {...}
+ > NOTE:
+	1. static field and method CAN ONLY be accessed by static methods inside the Class definition with "this"
+		- for non-satic methods, to access these static field/method, we need to call them via the Class itself
+		- ex: constructor() { Department.fiscalYear }
+		- ex: static getFiscalYear() { this.fiscalYear }
+
+EX:
+class Department {
+  static fiscalYear = 2020;
+  protected employees: string[] = [];
+
+  constructor(private id: string, private name: string) {
+    console.log(this.fiscalYear);  // will throw error
+    console.log(Department.fiscalYear);  // will be allowed
+  }
+
+  static createEmployee(name: string) {
+    return { name: name };
+  }
+
+  describe(this: Department) {
+    console.log(`Department ${this.id}: ${this.name}`);
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee);
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees);
+  }
+}
+
+const employee1 = Department.createEmployee("Glenn");
+console.log(employee1, Department.fiscalYear);
+
+
+
+
+
+
+
+
+
+13 Abstract Classes
+
+Abstract Classes
+ > with Abstract Classes, we can provide "abstraction" to Class definition
+	- "abstraction" is where we make the method/properties abstract, just defining their main objective
+	- with this, we will have to make its subclasses define the implementation/value of these abstract methods/properties
+ > Abstract Class must contain ATLEAST ONE abstract method of properties
+ > To create an Abstract Class, we will need to use the "abstract" keyword
+	- ex: abstract class Department {}
+
+Abstract Methods/Properties
+ > Abstract methods/properties must be inside an abstract Class
+ > These do not have concrete implementation, instead they are given abstract definition
+ > To create abstract method/properties, we will need to use "abstract" keyword
+ > For abstract method, we only need to define the parameters and its types and return type
+	- we typically add "this" parameter with type refering to abstract Class to make sure only its subclass can use it
+ > For abstract property, we only need to define the type of property
+
+EX:
+// Department Class, abstract class with abstract method "describe"
+abstract class Department {
+  static fiscalYear = 2020;
+  protected employees: string[] = [];
+
+  constructor(protected id: string, public name: string) {
+    console.log(Department.fiscalYear);
+  }
+
+  static createEmployee(name: string) {
+    return { name: name };
+  }
+
+  abstract describe(this: Department): void;
+
+  addEmployee(employee: string) {
+    this.employees.push(employee);
+  }
+
+  printEmployeeInformation() {
+    console.log(this.employees.length);
+    console.log(this.employees);
+  }
+}
+
+// ITDepartment and AccountingDepartment Class, creating their own implementation of "describe" method
+class ITDepartment extends Department {
+  admins: string[];
+
+  constructor(id: string, admins: string[]) {
+    super(id, "IT");
+    this.admins = admins;
+  }
+
+  describe() {
+    console.log(`IT Department ${this.id}`);
+  }
+}
+
+class AccountingDepartment extends Department {
+  private lastReport: string;
+
+  constructor(id: string, private reports: string[]) {
+    super(id, "Accounting");
+    this.lastReport = reports[0];
+  }
+
+  get mostRecentReport() {
+    if (this.lastReport) {
+      return this.lastReport;
+    }
+    throw Error("No recent report");
+  }
+
+  set mostRecentReport(report: string) {
+    if (report) {
+      this.addReport(report);
+      return;
+    }
+    throw Error("Please enter a report");
+  }
+
+  addReport(report: string) {
+    this.reports.push(report);
+    this.lastReport = report;
+  }
+
+  describe() {
+    console.log(`Accounting Department ${this.id}`);
+  }
+}
+
+
+
+
+
+
+14 Singletons & Private Constructors
+
+Singletons 
+ > a pattern where we can only have one instance of the Class available
+ > to do this, we will need three things inside the Class to apply Singleton
+	1. private static field whose type is the Class itself
+	2. private constructor
+	3. public static method that either
+		- assign new instance of Class to the private static field and returns it
+		- returns the private static instance of Class if its not null
+ > with this, we can access/create an instance of the Class through the public static method
+ 	- and even if we call this multiple times, it will just point to the same Class instance
+
+EX:
+// AccountingDepartment Class turned into Singleton
+class AccountingDepartment extends Department {
+  private lastReport: string;
+  private static instance: AccountingDepartment;
+
+  private constructor(id: string, private reports: string[]) {
+    super(id, "Accounting");
+    this.lastReport = reports[0];
+  }
+
+  public static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    } else {
+      this.instance = new AccountingDepartment("d2", []);
+      return this.instance;
+    }
+  }
+}
+
+const accounting = AccountingDepartment.getInstance();
+const accounting2 = AccountingDepartment.getInstance();
+console.log(accounting === accounting2);  // returns true
+
+
+
+
+
+
+
+16 A First Interface
+
+Interface
+ > allows us to define/describe the "structure" of an Object
+	- by structure, it means the properties/function the Object MUST HAVE
+ > unlike Class where we use it as blueprint to creating Objects, Interface will be used as a CUSTOM TYPE for Objects
+ > inside an Interface definition, we define the properties and methods Objects must have
+	- these properties/methods do not have concrete values
+	- instead, they are assign the supposed Type
+
+Creating an Interface
+ > creating (and using) interface can be similar to creating custom Types
+ > to create an Interface, we must use the keywork "interface"
+ > inside the Interface, we will define several key: type; pairs to create the Object's structure
+
+Using Interfaces
+ > we will use Interfaces as if we are assigning type to Objects
+
+EX:
+interface Person {
+  name: string;
+  age: number;
+
+  greet(phrase: string): void;
+}
+
+let user1: Person;
+
+user1 = {
+  name: "Max",
+  age: 30,
+  greet(phrase: string) {
+    console.log(phrase + " " + this.name);
+  },
+};
+
+
+
+
+
+
+
+
+
+
+
+17 Using Interfaces with Classes
+
+Custom Types vs Interfaces
+ > while both can be used as structure to Objects, there are few differences between them
+ > with Types, we can have its properties' type be a Union Type
+ > with Interface, we can only have ONE type on the properties/methods
+
+Interfaces with Classes
+ > we can also use Interfaces with Class, where Interface can act as "contracts" that Classes implementing it must adhere
+ 	- this means that if we implement an Interface to a Class, the Class must contain the properties and methods defined in the Interface
+ > compared to Abstract Classes, Interface provided 100% Abstraction to a Class
+ > to use Interface on a Class, we will need to use the keyword "implement"
+ > a Class can implement one or more Interfaces
+	- unlike inheriting where it can only be done once
+
+EX:
+interface Greetable {
+  name: string;
+  age: number;
+
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name: string;
+  age: number = 30;
+
+  constructor(n: string) {
+    this.name = n;
+  }
+
+  greet(phrase: string): void {
+    console.log(phrase + " " + this.name);
+  }
+}
+
+let user1 = new Person("Max");
+
+user1 = {
+  name: "Max",
+  age: 30,
+  greet(phrase: string) {
+    console.log(phrase + " " + this.name);
+  },
+};
+
+
+
+
+
+
+
+
+
+
+18 Why Interfaces
+
+Why Interfaces?
+1. Adding certain set of functionalities to a Class	
+	> with Interfaces, we can create structures which contains properties and functionalities
+	> these Interfaces can then be REUSED to the Classes that need those properties/functions
+
+
+
+
+
+
+
+
+
+19 Readonly Interface Properties
+
+readonly Interface Properties
+ > similar to Classes, we can also make the interface's fields to be a readonly
+ > we can do this by adding "readonly" to the property
+
+EX:
+interface Greetable {
+  readonly name: string;
+  age: number;
+
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name: string;
+  age: number = 30;
+
+  constructor(n: string) {
+    this.name = n;
+  }
+
+  greet(phrase: string): void {
+    console.log(phrase + " " + this.name);
+  }
+}
+
+let user1: Greetable;
+user1 = new Person("Max");
+user1.name = "NewName"; // error since name is a readonly property
+
+
+
+
+
+
+
+
+
+20 Extending Interfaces
+
+Extending Interfaces
+ > like Classes, Interfaces can "inherit" properties from another Interface by extending to it
+ 	- but, unlike Classes, Interface can inherit from MORE THAN ONE Interface
+	- ex: interface Greetable extends Named, Serializable {}
+ > to extend to another Interface, we will use the "extends" keyword
+ > when an Interface extends to another Interface, it will INHERIT all of its properties
+
+EX:
+interface Named {
+  readonly name: string;
+}
+
+interface Aged {
+  age: number;
+}
+
+interface Greetable extends Named, Aged {
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name: string;
+  age: number = 30;
+
+  constructor(n: string) {
+    this.name = n;
+  }
+
+  greet(phrase: string): void {
+    console.log(phrase + " " + this.name);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+21 Interfaces as Function Types
+
+Interfaces as Function Types
+ > we can also use Interfaces as custom function type
+ > inside the Interface, we will just define an anonymous function where we define the parameters and return types
+
+EX:
+// using type syntax
+type AddFn = (a: number, b: number) => number;
+
+// using Interface syntax
+interface AddFn {
+  (a: number, b: number): number;
+}
+
+let add: AddFn;
+
+add = (n1: number, n2: number) => {
+  return n1 + n2;
+}
+
+
+
+
+
+
+
+
+
+22 Optional Parameters & Properties
+
+Optional Properties/Methods
+ > in Classes and Interfaces, we can have optional properties
+ > this optional properties/method will be optional, which means that we dont need to initialize or pass value to the property
+	- for interface, we dont need to implement property/method to the Object or Class that uses it
+	- for classes, we dont need to initialize the property or define the method
+ > to make a field optional, we will add "?" symbol after the property name
+	- ex: class Person { name?: string; }	
+ > to make a method optional, we will use the syntax:
+	- class Person { myMethod?() {...} }	
+
+Optional Parameter
+ > we can also make a function's parameter optional by either
+	1. adding a default value to the parameter
+	2. adding "?" after the end of parameter name
+
+EX:
+interface Named {
+  readonly name?: string;
+  outputName?: string;
+}
+
+interface Aged {
+  age: number;
+}
+
+interface Greetable extends Named, Aged {
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name?: string;
+  age: number = 30;
+
+  constructor(n?: string) {
+    if (n) {
+      this.name = n;
+    }
+  }
+
+  greet(phrase: string): void {
+    console.log(phrase + " " + this.name);
+  }
+}
+
+
+NOTE:
+1. We can not make a Class' property to optional if its a property inherited from either Class or Interface UNLESS that same property is optional as well inside the inherited Class or Interface
+
+EX:
+interface Named {
+  readonly name: string;
+  outputName?: string;
+}
+
+interface Aged {
+  age: number;
+}
+
+interface Greetable extends Named, Aged {
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name?: string;  // will throw an error since in Named interface, name is NOT optional
+  age: number = 30;
+
+  constructor(n?: string) {
+    if (n) {
+      this.name = n;
+    }
+  }
+
+  greet(phrase: string): void {
+    console.log(phrase + " " + this.name);
+  }
+}
+
+
+
+
+
+
+
+23 Compiling Interfaces to JavaScript
+
+NOTE:
+1. Interfaces is TypeScript feature used for pure development purpose only
+	> it allows us to write better code, clearly structured code following clear rules
+	> at runtime, NO TRACE will be left by the interfaces
+2. Interface have no output in the TypeScript
+ 	> interfaces are ignored in the resulting JS file
+	> this is because interfaces is not a feature in JS
+
+TYPESCRIPT FILE
+// using Interface syntax
+interface AddFn {
+  (a: number, b: number): number;
+}
+
+let add: AddFn;
+
+add = (n1: number, n2: number) => {
+  return n1 + n2;
+};
+
+interface Named {
+  readonly name?: string;
+  outputName?: string;
+}
+
+interface Aged {
+  age: number;
+}
+
+interface Greetable extends Named, Aged {
+  greet(phrase: string): void;
+}
+
+class Person implements Greetable {
+  name?: string;
+  age: number = 30;
+
+  constructor(n?: string) {
+    if (n) {
+      this.name = n;
+    }
+  }
+
+  greet(phrase: string): void {
+    console.log(phrase + " " + this.name);
+  }
+}
+
+let user1: Greetable;
+user1 = new Person("Max");
+user1.greet("Hello");
+console.log(user1);
+
+
+COMPILED JS
+"use strict";
+let add;
+add = (n1, n2) => {
+    return n1 + n2;
+};
+class Person {
+    constructor(n) {
+        this.age = 30;
+        if (n) {
+            this.name = n;
+        }
+    }
+    greet(phrase) {
+        console.log(phrase + " " + this.name);
+    }
+}
+let user1;
+user1 = new Person("Max");
+user1.greet("Hello");
+console.log(user1);
+
+
+
+
+
+
+
+
+24 Wrap Up
+
+Interfaces
+ > pure TypeScript feature
+ > makes writing code better, cleaner, and clearly structured
+ > helps force Class to have certain feature or Objects in general

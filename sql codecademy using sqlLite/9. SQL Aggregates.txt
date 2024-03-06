@@ -1,0 +1,167 @@
+SQL Aggregate Functions
+
+Aggregate Functions
+	> Calculations performed on multiple rows of a table 
+	> will take a column as an input parameter
+	> will create a new column for displaying output, in which you can rename using AS query
+
+For now, we will be used a table 
+
+Database Schema
+
+TableName:
+fake_apps
+
+Columns:
+name		type
+id		INTEGER
+name		TEXT
+category	TEXT
+downloads	INTEGER
+price		REAL
+Rows: 		200
+
+
+1. COUNT
+	>  is a function that takes the name of a column as an argument and counts the number of non-empty values in that column
+
+EXAMPLE:
+
+SELECT COUNT(*)
+FROM table_name
+WHERE price = 0;
+
+Here, our goal is to count how many free apps are in the table. So first we SELECT and COUNT all the row (by passing * in the COUNT). Then selecting FROM the fake_apps, we will filter out rows (or apps) which are not free, so we will create a conditional statement WHERE price = 0. This way, only free apps will be selected and counted.
+
+
+
+2. SUM
+	> is a function that takes the name of a column as an argument and returns the sum of all the values in that column
+	> used mainly on columns that have number dataTypes
+
+EXAMPLE:
+
+SELECT SUM(downloads)
+FROM fake_apps;
+
+In this case, we will select the "downloads" column, then using the SUM query, we will add all of the downloads value of every row from fake_apps table. Same with the CASE query, we can use the AS query to change the column that will be created with the SUM query. 
+
+
+
+3. MAX / MIN
+	> return the highest and lowest values in a column, respectively
+
+EXAMPLE:
+
+SELECT MIN(downloads)
+FROM fake_apps;
+
+In this application, we will show the minimum value in downloads column in the table fake_apps.
+
+SELECT MAX(price)
+FROM fake_apps;
+
+Here, instead of minimum, we will show the maximum value in the price column in the table fake_apps.
+	
+
+
+4. AVERAGE, AVG()
+	> function to quickly calculate the average value of a particular column
+	> works by taking a column name as an argument and returns the average value for that column
+	
+EXAMPLE:
+
+SELECT AVG(downloads)
+FROM fake_apps;
+
+Here, the result will show the average values of the downloads column of fake_apps table.
+
+
+
+5. ROUND
+	> functions that rounds the values in the column to the number of decimal places specific by the integer
+	> needs two arguments to be passed
+		a. a column name (a NUMERICAL column)
+		b. an integer 
+
+EXAMPLE:
+
+SELECT ROUND(price, 0)
+FROM fake_apps;
+
+In this case, we will round of the values of the column in the 1st parameter (which is the price column) into the amount of decimal places the 2nd parameter tell (which is 0, so rounded off in 10^0 decimal places which is ones).
+
+
+
+6. GROUP BY
+	> is a clause in SQL that is used with aggregate functions
+	> used in collaboration with the SELECT statement to arrange identical data into groups
+	> comes after any WHERE statements, but before ORDER BY or LIMIT
+	> the result of the query will create the amount of rows equal to the amount of UNIQUE VALUES in the column that is passed to it
+
+
+EXAMPLE:
+
+SELECT price, COUNT(*) 
+FROM fake_apps
+WHERE downloads > 20000
+GROUP BY price;
+
+In this case, we will first SELECT the price column, and COUNT all of the rows (*) inside the fake_apps table. Then we will filter these rows by the WHERE query where only rows whose downloads is more than 20000 will be included. And lastly, they will be GROUP BY the price. 
+
+This GROUP BY query will create a some sort of hidden multiple table, where 1 table is only populated by rows whose column values that we passed in the GROUP BY query are the same. With these, we can manipulated the rows of the unique column value. In our case, its the price, and we get the count of the rows (or number of apps) of each of the price values.
+
+
+6.1 GROUP BY using REFERENCE for PARAMETERS
+	> instead of writing the columnName(s) in the parameter of the GROUP BY, we can call
+	> we do this by inputting the place of the said columnName on the SELECT query.
+
+EXAMPLE:
+
+SELECT category, 
+   price,
+   AVG(downloads)
+FROM fake_apps
+GROUP BY category, price;
+
+Here, we can see the category and price column being passed as parameters for GROUP BY query, but since we also used these columns in the SELECT query, we can just reference them by inputting their place. That is, 1st or 1 for category, and 2nd or 2 for price.
+
+SELECT category, 
+   price,
+   AVG(downloads)
+FROM fake_apps
+GROUP BY 1,2;
+
+This statement will have the same result as the one before.
+
+
+
+7. HAVING
+	> used to limit the results of a query based on an aggregate property,
+	> same effect as the WHERE statement
+	> used to filter groups
+	> HAVING statement always comes after GROUP BY, but before ORDER BY and LIMIT
+
+POINTER:
+
+WHERE = limit the results of a query based on values of the individual rows
+HAVING = limit the results of a query based on an aggregate property
+
+
+EXAMPLE:
+
+SELECT price, ROUND(AVG(downloads)), COUNT(*)
+FROM fake_apps
+GROUP BY 1
+HAVING (COUNT(*) > 10);
+
+In this statement, we will first get the rows FROM fake_apps table, then we called GROUP BY query with price parameter, which will create multiple table with different price values. Then after grouping them up by prices, we filter this groups using HAVING query. This way, only groups or aggregate that have more than 10 rows will be shown in the result. Lastly with SELECT, we will only show specific columns of the aggregates, which is the prices, their rounded average download values, and their row counts.
+
+
+	
+
+
+
+
+
+	

@@ -1,0 +1,7 @@
+09. Namespace
+
+Namespace
+	> resource in K8s used to provide isolations for parts of the Cluster
+		- ex: namespace for dev, qa, prod, etc.
+	> with this, we can separate the resources of the Cluster for each of the namespaces
+		- after creating Namespaces, we can associate resources (ex: deployment, secret, volume) to each and everyone of them 

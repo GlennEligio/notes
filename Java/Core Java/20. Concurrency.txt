@@ -1,0 +1,79 @@
+Concurrecy
+
+
+package com.glenneligio.concurrency;
+
+public class Main {
+         /*
+            Concurrency
+            > doing things simultaneously or at the same time
+         */
+    public static void main(String[] args) {
+        /*
+            Thread
+            > is a unit of execution in the device's central processing unit (CPU)
+            > by default, when you run an android application, a thread called "Main Thread" will
+                be created, some might call it "UI thread"
+            > theres also a "Worker Thread" that you create inside the Main Thread
+                >> will run at the same time with main thread, concurrent
+                >> you can create as many worker thread inside a main thread as you want
+            > Syntax to call a Thread
+                Thread threadName = new Thread();
+                > constructor of the thread requires an interface (in this case, Runnable interface)
+
+            Considerations you need to take account with worker thread
+            1. Cancelling your thread when the work is done
+            2. Thread proof, thread locks, entrapping your thread
+         */
+
+        //worker thread example
+        Thread thread = new Thread(new Runnable() {
+
+            //run method, method where you want to place the code to be handled/executed
+            //by the worker thread
+
+            @Override
+            public void run() {
+                for (int i = 0; i<5; i++){
+                    System.out.println("Printing..." + i + " in a worker thread.");
+
+                    //Ways to have the Thread to "sleep"
+                    /*
+                        1. Thread.sleep(int millisecond)
+                            > application will wait X millisecond before running again
+                     */
+
+                    /*
+                        try, catch function
+                        > used to catch different type of errors
+                        > function is put inside try method
+                        > errorType is put as argument in catch method
+                        > functions inside catch method will run if error occured
+                     */
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        //threadInstanceName.start();   >> used to run the codes inside the run method
+        thread.start();
+
+        for (int i = 0; i<5; i++){
+            System.out.println("Printing..." + i + " in a main thread.");
+
+            //Ways to have the Thread to "sleep"
+                    /*
+                        1. Thread.sleep(int millisecond)
+                            > application will wait X millisecond before running again
+                     */
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}

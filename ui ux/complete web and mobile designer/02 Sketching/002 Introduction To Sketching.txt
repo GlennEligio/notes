@@ -1,0 +1,29 @@
+002 Introduction To Sketching
+
+Sketching
+ > Intro
+	1. Sketching is a two step process, idea generation and sketch
+ > Uses:
+	1. Idea generation
+
+
+Two steps of Sketching
+1. Generate and Sketch
+	> here in idea generation step, we will approach the new product and generate AS MANY IDEAS that we can
+	> it is not uncommon to be missing certain ideas or details
+	> main goal is to get ideas out there quickly, does not matter what idea it is
+	> we then choose ideas that is most efficient for the task we are trying to solve for
+2. Add Details and Refine
+	> here, we will add details to the sketches we made earlier
+	> its ok to remove some ideas in this stage and thats the point
+
+
+Process
+1. Generate ideas
+	> low level details (no colors usually, though we may use some to signify important parts)
+	> goal here is to draw BASIC SKETCHES and generate as MANY OPTIONS as we can
+2. Refining sketches
+	> here, we might create some WIREFRAMES
+	> our basic sketches will have more detailed views, mostly the key components
+3. Creating Components
+	> we define the key components in our wireframes and refine/add more details to them

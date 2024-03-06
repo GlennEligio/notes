@@ -1,0 +1,47 @@
+Lambda Expressions
+
+Lambda Expression
+	> anonymous or nameless methods
+	> consist of the two components
+		1. parameter list
+		2. expression
+	> helpful in Collection
+		- iterating
+		- filtering
+		- extracting
+
+SYNTAX
+	> optional type declaration
+	> optional parenthesis around parameter
+	> optional curly braces
+	> optional return keyword
+
+(parameters) -> expression
+(parameters) -> {statements;}
+() -> expression
+
+
+EX:
+(int a, int b) ->    a * b      	// takes two integers and returns their multiplication
+() -> 99                      		// takes no values and returns 99
+(String a) -> System.out.println(a)   	// takes a string, prints its value to the console, and returns nothing
+	
+
+RULES IN WRITING LAMBDA EXPRESSION
+PARAMETERS
+1. Lambda expression can have zero, one, or more parameters
+2. Type of parameters can be explicitly declared or can be INFERRED from the context
+3. If lambda expression have MULTIPLE parameters, a parenthesis is MANDATORY
+4. Empty parenthesis for empty parameters
+5. If one parameter and type is inferred, parenthesis is OPTIONAL
+
+METHOD BODY
+1. Body can contain zero, one, or more statements
+2. If body has ONE statement, curly brackets are OPTIONAL
+3. If body has TWO or more statement, curly brackets are MANDATORY
+
+
+WHY LAMBDA EXPRESISON?
+	> Enable to treat functionality as a method argument, or code as data
+	> function can be treated without belonging to a class
+	> lambda expression can be passed around as if it was an object and execute on demand

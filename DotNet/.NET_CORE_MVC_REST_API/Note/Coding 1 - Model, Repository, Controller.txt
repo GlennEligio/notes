@@ -1,0 +1,449 @@
+Creating Model, Repository, MockRepository concrete implementation, Controller class, and Testing  
+
+Goals:
+Create Model
+Create Repository interface and Class that will implement it
+Create Controller class
+
+Contents of WebAPI project
+1. Program.cs
+	> serves as entrypoint of Application
+	> contains Main method
+	> inside Main(), create a Host using CreateHostBuilder
+	> inside CreateHostBuilder(), call UseStartUp and have StartUp.cs as param
+2. StartUp.cs
+	> central Hub of the dotnet application
+	> contains the following methods
+		a. Startup()
+			> configuration all the parameters of the application before it runs
+		b. ConfigureServices()
+			> add Services that we want to use
+			> uses Dependency Injection
+		c. Configure()
+			> this is where we setup the Request Pipeline
+			> contains multiple Middleware that process the incoming request
+			> the Middleware may short the Request Pipeline, or may pass it to other Middleware down the pipeline 
+3. Commander.csproj
+	> contains references to all the packages that we will use throughout the project
+4. appsettings.json
+	> contains the settings of the application
+	> we will INPUT the ConnectionString of the SQL server here later on
+	> written in json format
+5. appsettings.Development.json
+	> same as appsettings.json, but for the Development Environment
+6. launchSettings.json
+	> found inside Properties folder of Project
+	> contains the Settings that the app will use when it launches
+		= this includes the applicationUrl, ASPNETCORE_ENVIRONMENT, etc
+
+
+includes:
+
+Controller
+	> manages request and defines what the behavior of the WebAPI will be on a specific resource type
+	> composes for several ActionResults
+	> based on the URI and the VERB of the request, it will call different ActionResult
+
+
+ActionResults
+	> define what action the Controller will do based on specific request
+	> this will be the actions that Controller class will be doing on request based on what ActionResult is called specifically
+	> there are two factors to determine what ActionResult is being called
+		a. URI 
+		b. Verb
+	> Action result can have two same URI but will not conflict each other if they have DIFFERENT Verb
+	> to define the Verb of ActionResult
+		= add [HttpVerb] to the ActionResult method, where "Verb" can be replaced by an actual Verb (POST, GET, DELETE, PATCH)
+		= ex: [HttpGet], [HttpPost]
+	> to define the URI path of the ActionResult, add a parameter to the [HttpVerb] decoration
+		= ex: [HttpGet"{id}"] will be /pathName/controllerUri/{id} where id is another variable passed on it
+		= this means that in the ActionResult, the data that is passed on {id} http request will be passed on the parameter of ActionResult that has the same name (ex: int id)
+
+
+Dependency Injection
+	> used in order to automatically inject Interfaces/Services into the Classes
+	> this works by adding all the necessary Services and its Concrete Implementation class into the IServiceCollection bundle
+	> then whenever a Class request a Service, the Service Container that contains all the Services will inject the requested Interface to the Class
+
+
+Service Lifetimes
+	> there are three ways in order to register Services into Service Container
+		a. AddSingleton
+			= same for every request
+		b. AddScoped
+			= created once per client
+		c. Transient
+			= new instance created every time
+
+
+
+
+
+I. Creating the project folder
+
+1. Create a WebApi template in VS Code
+	> type in terminal the following line, assuming you already choose the folder destination
+		dotnet new webapi -n Commander
+	> Commander is the folder name but you can choose whatever you like
+
+
+
+2. Open the Project folder you've created
+	> to open the folder from terminal, type the following. This is assuming you are in the file directory the folder is in
+		= code -r Commander
+
+
+
+II. Cleaning the default webapi template
+
+3.  Remove some scafoldded items
+	a. WeatherForecastController.cs in Controllers folder
+		= we will create our own Controller class later on
+	b. WeatherForecast.cs in Project folder
+		
+
+
+
+III. Create the Data Model
+	> in our case the Command object data
+
+
+4. Create a folder for holding the Models
+	> name it Models
+	> create it inside the Project folder
+
+
+5. Create a new C# file
+	> name it Command.cs
+	> create it inside the Models folder
+
+
+6. Inside the Command.cs file, do the following
+	a. Create a namespace
+		> preferrably represents the file directory of the C# file
+	b. Define the Command class
+		> to immediately create a properties, type "prop" and you can edit the dataType and dataName
+		> add the following properties in the Command class
+			a. int Id
+			b. string HowTo	
+			c. string Line
+				> present the Command Line snippet that we will store in DB
+			d. string Platform
+				> this will be the Application platform
+			
+INSIDE Command.cs file
+
+namespace Commander.Models
+{
+    public class Command
+    {
+        public int Id { get; set; }
+        public string HowTo{ get; set; }
+        public string Line { get; set; }
+        public string Platform { get; set; }
+    }
+}
+
+
+
+IV. Create the Repository Interface and the Class that will implement the said Interface
+
+7. Create a new Folder in root folder and inside it create a new C# file
+	> name the folder Data
+	> inside the folder, create ICommanderRepo.cs file
+		= interface classes have their C# file starts with capital I
+
+
+8. Inside the ICommanderRepo.cs file, do the following
+	> give namespace corresponding to file location
+	> create an interface named ICommanderRepo
+	> inside the interface, add the following abstract methods
+		a. GetAppCommands()
+			= IEnumerable<Command> return type
+				=> this will prompt us to add System.Collections.Generic and Commander.Models in using directive
+			= no parameter
+		b. GetCommandById()
+			= Command return type
+			= int id parameter
+
+INSIDE ICommanderRepo.cs
+
+using System.Collections.Generic;
+using Commander.Models;
+
+namespace Commander.Data
+{
+    public interface ICommanderRepo
+    {
+        IEnumerable<Command> GetAllCommands();
+        Command GetCommandById(int id);
+    }
+}
+
+
+
+
+9. Create a new Class that will implement the Interface
+	> this will be a Mock Repository Class with fake data, we will modify this later on
+	> create a new C# file inside Data folder
+	 	= name it MockCommanderRepo.cs
+	> inside the Class, do the following
+		a. Define the namespace
+			= typically corresponds to the file location
+		b. Create a new Class and implement the ICommanderRepo interface in it
+		c. Implement the abstract methods we defined earlier in the Interface to the Class
+			= click the error, and press CTRL + (.), then choose implement methods
+		d. Define the method body of the implemented methods
+			= for the GetAppCommands(), return a variable that hold a new List of Command with Command objects inside it
+			= for the GetCommandById(), return a new Command object, regardless of the id parameter
+
+INSIDE MockCommanderRepo.cs
+
+using System.Collections.Generic;
+using Commander.Models;
+
+namespace Commander.Data
+{
+    public class MockCommanderRepo : ICommanderRepo
+    {
+        public IEnumerable<Command> GetAllCommands()
+        {
+            var commands = new List<Command>
+            {
+                new Command{Id=0, HowTo="Boil an egg", Line="Boil water", Platform="Kettle and Pan"},
+                new Command{Id=1, HowTo="Cut bread", Line="Get a knife", Platform="Knift and cutting board"},
+                new Command{Id=2, HowTo="Make a cup of tea", Line="Place a teabag in cup", Platform="Kettle and cup"}
+            };
+
+            return commands;
+        }
+
+        public Command GetCommandById(int id)
+        {
+            return new Command{Id=0, HowTo="Boil an egg", Line="Boil water", Platform="Kettle and Pan"};
+        }
+    }
+}
+
+ 
+
+V. Creating the Controller class
+	> used for managing request and actions
+	> typically, we will need a Controller per Resource type
+	> for naming convention, we would use plural version of the Class name of Resource
+
+
+10. Create a folder for Controllers
+	> name it Controllers
+
+
+
+11. Create a C# file
+	> will represent the Controller class for Command resource class
+	> name it CommandsController.cs
+	> create a class inside the namespace with following attribute
+		a. name it CommandsController
+		b. have it inherit the ControllerBase from Microsoft.AspNetCore.Mvc library
+			> ControllerBase is like normal Controller but with no view support
+	> decorate the Class with following annotations
+		a. ApiController
+			= this will give the class some out-of-the-box behaviors
+		b. Route
+			= defines how you will get to the resources and API Endpoints in the Controller
+			= this Route annotation will need a string parameter. 
+			= this string will represent the URL Extension to get to the Controller level
+			= as for the naming convention of the Route, we can either input
+				>> "routeName/[controller]" 
+					-> the [controller] part will be replaced by remaining letters in Controller class when controller substring is removed
+					-> i.e. if we have CommandsController as class name, then it will be "routeName/commands"
+				>> "routeName/hardCodedString"
+
+
+
+INSIDE CommandsController.cs
+
+using Microsoft.AspNetCore.Mvc;
+
+namespace Commander.Controllers
+{
+    [Route("api/commands")]
+    [ApiController]
+    public class CommandsController : ControllerBase
+    {
+
+    }
+}
+
+
+
+
+
+12. Define several ActionResults inside the Controller class
+	> for now we will create two ActionResults for 
+		a. Getting all commands
+		b. Getting a specific command based on id provided
+	> this is similar to the methods inside the Repository, this is because we will use the Repository to mediate between controller and Data
+	> create the two methods
+		a. GetAllCommands()
+			= ActionResult<IEnumerable<Command>> return type
+			= [HttpGet] decoration
+			= no parameter
+		b. GetCommandById(int id)
+			= ActionResult<Command> return type
+			= int id parameter
+			= [HttpGet("{id}")] decoration
+
+INSIDE CommandsController class
+
+    public class CommandsController : ControllerBase
+    {
+        [HttpGet]
+        public ActionResult<IEnumerable<Command>> GetAllCommands()
+        {
+
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<Command> GetCommandById(int id)
+        {
+
+        }
+    }
+
+
+
+
+
+13. Implement the Repository class into the Controller class
+	> add the Repository class as field member of Controller class
+		= private access, readonly modifier
+	> give it a value of a new Instance of the Class itself
+	> inside the ActionResult methods of Controller class, call the corresponding methods of Repository for each of them
+	> dont forget to return an ActionResult alongside the object result
+		= for now, we will return an Ok ActionResult with the appropriate object result
+
+INSIDE the CommandsController class
+
+    [Route("api/commands")]
+    [ApiController]
+    public class CommandsController : ControllerBase
+    {
+        private readonly MockCommanderRepo _repository = new MockCommanderRepo();
+
+        [HttpGet]
+        public ActionResult<IEnumerable<Command>> GetAllCommands()
+        {
+            var commandItems = _repository.GetAllCommands();
+            return Ok(commandItems);
+        }
+        
+        [HttpGet("{id}")]
+        public ActionResult<Command> GetCommandById(int id)
+        {
+            var commandItem = _repository.GetCommandById(id);
+            return Ok(commandItem);
+        }
+    }
+
+
+
+
+
+14. Test the newly created WebApi
+	> save all
+	> run the WebApi
+	> open the Postman
+	> create a new Basic Http Request
+	> input the applicationUrl and the route path of one of the ActionResult with it
+	> set the Verb of the Request, in our case its a GET request
+	> observe the response
+		= Postman may prompt you to disable SSL certification verification, disable it
+
+RESULT:
+
+For requestUrl http://localhost:5000/api/commands/
+
+[
+    {
+        "id": 0,
+        "howTo": "Boil an egg",
+        "line": "Boil water",
+        "platform": "Kettle and Pan"
+    },
+    {
+        "id": 1,
+        "howTo": "Cut bread",
+        "line": "Get a knife",
+        "platform": "Knift and cutting board"
+    },
+    {
+        "id": 2,
+        "howTo": "Make a cup of tea",
+        "line": "Place a teabag in cup",
+        "platform": "Kettle and cup"
+    }
+]
+
+
+For requestUrl http://localhost:5000/api/commands/3
+
+{
+    "id": 0,
+    "howTo": "Boil an egg",
+    "line": "Boil water",
+    "platform": "Kettle and Pan"
+}
+
+
+	As we can see, the Command object result that showed up to the Response is the Model serialized in Json format. In the GetCommandById, we fetch the id data from the URI itself. This is the default source of data in ApiController decorations. We can add attributes or data in other sources such us
+	a. [FromQuery] - get values from query string
+	a. [FromRoute] - get values from route data
+	a. [FromForm] - get values from posted form fields
+	a. [FromBody] - get values from the request body
+	a. [FromHeader] - get values from HTTP headers
+
+
+
+
+VI. Modify implementation of MockCommanderRepo class into Controller
+	> we will use Dependency Injection in order to do so
+	
+
+15. Add the Interface and the Concrete Implementation Class of it into the ConfigureServices() of StartUp class
+	> in our case, we will add the Repository class as AddScope() type
+		= this means that a new instance will be created for every client request
+	> AddScope<>() of IServiceCollection needs two arguments to be passed
+		a. Interface 
+		b. Concrete Implementation of the Interface using a Class
+
+INSIDE ConfigureServices() of the StartUp class
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddScoped<ICommanderRepo, MockCommanderRepo>();
+        }
+
+
+
+16. Back into the Controller Class, modify the ICommanderRepo implementation
+	> remove the MockRepository class field member
+	> add an ICommanderRepo interface as field member
+		= declare as private access, readonly 
+	> create a Constructor of the Controller class
+		= shortcut is ctor
+	> in the parameter, add an ICommanderRepo parameter into it
+	> inside the Constructor, assign the value of parameter to the ICommanderRepo field member
+
+INSIDE the CommandsController class
+
+        private readonly ICommanderRepo _repository;
+
+        public CommandsController(ICommanderRepo repository)
+        {
+            _repository = repository;
+        }
+
+
+
+

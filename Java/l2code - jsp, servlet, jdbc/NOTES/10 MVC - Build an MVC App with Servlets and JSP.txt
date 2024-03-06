@@ -1,0 +1,314 @@
+10 MVC - Build an MVC App with Servlets and JSP
+
+Contents:
+66 MVC with Servlets and JSP - Overview
+67 MVC with Servlets and JSP - Lets Write some Code
+68 MVC with Servlets and JSP - In More Detail
+69 MVC with ServLets and JSP - Part 1 - Create Student Class
+70 MVC with ServLets and JSP - Part 2 - Create StudentDataUtil
+71 MVC with ServLets and JSP - Part 3 - Create MVC Servlet
+72 MVC with ServLets and JSP - Part 4 - Create JSP View with HTML Tables
+
+
+
+
+
+
+
+
+
+66 MVC with Servlets and JSP - Overview
+
+Model-View-Controller (MVC) Design Pattern
+ > an architectural pattern that uses Controller, View, and Model to separate the business and presentation logic
+ > composed of three parts
+	1. Controller
+		- controls the data that the View receives
+		- consist of the Servlets
+		- holds all of the business logic like DB communication, Data sanitization/validation, etc
+	2. Model
+		- represents the data that is sent by the Controller to the View, typically used to displaying data
+		- this data is normally stored in a database
+		- Controller fetches data from DB, creates a Model object from it, and sends to the View
+	3. View
+		- represents what the User sees in the Web application
+		- consist of JSPs
+		- receives a Model object from Controller, which it will use to display data
+		- holds all the presentation logic
+ > steps in the MVC includes
+	1. Web Browser sends request to Controller
+	2. Controller receives data and may fetch data from Database based on request
+	3. Controller creates a Model object from the data and sends it to the View
+	4. View receives the Model, and uses it to display something to the Web Browser
+
+
+Benefits of MVC
+1. Minimizes HTML code in Servlet
+	> no more: out.println(...) in Servlet code
+2. Minimize Java business logic in JSPs
+	> no more large scriptlets in JSP code
+
+
+Servlets and JSP in MVC
+ > In MVC, Servlets INITIALLY receives the request from user
+ > Then after doing the business logic (ex: db comms), it will add the Model object in the request using request.setAttribute()
+ > After adding the Model data, it will FORWARD the request and response to a specific JSP using RequestDispatcher and its method forward()
+ > In JSP, it can access Model data using JSTL
+
+EX:
+// StudentServlet.java
+// Step 0: Add data
+String[] students = {"Susan", "Anil", "Mohamed", "Trupti"};
+request.setAttribute("student_list", students);
+
+// Step 1: get request dispatcher
+RequestDispatcher dispatcher = request.getRequestDispatcher("/view_students.jsp");
+
+// Step 2: forward to the JSP
+dispatcher.forward(request, response);
+
+
+
+// inside View_Students.jsp
+<c:forEach var="tempStudent" items="${student_list}">
+	${tempStudent}<br/>
+</c:forEach>
+
+
+
+
+67 MVC with Servlets and JSP - Lets Write some Code
+
+GOAL:
+1. Import JSTL and JSTL API jar files for JSTL support
+2. Create Servlet, add data in request, and forward it to a JSP
+3. Create JSP, access the added data from Servlet, and display it
+
+
+EX:
+// MvcDemoServlet.java
+@WebServlet("/MvcDemoServlet")
+public class MvcDemoServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    	public MvcDemoServlet() {
+        	super();
+        	// TODO Auto-generated constructor stub
+    	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// Step 0: Add data
+		String[] students = {"Susan", "Anil", "Mohamed", "Trupti"};
+		request.setAttribute("student_list", students);
+
+		// Step 1: get request dispatcher
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/view_students.jsp");
+
+		// Step 2: forward to the JSP
+		dispatcher.forward(request, response);
+	}
+}
+
+
+// view_students.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<c:forEach var="tempStudent" items="${student_list}">
+	${tempStudent}<br />
+	</c:forEach>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+68 MVC with Servlets and JSP - In More Detail
+
+GOAL:
+1. Create a Utility class that will be used to send Data to the Controller
+2. Create a POJO class to represent data
+
+TODO LIST:
+1. Create Student class
+2. Create StudentDataUtil class
+3. Create MVC Servlet
+4. Create View JSP
+
+
+
+
+
+
+
+
+69 MVC with ServLets and JSP - Part 1 - Create Student Class
+
+GOAL:
+1. Create a POJO to represent Student with following properties
+	> Firstname, Last name, Email
+
+// Student.java
+package com.luv2code.servletdemo.mvctwo;
+
+public class Student {
+	private String firstName;
+	private String lastName;
+	private String email;
+	
+	public Student(String firstName, String lastName, String email) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+	}
+	
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+}
+
+
+
+
+
+
+
+
+70 MVC with ServLets and JSP - Part 2 - Create StudentDataUtil
+
+GOAL:
+1. Create a Utility class with a method that returns a list of Student POJO
+	> meant to replicate a Data Access Object 
+
+// StudentDataUtil.java
+package com.luv2code.servletdemo.mvctwo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class StudentDataUtil {
+
+	public static List<Student> getStudents() {
+		// create an empty list
+		List<Student> students = new ArrayList<Student>();
+		
+		// add sample data
+		students.add(new Student("John", "Doe", "jd@gmail.com"));
+		students.add(new Student("Mary", "Sue", "ms@gmail.com"));
+		students.add(new Student("John", "Glenn", "jg@gmail.com"));
+		
+		// return the list
+		return students;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+71 MVC with ServLets and JSP - Part 3 - Create MVC Servlet
+
+GOAL:
+1. Create an MVC Servlet that utilizes the StudentDataUtil class to add Model data in request, which it will forward to a JSP
+
+// MvcDemoServletTwo.java
+@WebServlet("/MvcDemoServletTwo")
+public class MvcDemoServletTwo extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    public MvcDemoServletTwo() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// step 1: get the student data from helper class (model)
+		List<Student> students = StudentDataUtil.getStudents();
+		
+		// step 2: add students to the request object
+		request.setAttribute("student_list", students);
+		
+		// step 3: get request dispatcher
+		RequestDispatcher dispatcher = request.getRequestDispatcher("view_students_two.jsp");
+		
+		// step 4: now forward to JSP
+		dispatcher.forward(request, response);
+	}
+}
+
+
+
+
+
+
+
+
+72 MVC with ServLets and JSP - Part 4 - Create JSP View with HTML Tables
+
+GOAL:
+1. Create JSP that will access the Model from request received from the MVC Servlet
+2. Display the Model data in a table
+
+// view_Students_two.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Students Table</title>
+</head>
+<body>
+	<table border="1">
+		<tr>
+			<th>First Name</th>
+			<th>Last Name</th>
+			<th>Email</th>
+		</tr>
+		<c:forEach var="tempStudent" items="${student_list}">
+			<tr>
+				<td>${tempStudent.firstName }</td>
+				<td>${tempStudent.lastName }</td>
+				<td>${tempStudent.email }</td>
+			</tr>
+		</c:forEach>
+	</table>
+</body>
+</html>

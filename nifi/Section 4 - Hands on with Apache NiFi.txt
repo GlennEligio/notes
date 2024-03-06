@@ -1,0 +1,481 @@
+Section 4 - Hands on with Apache NiFi
+
+15. Working with Attributes & Content in NiFi
+16. Working with Expression language in NiFi
+17. More on Expression language functions in NiFi
+18. Working on Process Group, Input Port & Output port in NiFi
+19. Working with Templates in NiFi
+20. Working with Controller Services in NiFi
+22. Working with Variable Registry in NiFi
+
+
+15. Working with Attributes & Content in NiFi
+
+Overview
+ > in the NiFi, there are multiple processors that we can use when it comes to transforming FlowFile attributes and content
+ > these Processors will have their own set of unique properties and use cases
+ > in this section, we will be using ReplaceText processors to change the Content of the FlowFile, and ExtractText to modify the attributes of the FlowFile
+ 
+Processors used
+1. GenerateFlowFile
+	> This processor creates FlowFiles with random data or custom content. 
+	> GenerateFlowFile is useful for load testing, configuration, and simulation. 
+	> Also see DuplicateFlowFile for additional load testing.
+2. ReplaceText
+	> Updates the content of a FlowFile by searching for some textual value in the FlowFile content (via Regular Expression/regex, or literal value) and replacing the section of the content that matches with some alternate value. 
+	> It can also be used to append or prepend text to the contents of a FlowFile.
+3. ExtractText
+	> Evaluates one or more Regular Expressions against the content of a FlowFile. 
+	> The results of those Regular Expressions are assigned to FlowFile Attributes.
+4. LogAttribute	
+	> Emits attributes of the FlowFile at the specified log level
+
+Demo: Transformation and Extraction of content in FlowFile
+1. Add four processor
+	- GenerateFlowFile
+	- ReplaceText
+	- ExtractText
+	- LogAttribute
+2. Create connections between the processors
+	> GenerateFlowFile -> ReplaceText
+		- success relationship
+	> ReplaceText -> ExtractText
+		- success relationship
+	> ExtractText -> LogAttribute
+		- matched relationship
+3. Auto terminate the remaining unhandled relationship in each processors
+4. Configure the GenerateFlowFile to generate 1 byte FlowFile with random character
+5. Run the GenerateFlowFile
+	> we should see that in each FlowFile, theres one random character
+6. Configure the ReplaceText
+	> go to processor configuration
+	> go to properties tab
+	> set replacement strategy to "Alway Replace"
+		- this will always replaces the content of FlowFile, instead of replacing specific parts of it
+	> set replacement value to "a, b, c, d"
+		- this will be the replacement value
+	> set evaluation mode to "Entire text"
+		- this mean it will evaluate and apply replacement in the Whole text instead of just line by line
+7. Run the ReplaceText
+	> if we check the queue where the output of ReplaceText is located, we should see that instead of single character, it is now REPLACED by "a, b, c, d"
+8. Configure ExtractText
+	> go to processors configuration
+	> go to the properties
+	> add an entry which will be a new Attribute(s) added in the FlowFile
+		- name: csv, value: (.+),(.+),(.+),(.+)
+		- the value is a regex, that will capture not only the whole csv text, but also each of every values in the csv text itself
+9. Run the ExtractText
+	> checking the queue where the output of ExtractText is located, we should see that in the FlowFile attributes, new one are created. with the whole csv text, alongside the individual csv text values as attributes as well
+
+
+
+
+
+
+
+16. Working with Expression language in NiFi
+
+SOURCE:
+https://nifi.apache.org/docs/nifi-docs/html/expression-language-guide.html
+
+Overview
+ > using NiFi Expression language, we can use the Attributes present in a FlowFile in the content itself like replacing, modifying, or transforming the content
+ > example expression ${ATTRIBUTENAME}, which is used to "inject" a value of a specific attribute of FlowFile to anywhere you want, like content of FlowFile itself
+ 
+
+
+Demo: Reading and using FlowFile attribute to write content in FlowFile using ReplaceText processor and Expression language
+
+1. Create similar configuration as before
+	> use copy and paste technique, and setup the connections
+2. Copy the ReplaceText processor, and put them in between the ExtractText and LogAttribute processors
+3. Configure the ReplaceText to use the attributes added by the ExtractText and make the content of FlowFile into json format
+	> go to ReplaceText processor configuration
+	> go the properties
+	> edit the "Replacement Value" property into a JSON object string, where each field attribute uses the attributes in FlowFile
+		- we can use expression language here
+4. Test the NiFi data flow
+	> run the flow, and check the content of the queue after the second ReplaceText, and before the LogAttribute processor
+	> the content should be a JSON object string, with the attributes of the FlowFile being the values in the key:value pairs
+	
+	
+"Replacement Value" property value
+{
+	"field1": "${csv.1}",
+	"field2": "${csv.2}",
+	"field3": "${csv.3}",	
+	"field4": "${csv.4}"
+}
+
+
+
+NOTE:
+1. You can copy/paste Processor present in NiFi flow dashboard by using CTRL+C -> CTRL+V
+
+
+
+
+
+
+
+17. More on Expression language in NiFi
+
+Overview
+ > with Expression language, we are not just limited to the reading of the attributes of FlowFile
+
+Functionalities available in NiFi Expression Language
+1. functions
+2. boolean logic
+3. string manipulation
+4. encode/decode functions
+5. searching 
+6. mathematical operations and numeric manipulation
+7. date manipulation
+8. type coercion
+9. subjectless functions
+10. evaluating multiple attributes
+
+
+Demo: Manipulating Filename attribute of FlowFile by adding date info with specific date format, and changing file extension
+	> here, on top of the NiFi data flow we used before, we will be using two additional processor
+		1. UpdateAttribute
+		2. PutFile
+		
+Steps:
+1. On top of the NiFi data flow earlier, we will be adding two new processor after the last ReplaceText, an UpdateAttribute processor, then a PutFile processors
+2. Configure the UpdateAttribute processor
+	> specifically, we will edit the "filename" attribute
+	> go to UpdateAttribute processor configuration
+	> go to properties tab
+	> click the plus icon to add new attribute
+		- property name:
+		- property value: ${filename}-${now():toNumber():format('dd-MM-yy')}.json
+	> the property value uses the current filename attribute, then appends date information and changes the file extension to .json
+3. Configure the PutFile processor
+	> PutFile processor uses the "filename" attribute present in the FlowFile to determine the filename to be put in its directory property
+	> go to PutFile processor configuration
+	> go to properties
+	> assign a value to "Directory" property, to specify where we want to put the file
+4. Run the Nifi Data flow
+	> at the end, we should see in the output directory of PutFile json files, whose filename contains date information
+	
+
+NOTE:
+1. We can start all the processor in the current NiFi data flow diagram by right clicking the blank portion of diagram and selecting "Start"
+
+
+
+
+
+
+
+18. Working with Process Group, Input & Output port
+
+Process Group
+ > process group is a component used to group one or more Processors
+ > similar to Processors, we can connect Process groups with each other
+ > in order for two Process groups to connect, one Process group MUST have at least one Input port inside, and one Process group MUST have at least one Output port inside
+
+Input and Output port
+ > input and Output ports are used to specify where in the Process group should the Process group's input or output will be
+ > note that a Process group can have ONE or MORE Input or Output ports
+ 
+ 
+Demo: Create two ProcessGroup to contain processors for converting CSV to JSON, and writing JSON to a file
+	> here, we will create two ProcessGroups, with names
+		1. CSV to JSON
+		2. Write JSON to File system
+	> we will break down the NiFi data flow earlier, and put the respective processors in their correct ProcessGroup
+	> then we will setup the ProcessGroup Input and Output ports to be able to connect them together
+	
+	
+Steps
+1. Drag and drop two ProcessGroups in the NiFi flow canvas, with names:
+2. Change the names of the ProcessGroups to "CSV to JSON", and "Write JSON to File system"
+3. From the NiFi data flow earlier
+	> destroy the flow by deleting the connection between the 2nd ReplaceText and UpdateAttribute
+	> from GenerateFlowFile to last ReplaceText
+		- select them using box select tool
+		- drag and drop them to the CSV to JSON process group
+		- the process group should have blue outline if we hover to it
+	> from the UpdateAttribute up to the remaining processors
+		- select them and add them in the Write JSON to File system process group
+4. Setup the input and output ports of the ProcessGroups for connection later
+	> since the output of CSV to JSON processgroup will go to the Write JSON to File system processgroup, this means that we need:
+		- an Output port in the CSV to JSON process group and;
+		- an input port in the Write JSON to File system process group
+	> add an Output port in the CSV to JSON process group, and connect it at the END of the flow
+	> add an Input port in the Write JSON to File system process group, and connect it at the START of the flow
+5. Connect the two Process Group
+	> you will be prompted to choose the output port and input port to use in the 'CSV to JSON' and 'Write JSON to File system' process group respectively
+	> but since we only have one of each, it will use them by default
+6. Run the two ProcessGroups
+	> right click the Process Group and click start
+	> this will start the Process Group and all of the Processors inside of it
+	> we should see similar behavior as before, where new JSON files are created in the directory specified in the PutFile processor
+
+
+
+NOTE:
+1. To use box tool for multiple selection of component, we will need to hold the SHIFT key, then select all the component by adding them inside the box
+2. To leave the current ProcessGroup view in the canvas, we can either
+	> use the breadcrumb at the bottom of the canvas to switch views
+	> right click in canvas, and click Leave group
+3. We can only insert a COMPLETE NiFi processor flow inside the ProcessGroups
+	> if we want to insert a portion of NiFi processor flow, we need to cut off the connections first
+
+
+
+
+
+
+
+19. Working with Templates in NiFi
+
+Problem Statement
+1. How will you share a data flow with your friend or colleague to help in debugging?
+2. How will you move your data flow from one machine to another machine and continue your flow design from the new machine?
+3. How will you move your completed data flow from a development environment to a testing environment?
+
+
+NiFi templates
+ > Apache NiFi offers the concept of Templates, which makes it easier to reuse and distribute the NiFi flows. 
+ > The flows can be used by other developers or in other NiFi clusters. 
+ > It also helps NiFi developers to share their work in repositories like GitHub.
+ 
+ 
+Demo:
+1. Creating a template
+2. Checking and downloading a template
+3. Importing a template
+4. Adding a template in canvas
+
+Creating a template
+1. Select the component(s) that you want to include in the template
+	> this can be a one or more Processor, one or more ProcessGroup, etc
+2. Right click the selection and select "Create template"
+
+Checking and downloading a Template
+1. Click the hamburger menu at the top right corner
+2. Select "Templates"
+3. Click the template icon next to the trash icon for the specific template entry to download
+
+Importing a template
+1. Download any templates here
+	> https://cwiki.apache.org/confluence/display/nifi/example+dataflow+templates
+2. In the left side of the canvas, there is an "Operate" section. Click the template icon at the right most side
+	> left template icon = create template
+	> right template icon - upload template
+3. In "Upload template" modal, click the search icon and find the xml template file
+4. Click upload
+
+Adding a template in canvas
+1. Drag the template icon at the top of the canvas
+2. Select the template that you want to add in canvas
+
+
+
+
+
+
+20. Working with Funnels in NiFi
+
+Funnel
+ > Funnel component in NiFi is used to COMBINED data from several connections to a single connections
+ > this allows us to "funnel" outputs from several processors to a single point
+ > to create a Funnel, we can drag the funnel icon at the top panel of NiFi
+ 
+Without Funnel
+ > if we want to funnel multiple processor output to a single point, we will need to do the following things:
+	1. create two process groups
+		- one process groups contains all the processors and a single output port. this output port will be used to funnel all the outputs of the processors
+		- one processor will contain an input port
+		- these two processors will then be connected to each other
+ > as we can see, this method is a lot harder than just using a Funnel
+ > also, note that we CAN NOT connect an Input and Output ports unless they are in SEPARATE Process groups
+
+
+
+
+
+21. Working with Controller Services in NiFi
+
+Prerequisites:
+1. Database server that we will access later to add data inside
+
+
+Controller Services
+ > important abstraction of NiFi
+ > A controller service is a shared service which can be used across processors or other controller services
+ > "Controller service" is not limited to Database configuration
+ > You can do various abstraction of functionality using it
+
+
+Demo
+ > Processors to be used
+	1. GenerateFlowFile
+	2. LogAttribute
+	3. Put(DBName) processor
+		- differs based on the database server you will use
+		- ex: PutMongo, PutSQL
+ > Controller services used
+	1. MongoDBControllerService (MongoDB)
+	2. DBCPConnectionPool (SQL)
+	
+	
+Steps:
+1. Add GenerateFlowFile Processor
+	> set run schedule to 10sec
+2. Set Custom text property of GenerateFlowFile to the one below
+	> this will create a Json object with predefined schema, and random values for each fields
+
+{
+	"title": "mr",
+	"first": "John ${random():mod(10):plus(1)}",
+	"last": "Do ${random():mod(10):plus(1)}",
+	"email": "johndoe ${random():mod(10):plus(1)}",
+	"created_on": "${now():toNumber()}"
+}
+
+3. Add LogAttribute processor, and connect the GenerateFlowFile processor to it
+4. Run the data flow, check the connection queue between them.
+	> we should see that json content of the FlowFile with random value
+5. Add new processor for adding data in the database server of your choice
+	> in my case, im using MongoDb so the processor to use is PutMongo, for SQL Servers use PutSQL
+	> for PutMongo, configure the following
+		- Mongo URI: mongodb://sampleuser:samplepassword@localhost:27017/?authMechanism=DEFAULT
+		- Mongo Database name
+		- Mongo Collection Name
+		- Mode: insert
+5.1. In case you are using the SQL server, you should do the following
+	> add PutSQL processor
+	> add ConvertJsonToSQL processor, and connect it after the GenerateFlowFile
+	> configure the ConvertJsonToSQL processor
+		- Statement type: INSERT
+		- Table name: name of the table	
+	> for the JDBC Connection pool, select a new Service
+		- it will automatically be set to DBCPConnectionPool controller services
+6. Configure the ClientService of the PutMongo processor
+	> select "Create new service"
+		- it will automatically be set to MongoDBControllerService 
+	> change the Controller service name to the one that you like
+		- ex: "MongoDBControllerService mongodb"
+	> to check the ControllerService created, click the "right arrow" next to the Client Service property value
+		- in case you haven't save the changes you will be prompted to do so
+7. Check the list of the Controller Service you have right now
+	> to do so, we can right click on an empty spot in NiFi dashboard
+	> then select "Configure"
+	> go to the "Controller Services" tab
+	> at the left, we should see a yellow warning sign, which means that Controller Service is not configured properly yet
+	> at the left, we can see gear icon and trash icon, for configuring and deleting the processor
+8. Configure the Controller Service
+	> here, we will provide most of the database credentials to be used by the Client service
+	> these includes (for MongoDBControllerService)
+		- Mongo URI
+		- Database user
+		- Password
+		- SSL Context service
+		- Client Auth
+9. Connect the Controller service to the Processor
+	> after saving the configuration, we should see a lightning icon at the right
+	> this is for connecting the Controller Service to the processor
+	> click this, and enable the Controller service
+10. Create two LogAttribute for each relationship of the PutMongo
+	> one for failure and one for success
+11. Run the PutMongo and GenerateFlowFile processor
+12. Stop and observe the effect
+	> check the MongoDb database to see the JSON objects inserted from the JSON file generated by the Nifi data flow created
+	
+	
+	
+
+22. Working with Variable Registry in NiFi
+
+
+
+Why use Variable Registry?
+1. To hold environmental or system specific properties
+2. Helps to simplify the configuration management and migration of Data Flow across environments
+	> best practice to hold information that defers from one environment to another as a part of a property file or a variable, then refer the variable instead of referring the actual value itself
+3. Helps in CI/CD of Data Flow
+
+
+
+How to define Variable Registry?
+ > Variable Registry can be defined using two ways
+	1. Using "Variables" window available in NiFi UI
+	2. Using "Custom Configuration File" and referring them in "nifi.properties" file
+	
+	
+	
+	
+Using "Variables" window available in NiFi UI\
+1. Right click on an empty spot in NiFi dashboard
+2. Select "Variable"
+3. In the Variables window, click the plus icon
+4. Specify the variable name, then the variable value
+5. Finish, and wait for the update variables process to finish
+6. Use the variable within the dashboard using expression language
+	> you can only use the variable for field that supports Expression language
+	> ex: PutMongo
+		- Mongo Database Name: ${mongodb.database}
+		
+
+
+
+Using "Custom Configuration File" and referring them in "nifi.properties" file
+1. Go to the root directory of nifi (where bin folder is located)
+2. Go inside the conf dir
+3. Create custom properties file and add properties inside
+
+EX:
+# mongodb.properties
+mongodb.uri=mongodb://localhost:27017
+mongodb.username=sampleuser
+mongodb.password=samplepassword
+
+4. Inside the conf dir as well, open the "nifi.properties" file
+5. Search for the "nifi.variable.registry.properties" 
+6. Provide the directory of the custom properties file that you have created
+	> note that the current directory assumed here is the root directory of the nifi
+	> so, if we will use the current dir as the reference (with .), it will be
+		- ./conf/db.properties
+	> we can also provide MULTIPLE properties file by separating them using comma (,)
+
+EX:
+nifi.variable.registry.properties=./conf/mongodb.properties
+
+5. Restart the NiFi in order for the properties defined to be present in NiFi
+	> we can do so by running ./bin/nifi.sh (or ./bin/nifi.cmd) with argument "stop" then "start", or just "restart"
+	> ex: ./nifi.sh restart
+	
+6. Use the property located in the custom properties file with the help of expression language
+	> note that properties/variable can only be used for fields that do support Expression language
+	> ex: MongoDBControllerService
+		- Mongo URI: ${mongodb.uri}
+		
+
+	
+	
+	
+Advantages of UI Based Variables
+1. Used to add variables WITHOUT restarting the NiFi server
+2. Helps to override an incorrect variable defined using property file based approach
+
+
+
+Template & Variable Registry
+1. Templates created will have all the variables along with its value
+2. The variable pointing to sensitive field like password will be ignored during template creation
+
+
+NOTES:
+1. We can not use variables or properties on the field that DOES NOT SUPPORT Expression language
+2. Variables defined using NiFi UI are SCOPED
+	> if you define a variable inside a process group, you can only use it within the said process group,
+		- so if you define a process group inside it as well, you can use the variable in that new process group
+		- but outside of the process group where you created the variable, that said variable is NOT ACCESSIBLE
+3. The closer the variable source, the higher its precedence is when selecting the value
+	> let say you define a variable in the "NiFi Flow" dashboard
+	> then you created a process group the dashboard, and created a variable of same name as well
+	> the variable value inside the process group, assuming you used the variable inside that process group, will override the one defined in the "NiFi Flow"

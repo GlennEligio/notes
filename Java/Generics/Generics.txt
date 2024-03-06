@@ -1,0 +1,97 @@
+Generics
+
+Generics
+ > enables Types (Classes and Interfaces) to be parameters when defining Classes, Interfaces, and methods
+ > this eliminates the need to create multiple versions of methods or classes for various data types
+	- this results in ONE version of class/interface/method for all reference data types
+ > very useful for creating REUSABLE components
+ 
+Type as Parameters 
+ > with Type as Parameter, we can use this Type for different use cases
+ > for generic method, we can use the Type parameter to
+	1. Define the return value type of method
+	2. Define the parameter value type fo the method
+ > for generic classes/interface, we can use the Type parameter to
+	1. Define the type of their properties
+	2. Define the type of the parameter and/or return value of their methods
+
+
+Generic Methods
+Syntax
+ > to add Type parameter, we will add angle bracket AFTER the method modifiers and BEFORE function return type
+ > we can the add several Type identifiers inside these angle bracket, separated by comma
+ > after defining the Type identifiers, we can now use these identifiers in return type and parameter type
+
+Usage
+ > to use a generic method, we dont need to pass the Type itself
+ > it will just INFER the Type parameter based on the generic method argument type
+
+EX:
+// This generic method can be used to any type of array
+    public static <T> void displayArray(T[] array) {
+        for (T x : array) {
+            System.out.print(x + " ");
+        }
+        System.out.println();
+    }
+
+// usage where the displayArray infer that "T" will be Integer
+Integer[] intArray = {1, 2, 3, 4, 5};
+displayArray(intArray);
+
+
+
+Generic Class/Interface
+Syntax
+ > to add Type parameters, we will add the angle brackets AFTER the Class/Interface name and before the extends/implement keyword
+ > after defining the Type identifiers, we can use this inside the Class/Interface definition
+
+Usage
+ > when declaring a Generic Class/Interface, we must pass the Type argument
+ > we pass this in the angle bracket besides the Class/Interface name
+
+EX:
+public class MyGenericClass <T, U>{
+	T x;
+	U y;
+	
+	MyGenericClass(T x, U y){
+		this.x = x;
+		this.y = y;
+	}
+	
+	public U getValue() {
+		return y;
+		
+	}
+}
+
+// using the generic class
+MyGenericClass<Integer,Integer> myInt = new MyGenericClass<>(1,9);
+
+
+
+
+Bounded Types
+ > these Type parameters are BOUNDED to specific derived types (i.e. Number)
+ > to make a Type parameter BOUNDED, we need to specify which Type it extends or implements 
+
+EX:
+// with this, we made the Type Parameters of this Class Bounded to Classes that extends to Number class
+public class MyGenericClass <T extends Number, U extends Number>{
+	T x;
+	U y;
+	
+	MyGenericClass(T x, U y){
+		this.x = x;
+		this.y = y;
+	}
+	
+	public U getValue() {
+		return y;
+		
+	}
+}
+
+
+

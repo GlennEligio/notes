@@ -1,0 +1,436 @@
+Redux Crash Course with React
+
+Redux
+	> a State Management API	
+	> with Redux, it provides a way to create/access/modify "Application-level" States
+		- these Application-level or Global-level States are SHARED across all Component within React
+
+
+Redux Data Flow Components
+1. View
+	> composed of the React Component which shows data
+2. Store
+	> "stores" the App level States to be used
+3. Action Creators
+	> creates an "Action" to be dispatch to the Store
+	> this Action defines what it will do to the Store (CRUD)
+3. Reducers
+	> composed only of pure functions
+	> these Function defines how the App-level State should change in response to the Action
+	> these functions have specified identification that Actions can call
+
+Redux Data Flow Process
+1. Store starts of empty with no App-level State inside
+2. Store sends the current State to the View
+3. In View, there may be interaction (click, double click, submit, etc) that will send signal to the Action Creator
+4. The Action Creators will then dispatch Action based on the signal to the Reducers
+5. The Reducers will then take the previous State along with the Action in order to define the new State
+6. The Store will remove the previous State take the new State to store for use
+7. The Store sends the new State to the View and the View will be modified according to the new State
+
+
+
+Installing React Redux
+	> to use React Redux, we will need two things
+		1. react-redux library
+			- library that binds Redux and React together
+		2. react-thunk library
+			- library that serves as the middleware for Redux
+			- allows as to directly access the dispatch method so that we can make async call from our Actions
+	> to install them, use the command
+		npm i redux react-redux redux-thunk
+
+
+Components to use
+Provider
+	> a React component from react-redux library
+	> combines the Redux to the React
+	> we nest every Component that will access the Store inside the <Provider> component
+	> inside the <Provider> component, we must provide a "store" property
+		-> this store refers to the Store that stores the States of Reducers
+
+EX:
+function App() {
+  return (
+    <Provider store={store}>
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1 className="App-title">Welcome to React</h1>
+        </header>
+        <Postform />
+        <hr />
+        <Posts></Posts>
+      </div>
+    </Provider>
+  );
+}
+
+
+Store
+	> A store holds the whole state tree of your application. 
+	> The only way to change the state inside it is to dispatch an Action on it.
+	> To create a Store, we will need to use createStore() function
+	> A store is not a class. It's just an object with a few methods on it. 
+	> To create it, pass your root reducing function to createStore.
+
+createStore(reducer, [preloadedState], [enhancer])
+	> method from 'redux' library
+	> Creates a Redux store that holds the complete state tree of your app. 
+	> There should only be a single store in your app.
+	> this methods takes three arguments
+		1. reducer (Function)
+			> A reducing function that returns the next state tree, given the current state tree and an action to handle.			
+			> We will pass a root reducer here, which is a combination of all reducer
+				- we can create more than one reducer for each resources in App-level state 
+				- ex: PostReducer for Post resource, authReducer for Authentication-related resource
+		2. preloadedState (any)
+			> the initial state
+		3. enchanger [function]
+			> the store enchancer
+			> we will use third-party capabilities here such as
+				- middleware
+				- time-travel	
+				- persistence
+				- etc.
+	> this method returns a Store
+
+
+
+applyMiddleware
+	> function inside 'redux'
+	> used to add middleware in the Redux
+	> this applyMiddleware() function takes one argument
+		a. middlewares (Array)
+			- takes an array of middleware
+			- one of these middleware is thunk from 'redux-thunk'
+
+
+
+combineReducers
+	> function from "redux" library
+	> to use this function, we will import it from "redux" library
+		- import {combineReducers} from "redux";
+	> used to combine Reducers that we make
+	> inside this function, we will pass a key:value pairs
+		- this key:value pairs represents the Reducers that we want to be combined
+	> in example below, we will use the "posts" key to refer to the postReducers
+
+EX:
+import { combineReducers } from "redux";
+import postReducer from "./postReducer";
+
+export default combineReducers({
+  posts: postReducer,
+});
+
+
+
+connect(mapStateToProps, {actions...})(Component)
+	> function from 'react-redux'
+	> connects a Component to the Redux Store that is provided by the <Provider>
+	> this will replace the way of exporting the Component
+	> the syntax of the connect()() usage is:
+		export default connect(null, {<Actions>...})(<Component>)
+	> so instead of the typical
+		export default Posts
+	> we will use
+		export default connect(null, { fetchPosts })(Posts);
+
+
+
+Reducers
+	> composed of two parts
+		a. the App-level State that it manages
+		b. the control-flow function that dictates the modification done in its State
+			-> typically created as switch function and uses the action.type as the basis for its modification
+
+dispatch()
+	> similar to the resolve() of Promise
+	> we passed Object literal in this method, which then acts as the value of 2nd parameter of ANONYMOUS function exported in Reducer
+
+
+Action type
+	> typically defined in the actions folder in the types.js
+	> inside the types.js, we export several const variable
+	> these const variable corresponds to a unique string
+
+
+Action payload
+	> typically what is passed in the Action method
+	> the value is then assigned in the dispatch as the payload
+
+
+
+
+Writing Boilerplate for React Redux Configuration
+
+I. Setting Up Provider configuration
+1. Import Provider component from 'react-redux'
+2. Nest everything in App.js render()'s return into the <Provider></Provider>
+3. Define the store property of the <Provider> component
+	- provide a dummy variable that we will define in separate JS file
+
+
+II. Defining the Store variable 
+4. Create a new JS file inside src
+	> store.js
+5. Import the following components
+	> createStore, applyMiddleware from 'redux'
+	> thunk from redux-thunk
+	> rootReducer from ./reducers
+		- we will define this later when we create reducers inside src/reducers
+6. Define initialState variable
+	> set it as an empty object 
+		const initialState = {};
+7. Define the middleware array that we will pass
+	> pass the thunk that we imported
+	  	const middleware = [thunk]
+8. Define the store variable that we will export and to be used by <Provider> component as its store prop
+	> we will use the createStore() function
+	> we will pass three arguments in the function
+		a. the rootReducer
+		b. the initialState
+		c. applyMiddleware()
+			- we will pass the middleware variable using the spread operator	
+
+const store = createStore(
+  rootReducer,
+  initialState,
+  applyMiddleware(...middleware)
+);
+
+9. Export the "store" variable
+	export default store;
+
+
+
+III. Setting up the rootReducer
+10. Create a "reducer" folder inside src
+	src/reducer
+11. Create index.js inside
+12. Import combineReducers from redux
+13. Import postReducer from "./postReducer"
+	> postReducer will be one of the reducers content of the rootReducer that we will make
+	> we will combine all reducers into ONE ROOT REDUCER using combineReducer()
+14. Call the combineReducers()
+15. Pass a key:value pair list inside the combineReducers()
+	> in key:value pair
+		a. key represents the name that we will use to refer to specific Reducer
+		b. value refers to the Reducer the key points to
+
+import { combineReducers } from "redux";
+import postReducer from "./postReducer";
+
+export default combineReducers({
+  posts: postReducer,
+});
+
+
+
+IV. Define the Action types that we will use
+16. Create an "actions" folder inside the src folder
+17. Create a JS file named "types.js"
+	> these will host the Action types strings
+18. Create const variables to represents Action types
+	> also, export them so it will be accessible outside
+
+export const FETCH_POSTS = "FETCH_POST";
+export const NEW_POST = "NEW_POST";
+
+
+
+V. Creating Reducer for rootReducer content
+19. Create a postReducer in the "src/reducer" folder
+20. Import the Actions types that this Reducer will use
+	> in case of postReducer, it will use the FETCH_POST and NEW_POST
+21. Initialize the App-level State of this Reducer
+	> typically, this is where we will store the Resources
+	> same format as Component level store, Object literal with key:value pairs
+
+const initialState = {
+  items: [],
+  item: {},
+};
+
+22. Export an ANONYMOUS function
+	> these function will have several properties
+		a. takes two parameters
+			-> state, which is initialized as the value of the Reducer's State defined
+			-> action, which will represent the value passed in the Action's dispatch()
+		b. inside the function, there will be a conditional flow 
+			-> typically created using switch function
+			-> the condition for the cases will depend on the Action's type
+			-> for each type, there will be CRUD operation done in the Reducer's State
+
+EX:
+import { FETCH_POSTS, NEW_POST } from "../actions/types";
+
+const initialState = {
+  items: [],
+  item: {},
+};
+
+export default function (state = initialState, action) {
+  switch (action.type) {
+    case FETCH_POSTS:
+      console.log("Post Reducer Fetching");
+      return {
+        ...state,
+        items: action.payload,
+      };
+    case NEW_POST:
+      return {
+        ...state,
+        item: action.payload,
+      };
+    default:
+      return state;
+  }
+}
+
+
+
+
+VI. Create the Actions to be dispatch
+	> these Actions will be accesible in the props of the Components nested inside <Provider>
+23. Import the Action types to be used
+	> since these are the Actions to dispatch related to post resources, we will import types related to post as well
+24. Create and export a named function
+	> can be either
+		-> variable that pertains to a function
+		-> straight up function
+	> inside the function, we will return another function
+		-> this function will take one parameter called "dispatch" (you can name it anything)
+		-> inside this function, we must call the dispatch() parameter and pass an Object Literal with two property
+			a. type, 
+				-> which refers to the Action type
+				-> MANDATORY
+			b. payload
+				-> refers to the payload of the Action
+				-> optional, depends on the action
+					= ex: if we will just fetch data from State, we can omit the payload
+					= ex: if we will add a resource to the State, we will need to add a payload
+	> the value we pass in the dispatch() will then be received by the ANONYMOUS function of its corresponding reducer
+		-> this will be the "action" parameter
+		
+EX:
+import { FETCH_POSTS, NEW_POST } from "./types";
+
+export const fetchPost = () => (dispatch) => {
+  console.log("Post Action Fetching");
+  fetch("https://jsonplaceholder.typicode.com/posts")
+    .then((res) => res.json())
+    .then((posts) =>
+      dispatch({
+        type: FETCH_POSTS,
+        payload: posts,
+      })
+    );
+};
+
+export const createPost = (postData) => (dispatch) => {
+  fetch("https://jsonplaceholder.typicode.com/posts", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(postData),
+  })
+    .then((res) => res.json())
+    .then((post) =>
+      dispatch({
+        type: NEW_POST,
+        payload: post,
+      })
+    );
+};
+
+
+
+VII. Connecting React Component to the Store
+25. Import connect from 'react-redux'
+	> we will use this to connect to Store
+26. Import the Action functions that we will use for dispatching Actions
+27. Export the result of connect()()
+	> we will replace the normal export of Component
+	> syntax is
+		connect(mapStateToProps, {actions...})(Component)
+	> in the connect()(), we will pass three things
+		a. mapStateToProps
+			-> in first parenthesis as first argument
+			-> is a function that defines how we will map the Store's State to the Component Props
+			-> if theres no State to map in Component's prop, we can pass null
+		b. { actions...}
+			-> in first parenthesis as second argument
+			-> defines the list of Actions that we imported for dispatching actions
+		c. Component
+			-> the Component that we are suppose to export normally
+
+EX:
+// Export line
+export default connect(mapStateToProps, { fetchPost })(Posts);
+
+// Example of mapStateToProp
+const mapStateToProps = (state) => ({
+  // this will add "posts" and "newPost" in the Component's props
+  // state refers to App-level state in Store
+  // state.posts.items refers to the "items" property in "posts" (with points to the postReducer, defined in reducers/index.js combineReducer)
+  // state.posts.item refers to the items key in postReducer's State
+  posts: state.posts.items,
+  newPost: state.posts.item,
+});
+
+
+
+VIII. (OPTIONAL) Add PropTypes and define PropTypes of the props added and mapped from State
+	> to add robustness to the props
+28. Import PropTypes from 'prop-types'
+29. Define Component's propTypes
+
+Posts.propTypes = {
+  fetchPost: PropTypes.func.isRequired,
+  posts: PropTypes.array,
+  newPost: PropTypes.object,
+};
+
+
+
+
+Enabling Redux DevTool
+	> Redux DevTool in browser must be installed
+30. In the place where we define Store (store.js), import compose from "redux"
+31. Replace the third argument in createStore(), with compose()
+	> inside compose(), we will pass the previous value of argument earlier
+32. Add additional argument in the compose()
+	> this will enable the redux devtool in browser
+	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+
+
+
+Accessing Store's App-level States and Actions to dispatch
+	> React Redux exposes these in the props of components
+	> we can also use Props destructuring in this case
+
+EX:
+// Export line
+export default connect(mapStateToProps, { fetchPost })(Posts);
+
+// Example of mapStateToProp
+const mapStateToProps = (state) => ({
+  // this will add "posts" and "newPost" in the Component's props
+  // state refers to App-level state in Store
+  // state.posts.items refers to the "items" property in "posts" (with points to the postReducer, defined in reducers/index.js combineReducer)
+  // state.posts.item refers to the items key in postReducer's State
+  posts: state.posts.items,
+  newPost: state.posts.item,
+});
+
+
+For fetchPost Action
+props.fetchPost()
+
+For posts and newPost States
+props.posts and props.newPost
+
+	

@@ -1,0 +1,27 @@
+89 S3 Encryption
+
+
+S3 Encryption
+
+No Encryption
+
+	Uploads Object
+User ----------------->	Amazon S3 Bucket
+
+
+
+Server-Side Encryption
+
+	Upload Object
+User ----------------->	AWS Bucket
+			(Server encrypts the Object)
+
+
+Client-Side Encryption
+	
+		Upload Object
+	User ----------------->	AWS Bucket
+(Encrypts the file		(Object is already encrypted)
+before upload)
+
+		

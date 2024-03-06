@@ -1,0 +1,34 @@
+Important HTML Extension, Settings, and Shortcuts
+
+Extension
+
+1. Prettier - Code Formatter
+	> we can install this in VS Code Extensions
+	> this will format our code in a more eligible way
+	> some of the format effect includes
+		- proper indentions
+		- proper spacing
+	
+
+Settings
+	
+1. Enabling auto format in the VSCode
+	> go to Setting
+	> search "Format"
+	> in Editor: Default Formatter, choose the Prettier extension we installed
+	> Turn on Editor: Format On Paste and Editor: Format On Save
+	> go to Json setting
+	> save the Json
+	> we should see the Format changes in the index.html right away
+
+
+Shortcuts
+
+HOLD ALT + RMB          Select new cursor
+HOLD MMB + Drag         Box select
+CTRL + L                Select whole line 
+CTRL + LEFT/RIGHT       Navigate line word by word
+SHIFT + ALT + UP/DOWN   Copy the line where cursor is and paste it above or below
+ALT + UP/DOWN           Move the line of code up or down
+CTRL + /                Comment the whole line
+CTRL + ENTER            Create a space below and move the cursor to the start

@@ -1,0 +1,89 @@
+32. RateLimiter of Resilience4j for Rate Limiting
+
+RateLimiting
+	> Rate limiting is an imperative technique to prepare your API for scale and establish high availability and reliability of your service. 
+	> But also, this technique comes with a whole bunch of different options of how to handle a detected limits surplus, or what type of requests you want to limit. 
+	> You can simply decline this over limit request, or build a queue to execute them later or combine these two approaches in some way.
+
+
+Annotations to use
+
+@RateLimiter
+	> can be applied on a class or a specific method
+	> The annotation enables throttling for allmethods where it is applied. Throttling monitoring is performed via a rate limiter.
+	> this annotation have same parameters as @CircuitBreaker and @Retry
+		a. name
+			- defines the name of this RateLimiter instance
+			- takes a String
+			- REQUIRED
+		b. fallBackMethod
+			- takes a String
+			- defines the name of method that will be executed IN CASE rate limit is EXCEEDED
+
+Properties to configure in RateLimiter instance
+
+timeoutDuration
+	> default value is 5 [s]	
+	> defines the default wait time a thread waits for a permission
+
+limitRefreshPeriod
+	> default value is 500 [ns] 
+	> the period a of limit refresh
+		- after each period, the rate limiter sets its permission count back to the limitForPeriod value
+
+limitForPeriod
+	> default value is 50
+	> defines the number of permission available during one limit refresh
+
+EX:
+resilience.ratelimiter.instances.default.limitForPeriod=2
+resilience.ratelimiter.instances.default.limitRefreshPeriod=10s
+	> in this case, we can only have TWO REQUEST for EVERY 10 SECONDS
+	> for each request sent during this 10 sec period, the number of allowed request is reduced
+		- if request is sent during this 10 sec and no more request is allowed, the fallbackMethod will be executed
+	> after the 10sec, the request limit is REFRESHED back to its max amount which in this case is TWO
+
+
+How to use RateLimiter
+1. Add @RateLimiter to the class or method
+	> define the name and fallbackMethod attribute
+2. Define the Config props of this specific RateLimiter instance in application.properties 
+
+EX: 
+Controller class whose method uses @RateLimiter
+
+@RestController
+public class CircuitBreakerController {
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@GetMapping("/sample-api")
+	//@Retry(name = "sample-api", fallbackMethod = "hardcodedResponse")
+	//@CircuitBreaker(name = "sample-api", fallbackMethod = "hardcodedResponse")
+	@RateLimiter(name = "default", fallbackMethod = "hardcodedResponse")
+	public String sampleApi() {
+		logger.info("Sample Api call received");
+//		ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8080/some-dummy-url", 
+//				String.class);
+//		return forEntity.getBody();
+		return "sample-api";
+	}
+	
+	public String hardcodedResponse(Exception e) {
+		logger.info("Fallback method");
+		return "hardcodedResponse";
+	}
+}
+
+Resilience4j's RateLimiter config props
+resilience4j.ratelimiter.instances.default.limitForPeriod=2
+resilience4j.ratelimiter.instances.default.limitRefreshPeriod=10s
+
+
+CONSOLE LOGS
+2021-12-25 00:01:23.950  INFO 14924 --- [nio-8000-exec-1] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-25 00:01:23.950  INFO 14924 --- [nio-8000-exec-2] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+2021-12-25 00:01:33.576  INFO 14924 --- [nio-8000-exec-3] c.g.m.c.c.CircuitBreakerController       : Fallback method
+2021-12-25 00:01:33.946  INFO 14924 --- [nio-8000-exec-4] c.g.m.c.c.CircuitBreakerController       : Sample Api call received
+
+	As you can see, the first two request is process immediately. But the third one took longer. The request then timed out AFTER 10 SECONDS and the fallbackMethod response is sent back.

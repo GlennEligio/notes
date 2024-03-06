@@ -1,0 +1,41 @@
+009 Skills To Be A Top Designer (also online resources for assets)
+
+Key elements in designing (web/mobile design)
+1. Graphic Design
+	> uses font, color, layout
+	> idea of telling a story to convey specific feeling or to target specific audience
+	> all about the visuals
+2. User Experience
+	> arts and science of designing a product that provide users with the best possible experience
+	> how to make user move through a product in enjoyable way, in an easy flow
+	> all about understand the customer/user
+3. Goal conversion
+	> need to know how to design a product that drives the result your client want
+	> conversion means that user will take the desired action
+	> ex: bruno hired us because he wants to be successful with his product
+4. Platform Development
+	> having at least a basic knowledge on how to design in a specific platform (html/css for webapp) is an important skill
+ 
+
+Free Online Design tools
+1. goodui.org
+	> great for the goal conversion
+	> shows latest discovered UI patterns used by top companies that we can use
+2. awwwards.com
+	> great to get design aspirations
+	> we can search using different topics or colors
+3. behance.net
+	> shows off other people's portfolio
+	> used to get inspirations
+4. flaticon.com
+	> paid version where we can get good icons
+5. thenounproject.com
+	> free version where we can get good icons
+6. unsplash.com
+	> website where we can get images
+
+
+Three types of work environment
+1. Freelancer
+2. Working in an agency
+3. Working inhouse

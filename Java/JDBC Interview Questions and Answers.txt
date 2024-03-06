@@ -1,0 +1,362 @@
+JDBC Interview Questions and Answers
+
+Questions:
+01 When do you use JDBC?
+02 Different types of JDBC Drivers
+03 What is the use of JDBC API?
+04 What are the steps in a simple query to database?
+05 What is difference between JDBC Statement and PreparedStatement?
+06 What is the difference between execute, executeQuery, executeUpdate?
+07 What is a ResultSet?
+08 What is the use of setFetchSize() and setMaxRows() methods in Statement?
+09 What is JDBC Batch Processing?
+10 What is Transaction Management?
+11 What is JDBC Savepoint?
+12 What is a DataSource?
+13 What are the CLOB and BLOB datatypes in JDBC? Why do you use them?
+14 What is DDL and DML?
+15 What are JDBC Best Practices?
+16 What are the other famous JDBC frameworks? How did they solve the typical problems with JDBC?
+17 What is JPA? https://github.com/in28minutes/HibernateJPAStepByStep
+18 What is Hibernate?
+
+
+
+
+
+
+
+01 When do you use JDBC?
+
+ANSWER:
+ > JDBC stands for Java Database Connectivity
+ > JDBC is used when you want to connect to a database for accessing or modifying its data programmatically (through Java coade)
+ > we can use JDBC to any database as long as they provide their own implementation of JDBC drivers
+ > Spring provides a library which makes working with JDBC much easier (Spring JDBC)
+
+
+
+02 Different types of JDBC Drivers
+
+ANSWER:
+ > There are four types of JDBC drivers
+	- Type 1: JDBC-ODBC bridge.
+	- Type 2: partial Java driver.
+	- Type 3: pure Java driver for database middleware.
+	- Type 4: pure Java driver for direct-to-database. 
+ > ODBC stands for Open Database Connectivity
+ > the higher the type, the close the code that we write resembles Java when using JDBC
+ > For type 1, 
+	- JDBC <-> ODBC bridge <-> Database Library APIs <-> Databases
+ > For type 2, 
+	- Native-APIP driver <-> Database Library APIs <-> Databases
+ > For type 3, 
+	- Network-Protocol driver <-> Middleware <-> Different Databases
+ > For type 4, 
+	- Pure Java driver <-> Databases
+ > Nowadays, we only use Type 4. It uses different drivers for different database
+	- database vendor provides their own Type 4 JDBC driver
+
+
+
+
+
+
+
+03 What is the use of JDBC API?
+
+ANSWER:
+ > Provides an abstraction for communicating to database, by providing an API that works with any database vendors
+
+
+
+
+
+
+04 What are the steps in a simple query to database?
+
+ANSWER:
+1. Create a connection to the database
+	> Load the JDBC driver using Class.forName()
+	> Create Connection instance by using DriverManager.getConnection()
+2. Executing the query
+	> Create a Statement instance using createStatement() of Connection instance
+ 	> Pass query to the Statement and call method to execute
+3. Optional: Iterate through the ResultSet
+	> ResultSet is only present when we do a query with return value
+4. Close the connection
+	> Connection and Statement have methods called clsoe() to release resources like Connection back to Connection pool
+
+
+
+
+
+
+
+05 What is difference between JDBC Statement and PreparedStatement?
+
+ANSWER:
+ > For Statement, we will pass the hardcoded STATIC query string. 
+	- Theres also no caching that happens for the query used
+ > For PreparedStatement, we will pass a DYNAMIC query string which contains "?" where we can insert values
+	- We can then use the set methods of the PreparedStatement to populate the ? with values
+	- The query is also stored in cache for later use
+
+NOTES:
+1. Statement can be created from the Connection instance
+2. We typically enclose all database related code inside a try-catch-finally blocks
+	> in the finally block, we will release all the resources like Connection and PreparedStatement
+
+ 
+
+06 What is the difference between execute, executeQuery, executeUpdate?
+
+ANSWER:
+ > execute() of Statement returns boolean
+	- return value refers to the whether the SQL statement is successful or not
+	- used for Update and Delete queries
+ > executeQuery() of Statement returns a ResultSet
+	- used for SELECT SQL statements
+	- ResultSet will contain the queries data sent back by the database
+ > executeUpdate() of Statement returns int
+	- int return value refers to the amount of rows affected by DML query
+	- used for DELETE, CREATE, UPDATE SQL statements
+	- can't be called on PreparedStatement or CallableStatement
+
+
+
+
+
+07 What is a ResultSet?
+
+ANSWER:
+ > ResultSet represents the result query sent by the database in response to our SELECT query
+ > ResultSet contains methods like
+	- next(), move the pointer of ResultSet to the next. Initially points before the 1st result
+	- getString(), getBoolean(). etc, returns the value of Column. Takes either the column name or the column index
+
+
+
+
+
+08 What is the use of setFetchSize() and setMaxRows() methods in Statement?
+
+ANSWER:
+ > setFetchSize() refers to the number of Rows to get per batch
+	- ex: setFetchSize(100) on a 1000 result row. This will fetch 100 of those result per batch. So in total, there will be 10 batches to get all result
+ > setMaxRows() refers to the max amount of Rows to get in the result rows
+
+
+
+
+
+
+09 What is JDBC Batch Processing?
+
+ANSWER:
+ > Batch processing is a feature of JDBC that let us execute multiple queries at the same time
+ > there are two methods on Statement that supports this feature
+	- addBatch(String sql), adds a SQL in batch processing
+	- executeBatch(), execute all the SQL queries
+		-> returns an int array which refers to the row updated count of each SQL queries
+		-> order of this int array will reflect on the order at which SQL queries are added
+
+
+
+
+10 What is Transaction Management?
+
+ANSWER:
+ > Transaction represents a single unit of work
+ > The ACID properties describes the transaction management well. ACID stands for Atomicity, Consistency, isolation and durability.
+ 	- Atomicity means either all successful or none.
+	- Consistency ensures bringing the database from one consistent state to another consistent state.
+	- Isolation ensures that transaction is isolated from other transaction.
+	- Durability means once a transaction has been committed, it will remain so, even in the event of errors, power loss etc.
+ > Advantages include
+	- Fast performance, since database is hit at the time of commit
+	- Rollback feature
+
+NOTE:
+1. To use transaction management, we will need to disable auto-commit of the Connection
+	> we do this by calling setAutoCommit() of Connection instance and passing false
+
+
+
+
+
+
+11 What is JDBC Savepoint?
+
+ANSWER:
+ > A Savepoint object is used to save the current state of the database which can be rolled-back afterwards to that state of the database. 
+ > Savepoints are similar to the SQL Transactions and are generally to rollback if something goes wrong within the current transaction. 
+ > The connection.setSavepoint() method of Connection interface in Java is used to create an object which references a current state of the database within the transaction.
+ > Two methods of Connection is used to use this feature
+	- setSavepoint(), returns a SavePoint
+	- rollback(SavePoint sp), returns the state of database using the SavePoint
+	- commit()
+
+NOTES:
+1. Similar to Transaction Management, we need to set autoCommit of Connection to false
+
+
+
+
+
+
+
+
+
+12 What is a DataSource?
+
+ANSWER:
+ > DataSource programming is the way to work with database in our Java program
+ > It provides a way to abstract database connection and provide loose coupling to the database itself
+	- this means we can easily swap databases without tinkering too much with the source code
+ > To create a DataSource, we will need to configure it by assigning its URL, Username, Password, etc
+ > Then we can use the DataSource instance to get Connection through getConnection();
+
+EX:
+// application.properties
+#mysql DB properties
+MYSQL_DB_DRIVER_CLASS=com.mysql.jdbc.Driver
+MYSQL_DB_URL=jdbc:mysql://localhost:3306/UserDB
+MYSQL_DB_USERNAME=testusername
+MYSQL_DB_PASSWORD=testpassword
+
+#Oracle DB Properties
+ORACLE_DB_DRIVER_CLASS=oracle.jdbc.driver.OracleDriver
+ORACLE_DB_URL=jdbc:oracle:thin:@localhost:1521:orcl
+ORACLE_DB_USERNAME=hr
+ORACLE_DB_PASSWORD=oracle
+
+
+// CODEimport java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import oracle.jdbc.pool.OracleDataSource;
+
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+
+public class MyDataSourceFactory {
+
+	public static DataSource getMySQLDataSource() {
+		Properties props = new Properties();
+		FileInputStream fis = null;
+		MysqlDataSource mysqlDS = null;
+		try {
+			fis = new FileInputStream("db.properties");
+			props.load(fis);
+			mysqlDS = new MysqlDataSource();
+			mysqlDS.setURL(props.getProperty("MYSQL_DB_URL"));
+			mysqlDS.setUser(props.getProperty("MYSQL_DB_USERNAME"));
+			mysqlDS.setPassword(props.getProperty("MYSQL_DB_PASSWORD"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return mysqlDS;
+	}
+	
+	public static DataSource getOracleDataSource(){
+		Properties props = new Properties();
+		FileInputStream fis = null;
+		OracleDataSource oracleDS = null;
+		try {
+			fis = new FileInputStream("db.properties");
+			props.load(fis);
+			oracleDS = new OracleDataSource();
+			oracleDS.setURL(props.getProperty("ORACLE_DB_URL"));
+			oracleDS.setUser(props.getProperty("ORACLE_DB_USERNAME"));
+			oracleDS.setPassword(props.getProperty("ORACLE_DB_PASSWORD"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return oracleDS;
+	}
+		
+}
+
+
+
+
+
+
+
+13 What are the CLOB and BLOB datatypes in JDBC? Why do you use them?
+
+ANSWER:
+ > BLOB stands for binary large object and a SQL datatype
+	- its a collection of binary data stored as a single entity
+	- typically used for storing files such as images
+ > CLOB stands for character large object and also a sql datatype
+	- it is a large block of text stored in a database in some form of text encoding
+	- used for storing large amount of text
+
+
+
+
+
+
+
+14 What is DDL and DML?
+ 
+ANSWER:
+ > DDL stands for Data Definition Language
+	- used to define and modify structure/schema of the database, tables, etc
+	- ex: CREATE, ALTER commands
+ > DML stands for Data manipulation Language
+	- used to manipulating data stored inside a Table
+	- ex: INSERT, UPDATE, DELETE commands
+
+
+
+
+
+
+15 What are JDBC Best Practices?
+
+ANSWER:
+1. Use Connection pooling, to manage connections efficiently
+2. Unless necessary, do not use JDBC by itself. Use framework that abstract the JDBC for you like Spring JDBC or Spring JPA
+	> using JDBC alone can result in writing many boilerplate code
+3. Understand the underlying technology and concept in JDBC
+
+
+
+16 What are the other famous JDBC frameworks? How did they solve the typical problems with JDBC?
+
+ANSWER:
+ > Spring JDBC: 
+	- Lessens the amount of boilerplate code through the use of @Annotations
+	- also lets you only concern about the data nd its mapping to objects (ex: RowMapper<T>)
+
+
+
+
+
+17 What is JPA? 
+
+ANSWER:
+ > JPA is a specification for persisting Java object and management of relation data enterprise Java applications
+ > Hibernate is its reference implementation
+ > typically used for ORM or Object Relational mapping
+ > ex: https://github.com/in28minutes/HibernateJPAStepByStep
+
+
+
+
+
+
+18 What is Hibernate?
+
+ANSWER:
+ > Hibernate is an implementation of JPA
+ > There are different services offered by Hibernate, but it is widely used for ORM and Validation
+ > ORM, or Object/Relational Mapping is where we can persist Java object to the database, and map the database value back into a Java object

@@ -1,0 +1,103 @@
+136 CodeStar & Cloud9 Hands On
+
+Creating a CodeStar project
+1. Search 'CodeStar' in AWS console
+2. Go to Projects section
+3. Click create IAM Service role
+4. Create a Project, by clicking Create
+5. In 'Choose a Project template'
+ > Select a Web app Template that runs on an Elastic Beanstalk
+	- choose filters: 'AWS Elastic Beanstalk' and 'Web application'
+	- choose the Template that you are familiar
+6. In 'Set up your project'
+ > give a name (DemoProject)
+ > repo will be CodeCommit
+ > EC2 instance type if t2.micro (free)
+ > Create a dummy keypair
+ > click next
+7. In 'Review', review and click Create Project
+8. Wait until all resources associated with this Project is created
+
+
+
+Checking the new CodeStar project
+1. Go to the new CodeStar project
+2. Go to Overview tab
+	> we can see that a CodePipeline is created for this
+	> also in Project resources, a lot of resources are created like IAM roles, CodePipeline, CodeCommit, CodeBuild, CloudFormation (due to Elastic Beanstalk) and S3
+3. Check the CodePipeline created by clicking the its name
+	> as we can see, theres three things here, the Source, the Build, and the Deploy
+	> each of this section contains events related to the CodeStar like creating initial Commit in CodeCommit, building the source code using CodeBuild, and deploying the application using CloudFormation
+	> we can also check other services like CodeBuild. CodeDeploy (not used), CodeArtifact, and CodeCommit
+
+
+
+Checking the initial State of the CodeStar application
+1. Go to CodeStar project > Overview tab > Resources
+2. Click the Elastic Beanstalk
+3. Click the URL exposed by it
+4. You should see the default page
+5. We will modify this using Cloud9
+
+
+
+Using Cloud9 to access the Project Template's source code
+1. Go to the CodeStar project
+2. Go to IDE tab
+3. Open the 'Access your project code'
+	> Click 'Create environment' in the AWS Cloud9
+4. In 'Create AWS Cloud9 environment'
+	> set Instance type to t2.micro
+	> set env name to DemoEnv
+	> set shutdown timer to 30mins of inactivity
+5. Wait for the Cloud9 to be created
+	> to check for Cloud9 creation status, go to CloudFormation
+	> reset CodeStar page to check if Cloud9 is created
+6. Select the Cloud9 environment, and click 'Open IDE'
+7. Edit the BeanStalk application
+	> for Java Spring Webapp, we can change the Content of the index.jsp
+	> add another h3 element to update the webpage
+	> dont forget to save the changes in file
+
+EX:
+        <div class="text">
+          <h1>Congratulations!</h1>
+          <h2>You just created a Java Spring web application.</h2>
+          <h3>Updated by John Glenn Eligio</h3>
+        </div>
+
+8. Configure the Git user's name and email
+	> in the Shell provided by the Cloud9, execute the command below
+
+$ git config --global user.name glenneligio
+$ git config --global user.email glenneligio@gmail.com
+
+9. Commit the changes	
+	> click the Git icon at top left
+	> click the plus icon near index.jsp
+	> pass the Commit message
+	> click the paper icon
+	> click Commit
+10. Push the changes to the source code
+	> in the Shell, execute 'git push' command
+
+
+
+Checking the Effect of Source code change
+1. Go to the CodeStar's CodePipeline
+	> we should see that a new Build, and Deploy event is triggered
+2. If the build is successful (ex: no Compile error and passes Test cases), then the Deploy stage will start
+3. After the Deploy stage is finished, go to the Elastic Beanstalk again to see the changes in the webpage
+
+
+
+Cleanup
+1. Delete the Cloud9 environment
+2. Delete the CodeStar project
+
+
+
+
+NOTE:
+1. We can access the source code of CodeStar project anywhere. But we will need to follow some instruction which differ from IDE to IDE
+2. Initially, you will need to set the Git user's name and email on the Cloud9 environment

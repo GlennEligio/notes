@@ -1,0 +1,509 @@
+12 Build a Complete Database Web App with JDBC Part 2
+
+Contents:
+82 List Student - Overview
+83 List Students - Creating the JDBC Code
+84 List Students - Building the Servlet
+85 List Students - Developing the JSP
+86 List Students - Making it Pretty with Cascading Style Sheets (CSS)
+87 List Students - Adding JSTL Functionality
+88 List Students - Adding a Welcome File
+
+
+
+
+
+
+
+
+82 List Student - Overview
+
+To Do List
+1. Create Student.java
+2. Create StudentDBUtil.java
+3. Create StudentControllerServlet.java
+4. Create JSP page: list-students.jsp
+
+
+Create Student.java
+ > Student class will be a POJO to wrap the information about the Student 
+ > contains following properties
+	- id
+	- firstName
+	- lastName
+	- email
+ > toString() is overriden to display all properties value
+
+// Student.java
+package com.luv2code.web.jdbc;
+
+public class Student {
+	private int id;
+	private String firstName;
+	private String lastName;
+	private String email;
+
+	public Student(int id, String firstName, String lastName, String email) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	@Override
+	public String toString() {
+		return "Student [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + "]";
+	}
+
+}
+
+
+
+
+
+
+
+83 List Students - Creating the JDBC Code
+
+GOAL:
+Create the StudentDBUtil class
+ > contains the JDBC codes
+ > have DataSource as property
+ > also contains methods that uses Connection, ResultSet, and Statement inside to fetch data from Database
+
+// StudentDbUtil.java
+package com.luv2code.web.jdbc;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+public class StudentDbUtil {
+	
+	private DataSource dataSource;
+
+	public StudentDbUtil(DataSource dataSource) {
+		super();
+		this.dataSource = dataSource;
+	}
+	
+	public List<Student> getStudents() throws Exception {
+		
+		List<Student> students = new ArrayList<>();
+		
+		Connection myConn = null;
+		Statement myStmt = null;
+		ResultSet myRs = null;
+		
+		try {
+			// get a connection
+			myConn = dataSource.getConnection();
+			
+			// create sql statement
+			String sql = "SELECT * FROM Student ORDER BY last_name";
+			myStmt = myConn.createStatement();
+			
+			// execute query
+			myRs = myStmt.executeQuery(sql);
+			
+			// process result set
+			while(myRs.next()) {
+				
+				// retrieve data from result set row
+				int id = myRs.getInt("id");
+				String firstName = myRs.getString("first_name");
+				String lastName = myRs.getString("last_name");
+				String email = myRs.getString("email");
+				
+				// create new student object
+				Student tempStudent = new Student(id, firstName, lastName, email);
+				
+				// add it to the list of Students
+				students.add(tempStudent);
+			}
+			
+			return students;
+		} finally {
+			// close JDBC objects
+			close(myConn, myStmt, myRs);
+		}
+	}
+	
+	private void close(Connection c, Statement s, ResultSet rs) {
+		try {
+			if (rs != null) {
+				rs.close();
+			}
+			
+			if (s != null) {
+				s.close();
+			}
+			
+			if(c != null) {
+				c.close(); // doesnt really close it ... just puts back in connection pool
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+84 List Students - Building the Servlet
+
+GOAL:
+Create the StudentControllerServlet that does the following
+ > have a DataSource property whose value is resource injected from META-INF/config.xml
+ > have a StudentDbUtil property
+ > overriden init() method that 
+	- initializes the StudentDbUtil property by passing the DataSource property
+ > listStudents() method that 
+	- takes request and response as input
+	- uses the StudentDbUtil to fetch list of Students
+ 	- uses the request and response to add Model in request and forward the response using RequestDispatcher
+ > overwritten doGet() method that call listStudents() method
+
+
+// StudentControllerServlet.java
+package com.luv2code.web.jdbc;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
+@WebServlet("/StudentControllerServlet")
+public class StudentControllerServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	@Resource(name="jdbc/web_student_tracker")
+	private DataSource dataSource;
+
+	private StudentDbUtil studentDbUtil;
+	
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		
+		// create out student db util ... and pass in the conn pool / datasource
+		try {
+			studentDbUtil = new StudentDbUtil(dataSource);
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new ServletException(e);
+		}
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// list the students ... in MVC fashion
+		try {
+			listStudents(request, response);
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+	}
+
+	private void listStudents(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		// get students from db utils
+		List<Student> students = studentDbUtil.getStudents();
+		
+		// add students to the request
+		request.setAttribute("students", students);
+		
+		// send to JSP page (view)\
+		RequestDispatcher rd = request.getRequestDispatcher("/list-students.jsp");
+		rd.forward(request, response);
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+85 List Students - Developing the JSP
+
+GOAL:
+Create list-students.jsp, which
+ > imports the Student and List class
+ > fetches the List of Student from request
+ > display the Students info as table
+
+
+// list-students.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ page import="com.luv2code.web.jdbc.Student,java.util.*" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+
+<%
+	// get the students from the request object (sent by servlet)
+	List<Student> theStudents = (List<Student>) request.getAttribute("STUDENT_LIST");
+%>
+
+<body>
+	<div id="wrapper">
+		<div id="header">
+			<h2>FooBar University</h2>	
+		</div>
+	</div>
+	<div id=container>
+		<div id="content">
+			<table>
+				<tr>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+				</tr>
+				<% for (Student tempStudent: theStudents) { %>
+					<tr>
+						<td><%= tempStudent.getFirstName() %></td>
+						<td><%= tempStudent.getLastName() %></td>
+						<td><%= tempStudent.getEmail() %></td>
+					</tr>
+				<% } %>
+			</table>
+		</div>
+	</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+86 List Students - Making it Pretty with Cascading Style Sheets (CSS)
+
+GOAL:
+1. Add CSS styling in JSP
+2. Import the CSS in the JSP
+
+// add-student-style.css
+form {
+	margin-top: 10px;
+}
+
+label {
+	font-size: 16px; 
+	width: 100px; 
+	display: block; 
+	text-align: right;
+	margin-right: 10px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+input {
+	width: 250px;
+	border: 1px solid #666; 
+	border-radius: 5px; 
+	padding: 4px; 
+	font-size: 16px;
+}
+
+.save {
+	font-weight: bold;
+	width: 130px; 
+	padding: 5px 10px; 
+	margin-top: 30px;
+	background: #cccccc;
+}
+
+table {   
+	border-style:none;
+	width:50%;
+}
+
+tr:nth-child(even) {background: #FFFFFF}
+tr:nth-child(odd) {background: #FFFFFF}
+
+tr {
+	border-style:none;
+	text-align:left;	
+}
+	
+
+// style.css
+html, body{
+	margin-left:15px; margin-right:15px; 
+	padding:0px; 
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+}
+
+table {   
+	border-collapse:collapse;
+	border-bottom:1px solid gray;
+	font-family: Tahoma,Verdana,Segoe,sans-serif;
+	width:72%;
+}
+ 
+th {
+	border-bottom:1px solid gray;
+	background:none repeat scroll 0 0 #0775d3;
+	padding:10px;
+	color: #FFFFFF;
+}
+
+tr {
+	border-top:1px solid gray;
+	text-align:center;	
+}
+ 
+tr:nth-child(even) {background: #FFFFFF}
+tr:nth-child(odd) {background: #BBBBBB}	
+ 
+#wrapper {width: 100%; margin-top: 0px; }
+#header {width: 72%; background: #0775d3; margin-top: 0px; padding:15px 0px 15px 0px;}
+#header h2 {width: 100%; margin:auto; color: #FFFFFF;}
+#container {width: 100%; margin:auto}
+#container h3 {color: #000;}
+#container #content {margin-top: 20px;}
+
+.add-student-button {
+	border: 1px solid #666; 
+	border-radius: 5px; 
+	padding: 4px; 
+	font-size: 12px;
+	font-weight: bold;
+	width: 120px; 
+	padding: 5px 10px; 
+	
+	margin-bottom: 15px;
+	background: #cccccc;
+}
+
+
+// inside list-students.jsp <head> tag
+<link type="text/css" rel="stylesheet" href="css/style.css"/>
+
+
+
+
+
+
+
+
+87 List Students - Adding JSTL Functionality
+
+GOAL:
+1. Replace the scriptlet with for each loop with the JSTL core tag "forEach"
+
+// inside list-students.jsp
+<c:forEach var="tempStudent" items="${STUDENT_LIST}">
+	<tr> 
+		<td>${tempStudent.firstName}</td>
+		<td>${tempStudent.lastName}</td>
+		<td>${tempStudent.email}</td>
+	</tr>
+</c:forEach>
+
+
+
+
+
+
+
+88 List Students - Adding a Welcome File
+
+WEB-INF/web.xml
+ > Java Servlet spec defines a deployment descriptor file
+ > this file contains various configs for application delpoyment
+ > also defines a list of "welcome files"
+
+
+Web App Welcome Files
+ > if a request is not referencing a file (ex: jsp, html, css, js, etc) then it will look for a matching "welcome file"
+ 	- this means that user sent a request with just the base url of web app, without any relative url
+ > the web app searches for the welcome file to server from TOP to BOTTOM
+ > to add Servlet as Welcome File, we will just pass the URL mapped to the Servlet
+	- ex: <welcome-file>StudentControllerServlet</welcome-file>
+
+NOTE:
+1. When changing/adding web.xml, Tomcat Server must be restarted
+
+
+EX:
+// web.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/j2ee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>web-student-tracker</display-name>
+
+  <welcome-file-list>
+  	<welcome-file>StudentControllerServlet</welcome-file>
+  	<welcome-file>index.jsp</welcome-file>
+  	<welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+</web-app>
+
+
+

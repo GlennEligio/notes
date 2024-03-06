@@ -1,0 +1,102 @@
+21. useMemo hook
+
+Memoization
+	> Memoization is essentially just caching. 
+	> Imagine a complex function that is slow to run which takes a as an argument. 
+	> In order to speed up this function, you can cache the results of running the function so that when the function is run with the same inputs you can use the cached value instead of recomputing the value.
+
+
+Problem
+	> if Component's State changes, it will run all the logic inside the said Component again
+	> if one of the Component's logic is a long running task (e.g. fetch data from external api), it can cause slow down
+	> this long running task will still run EVEN IF THE INPUT IS THE SAME	
+	> therefore, we must find a way to be able to cache output of a function given the same input
+
+
+Solution
+	> use the hook "useMemo "
+
+useMemo hook
+	> Functional hook used to "cache" a value of a function
+	> takes two inputs
+		1. Function to run
+			-> this function MUST RETURN a value
+		2. Dependency variables
+			-> an array of variables
+			-> if any of the variable changes value, the function in useMemo() will be executed
+
+SYNTAX:
+const var = useMemo(() => {
+	// some logic
+	return valueToCache;
+}, [dVar1, dVar2, ...])
+
+OR
+
+const result = useMemo(() => {
+  return slowFunction(a)
+}, [a])
+
+
+
+Use cases:
+1. For long running task whose return value DOES NOT CHANGE VERY OFTEN
+	-> there may be logic in a component what relies on a result of long running function, whose value is not used or changed very often
+2. For doing Referencial Equality
+	-> variables whose value comes from useMemo() hook will have the SAME REFERENCE
+	-> reason for doing this is that every RENDER of Component, it will create NEW REFERENCE for all variables inside the Components and in doing so, it will trigger any hook whose dependency array includes the variables inside Component
+	-> to do this, we can use the useMemo() so that every render, the variable's reference will change ONLY if the result of useMemo() CHANGED
+
+
+
+Disadvantages
+1. Uses more memory
+	-> since the return value will be cache, it will be stored in some memory
+
+
+EXAMPLE USES:
+
+import React, { useEffect, useMemo, useState } from "react";
+
+function App() {
+  const [number, setNumber] = useState(0);
+  const [dark, setDark] = useState(false);
+  const doubleNumber = useMemo(() => {
+    return slowFunction(number);
+  }, [number]);
+  const themeStyles = useMemo(() => {
+    return {
+      backgroundColor: dark ? "black" : "white",
+      color: dark ? "white" : "black",
+    };
+  }, [dark]);
+
+  useEffect(() => {
+    console.log("Theme Changed");
+  }, [themeStyles]);
+
+  return (
+    <>
+      <input
+        type="number"
+        value={number}
+        onChange={(e) => setNumber(parseInt(e.target.value))}
+      />
+      <button onClick={() => setDark((prevDark) => !prevDark)}>
+        Change Theme
+      </button>
+      <div style={themeStyles}>{doubleNumber}</div>
+    </>
+  );
+}
+
+function slowFunction(num) {
+  for (let i = 0; i <= 1000000000; i++) {}
+  return num * 2;
+}
+
+export default App;
+
+
+
+In component above, we have used the useMemo() to provide the value of the themeStyles and doubleNumber variables. This way, if the Component re-render (either by changing "number" or "dark" state through UI), the "themeStyles" and "doubleNumber"'s reference will NOT CHANGED and the function inside useMemo() will NOT RUN AGAIN

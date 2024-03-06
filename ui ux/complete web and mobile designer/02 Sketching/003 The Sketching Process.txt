@@ -1,0 +1,35 @@
+003 The Sketching Process
+
+Sketching Process Steps
+1. Be prepared!
+	> prepare your tools beforehand
+	> determine what your goals are
+	> who is your audience
+	> timebox yourself
+		- determine how much time you spend for each thing like sketching, presentation, etc
+2. Ready, Set ... Go!
+	> Draw a frame for your device
+	> Start with more simple and redundant elements...
+		- use simple shapes like square, circle, rectangle
+	> Move onto some more detailed interactions
+	> Annotate your sketches and keep them safe
+		- be as details as you can with annotations
+		- save them so that we can revisit them later
+	> Keep going
+	> Share your sketches
+		- their feedback can help improve your sketches and fix mistakes
+3. Refinement
+	> Add titles to your sketches
+		- the provide context to the sketches, useful when you have many sketches
+	> Add annotations tot he sketches again
+		- important note is that update the annotations that you have in your current sketches
+		- helps us explain stuff better
+	> Use numbers
+		- helps define where certain sketches within the flow/interactions is	
+		- helps speed up discussions, and help others where a sketch fits in 
+		- easier to point/specify the sketches (ex: sketch no.3)
+	> Use arrows
+		- helps indicate transitions (ex: using arrow to navigate viewer to the new sketch when a button is clicked)
+	> Add gestures if you want
+		- optional, we can indicate them in the sketch
+		- though typically, we will directly communicate this to the developers

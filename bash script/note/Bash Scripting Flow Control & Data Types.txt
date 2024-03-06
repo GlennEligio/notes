@@ -1,0 +1,720 @@
+Bash Scripting Flow Control & Data Types
+
+Contents:
+01 Using if...then...else Statements
+02 Recognizing and Using Comparison Operators
+03 Working with For Loops
+04 Using While and Until Loops
+05 Using Break and Continue Inside a Loop
+06 Creating a Case Statement
+07 Creating and Manipulating Arrays
+08 Performing Math Operations
+09 Converting Numbers between Bases
+10 Manipulating Strings
+11 Working with Directories
+12 Exercise: Using Conditions and Data Types in Bash
+13 Take Test
+
+
+
+
+
+
+
+
+
+
+01 Using if...then...else Statements
+
+if-fi
+ > used to create an if statement
+ > typically used together with test, then, and else
+
+test
+ > used to create a condition to check
+ > we can use this to check for 
+	1. expression result like arithmetic
+	2. directory or file existance
+ > we can use several condition operators like
+	=	for equality
+	-gt	for greater than check
+	-lt	for less than check
+ > SYNTAX:
+	test EXPRESSION
+ > ex:
+	test $USER = "root"
+	test vmid -gt 0
+	test -d /location
+	
+
+then
+ > used to enclose the logic to execute when the condition in "test" command passes
+
+else
+ > used to enclose the logic to execute when the condition in "test" command fails
+
+
+EX:
+#if.sh
+if test $USER = "root"
+then
+{
+        clear
+        echo "You are not root"
+        exit
+}
+else
+{
+        clear
+        echo "You are root"
+        exit
+}
+
+
+Commands
+if test -d /location; then { echo "Directory exist"; };  fi
+ > this checks if /location exist
+
+
+
+
+
+
+
+
+
+
+
+02 Recognizing and Using Comparison Operators
+
+&&
+ > double ampersand symbol
+ > used for AND comparison
+ 	- will return a true when BOTH expression is true
+ > with this, the expression in the RIGHT will only be executed ONLY when the expression in left returns true
+	- we typically use "test" commands in the left
+ > SYNTAX: expression && expression
+ > EX: test 3 -gt 4 && echo "First number is greater than second number"
+
+
+||
+ > double pipe symbol
+ > used for OR comparison
+	- will return true when EITHER of the expression is true
+ > with this, the expression in the RIGHT will be executed REGARDSLESS if the expression in the right returns true or false
+	- we typically use this as a FALLBACK in if-else with combination of &&
+ > SYNTAX: expression && expression
+ > EX: test 3 -gt 4 && echo "First number is greater than second number" || "First number is NOT greater than second number"
+
+
+EX:
+// Using &&
+if test $citycode="Toronto" && test $projdays -gt 8; then { echo "Both are true"; }; else { echo "Either one if false"; };  fi
+
+// Using ||
+if test $citycode="Toronto" || test $projdays -gt 8; then { echo "Either one is true"; }; else { echo "Both is false"; };  fi
+
+
+
+
+
+
+
+
+
+
+
+03 Working with For Loops
+
+For in loops
+ > for loops are used to executed a code repeatedly
+ > classified as an iteration statement
+	- it is the repetition of a process within abash
+ 
+SYNTAX:
+1. Using a hardcoded list of numbers
+for VARIABLE in 1 2 3 4 5 .. N
+do
+    command1
+    command2
+    commandN
+done
+
+2. Using a hardcoded list of file
+for VARIABLE in file1 file2 file3
+do
+    command1 on $VARIABLE
+    command2
+    commandN
+done
+
+3. Using output of a command
+for OUTPUT in $(Linux-Or-Unix-Command-Here)
+do
+    command1 on $OUTPUT
+    command2 on $OUTPUT
+    commandN
+done
+
+
+
+Accessing the current iteration value
+ > to access the current iteration value, we will use either the $VARIABLE or $OUTPUT
+
+EXAMPLE:
+// for.sh
+#!/bin/bash
+
+clear
+totalsize=0
+currentfilesize=0
+
+for currentfile in /html/*.html
+do
+        currentfilesize=`ls -l $currentfile | tr -s " "| cut -f5 -d " "`
+        let totalsize=$totalsize+$currentfilesize
+        echo $currentfilesize
+done
+echo
+echo "The total space used by HTML files is" $totalsize
+echo
+
+
+
+Creating an Array
+ > to create an array, we will assign a space-separated list of values enclosed in parenthesis
+ > SYNTAX:
+	variable=(1 2 3 4 5)
+ > EX: numbers=(1 2 3 4 5)
+
+
+Accessing an Array element
+ > to access an array element, we will need to use the square brackets after the array variable
+ > we will then pass the index of the element
+	- NOTE: Index in array starts with ZERO
+ > Syntax:
+	variable[index]
+ > EX: echo ${numbers[2]}
+
+
+
+For loops
+ > different with for in loops
+ > needs to specify the following
+	- iterator, 
+	- the condition to check to determine if loop will continue, 
+	- and the operation to do after each operation
+ > for the for loop, we typically
+	1. start the iterator to 0
+	2. then using the length of the array that we will be iterating, we will create a condition to check if we iterate through all the element
+	3. then we increment the iterator
+ > inside the do-done, we can use the iterator to access the array elements
+
+EX:
+for ((i=0; i<${#numbers[@]}; i++)); do echo ${numbers[$i]}; done
+
+
+
+
+
+
+
+
+
+
+
+04 Using While and Until Loops
+
+While and Until loops
+ > while "for" loops is for executing a code in a finite amount, 
+ > "while" loop is for executing a code repeatedly UNTIL the condition is NOT MET
+ 
+SYNTAX:
+while CONDITION
+do
+  command1
+  command2
+done
+
+EX:
+// while.sh
+#!/bin/bash
+
+choice="0";
+
+while (($choice!="1"))
+do
+        clear
+        echo
+        echo "Please select an option"
+        echo
+        echo "1 - Exit"
+        echo
+        read choice
+done
+
+
+
+While loop and Input redirection
+ > with while loop, we can use input redirection to feed it an array of inputs
+ > with this, we will need to use a "placeholder" to the said item of the array
+	- for files, an item will be the line text (with "\n" being the delimiter)
+
+EX:
+// readfile.sh
+#!/bin/bash
+
+filetoread=/datafiles/cities.txt
+
+while read linefromfile
+do
+        mkdir -p /locations/$linefromfile
+done < $filetoread
+
+
+
+
+
+
+
+
+
+
+
+05 Using Break and Continue Inside a Loop
+
+break
+ > keyword used to stop a loop
+ > when used, it will immediately exit the "for" or "while" without executing the proceeding code
+
+continue
+ > keyword used to stop an iteration
+ > when used, it will immediately finish the iteration and move on to the next one
+
+EX:
+// while_break.sh
+#!/bin/bash
+while true
+do
+        clear
+        echo "To leave, type exit"
+        echo
+        read -p "What say you? " choice
+        if test $choice = "exit"
+        then
+        {
+                break
+        }
+        fi
+done
+
+
+
+// while_continue.sh
+#!/bin/bash
+
+filetoread=/datafiles/cities.txt
+
+while read linefromfile
+do
+        if test -d /locations/$linefromfile
+        then
+                echo "Folder $linefromfile already exist in /locations"
+                continue
+        fi
+        mkdir -p /locations/$linefromfile
+done < $filetoread
+
+
+
+
+
+
+
+
+
+
+
+06 Creating a Case Statement
+
+case
+ > keyword used to enclose a case statement
+ > a case statement is where we check the value of a specific variable
+	- then for each case where it matches a regex expression pattern, we can define the code to execute
+ > this is used as a better alternative to multiple if else statement
+
+SYNTAX:
+case variable in
+	pattern1) command ;;
+	pattern2) command1; command2 ;;
+	pattern3) commands ;;
+esac
+
+
+KEYWORDS USED
+case-esac
+ > same as if-fi, used to enclose the case statement
+pattern1
+ > a regex pattern
+ > used for checking if case matches
+ > a * pattern matches ALL input
+	- used for default condition to be executed
+;;
+ > similar to a "break" in switch statements for each case
+ > this immediately finishes the case statement
+
+	
+EX:
+// case.sh
+#!/bin/bash
+clear
+echo "Expense allocation"
+echo
+read -p "Please enter your city: " city
+
+case $city in
+        "manila"|"Manila")costcenter="NCR";;
+        "cebu"|"Cebu")costcenter="Cebu";;
+        *)clear;echo "Invalid city $city";exit;;
+esac
+clear
+echo
+echo "Cost center for $city has been set to $costcenter"
+
+
+
+
+
+
+
+
+
+
+
+
+07 Creating and Manipulating Arrays
+
+Contents
+ > Creating an Array
+ > Accessing Array element values
+ > Modifying Array element value
+ > Getting the Size of an Array
+ > Fetching a "Slice" of an Array
+ > Replacing an Element in an Array
+ > Arrays and Input Redirection
+
+Creating an Array
+ > to create an Array, we will pass a SPACE-SEPARATED values, enclosed in a parenthesis
+ > SYNTAX:
+	varName=(value1 value2 value3)
+ > EX:
+	depts=("it" "hr" "sales")
+	numbers=(1 2 3 4)
+
+
+Accessing Array element values
+ > to access an Array element, we will use the square brackets and pass the index of element inside
+	- NOTE: We are using 0-based index here, where 0th index is the first element
+ > passing * as the index will return ALL element
+ > SYNTAX:
+	arrayName[elementIndex];
+ > EX:
+	echo ${depts[2]}
+		- this returns the 3rd element
+	echo ${depts[*]}
+		- returns all element, which is the whole array
+
+
+Modifying Array element value
+ > to modify an element inside the Array, we will use the syntax below
+ > SYNTAX:
+	arrayName[elementIndex]=newValue
+ > EX:
+	depts[2]="exec"
+		- changes the value of 3rd element to "exec"
+
+
+Getting the Size of an Array
+ > to get the size of an Array, we will use the # symbol, with the following syntax:
+ > SYNTAX:
+	#array[*]
+ > EX:
+	echo ${#depts[*]}
+		- this will print the array size of the depts array
+
+
+Fetching a "Slice" of an Array
+ > to get a Slice, we will need the following input
+	1. the number of elements to skip
+	2. the number of elements to read after the skipped element
+ > SYNTAX:
+	array[*]:skip:howmany
+		- start refers to the elements that will be skipped
+		- howmany refers to the elements to fetch after the skipped elements
+ > EX:
+	echo ${depts[*]:2:2}
+		- this will print the next two elements after the TWO skipped elements of depts array
+
+
+Replacing an Element in an Array
+ > to replace an element in an array, we will need two things
+	1. the element value to replace
+	2. the new element value to put
+ > this will NOT modify the array value itself permanently, it will just modify the copy of array to be used for inputs
+	- to store the modified array, we typically create a SEPARATE variable for the modified array
+ > SYNTAX:
+	depts[*]/oldElementVal/newElementVal
+ > EX:
+	echo ${depts[*]/sales/marketing}
+		- this prints the depts array where the "sales" element is replaced by "marketing" element
+	newDepts=`echo ${depts[*]/sales/marketing}`
+		- this will store the modified array output of echo into the newDepts array
+
+
+Arrays and Input Redirection
+ > by default a single input redirection symbol (<) is used for files
+ 	- some of the commands (like sort) only takes a file as input
+ > so in order for us to use Arrays as input to these commands, we will use a triple < symbol (<<<)
+ > in essence, the <<< converts our Array into a temporary file, which commands can use as input
+ > SYNTAX:
+	command <<< array
+ > EX:
+	sort <<< "$depts[*]"
+		- this creates a file with depts array inside
+		- then, the sort uses the temporary file, and prints the sorted output
+
+
+
+
+
+
+
+
+
+
+
+08 Performing Math Operations
+
+Performing Math Operations
+ > by default, bash script can perform SIMPLE math operations
+	- this include add, subtract, multiple, divide
+	- but this is limited only to integers
+ > fortunately, in UNIX or Linux, theres a tool to help us perform more sophisticated math operation
+ > this tool is the "bc"
+	- most UNIX or Linux OS have bc installed by default
+	- but if you dont have one, you can use "apt-get install bc" to install it
+
+bc
+ > used to perform math operations
+ > takes a string input which represents a mathematical operation, parse it, then perform it
+ > for bc inputs, we typically source it from another command through output redirection
+ > SYNTAX:
+	mathOperationString | bc
+ > EX:
+	echo "574*2.5" | bc
+
+EX:
+// paycheck.sh
+#!/bin/bash
+
+clear
+echo
+read -p "Enter hours worked: " hoursworked
+read -p "Enter hourly wage: " hourlywage
+echo
+grosspay=`echo $hoursworked*$hourlywage | bc`
+echo "Gross pay is \$" $grosspay
+
+
+
+
+
+
+
+
+
+
+09 Converting Numbers between Bases
+
+Converting Numbers between Bases
+ > to convert the numbers to different bases, we can use the "bc" command again
+ > this type, we will provide another input to the bc command, the "obase"
+	- "obase" defines the base of the output number
+
+EX:
+echo "obase=2;192" | bc
+ > this will return the 192 written in base two, which is 1100000
+
+EX:
+// to_binary.sh
+#!/bin/bash
+
+clear
+echo
+read -p "Please enter the ipv4 address: " ip_address
+
+for ((i=1;i<5;i++))
+do
+        octet[$i]=`echo $ip_address | cut -f$i -d "."`
+done
+
+for ((i=1;i<5;i++))
+do
+        current_bin_value=`bc <<< "obase=2;${octet[$i]}"`
+        full_bin_val=$full_bin_val" "$current_bin_value
+done
+echo
+echo "Binary value: " $full_bin_val
+
+
+
+
+
+
+
+
+
+
+
+10 Manipulating Strings
+
+Content
+ > Fetching string character length
+ > Evaluate and fetch a substring that matches the given regexp
+ > Fetching a substring of a string
+ > Replacing a substring with another value
+
+Initialization
+locationcode="hfx123"
+
+
+Fetching string character length
+ > to fetch the length of a string, we will use the # symbol in front of the string variable
+ > SYNTAX:
+	#stringVar
+ > EX:
+	echo ${#locationcode}
+
+
+Evaluate and fetch a substring that matches the given regexp
+ > to evaluate and fetch a substring of a string which matches with the given regexp, we will use the "expr" command
+ > using the syntax below, we can fetch a substring that matches the regexp provided
+ > SYNTAX:
+	expr STRING : REGEXP
+ > EX:
+	echo `expr "$locationcode" : '\([a-j]\)'`
+		- this will return the first character of the locationcode, if it is included in a-j
+
+
+Fetching a substring of a string
+ > to fetch a substring of a string, we will use the syntax similar to getting a slice of an array
+ > SYNTAX:
+	stringVar:skip:howmany
+		- skip refers to how many characters to skip
+		- howmany refers to how many characters to fetch after the skipped elements
+ > EX:
+	echo ${locationcode:0:3}
+		- this will fetch the first three
+
+
+Replacing a substring with another value
+ > to replace a substring with another value, we will use a syntax similar to replacing an element in an array
+ > if we want to retain this modified string, we will need to use a placeholder variable and assign the value to it
+ > SYNTAX:
+	stringVar/substring/newstring
+ > EX:
+	echo ${locationcode/hfx/qwe}
+		- this will replaces the "hfx" with "qwe" in the string
+	newLocationcode=echo ${locationcode/hfx/qwe}
+		- stores the modified data to the newLocationcode
+
+
+
+
+
+
+
+
+
+
+11 Working with Directories
+
+Working with Directories
+ > whenever we work on directories, we typically do the following things
+	- list directories (ls)
+	- check current directory (pwd)
+	- remove directories (rm)
+	- change directories (rename)
+	- add directory (mkdir)
+ > the command associated with these actions needs to have a directory input
+	- this directory input can be either 
+		1. hardcoded
+		2. fetch from a value of specific variable
+
+DIRSTACK
+ > builtin environment variable that contains an array of all recently visited directories
+ > we can push or pop directories in this array
+	- for push, we will use the "pushd" command
+	- for pop, we will use the "popd" command
+
+pushd
+ > pushes a directory in DIRSTACK, it then takes you to the added directory
+ > takes a directory input
+ > SYNTAX:
+	pushd DIRECTORY
+
+popd
+ > pops/removes a directory in DIRSTACK, it then takes the user in the removed directory
+ > SYNTAX:
+	popd
+
+EX:
+
+
+
+
+
+
+
+
+12 Exercise: Using Conditions and Data Types in Bash
+
+GOAL:
+1. Create the /course2 directory and use the touch command to create sample files containing smaple data with .html and .log file extensions in /course2
+2. Create a new shell script
+	> Accept one parameter; a directory name
+		- Verify that the directory exists otherwise exit the scripts
+	> Use a for loop to process all files in /course2
+		- Calculate the total disk space used by .log files
+	> Display the .log file space usage using the echo command
+
+
+
+SCRIPT:
+#!/bin/bash
+
+clear
+read -p "Please enter the directory of the log files: " directory
+echo
+
+logspace=0
+
+if !(test -d $directory)
+then
+        echo "No directory exist"
+        exit
+fi
+
+files=`ls -l /course2 | grep .log`
+
+for logfile in $directory/*.log
+do
+        currentfilesize=`ls -l $logfile | tr -s " " | cut -f5 -d " "`
+        logspace=`echo $logspace+$currentfilesize | bc`
+done
+
+echo "The total space used by the .log files is $logspace"
+
+
+
+13 Take Test

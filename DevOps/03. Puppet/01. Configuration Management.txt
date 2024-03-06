@@ -1,0 +1,30 @@
+01. Configuration Management
+
+Configuration
+	> includes resources of Server like
+		a. Installation of software
+		b. Users
+		c. Files
+	> changing the default state of operating system
+
+
+Configuration Management (CM)
+	> CM is a systems engineering process for establishing and maintaining consistency of a product's performance, functional, and physical attributes with its requirements, design, and operational information throughout its life.
+	> CM can be divided into TWO models
+		1. Pull based models
+		2. Push based models
+	> Configuration Management tools tend to implement one (or both) of these models of management.
+	> These are the ways a given configuration management tool actually "does the things" it has to do, like
+		- installing packages
+		- writing files
+		- adding users
+
+
+Push based Model
+	> Centralized server (Master) PUSHES the configurations on the nodes
+	> Examples are Ansible, Terraform
+
+
+Pull based Model
+	> Node / Client Server PULLS the configurations from the Master Server
+	> example is Puppet

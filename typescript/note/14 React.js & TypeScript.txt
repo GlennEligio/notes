@@ -1,0 +1,533 @@
+14 ReactJS and TypeScript
+
+Contents:
+01 Module Introduction
+02 Setting up a React + TypeScript project
+03 How do React + TypeScript work together
+04 Working with Props and Types for Props
+05 Getting User Input with refs
+06 Cross-Component Communication
+07 Working with State & Types
+08 Managing State Better
+09 More Props & State Work
+10 Adding Styling
+11 Types for other React Features
+12 Wrap Up
+
+
+
+
+
+
+
+
+
+
+
+01 Module Introduction
+02 Setting up a React + TypeScript project
+
+React app with TypeScript support
+ > there are two cases of adding TypeScript in react app
+	1. Create a new React app with TypeScript
+	2. Add TypeScript support in existing React app
+
+1. Create a new React app with TypeScript
+	> npx create-react-app <project-name> --template typescript
+	> ex: npx create-react-app my-app --template typescript
+2. Add TypeScript support in existing React app
+	> npm install --save typescript @types/node @types/react @types/react-dom @types/jest
+
+
+.tsx file
+ > similar to TypeScript files but can support JSX code inside
+
+
+
+
+
+
+
+
+03 How do React + TypeScript work together
+
+Classes/Function/Object in the @types/react
+
+React.FC<PropType>
+React.FunctionComponent<PropType>
+ > function type available in @types/react
+ > used for create a function component
+ > function with this type MUST RETURN a JSX code
+ > the Type argument refers to the Object type of the Component's Props
+
+EX:
+import React from 'react';
+
+import TodoList from './components/TodoList';
+
+const App: React.FC = () => {
+  const todos = [{ id: 't1', text: 'Finish the course' }];
+  return (
+    <div className="App">
+      {/* A component that adds todos */}
+      <TodoList items={todos} />
+    </div>
+  );
+};
+
+export default App;
+
+
+
+
+
+
+
+
+
+04 Working with Props and Types for Props
+
+Working with Props and Types for Props
+ > with TypeScript, we can also add type safety to the Props of the Components
+ > we can do this by passing a Type argument to the React.FC or React.ClassicComponent
+	- ex: const TodoList: React.FC<TodoListProps> = (prop) => { // logic inside }
+
+
+EX:
+// TodoList.tsx
+interface TodoListProps {
+  items: {id: string, text: string}[];
+};
+
+const TodoList: React.FC<TodoListProps> = props => {
+  return (
+    <ul>
+      {props.items.map(todo => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+    </ul>
+  );
+};
+
+
+// App.tsx
+import React from 'react';
+
+import TodoList from './components/TodoList';
+
+const App: React.FC = () => {
+  const todos = [{ id: 't1', text: 'Finish the course' }];
+  return (
+    <div className="App">
+      {/* A component that adds todos */}
+      <TodoList items={todos} />
+    </div>
+  );
+};
+
+export default App;
+
+
+
+
+
+
+
+
+
+
+05 Getting User Input with refs
+
+Function/Object/Types used
+React.FormEvent
+ > Type that refers to the Event that occurs whenever a form or form element gets/loses focus, a form element value is changed or the form is submitted.
+
+useRef<T>(init: any)
+ > a generic variation of useRef hook
+ > takes two argument
+	1. T:		Type argument which refers to the type of the value to be stored (e.x. HTMLInputElement)
+	2. init:	initial value of the useRef 
+ > when using this, we typically
+	1. set initial value to null
+	2. when using the useRef value, either
+		- do a null check to current prop first
+		- add a non null assertion operator (!) to the useRef.current value
+
+
+GOAL:
+1. Create a new component for creating a new Todo
+2. Inside the NewTodo component we will do the following
+	> create a form with input label inside it
+	> add submitEventHandler to form
+	> use useRef to the input inside the form and use the data inside the submitEventHandler
+3. Dont forget to use Types for type safety
+
+
+EX:
+// NewTodo.tsx
+import React, { useRef } from "react";
+
+const NewTodo: React.FC = () => {
+  const textInputRef = useRef<HTMLInputElement>(null);
+
+  const submitEventHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const enteredText = textInputRef.current!.value;
+
+    console.log(enteredText);
+  };
+  return (
+    <form onSubmit={submitEventHandler}>
+      <div>
+        <label htmlFor="todo-text">Todo Text</label>
+        <input type="text" ref={textInputRef} id="todo-text" />
+      </div>
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+  );
+};
+
+export default NewTodo;
+
+
+// App.tsx
+const App: React.FC = () => {
+  const todos = [{ id: "t1", text: "Finish the course" }];
+  return (
+    <div className="App">
+      {/* A component that adds todos */}
+      <TodoList items={todos} />
+      <NewTodo />
+    </div>
+  );
+};
+
+
+
+
+
+
+
+
+
+06 Cross-Component Communication
+
+Cross-Component Communication
+ > refers to the communication between two component, either by sending and receiving data
+ > we do this by either
+	1. props chaining	
+	2. app wide state management like Context API or Redux
+
+Props Chaining with React & TypeScript
+ > when passing a prop to a Component instance, we need to make sure that it conforms to that Compoent's Prop type
+	- we can define the Component's prop type by passing a type or interface to the React.FC class
+
+EX:
+Below, we can see that the props passed to the NewTodo instance in App component conforms to the interface we set as type in the NewTodo component
+
+// NewTodo.tsx
+interface NewTodoProps {
+  onAddTodo: (todoText: string) => void;
+}
+
+const NewTodo: React.FC<NewTodoProps> = (props) => {
+  const textInputRef = useRef<HTMLInputElement>(null);
+
+  const submitEventHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+    const enteredText = textInputRef.current!.value;
+    props.onAddTodo(enteredText);
+  };
+
+  return (
+    <form onSubmit={submitEventHandler}>
+      <div>
+        <label htmlFor="todo-text">Todo Text</label>
+        <input type="text" ref={textInputRef} id="todo-text" />
+      </div>
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+  );
+};
+
+
+// inside App Componet of App.tsx
+  const addTodoHandler = (text: string) => {
+    setTodos((oldTodos) => {
+      const newTodos = [...oldTodos];
+      newTodos.push({ id: Math.random().toString(), text });
+      return newTodos;
+    });
+  };
+
+  return (
+    <div className="App">
+      <NewTodo onAddTodo={addTodoHandler} />
+      {/* A component that adds todos */}
+      <TodoList items={todos} />
+    </div>
+  );
+
+
+
+
+
+
+
+
+
+07 Working with State & Types
+
+Function/Object/Types used
+useState<T>(init: T) => [state: T, setState: (T) => {}]
+ > generic function variation of the useState() hook
+ > take two arguments
+	1. T:		the type argument which refers to the Type of the State data we will manage
+	2. init:	the initial value of the State
+ > returns an array which contains both the latest State value and the function to modify the State itself
+
+
+Working with State & Types
+ > when working with Component State in the React using TypeScript, we will need to define the Type of the State to manage
+ > we can do this by passing a type/interface to the useState() hook
+
+EX:
+// Todo interface in Todo.ts
+export interface Todo {
+  id: string;
+  text: string;
+}
+
+
+// Using Todo interface to set type of State in App.tsx
+import { Todo } from "./model/Todo";
+
+const App: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const addTodoHandler = (text: string) => {
+    setTodos((oldTodos) => {
+      const newTodos = [...oldTodos];
+      newTodos.push({ id: Math.random().toString(), text });
+      return newTodos;
+    });
+  };
+
+  return (
+    <div className="App">
+      <NewTodo onAddTodo={addTodoHandler} />
+      {/* A component that adds todos */}
+      <TodoList items={todos} />
+    </div>
+  );
+};
+
+
+
+
+
+
+
+
+
+08 Managing State Better
+
+Function/Object/Types used
+setState(prevState => { return newState })
+ > overload of the modifying State function of useState where we pass a function
+ > in this input function, 
+	1. we will receive the previous State value as argument
+	2. we need to return the new value of the State
+
+EX:
+// Inside App component
+  const addTodoHandler = (text: string) => {
+    setTodos((oldTodos) => [
+      ...oldTodos,
+      { id: Math.random().toString(), text },
+    ]);
+  };
+
+
+
+
+
+
+
+
+09 More Props & State Work
+
+GOAL:
+1. Add a button to each Todo item
+2. Set the button so that it deletes the said Todo item when clicked
+
+EX:
+// todoDeleteHandler function and TodoList component using it
+// App.tsx
+  const todoDeleteHandler = (id: string) => {
+    setTodos((oldTodos) => oldTodos.filter((todo) => todo.id !== id));
+  };
+
+  return (
+    <div className="App">
+      <NewTodo onAddTodo={todoAddHandler} />
+      {/* A component that adds todos */}
+      <TodoList items={todos} onDeleteTodo={todoDeleteHandler} />
+    </div>
+  );
+
+
+// TodoList component
+// TodoList.tsx
+interface TodoListProps {
+  items: { id: string; text: string }[];
+  onDeleteTodo: (id: string) => void;
+}
+
+const TodoList: React.FC<TodoListProps> = (props) => {
+  return (
+    <ul>
+      {props.items.map((todo) => (
+        <li key={todo.id}>
+          <span>{todo.text}</span>
+          <button onClick={props.onDeleteTodo.bind(null, todo.id)}>
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+10 Adding Styling
+
+// NewTodo.css
+form {
+  width: 90%;
+  max-width: 40rem;
+  margin: 2rem auto;
+}
+
+.form-control {
+  margin-bottom: 1rem;
+}
+
+label, input {
+  display: block;
+  width: 100%;
+}
+
+label {
+  font-weight: bold;
+}
+
+input {
+  font: inherit;
+  border: 1px solid #ccc;
+  padding: 0.25rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #50005a;
+}
+
+button {
+  background: #50005a;
+  border: 1px solid #50005a;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+}
+
+button:focus {
+  outline: none;
+}
+
+button:hover,
+button:active {
+  background: #6a0a77;
+  border-color: #6a0a77;
+}
+
+
+// TodoList.css
+ul {
+  list-style: none;
+  width: 90%;
+  max-width: 40rem;
+  margin: 2rem auto;
+  padding: 0;
+}
+
+li {
+  margin: 1rem 0;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+11 Types for other React Features
+
+Using other React features with TypeScript feature
+ > earlier, in order for us to have Type support in React, we added several "@types/" as devDependencies
+	- this includes @types/react @types/react-dom
+	- with this, we are able to check the React and React DOM types inside their libraries
+ > with this logic, we can also search for Type support of other React features like React Router, React Redux, etc
+
+
+For React Redux
+ > we will use the following libraries to provide Type support for React with Redux installed
+	1. @types/redux
+	2. @types/react-redux
+ > the Redux library itself already provide the Types needed, so no need to install @types/redux
+
+
+For React Router
+ > we will use the following @types module to provide Type support for react-router and react-router-dom
+	1. @types/react-router
+	2. @types/react-router-dom
+		- for web apps
+	3. @types/react-router-native
+		- for mobile apps
+ > both the @types/react-router-dom and @types/react-router-native are BUILT ON TOP of the @types/react-router
+	- this means that we dont have to install the @types/react-router anymore
+
+
+
+
+
+
+
+
+
+
+
+12 Wrap Up

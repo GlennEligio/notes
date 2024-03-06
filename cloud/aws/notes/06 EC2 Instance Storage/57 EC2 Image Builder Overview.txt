@@ -1,0 +1,24 @@
+57 EC2 Image Builder Overview
+
+
+EC2 Image Builder 
+ > used to automate the creation of Virtual Machines or Container images
+ > this automates the creation, maintaining, validating, and testing EC2 AMIs
+ > we can also run this builder on schedule (weekly, whenever packages are updated, etc...)
+ > Free service (only pay for the underlying resources used to create the Image)
+
+
+Example
+1. EC2 Image Builder creates a Builder EC2 instance
+2. Inside the Builder EC2 instance, the Build Components are applied
+	> ex: customizing the software installed on the instance (install java, sql, or customise firewall)
+3. New AMI is created after the Builder EC2 instance finish applying the build components
+4. The New AMI will then be tested using a Test EC2 instance
+5. Inside the Test EC2 instance, Test Suites are running to see if the AMI is working, is secure, or if the application inside is working
+6. AMI will the be distributed (can be multiple region)
+	> allows our application to be truly global
+
+
+
+NOTE:
+1. Underlying resources includes the resources used by the EC2 instances used to build and test the AMI

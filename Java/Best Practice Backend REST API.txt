@@ -1,0 +1,46 @@
+Backend Code must have
+1. ReadME file
+2. Add sql script inside src/main/resource
+3. Must have Unit Test in the src/test/java
+4. Must have application.properties for each environment
+	> application.properties, application-dev.properties, application-qa.properties
+5. Proper url path name
+	> no camelcase, prefix "/api", add versioning if you choose path url for versioning
+	> baseUrl/api/resource-name
+	> ex: http://localhost:8080/api/users
+6. Backend must have versioning
+	> either in
+		a. request headers
+			X-API-VERSION = v1
+		b. request url path
+			"api/v1/users"
+7. Prefer Constructor injection over Properties injection
+8. Make the @Service properties you injected final
+9. Put the exception handling logic in @Service, not in @Controller
+	> throws must be in @Service class
+10. For JpaRepository methods that returns Optional<?>, use the orElseThrow(Supplier s) to throw the exception
+11. Prefer using LocalDateTime for time properties
+12. Make the properties of DTO classes final
+13. Use BigDecimal for money-related properties of Entities
+14. Use newLine and indentions to make the SQL Queries in JpaRepository @Query readable
+15. Instead of using the default now() factory of Java8 Time API, use the Clock @Bean and pass the clock property to the now() method
+	> with Clock, we can easily mock the instant time when Unit Testing
+
+  public class MyBean {
+    private Clock clock;  // dependency inject
+    ...
+    public void process(LocalDate eventDate) {
+      if (eventDate.isBefore(LocalDate.now(clock)) {
+        ...
+      }
+    }
+  }
+
+16. Must have consistency throughout the project
+	> same Dependency Injection technique
+
+17. Have the delete functionality of JpaRepository return int
+	> we can do this by adding an abstract method in JpaRepository interface and making the return type int
+		-> the int return value will be the NUMBER OF ROWS AFFECTED
+
+

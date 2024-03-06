@@ -1,0 +1,370 @@
+Directory traversal / Path traversal
+
+Content:
+I. Path Traversal
+01. Welcome
+02. Introduction
+03. Objectives
+04. Module Outline
+
+II. Path Traversal Summary
+05. Introduction
+06. Impacts of path 
+07. Scenario Introduction
+	> Path traversal attempt
+
+III. Path traversal - Example
+08. Introduction
+09. Example
+10. Remediation
+11. Double encoding
+	> Using number or identifier for files
+
+IV. Conclusion
+12. Best practices
+13. Problem identification
+14. Scenario resolution
+
+V. Summary
+15. Module summary
+
+
+
+
+
+
+
+
+
+I. Path Traversal
+01. Welcome
+02. Introduction
+
+
+Path traversal
+ > prevalent application vulnerability
+ > if exploited, path traversal can potentially allow an attacker to view restricted files, or other sensitive information
+ > also known as
+	- directory traversal
+	- dot-dot-slash
+	- directory climbing
+	- backtracking
+
+
+
+
+
+
+
+
+03. Objectives
+
+Objectives
+1. Describe the path traversal vulnerability
+2. Identify sample code that contains the path traversal vulnerability
+3. Recognize methods to eliminate the vulnerability
+
+
+
+
+
+
+
+04. Module Outline
+
+Module Outline
+Section 1: Path Traversal Summary
+Section 2: Path Traversal - Example
+Section 3: Conclusion
+
+
+
+
+
+
+
+
+
+
+II. Path Traversal Summary
+05. Introduction
+
+Path traversal attack
+ > in path traversal attack, malicious actors GAIN UNAUTHORIZED access to restricted directories and files that are stored outside the web root folder
+ > with this, they can gain access to
+	1. application code
+	2. application data
+	3. system credentials
+	4. sensitive system files
+ > can also use ABSOLUTE FILE PATHS to access the restricted directories
+ 
+Sequence of Path traversal attack
+1. Attacker tries to find a starting point
+2. Attacker lands at starting point
+3. Attacker uses start point to search for other accessible files, using ../ sequences
+
+
+
+
+
+
+
+
+
+
+06. Impacts of path 
+
+Impacts of path traversal
+1. Path traversal attacks have serious impacts on the application and its users
+2. A successful path traversal attack enables an attacker to
+	> View restricted directories and files
+	> Create or overwrite critical system files
+
+Confidentiality
+ > A path traversal attack enables an attacker to:
+	1. Read confidential system data
+	2. Read a security configuration file
+ > ex: By reading a password file, the attacker can identify the users in the system, and the groups they belong to
+
+
+Integrity 
+ > A path traversal attack enables an attacker to:
+	1. Create or overwrite critical system files
+	2. Modify a critical system
+	3. Bypass system security
+ > Ex: Modifying entries in a hosts file can allow an attacker to redirect traffic to a malicious domain
+
+
+
+Availability
+ > A path traversal attack enables an attacker to:
+	1. Manipulate critical system files
+	2. Lock out legitimate users
+	3. Cause the system to crash
+ > Ex: If an attacker deletes the password file, legitimate users will be locked out
+
+
+
+
+
+
+
+
+07. Scenario Introduction
+
+Scenario Introduction
+ > John and his team manage the online learning management application at Technologies inc. 
+ > This application fetching a course file saved in the server using a specific input from the request query parameters
+	- specifically, the "courseFile" query parameter
+
+
+Path traversal attempt
+ > while viewing the application logs, one of John's team members discovered that there have been attempts to retrieve sensitive files stored on the web server
+
+
+
+
+
+
+
+
+
+III. Path traversal - Example
+08. Introduction
+09. Example
+
+Example ASP.NET code
+ > this code snippet is used to delete a file
+ > it uses a check to see if it starts with a specific file directory string
+ > but, we can pass a file directory string that contains a ../ which is for navigating the parent directory
+
+EX:
+string file = GetFileToDelete();
+if (file.StartsWith("C://Temp")) {
+  File.Delete(file);
+}
+
+// Malicious attack
+string file = GetFileToDelete();
+if (file.StartsWith("C://Temp/../important.dat")) {
+  File.Delete(file);
+}
+
+
+
+
+
+
+
+
+
+10. Remediation
+
+Remediation
+1. Decoding
+2. Canonicalization
+
+Decoding
+ > decoding helps to get the user input with the path traversal information
+ > ex:
+	User input before decoding: %2Fhome%2Fpublic%2F..%2Fprivate
+	User input after decoding: /home/public/../private
+ > Note that in the above example, %2F was decoded to reveal the "/" character
+
+Canonicalization
+ > canonicalization is used to get the complete folder name without the dot dot slash sequence
+ > to remediate the flaw in our example, we must validate user input, and use the canonicalization function
+ 
+EX:
+// Original code
+string file = GetFileToDelete();
+if(file.StartsWith("C://Temp//")) {
+  File.Delete(file);
+}
+
+string file = GetFileToDelete();
+if (Path.GetFullPath(pathname).StartsWith("C://Temp//")) {
+  File.Delete(file);
+}
+
+
+
+
+
+
+
+
+11. Double encoding
+
+Double encoding
+ > process where the attacker encodes the filename twices to get around
+	- first is encoding using url encoding the ../ to %2E%2E%2f
+	- then encoding the % in the url encoded ../ to url encoding again, which is %25
+	- the double encoding ../ will be %252E%252E%252f
+
+Original url
+http://my-web-site/GetFile?file=/dir/../important.dat
+
+Double encoded URL:
+http://my-web-site/GetFile?file=/dir/%252E%252E%252fimportant.dat
+
+
+Remidiation: Using number or identifier for files
+ > we can use identifiers to the files
+ > the user will then pass the said identifier to the request's query param which will be used to find the right file
+
+EX:
+// Original url
+http://online-university.com/courses/getcatalog?file=C:\Files\Course1.pdf
+
+// Modified URL:
+http://online-university.com/courses/getcatalog?courseId=1
+
+switch (int.Parse(Request["courseId"])) {
+  case 1:
+    return "C:\\Files\\Course1.pdf";
+  case 2:
+    return "C:\\Files\\Course2.pdf"
+  default:
+    throw new FileNotFoundException("Cannot find file for course");
+}
+
+
+
+
+
+
+
+
+
+IV. Conclusion
+12. Best practices
+
+Best practices
+1. Decode and canonicalize inputs before validating them
+2. Validate all user input
+3. User filters to block certain user input, like URLs containing commands, and escape codes commonly used by attackers
+4. Keep all web server software up-to-date with current patches
+5. When only a small set of file names need to be passed as input, pass a number or an identifier instead
+6. As as as possible, do not store sensitive files within the web document root.
+	> Instead, use a separate directory to store them and bind it with access control framework
+7. Use the princicle of least privilege to run server processes.
+	> On Unix systems, run the server process in a chroot jail
+
+
+
+
+
+
+
+
+
+13. Problem identification
+
+Problem identification
+ > the "courseFile" is read WITHOUT any validation
+ > they found that the code that allowed retrieval of course summary documents from the server had to be modified, to overcome the path traversal
+
+
+
+
+
+
+
+
+14. Scenario resolution
+
+Scenario resolution
+ > John and his team address the vulnerability by chaning the code
+ 
+.NET
+ > use the Path.GetFullPath() function which takes the pathname
+ 	- this normalize/canonicalize the pathname input
+ > then, we can use a equal check to original path input and the canonicalize path input to check if path is traversal or not
+
+// code
+string courseFileName = Request.QueryString("courseFile");
+string pathname = Path.Combine("C:\\safedir", courseFileName);
+if(Path.GetFullPath(pathname).Equals(pathname)) {
+  byte[] file = File.ReadAllBytes(pathname);
+  Display(file)
+} else {
+  throw new Exception($"{courseFileName} is invalid")
+}
+
+
+Java
+ > we can use the File.getCanonicalPath() to check the canonicalized pathname
+ > we can then use string methods like startsWith or even do a equal check to original pathname to check if file path does not traverse to a different directory
+
+// Vulnerable Java code:
+String courseFileName = request.getParameter("courseFile");
+String pathname = "/safedir/" + courseFileName;
+File file = new File(pathname);
+Display(file);
+
+// Remediated Java code
+String courseFileName = request.getParameter("courseFile");
+final String bsae = "/safedir";
+File file = new File(prefix, filename);
+if(file.getCanonicalPath().startsWith(base)) {
+  Display(file);
+} else {
+  throw new PathTraversalException(courseFileName + " is invalid");
+}
+
+
+
+
+
+
+
+
+V. Summary
+15. Module summary
+
+Module Summary
+1. Path traversal is an exploit used by attackers to gain unauthorized access to restricted directories and files that are stored outside the web root folder
+2. Attackers use "../" sequences or absolute file paths to access the restricted server files.
+3. Path traversal attacks can compromise the confidentiality, integrity, and availability of the target application
+4. Proper input validation practices and attack surface reduction can help in preventing path traversal attacks

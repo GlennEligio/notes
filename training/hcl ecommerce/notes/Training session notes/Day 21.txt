@@ -1,0 +1,33 @@
+Day 21
+
+Adding custom data for BOD commands
+1. Add the request parameter in the form/url
+	> it should start with "x_"
+	> ex: "x_customParamName"
+2. Go to the rest-template-config.xml file that contains the resourceName.method which maps the requestParam to the parameters input for the BOD	
+	> add new field mapping to the method that receives the 
+	
+	
+	
+	
+SCHCONFIG
+	> contains tables with regards to the Job (in Schedulers), which includes
+		- job id
+		- tasks that it points to
+		- start time and end time
+		
+		
+SCHACTIVE
+	> contains row with regards to the ACTIVE Jobs, which means that they will be executed in the future
+
+
+Registry	
+	> table loaded into memory
+	> with this, it will not go to the database for getting information of registries
+	> when we updated a database table that is used by the Registry, we will need to either
+		1. restart Transaction server in order for the changes in the database to reflect in the Registry in memory
+		2. registry refresh in live
+	
+Index and Staging propagation
+	> Index propagation is where we propagate the changes in the Solr index fields from Staging to Production
+	> Staging propagation is where we propagate all the changes in Registry from Staging to Production

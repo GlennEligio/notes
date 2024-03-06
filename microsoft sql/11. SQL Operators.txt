@@ -1,0 +1,230 @@
+OPERATORS
+
+Types of OPERATORS
+1. Arithmetic Operators
+2. Assignment Operators
+3. Bitwise Operators
+4. Comparison Operators
+5. Compound Operators
+6. Logical Operators
+7. Scope Resolution Operators
+8. Set Operators
+9. String Concat Operators
+10. Aggregate Functions
+
+
+1. Arithmetic Operators
+	> includes addition, subtraction, multiplication, division, and modular sign
+	> does add, subtract, multiply, divide and find remainder
+
+Operator	Syntax
++		expression + expression
+- 		expression - expression
+* 		expression * expression
+/ 		expression / expression
+% 		expression % expression
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+2. Assignment Operators
+	> used to assign a value to the variable
+
+Operator	Syntax
+=		variable = 'value'
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+3. Bitwise Operator
+	> used to perform Bitwise AND, OR, XOR, NOT
+
+Operator				Syntax
+& (Bitwise AND)				expression & expression
+&= (Bitwise AND Assignment)		expression &= expression
+| (Bitwise OR)				expression | expression
+|= (Bitwise OR Assignment) 		expression |= expression
+^ (Bitwise Exclusive OR)		expression ^ expression
+^= (Bitwise Exclusive OR Assignment)	expression ^= expression
+~ (Bitwise NOT)				~ expression
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4. Comparison Operators
+	> used to compare expression, returns boolean value
+	> ! is used to reverse the boolean value of their non-! counterpart
+
+Operator	Syntax
+=		expression = expression
+>		expression > expression
+<		expression < expression
+>=		expression >= expression
+<=		expression <= expression
+<>		expression <> expression
+!=		expression != expression
+!<		expression !< expression
+!>		expression !> expression
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+5. Compound Operators
+	> used to do compound operation
+	> compound means to repeat the operation
+	> expression1 += expression2 is equal to expression1 = expression1 + expression2
+
+Operator	Syntax
++=		expression += expression
+-=		expression -= expression
+*=		expression *= expression
+/=		expression /= expression
+%=		expression %= expression
+&=		expression &= expression
+^=		expression ^= expression
+|=		expression |= expression
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+6. Logical Operators
+	> used to perform logical operations between data
+
+Operator	Syntax
+ALL		scalar_expression { = | <> | != | > | >= | !> | < | <= | !< } ALL (subquery)
+AND		boolean_expression AND boolean_expression
+ANY		scalar_expression { = | <> | != | > | >= | !> | < | <= | !< } {ANY} (subquery)
+BETWEEN		sampleexpression [NOT] BETWEEN beginexpression AND endexpression
+EXIST		EXIST (sub query)
+IN		test_expression [NOT] IN (subquery | expression [,...n])
+LIKE		match_expression [NOT] LIKE pattern [ESCAPE escape_character]
+NOT		[NOT] boolean_expression
+OR		boolean_expression OR boolean_expression
+SOME		scalar_expression { = | <> | != | > | >= | !> | < | <= | !< } {SOME} (subquery)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+7. Scope Resolution Operators
+	> used to define a scope
+
+Operator	Syntax
+::		DECLARE @hid hierachyid; SELECT @hid = hierarchyid::GetRoot();PRINT @hid.ToString();
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+8. Set Operators
+	> used to define which Set is picked from the Combination fo two queries
+	>
+
+OPERATOR	Syntax					Purpose
+UNION		SELECT ColumnName(s) FROM Table1	Combine rows from both queries
+		UNION
+		SELECT ColumnName(s) FROM Table2	
+
+INTERSECT	SELECT ColumnName(s) FROM Table1;	Keeps rows which are common in both the queries
+		WHERE Condition
+		INTERSECT SELECT ColumnName(s)
+		FROM TableName; WHERE Condition
+
+EXCEPT		SELECT ColumnName FROM TableName;	Keeps rows from the left query which are not present in the right query
+		EXCEPT SELECT ColumnName 
+		FROM TableName
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+9. String Concat Operators
+	> used to perform the following Operations
+
+Operator				Syntax
++ (String Concatenation)		expression + expression
++= (String Concatenation)		Expression += expression
+% (Wildcard Characters to match)	Example: 'sample%'
+[] (Wildcard Characters to match)	Example: 'm[n-z]%'
+[^] (Wildcard Characters to match)	Example: 'Al[^a]%'
+_ (Wildcard Characters to match)	test_expression [NOT] IN (subquery | expression [,...n])
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+10. Aggregate Function
+	> used to perform the following operations
+
+Operators	Syntax
+SUM()		SELECT SUM(ColumnName) FROM TableName;
+COUNT()		SELECT COUNT(ColumnName) FROM TableName WHERE Condition;
+AVG()		SELECT AVG(ColumnName) FROM TableName;
+MIN()		SELECT MIN(ColumnName) FROM TableName;
+MAX()		SELECT MAX(ColumnName) FROM TableName;
+FIRST()		SELECT FIRST(ColumnName) FROM TableName;
+LAST()		SELECT LAST(ColumnName) FROM TableName;
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+EXAMPLE USES OF OPERATORS
+
+Arithmetic Operator
+SELECT 40 + 60;
+
+Comparison Operator
+SELECT * FROM numbers WHERE Marks > '2';
+
+Compound Operator
+DECLARE @var1 int = 30;
+SET @var1 /= 16;
+SELECT @var1 AS Example;
+
+Logical Operator 
+BETWEEN and AND
+SELECT * FROM numbers WHERE Marks BETWEEN '3' AND '7'
+
+BETWEEN and OR
+SELECT * FROM numbers WHERE Marks > '62' OR Marks = '67'
+
+LIKE using % WILDCARD
+SELECT * FROM StudentsInfo WHERE StudentName LIKE 's%';
+	> this will search for rows whose StudentName starts with 's' since % can be replaced by character or strings of characters
+
+SELECT * FROM StudentsInfo WHERE StudentName LIKE 'm&a';
+	> this will search for rows whose StudentName starts with 'm' and ends with 'a' since % can be replaced by character or strings of characters
+
+LIKE using _ wildcard
+SELECT * FROM StudentsInfo WHERE StudentName LIKE 'm_____';
+	> this will search for rows whose StudentName starts with 'm' and have 5 extra letters after it since _ can be replaced by any character
+
+
+Scope Resolution Concat Operators
+DECLARE @exif hierarchyid
+SELECT @exif = hierarchy::GetRoot();
+PRINT @exif.ToString
+
+	> hierarchyid are dataType that represent tree node, the value of the Root of hierarchy in nvarchar format is /
+	> childer values are typically /1/ , /2/ ,  /3/
+	> grandchildren values are /1/1/ , /1/2/ , /2/3/
+
+
+String Concat Operators
+SELECT (StudentName + ',' + ParentName) AS Name FROM StudentsInfo
+	> this will create a column named 'Name' whose column values are combination of StudentName and ParentName
+
+
+Aggregate Function
+Average
+SELECT AVG(numbers) FROM numbers;
+	> will return the Average of numbers column values FROM numbers table
+
+
+Set Operators
+UNION
+
+SELECT * FROM StudentsInfo
+UNION
+SELECT * FROM StudentsDetails
+
+	> this will create a new table whose rows values are combinations of StudentsInfo and StudentsDetails table
+
+SELECT * FROM StudentsInfo
+INTERSECT
+SELECT * FROM StudentsDetails
+	
+	> this will create table whose rows are the rows common to both StudentsInfo and StudentsDetail table
+
+SELECT * FROM StudentsInfo
+EXCEPT
+SELECT * FROM StudentsDetails
+
+	> this will create a table whose rows are exclusive only to StudentsInfo
+	> will not contain any rows that can be found to StudentDetails Table

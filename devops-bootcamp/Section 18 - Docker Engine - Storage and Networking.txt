@@ -1,0 +1,436 @@
+Section 18 - Docker Engine - Storage and Networking
+
+109. Docker Engine
+
+Docker Engine
+ > host machine that have Docker installed on it
+ > when installing Docker in a host machine, we are essentially installing three components
+	1. Docker Daemon
+	2. REST API server
+	3. Docker CLI
+	
+Docker Daemon
+ > background process that is responsible for managing Docker objects such as images, containers, volumes, and networks
+ 
+REST API Server
+ > REST API interface that programs can use to talk to the daemon and provide instructions
+ > you could create your own tools using this REST API
+ 
+Docker CLI
+ > Command line interface that we are using to perform actions such as running containers, destroying containers, building and pulling images, etc
+ > uses the REST API to interact with the daemon
+ > due to Docker CLI using REST API, the said CLI does not need to be in the same host, it could be in other system
+	- in docker commands, we can specify the host address of the Docker engine where we want using '-H' option
+	- ex: docker -H=remote-docker-engine:2375 run nginx
+	
+
+Containerization
+ > under the hood, Docker uses 'namespaces' to isolate the workspace
+ > these includes but not limited to:
+	- process ids (PID)
+	- network
+	- interprocess
+	- unix timesharing
+	- mount
+ > things mentioned above are created in their own namespace, which provides isolation between containers
+ 
+
+Sample Namespace isolation technique - PID namespaces
+1. Whenever a Linux system boots up, it starts with just one process with a process id of 1
+	> this process is the root process and kick offs all the other processes in the system
+2. By the time the system boots up completely, we would have a handful of processes running
+	> we can observe this using the 'ps' command to list all the running processes
+	> note that processes can not share the same process id
+3. If we we're to create a container, it must think that it is an independent system on its own, and it must have its own set of processes originating from a root process with a process id of 1
+	> we can think of this container as a child system within the docker engine
+4. But we know that there is no HARD isolation between the container and the underlying host, and processes can not share two the same id. 
+5. This is where namespaces come into play. With namespaces, each of the processes can have multiple process ids associated with it
+	> for example, when the processes start in the container, it basically is just another processes on the underlying host
+	> This mean that the processes running under the container are in fact just another processes of the underlying host itself
+	> These new processes in host will just get the next available PIDs in the host, and a new process ids in another namespace
+		- this namespace is only visible within the container itself
+	> ex:
+		Container PIDs		Host PIDs
+							1 --|
+								|- 	2
+								|-	3
+								|-	4
+		1				->		|-	5
+		2				->		|-	6
+6. With processes having both PIDs in host and container (for container, PIDs are under different namespace), we can make the container think that it has its own root process, and therefore it thinks that its an isolated system
+7. To see this in person
+	> initially record the current running processes in host
+	> spin up a container, e.g. nginx
+	> check the PIDs in container and host
+	
+	
+cgroups	
+ > Containers do share the same machine resources such as CPU, Memory, Storages, etc
+ > By default there is no restriction as to how much resources a container can use. This may result in a container utilizing all of the resources of the host
+ > cgroups (control groups) is what Docker uses in order to limit/restrict the amount of hardware resources allocated to each container
+ > this can be done by providing the '--cpus' and '--memory' options in 'docker run' command
+ 
+ 
+	
+Commands
+docker -H=DOCKER_ENGINE_HOST_ADDRESS COMMAND
+ > -H is for remote docker engine host address
+ > with this, we can execute docker commands remotely
+ > ex:
+	$ docker -H=10.123.2.1:2375 run nginx
+docker run --cpus=CPU_COUNT --memory=MEMORY IMAGE
+ > --cpus flag is used to specify the cpu limit the container can use
+ > --memory flag is used to specify the memory limit the container can use
+ > ex:
+	$ docker run --cpus=.5 --memory=100m ubuntu 
+
+
+
+
+110. Docker Storage
+
+Docker usage of Local File system (of Docker Host)
+ > when Docker is installed, it creates a directory structure in the Docker Host, where the root directory is '/var/lib/docker'
+ > under the /var/lib/docker, there are several directories which stores different files of the Docker such, these includes but not limited to:
+	- aufs
+	- containers
+	- image
+	- volumes
+	
+Docker way of handling files related to Images and Containers
+Layered Architecture (Recap)
+ > to understand how the Docker handles files related to images and containers, we must first understand the Layered Architecture we have talked before in the Docker images section
+ > as a recap, when we created a Docker image, each of the instructions specified in the Dockerfile used for building the image will create NEW LAYERS
+ > these layers only containers CHANGES it have from the previous layers
+	- this helps us reduce the storage consumption of each layers
+ > also, we talked about how Image layers of the previously built Docker images are cached.
+	- this cached layers can then be reused by subsequent build images if they are the same layers, saving us a lot of time and space
+ 
+EX:
+Dockerfile
+1 FROM Ubuntu
+2 RUN apt-get update && apt-get -y install python
+3 RUN pip install flask flask-mysql
+4 COPY . /opt/source-code
+5 ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
+
+Layers
+1. Base Ubuntu Layer - 120MB
+2. Changes in apt packages - 306MB
+3. Changes in pip packages - 6.3MB
+4. Source code - 239B
+5. Update Entrypoint - 0B
+
+Dockerfile2
+1 FROM Ubuntu
+2 RUN apt-get update && apt-get -y install python
+3 RUN pip install flask flask-mysql
+4 COPY app2.py /opt/source-code
+5 ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
+
+Layers
+1. Base Ubuntu Layer - 0MB - From cached layer previously
+2. Changes in apt packages - 0MB - From cached layer previously
+3. Changes in pip packages - 0MB - From cached layer previously
+4. Source code - 239B
+5. Update Entrypoint - 0B
+
+
+Image layer vs Container layer
+ > when we build a Docker image using 'docker build', we will be created IMAGE LAYERS
+	- this image layers are READ ONLY, meaning we cannot modify the contents of these layers
+ > when we create or spin up a container using a specific Docker image using the 'docker run' command, it will create a new CONTAINER LAYER on top of the layer of image used on container
+	- this container layer is WRITABLE layer
+	- this layer is used to store data created by the containers, such as 
+		a. log files by the applications, 
+		b. any temporary files generated by the container
+		c. or any file modified by that user in that container
+	- the life of this layer though is only as long as the container is alive. this means that when container is destroyed, the container layer will also be destroyed
+
+
+Container layer modification on files present in image layers
+ > container layer, as mentioned before, is used to contain the modifications done in the container, either by the user, or by the application hosted
+ > as for the files that is present in the read-only image layers, whenever we modify these files in the container layers, Docker AUTOMATICALLY CREATES A COPY of the said files in the container layer
+ > this way, we are essentially modifying different version of the file in the container layer. any modification done in the future will be done on this new copy of file from image layers
+ > this mechanism is called COPY-ON-WRITE mechanism
+
+
+Volumes - Way of Persisting changes in Container layers
+ > Volumes are a way for Docker to persist changes done in Container layers
+ > Information related to volumes are stored under '/var/lib/docker/volumes' directory
+	- inside are folders which contains the files added/modified by the container that have this volume mounted
+ > These volumes can be mounted in any containers in a given path inside the container
+	- ex: data_volume volume mounted in Container A on /var/lib/mysql directory means that any files added by Container A on /var/lib/mysql within the container will be reflected on data_volume volume
+ > to create a Docker Volume, we can either
+	a. use 'docker volume create' and pass the volume name
+	b. use 'docker run' with non-existent volume mounted on the container
+		- this will automatically create the said non-existent volume
+
+Types of Mounting in Docker containers
+1. Volume mounting
+	> here, we are mounting volumes on a specific directory of container
+2. Bind mounting
+	> here, we are mounting specific directory in the Docker host to the specific director of container
+	
+	
+Storage drivers
+ > Docker uses Storage drivers for maintaining Layered Architecture, creating writable layers, moving and copying files across the layers to enable COPY-ON-WRITE, etc
+ > Common storage drivers includes:
+	- AUFS
+	- ZFS
+	- BTRFS
+	- Device Mapper
+	- Overlay
+	- Overlay 2
+ > Selection of storage drivers depends on the underlying OS being used
+	- for example, AUFS is Ubuntu's default storage driver and is not available in any other Linux OS. For those, Device Mapper can be a better option
+ > Docker will choose the best storage driver AUTOMATICALLY based on the OS of the Docker Host
+
+
+Commands
+docker volume create VOLUME_NAME
+ > used to create a volume
+ > we can see the volume contents inside /var/lib/docker/volumes/VOLUME_NAME
+ > ex:
+	$ docker volume create data_volume
+	
+docker run -v VOLUME_NAME:TARGET_CONTAINER_DIR IMAGE
+docker run -v DOCKER_HOST_DIR_TO_MOUNT:TARGET_CONTAINER_DIR IMAGE 
+ > -v flag stands for volume
+ > we can either to a volume mount, or a bind mount
+ > if the volume we mounted does not exist, it will automatically create a new one
+ > ex:
+	$ docker run -v data_volume:/var/lib/mysql mysql
+	$ docker run -v /data/mysql:/var/lib/mysql mysql
+	
+docker run --mount type=bind|volume,source=VOLUME_NAME|DOCKER_HOST_DIR,target=CONTAINER_DIR mysql
+ > --mount flag stands for mount
+ > the value we will be passing to this flag is key=value pair, separated by command
+ > the keys we need to provide are:
+	- type: either bind or volume
+	- source: either docker host dir or volume name
+	- target: container dir
+ > ex:
+	docker run --mount type=bind,source=/data/mysql,target=/var/lib/mysql mysql
+	
+
+
+
+111. Labs: Docker Storage
+
+Q1: What location are the files related to the docker containers and images are stored?
+A: /var/lib/docker
+
+Q2: What directory under /var/lib/docker are the files related to the container 'alpine-3' image stored
+S: Use 'docker container ls -a', and get the container id of the container with 'alpine-3' image. Container (and image id) is the folder names under /var/lib/docker/container or image folders
+A: 4cbf6b36ed20
+
+Q3: Run a mysql contianer named 'mysql-db' using the 'mysql' image. Set database password to 'db_pass123'.
+Note: Remember to run it in the detached mode
+S: Use command below
+	$ docker run --name mysql-db -e MYSQL_ROOT_PASSWORD=db_pass123 -d mysql
+	
+Q4: We have just written some data into the database. To view the information we wrote, run the get-data.sh script available in the /root directory. How many customers data have been written to the database
+Command: sh get-data.sh
+S: Use command below
+	$ sh /root/get-data.sh
+A: 30
+
+Q5: The database crashed. Are you able to view the data now?
+Use the same command to try and view data. Try to find the container
+A: No
+N: Since we didn't mount anything in container, no data can be persisted
+
+Q6: Damn! We didn't plan that well at all. Let's try again!!
+
+Q7: Run a mysql container again, but this time, map a volume to the container so that the data stored by the container is stored at /opt/data on the host.
+Use the same name: mysql-db and same password: db_pass123 as before. Mysql stores data at /var/lib/mysql inside the container
+S: Use command below
+	$ mkdir -p /opt/data
+		- in case folder does not exist
+	$ docker run --name mysql-db -e MYSQL_ROOT_PASSWORD=db_pass123 -d  --mount type=bind,source=/opt/data,target=/var/lib/mysql mysql
+
+Q8: We have now re-written data again. Run the get-data.sh scripts to ensure data is present
+Command: sh get-data.sh
+S: Use command specified above
+	$ sh /root/get-data.sh
+	
+Q9: Disaster strikes.. again! And the database crashed again. But this time we have the data stored at /opt/data directory. Re-deploy a new mysql instance using the same options as before.
+Just run the same command as before. Here is it for your convenience:
+docker run -v /opt/data:/var/lib/mysql -d --name mysql-db -e MYSQL_ROOT_PASSWORD=db_pass123 mysql
+S: Run command specified above to create the container. Then use the /root/get-data.sh file to verify
+	
+Q10: Fetch data and make sure it is present
+Command: sh get-data.sh
+S: Use command below
+	$ sh /root/get-data.sh
+
+
+
+
+
+112. Docker Networking
+
+Networking in Docker
+
+Default Networks in Docker
+ > When Docker is installed, it automatically creates three types of networks
+	1. Bridge
+	2. none
+	3. host
+ > by default, Docker containers are attached to the bridge network 'docker0' when they are created
+	- 'docker0' is the default bridge network created when we install Docker for the first time
+ > to specify the network we want the container to be attached to, use '--network' flag
+	- ex: 
+		docker run Ubuntu --network=none
+		docker run Ubuntu --network=host
+
+Bridge Network
+ > Bridge network is the private network created internally by Docker on the host
+ > All containers, if network is not specified, will be attached to the bridge network 'docker0'.
+	- this 'docker0' have the subnet of 172.17.0.0/16
+	- this means that when a container is attached to this 'docker0' bridge network, they will get an internal ip address within 172.17 series
+	- ex:
+		docker0 gateway 	172.17.0.1
+		containerA ip		172.17.0.3
+		containerB ip		172.17.0.2
+		containerC ip		172.17.0.4
+		containerD ip		172.17.0.5
+ > to access any of the containers attached to the bridge network to the outside world, we would need to do port mapping of container port to any of the docker host's port
+	- we can do this using the '-p' flag when running a container
+
+host Network
+ > Host network, from the name itself, is the network within the Docker host
+ > Any containers attached to the host network will directly listen to the docker host's port
+	- this means that if we ran a web app container on port 5000, it is automatically accessible on the same port externally without requiring any port mapping as the web app container uses the host's network
+ > This removes the isolation between the docker host and the docker container
+ > Keep in mind that since it uses the host network, running multiple container attached on host's network can not use or listen to the same port of the same host
+ 
+ 
+none network
+ > with none network, the containers are not attached to any of the network
+ > this means that the container network is completely isolated and does not have access to external network or to other docker containers
+ 
+ 
+User-defined networks
+ > in Docker, we can created our own network
+ > by default, Docker creates a bridge network named 'docker0' with subnet of 172.17.0.0/16
+ > if we want to create another bridge network to isolate containers with, we can do so using 'docker network create'
+	- ex: 
+		docker network create \
+			--driver bridge \
+			--subnet 182.18.0.0/16 \
+			custom-isolated-network
+ > with user-defined networks, we can do a sample configuration like the one below, where web container 3 and 4 are in different bridge network
+	docker0	gateway							172.17.0.1
+	web container 1							172.17.0.2
+	web container 2							172.17.0.4
+	
+	custom-isolated-network gateway`		182.18.0.1
+	web container 3							182.18.0.3
+	web container 4							182.18.0.2
+	
+	
+	
+Inspect Network of Docker container
+ > to check which Network the Docker container is attached to, alongside other Network related stuff, use the 'docker inspect' command
+	- ex: docker inspect blissful_hopper
+ > in the JSON output, we can trace the Network which the container is attached to in the path 'NetworkSettings.Networks'
+	- ex: 
+		NetworkSettings.Networks.bridge.Gateway = 172.17.0.1
+		NetworkSettings.Networks.bridge.IPAddress = 172.17.0.6
+		NetworkSettings.Networks.bridge.MacAddress = 02:42:ac:11:00:06
+	
+ 
+Embedded DNS
+ > Docker containers within the Docker host can reach each other using their names
+ > In order to make this work, Docker runs an Embedded DNS, which contains the host-ip pairing
+	- in this case, the host is the container name, which the ip is the internal ip assigned by whatever network they are attached to
+	- ex:
+		Host	IP
+		web		172.17.0.2
+		mysql	172.17.0.3
+	- in example above, instead of web container using the internal ip of mysql (172.17.0.3), they can just directly use 'mysql', i.e. using mysql:3060 instead of 172.17.0.3:3060
+ > This Embedded DNS always runs in the address 127.0.0.11
+ 
+
+Network Namespaces for Network Isolation
+ > Docker uses the Network Namespaces in order to achieve network isolation of the container within the host
+ > This means that whenever a container is created, Docker will create a separate network namespace for that container
+ > It then uses virtual ethernet pairs to connect containers together
+ 
+
+Commands
+docker run IMAGE --network=NETWORK_TYPE
+ > --network flag is used to specify the network the resulting container will be attached to
+ > ex:
+	$ docker run ubuntu --network=none
+	$ docker run ubuntu --network=host
+	
+docker network create --driver DRIVER --subnet SUBNET NETWORK_NAME
+ > docker network create is used to create a Docker network
+ > for --driver, we can pass either 'bridge' or 'overlay'
+ > for --subnet, we must pass the subnet of the network, which includes the network prefix and the subnet mask
+ > ex:
+	docker network create \
+		--driver bridge \
+		--subnet 182.18.0.0/16 \
+		custom-isolated-network
+	
+docker network ls
+ > used to list all the networks within the docker host
+ > ex:
+	docker network ls
+	
+	
+	
+	
+
+113. Labs: Docker Networking
+
+Q1: Explore the current setup and identify the number of networks that exist on this system
+S: Use command 'docker network ls'
+A: 3
+
+Q2: What is the ID associated with the bridge network?
+S: Check the network id of the bridge network of docker network ls output
+A: d62702445bf0
+
+Q3: We just ran a container named 'alpine-1'. Identify the network it is attached to.
+S: Use 'docker inspect alpine-1'
+A: host
+
+Q4: What is the subnet configured on 'bridge' network
+S: Use 'docker network inspect' and pass the name of network
+A: 172.17.0.0/24
+
+Q5: Run a container named 'alpine-2' using the alpine image and attach it to the 'none' network
+S: Use command below
+	$ docker run --name alpine-2 --network none alpine
+	
+Q6: Create a new network named 'wp-mysql-network' using the 'bridge' driver. Allocate subnet '182.18.0.1/24'. Configure 'Gateway 182.18.0.1'
+S: Use 'docker network create' command
+	$ docker network create --driver bridge --subnet 182.18.0.1/24 --gateway 182.18.0.1 wp-mysql-network
+	
+Q7: Deploy a mysql database using the 'mysql:5.6' image and name it 'mysql-db'. Attach it to the newly created network 'wp-mysql-network'
+Set the database password to use 'db_pass123'. The environment variable to set is MYSQL_ROOT_PASSWORD
+S: Use command below
+	$ docker run --name mysql-db -e MYSQL_ROOT_PASSWORD=db_pass123 -d   --network wp-mysql-network mysql:5.6
+	
+Q8: Deploy a web application named 'webapp' using the 'kodekloud/simple-webapp-mysql' image. Expose the port to 38080 on the host.
+The application makes use of two environment variable:
+1. DB_Host with the value 'mysql-db'
+2. DB_Password with the value 'db_pass123'
+Make sure to attach it to the newly created network called wp-mysql-network
+Also make sure to link the MySQL and the webapp container
+S:
+0. Inspect docker image, check the port it is listening
+	$ docker pull kodekloud/simple-webapp-mysql
+	$ docker inspect kodekloud/simple-webapp-mysql
+1. Deploy the webapp container
+	$ docker run --name webapp -p 38080:8080 -e DB_Host=mysql-db -e DB_Password=db_pass123 --network=wp-mysql-network kodekloud/simple-webapp-mysql
+2. Add '--link mysql-db:mysql-db'
+	> tbh, im not sure as to the use of --link flag
+	> command above is sufficient
+	
+Q9: If you are successful, you should be able to view the application by clicking on the HOST:38080 at the top of your terminal. You should see a green success message

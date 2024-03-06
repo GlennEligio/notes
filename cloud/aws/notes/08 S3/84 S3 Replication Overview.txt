@@ -1,0 +1,23 @@
+84 S3 Replication Overview
+
+S3 Replication (CRR & SRR)
+ > must have versioning ENABLED in both source and destination buckets
+ > two types of S3 Replication based on bucket locations
+	1. Cross Region Replication (CRR)
+	2. Same Region Replication (SRR)
+ > the source and destination buckets can be in DIFFERENT accounts
+ > copying is done ASYNCHRONOUSLY
+ > must give proper IAM permissions to S3
+
+Use Cases
+CRR - Use cases:
+ > compliance, lower latency access, replication across accounts
+SRR - Use cases:
+ > log aggregation, live replication between production and test accounts
+
+
+Ex:
+
+		Asynchronous replication
+S3 Bucket 1 -----------------------------> S3 Bucket 2 
+eu-west-1				   us-east-1	

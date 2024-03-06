@@ -1,0 +1,15 @@
+SELECTING SPECIFIC COLUMN IN TABLE
+	> in order to just show a specific column(s) in a table, instead of an asterisk (*), we will change it to the name(s) of the column(s) that we want to show
+
+EX:
+	SELECT columnName1 FROM tableName;
+
+If we run this, only the columnName1 from tableName and its data will be shown. If we want to show more columns, we will just add the column name and use comma to separate the column names.
+
+	SELECT columnName1, columnName2 FROM tableName;
+
+This way, the columnName1, and columnName2, and its data populating it will be shown. So, going back to the "celebs" table, if we want to show just the "name" column and its data, we can write this
+
+	SELECT name FROM celebs;
+
+With this, the name column and all of the data inside it will be shown.

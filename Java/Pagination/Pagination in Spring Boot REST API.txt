@@ -1,0 +1,117 @@
+Pagination in Spring Boot
+
+Dependency needed
+Spring Web
+Spring Data
+
+
+Classes / Interfaces uses
+
+Page<T>
+	> interface, extends Slict
+	> A page is a sublist of a list of objects
+	> It allows gain information about the position of it in the containing entire list
+	> methods include:
+		int		getTotalPages()
+					> return the total pages
+		<U> Page<U>	map(Function<? super T, ? extends U> converter)
+					> creates a Page of new type based on the return type the Function input generated
+
+Sort
+	> class
+	> used to create a Sorting option for queries
+	> typically needs two parameters to work
+		- Direction of sorting (ascending/descending)
+		- Field of Object to be the sorting
+	> containing a static method by() that is OVERLOADED	
+		- one of the forms is Sort.by(Direction direction, String... properties)
+
+	
+Pageable
+	> abstract interface for pagination information
+	> contains pagination information with accessors like
+		- pageSize
+		- offset
+		- sort
+		- isLast and isFirst
+		- hasNext and hasPrevious
+
+
+PageRequest
+	> basic Java Bean implementation of Pageable
+	> object used to provide a Pageable object
+	> its static method "of()" is used to create a PageRequest
+	> this method is OVERLOADED and each can be used
+		PageRequest.of(int page, int size)
+		PageRequest.of(int page, int size, Sort sort)
+		PageRequest.of(int page, int size, Direction direction, String... properties)
+
+
+
+PagingAndSortingRepository<T, ID>
+	> Extension of CrudRepository to provide additional methods to retrieve entities using the pagination and sorting abstraction
+	> with this, method that supports Pagination will be available
+	> new methods includes
+		
+New methods:
+Iterable<T> findAll(Sort sort)
+	> returns all entities sorted by the given options
+	
+Page<T> findAll(Pageable pagable)
+	> returns a Page of entities meeting the paging restriction provided in the Pageable object
+
+
+
+CREATING Pagination in Spring Boot REST API
+I. Repository Layer
+1. Create Repository interface that have exposed methods with Pageable parameter
+	> PagingAndSortingRepository interface offers ONE method with Pageable parameter
+	> or we can use any interface that extends to Repository interface (JpaRepository, CrudRepository) as long as we have abstract method inside them that have Pageable parameter
+
+EX:
+public interface ItemRepository extends JpaRepository<Item, Integer> {
+
+    Page<Item> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    @Query( value = "SELECT i FROM Item i WHERE cast(i.id as string) LIKE concat('%', :id, '%')")
+    Page<Item> findByIdContaining(@Param("id") String itemId, Pageable pageable);
+}
+
+
+II. Service Layer
+1. Create Service class that have at least one exposed method with Pageable parameter (or at least object necessary to create a Pageable object)
+	> inside these methods, we can use the Repository method to fetch a Page of Entity using the Pageable parameter	
+	> if we dont have Pageable parameter in Service method, we need to create a Pageable object from the parameters
+
+Ex:
+	public Page<Item> findItemsWithPaging(int page, int size){
+		Page<Item> itemPage = repository.findAll(PageRequest.of(page, size));
+		if(page > itemPage.getTotalPages()){
+			throw new AppException("Page request out of bound", HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+		}
+		return itemPage;
+	}
+
+
+	public Page<Item> findItemsWithPaging(Pageable pageable){
+		Page<Item> itemPage = repository.findAll(pageable);
+		if(pageable.getPageNumber() > itemPage.getTotalPages()){
+			throw new AppException("Page request out of bound", HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+		}
+		return itemPage;
+	}
+
+
+
+III. Controller layer
+1. Create a @Controller that exposes at least one endpoint method that receives data necessary for creating a Pageable
+	> the most optimal way of doing this is by receiving them via QUERY PARAMETERS
+
+ex:
+	@GetMapping(value = "/items", params = {"page", "size", "field", "sort"})
+	public ResponseEntity<Page<Item>> getItemWithPaging(@RequestParam("page") int page,
+							@RequestParam("size") int size,
+							@RequestParam("field") String field,
+							@RequestParam("sort") String direction){
+		log.info("Fetching items with page of " + page + " and size of " + size + ", sorted by " + field + " in " + direction + " order");
+		return ResponseEntity.ok(service.findItemsWithPagingAndSorting(PageRequest.of(page-1, size, Sort.Direction.fromString(direction), field)));
+	}

@@ -1,0 +1,174 @@
+01. Introduction
+
+
+Kubernetes - K8s
+	> is an open-source system for automating deployment, scaling, and management of containerized applications
+	> designed by Google, but now CNCF (Cloud Native Computing Foundation) maintains the project
+	> can work with any Container Runtimes like
+		- Docker Container
+		- Containerd
+		- CRI-O
+	> these containerized application maybe
+		- DB Server Container (eg MySQL)
+		- API Server Container (eg Spring REST)
+		- Web Server Container (eg React)
+		- Build Server Container (eg Jenkins)
+	> variations of K8s includes
+		a. minikube
+			- for small clusters
+			- for unit testing small nodes
+		b. bare metal
+			- kubeadm
+		c. KOPS	
+			- AWS solution
+		d. EKS
+			- elastic kubernetes service
+		a. AKS
+
+Kubernetes - Advantages
+	> Kubernetes can scale without increasing your Ops team
+	> Whether testing locally or running a global enterprise, Kubernetes FLEXIBILITY grows with you to deliver yout applicaitons consistently and easily no matter how complex your need is
+	> Kubernetes is OPEN SOURCE, giving you the freedom to take advantages of on-premises, hybrid, or public cloud infrastructure
+		- these let you effortlessly move workloads to where it matters to you
+
+
+Kubernetes Architecture
+
+Kubernetes
+	-> Control Plane
+		-> API Server
+		-> Key Value Store - ETCD
+		-> Scheduler
+		-> Control Manager
+	-> Worker Nodes (1,2,3)
+		-> Kubelet
+		-> Kube-Proxy
+		-> Container Runtime
+
+
+Control Plane components
+1. API Server
+	> the API server is a component of the K8s control plane that EXPOSES the K8s API
+	> the API server is the front end for the K8s control plane
+	> the API server is exposed by either
+		a. kubectl CLI commands
+		b. kubernetes-dashboard GUI
+	> the main implementation of a K8s API server is kube-apiserver
+	> kube-apiserver is designed to scale HORIZONTALLY
+		- this means it scales by deploying more isntances
+	> one can run several instances of kube-apiserver and balance the traffic between those instances
+	> after processing request, the API Server will talk to other components of Control Plane or to the Worker Nodes	
+	
+
+2. etcd
+	> Consistent and highly-available key value store used as K8s' backing store for all cluster data
+		- similar to a Database
+	> Stores data related to the DESIRED STATE of the K8s cluster
+	> If your K8s cluster uses etcd as its backing store, make sure you have a back up plan for those data
+
+3. Scheduler
+	> Control plane component that watches for newly created Pods with no assigned node, and selects a Node for them to run on
+	> Factors taken into account for scheduling decisions includes:
+		- indivdual and collective resource requirements
+		- hardware/software/policy constraints
+		- node affinity and anti-affinity specifications (taint and tolerance of node)
+		- data locality
+		- inter-workload interference
+		- deadlines
+
+4. Kube Controller Manager
+	> Control Plane components that runs controller processes 
+	> Logically, each controller is a separate process, but to reduce complexity, they are compiled into a SINGLE BINARY and run in a single process
+	> These controllers includes:
+		a. Node controller:
+			- responsible for noticing and responding when Nodes go down
+		b. Replication controller
+			- responsible for maintaining the correct number of Pods for every replication controller object in the system
+		c. Endpoints controller
+			- populates the endpoints object (that is, joins K8s Services and Pods)
+		d. Service Account & Token controllers
+			- create default accounts and API access tokens for new namespace
+
+5. Cloud Controller Manager
+	> A K8s control plane component that embeds cloud-specific control logic
+	> The cloud controller manager lets you link your cluster into you cloud provider's API, and separates out the components that interact with that cloud platform from components that just interact with your cluster
+	> The following controllers can have cloud provider dependencies:
+		a. Node controller
+			- for checking the cloud provider to determine if a node has been deleted in the cloud after it stops responding
+		b. Route controller
+			- for setting up routes in the underlying cloud infrastructure
+		c. Service controller
+			- for creating, updating and deleting cloud provider load balancers
+
+
+
+Nodes Components
+1. Kubelet
+	> An agent that runs on each node in the cluster
+	> It make sures that Contianers are running in a Pod
+	> The kubelet takes a set of PodSpecs that are provided through various mechanism and ensures that the containers describe in the PodSpecs are running and healthy
+		- PodSpecs contains information for the Desired state of a Pod and Containers running inside it
+	> The kubelet does NOT manage containers which were not created by Kubernetes
+
+2. Kube-Proxy
+	> kube-proxy is a network proxy that runs on each node in your cluster, implementing part of the Kubernetes Service concept
+	> kube-proxy maintains network rules on nodes
+	> These network rules allow network communication to your Pods from network sessions inside or outside of your cluster
+
+3. Container Runtime
+	> The container runtime is a software that is responsible for running Container
+	> examples of these are
+		- Docker
+		- Containerd
+		- CRI-O
+
+
+Addons
+	> Addons use Kubernetes resources (DaemonSet, Deployment, etc) to implement Cluster features
+	> Because these are providing cluster-level features, namespaced resources for addons belong with the kube-system namespaces
+
+Addons
+1. DNS
+	> Cluster DNS is a DNS server
+	> In addition to other DNS Server(s) in your environment, which servers DNS reconds for K8s services
+2. WebUI
+	> kubernetes-dashboard GUI
+	> Dashboard is a general purpose, web-based UI for K8s clusters
+	> It allows users to manage and troubleshoot applications running in the cluster, as well as the cluster itself
+3. Container Resource Monitoring
+	> Container Resource Monitoring records generic time-series metrics about containers in a central database, and provides a UI for browsing that db
+
+
+
+
+K8s Pod Networking Model
+
+
+Kubernets-Cluster Design for Production-Grade Container Orchestration
+
+Application Components and number of replications
+	> below are restrictions for K8s
+		-> 5000 Nodes
+		-> 150,000 Pods
+		-> 300,000 Containers
+		-> 100 Pods/Node
+
+Resource Requirements
+	> Resource Requirements for running a K8s cluster includes
+		-> Processor, HDD, and Memory requirement
+		-> Application Data Storage
+
+Worker Nodes in a Cluster
+	> Worker node size depends upon pods resource requirements
+	> Calculation for Total Number of Nodes is:
+		Total Number of Nodes = (Maximum Pods per Cluster) / Expected Pods per Node
+	> Plan for the node failure at ANY POINT
+
+
+Master Node Configuration
+1-5 Nodes	2vCPU / 4 GB RAM
+6-10 Nodes	2vCPU / 7.5 GB RAM
+11-100 Nodes	4vCPU / 15 GB RAM
+101-250 Nodes	8vCPU / 30 GB RAM
+251-500 Nodes	16vCPU / 30 GB RAM
+> 500 Nodes	36vCPU / 60 GB RAM

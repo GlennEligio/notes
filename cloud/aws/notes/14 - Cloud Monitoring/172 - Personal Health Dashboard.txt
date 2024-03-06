@@ -1,0 +1,23 @@
+172 - Personal Health Dashboard
+
+AWS Personal Health Dashboard
+ > AWS Personal Health Dashboard provides ALERTS AND REMEDIATION GUIDANCE when AWS is experiencing EVENTS THAT MAY IMPACT YOU
+ > While the Service Health Dashboard displays the general status of AWS services, Personal Health Dashboard gives you a personalized view into the performance and availability of the AWS services underlying your AWS resources
+ > The dashboard displays relevant and timely information to help you manage events in progress and provides proactive notification to help you plan for scheduled activities
+ > Global service website: https://phd.aws.amazon.com/
+	- this shows you how AWS outages directly impact you & your AWS resources
+	- includes Alerts, remediation, proactive, scheduled activities
+ > We can also go the the PHD by:
+	1. going to AWS Management Console
+	2. Click the bell icon at the top right
+	3. Click "View all alerts"
+	
+	
+AWS Personal Health Dashboard sections:
+1. Dashboard
+	> contains the following panels:
+		- Open issues
+		- Scheduled changes
+		- Other notifications
+2. Event logs
+	> contains the events/issues with regards to AWS services that may impact our resources

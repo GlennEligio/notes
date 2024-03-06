@@ -1,0 +1,2932 @@
+Bootstrap
+
+Topics to discuss:
+1. What is Bootstrap?
+2. Installation / Setup
+3. Grid System
+4. Components
+
+
+What is Bootstrap?
+	> Most popular Front-end framework
+	> Used for building responsive, mobile first websites and web applications
+	> Uses HTML / CSS / JavaScript 
+
+
+Why uses Bootstrap?
+	> Increase development speed
+	> Assure responsiveness
+	> Prevent repetition between projects
+	> Add consistency
+	> Ensure cross browser compatibility
+	> Large community
+	> Customizable
+
+
+Bootstrap Components and Helpers
+	> Alerts		> Popovers
+	> Badges		> Progress bars
+	> Breadcrumbs		> Scrollspy
+	> Buttons		> Spinners
+	> Cards			> Toasts
+	> Carousel		> Clearfix
+	> Collapse		> Icons
+	> Dropdowns		> Tables
+	> List group		> Responsible Utilities
+	> Modal			> Gutters
+	> Navbars
+	> Panels
+	> Paginations
+
+
+
+Installation of Bootstrap
+	> https://getbootstrap.com/
+
+Installation methods
+1. Through NodeJS package
+2. Adding Bootstrap CSS and JS Bundle with Popper in Webapp
+3. Downloading the Compiled CSS and JS, and using them in HTML file
+
+
+I. Through NodeJS package
+	> create an npm project using 
+		-> npm init
+	> create index.html
+	> install bootstrap node package using
+		-> npm install bootstrap
+	> for installing PopperJS separately, use
+		-> npm install @popperjs/core --save
+	> inside index.html, create <link> and <script> and refer to the bootstrap.css and bootstrap.bundle.js
+
+EX: Index.html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="node_modules/bootstrap/dist/css/bootstrap.css"
+    />
+  </head>
+  <body>
+    <h1>Hello npm world</h1>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+  </body>
+</html>
+
+
+
+
+II. Adding Bootstrap CSS and JS Bundle with Popper in Webapp
+	> CSS is added in <head>
+	> JS Bundle is added at the end of <body>
+	
+<!-- CSS + Bootstrap JS bundle only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+<!-- CSS + JS + Popper -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+
+
+
+
+III. Downloading the Compiled CSS and JS, and using them in <head> of HTML
+	> https://github.com/twbs/bootstrap/releases/download/v5.1.3/bootstrap-5.1.3-dist.zip
+	> CSS is added in <head>
+		-> use the bootstrap.css inside css folder
+	> JS Bundle is added at the end of <body>
+		-> use the bootstrap.js for BootStrap JS only
+		-> use the bootstrap.bundle.js for BootStrap JS + Popper
+
+EX:
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+  </head>
+  <body>
+    <h1>Hello Bootstrap</h1>
+    <script src="js/bootstrap.bundle.js"></script>
+  </body>
+</html>
+
+
+
+
+
+Bootstrap Grid System
+	> the Grid System uses ROWS and COLUMNS
+	> a Webpage can contain any amount of ROWS
+	> a Rows can contain AT MOST 12 COLUMNS
+
+Responsiveness
+	> the content of the webpage SHOULD ADJUST to the size of the screen
+
+
+Breakpoints
+	> Breakpoints are customizable widths that determine how your responsive layout behaves accross devices
+
+Breakpoints Core concepts
+1. Breakpoints are building blocks of responsive design
+	> use them to control when your layout can be adapted at a particular viewport or device size
+2. Use media queries to architect your CSS by breakpoint
+	> Media queries are a feature of CSS that allow you to conditionally apply styles based on a set of browser and operating system parameters
+	> Bootstrap commonly use min-width property in their media queries
+3. Mobile first, responsive desgin is the goal
+
+
+Available breakpoints
+	> Bootstrap includes six default breakpoints, sometimes referred to as "grid tiers", for building responsively
+	> These breakpoints can be customized if you're using Bootstrap's source Sass files
+	> SYNTAX IS: prop-breakpoint-number
+		-> ex: col-sm-4, md-lg-4, etc
+
+Breakpoints		Class infix		Dimensions 
+X-Small			None			<576px
+Small			sm			>=576px
+Medium			md			>=768px
+Large			lg			>=992px
+Extra large		xl			>=1200px
+Extra extra large	xxl			>=1400px
+
+EX:
+<div col-sm-1 col-md-2 col-lg-3 col-xl-4 col-xxl-6></div>
+	> this div will
+		1. occupy 1 col in row when width >=576px
+		2. occupy 2 col in row when width >=768px
+		3. occupy 3 col in row when width >=992px
+		4. occupy 4 col in row when width >=1200px
+		5. occupy 5 col in row when width >=1400px
+
+
+Overriding Breakpoints
+	> These breakpoints are customizable via Sass—you’ll find them in a Sass map in our _variables.scss stylesheet.
+
+
+
+
+Container
+	> Containers are the most basic layout element in Bootstrap and are required when using our default grid system. 
+	> Containers are used to contain, pad, and (sometimes) center the content within them. 
+	> While containers can be nested, most layouts do not require a nested container.
+
+Three types of Containers
+.container
+	-> sets a max-width at each responsive breakpoint
+.container-fluid
+	-> which is "width: 100%" at all breakpoints
+.container-{breakpoint} 
+	-> which is "width: 100%" until the specified breakpoint
+	-> ex: <div class="container-md"></div> will be "container-fluid" until md breakpoint (720px)
+
+
+
+Rows and Column
+row
+	> class added in element (typically div)
+	> with this, the element's width will occupy ALL the space available inside a Container
+	
+
+row-cols-1
+row-cols-2
+row-cols-3
+row-cols-n
+	> added in the element with "row" class
+	> defines the number of max columns the row will have
+
+
+col
+col-1
+col-2
+col-n
+	> class added in element, mostly div
+	> the element must be WRAPPED by an element with class of "row"
+	> with this, it will occupy a PORTION of row's width based on the number
+		-> if no number is given, it will occupy all the available width of the row
+		-> if a number is given, it will occupy a PORTION of row's width
+			=> for this, the calculation is (n/12) where n is the number given to col
+
+EX:
+      <div class="row">
+        <div class="col">Col 1</div>
+        <div class="col">Col 2</div>
+      </div>
+
+In this case, the two col will occupy ALL the available space in row. They will share the space and end up with each half of row's width (6 columns or 50% of row's width)
+
+
+      <div class="row">
+        <div class="col-4">Col 1</div>
+        <div class="col-4">Col 2</div>
+      </div>
+
+In this, case, the two col will each occupy 4 out of 12 columns (33% of 12 col). They will occupy a total of 8 columns (66%).
+
+
+      <div class="row">
+        <div class="col-4">Col 1</div>
+        <div class="col">Col 2</div>
+      </div>
+
+Here, the first col will occupy the 4 out of 12 columns (33% of row's width). The second column will then occupy the REST of available space (8 columns or 66% of row's width)
+
+
+
+Column and Breakpoints
+	> we can also define the amount of columns an element occupies in a specific breakpoints
+	> we can do this by adding the breakpoint infix
+		-> ex: col-md-4 will occupy 4 columns in screen with width >= 768px
+	> NOTE: If theres no col specified for a specific breakpoint, the col will occupy 12 COLUMNS or 100% of row's column
+		-> with this, if two col occupies a row, the 2nd col will be wrapped to the next row
+
+
+
+
+Vertical Alignment (of Columns inside Row)
+	> to align the columns items inside a Row element VERTICALLY, we can use the "align-items-*" classes
+	> similar to the align-items property of the CSS Flexbox (with "flex-direction:row")
+	> NOTE: To see this in action, the row element's height must be DEFINED
+
+1. align-item-start
+	> align all col elements of row at the start (top)
+2. align-item-center
+	> align all col elements of row at the center
+3. align-item-end
+	> align all col elements inside the row at the end (bottom)
+
+
+
+
+Horizontal Alignment (of col elements inside row)
+	> to align the col elements of row HORIZONTALLY, we can use the "justify-content-*" classes
+	> similar to "justify-content" property of CSS flexbox
+
+1. justify-content-start
+	> align the col element at the start of row (left most)
+2. justify-content-center
+	> align the col element at the center of row 
+3. justify-content-end
+	> align the col element at the end of row (right)
+4. justify-content-around
+	> align the col elements so that they have equal margin left and right
+5. justify-content-between
+	> align the col elements so that they have equal space to each of the col elements
+6. justify-content-evenly
+	> align the col elements so that they have equal space to other col elements and sides of row
+
+
+
+Margin and Padding
+	> to add margin and padding in Bootstrap, we can use the classes m*-n and p*-n
+
+Notation / Syntax
+{property}{sides}-{size}
+{property}{sides}-{breakpoint}-{size}	// margin/padding for specific breakpoint
+
+Property
+    m - for classes that set margin
+    p - for classes that set padding
+
+
+Sides
+    t - for classes that set margin-top or padding-top
+    b - for classes that set margin-bottom or padding-bottom
+    s - (start) for classes that set margin-left or padding-left in LTR, margin-right or padding-right in RTL
+    e - (end) for classes that set margin-right or padding-right in LTR, margin-left or padding-left in RTL
+    x - for classes that set both *-left and *-right
+    y - for classes that set both *-top and *-bottom
+    blank - for classes that set a margin or padding on all 4 sides of the element
+
+Sizes
+    0 - for classes that eliminate the margin or padding by setting it to 0
+    1 - (by default) for classes that set the margin or padding to $spacer * .25
+    2 - (by default) for classes that set the margin or padding to $spacer * .5
+    3 - (by default) for classes that set the margin or padding to $spacer
+    4 - (by default) for classes that set the margin or padding to $spacer * 1.5
+    5 - (by default) for classes that set the margin or padding to $spacer * 3
+    auto - for classes that set the margin to auto
+
+
+
+
+Gutters
+	> Gutters are the padding between your columns, used to responsively space and align content in the Bootstrap grid system.
+	> Gutters are the GAPS between column content, created by horizontal padding. We set padding-right and padding-left on each column, and use negative margin to offset that at the start and end of each row to align content.
+	> Gutters start at 1.5rem (24px) wide. This allows us to match our grid to the padding and margin spacers scale.
+	> Gutters can be responsively adjusted. Use breakpoint-specific gutter classes to modify horizontal gutters, vertical gutters, and all gutters.
+
+Notation/Syntax
+{property}{side}-{size}
+
+g-{size}	for all sides
+gx-{size}	for x-axis gutter
+gy-{size}	for y-axis gutter
+
+Horizontal Gutter 
+	> defines the space between the col elements and the sides of the row
+	> higher the size, the LESSER the gap between col elements and the sides of the row
+	> SYNTAX:
+		gx-{size}	for left and right
+	> NOTE: If larger gutters are used, it may cause unwanted OVERFLOW. For this, we can either
+		a. Use matching padding utility for Container
+		b. Add "overflow-hidden" class to Container
+
+
+Vertical Gutter
+	> defines the space between the col elements of a row
+		-> this happens when a row can occupy all the col due to overflow (col elements occupy > 12 columns)
+	> higher the size, the LARGER the gap between the wrapped col elements in a row
+	> SYNTAX
+		gy-{size}	for y-axis
+	> NOTE: If larger gutters are used, it may cause unwanted OVERFLOW. For this, we can either
+		a. Use matching padding utility for Container
+			-> py-{size}
+		b. Add "overflow-hidden" class to Container
+
+
+
+
+COMPONENTS
+
+Buttons 
+	> Bootstrap includes several predefined button styles, each serving its own semantic purpose, with a few extras thrown in for more control.
+
+
+Classes for Button
+"btn"
+	> changes the following properties of button
+		- increase size
+		- adds border radius and removes border color
+		- set background color to white and color to black
+	> can be used in elements other than <button> like
+		<a>
+		<input>
+
+
+Class to add background color to Buttons
+	> reduces alpha values when hovers as well
+
+btn-primary	
+	> blue background color
+	> white color
+btn-secondary
+	> gray background
+	> white color
+btn-success
+	> green background
+	> white color
+btn-danger
+	> red background
+	> white color
+btn-warning
+	> yellow background
+	> white color
+btn-info
+	> skyblue background
+	> black color
+btn-light
+	> white background
+	> black color
+btn-dark
+	> black background
+	> white color
+btn-link
+	> white background
+	> blue color
+	> text decoration is underline
+
+
+Outline variation
+	> similar to the normal colored variation, but with few differences
+		1. When not in hover event
+			- White background color
+			- Border color is similar to the typical background color of their Opaque colored equivalent
+		3. When cursor hover
+			- becomes their Opaque colored variant
+	> ex: "btn-outline-primary" becomes essentially "btn-primary" is apperance when hovered
+
+btn-outline-primary
+btn-outline-secondary
+btn-outline-success
+btn-outline-danger
+btn-outline-warning
+btn-outline-info
+btn-outline-light
+btn-outline-dark
+
+
+Button sizes
+	> Bootstrap also have some classes to customize the size of the buttons
+	> these classes adjust both height and width of button
+	> not adding any of the two will result in a button whose size is in MIDDLE of the large and small
+
+"btn-lg"	large button
+"btn-sm"	small button
+
+
+Disabling Buttons
+	> adding "disabled" property in element will disable it
+	> we can also add disabled property in a Button (or Link/Input) to disable it
+	> this add "pointer-events: none", which prevents hover and active states from triggering
+
+EX:
+<button type="button" class="btn btn-lg btn-primary" disabled>Primary button</button>
+
+
+
+Button Plugin functionality
+Toggle State
+	> to add toggle functionality to Button, add "data-bs-toggle="button"" property
+	> to have the button pre-toggled, add "active" class and "aria-pressed="true"" property
+
+
+
+
+~~~~~~~ CARDS ~~~~~~~~
+
+Cards
+	> A card is a flexible and extensible content container. 
+	> It includes options for
+		- headers and footers, 
+		- a wide variety of content, 
+		- contextual background colors, and 
+		- powerful display options. 
+	> If you’re familiar with Bootstrap 3, cards replace our old panels, wells, and thumbnails. Similar functionality to those components is available as modifier classes for cards.
+
+
+Creating Card
+	> to create a Card, we will need to have a div with class "card"
+	> inside the "card" element, we can need several elements/components with classes like
+
+
+Class hierarchy when creating Card Component of Bootstrap
+> "card"
+	> "card-header"
+	> "card-body"
+		> "card-img-top"
+		> "card-title"
+		> "card-text"
+	> "card-footer"
+
+
+"card"
+	> class in Bootstrap to make an element (mostly div) look like a card	
+	> gives some properties as well like
+		- display: flex and flex-direction: column
+		- light gray 1px border
+		- border radius of 0.25rem
+
+"card-header"
+	> represents the header of the card
+	> properties include
+		- gray background
+		- top/bottom padding 0.5rem, left/right padding 1rem
+		- 1px gray bottom border
+
+"card-footer"
+	> represents the footer of card
+	> same properties as "card-header"
+	> typically used with "text-muted"
+		-> text-muted makes the text less opaque
+
+"card-body"
+	> represents the body of the card
+	> contains the content of the card
+	> have the following properties
+		-> flex: 1 1 auto
+		-> padding of 1rem in all sides
+
+"card-title"
+	> represents the title of the card's body
+	> properties include
+		-> bottom margin 0.5rem
+
+"card-text"
+	> represents the text content of card's body
+	> properties include
+		-> last child will have margin bottom of 0
+
+"card-img"
+"card-img-top"
+"card-img-bottom"
+	> represents the image inside card's body
+	> properties include
+		-> width: 100%
+		-> 0.25rem top-left and top-right border radius
+			=> only in card-img and card-img-top
+		-> 0.25rem bottom-left and bottom-right border radius
+			=> only in card-img and card-img-bottom
+
+
+
+
+Sizing of Cards
+	> by default, the Card will take ALL the space available in the screen (width:100%)
+	> to prevent this, we will need to define the size of the Card
+	> instead of specifying the size of the element with "card", we will instead do it in the element that NEST the Card
+
+ex: 
+<div class="col-2">
+	<div class="card">
+		<!-- Card content here -->
+	</div>
+</div>
+
+	> there are several ways to do the sizing of the Card
+		1. Using grid markup
+			-> adding "col" class in the element that nest the Card
+			-> ex: <div class="col-2">
+		2. Using utilities
+			-> using Width and Height utilities in the "card" element
+			-> ex: <div class="card w-50">
+		3. Using custom CSS in the "card" element
+			-> <div class="card" style="width:18rem">
+
+
+
+Creating Card Groups
+	> card groups is used to group up Card
+	> in Card group, all Cards under it will
+		-> occupy all WIDTH (total width of Cards = total width available in parent container)
+		-> all Cards will have SAME WIDTH and HEIGHT
+	> to create a card group, we will need to use the class "card-group"
+
+"card-group"
+	> used to group Cards
+	> added in the element that nest the "card" elements
+
+EX:
+<div class="card-group">
+	<div class="card">
+	</div>
+	<div class="card">
+	</div>
+	<div class="card">
+	</div>
+</div>
+
+
+
+
+
+Creating List Group
+	> we can create a list of Card items/contents stack VERTICALLY with "list-group"
+		-> for horizontal List Group, use "list-group-horizontal"
+	> for the items inside the List Group, we will need to add "list-group-item" class to them
+
+Hierarchy
+> "card"
+	> "list-group"
+		> "list-group-item"
+
+
+"list-group"
+	> used to group items (ex. Card content) VERTICALLY
+	> properties include
+		- display: flex; flex-direction: column
+
+"list-group-item"
+	> represents an item in List groups
+	> properties include:
+		- display: block; grayish border; top-bottom padding 0.5rem; left-right padding 1rem
+
+
+EX:
+<div class="card" style="width: 18rem;">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">An item</li>
+    <li class="list-group-item">A second item</li>
+    <li class="list-group-item">A third item</li>
+  </ul>
+</div>
+
+
+
+
+
+Horizontal Card
+	> in a horizontal Card, the card image and card body is arranged horizontally instead of default vertically
+	> to do this, we will do several steps
+		1. Create a "card" element
+		2. Create a "row" element inside the Card
+			-> this element must have "g-0" class to remove the gutter at the sides
+		3. Create two "col" elements inside the row
+			-> one for nesting the img
+				=> must have "card-img" class or at least width:100% to occupy the whole column
+			-> one for nesting the card-body
+
+EX:
+<div class="col-6">
+	<div class="card">
+		<div class="row g-0">
+			<div class="col-4">
+				<img src="someImage.jpg" class="card-img-top"/>
+			</div>
+			<div class="col-8">
+				<div class="card-body">
+					<!-- Some content -->
+				</div>
+			</div>
+		</div>
+	</div>
+</>
+
+
+
+
+Styling Cards
+	> we can use the Bootstrap Utilities for applying text, background, and border color
+		-> ex: "text-white" "text-dark" "bg-primary" "bg-warning" "border-info"
+	> we typically apply these Bootstrap Utility classed in "card" element
+		-> if we do this, all element nested inside the Card will INHERIT the said properties
+
+EX:
+        <div class="col-3">
+          <div class="card text-white bg-primary mb-3" style="max-width: 18rem">
+            <div class="card-header">Header</div>
+            <div class="card-body">
+              <h5 class="card-title">Primary card title</h5>
+              <p class="card-text">
+                Some quick example text to build on the card title and make up
+                the bulk of the card's content.
+              </p>
+            </div>
+          </div>
+        </div>
+
+In this example, we can see the "text-white" and "bg-primary" being used to style the card's text and background color
+
+
+          <div class="card border-primary mb-3" style="max-width: 18rem">
+            <div class="card-header">Header</div>
+            <div class="card-body text-primary">
+              <h5 class="card-title">Primary card title</h5>
+              <p class="card-text">
+                Some quick example text to build on the card title and make up
+                the bulk of the card's content.
+              </p>
+            </div>
+          </div>
+
+In this example, we can see the "border-primary" in Card and "text-primary" in Card body
+
+
+
+
+~~~~~~ TYPOGRAPHY ~~~~~~~
+Headings
+	> Headings in Bootstrap are RESPONSIVE
+		-> font size changes based on the screen size (width)
+	> Bootstrap also offers utility classes to make an element to look like Heading
+
+
+Heading class
+	> provides properties similar to a heading element (ex: <h1>)
+	> these properties include:
+	  	margin-top: 0;
+  		margin-bottom: 0.5rem;
+  		font-weight: 500;
+  		line-height: 1.2;
+	
+NOTATION:
+h{size}
+
+Size
+1-6	1 being the BIGGEST, and 6 being the SMALLEST
+
+EX:
+<p class="h1">h1. Bootstrap heading</p>
+<p class="h2">h2. Bootstrap heading</p>
+<p class="h3">h3. Bootstrap heading</p>
+<p class="h4">h4. Bootstrap heading</p>
+<p class="h5">h5. Bootstrap heading</p>
+<p class="h6">h6. Bootstrap heading</p>
+
+
+
+Dispay heading class
+	> Traditional heading elements are designed to work best in the meat of your page content. 
+	> When you need a heading to STAND OUT, consider using a display heading — a larger, slightly more opinionated heading style.	
+
+NOTATION
+display-{size}
+
+Sizes
+$display-font-sizes: (
+  1: 5rem,
+  2: 4.5rem,
+  3: 4rem,
+  4: 3.5rem,
+  5: 3rem,
+  6: 2.5rem
+);
+
+EX:
+<h1 class="display-1">Display 1</h1>
+<h1 class="display-2">Display 2</h1>
+<h1 class="display-3">Display 3</h1>
+<h1 class="display-4">Display 4</h1>
+<h1 class="display-5">Display 5</h1>
+<h1 class="display-6">Display 6</h1>
+
+
+
+
+
+Lead
+	> used to make a paragraph stand out
+	> we do this by adding "lead" class in a paragraph element
+
+ex:
+<p class="lead">
+  This is a lead paragraph. It stands out from regular paragraphs.
+</p>
+
+
+
+
+Inline text element
+	> in Bootstrap, they offer several classes for inline text element styling
+	> these classes (or element tags) should be used for SEMANTIC PURPOSE
+
+HTML tags
+<mark> 		represents text which is marked or highlighted for reference or notation purposes.
+<small> 	represents side-comments and small print, like copyright and legal text.
+<s> 		represents element that are no longer relevant or no longer accurate.
+<u> 		represents a span of inline text which should be rendered in a way that indicates that it has a non-textual annotation.
+<b>		meant to highlight words or phrases without conveying additional importance
+<i>		mostly for voice, techinical terms, etc
+
+Bootstrap Classes equivalent
+"mark"				<mark>
+"small"				<small>
+"text-decoration-underline"	<u>
+"text-decoration-line-through"	<s>
+
+
+EX:
+<p>You can use the mark tag to <mark>highlight</mark> text.</p>
+<p><del>This line of text is meant to be treated as deleted text.</del></p>
+<p><s>This line of text is meant to be treated as no longer accurate.</s></p>
+<p><ins>This line of text is meant to be treated as an addition to the document.</ins></p>
+<p><u>This line of text will render as underlined.</u></p>
+<p><small>This line of text is meant to be treated as fine print.</small></p>
+<p><strong>This line rendered as bold text.</strong></p>
+<p><em>This line rendered as italicized text.</em></p>
+
+
+
+
+
+Abbreviations
+	> Stylized implementation of HTML’s <abbr> element for abbreviations and acronyms to show the expanded version on hover. 	> Abbreviations have a default underline and gain a help cursor to provide additional context on hover and to users of assistive technologies.
+	> Add "initialism" class to an abbreviation for a slightly smaller font-size.
+
+EX:
+<p><abbr title="attribute">attr</abbr></p>
+<p><abbr title="HyperText Markup Language" class="initialism">HTML</abbr></p>
+
+
+
+
+Blockquotes
+	> for quoting blocks of content from another source within your document.
+	> Wrap <blockquote> around any HTML as the quote AND add "blockquote" class
+
+EX:
+<blockquote class="blockquote">
+  <p>A well-known quote, contained in a blockquote element.</p>
+</blockquote>
+
+
+Naming a source of quote of blockquote
+	> The HTML spec requires that blockquote attribution be placed outside the <blockquote>. 
+		-> Attribution means citing the source of a thing (i.e. quote)
+	> When providing attribution, 
+		1. wrap your <blockquote> in a <figure> and 
+		2. use a <figcaption> or a block level element (e.g., <p>) with the .blockquote-footer class. 
+	> Be sure to wrap the name of the source work in <cite> as well.
+
+EX:
+<figure>
+  <blockquote class="blockquote">
+    <p>A well-known quote, contained in a blockquote element.</p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Someone famous in <cite title="Source Title">Source Title</cite>
+  </figcaption>
+</figure>
+
+
+
+Alignment of Blockquote
+	> we can align the text of blockquote using the text utilities
+		-> we will add these text utilities in the <figure> element that encapsulates the blockquote and figcaption
+	> these text utilities for alignment includes
+		
+
+EX: text center
+<figure class="text-center">
+  <blockquote class="blockquote">
+    <p>A well-known quote, contained in a blockquote element.</p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Someone famous in <cite title="Source Title">Source Title</cite>
+  </figcaption>
+</figure>
+
+EX: text end
+<figure class="text-center">
+  <blockquote class="blockquote">
+    <p>A well-known quote, contained in a blockquote element.</p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Someone famous in <cite title="Source Title">Source Title</cite>
+  </figcaption>
+</figure>
+
+
+
+
+List
+Unstyling a List
+	> we can remove the styles (symbol and indentation) of list in Bootstrap
+	> with this, we will need to use "list-unstyled" class
+
+"list-unstyled"
+	> remove the style of a list
+		-> similar to "list-style: none"
+	> only applies to IMMEDIATE CHILDREN
+		-> will not apply to the list item of a nested list
+
+EX:
+<ul class="list-unstyled">
+  <li>This is a list.</li>
+  <li>It appears completely unstyled.</li>
+  <li>Structurally, it's still a list.</li>
+  <li>However, this style only applies to immediate child elements.</li>
+  <li>Nested lists:
+    <ul>
+      <li>are unaffected by this style</li>
+      <li>will still show a bullet</li>
+      <li>and have appropriate left margin</li>
+    </ul>
+  </li>
+  <li>This may still come in handy in some situations.</li>
+</ul>
+
+
+
+
+Inline list
+	> we can also make an inline list
+		-> difference is that in default list, list-items are block level. 
+		-> here, the list items are inline level
+	> to do this, we will need to use the combination of "list-inline" and "list-inline-item"
+		-> "list-inline" for <ul> element
+		-> "list-inline-item" for <li> element
+
+
+
+Truncating text content
+	> if somehow a text goes beyond the area it is nested, we can use "text-truncate" class
+
+"text-truncate"
+	> will truncate the text that goes over the border of element it is nested
+	> the text, if it overflows, will be concatenated by "..." at the end
+	> ex: This text is trunca...|
+
+EX:
+<dl class="row">
+  <dt class="col-sm-3">Description lists</dt>
+  <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
+
+  <dt class="col-sm-3">Term</dt>
+  <dd class="col-sm-9">
+    <p>Definition for the term.</p>
+    <p>And some more placeholder definition text.</p>
+  </dd>
+
+  <dt class="col-sm-3">Another term</dt>
+  <dd class="col-sm-9">This definition is short, so no extra paragraphs or anything.</dd>
+
+  <dt class="col-sm-3 text-truncate">Truncated term is truncated</dt>
+  <dd class="col-sm-9">This can be useful when space is tight. Adds an ellipsis at the end.</dd>
+
+  <dt class="col-sm-3">Nesting</dt>
+  <dd class="col-sm-9">
+    <dl class="row">
+      <dt class="col-sm-4">Nested definition list</dt>
+      <dd class="col-sm-8">I heard you like definition lists. Let me put a definition list inside your definition list.</dd>
+    </dl>
+  </dd>
+</dl>
+
+
+
+
+~~~~~~ RESPONSIVE IMAGES ~~~~~~~
+
+Responsive Images
+	> Images in Bootstrap are made responsive with .img-fluid. 	
+	> This applies max-width: 100%; and height: auto; to the image so that it scales with the parent element.
+
+"img-fluid"
+	> makes image responsive
+	> add following properties
+		- width:100%
+		- height: auto
+
+ex:
+    <div class="container">
+      <div style="width: 40%; border: 5px red solid">
+        <img src="https://picsum.photos/500/300" alt="" class="img-fluid" />
+      </div>
+    </div>
+
+
+
+
+Image thumbnails
+	> In addition to our border-radius utilities, you can use .img-thumbnail to give an image a rounded 1px border appearance.
+
+"img-thumbnail"
+	> along with "img-fluid" properties, it will add additional properties like
+		1. border of 1px solid gray
+		2. border radius of 0.25rem
+
+
+
+
+Image alignment
+	> for aligning image in their parent element, we can either
+		1. Use helper float classes
+			-> if we do this, make sure to use div with "clearfix" class after the float image
+		2. Use margin x-axis: auto
+			-> mx-auto
+		3. Use text align utilities
+			-> text-center class
+
+
+
+
+
+~~~~~~ UTILITIES ~~~~~~~
+I. Background
+	1. Background color
+	2. Background gradient
+II. Borders
+	1. Border
+		- additive
+		- subtractive
+	2. Border color
+	3. Border width
+	4. Border radius
+	5. Border radius size
+III. Colors
+	1. Colors
+IV. Display Property
+	1. Display
+	2. Display on print
+V. Flex
+	1. Flex direction
+	2. Justify content
+	3. Align items	
+	4. Align self
+	5. Flex fill
+	6. Flex grow
+	7. Flex shrink
+	8. Flex wrap
+	9. Flex item order
+	10. Align content
+VI. Float
+	1. Float
+VII. Interactions
+	1. Text selection
+	2. Pointer events
+VIII. Overflow
+	1. Overflow
+IX. Position
+	1. Postion values
+	2. Arrange element
+	3. Center elements
+X. Shadow
+	1. Shadow
+XI. Sizing
+	1. Sizing relative to parent
+	2. Sizing relative to viewport
+XII. Spacing	
+	1. Margin
+	2. Padding
+	3. Centering using margins
+XIII. Text
+	1. Text alignment
+	2. Text wrapping and overflow
+	3. Word break
+	4. Text transform
+	5. Font size
+	6. Font weight and style
+	7. Line height
+	8. Monospace font
+	9. Reset text or link color
+	10. Text decoration
+XIV. Vertical alignment
+	1. Vertical alignment
+XV. Visibility
+	1. Visibility
+
+
+I. Background
+1. Background color
+	> set the background color, NOT the text color
+
+NOTATION:
+bg-{color}
+
+Colors
+.bg-primary
+.bg-secondary
+.bg-success
+.bg-danger
+.bg-warning
+.bg-info
+.bg-light
+.bg-dark
+.bg-body
+.bg-white
+.bg-transparent
+
+
+2. Background-gradient
+	> adds a LINEAR gradient as background image to the backgrounds
+	> we can do this by adding "bg-gradient" class at element with background color class
+		-> ex: "bg-warning bg-gradient"
+
+
+
+II. Border
+1. Border
+	> adds or removes a border in the element
+	> for removing the border, add "-0" at the end of the Border class
+		-> ex: "border-top-0" removes border at top
+
+NOTATION
+border-{side}
+	> no side specified will apply border in ALL SIDES
+
+Sides
+top
+bottom
+left
+right
+start
+end
+
+
+2. Border color
+	> adds color to the border
+	> we will do this by adding "border-{color}" class
+		-> ex: "border border-primary"
+
+NOTATION:
+border-{color}
+
+Colors
+primary
+secondary
+success
+danger
+warning
+info
+light
+dark
+white
+
+
+
+3. Border width
+	> adds width to the border
+
+NOTATION:
+border-{size}
+
+Sizes
+1-5	1 being the thinnest, 5 being the thickest
+
+
+
+4. Border radius
+	> adds and defines the Border radius of the element
+	
+NOTATION
+rounded-{side}
+	> blank means border radius is applied to all sides
+
+Side/s
+top
+end
+bottom
+start
+circle
+pill
+
+
+
+5. Border radius size
+	> scales the border radius sizes
+
+NOTATION
+rounded-{size}
+
+Sizes
+0-3	0 having no radius, 3 being highest radius
+
+
+
+
+III. Colors
+1. Colors
+	> defines the text color
+
+NOTATION
+text-{color}-{font-weight}
+
+Colors
+.text-primary
+.text-secondary
+.text-success
+.text-danger
+.text-warning
+.text-info
+.text-light
+.text-dark
+.text-body
+.text-muted
+.text-white
+.text-black
+
+Sizes
+0-1000	0 being the lightest (more transparent) and 0 being the heaviest
+
+
+
+IV. Display
+1. Display
+	> define the display property of the element
+
+NOTATION
+.d-{value} for xs
+.d-{breakpoint}-{value} for sm, md, lg, xl, and xxl
+
+Values
+    none
+    inline
+    inline-block
+    block
+    grid
+    table
+    table-cell
+    table-row
+    flex
+    inline-flex
+
+
+
+2. Display on print
+	> we can also define if the element will be shown when Printing
+
+NOTATION
+.d-print-{value}
+
+Values
+    none
+    inline
+    inline-block
+    block
+    grid
+    table
+    table-cell
+    table-row
+    flex
+    inline-flex
+
+
+
+
+V. Flex
+1. Flex direction
+	> defines the flex direction of the element
+	> will only take effect if element have "d-flex"
+
+NOTATION:
+flex-{breakpoint}-{direction}
+
+Directions
+row
+column
+
+
+	
+2. Justify content
+	> used to change the alignment of the flex items on the main axis 
+		-> x axis if flex-row
+		-> y axis if flex-column
+
+NOTATION:
+justify-content-{breakpoint}-{value}
+
+Values
+start
+end
+center
+between
+around
+evenly
+
+
+
+3. Align items	
+	> similar to CSS Flexbox "align-items"
+	> defines how the flex items is arranged inside flex container
+
+NOTATION:
+align-items-{position}
+align-items-{breakpoint}-{position}
+
+Positions
+start
+end
+center
+baseline
+stretch
+
+
+
+4. Align self
+	> added in a flex item
+	> align a flex-item inside the flex container
+
+NOTATION:
+align-self-{position}
+align-self-{breakpoint}-{position}
+
+Positions
+start
+end
+center
+baseline
+stretch
+
+
+
+5. Flex fill
+	> added in a flex item
+	> makes the flex item occupy ALL THE REMAINING SPACES
+		-> if added in one or more flex item, they will share the remaining space
+
+NOTATION:
+flex-fill
+
+
+6. Flex grow
+	> defines the ability of a flex-item to grow to fill available space
+	> 1 will allow the flex item to grow to occupy the remaining space
+
+NOTATION:
+flex-{breakpoint}-grow-{0|1}
+
+Number
+Any positive non-zero integer
+
+
+
+7. Flex shrink
+	> defines the ability of a flex-item to shrink 
+	> 1 will allow the flex-item to shrink for other flex-item to occupy the given space
+	> 0 will NOT ALLOW the flex-item to shrink
+
+NOTATION
+flex-{breakpoint}-shrink-{0|1}
+
+
+
+
+8. Flex wrap
+	> defines the behavior of the flex-items in case they overflow in flex-container
+	> nowrap will have the flex-items overflow in container
+	> wrap will have the flex-items go to the next flex row/column
+	> wrap will have the flex-items go to the next flex row/column but in reverse
+
+NOTATION:
+flex-{breakpoint}-{wrap|no-wrap|wrap-reverse}
+
+
+
+9. Flex item order
+	> defines the order of flex item arrangement
+	> lowest will appear nearer at START
+
+NOTATION:
+order-{number|first|last}
+
+Number:
+Any integer
+
+
+
+
+10. Align content
+	> added in flex-container
+	> defines how the flex-row/columns will be arranged in the container
+	> WILL NOT HAVE AN EFFECT in a flex-container with single row/column
+
+NOTATION:
+align-content-{breakpoint}-{position}
+
+Positions:
+start
+end
+center
+around
+stretch
+
+
+
+
+VI. Float
+1. Float
+	> allows an element to "float" left or right, or disable floating, based on the current viewport size
+	> start and end values are there to support the LTR and RTL orientation of words
+
+NOTATION:
+float-{position}
+float-{breakpoint}-{position}
+
+Positions
+start
+end
+none
+
+
+
+VII. Interactions
+1. Text selection
+	> specifies the way in which the content is SELECTED when the user interacts with it
+
+NOTATION
+user-select-{value}
+
+Values
+all
+auto
+none
+
+
+2. Pointer events
+	> defines if the element is interactable or not
+	> these property is inherited by child elements
+	> for preventing non-pointer interactions (i.e. keyboard), either
+		-> use tabindex="-1" HTML attribute
+		-> use aria-disable="true" HTML attribute
+		-> use disabled HTML attribute
+
+NOTATION:
+pe-{value}
+	
+Values:
+auto
+none
+
+
+
+
+VIII. Overflow
+1. Overflow
+	> used to configure the overflow property of an element
+
+NOTATION:
+overflow-{values}
+
+Values
+auto
+hidden
+visible
+scroll
+
+
+
+IX. Position
+	> main use is the additional info at the top 
+1. Postion values
+	> used to define the positioning property of an element
+	> these are NOT RESPONSIVE
+
+NOTATION:
+position-{values}
+
+Values:
+static
+relative
+absolute
+fixed
+sticky
+
+
+
+2. Arrange element
+	> we can arrange the element's position by adding position values
+	> used in CONJUNCTION with Position classes
+		-> ex: position-absolute top-0 start-0
+
+NOTATION
+{property}-{position}
+
+Properties
+    top - for the vertical top position
+    start - for the horizontal left position (in LTR)
+    bottom - for the vertical bottom position
+    end - for the horizontal right position (in LTR)
+
+Values
+    0 - for 0 edge position
+    50 - for 50% edge position
+    100 - for 100% edge position
+
+
+3. Center elements
+	> to absolutely center an element, we can use the "translate-middle" class
+		-> since by default, using the top-50 doesnt position the element at the center of the parent
+		-> it instead align the end/start side to the horizontal/vertical middle axis
+	> "translate-middle" class does the following
+		-> translateX(-50%)
+		-> translateY(-50%)
+
+NOTATION:
+translate-middle
+translate-middle-{axis}
+
+Axis
+x
+y
+
+
+X. Shadow
+1. Shadow
+	> add or remove shadows to elements
+	> we can specify how much shadow an element have
+
+NOTATION:
+shadow-{value}
+	> not passing a value will result in regular shadow (sm < reg < lg)
+
+Values
+none
+sm
+lg
+
+
+
+
+XI. Sizing
+1. Sizing relative to parent
+	> we can define the size of an element relative to its parent by using
+
+NOTATION:
+{property}-{size}
+
+Property
+w	width
+mw	max-height
+h	height
+mh	max-height
+
+Size
+0-100	percentage of parent size
+
+
+2. Sizing relative to viewport
+	> we can also define a size of an element relative to viewport's size
+
+NOTATION:
+{property}-{size}
+
+Property
+vw 	viewport width
+vh	viewport height
+min-vw	minimum width
+min-vh	minimum height
+
+Size
+0-100	percentage of Viewport
+
+
+
+XII. Spacing	
+1. Margin and Padding
+	> we can define margins and padding in Bootstrap using the utility classes
+	> the size of these margins and paddings are RESPONSIVE
+
+Notation / Syntax
+{property}{sides}-{size}
+{property}{sides}-{breakpoint}-{size}	// margin/padding for specific breakpoint
+
+Property
+    m - for classes that set margin
+    p - for classes that set padding
+
+
+Sides
+    t - for classes that set margin-top or padding-top
+    b - for classes that set margin-bottom or padding-bottom
+    s - (start) for classes that set margin-left or padding-left in LTR, margin-right or padding-right in RTL
+    e - (end) for classes that set margin-right or padding-right in LTR, margin-left or padding-left in RTL
+    x - for classes that set both *-left and *-right
+    y - for classes that set both *-top and *-bottom
+    blank - for classes that set a margin or padding on all 4 sides of the element
+
+Sizes
+    0 - for classes that eliminate the margin or padding by setting it to 0
+    1 - (by default) for classes that set the margin or padding to $spacer * .25
+    2 - (by default) for classes that set the margin or padding to $spacer * .5
+    3 - (by default) for classes that set the margin or padding to $spacer
+    4 - (by default) for classes that set the margin or padding to $spacer * 1.5
+    5 - (by default) for classes that set the margin or padding to $spacer * 3
+    auto - for classes that set the margin to auto
+
+$spacer = 1rem
+
+
+EX:
+m-5	> increase margin in ALL SIDE by 3rem
+ml-2	> increase margin in LEFT SIDE by 0.5rem
+mx-3	> increase margin in LEFT AND RIGHT SIDE by 1rem
+
+
+2. Centering using margins
+	> we can center items either horizontally or vertically using the margins
+		-> mx-auto for horizontal center
+		-> my-auto for vertical center
+
+
+XIII. Text
+1. Text alignment
+	> NOTE: text alignment property is INHERITED by child classes
+
+NOTATION:
+text-{position}
+text-{breakpoint}-{position}
+
+Positions
+start
+center
+end
+
+
+2. Text wrapping and overflow
+
+NOTATION:
+text-{wrap|no-wrap}
+
+
+3. Word break
+	> with "text-break", it will apply the following properties
+		-> word-wrap: break-word
+		-> word-break: break-word
+
+
+4. Text transform
+	> transform the text into either lowercased, UPPECASED, or Capitalized
+
+NOTATION
+text-{lowercase|uppercase|capitalize}
+
+
+5. Font size
+	> only apply font-size CSS property
+
+NOTATION:
+fs-{size}
+
+Sizes
+1-6	1 being the largest, 6 being the smallest
+
+
+6. Font weight
+
+NOTATION:
+fw-{value}
+
+Values:
+bold
+bolder
+normal
+light
+lighter
+
+
+7. Font style
+
+NOTATION:
+fst-{italic|normal}
+
+
+8. Line height
+	> defines the height of each line
+		-> not to be confused with font-size/height
+		-> synanomous with linespacing
+
+NOTATION:
+lh-{value}
+
+Values
+1
+sm
+base
+lg
+
+
+9. Monospace font
+	> "font-monospace"
+
+
+
+10. Reset text or link color
+	> reset a text or links color so that it inherits the color from its parent
+		-> if parent has "text-muted", link inside it will have "text-muted" property IF the link have "text-reset"
+
+NOTATION:
+"text-reset"
+
+
+11. Text decoration
+	> used to decorate the text
+
+NOTATION:
+text-decoration-{value}
+
+Values
+underline
+line-through
+none
+
+
+
+XIV. Vertical alignment
+1. Vertical alignment
+	> defines the vertical alignment of the elements
+		-> NOTE: ONLY AFFECTS inline, inline-block, inline-table, and table cell elements
+
+NOTATION:
+align-{position}
+
+Position
+baseline
+top
+middle
+bottom
+text-top
+text-bottom
+
+
+
+XV. Visibility
+1. Visibility
+	> defines the visibility of the element
+	> can either be 
+		-> "visible"
+		-> "invisible"
+
+
+
+
+~~~~~ CONTENT - TABLE ~~~~~~~~~
+1. Table
+2. Variant / colors
+3. Accented tables
+	- Striped rows
+	- Hoverable rows
+	- Active tables/row/cell
+4. Table borders
+	- Bordered tables
+	- Tables without borders
+5. Small table
+6. Vertical alignment
+7. Nesting
+8. Anatomy
+	- Table head
+	- Table foot
+	- Captions
+9. Responsive tables
+	- Always responsive
+	- Breakpoint specific
+
+
+1. Table
+	> to create a Bootstrap Table, use "table" class
+	> only applicable in <table> elements
+
+NOTATION
+table
+
+
+2. Variant / colors
+	> we can also define the colors/theme of the table/row/column
+	> applicable in any element inside table (table, thead, tbody, tr, th, td)
+
+NOTATION
+table-{color}
+
+Colors
+primary
+secondary
+success
+danger
+warning
+info
+light
+dark
+
+
+
+3. Accented tables
+	> Striped rows
+		- "table-striped"
+		- will apply alternating alpha of color to table rows
+		- applicable with table variants
+			-> ex: <table class="table-primary table table-striped">
+	> Hoverable rows
+		- "table-hover"
+		- makes the table so that when we hover in a row, it will change color
+	> Active tables/row/cell
+		- "table-active"
+		- applied in table rows and table cell
+		- makes it look like it is active (darker)
+
+
+4. Table borders
+	> Bordered tables
+		- "table-bordered"
+		- applicable in table
+		- can be used together with border color utilities
+			-> ex: <table class="table table-bordered border-primary">
+	> Tables without borders
+		- "table-borderless"
+		- removes the borders of the table, rows, and cells
+
+
+5. Small table
+	> "table-sm"
+	> applied in table
+	> makes table more COMPACT by cutting all cell padding in HALF
+
+
+6. Vertical alignment
+	> here, we will use the vertical alignment utility classes of Bootstrap (ex: .align-center, .align-top, .align-bottom)
+		-> applied in table, tr, or td elements
+	> table cells in thead element is always vertically aligned in BOTTOM
+	> table cells in tbody element INHERITS their alignment from table element and aligned to the TOP by default
+
+
+7. Nesting
+	> KEY NOTE: Border styles, active styles, and table variants are NOT inherited by nested tables.
+
+
+8. Anatomy
+	> Table head
+		- we can use .table-light, .table-dark, or any variant to emphasis the thead
+	> Table foot
+	> Captions
+		- we can use caption element to serve as "heading" for a table
+		- help users with screen readers to find a table and understand what it is about and decide if they want to to read it
+
+
+9. Responsive tables
+	> Always responsive
+		- by making the tables responsive, it allows the tables to be scrolled HORIZONTALLY with ease
+		- we can also apply breakpoints to define when it will be responsive
+	> Breakpoint specific
+
+NOTATION
+.table-responsive
+	> will be responsive in ANY screen
+.table-responsive-{breakpoint}
+	> will be responsive when above the specified breakpoint
+	> ex: .table-responsive-xl will be responsive over xl breakpoint
+
+
+
+
+~~~~~ COMPONENTS - ALERTS ~~~~~
+Alerts
+	> used to provide contextual feedback messages for typical user actions with the handful of available and flexible alert messages.	
+	> typically have the following
+		1. Alert header (RARE)
+		2. Alert content
+		3. Button for closing the alert (needs Bootstrap JS alert plugin)
+
+Creating Alert
+1. Add "alert" to the element
+2. Add "alert-{color}" to decorate the alert
+3. Add role="alert" for ARIA
+
+Optional
+1. "alert-heading" for the element to be used for alert heading
+2. "alert-link" for links inside the alert
+	-> this will make the link inherit the properties of alert (specifically COLOR)
+3. Specify the alert icon by adding element inside the "alert"
+
+
+Dismissing an alert
+	> needs to have the alert JS plugin
+1. Add a close button
+2. Add "alert-dismissible" class to the "alert" element
+	> adds extra padding to the right of the alert and positions the close button
+3. Add "data-bs-dissmiss="alert"" attribute to the close button
+	> triggers the JS functionality
+	> be sure to use button element
+4. Add "fade" or "show" to add animations to alert
+	> fade for adding fade effect when closing
+	> show for adding show effect when closing
+
+
+
+
+~~~~~ COMPONENTS - TOAST ~~~~~
+1. Toast overviews
+2. Basics
+3. Interactability / live
+4. Translucent body
+5. Stacking toast
+6. Custom content
+7. Color Scheme
+8. Placement
+9. Usage
+	- Options
+	- Methods
+		a. show
+		b. hide
+		c. dispose
+		d. getInstance
+		e. getOrCreateInstance
+
+
+1. Overview
+	> Toasts are lightweight notifications designed to mimic the push notifications that have been popularized by mobile and desktop operating systems. They’re built with flexbox, so they’re easy to align and position.
+	> Things to know when using the toast plugin:
+		a. Toasts are opt-in for performance reasons, so YOU MUST INITIALIZE THEM YOURSELF.
+		b. Toasts will AUTOMATICALLY hide after 5 seconds if you do not "autohide: false"
+	
+Classes used
+"toast"
+	> used to create Toast
+"toast-header"
+	> used to create Toast Header
+"toast-body"
+	> used to create Toast Body
+
+HTML Attribute used
+data-bs-dismissing="toast"
+	> added to a Button inside a Toast
+	> used to dismiss the Toast the button is nested on
+
+
+2. Basics
+	> Toast must have 
+		1. Header
+		2. Body
+	> Header must contain
+		1. Title
+		2. At least ONE Close button (STRONGLY ENCOURAGED)
+	> Body represents the content of Toast message
+		-> recommended to nest all content of Toast body in ONE element
+
+
+
+3. Interactability / Live using Button
+	> To show a Toast
+		> fetch the Button element and Toast using JS
+		> if Button is present, add eventListenter to the Button, and inside the if statement
+			a. create new Bootstrap Toast using bootstrap.Toast(toastElemenet);
+			b. call show() of the Bootstrap Toast
+	> Add "hide" class in "toast" to INITIALLY HIDE the Toast
+	> To close a Toast
+		1. Add Button inside the "Toast"
+		2. Add "data-bs-dismiss="toast"" attribute to the Button
+
+
+4. Translucent body
+	> Toasts are slightly translucent to blend in with what’s below them.
+
+
+5. Stacking toast
+	> for Stacking Toast, nest all the "toast" element inside an element with "toast-container"
+	> "toast-container" will do the following things
+		a. Stack the "toast" element inside them vertically, like flex column items
+		b. Adds margin/space between each "toast" element
+
+6. Custom content
+	> we can remove other Components inside the Toast
+	> but we need to have at least minimum of
+		1. Toast message content
+		2. Close button with data-bs-dismiss="toast" attribute
+
+
+7. Color Scheme
+	> we can also apply text color and background utility classes in the Toast messages
+	> ex: "text-white" "bg-primary"
+
+
+8. Placement
+	> we typically add these notification at the TOP RIGHT, as well as TOP MIDDLE
+	> for placing them at corners, nest the Toast inside a "toast-container"
+		-> we will them position the "toast-container" element at screen corner
+		-> RECOMMENDED: Add padding to avoid Toast to stick at edge of container/screen
+
+
+9. Usage
+
+Fetching all Toast elements and initializing Bootstrap toast for methods
+
+	var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+	var toastList = toastElList.map(function (toastEl) {
+	  return new bootstrap.Toast(toastEl, option)
+	})
+
+Options
+	> these options can be passed via data attributes or JavaScript
+	> for data attribute, append the option name to "data-bs-" (ex: data-bs-animation="")
+
+Name		Type		Default		Description
+animation	boolean		true		Apply a CSS fade transition to the toast
+autohide	boolean		true		Autohide the toast
+delay		number 		5000		Delay hiding the toast (ms)
+
+
+Methods
+	> these methods are ASYNCHRONOUS and starts a transition
+	> returns to the caller as soon as the transition started but before it ends
+	> in addition, a method call on a transitioning component will be IGNORED
+
+a. show
+	> Reveals an element’s toast. Returns to the caller before the toast has actually been shown (i.e. before the shown.bs.toast event occurs). You have to manually call this method, instead your toast won’t show.
+	> EX: toast.show()
+
+
+b. hide
+	> Hides an element’s toast. Returns to the caller before the toast has actually been hidden (i.e. before the hidden.bs.toast event occurs). You have to manually call this method if you made autohide to false.
+	> EX: toast.hide()
+
+
+c. dispose
+	> Hides an element’s toast. Your toast will remain on the DOM but won’t show anymore.
+	> toast.dispose()
+
+d. getInstance
+	> Static method which allows you to get the scrollspy instance associated with a DOM element
+
+EX:
+var myToastEl = document.getElementById('myToastEl')	// Fetch the "toast" element
+var myToast = bootstrap.Toast.getInstance(myToastEl) // Returns a Bootstrap toast instance
+
+e. getOrCreateInstance
+	> Static method which allows you to get the scrollspy instance associated with a DOM element, or create a new one in case it wasn’t initialised
+
+EX:
+var myToastEl = document.getElementById('myToastEl')
+var myToast = bootstrap.Toast.getOrCreateInstance(myToastEl) // Returns a Bootstrap toast instance
+
+
+
+Events
+Event type 		Description
+show.bs.toast 		This event fires immediately when the show instance method is called.
+shown.bs.toast 		This event is fired when the toast has been made visible to the user.
+hide.bs.toast 		This event is fired immediately when the hide instance method has been called.
+hidden.bs.toast 	This event is fired when the toast has finished being hidden from the user.	
+
+EX:
+var myToastEl = document.getElementById('myToast')
+myToastEl.addEventListener('hidden.bs.toast', function () {
+  // do something...like remove notification count on Facebook
+})
+
+	
+
+
+~~~~~ COMPONENT - NAVBAR ~~~~~~
+Navbar on Bootstrap
+	> responsive by default where if Navbar's width is less than the total width of Navbar item, it will collapse and be expandable
+		-> Expandable content is where you can expand a content/menu using some button (i.e. hamburger icon)
+
+How Navbar works
+	> Navbars require a wrapping .navbar with .navbar-expand-{breakpoint} for responsive collapsing and color scheme classes
+	> Navbars and their contents are FLUID by default. 
+		-> Change the container to limit their horizontal width in different ways (ex: define .container inside .navbar)
+	> Use spacing and flex utility classes for controlling spacing and alignment within navbars
+	> Use <nav> element for defining .navbar wrapping element
+		-> if using div, add role="navigation" to every navbar
+	> Indicate the current item by using aria-current="page" for the current page or aria-current="true" for the current item in a set.
+
+
+Supported content
+.navbar-brand 	
+	> for your company, product, or project name.
+.navbar-nav 	
+	> for a full-height and lightweight navigation (including support for dropdowns).
+.navbar-toggler 	
+	> for use with our collapse plugin and other navigation toggling behaviors.
+Flex and spacing utilities for any form controls and actions.
+.navbar-text 
+	> for adding vertically centered strings of text.
+.collapse.navbar-collapse 
+	> for grouping and hiding navbar contents by a parent breakpoint.
+Add an optional .navbar-scroll to set a max-height and scroll expanded navbar content.
+
+
+Class usage hierachy
+.navbar
+	.navbar-brand
+	.navbar-toggler
+	.navbar-collapse .collapse			> used together in single element
+		.navbar-nav
+			.nav-item			> can be omitted if we opt to div .navbar-nav
+				.navbar-link
+
+
+Creating Navbar
+1. Create a nav element
+2. Add "navbar" class
+
+
+Adding Responsiveness to Navbar
+	> by default, Navbar collapses at xl breakpoint
+	> to define the collapse breakpoint, add .navbar-expand-{breakpoint} class in .navbar
+
+NOTATION:
+.navbar-expand-{breakpoint}
+
+
+Defining Width of Navbar
+	> we can modify the width of Navbar by defining the width of element inside it
+1. Add a div element inside the .navbar
+2. Add .container or .container-fluid class
+
+
+Supported content
+1. Brand
+	> .navbar-brand class
+	> for your company, product, or project name
+	> stands out the most in the Navbar
+		- ex: Fb logo in Facebook Navbar
+	> we can nest several contents in .navbar-brand element like
+		a. Text
+		b. Image
+		c. Text and Image
+
+EX: .navbar-brand with image
+        <a class="navbar-brand" href="#">
+          <img
+            src="https://mdbootstrap.com/img/Marketing/mdb-press-pack/mdb-dark.jpg"
+            alt=""
+            width="50px"
+            height="35px"
+          />
+        </a>
+
+
+
+2. Nav
+	> to create a Nav inside the Navbar, we will need to
+		a. Wrap the list with element 	
+			-> .collapse and .navbar-collapse class
+			-> id that matches the data-bs-target value of .navbar-toggler button
+
+EX:
+In .navbar-toggler
+data-bs-target="#navbarSupportedContent"
+In .div that serves as wrapper
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+		b. Inside the wrapper, create the following
+			-> div with .navbar-nav class
+			-> add .nav-link to each link element inside the div
+			-> OPTIONAL: add disabled attribute to disable link element
+
+
+3. Forms
+	> Immediate child elements of .navbar use flex layout and will default to justify-content: space-between. 
+	> Use additional flex utilities as needed to adjust this behavior.
+
+
+4. Text
+	> .navbar-text class
+	> this class adjust vertical alignment and horizontal spacing for strings of text
+
+
+Color schemes
+	> we can modify the background color of the Navbar with utility classes
+	> as for text color, Bootstrap offers two classes for dark and light backgrounds
+		-> .navbar-light for light backgrounds
+		-> .navbar-dark for dark backgrounds
+
+
+Placement
+	> we can define the placement of the Navbar with the following classes
+	> these class are added in .navbar element
+
+.default
+	> when we scroll past the Navbar, Navbar STAYS IN PLACE
+.fixed-top
+	> when we scroll past the Navbar, the Navbar STAYS AND BE FIXED AT TOP of viewport
+.fixed-bottom
+	> when we scroll past the Navbar, the Navbar STAYS AND BE FIXED AT TOP of viewport 
+
+
+
+Customizing the Position of Navbar Brand and Toggler
+	> we can customize the position of Brand and Toggler when in collapsed form by changing the markup arrangement
+
+1. No navbar brand when collapse
+	> to do this, put the .navbar-brand inside the div that will collapse
+
+2. Left navbar-brand, right .navbar-toggler
+	> define the .navbar-brand first before the .navbar-toggler
+
+3. Right navbar-brand, left .navbar toggler
+	> define the button for .navbar-toggler first before the Brand
+
+
+
+Using Collapse plugin for External content
+	> we can use the collapse plugin as long as
+		1. Button for .navbar-toggler is nested inside nav class
+		2. Toggler's data-bs-target is same as the Collapse element's id
+		3. Element to expand must have .collapse class to have it collapse initially
+		4. The collapsed element and navbar must be wrap in an element (div)
+
+EX:
+    <div class="container my-5">
+      <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark p-4">
+          <h5 class="text-white h4">Collapsed content</h5>
+          <span class="text-muted">Toggleable via the navbar brand.</span>
+        </div>
+      </div>
+      <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarToggleExternalContent"
+            aria-controls="navbarToggleExternalContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </nav>
+    </div>
+
+
+
+
+~~~~~ COMPONENT - NAV and TAB ~~~~~
+Nav	
+	> Navigation available in Bootstrap share general markup and styles, from the base .nav class to the active and disabled states. 	> Swap modifier classes to switch between each style.
+
+Creating Nav
+I. Using list
+1. Create a list element and add "nav" class
+2. Populate the list with list item with class "nav-item"
+3. Add link element inside list item with class "nav-link"
+
+II. Using nav
+1. Create nav element with class "nav"
+2. Populate the nav with link elements with class "nav-link"
+3. Specify if nav-link is active by added "active" or "disable" class
+"nav"
+	> used to create a navigation
+	> typically added in a list element
+"nav-item"
+	> used to specify a navigation item
+	> added in a list item inside a list
+"nav-link"
+	> used to specify a link inside a navigation item
+	> added in a link element inside list item
+
+
+
+
+Nav Styles
+	> .nav class is created with flexbox capabilities
+
+1. Horizontal
+	> nav uses flex-direction: row by default
+2. Vertical
+	> use flex-column class
+
+
+Nav items alignment
+	> use justify-content-* classes to align the .nav-item elements
+
+
+
+
+~~~~~~ COMPONENT - TABS ~~~~~~
+Tab
+	> Takes the basic nav from above and adds the .nav-tabs class to generate a tabbed interface. 
+	> Use them to create tabbable regions with our tab JavaScript plugin.
+	> With Tabs, we can create tabbable panes of local content
+	> to use Nav Tab, add .nav-tab class to a .nav element
+	> EX: <ul class="nav nav-tabs">
+
+
+Pill
+	> another style of Nav, but with Tab looking like pills/button when active
+	> to use Nav pill, add .nav-pill class to a .nav element
+	> ex: <ul class="nav nav-pills">
+
+
+Fill and Justify
+.nav-fill
+	> added in a .nav element
+	> this makes the Nav items takes ALL THE SPACE in a Nav
+
+.nav-justified
+	> added in a .nav element
+	> this makes the Nav items takes ALL THE SPACE and have SAME WIDTH
+
+
+Tabbable panes of Local Content using Nav
+RULES:
+1. No Dropdowns in Nav items
+2. role="tablist", role="tab", role="tabpanel", and additional aria- attributes ARE REQUIRED in order to convey their structure, functionality and current state to users of assistive technologies (such as screen readers)
+	> role="tablist" 	added to .nav element
+				for <nav> markup, add the role in a div that wraps the .nav-item, then wrap the .nav to the div
+	> role="tab" 		added to .nav-link
+	> role="tabpanel"	added to .tab-pane
+3. As best practice, use <button> elements for the tabs
+
+
+
+Creating Nav for Tabbable panes
+1. Create a Nav
+	> either by using <ul> or <nav> markup
+2. Add the classes need
+	> .nav
+	> .nav-item	
+	> .nav-link
+3. Add the required role attribute for each Nav parts
+	> role="tablist" 	added to .nav element
+	> role="tab" 		added to .nav-link
+	> role="tabpanel"	added to .tab-pane
+	> NOTE: For <nav> markup, DO NOT ADD the role="tablist" in <nav>. 
+		Instead, add div inside the <nav>, add the original content of the <nav> inside, then add the role="tablist" in div
+4. Add the necessary data api attributes in the tab Buttons
+	> data-bs-toggle="tab" is a MUST
+	> data-bs-target="#{tabpanelId}" value must MATCH the ids of the tabpanels
+	> ex: if tabpanel id is "home", then data-bs-target="#home"
+
+Creating TabPanels for Tabbable panes
+1. Create a div that will contain the Tabpanels
+2. Add .tab-content class to the div above
+3. Inside the .tab-content, add several divs that will serve as tab panel
+4. In each div tabpanels, add the following
+	> .tab-pane class
+	> id that should match the data-bs-target of its corresponding tab
+	> role="tabpanel"
+
+EX:
+<div class="d-flex align-items-start">
+  <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+    <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</button>
+    <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</button>
+    <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</button>
+    <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</button>
+  </div>
+  <div class="tab-content" id="v-pills-tabContent">
+    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">...</div>
+    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
+    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
+    <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
+  </div>
+</div>
+
+
+
+Fade effect in Tab
+	> add "fade" to each .tab-pane elements to add fade effect when changing tabs
+
+
+
+
+~~~~~ EXTEND - ICON ~~~~~~
+Icons
+	> Bootstrap offers Icons that can be used in a project
+
+Installation method
+1. using npm
+	npm i bootstrap-icons
+2. using compiled svgs
+3. using CDN
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+
+Methods of using Bootstrap Icon
+1. Download SVG and include it in HTML
+2. Use icon element and give it the appropriate class
+	> available only when using web font
+	> NOTE: To adjust icon added using icon element, use FONT-SIZE
+3. Copy and paste the svg element
+
+
+Using Bootstrap Icon
+1. Import the CSS file for Bootstrap icons
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+2. Add the Bootstrap icon that you want
+	> with the bootstrap-icons.css, we can use the icon element
+
+
+
+
+~~~~~~ FORMS - FORM CONTROL ~~~~~~~
+Forms
+	> Bootstrap offers several classes to modify the base form properties
+1. Form
+2. Sizing
+3. Disabled
+4. Readonly
+5. Readonly plaintext
+6. Fileinput
+7. Color
+8. Datalist
+
+1. Example
+Creating Simple Bootstrap Form
+1. Create normal form with form, label, input elements (input, checkbox, select, textarea, button)
+2. Add the following classes in each of the elements inside the form element
+
+.form-label
+	> added in the label element for the input
+	> adds 0.5rem margin at bottom
+
+
+2. Sizing
+
+.form-control
+.form-control-{size}
+	> added in input element
+	> makes it so that input occupies 100% width
+	> when focused, adds bluish border glow
+	> Size sets the height of the .form-control
+		- lg for Large	
+		- sm for small
+
+
+3. Disabled
+
+disabled
+	> boolean attribute added in input
+	> disables the input
+
+
+4. Readonly
+readonly
+	> boolean attribute added in input element
+	> prevent modification in input's value
+
+
+5. Readonly plain text
+.form-control-plaintext
+	> added in input with readonly attribute
+	> remove the default form field styling and preserve the correct margin and padding
+
+
+6. File input
+.formFile
+.formFile{size}
+.formFileDisabled
+.formFileMultiple
+	> added in input element of type "file"
+	> .formFileDisabled makes file input disabled
+	> .formFileMultiple for multiple file 
+
+
+7. Color
+.form-control-color
+	> added in input type="color"
+
+
+8. Datalist
+	> we can create group of option element that can be accessed through an input
+	> to do this, we need to 
+		1. Create input element
+		2. Define the list attribute of element
+			-> this MUST MATCH the id of the datalist element
+		3. Create a datalist element
+		4. Define id of datalist element
+			-> MUST MATCH the value of the list attribute of input
+		5. Define several option elements inside the datalist
+
+
+
+~~~~~ FORMS - SELECT ~~~~~~
+1. Default
+2. Sizing
+3. Disabled
+
+1. Default
+	> only need .form-select in select element to use custom style
+	> cant modify the option elements due to browser limitation
+
+.form-select
+	> added in select element
+selected
+	> added in option element
+	> defines the default value of the select
+multiple
+	> added in select element
+	> attribute
+size
+	> attribute element
+	> added in select element
+	> defines the max number of options displayed
+		-> ex: size="3"
+
+
+2. Sizing
+	> added in select
+	> used ALONGSIDE .form-select
+
+.form-select-{size}
+	
+Sizes
+lg
+sm
+
+
+
+3. Disabled
+
+disabled
+	> attribute added in select
+	> disables the select element
+
+
+
+~~~~~ FORMS - CHECKS AND RADIOS ~~~~~~
+1. Checks
+	a. Intederminate
+	b. Disabled
+2. Radios
+	a. Disabled
+3. Switches
+4. Default Stacking
+5. Inline sstacking
+6. Without labels
+7. Toggle Buttons
+	a. Checkbox toggle button
+	b. Radio toggle button
+	c. Outlined style 
+
+
+1. Checks
+	> to create a Bootstrap check
+		- create div with class .form-check
+		- inside each div.form-check, add
+			a. input with 
+				- type="checkbox" and 
+				- class .form-check-input
+				- id
+			b. label with 
+				- class .form-check-label
+				- for attribute which match the id of input
+
+.form-check
+	> added in div that wraps both input and label
+.form-check-input
+	> added in the input inside the .form-check
+.form-check-label
+	> added in the label inside the .form-check
+
+
+
+a. Indeterminate Checks
+	> we can utilize the ::indeterminate pseudo class when manually set via JS
+
+ex:
+              <script>
+                let checkbox = document.getElementById(
+                  "flexCheckIndeterminate"
+                );
+                checkbox.indeterminate = true;
+	      </script>
+
+
+
+b. Disabled
+	
+disabled
+	> attribute of element
+	> added so that it disables the checkbox
+
+
+
+2. Radios
+	> same format as the Checkbox, but with input whose type is "radio"
+
+a. Disabled
+	> same as disabling checkbox, we add disabled attribute to input
+
+
+
+3. Switches
+	> works like a custom checkbox
+	> for ARIA, add role="switch" to input
+		-> by default its announced as regular checkbox
+
+.form-switch
+	> added in div.form-check element
+	> used in CONJUNCTION with .form-check
+
+disabled
+	> html attribute
+	> added in input to disable it
+
+
+
+4. Default Stacking (VERTICAL)
+	> by default, any number of checkbox/radios inside .form-check wrapper is stack VERTICALLY
+
+
+5. Inline 
+	> to change the arrangement of checkbox/radio inside div wrapper, ADD .form-check-inline to the div wrapper
+
+.form-check-inline
+	> align the checkboxes HORIZONTALLY
+
+
+6. Without labels
+	> to create checkbox/radio without labels
+		a. remove .form-check class in div wrapper
+		b. remove label element inside each div wrapper
+
+
+7. Toggle Buttons
+	> we can do this by using .btn styles instead of .form-check-label in label elements
+	> to create toggable buttons, we will need to
+		1. Create input with following properties
+			- type="checkbox" or "radio"
+			- class .btn-check
+			- id that MATCHES that for value of label
+			- autocomplete="off"
+		2. Create label with following properties
+			- class of .btn and .btn-{variants} (.btn-primary)
+			- for that MATCHES the id value of input
+	> to create Outlined style of toggle buttons
+		1. Use .btn-outline-{variant} instead of .btn-{variant} in the label
+
+
+
+
+~~~~~ FORM - RANGE ~~~~~
+1. Overview
+2. Disabled
+3. Min and max
+4. Steps
+
+1. Overview
+	> to create custom controls of <input type="range">, we will need to add .form-range class
+
+.form-range
+	> added in <input type="range">
+	> changes the visual look of range
+
+2. Disabled
+	> add disabled attribute in input to disable the range
+
+3. Min and max
+	> by default, min and max values are 0 and 100
+	> to define custom min and max values of range, define the min and max properties
+		-> ex: <input type="range" class="form-range" min="0" max="5" id="customRange2">
+
+4. Steps
+	> by default, range input "snaps" to interger values
+	> to change this, specify the step attribute value in input
+		-> ex: <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">
+
+
+
+~~~~~ FORMS - INPUT GROUPS ~~~~~~
+Input groups
+	> in Bootstrap, we can easily extend form-cotnrols by adding text, buttons, or buttons groups on either side of textual inputs, custom selects and custom file inputs
+
+Creating Input groups
+1. Create div wrapper
+	- class .input-group
+2. Add input element inside the div wrapper
+	- class .form-control
+3. Add the extensions you want inside the div wrapper as immediate sibling of input
+	> this can be either span (with icon inside), checkbox, radio, buttons etc
+	> for checkbox and radio, wrap them inside a div
+4. Input group extensions must have
+	- class .input-group-item
+5. For button extension, .input-group-item can be omitted for .btn styles
+
+Classes
+.input-group
+	> added inside a div wrapper for input
+	> used for grouping up input group
+	> gives the div border radius and makes the element inside occupy all space
+.input-group-text
+	> used in extension of input in input groups
+	> gives it a grayish background
+
+
+
+
+
+~~~~~ FORMS - FLOATING LABELS ~~~~~~
+Creating the Floating label effect
+	> works only in Inputs with textbox
+	> what this does is 
+		a. Add the Label inside the Input
+		b. When Input is focus or not empty, the Label will be shift to the top right, and font-size gets smaller
+1. Create a div to wrap the input
+	> add .form-floating class to the wrapping div
+2. Add the input and label elements inside the .form-floating div
+	> input must be defined FIRST before the label
+	> input must have PLACEHOLDER attribute
+
+NOTE: Can work with .form-select as well for select elements
+
+EX:
+                      <div class="form-floating mb-3">
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="floating-label"
+                          placeholder=""
+                        />
+                        <label for="exampleInputPassword1"
+                          >Floating label</label
+                        >
+                      </div>
+
+
+
+~~~~~ FORMS - LAYOUT ~~~~~~
+Forms in Bootstrap
+1. Since most .form-control is display: block and width:100%, they stack VERTICALLY
+2. For Horizontal inputs (label and input are in same horizontal place)
+	-> use .col-form-label class to align the label to its input vertically
+
+
+
+
+~~~~~ FORMS -  VALIDATION ~~~~~~
+1. Browser Default
+	> adding required attribute to the input will trigger the default validation
+	> only checks if input is NOT POPULATED
+2. Custom Style
+	> needs custom JS to do validation
+
+Creating Custom Styles
+1. Create form
+	> add a class (we will need this for fetching the form for JS use)
+	> add novalidate attribute
+		- this will allow as to use custom Bootstrap form validation messages
+2. Add div elements inside
+	> serves as wrappers for inputs, labels, and the custom validation message (valid, invalid)
+3. Inside div, add the following
+	> label
+		-> .form-label class
+		-> for value must MATCH the id value of input
+	> input
+		-> .form-control class
+		-> id must MATCH the for value of label
+		-> must have required attribute
+	> div in case of input groups
+		-> .input-group
+		-> contains input and extension
+			=> input id must match label for value
+			=> input must have required attribute
+		-> MUST contain .has-validation class
+4. Inside div as well, add the following
+	> div for when input is valid
+		-> .valid-feedback class
+	> div for when input is invalid
+		-> .invalid-feedback class
+
+
+Javascript for Form validation
+1. Fetch the form element
+	-> use document.querySelectorAll() and pass the identifier (id, class, etc)
+2. Loop through all forms using forEach
+3. In each form, add eventListener for 'submit'
+4. Inside th event listener, 
+	-> prevent default behavior with preventDefault()
+	-> check the value of form.checkValidity() method
+	-> if false, call stopPropagation() and return
+	-> else, add .was-validated to form using form.classList.add()
+
+EX:
+<form class="row g-3 needs-validation" novalidate>
+  <div class="col-md-4">
+    <label for="validationCustom01" class="form-label">First name</label>
+    <input type="text" class="form-control" id="validationCustom01" value="Mark" required>
+    <div class="valid-feedback">
+      Looks good!
+    </div>
+  </div>
+  <div class="col-md-4">
+    <label for="validationCustom02" class="form-label">Last name</label>
+    <input type="text" class="form-control" id="validationCustom02" value="Otto" required>
+    <div class="valid-feedback">
+      Looks good!
+    </div>
+  </div>
+  <div class="col-md-4">
+    <label for="validationCustomUsername" class="form-label">Username</label>
+    <div class="input-group has-validation">
+      <span class="input-group-text" id="inputGroupPrepend">@</span>
+      <input type="text" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required>
+      <div class="invalid-feedback">
+        Please choose a username.
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <label for="validationCustom03" class="form-label">City</label>
+    <input type="text" class="form-control" id="validationCustom03" required>
+    <div class="invalid-feedback">
+      Please provide a valid city.
+    </div>
+  </div>
+  <div class="col-md-3">
+    <label for="validationCustom04" class="form-label">State</label>
+    <select class="form-select" id="validationCustom04" required>
+      <option selected disabled value="">Choose...</option>
+      <option>...</option>
+    </select>
+    <div class="invalid-feedback">
+      Please select a valid state.
+    </div>
+  </div>
+  <div class="col-md-3">
+    <label for="validationCustom05" class="form-label">Zip</label>
+    <input type="text" class="form-control" id="validationCustom05" required>
+    <div class="invalid-feedback">
+      Please provide a valid zip.
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+      <label class="form-check-label" for="invalidCheck">
+        Agree to terms and conditions
+      </label>
+      <div class="invalid-feedback">
+        You must agree before submitting.
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <button class="btn btn-primary" type="submit">Submit form</button>
+  </div>
+</form>
+
+
+
+~~~~~ COMPONENTS ~~~~~~
+Accordion
+	> similar to collapse
+	> Accordion can only have ONE Active item
+
+Badge	
+	> adds a icon/badge to an element
+	> typically used for notification with number or just a dot
+
+Breadcrumb
+	> used to indicate the current page's location within a navigational hierarchy that automatically adds separators via CSS
+
+Button groups
+	> used to group up buttons
+	> similar to input groups
+
+Dropdowns
+	> uses dropdown plugin JS
+	> gives an option to use dropdown to show contents
+
+Listgroups
+	> similar to Cards and Panels
+	> uses list and list elements as base
+
+Popovers
+	> similar to tooltips
+	> make a Content appear/disappear when certain elements are clicked
+	> uses PopperJS
+
+Tooltips
+	> shows an messages when hovering to certain elements
+
+Spinners
+	> indicate loading state of a component or page
+	> can be similar to loading icons
+
+Progress
+	> indicate the progress state of a component or page
+	> similar to a progress bar
+
+Scroll spy
+	> used to automatically update Bootstrap navigation or list group components based on scroll position to indicate which link is currently active in the viewport.
+	> used in nav components or list groups
+
+
+
+~~~~~ COMPONENT - MODALS ~~~~~
+Modals
+	> we can create modals using Bootstrap class
+	> for functionality (open/close), we can use the data api
+	> by default, modal closes when user click outside the modal
+
+Creating Modal
+1. Create div for wrapping entire modal
+	-> .modal class
+	-> tabindex of -1
+2. Create div inside the div.modal for wrapping the modal dialog
+	-> .modal-dialog class
+3. Create another div inside the div.modal-dialog
+	-> .modal-content class
+4. Inside the .modal-content div, we can create three div
+	-> 1st div for modal header
+	-> 2nd div for modal body
+	-> 3rd div for modal footer
+5. For modal header div
+	-> .modal-header class
+	-> inside, we can define the modal title and a close button
+		=> modal title will have .modal-title class
+		=> button can have .btn-close for predefined close button style
+6. For modal body, we can modify it whenever we want
+7. For modal footer, we can add some buttons
+	-> these buttons can also be used to close the modal
+
+
+Adding Opening/Closing functionality
+1. Create a button to open the modal
+	-> data-bs-toggle="modal"
+	-> data-bs-target="#{modal-id}" must MATCH the id value of the .modal element
+		=> ex: if .modal element have id="modalEx1", then data-bs-target="#modalEx1"
+2. Add attributes to the buttons inside Modal to be used for closing it
+	-> data-bs-dismiss="modal"
+
+
+
+Static backdrop
+	> with this, User will be able to close the modal ONLY by using buttons inside modal with 'data-bs-dismiss="modal"'
+	> to do this, we will need to add data-bs-backdrop="static" and data-bs-keyboard="false"
+
+data-bs-backdrop="static"
+	> prevent user from closing modal by touching outside it
+data-bs-keyboard="false"
+	> prevent user from closing modal by using ESC key in keyboard
+
+
+
+Scrollable Modal
+	> to make modal scrollable, add .modal-dialog-scrollable class in CONJUNCTION to .modal element
+	
+<!-- Scrollable modal -->
+<div class="modal-dialog modal-dialog-scrollable">
+
+
+
+
+Vertically Centered Modal
+	> to make modal vertically centered, add .modal-dialog-centered in CONJUNCITON to .modal element
+
+<!-- Vertically centered modal -->
+<div class="modal-dialog modal-dialog-centered">
+
+
+
+Adding fade effect to Modal
+	> to add fade effect, we can use .fade class ALONGSIDE .modal element
+		=> <div class="modal fade">
+
+
+		

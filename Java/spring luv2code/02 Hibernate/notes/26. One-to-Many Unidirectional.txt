@@ -1,0 +1,48 @@
+Hibernate 1-N Uni
+	> In Unidirectional 1-N, we will NOT add @ManyToOne to the N Identity
+		- in this case, we will not add @ManyToOne to Review Entity
+
+Real World Project Requirement
+	> Previously we have these following entities
+		- Instructor
+		- Instructor Details
+		- Course
+	> Now we will add Review entity
+		- Course -> 1-N -> Review
+		- will cascade delete operation from Course to Review
+
+
+
+1. Create Review Class
+	> Review Class will have the following properties
+		- int id
+			= @Id, @GeneratedValue
+		- String comment
+
+2. Add a reference to Review entity in Course entity
+	> add List<Review> in the Course
+		- annotate with 
+			= @OneToMany
+				- define fetch type to LAZY
+				- define cascade type to ALL
+			= @JoinColumn
+				- define the name of the join column
+	> add convenience methods for adding reviews
+		- needed only since we defined the relationship as LAZY LOADING type
+		- public void add(Review tempView)
+		- inside, check if List<Review> property is null
+			= if null, assign the property as new ArrayList<>()
+			= if not, add the Review parameter
+
+3. In the Main App
+	> setup Hibernate
+		- create a Session using HibernateUtility
+		- create Transaction object using Session.beginTransaction()
+	> create Course object
+	> add Review object to Course object using add()
+	> save the Course object in Session
+	> call commit() of Transaction object
+	> create another Transaction again
+	> using the Id of the Course object we addded, fetch it again
+	> print the Course object
+	> print the Review object inside Course object

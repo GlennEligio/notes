@@ -1,0 +1,40 @@
+12 Flux and the subscribe method
+
+Flux<T>
+ > A Reactive Streams Publisher with rx operators that emits 0 to N elements, and then completes (successfully or with an error).
+ > this emitted element can then be received by observer through  operators (ex: subscribe)
+ > the emission rate can also be define when we create the Flux object
+
+
+Flux<T>.subscribe()
+Flux<T>.subscribe(Consumer<? super T> consumer)
+ > "subscribe" a callback/function that will consume the emitted elements of the Flux
+ > this means that anytime an element is emitted, the Consumer function passed will run
+
+EX:
+public class Exercise2 {
+
+    public static void main(String[] args) throws IOException {
+
+
+        // Use ReactiveSources.intNumbersFlux() and ReactiveSources.userFlux()
+
+        // Print all numbers in the ReactiveSources.intNumbersFlux stream
+        ReactiveSources.intNumbersFlux().subscribe(System.out::println);
+
+        // Print all users in the ReactiveSources.userFlux stream
+        ReactiveSources.userFlux().subscribe(System.out::println);
+
+        System.out.println("Press a key to end");
+        System.in.read();
+    }
+
+}
+
+
+
+NOTES:
+1. The behavior subscribe in a Flux will continue to run forever, until we close the application
+2. Flux emits event independently to each other
+	> this means that if we define two Flux next to each other, both of them will emit (and execute behavior subscribed on them) in parallel and not in sequence
+

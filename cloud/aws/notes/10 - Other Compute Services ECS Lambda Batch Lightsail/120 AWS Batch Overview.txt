@@ -1,0 +1,53 @@
+120 AWS Batch Overview
+
+AWS Batch
+ > fully managed batch processing at any scale
+ > Efficiently run 100,000s of computing batch jobs on AWS
+ > A "batch" job is a job with a start and an end (opposed to continuous)
+ > Batch will dynamically launch EC2 instances or Spot instances
+ > AWS Batch provisions the right amount of compute/memory
+ > You submit or schedule batch jobs and AWS Batch does the rest!
+ > Batch jobs are defined as Docker images and run on ECS
+ > Helpful for cost optimizations and focusing less on the infrastructure
+
+
+
+
+AWS Batch - Simplified Example
+
+Amazon S3 (Contains Objects)
+ |
+ | trigger
+ |
+ V
+AWS Batch 
+ > Runs ECS, which contains EC2 instance and/or Spot Instance
+ > Processes the Object
+ |
+ |
+ | Insert processed Object
+ |
+ V
+Amazon S3 (Contains Processed Object)
+ 
+
+
+
+
+Batch vs Lambda
+Lambda:
+ > time limit (max 15 minutes)
+ > limited runtimes (few programming language)
+ > limited temporary disk space
+ > Serverless
+
+Batch
+ > No time limit
+ > Any runtime as long as its packaged as a Docker image
+ > Rely on EBS / instance store for disk space
+ > Relies on EC2 (can be managed by AWS, so no need to think of auto scaling)
+
+
+
+NOTE:
+1. Anything that can run in ECS can run in Batch jobs

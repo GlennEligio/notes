@@ -1,0 +1,451 @@
+Day 10
+
+
+Services
+	> Service provides constant IP for all replica of a Pod
+	> Similar to the Spring Cloud LoadBalancer where it uses "Service Name" to access replica instances of a specific Service
+	> we can create one either by 
+		a. CLI using kubectl expose pod
+		b. Manifest file
+
+
+Types of Services
+	> by default, they have port and targetPort define for Port Mapping/Forwarding
+1. ClusterIP
+	> internal communication (within Cluster)
+	> DOES NOT HAVE nodePort defined
+	> ex: Application fetching data on a Database Container in same Cluster
+2. NodePort
+	> for external communication (can be outside Cluster)
+	> opens on Port range 30000-32767
+	> MUST HAVE nodePort defined for external access
+	> ex: Users outside the K8s cluster access an Application
+3. LB
+	> stands for Loadbalancer	
+	> MUST ALSO HAVE nodePort defined for external access
+
+
+STEPS: NodePort
+1. Go to home dir
+	cd /home/ubuntu
+2. Create svc dir and go inside
+	mkdir svc
+	cd svc
+3. Create Manifest for Deployment
+	vi deploy.yaml
+4. Copy inside the file
+
+# Deployment
+# deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+
+
+5. Create Manifest for NodePort Service
+	vi np.yaml
+
+6. Copy inside the file
+
+# Service
+# np.yaml
+apiVersion: v1
+kind: Service	
+metadata:
+  name: my-service
+  labels:
+    app: nginx-app
+spec:
+  selector:
+    app: nginx-app
+  type: NodePort
+  ports:
+  - nodePort: 31111
+    port: 80
+    targetPort: 80
+
+NOTES:
+1. labels: must match the labels: of the pods we want to include in this Service
+2. New properties includes:
+targetPort	
+	> Container's Port that is mapped to the Service
+port
+	> Service's port that is mapped to the Container's port
+nodePort
+	> Node's port that is mapped to the Service's port
+
+
+7. Create K8s object using these files
+	kubectl create -f deploy.yaml
+	kubectl create -f np.yaml
+
+
+8.  Check all the current K8s Services running
+	> take note of the port in Services opened by "my-service"
+	kubectl get svc
+9.  Check information of the pods
+	> take note on which node the "nginx-deployment" pods is running
+	kubectl get pods -o wide
+10. See full information of "my-service" Service
+	> we can see that the "my-service" is of type NodePort
+	kubectl describe svc my-service
+11. Check information of pods for no reason
+	kubectl get pods -o wide
+
+ACCESS THE nginx running inside Pod
+	> we can access the nginx with url
+		<ip-address>:<tcp port>
+
+	a. For ip address, use Public IP of Node where Pod is running
+	b. For tcp port, use the nodePort of the "my-service" defined inside Manifest file used to create the Service
+	
+
+STEPS: ClusterIP
+12. Delete current Service
+	kubectl delete svc my-service
+13. Copy content of np.yaml to new file named ci.yaml
+	cp np.yaml ci.yaml
+14. Edit the ci.yaml file (remove nodePort: property)
+	vi ci.yaml
+15. Create K8s object using the ci.yaml file
+	kubectl create -f ci.yaml
+16. Check Services running
+	> take note of the ClusterIP of "my-service" Service
+	kubectl get svc
+17. Call the nginx server running using the ClusterIP of the Service
+	curl <my-sevice clusterIp>
+	curl 10.98.14.71
+18. Create the Manifest file for Load Balance type Service
+	vi lb.yaml
+
+19. Copy inside lb.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  labels:
+    app: nginx-app
+spec:
+  selector:
+    app: nginx-app
+  type: LoadBalancer
+  ports:
+  - nodePort: 31000
+    port: 80
+    targetPort: 80
+
+20. Create K8s object using lb.yaml file
+	kubectl create -f lb.yaml
+20. Delete the "my-service" for clean up
+	kubectl delete svc my-service
+21. Use the lb.yaml file again to create K8s Service
+	kubectl create -f lb.yaml
+22. Check the current running Services
+	kubectl get svc
+
+
+INGRESS	
+	> Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster. 
+	> Traffic routing is controlled by rules defined on the Ingress resource (Manifest file with kind: Ingress)
+	> Used to be able to access ClusterIP services EXTERNALLY
+	> The Ingress MAPS each of the ClusterIP services on a specific "path"
+		- ex: nginx Service on "/nginx" path
+	> Services in K8s cluster are set up in ClusterIP
+		- to map an external path to a ClusterIP Service, we will define it in the paths: of Ingress Manifest file
+	> Below, we can see the ClusterIP type Service 
+		- "nginx" being mapped to "/path" 
+		- "tomcat" being mapped to "/tomcat"
+
+EX:
+#ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: simple-fanout-example
+  annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+     paths:
+     - path: /nginx
+       backend:
+        serviceName: nginx
+        servicePort: 80
+     - path: /tomcat
+       backend:
+        serviceName: tomcat
+        servicePort: 8080
+
+
+
+1. Apply the ingress-nginx yaml file using an external URL
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/baremetal/deploy.yaml
+2. Check the Namespaces (ingress-nginx should be here)
+	kubectl get ns
+3. Check Services running under namespace "ingress-nginx" (ingress-controller should be one of them)
+	kubectl get svc -n ingress-nginx
+4. Run a Pod "nginx" using image of nginx
+	kubectl run nginx --image=nginx
+5. Create a ClusterIP Service "nginx" to expose Pod on Port 80
+	kubectl expose pod nginx --type=ClusterIP --port=80
+6. Check services again, nginx should be here
+	kubectl get svc
+7. Delete "my-service" service in case its still there
+	kubectl delete svc my-service
+8. Check services again
+	kubectl get svc
+9. Run a Pod "tomcat" using image of tomcat
+	kubectl run tomcat --image=tomcat
+10. Create a ClusterIP Service "tomcat" to expose Pod on Port 8080
+	kubectl expose pod tomcat --type=ClusterIP --port=8080
+11. Check services again, tomcat should be there
+	kubectl get svc
+12. Check Pods running, nginx and tomcat should be there
+	kubectl get pods
+13. Delete any deployment 
+	kubectl delete deploy --all
+14. Check Pods again
+	kubectl get pods
+15. Check Services again
+	kubectl get svc
+16. Create Manifest file for K8s Ingress
+	vi ingress.yaml
+17. Copy the text inside
+
+#ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: simple-fanout-example
+  annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+     paths:
+     - path: /nginx
+       backend:
+        serviceName: nginx
+        servicePort: 80
+     - path: /tomcat
+       backend:
+        serviceName: tomcat
+        servicePort: 8080
+
+18. Check services running under "ingress-nginx" namespace
+	kubectl get svc -n ingress-nginx
+19. Check informations of the Pods
+	kubectl get pods -o wide
+20. Create Ingress using ingress.yaml
+	kubectl create -f ingress.yaml
+
+ACCESS nginx and tomcat Service using Ingress defined Path
+	> access nginx and tomcat using the following syntax
+		
+		<ip address>:<tcp port><path>
+
+	> for ip address, use the public ip address of Nodes where nginx or tomcat is running
+	> for tcp port, use the exposed tcp port of the "ingress-controller" Service (between 30000-32767)
+	> for path, use the "path:" defined under "paths:" in the ingress.yaml
+
+		http://52.66.225.225:32711/nginx
+
+
+
+
+K8s VOLUME
+	> storage solution for persisting data
+	> similar to Docker Volumes
+
+Types os K8s
+1. emptyDir
+	> similar to tmpfs of Docker
+		- NON-PERSISTENT
+	> temporary storage folder
+	> initially empty
+	> will disappear if Pod is removed
+2. hostPath
+	> similar to Bind Mount of Docker
+		- PERSISTENT
+		- Data is stored in Host Machine file system running the Pod
+3. Persistent Volume (PV)
+	> similar to Bind Mount where data is Persistent even if Pod is destroyed
+	> But PV have its own lifecycle outside the Pod
+	> This Persistent Volume will RESERVE some space on the Cluster
+	> used in conjunction with Persistent Volume Claim (PVC)
+	> Persistent Volume Claim	
+		- create request for storage by a user, it then fetches a Storage space from Persistent Volume
+		- Claims can request specific size and access modes (e.g., they can be mounted ReadWriteOnce, ReadOnlyMany or ReadWriteMany
+
+
+STEPS: emptyDir
+1. Go to /home/ubuntu
+	cd /home/ubuntu
+2. Create volume dir
+	mkdir volume
+3. Go inside volume
+	cd volume/
+4. Create a Manifest file for Pod with emptyDir volume
+	vi ed.yaml
+5. Copy inside ed.yaml
+
+# nginx-emptydir.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-emptydir
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    volumeMounts:
+    - name: test-vol
+      mountPath: /test-mnt
+  volumes:
+  - name: test-vol
+    emptyDir: {}
+
+6. Create Pod with emptyDir Volume using ed.yaml file
+	kubectl create -f ed.yaml
+7. Check the pods running, nginx-emptydir should be there
+	kubectl get pods
+8. Check full information of the pod, Mount type should be emptyDir
+	kubectl describe pod nginx-emptydir
+9. Go inside the "nginx-emptydir" Pod
+	kubectl exec -it nginx-emptydir -- bash
+
+INSIDE nginx-emptydir
+10. Go to the mountPath defined in ed.yaml
+	cd /test-mnt/
+11. Create files inside it
+	touch 1 2 3 4
+12. Exit the Pod
+	exit
+
+INSIDE Master / Node1
+13. Check which Node the Pod is running
+	kubectl get pods -o wide
+
+INSIDE Node where Pod is running
+14. Go to the Node, and check the files inside the Volume defined in the ed.yaml
+	ls /test-vol/
+
+INSIDE Master / Node1
+15. Delete the Pod
+	kubectl delete pod --all
+
+INSIDE Node where Pod is running
+16. Check the Volume data again, this time it should be empty
+	ls /test-vol/
+
+
+STEPS: hostPath Volume
+17.0 Clean up the enviroment first
+	kubectl delete po nginx-emptydir
+17. Go inside volume dir
+	cd /home/ubuntu/volume
+18. Create Manifest file for Pod with hostPath Volume
+	vi hp.yaml
+19. Copy inside the hp.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-hostpath
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+      volumeMounts:
+      - mountPath: /test-mnt
+        name: test-vol
+  volumes:
+  - name: test-vol
+    hostPath:
+      path: /test-vol
+
+20. Create Pod using hp.yaml file
+	kubectl create -f hp.yaml
+21. Check the Pods
+	kubectl get pods
+22. Check full information of nginx-hostpath Pod, we should see its Mount type is hostPath
+	kubectl describe pod nginx-hostpath
+23. Go inside the "nginx-hostpath" Pod
+	kubectl exec -it  nginx-hostpath -- bash
+
+INSIDE "nginx-hostpath" Pod
+24. Go inside /test-mnt/ dir
+	cd /test-mnt/
+25. Create files inide
+	touch 1 2 3 4
+26. Exit the Pod
+	exit
+
+INSIDE Master / Node 1
+  384  kubectl delete pod --all
+  385  kubectl get pods
+  386  vi hp.yaml
+  387  kubectl create -f hp.yaml
+  388  kubectl get pods -o wide
+  389  kubectl exec -it  nginx-hostpath -- bash
+  390  ls
+  391  vi pv.yaml
+  392  kubectl create -f pv.yaml
+  393  kubectl get pv
+  394  vi pvc.yaml
+  395  kubectl create -f pvc.yaml
+  396  kubectl get pv
+  397  kubectl get pvc
+398  vi pod.yaml
+  399  kubectl create -f pod.yaml
+  400  kubectl get pods -o wide
+  401  kubectl exec -it busybox -- /bin/sh
+  402  kubectl delete pod --all
+  403  kubectl delete pvc --all
+  404  kubectl delete pv --all
+
+
+
+METRIC SERVER
+	> Metrics Server is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.
+	> Metrics Server collects resource metrics from Kubelets and exposes them in Kubernetes apiserver through Metrics API
+		
+
+STEP:
+1. Fetch MetricServer package
+	wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+2. Create namespace
+	kubectl create ns kubernetes-infra
+
+
+
+KUBECTL LIVELINESS AND READINESS CHECKS
+	> use to check 
+
+
+
+CAPSTONE
+1. Create Github repo public BankingMicroservice
+2. Push your code
+3. Create a Readme.md file
+4. Share that link with me

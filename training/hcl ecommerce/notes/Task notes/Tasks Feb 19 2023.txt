@@ -1,0 +1,138 @@
+SOURCE: https://help.hcltechsw.com/commerce/9.1.0/data/refs/rmldataloadsample.html
+
+Task #1 STORECONF dataload
+SOURCE: https://help.hcltechsw.com/commerce/9.1.0/data/refs/rmlsamplestoreconfiguration.html
+0. Check the current STORECONF table
+	> SELECT * FROM STORECONF;
+1. Update the StoreConfiguration.csv
+	> add new StoreConfiguration in the following format
+	> <property-name>,<property-value>,<delete-flag>
+		- delete flag: 1 for delete, 0 for not delete
+	> ex: NewPropName,NewPropValue,0
+2. Go to the directory for the sample files for StoreConfiguration data loading
+	> C:\WCDE_V9\samples\DataLoad\StoreConfiguration
+3. Update the wc-dataload-env inside
+	> copy the storeIdentifier and the database setting for AIX/DB2 server from the previous wc-dataload-env file
+	> make sure theres only one <_config:Database> specified
+4. Execute the dataload utility command
+	> dataload.bat C:\WCDE_V9\samples\DataLoad\StoreConfiguration\wc-dataload-store-configuration.xml
+
+EX:
+<_config:BusinessContext storeIdentifier="AuroraESite"></_config:BusinessContext>
+<_config:Database type="db2" name="mall" user="USERNAME" password="PASSWORD" server="localhost" port="50000" schema="wcs" />
+
+
+5. Cleanup:
+	> change the "Delete" column of the items in StoreConfiguration.csv to 1
+	> execute dataload.bat command again
+
+
+
+
+
+Task #2 CATGROUP, CATENTRY
+SOURCE: https://help.hcltechsw.com/commerce/9.1.0/data/refs/rmlsampleinitialload.html
+0. Check current CATGROUP, CATENTRY table
+	> as of now, theres no 
+1. Go to C:\WCDE_V9\samples\DataLoad\Catalog
+2. Check contents of CatalogGroup.csv and CatalogEntries.csv
+	> this will be the data that will be added in the CATGROUP and CATENTRY tables
+3. OPTIONAL: Update the wc-dataload-env.xml
+	> make sure the storeIdentifier and database settings is correct
+4. Execute the dataload utility command
+	> dataload.bat C:\WCDE_V9\samples\DataLoad\Catalog\wc-dataload-catalog-entry.xml
+5. Check the CATGROUP and CATENTRY if they are updated
+
+-- Mens Fashion is in CatalogGroup.csv --
+-- This should result in no matches initially --
+select * from CATGROUP where identifer='Mens Fashions'; 
+-- Dress shirt-White-16 is in CatalogEntries.csv --
+-- This should result in no matches initially --
+select * from CATENTRY where partnumber='Dress shirt-White-16';
+
+NOTES:
+1. CATGROUP update is successful, but the CATENTRY update is not. Error message is indicated below
+Processing CatalogEntry...
+com.ibm.commerce.foundation.dataload.exception.DataLoadConfigException:
+An error occurred while initializing the data load configuration.
+
+The catalog passed in is not a master catalog. Only master catalogs are allowed for the operation. Catalog id=10502, store id = 1.
+
+
+
+
+Task #2 ATTRIBUTEDICTIONARYATTRIBUTE
+0. Check the Attributes Dictionary
+	> select * from attr
+1. Go C:\WCDE_V9\samples\DataLoad\Catalog\AttributeDictionaryAttribute
+2. Check contents of AttributeDictionaryAttributeAndAllowedValues.csv file
+3. Modify the wc-dataload-env.xml file
+	> make sure the storeIdentifer is AuroraESite store
+	> make sure you are using correct database settings
+4. Execute the dataload utility command
+	> dataload.bat C:\WCDE_V9\samples\DataLoad\Catalog\AttributeDictionaryAttribute\wc-dataload.xml
+5. Check if the data in the csv file is reflected in the database as well
+
+NOTES:
+1. Errors
+Program exiting with exit code: 3.
+Load was not successful. An unrecoverable error has occurred.
+
+The program will be terminated.
+Failed load items: [CatalogEntryAttributeDictionaryAttributeRelationship, AttributeDictionaryAttributeAndAllowedValues].
+
+Processing AttributeDictionaryAttributeAndAllowedValues...
+Error loading the data: AllowedValue2=
+Delete=
+AllowedValue1=
+Displayable=true
+Comparable=true
+AllowedValue4=
+AllowedValue3=
+AllowedValue5=
+columnNameListInCSV=[1,Identifier,null,null, 2,Type,null,null, 3,AttributeType,null,null, 4,Sequence,null,null, 5,Displayable,null,null, 6,StoreDisplay,null,null, 7,Comparable,null,null, 8,Facetable,null,null, 9,Searchable,null,null, 10,Merchandisable,null,null, 11,Name,null,null, 12,AllowedValue1,null,null, 13,AllowedValue2,null,null, 14,AllowedValue3,null,null, 15,AllowedValue4,null,null, 16,AllowedValue5,null,null, 17,Delete,null,null]
+CSVLineNumber=13
+Sequence=11
+Facetable=
+Merchandisable=
+loadItemNameLineInCSV=AttributeDictionaryAttributeAndAllowedValues,,,,,,,,,,,,
+Name=Style
+columnHeaderLineInCSV=Identifier,Type,AttributeType,Sequence,Displayable,StoreDisplay,Comparable,Facetable,Searchable,Merchandisable,Name,AllowedValue1,AllowedValue2,AllowedValue3,AllowedValue4,AllowedValue5,Delete
+inputDataLineInCSV=Style,STRING,AssignedValues,11,true,0,true,,,,Style,,,,,,
+Type=STRING
+Identifier=Style
+AttributeType=AssignedValues
+sourceLocation=13
+Searchable=
+StoreDisplay=0
+ at the data source position: 13
+com.ibm.commerce.catalog.dataload.exception.CatalogDataLoadApplicationException: The attribute dictionary attribute "Style" belonging to the store "Extended Sites Catalog Asset Store", cannot be modified in the store "AuroraESite"
+
+
+
+SQL COMMANDS
+-- Assignment 2/17/2023 --
+select * from STORECONF;
+select * from store;
+
+select * from CATGROUP;
+-- Mens Fashion is in CatalogGroup.csv --
+-- This should result in no matches initially --
+select * from CATGROUP where identifier='Mens Fashions'; 
+select * from catgroup where identifier in ('Mens Fashions','Womens Fashions','Pants','Shirts','Activewear',
+'Accessory')
+-- Dress shirt-White-16 is in CatalogEntries.csv --
+-- This should result in no matches initially --
+select * from CATENTRY where partnumber='Dress shirt-White-16';
+select * from catentry where partnumber like 'Cords%'
+
+select * from CATGPENREL;
+select * from CATENTREL;
+-- CordsColor is in AttributeDictionaryAttributeAndAllowedValues.csv --
+-- This should result in no matches initially --
+select * from ATTR where identifier='CordsColor';
+select * from attrvalue where catentry_id in (select catentry_id from catentry where partnumber 
+='Cords-Black-29W x 28L')
+
+select * from offerprice where offer_id in (select offer_id from offer where catentry_id 
+= (select catentry_id from catentry where partnumber ='Cords-Black-29W x 28L'))

@@ -1,0 +1,11 @@
+01 Course Introduction
+
+Course Road Map
+1. Getting Started with JSP: Dev Environment
+2. Explore JSP scripting elements
+3. Reading HTML form data with JSP
+4. Manage application state with Cookies and Sessions
+
+
+JSP
+ > stands for Java Server Pages

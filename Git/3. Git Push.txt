@@ -1,0 +1,137 @@
+GIT PUSH
+
+
+I. Pushing to remote GitHub repository
+
+1. Push the commits we made in local git repo to the GitHub repo
+	> to do a push, use the following command
+
+		git push origin master
+
+	> the command consist of the following
+		origin -> stands for the location of the remote repository
+		master -> stands for the branch where we will push the commits
+
+
+
+2. Check the GitHub repo to see the commits we added there
+	> we can see the commit we made (the Added index.html commit) in the demo-repo in GitHub
+	> also, if we look at the commit, we can see the following
+		= -m text
+		= the changes (addition, removal of lines)
+
+
+
+II. Creating git repository locally
+
+3. Create a new folder
+	> name it demo-repo2
+	> have it located in the same location as demo-repo
+
+
+
+4. Add a README.md file inside it will some text
+
+INSIDE README.md
+
+# Demo 2
+
+Some text.
+
+
+
+
+5. Check if .git folder is inside the newly created demo-repo2
+	> use the command 
+		
+		ls -Force
+	
+	> as we can see, theres no .git folder inside it
+
+
+
+6. Initialize the local git repo for this folder
+	> to do it, use
+
+		git init
+
+	> now, if we take a look at the contents of ls -Force, we will see a .git folder
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d--h--         10/7/2021   8:39 PM                .git
+-a----         10/7/2021   8:39 PM             22 README.md
+
+
+
+7. Add the README.md file in the local git repo
+	> use git add . for adding
+	> use git status to check the local git repo status
+
+
+
+8. Commit the changes we made into the local git repo
+	> use git commit to commit
+
+		git commit -m "Created README" -m "description"
+
+
+
+9. Try pushing the commits into the origin master
+	> if we try it, we will get an error that states
+
+		fatal: 'origin' does not appear to be a git repository
+
+
+
+10. Create a new repository in our GitHub account for us to push the commits
+	> have it the same name as the folder we have in local git (demo-repo2)
+
+
+
+11. Copy the https or ssh link of the remote git repo that weve just made
+
+
+
+12. Add the remote github repo link to our local git as the origin
+	> use the command to do so
+
+		git remote add origin <https-or-ssh-link>
+
+	> in our case, it will be 
+
+		git remote add origin git@github.com:GlennEligio/demo-repo2.git
+
+
+
+13. Check the remote repositories we have in our local git
+	> to check the remote repos we have, use the command
+
+		git remote -v
+
+	> the output should look like this
+
+		origin  git@github.com:GlennEligio/demo-repo2.git (fetch)
+		origin  git@github.com:GlennEligio/demo-repo2.git (push)
+
+
+
+14. Lets now push the commits we have in local git repo to the remote git repo
+	> use the same command as before
+
+		git push origin master
+
+
+
+15. Set an upstream in our local git
+	> upstream means that it will be the default remote whenever we dont specify the remote git repo and the branch that whenever we push
+	> to do this, we add a -u flag before we push on the remote git repo and branch that we want to be the upstream
+	> for example, doing this
+
+		git push -u origin main
+
+	> this will make the origin main whenever we push and doesnt not provide the location. something like this
+
+		git push
+
+

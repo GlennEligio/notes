@@ -1,0 +1,331 @@
+02. HTML structure, elements, attributes
+
+HTML
+	> stands for Hyper text markup language
+	> used to display data in web browser
+	> HTML files uses .html file extension
+	> a client side programming language
+		- this is so that we can run html directly in client's web browser
+	> HTML file is composed of HTML <elements>
+
+
+HTML Element
+	> compose of opening and closing tag
+		- ex: <element>Content</element>
+	> there are some element where closing tag is OPTIONAL
+		- these elements use WITHOUT CONTENT between opening and closing tags
+		- ex: <br>	<link>
+
+
+Structure of HTML
+1. <html>
+	> represent the root of the HTML page
+	> in JavaScript, can be referred to as the document variable
+	> contains all the data of an HTML page
+	> contains two parts:
+		a. <head>
+			- contains metadata, links, stylesheet, etc
+			- represent the collection of metadata in the HTML document
+		b. <body>
+			- contains the elements used to populate HTML page with displays
+			- represent the content of the HTML page
+
+<head> elements
+<title>
+	> represents the document's title or name
+	> defines the name of browser tab of the HTML page
+
+
+<body> elements
+
+<br>
+	> linebreak
+	> used to create space between line
+
+<hr>
+	> linebreak but with a horizontal line
+
+<b>
+	> represents a bold text
+	> all text inside this tag is in BOLD
+<strong>
+	> text inside this are STRONG
+<big>
+	> text inside this tag are BIG
+<em>
+	> text inside this are EMPHASIZED
+<i>
+	> text inside this are in ITALIC
+<small>
+	> text inside this are in SMALL
+
+<pre>
+	> all text inside this will be displayed as is
+		- will ignore the whitespace reduction of HTML
+
+<p>
+	> stands for paragraph element
+	> theres a linebreak before the paragraph content
+		
+<h1>
+<h2>
+<h3>
+<h4>
+<h5>
+	> represents a section heading
+	> the higher the number, the smaller the font size of content
+
+<img>
+	> represents an image 
+	> have parameters like
+		a. src
+			= defines the source of the image
+			= can be a URL for internet image or file directory for loca image file in project
+		b. alt
+			= defines the text displayed if image cant be rendered for some reason
+
+ex: 
+    <img
+      src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+      alt="Google logo"
+    />
+    <img
+      src="./googlelogo_color_272x92dp.png"
+      alt="Google logo in project file"
+    />
+
+
+
+Linktag to navigate in HTML page
+	> we can use Link tags to navigate to a page
+	> to do this, we will 
+		1. Create a link tag
+			- for href, use the id or name attribute of the element we want to navigate
+			- syntax: href="#id" or href="#name"
+			- ex: <a href="#c4"><h1 id="c4">Chapter 4</h1>
+
+<a>
+	> represent a link tag where user can interact to navigate to another page
+	> have parameters like
+		a. href
+			= refers to the location of the page to navigate
+			= can be 
+				- URL link to navigate to webpage in internet, or 
+				- HTML file directory to navigate to another page in project
+		b. target
+			= refers to where we will display the webpage
+			= can be
+				- "_self" where it will open the page on the same browser tab (default)
+				- "_blank" where it will open the page in a new blank page
+EX:
+    <a href="https://www.google.com">Google Link</a>
+    <a href="./04-image.html">04 Link HTML in local project directory</a>
+
+
+
+
+LIST
+
+<li>
+	> refers to a List Item
+
+<ul>
+	> refers to an Unordered List
+	> list is displayed without numbers
+	> can nest <li> elements
+
+<ol>
+	> refers to an Ordered List
+	> list is display WITH numbers
+	> can nest <li> elements inside 
+
+EX:
+    <p>Unordered List</p>
+    <ul>
+        <li>One</li>
+        <li>Two</li>
+        <li>Three</li>
+    </ul>
+
+    <p>Ordered List</p>
+    <ol>
+        <li>One</li>
+        <li>Two</li>
+        <li>Three</li>
+    </ol>
+
+
+Nested List
+	> list nested inside a list
+	> in a list item <li> of a list <ul> or <ol>, theres another <ul> or <ol>
+
+
+<div>
+	> represents a division
+	> a block level element, takes up a whole line (hence division)
+
+<span>
+	> represents a span in a line
+	> an inline level element, takes up a portion of a line (hence span)
+
+
+
+
+TABLE
+
+<table>
+	> represents a table
+	> can nest <tr> table row
+<tr>
+	> represents a table row
+	> can nest <td> table data, or <th> table header
+<td>
+	> represents a table data
+	> have attributes 
+		a. colspan
+			= define the column span of a specific table cell
+<th>
+	> represents a table heading
+	> same as table data, but they are in BOLD
+	> have attributes
+		a. colspan
+			= define the column span of a specific table cell
+<thead>
+	> represents a table head 
+		- nested inside are table row that represents the table headings
+<tbody>	
+	> represents a table body
+		- nest inside are table row that represents the body of table
+
+
+
+FORM
+
+<form>
+	> represents a form where user can input different data to send to another webpage
+	> this element can nest different element that can be used to take data like input, checkbox, radiobutton, etc
+	> we can then use input of type button or button itself to send out those data
+	> have attributes like
+		a. action
+			> define the destination of the form data to send
+			> can be a 
+				- URL to another page in internet
+				- file location of an HTML in project
+		b. method
+			> define the HTTP method used to send form data
+			> can be POST, GET, DELETE, PUT, etc
+		c. 
+
+
+<form>
+	> represents a form
+	> form is used to send data
+	> inside a form, there are <input>, <select>, and <textarea> nested inside to be able to input data
+
+Form attribute
+1. action
+	> defines where the form data will be submitted
+	> can be an external url to internet OR html page to the same project
+2. method
+	> defines the HTTP method to use when submitting data	
+		- GET will have the data submitted to query parameters
+		- POST will have the data submitted to request body
+
+
+<input>
+	> represents an input
+	> input is used to input data in form
+
+Input attributes
+1. input
+	> defines the input type of <input>
+	> can be
+		a. text, for text inputs
+		b. password, same as text input but the character is changed to hide the actual character
+		c. checkbox, for checkbox input type
+			- for checkbox, we can have more than ONE value
+			- for this type, if we want to have multiple checkbox option, we can create more than one
+			- but they MUST HAVE the same name value 
+		d. radiobutton
+			- radiobutton can have only ONE value to it
+			- to create more than ONE option, radiobutton inputs must have SAME NAME attribute
+		e. file
+			- used to upload file
+			- you will be given an "upload" button to prompt you to choose the file
+		f. hidden
+			- used to send hidden hardcoded data
+			- this input will NOT be displayed in the form
+		g. submit
+			- used to send the data of form to the "action"
+		h. reset
+			- used to reset the values in form
+2. value
+	> value of a specific input
+	> if we give this a value, it will be displayed in the textbox
+		- we can still change this in the HTML page itself
+3. size
+	> defines the size of the input textbox's length
+4. maxlength
+	> defines the max length of an <input>'s value
+5. name
+	> defines the name of the data
+
+
+<select>
+	> used to create dropdown menu 
+	> dropdown menu will have multiple options available for users to choose
+	> to add options, add <option> inside the select
+	> have the following attribute
+		a. name
+			= defines the name of the data to send
+		b. multiple
+			= defines if user can choose multiple options
+
+<option>
+	> represents an option
+	> nested inside a select tag
+	> have attribute
+		a. value
+			= defines the value of the option
+
+<textarea>
+	> represents a textarea
+	> used to pass a large body of text in form
+	> have the following attribute
+		a. name	
+			= represents the name of data
+		b. cols and rows
+			= represents the column and row size of textarea (by character size)
+
+
+
+
+
+EXTENSIONS FOR HTML DEVELOPMENT
+1. Live Server
+	> made by Ritwick Dey
+	> launch a development live server that displays the html page Live
+		- any changes in HTML file will be reflected in Live Server
+
+
+
+HTML ATTRIBUTES
+	> for each HTML elements, we can modify them by specifying their HTML attributes
+	
+SYNTAX
+<element attribute1=value attribute2=value> Content </element>
+
+	> some of the attributes common in <body> HTML elements are
+		a. style
+			= use to define a in-line CSS for the element
+		b. border
+			= used to define border properties of an element
+		c. title
+			= used to provide more information
+			= when mouse cursor to the element, it will show a textbox
+
+
+
+
+
+

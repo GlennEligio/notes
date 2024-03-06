@@ -1,0 +1,101 @@
+41 RHCSA RHEL 8 - Configure time service clients
+
+Injection of Value in String
+ > to inject output of a command as string, we can use the backticks (`)
+ > ex:
+	$ echo `date`
+
+
+Logging with Date
+ > with "date" command, we can add date in our logs, either in log filename or log content
+ > ex:
+	$ touch log-`date +%d%m%y-%H%M%S`.log
+		- creates a log file with filename that includes the current date in specific format
+
+
+Changing value of Hardware Clock from System Clock and vice-versa
+ > we can use the "hwclock" command along with the "-w" or "-s" flags to set the clock based on the value of other clock
+ > this is because sometimes either of HW or SYS clock is wrong
+ > ex: 
+	$ hwclock -w
+		- set hardware clock to systemclock
+	$ hwclock -s
+		- set system clock to hardware clock
+
+
+Time and Date synchronization with Internet
+ > with NTP, the timedatectl can synchronize the date time from the internet
+ > uses chrony daemon to do the synchronization 
+	- before RHEL8, uses ntp daemon
+ > to setup the chrony daemon, we will do the following
+	$ dnf install chrony
+	$ systemctl start chronyd
+	$ systemctl status chronyd
+	$ vi /etc/chrony.conf			- check if theres a public servers configured to pool the time and date
+	$ chronyc sources			- using chrony CLI, check the sources
+	$ timedatectl set-ntp yes		- enable network time protocol
+	$ timedatectl				- check if ntp is set to yes and if systemclock sync is yes
+
+
+
+
+Commands
+date
+ > print or set the system date and time
+ > sypnosis
+	$ date [OPTION]... [+FORMAT]
+ 	$ date [-u| --uct | --universal] [MMDDhhmm[[CC]YY][.ss]]
+ > FORMAT includes
+	%d	day of month
+	%m	month (01,...,12)
+	%y	last two digit of year (20,21,22)
+	%H	hour of day in 24H format
+	%M	minute of the hour
+	%S 	second of the minute
+ > ex:
+	$ date +%d%m%y
+		- prints 180320 for date march 18 2020
+
+
+hwclock
+ > time clocks utility
+ > stands for hardware clock
+ > needs root access to use
+ > sypnosis:
+	$ hwclock [function] [option...]
+ > options:
+	-s	set the system clock from the hardware clock
+	-w 	set the hardware clock from the system clock
+ > ex:
+	$ hwclock -s
+	$ hwclock -w
+
+
+timedatectl
+ > control the system time and date
+ > sypnosis:
+	$ timedatectl [OPTIONS...] [COMMAND]
+ > commands:
+	set-time		sets the system time and date
+	list-timezones	list all timezones
+	set-timezone	sets the system timezone
+	set-ntp		sets the NTP (Network Time Protocol)
+ > ex:
+	$ timedatectl
+		- prints the current systme time and date information
+	$ timedatectl set-time 2020-03-18
+	$ timedatectl set-time 22:43:00
+		- sets the date time to 2020-03-18 22:43:00
+	$ timedatectl list-timezones
+		- list all timezones
+	$ timedatectl set-timezone Australia/Melbourne
+	$ timedatectl set-ntp yes
+
+
+chronyc
+ > command-line interface for chrony daemon
+ > sypnosis
+	$ chronyc [OPTION]... [COMMAND]...
+ > command:
+	sources	- list all sources for internet timedate synchronization
+	

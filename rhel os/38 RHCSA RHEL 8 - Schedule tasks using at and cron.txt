@@ -1,0 +1,83 @@
+38 RHCSA RHEL 8 - Schedule tasks using at and cron
+
+Scheduling tasks
+ > there are two services used to schedule task
+	1. at - schedule ONCE OFF tasks such as reboot a server
+	2. cron  - schedule REPETITIVE tasks such as execute a backup
+
+at
+ > to install at module, use the command below
+ 	$ dnf install at
+ > to check status, start, or enable at daemon at boot, use the commands below
+	$ systemctl status atd
+	$ systemctl start atd	
+	$ systemctl enable atd
+
+
+cron
+ > built in module to the Linux OS
+ > we have two options to set up a scheduled job with cron
+	1. use "crontab" command to manually setup the date to execute and the commands to execute
+ 	2. insert script files inside the "/etc/cron" directory, which contains specific folder to contain daily, hourly, monthly task to executed
+
+
+Writing in crontab
+ > there is a specific syntax when scheduling a task/command in the crontab
+	mm hh dm mth dw command
+ 		Where:
+			mm is minute, 
+			hh is hour, 
+			dm is day of the month, 
+			mth is the month and 
+			dw is the day of the week, 
+ > Use crontab.guru to help with this. Command will be script to run e.g. the backup script.
+
+
+
+Commands
+at
+ > reads commands from standard input or a specified file which are to be executed at a later time
+ > uses /bin/sh
+ > allows fairly complex time specification, extending the POSIX.2 stands. check "man at" for more info about the time input
+ > sypnosis
+	$ at [TIME]			- opens a text editor to enter the commands to execute
+	$ at [TIME] -f [SCRIPT]	- executes a script file at specified time
+ > ex:
+	$ at now + 1 minute
+		- schedules a task 1 minute after now
+		- opens a text editor for you to enter commands to execute
+	$ at 3pm + 3 days -f script.sh
+		- sets up a schedule to execute script.sh at 3pm after 3 days
+
+atq
+ > used to view the queued jobs
+ > list informations like job number, date of execution, user that schedules the task
+ > ex: 
+	$ atq
+
+
+atrm [JOB NUMBER]
+ > removes the scheduled job with specified job number in the queue
+ > ex
+	$ atrm 1 
+
+
+
+crontab
+ > maintains crontab files for individual users
+ > a program used to install a crontab table file, remove or list the existing tables used to serve the cron daemon
+ > each user can have their own crontab, and though these are files in /var/spool, they are not intended to be edit directly
+ > sypnosis
+	$ crontab [-u user] file
+	$ crontab [-u user] [-l | -r | -e] [-i] [-s]
+	$ crontab -n [ hostname ]
+	$ crontab -c
+	$ crontab -V
+ > ex:
+	$ crontab -e
+		- shows the crontab for the current user
+		- here we can add scheduled task by editing it
+	$ crontab -u user1 -e
+		- shows the crontab for the user "user1" and opens a text editor for you to edit
+	$ crontab -l
+		- shows the content of crontab without editing it

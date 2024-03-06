@@ -1,0 +1,600 @@
+Coding Part 4 - PUT, PATCH, DELETE
+
+
+PUT Endpoint -  Plan of Attack
+
+1. Overview of a PUT request
+	> How it's called
+	> What we should expect back
+2. Update our Repository Interface
+3. Update our SQL Repository Implementation
+4. Create a CommandUpdateDto
+5. Create a PUT Action Result method 
+
+
+What is PUT Request
+	> "Full update" - need to supply the entire object (with its entire properties included)
+	> Inefficient (and error prone for large objects)
+	> Not used so much now, PATCH is the favoured approach]
+
+
+includes
+
+204 No Content
+	> typically the response code of the PUT/PATCH request
+	> though it can be 200 OK with the Updated Resource inside it
+
+
+Tips:
+
+1.When creating an interface, think of the general functions of the Interface instead of the Technologies and techniques that we will use with it
+
+2. In the CreateMap<A,B>(), we can only map the source A to the target B. We can't do the other way around. For that, we will need to create another CreateMap<B, A>()
+
+
+
+
+
+I. ADDING PUT Functionality in the Web API
+
+1. Update the Repository Interface
+	> inside the ICommanderRepo, add another method named UpdateCommand()
+
+INSIDE ICommanderRepo interface
+
+    public interface ICommanderRepo
+    {
+        bool SaveChanges();
+        IEnumerable<Command> GetAllCommands();
+        Command GetCommandById(int id);
+        void CreateCommand(Command cmd);
+        void UpdateCommand(Command cmd);
+    }
+
+
+
+
+2. Update the Concrete implementation of the Repository Interface
+	> implement the abstract method we added in the Repository Interface
+	> inside the method, do nothing
+		= this is because we will not need to do anything with regards of DbContext
+		= when we mapped the CommandUpdateDto to the Command model we got from DbContext, the Command model inside DbContext will be updated too and when we SaveChanged(), it will apply to SQL Server as well
+
+INSIDE SqlCommanderRepo class
+
+        public void UpdateCommand(Command cmd)
+        {
+            //Do nothing
+        }
+
+
+
+
+3. Create a CommandUpdateDto class
+	> same content as the CommandReadDto, just different Class name
+	> just copy and past
+
+INSIDE CommandUpdateDto.cs
+
+using System.ComponentModel.DataAnnotations;
+
+namespace Commander.Dtos
+{
+    public class CommandUpdateDto
+    {
+        [Required]
+        public string HowTo{ get; set; }
+
+        [Required]
+        public string Line { get; set; }
+
+        [Required]
+        public string Platform { get; set; }
+    }
+}
+
+
+
+
+
+4. Add another Map in the CommandsProfile class
+	> source will be the CommandUpdateDto and the target is the Command model that we got from the Database by using the ID we pass in the PUT Route Url
+
+INSIDE CommandsProfile class
+
+    public class CommandsProfile : Profile
+    {
+        public CommandsProfile()
+        {
+            // <Source, Target>
+            CreateMap<Command, CommandReadDto>();
+
+            CreateMap<CommandCreateDto, Command>();
+
+            CreateMap<CommandUpdateDto, Command>();
+        }
+    }
+
+
+
+
+
+5. Create a PUT ActionResult method in the CommandsController which will have the following properties
+	a. [HttpPut("{id}")] annotation
+	b. ActionResult return type (no type since we will not add anything in the Response body)
+	c. int id, CommandUpdateDto parameters
+	d. Inside the method body, do the following
+		> fetch the specific Command that we will update using the id we got from the Request Url and calling GetCommandById of repository
+		> add a null check in the Command item
+			= if null, then return a NotFound() ActionResult
+		> if not null, then using the IMapper, map the CommandUpdateDto parameter to the Command item we got from DbContext
+			= this will update the property of the Command item we got INSIDE the DbContext
+		> after mapping, call the SaveChanges() of DbContext and UpdateCommand() of ICommanderRepo
+			= though the UpdateCommand() will not do anything since SaveChanges() will already update the Command item in the SQL Server database
+		> RETURN a NoContent() ActionResult after saving changes
+
+
+INSIDE CommandsController class
+
+        [HttpPut("{id}")]
+        public ActionResult UpdateCommand(int id, CommandUpdateDto commandUpdateDto)
+        {
+            var commandItem = _repository.GetCommandById(id);
+            if(commandItem == null)
+            {
+                return NotFound();
+            }
+            
+            _mapper.Map(commandUpdateDto, commandItem);
+
+            _repository.SaveChanges();
+
+            _repository.UpdateCommand(commandItem);
+
+            return NoContent();
+        }
+
+
+
+
+6. Test the application
+	> save all, build and run
+	> using PostMan, send a GET request to see all the Commands available
+	> choose one of the Commands to update
+	> update the properties of said Command by sending a PUT request
+	> observe response 
+	> send a GET request to check if the Command property has been changed
+
+INITIAL Commands content
+
+[
+    {
+        "id": 1,
+        "howTo": "How to create migrations",
+        "line": "dotnet ef migrations add <Name of Migration>"
+    },
+    {
+        "id": 2,
+        "howTo": "How to run migrations",
+        "line": "dotnet ef database update"
+    },
+    {
+        "id": 3,
+        "howTo": "Run a .NET Core app",
+        "line": "dotnet run"
+    }
+]
+
+PUT Http request URL
+http://localhost:5000/api/commands/1
+
+PUT Http request Body
+    {
+        "howTo": "How to build .NET Core app",
+        "line": "dotnet build",
+        "platform": ".NET CLI"
+    }
+
+
+GET request result after sending PUT request
+[
+    {
+        "id": 1,
+        "howTo": "How to build .NET Core app",
+        "line": "dotnet build"
+    },
+    {
+        "id": 2,
+        "howTo": "How to run migrations",
+        "line": "dotnet ef database update"
+    },
+    {
+        "id": 3,
+        "howTo": "Run a .NET Core app",
+        "line": "dotnet run"
+    }
+]
+
+
+	As we can see, the properties of the Command with ID 1 has been changed.
+
+
+
+
+
+~~~~~~~~~~~~~~~ PATCH ENDPOINT ~~~~~~~~~~~~~~~~~~~
+
+
+PATCH Endpoint - Plan of Attack
+1. Overview of a PATCH Request
+	> How it's called - use of "Patch" Document
+	> What we should expect back
+2. Create a PATCH ActionResult method in Controller
+
+
+
+JSON Patch Standard
+	> JSON Patch standard specific in the RFC 6902
+	> 6 Operations which includes
+		a. Add
+			= applicable only in dynamic object. In our case, the Command object is a static object
+			= inputs are path and the value
+		b. Remove
+			= remove item in specified path
+			= input is the path
+		c. Replace
+			= used to replace an attribute with specific value in a json object
+			= inputs are path and the value
+		d. Copy
+			= used to copy one item to other
+			= inputs are source path and target path of copy operation
+		e. Move
+			= used to move the item from one path to other
+			= inputs are source path and target path of copy operation
+		f. Test
+			= used to check the value of the item in specified path
+			= inputs are source path of item and the item that we will compare it to
+
+
+EXAMPLE of REPLACE and TEST json patch
+[
+	{
+		"op": "replace",
+		"path": "/howto",
+		"value": "Some new value"
+	},
+	{
+		"op": "test",
+		"path": "/line",
+		"value": "dotnet new"
+	}
+]
+
+
+
+
+II. Add PATCH Functionality in the Web API
+
+7. Install necessary packages in order for us to add the PATCH function
+	> add these packages into the Project using .NET Terminal
+		a. dotnet add package Microsoft.AspNetCore.JsonPatch
+		b. dotnet add package Microsoft.AspNetCore.Mvc.NewtonsoftJson
+	> check in the Commander.csproj if the package got included in the Project
+
+
+
+8. Setup the Newtonsoft.Json into our Controller class
+	> add the Newtonsoft.Json.Serialization in the using directive
+	> in the ConfigureService(), append the AddNewtonsoftJson() into the AddController() call
+	> inside the AddNewtonsoftJson(), configure the setUpAction parameter using lambda expression
+		= define the SerializerSettings.ContractResolver of setupAction
+		= give it the value of a new instance of CamelCasePropertyNamesContractResolver
+	> this is for us to use Newtonsoft Json instead of the System.Text.Json which is the default in .NET
+
+INSIDE StartUp class in using directive
+
+	using Newtonsoft.Json.Serialization;
+
+
+INSIDE ConfigureService() of StartUp class
+
+            services.AddControllers().AddNewtonsoftJson(s => {
+                s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
+
+
+
+
+9. Add another Map in the CommandsProfile
+	> source is Command and target is the CommandUpdateDto model
+		= this is for when we apply the JsonPatch document to the CommandUpdateDto
+		= we cant apply patch on Command since 
+
+INSIDE CommandsProfile constructor
+
+    public class CommandsProfile : Profile
+    {
+        public CommandsProfile()
+        {
+            // <Source, Target>
+            CreateMap<Command, CommandReadDto>();
+
+            CreateMap<CommandCreateDto, Command>();
+
+            CreateMap<CommandUpdateDto, Command>();
+
+            CreateMap<Command, CommandUpdateDto>();
+        }
+    }
+
+
+
+
+
+10. Create the PATCH ActionResult method which includes the following properties
+	> [HttpPatch("{id}")] annotation
+	> ActionResult return type 
+		= no type since we will not add a Body into the RESPONSE
+	> int id, and JsonPatchDocument<CommandUpdateDto> parameter
+		= id for the specific Command in the Database that we will Update
+		= JsonPatchDocument for the instructions or operations
+		= CommandUpdateDto type since we will need some basis on what /path is available and valid in the JsonPatchDocument operations
+	> inside the method body, do the following
+		a. Null Check to see that a Command with specific ID exist in the Database
+			= if not, then return a NotFound()
+		b. If it exist, first Map the Command item into a CommandUpdateDto item and assign it to a variable
+		c. Use ApplyTo() to the JsonPatchDocument into the variable that holds the CommandUpdateDto 	
+			= ApplyTo() needs two parameters
+				=> the Target of patch and a ModelState
+		d. Validation Model Check to see if the Patch is successful or not
+			= if not, then return a ValidationProblem with the ModelState passed to it
+			= ModelState will tell us the Model patch action status
+		e. If ValidateModel() is OK, then Update the Command model from Repository using the PATCHed CommandUpdateDto
+		f. Call SaveChanges() of Repository to apply changes into the SQL database
+		g. Call UpdateCommand() of Repository, even if its redundant
+		h. Finally, return a NoContent()
+
+INSIDE CommandController class
+
+        [HttpPatch("{id}")]
+        public ActionResult PartialCommandUpdate(int id, JsonPatchDocument<CommandUpdateDto> patchDocument)
+        {
+            var commandFromRepo = _repository.GetCommandById(id);
+            if(commandFromRepo == null)
+            {
+                return NotFound();
+            }
+            
+            var commandToPatch = _mapper.Map<CommandUpdateDto>(commandFromRepo);
+            patchDocument.ApplyTo(commandToPatch, ModelState);
+            if(!TryValidateModel(commandToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(commandToPatch, commandFromRepo);
+            _repository.SaveChanges();
+            _repository.UpdateCommand(commandFromRepo);
+            
+            return NoContent();
+        }
+
+
+
+
+11. Test the PATCH functionality
+	> save all, build and run
+	> in PostMan, send a GET request to see all the Command
+	> send a PATCH request to the Web API
+		= include the id of the Command we want to change
+		= input the JsonPatchDocument inside the body of the Http request
+	> after sending the PATCH request, check the Command we changed using the GET request and inserting the id
+
+INITIAL CommandList
+[
+    {
+        "id": 1,
+        "howTo": "How to build .NET Core app",
+        "line": "dotnet build"
+    },
+    {
+        "id": 2,
+        "howTo": "How to run migrations",
+        "line": "dotnet ef database update"
+    },
+    {
+        "id": 3,
+        "howTo": "Run a .NET Core app",
+        "line": "dotnet run"
+    }
+]
+
+
+PATCH request URL
+	http://localhost:5000/api/commands/2
+
+PATCH request body
+[
+    {
+        "op": "replace",
+        "path": "/howTo",
+        "value": "Some new value"
+    }
+]
+
+
+GET request URL
+	http://localhost:5000/api/commands/2
+
+GET request response
+{
+    "id": 2,
+    "howTo": "Some new value",
+    "line": "dotnet ef database update"
+}
+
+
+	As we can see, the "howTo" attribute of the Command has been changed. Lets also try to trigger the two check we had in the PATCH route endpoint
+
+A. No Command in specific PATCH request Url
+
+URL
+	http://localhost:5000/api/commands/29
+
+RESPONSE
+{
+    "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+    "title": "Not Found",
+    "status": 404,
+    "traceId": "00-b75bb06ef0099c45aa819ed7447a3d8f-7df6e6cec9acf941-00"
+}
+
+
+
+B. Validation Error, No "value" content in the JsonPatchDocument
+
+URL
+	http://localhost:5000/api/commands/2
+BODY
+[
+    {
+        "op": "replace",
+        "path": "/howTo",
+        "value": ""
+    }
+]
+
+RESPONSE
+{
+    "errors": {
+        "howTo": [
+            "The HowTo field is required."
+        ]
+    },
+    "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+    "title": "One or more validation errors occurred.",
+    "status": 400,
+    "traceId": "00-66586a363b1b5348b91b0b51c8b1dcce-09da3c816121864a-00"
+}
+
+
+
+
+
+
+~~~~~~~~~~ DELETE Endpoint ~~~~~~~~~~~~~~~
+
+12. Update the ICommanderRepo interface
+	> add a DeleteCommand() inside
+		= void return, Command parameter
+
+INSIDE ICommanderRepo
+
+    public interface ICommanderRepo
+    {
+        bool SaveChanges();
+        IEnumerable<Command> GetAllCommands();
+        Command GetCommandById(int id);
+        void CreateCommand(Command cmd);
+        void UpdateCommand(Command cmd);
+        void DeleteCommand(Command cmd);
+    }
+
+
+
+
+13. Implement the DeleteCommand() in the Concrete Implementations of ICommanderRepo
+	> inside the implemented method, do the following
+		a. check if Command parameter is null
+			= if null, then throw an ArgumentNullException() with name of Command passed on it
+		b. if not, then call the Remove() of the Commands DbSet of the DbContext
+			= pass the Command parameter to it
+
+INSIDE SqlCommanderRepo class
+
+        public void DeleteCommand(Command cmd)
+        {
+            if(cmd == null)
+            {
+                throw new ArgumentNullException(nameof(cmd));
+            }
+            _context.Commands.Remove(cmd);
+        }
+
+
+
+
+14. Create a new Route Endpoint in the Controller, which will have the following attributes
+	> [HttpDelete("{id}")] annotation
+	> ActionResult return type
+		= no Response body
+	> int id parameter
+	> inside the method body, do the following
+		a. Check if a Command exist in the Database with ID equal to id parameter
+			= if no match, then return a NoteFound()
+		b. if there is a match, then call DeleteCommand() of repository and pass the Command item
+		c. call SaveChanges() to apply changes to the SQL
+		d. finally, return a NoContent()
+
+INSIDE CommandsController class
+
+        [HttpDelete("{id}")]
+        public ActionResult DeleteCommand(int id)
+        {
+            var commandFromRepo = _repository.GetCommandById(id);
+            if(commandFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            _repository.DeleteCommand(commandFromRepo);
+            _repository.SaveChanges();
+
+            return NoContent(); 
+        }
+
+
+
+
+15. Test the DELETE Route Endpoint
+	> save all, build and run
+	> check all the Commands using GET request
+	> send a DELETE request and pass a valid id 
+	> check again if the Command deleted is still available by calling GET request and passing the id
+
+INITIAL COMMAND list
+
+[
+    {
+        "id": 1,
+        "howTo": "How to build .NET Core app",
+        "line": "dotnet build"
+    },
+    {
+        "id": 2,
+        "howTo": "Some new value",
+        "line": "dotnet ef database update"
+    },
+    {
+        "id": 3,
+        "howTo": "Run a .NET Core app",
+        "line": "dotnet run"
+    }
+]
+
+
+DELETE request url
+	http://localhost:5000/api/commands/2
+
+GET request url
+	http://localhost:5000/api/commands/2
+
+GET response
+{
+    "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+    "title": "Not Found",
+    "status": 404,
+    "traceId": "00-57c99793f8382f4d92d1185bdb286c2d-62bd1ccaf018b644-00"
+}
+
+

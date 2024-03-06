@@ -1,0 +1,604 @@
+09 Servlet Fundamentals
+
+Contents:
+56 Hello World Servlet Overview
+57 Hello World Servlet Lets Write some Code
+58 Comparing Servlets and JSP - Whats the Difference
+59 Reading HTML Form Data with Servlets - Overview
+60 Reading HTML Form Data with Servlets - Lets Write some Code
+61 HTML Forms - Difference between GET and POST
+62 Reading Servlet Parameters - Overview
+63 Reading Servlet Parameters - Lets write some code
+64 FAQ Can you define per servlet parameters
+65 FAQ How to Redirect from JSP to Servlet
+
+
+
+
+
+
+
+
+
+
+
+56 Hello World Servlet Overview
+
+Servlets
+ > Java class that is processed on the server
+ > Java class generates HTML that is returned to browser as an HTTP response
+ 	- Servlets receives an HTTP request, which it can access and read
+ > Servlets can read HTML form data, use cookies and sessions, etc
+ > At a high-level, similar functionality to JSPs
+
+
+Creating a Servlet class
+1. Create a class that EXTENDS to HttpServlet class
+2. Add annotation @WebServlet() to the class and pass the relative URL that it will listen to for request
+3. Overwrite the method functions like doGet, doPost, doPut, etc,
+	> this corresponds to the methods that will be executed based on the HTTP method of the request
+	> ex: doGet will be executed when HTTP request method is GET
+
+
+
+
+
+
+
+
+
+
+57 Hello World Servlet Lets Write some Code
+
+GOAL:
+1. Create implementation of HttpServlet
+2. Overwrite doGet method to display Hello World and the current Date
+
+// HelloWorldServlet.java
+package com.luv2code.servletdemo;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class HelloWorldServlet
+ */
+@WebServlet("/HelloWorldServlet")
+public class HelloWorldServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public HelloWorldServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// Step 1: set the content type
+		response.setContentType("text/html");
+		
+		// Step 2: get the printwriter
+		PrintWriter out = response.getWriter();
+		
+		// Step 3: generate HTML content
+		out.println("<html><body>");
+		
+		out.println("<h2>Hello World</h2>");
+		out.println("<hr>");
+		out.println("Time on the server is: " + new java.util.Date());
+		
+		out.println("</body></html>");
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+58 Comparing Servlets and JSP - Whats the Difference
+
+JSP and Servlets
+
+JSPs
+ > HTML file with .jsp extension
+ > Contains static HTML 
+ > JSP to generate HTML
+ > Has built-in JSP objects
+
+Servlets
+ > Java class
+ > Generate all HTML
+ > More steps to access web objects
+
+
+Best Practice
+1. With Model-View-Controller Design Pattern, we can integrate both JSP and Servlets
+	> Servlet for containing business logic
+	> JSP for handling the presentation view
+
+
+
+
+
+
+
+
+
+
+59 Reading HTML Form Data with Servlets - Overview
+
+Reading HTML Form Data with Servlets
+ > Servlets can access HTML form data (or HTTP request in general) through the overriden methods of HttpServlet
+ > All methods of HttpServlet (doGet, doPost, ...) have the HttpServletRequest as parameter, which works the same way as the "request" implicit object in the JSPs
+ > This HttpServletRequest represents the HTTP request received and contains information like HTML Form data
+
+
+HttpServletRequest
+ > interface that represents the Http request
+ > contains several methods/properties for accessing the request information
+ > this methods include
+	getParameter(String name): String
+		- returns the value of the parameter based on name passed
+
+
+
+
+
+
+
+
+
+
+60 Reading HTML Form Data with Servlets - Lets Write some Code
+
+GOAL:
+1. Create HTML form to take first and last name to sends as query params to StudentServlet
+2. Create StudentServlet to read request parameter and display them
+
+
+// student-form.html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="StudentServlet" method="GET">
+		First name: <input type="text" name="firstName"/>
+		<br/>
+		Last name: <input type="text" name="lastName"/>
+		<br/>
+		<input type="submit" value="Submit"/>
+	</form>
+</body>
+</html>
+
+
+// StudentServlet.java
+package com.luv2code.servletdemo;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class StudentServlet
+ */
+@WebServlet("/StudentServlet")
+public class StudentServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public StudentServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Step 1: Set content type
+		response.setContentType("text/html");
+		
+		// Step 2: Get the printwriter
+		PrintWriter out = response.getWriter();
+		
+		// Step 3: Generate the HTML content
+		out.println("<html><body>");
+		
+		out.println("The student is confirmed: "
+					+ request.getParameter("firstName") + " "
+					+ request.getParameter("lastName"));
+		
+		out.println("</body></html>");
+	}
+}
+
+
+
+
+
+
+
+
+
+
+61 HTML Forms - Difference between GET and POST
+
+HTML Forms - Difference between GET and POST
+
+GET request
+ > sends the form data through the request query parameters
+ > this can be seen in the request URL, where they are added after the "?" and separated using "&"
+	- ex: http://localhost:8080/servletdemo/StudentServlet?firstName=John+Glenn&lastName=Eligio
+
+POST request
+ > sends the form data through the request body
+ > needs special client to see the request body payload
+
+
+GET vs POST
+ > GET request uses/limitation includes
+	1. Good for debugging
+	2. Bookmark or email URL
+	3. Limitations on data length
+ > POST request uses/limiation includes
+	1. Can't bookmark or email URL
+	2. No limitation on data length	
+	3. Can also send binary data
+
+
+
+
+
+
+
+
+
+62 Reading Servlet Parameters - Overview
+
+Class/Interface used
+
+ServletContext
+ > helper class to read/parse web.xml file
+ > to create one, we can call getServletContext() available in the HttpServlet class
+ > contains functions like
+	getInitParameter(String name): String
+		- returns the String value of the parameter
+		- returns null of no param anme is found
+
+getServletContext()
+ > inherit from the classes that extends to HttpServlet
+ > returns a ServletContext object based on the web.xml
+
+
+Servlet Configuration Parameters
+ > Our web apps can amke use of configuration parameters
+ > These are typically located in standard file: {Content Directory}/WEB-INF/web.xml
+
+Creating Context Parameters
+ > these parameters can be accessible anywhere in webapp (JSP/Servlet)
+ > to add one in web.xml, we will use the tags "context-param", "param-name" and "param-value"
+
+EX:
+<web-app>
+	<context-param>
+		<param-name>max-shopping-cart-size</param-name>
+		<param-value>99</param-value>
+	</context-param>
+	<context-param>
+		<param-name>project-team-name</param-name>
+		<param-value>The Coding Gurus</param-value>
+	</context-param>
+</web-app>
+
+
+Reading Configuration/Context Parameters
+ > inside the HttpServlet class methods, we can call the getServletContext() method 
+ 	- this returns a ServletContext object, which we can use to access the parameters we defined earlier
+
+
+
+
+
+
+ 
+63 Reading Servlet Parameters - Lets write some code
+
+GOAL:
+1. Add configuration parameters in web.xml
+2. Create Servlet to read these configuration parameters
+
+// web.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+	id="WebApp_ID" version="4.0">
+	<context-param>
+		<param-name>max-shopping-cart-size</param-name>
+		<param-value>99</param-value>
+	</context-param>
+	<context-param>
+		<param-name>project-team-name</param-name>
+		<param-value>The Coding Gurus</param-value>
+	</context-param>
+	<display-name>servletdemo</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>
+
+
+// TestParamServlet.java
+/**
+ * Servlet implementation class TestParamServlet
+ */
+@WebServlet("/TestParamServlet")
+public class TestParamServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public TestParamServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// Step 1: Set content type
+		response.setContentType("text/html");
+		
+		// Step 2: Get PrintWriter
+		PrintWriter out = response.getWriter();
+		
+		// Step 3: Read Configuration
+		ServletContext context = getServletContext();
+		String maxCartSize = context.getInitParameter("max-shopping-cart-size");
+		String teamName = context.getInitParameter("project-team-name");
+		
+		// Step 4: Generate HTML 
+		out.println("<html><body>"); 
+		
+		out.println("Max cart: " + maxCartSize);
+		out.println("<br>");
+		out.println("Team name: " + teamName);
+		
+		out.println("</body></html>");
+	}
+
+}
+
+
+
+
+
+
+
+
+
+64 FAQ Can you define per servlet parameters
+
+
+FAQ: Can you define per servlet parameters?
+
+Question: 
+I hope there is a concept called servlet config which is one per servlet, the concept you explained is servlet context , which is one per app that's fine, but actual servletconfig is missing I believe..?
+
+---
+
+Answer:
+Yes, you can define servlet parameters on a per servlet basis.
+These params can only be read by the given servlet.
+
+Here's an example for your web.xml.
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+
+  <display-name>servletdemo</display-name>
+
+  <context-param>
+    <param-name>max-shopping-cart-size</param-name>
+    <param-value>99</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>project-team-name</param-name>
+    <param-value>The Coding Gurus</param-value>
+  </context-param>
+  
+    <servlet>
+      <servlet-name>TestParamServlet</servlet-name>
+      <servlet-class>com.luv2code.servletdemo.TestParamServlet</servlet-class>
+
+      <init-param>
+        <param-name>greeting</param-name>
+        <param-value>Welcome</param-value>
+      </init-param>
+
+      <init-param>
+        <param-name>serviceLevel</param-name>
+        <param-value>Platinum</param-value>
+      </init-param>
+
+    </servlet>  
+    
+    <servlet-mapping>
+      <servlet-name>TestParamServlet</servlet-name>
+      <url-pattern>/demo</url-pattern>
+    </servlet-mapping>
+  
+</web-app>
+
+
+IMPORTANT: Your servlet can not use Annotations for @WebServlet. It has to be manually configured in web.xml with <servlet> and <servlet-mapping> tags, as shown above
+
+
+---
+
+Then in your servlet, you can read this servlet's params using this code
+
+String theGreeting = getInitParameter("greeting");
+String theInfo = getInitParameter("serviceLevel");
+
+Note: These params can only be read by the given servlet. If another servlet attempts to read the params then they will get null.
+
+Here is the full source code for the servlet.
+
+package com.luv2code.servletdemo;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class TestParamServlet
+ */
+public class TestParamServlet extends HttpServlet {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Step 1: set content type
+        response.setContentType("text/html");
+        
+        // Step 2: get printwriter
+        PrintWriter out = response.getWriter();
+        
+        // Step 3: read configuration params
+        ServletContext context = getServletContext(); // inherit from HttpServlet
+        String maxCartSize = context.getInitParameter("max-shopping-cart-size");
+        String teamName = context.getInitParameter("project-team-name");
+        
+        // READ PER-SERVLET parameter
+        String theGreetingMessage = getInitParameter("greeting");
+        String theServiceLevel = getInitParameter("serviceLevel");
+        
+        // Step 4: generate HTML content
+        out.println("<html><body>");
+        out.println("Max cart: " + maxCartSize);
+        out.println("<br/><br/>");
+        out.println("Team name: " + teamName);
+        out.println("<hr>");
+        out.println("Per Servlet Params<br/><br/>");
+        out.println("greeting: " + theGreetingMessage);
+        out.println("<br/><br/>");
+        out.println("serviceLevel: " + theServiceLevel);
+        
+        out.println("</body></html>");    
+    }   
+
+}
+
+
+
+
+
+
+
+
+
+
+
+65 FAQ How to Redirect from JSP to Servlet
+
+How To Redirect from JSP to a Servlet:
+
+You can make use of the method:
+
+    response.sendRedirect( <thePageUrl> )
+
+Here's a quick example. The file test-redirect.jsp will send a redirect to the HelloWorldServlet. The HelloWorldServlet has a URL mapping of "/hello".
+
+Here's the code for the JSP
+
+File: test-redirect.jsp
+
+<%
+    response.sendRedirect(request.getContextPath() + "/hello");
+%>
+
+Here's the code for the Servlet. Make note of the URL mapping "/hello"
+
+File: HelloWorldServlet.java
+
+package com.luv2code.demo;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/hello")
+public class HelloWorldServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        
+        out.println("Hello world: " + new java.util.Date());
+    }
+
+}
+
+---
+
+When you run the JSP file, test-redirect.jsp.  It will automatically redirect to the servlet.
+
+That's it!  Enjoy :-)

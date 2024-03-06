@@ -1,0 +1,459 @@
+Section 3 - Apache NiFi basics
+
+VII. NiFi user interface
+
+Overview
+1. One of the main features of NiFi is its easy-to-use User interface
+	> you can do drag-and-drop action to each of the components you will need in the Flow chart
+
+Components that we can add to our data flow
+1. Processors
+2. Input port
+3. Output port
+4. Process group
+5. Remote process group
+6. Funnel
+7. Template
+8. Label
+
+
+Practical: Transfer file from one directory to other
+ > here, we will be using two Processors
+	1. GetFile
+		- continuously listen to any files on the specified directory and get them
+		- this will also remove the said file on that directory as well
+	2. PutFile
+		- this processor will PUT all the file it receives to the specified directory
+
+Steps:
+1. Drag and drop two processors in the NiFi flow
+	> make one processor into a GetFile and the other one into a PutFile
+2. Configure the processors
+	> for GetFile, pass the directory where we will fetch the files
+	> for PutFile, pass the directory where we will place the files
+3. Connect the processors together
+	> set the Connector configuration as is
+4. Prepare the input and output directory if you havent done so.
+	> D:\Study\programming\workspaces\Nifi\nifi storage\output
+	> D:\Study\programming\workspaces\Nifi\nifi storage\input
+5. Prepare the file to be used for testing
+6. Start the processors
+	> they should have green start icon instead of red stop icon before
+7. Place a file in the 'input' folder
+	> we should see it disappear, and be transferred to the 'output' folder
+
+NOTE:
+1. For PutFile processor, we need to set the Relationship for "failure" and "success"
+	> we can do so by going to processor configuration -> relationships -> set failure and success to either terminate or retry
+
+
+
+
+
+
+VIII. Core NiFi terminologies
+
+Terminologies
+1. Flow-based programming (FBP)
+2. Processor
+3. Connection
+4. Process Group
+5. Controller Service
+
+Flow-based programming (FBP)
+ > NiFi is based on Flow Based Programming (FBP)
+ > Flow Based programming is a programming paradigm that defines applications as networks of "black box" processes, which exchange data across the predefined connections by message passing, where the conenctions are specified externally to the processes
+ > These black box processes can be reconnected endlessly to form different applications without having to be changed internally
+ > FBP is thus naturally 'component-oriented'
+
+
+How NiFi works?
+ > NiFi consists of atomic elements which can be combined to groups to build a simple or complex DATA Flow
+ > NiFi consist of Processors and Process Groups
+ 
+ 
+Processor
+ > Processor are an atomic elements in NiFi which can do some simple tasks
+ > At the time of recording (Jan. 20, 2019) of the Video, NiFi has 280+ Processors
+ > Each Processors in NiFi is unique in it's own way
+ > Each Processors have their own actions and responsibility as well
+	- ex: GetFile can read a file in a specific directory while PutFile can write a file in a specific directorys
+ > NiFi have processors for almost anything
+
+
+What can a Processor do?
+ > We have tons of Data Source and Data Sink Processors
+ > The Source and Sink can be anything, this includes but not limited to
+	- SQL
+	- NoSQL
+	- Search Engine (ex: Solr, ElasticSearch)
+	- Cache Server (ex: Redis, HBase)
+	- Messaging Queue (ex: Apache Kafka)
+	- AWS Entities
+ > NiFi have processors for all your data needs
+ > NiFi supports custom processors as w ell
+
+
+What is a FlowFile?
+ > FlowFile = Actual Data -> ex: CSV, JSON, XML, Plaintext, SQL, Binary, etc
+ > FlowFile is an ABSTRACTION of data in NiFi
+ > A Processor can generate new Flow File by processing an existing Flow File or ingesting new data from any source
+ 
+ 
+Connection
+ > In NiFi, all processors can be connected with each other to create a data processing flow
+ > Processors are linked via connections
+ > Each connection will act as a QUEUE for FlowFiles
+
+
+Process Group
+ > Process Group is a SET of Processors combined in NiFi
+ > Process Groups helps to maintain large and complex data flow
+ > Input and Output ports are used to move data between Process Groups
+
+
+Controller Service
+ > A Controller Service is a shared service that can be used by a Processor
+ > Controller Service can hold DB connection details
+ > We can create Controller Service for CSV Reader, JSON Writer, and many more
+ > EX:
+	1. A Processor which gets and puts data to a SQL database can have a Controller Service with the required DB Connection details
+
+
+
+
+
+
+
+IX. More on FlowFiles of NiFi
+
+FlowFile
+ > A FlowFile contains data
+ > A FlowFile is composed of two components
+	1. Content
+	2. Attributes (or metadata)
+ > Content:
+	- That's the actual content of the FlowFile
+	- It is the actual content of a file you would read using GetFile, GetHTTP, etc
+ > Attributes:
+	- These are the metadata from the FlowFile
+	- Contains information about the content:
+		a. When it was created
+		b. Name
+		c. Where is it from
+		d. What does it represent
+		
+Construct Using NiFi FlowFiles
+ > A processor can (either or both)
+	- Add, update, or remove attributes of a FlowFile
+	- Change content of a FlowFile
+ > Update the Attributes or Content or both using various processors available in NiFi to design your Dataflow to get the REQUIRED OUTPUT
+ 
+Lifecycle of FlowFile
+ > FlowFiles are persisted in the disk
+	- Whenever a FlowFile is generated by a Processor, the said FlowFile will immediately gets persisted into the disk
+ > FlowFiles are passed-by-reference
+	- only the reference of the FlowFile is passed between the Processors
+ > A new FlowFile will be created if the content of the existing FlowFile is modified or new data is ingested from source
+ > New FlowFile will be not created if the attributes of the existing FlowFile is modified
+
+
+
+
+
+
+
+X. Types of Processors available in NiFi
+
+Overview
+ > In order to create an effective dataflow, the user must understand the various types of Processors available for them to use
+ > NiFi, out of the box, have different types of processors for all your data needs
+ > Processors are capable of the following:
+	- ingest data from numerous data systems
+	- it can route, transform, process, split and aggregate data and distribute data to many systems
+ > At the time of recording this video, NiFi has 280+ Processors
+ 
+Types of Processors
+1. Data Ingestion Processors
+2. D
+
+Data Ingestion Processors
+ > used for ingesting/extracting data from popular data source currently available in market
+ > below are the example of Data Ingestion Processors
+	- GenerateFlowFiles
+	- GetFile
+	- GetFTP
+	- GetSFTP
+	- GetJSMQueue
+	- GetJMSTopic
+	- GetHTTP
+	- ListenHTTP
+	- ListenUDP
+	- GetHDFS
+	- GetKafka
+	- QueryDatabaseTable
+	- GetMongo
+	- GetTwitter
+	- ListHDFS/FetchHDFS
+ 
+Data Transformation Processors
+ > used for tranforming data to various formats according to our requirement
+ > examples are:
+	- ConvertRecord
+	- UpdateRecord
+	- ConvertJSONToSQL
+	- ReplaceText
+	- CompressContent
+	- ConvertCharacterSet
+	- EncryptContent
+	- TransformXml
+	- JoltTransformJSON
+
+Data Egress / Sending Data Processors
+ > used to send processed data to various types of destination systems
+ > examples includes:
+	- PutEmail
+	- PutFile
+	- PutFTP
+	- PutSFTP
+	- PutJMS
+	- PutSQL
+	- PutKafka
+	- PutMongo
+	- PutHDFS
+	
+Routing and Mediation Processors
+ > these processors will help us to conditionally change the way how a FlowFile to be processed
+ > examples include:
+	- ControlRate
+	- DetectDuplicate
+	- DistributeLoad
+	- RouteOnAttribute
+	- RouteOnContent
+	- ScanAttribute
+	- ScanContent
+	- ValidateXml
+	- ValidateCSV
+	
+Database Access Processors
+ > processors that are used to access the database
+ > most commonly used database access processors are
+	- ConvertJSONToSQL
+	- ExecuteSQL
+	- PutSQL
+	- SelectHiveQL
+	- PutHiveQL
+	- ListDatabaseTables
+	
+Attribute Extraction Processors
+ > processed used to extract and manipulate the attributes of a FlowFile from its content or other existing attributes, or both
+ > usually, these processors will provide with right set of attributes which can be used routing and mediation processors
+ > examples include:	
+	- EvaluateJsonPath
+	- EvaluateXPath
+	- EvaluateXQuery
+	- ExtractText
+	- HashAttribute
+	- HashContent
+	- IdentifyMimeType
+	- UpdateAttribute
+	- LogAttribute
+	
+System Interaction Processors
+ > these set of processors in NiFi supports us to run an OS specific command specified by the User and writes the output of that command to a FlowFile
+ > examples
+	- ExecuteProcess
+	- ExecuteStreamCommand
+	
+Splitting and Aggregation Processors
+ > used for splitting or aggregating data according to our requirement
+ > examples	
+	- SplitText
+	- SplitJson
+	- SplitXml
+	- SplitRecord
+	- SplitContent
+	- UnpackContent
+	- SegmentContent
+	- MergeContent
+	- QueryRecord
+	
+HTTP and UDP Processors
+ > NiFi can even ingest data or send data using HTTP and UDP protocol
+ > examples
+	- GetHTTP
+	- ListenHTTP
+	- InvokeHTTP
+	- PostHTTP
+	- HandleHttpRequest
+	- HandleHttpResponse
+	- ListenUDP
+	- PutUDP
+	- ListenUDPRecord
+	
+Amazon Web Services Processors
+ > NiFi comes with rich set of Processors to communicate with our AWS entities as well
+ > examples
+	- FetchS3Object
+	- PutS3Object
+	- PutSNS
+	- GetSQS
+	- PutSQS
+	- DeleteSQS
+	- GetDynamoDB
+	- PutDynamoDB
+	- PutLambda
+
+
+
+
+XI. Processor Config, Connections & Relationship
+
+"Configuration over coding!!!"
+ > main concept when it comes to configuring NiFi
+ 
+Type of NiFi Processor Configurations
+1. Standard Configurations
+	> Configuration common across all processors
+2. Unique Configurations
+	> COnfiguration specific to a processor
+
+Standard Configurations:
+Name
+ > help us give more meaningful name to a processor 
+ > becomes more important as the NiFi data flow becomes more dense
+Scheduling related configuration
+ > we can schedule the execution of a processor either by using Timer driven or CRON driven scheduling strategy, which every fits you the most
+ > by default, "Scheduling strategy" is set to Timer driven with "Run Schedule" of 0 sec, meaning it is running non-stop
+ 
+ 
+Relationship
+ > each Processor has zero or more Relationships defined for it
+ > Relationships are named to indicate the result of processing a FlowFile
+ > After a Processor has finished processing a FlowFile, it will transfer the FlowFile to one of the Relationships
+ > The FlowFile creator needs to handle all the relationship of a processor or terminate unhandle relationship
+	- we only terminate unhandled relationship if we dont have to do anything on it
+	- also NiFi will COMPLAIN if you have UNHANDLED relationship with the processor, which it will not allow the 
+
+
+Demo: Scheduling and Concurrency
+ > for this demo, we will be using the following processors
+	1. GenerateFlowFile
+		- used for generating random or structured flowfile
+	2. LogAttribute
+		- used for logging the attributes of the FlowFile
+	
+Configuring processor:
+1. Add two Processors, one GenerateFlowFile and one LogAttribute Processor
+2. Create connection between the two
+	> from GenerateFlowFile to LogAttribute processor
+3. Configure the relationship of the two processor
+	> by default, GenerateFlowFile will have its "success" relationship handled when we created the connection to the Log attribute
+	> for LogAttribute processor, check the "terminate" under Relationship tab of processor configuration
+	
+Testing the data flow
+1. Run the GenerateFlowFile only
+	> if we do so, we should see the queued FlowFile in the  connection between them to be increased
+	> based on the scheduling of the Processor, the queue will increase by specific interval
+		- in this case, the "Run schedule" is set to 1min, so the queue increases by 1 each minute
+2. Reset the setup
+	> stop the GenerateFlowFile
+	> reset the queue in the connection
+3. Configure the GenerateFlowFile
+	> under Scheduling of Configure Processor, set the "Concurrent Tasks" to 5
+4. Run the GenerateFlowFile again
+	> this type, we should see that the queue is now increased to 5 instead of 1
+	
+
+ 
+NOTES:
+1. The symbols next to the Processor name are:
+	- Yellow Warning sign: There are unhandled relationships, can not start the processor
+	- Red Stop sign: Relationship are handled, the processor is currently not running
+	- Green Start sign: The processor is current running
+
+
+
+
+
+
+
+
+XII. Connection Queue & Back Pressure in NiFi
+ 
+Connection Queue
+ > refers to the queue of the FlowFile in the connection between the Processor
+
+Back Pressure
+ > in NiFi or data flow context, back pressure is the resistance to the desired flow of FlowFile through a connection.
+ > in this case, we can have two threshold to define the back pressure
+	1. Back pressure object threshold
+		- defines how many FlowFile can be in the queue before the connection stop adding more in queue
+	2. Size threshold
+		- defines the total FlowFile size can be in the queue before the connection stop adding more in queue
+
+Accessing/Reading FlowFile
+ > to read a FlowFile in the queue:
+	1. Right click a connection
+		- make sure that there's an item in the queue
+	2. Click List queue
+		- we should see a table where each FlowFile is listed
+	3. Click the info icon at 1st column
+		- we can use this to see the details and attributes of the FlowFile
+	4. In the Details panel, we can see in Content Claim section the buttons to download or view the content of the FlowFile
+		- this will only be available if there is CONTENT in the FlowFile itself
+
+Demo: Accessing/Reading FlowFile
+1. Configure the GenerateFlowFile to have the unique content
+	> Go to processor configuration
+	> Go to Properties panel
+	> Set the File Size to 1B
+	> Set the Unique FlowFiles to true
+	> Apply configuration
+2. Run the GenerateFlowFile processor
+	> stop it when theres an item in the queue
+3. Right click a connection
+	> make sure that there's an item in the queue
+4. Click List queue
+	> we should see a table where each FlowFile is listed
+5. Click the info icon at 1st column
+	> we can use this to see the details and attributes of the FlowFile
+6. In the Details panel, we can see in Content Claim section the buttons to download or view the content of the FlowFile
+
+Demo: Configuring backpressure
+1. Configure the GenerateFlowFile to generate FlowFile every 0 sec to flood the queue
+	> go to processor configuration
+	> go to Scheduling panel
+	> set the Run Schedule to 0 sec
+	> apply configurations
+2. Configure the connection
+	> go to connection configuration
+	> go to Settings panel
+	> change the Back Pressure Object Threshold to 10000
+	> apply configurations
+3. RUn the GenerateFlowFile
+	> we should see that in the queue after some time, only 10000 items are present
+4. Reset the setup
+	> stop the GenerateFlowFile
+	> empty the queue
+	
+Demo: Configuring item size threshold
+1. Configure the GenerateFlowFile to generate 250mb FlowFile every 10 sec
+	> go to processor configuration
+	> go to Scheduling panel
+	> set the Run Schedule to 30 sec
+	> go to properties panel
+	> set File Size to 250MB
+	> apply configurations
+2. Configure the connection
+	> go to connection configuration
+	> go to Settings panel
+	> change the Size Threshold to 1GB
+	> apply configurations
+3. RUn the GenerateFlowFile
+	> we should see that in the queue after some time, only 4 items should be present
+4. Reset the setup
+	> stop the GenerateFlowFile
+	> empty the queue
+
+

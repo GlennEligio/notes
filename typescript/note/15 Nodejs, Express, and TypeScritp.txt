@@ -1,0 +1,384 @@
+15 Node.js + Express & TypeScript
+
+Contents:
+1. Module Introduction
+2. Executing TypeScript Code with Node.js
+3. Setting up a Project 
+4. Finished Setip & Working with Types (in Node + Express Apps)
+5. Adding Middleware & Types
+6. Working with Controllers & Parsing Request Bodies
+7. More CRUD Operations
+8. Wrap up
+
+
+
+
+
+
+
+
+
+
+1. Module Introduction
+2. Executing TypeScript Code with Node.js
+
+Executing TypeScript Code with Node.js
+ > by default, the command "node <filename>" can be executed to every file regardless of the file extension
+	- reason is that Nodejs treats the content of the file as a JavaScript code
+	- so as long as the content is a valid JS code, it will run the said file as if its a JS file
+ > but if we use a non-JavaScript feature (like type assignment of TypeScript), it will fail when executed
+	- in order to solve this, we will need to first compile the TypeScript, and then execute the compiled JavaScript file using Node
+
+EX:
+// app.ts
+console.log("Hello World!") // will be executed by Nodejs as JS code even if its a TS file
+
+// app.ts, will fail since JavaScript dont have type assignment feature
+let age: number;
+age = 30;
+console.log(age)
+
+
+
+
+
+
+
+
+
+
+
+3. Setting up a Project 
+
+Setting up a Project
+I. Adding dependencies
+1. Initialize the Nodejs project
+	> npm init
+2. Add the following dependencies
+	> express
+	> body-parser
+	> npm install --save express body-parser
+3. Add the following as devDependency
+	> nodemon
+	> npm install --save-dev nodemon
+
+
+II. Configuring tsconfig.json
+1. Set target to ES6/ES2015 and above
+2. Set moduleResolution prop to "node"
+	> tells typescript on how different files works to each other
+3. Set outDir to "./dist"
+4. Set rootDir to "./src"
+
+Express
+ > framework for Nodejs to handle http request
+
+Body parser
+ > middleware to parse the request body coming
+ > NOTE: As of express@4.16.0, body-parser is included to the Express middlewares.
+	- this means we dont need to install body-parse and instead just use express.json() when passing the middleware
+
+Nodemon
+ > devTool for automatic restart of application in case any of the file it watches changes
+
+
+
+
+
+
+
+
+
+
+4. Finished Setip & Working with Types (in Node + Express Apps)
+
+
+Type support for Node and Express
+ > by default, Node and Express doesnt come with Type support
+ > in order to add it, we will need to install the modules that contains them
+	1. @types/node	
+	2. @types/express
+
+
+Importing dependencies/modules
+ > when importing dependecies to .ts file, we can use either
+	1. const name = require("name")		
+		- regular commonjs import syntax that node.js uses by default
+		- does NOT give us type support
+	2. import name from "name"	
+		- import syntax available in the Node.js as well
+		- GIVE US the type support that we need
+
+
+EX:
+// app.ts
+import express from "express";
+
+const app = express();
+
+app.listen(3000, () => {
+  console.log("Server starting at port 3000");
+});
+
+
+
+// package.json
+{
+  "name": "understanding-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./dist/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^18.0.1",
+    "nodemon": "^1.19.4"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+5. Adding Middleware & Types
+
+Express Middleware and Types
+ > to add a middleware, we will need to pass a function to either
+	1. Router.post(), Router.get(), etc.
+	2. Express.post(), Express.get(), etc.
+	3. Express.use()
+ > for the Router and Express http method function, we will need to pass the said middleware between the uri and RequestHandler input
+ > for Express.use(), we will just pass the said Middleware to the function itself
+
+
+Middleware function
+ > middleware function are function that we can use to manipulate the Request and Response at a specific point in time
+	- ex: add middleware before handling the request in Router/Express http method functions
+ > we can also add a middleware to act as the CENTRALIZED EXCEPTION HANDLER
+	- we do this by adding a middleware to the Express AFTER ALL previous middleware/routes are adding the Express server
+	- this means that this errorHandler middleware must be at the very last of middleware stack
+
+Middleware function overloads
+ > there are three overloads that we can use to define a middleware/requestHandler
+
+(req: express.Request, res: express.Response) => {}
+ > used for request handlers
+ > only used if you are sure that this requestHandler will be the last in the middleware/requestHandler stack
+
+(req: express.Request, res: express.Response, next: NextFunction) => { next() }
+ > typically used for middleware that we apply to the Routes
+ > if this method is used for middleware, it MUST call the NextFunction parameter in order to execute the next middleware/requestHandler
+
+(error: Error, req: express.Request, res: express.Response, next: NextFunction) => { next() }
+ > middleware that is typically use to handle errors
+ > "error" parameter receives the Error that is thrown before that request reached this middleware
+
+EX:
+// inside ./router/todo.ts
+import { Router } from "express";
+const router = Router();
+router.post("/", (req, res) => {
+
+});
+
+export default router;
+
+
+
+// inside ./app.ts
+import express, { Request, Response, NextFunction } from "express";
+import todoRouter from "./router/todo";
+
+const app = express();
+app.use("/todos", todoRouter);
+
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).send(error);
+});
+
+app.listen(3000, () => {
+  console.log("Server starting at port 3000");
+});
+
+
+
+
+
+
+
+
+
+
+6. Working with Controllers & Parsing Request Bodies
+
+Controllers
+ > mainly used to contain the RequestHandler function that we will provide to the Routers' routes
+
+Parsing Request Bodies
+ > before we send the request to the Routers' routes, we want to have the requests body ALREADY PARSE into an Object instead of JSON string
+ > to do this, we can add a middleware to the Express Server which we can get by calling express.json()
+	- ex: app.use(express.json())
+
+
+EX:
+// inside ./controllers/todo.ts
+import { RequestHandler } from "express";
+import { Todo } from "../models/todo";
+
+const TODOS: Todo[] = [];
+
+export const createTodo: RequestHandler = (req, res, next) => {
+  const text = (req.body as { text: string }).text;
+  const newTodo = new Todo(Math.random().toString(), text);
+  TODOS.push(newTodo);
+  res.status(201).send({ message: "Create a Todo item", createdTodo: newTodo });
+};
+
+
+// ./models/todo.ts
+export class Todo {
+  constructor(public id: string, public text: string) {}
+}
+
+
+// ./routes/todo.ts
+import { Router } from "express";
+import { createTodo } from "../controllers/todo";
+
+const router = Router();
+
+router.post("/", createTodo);
+
+export default router;
+
+
+// ./app.ts
+import express, { Request, Response, NextFunction } from "express";
+import todoRouter from "./routes/todo";
+
+const app = express();
+app.use(express.json()); // must be called before we register Routers
+app.use("/todos", todoRouter);
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).send(error);
+});
+
+app.listen(3000, () => {
+  console.log("Server starting at port 3000");
+});
+
+
+
+
+
+
+
+
+
+7. More CRUD Operations
+
+Function/Object/Types used
+RequestHandler<P extends object>
+ > special function that we pass to http verb functions of Router or Express
+ > the RequstHandler function receives two or three arguments
+	1. req: Request
+	2. res: Response
+	3. next?: NextFunction
+ > RequestHandler can also take a Type argument which represent the object type the request parameters have 
+	- request parameters refers to the parameter we set in the url (i.e. "/todos/:id")
+	- this type must be in an object form, either using "type" or "interface"
+
+
+GOAL:
+1. Complete the CRUD operation for Todo resource
+
+// ./controllers/todo.ts
+import { RequestHandler } from "express";
+import { Todo } from "../models/todo";
+
+const TODOS: Todo[] = [];
+
+export const createTodo: RequestHandler = (req, res, next) => {
+  const text = (req.body as { text: string }).text;
+  const newTodo = new Todo(Math.random().toString(), text);
+  TODOS.push(newTodo);
+  res.status(201).send({ message: "Create a Todo item", createdTodo: newTodo });
+};
+
+export const getTodos: RequestHandler = (req, res, next) => {
+  res.send(TODOS);
+};
+
+export const updateTodo: RequestHandler<{ id: string }> = (req, res, next) => {
+  const id = req.params.id;
+  const todoIndex = TODOS.findIndex((todo) => todo.id === id);
+  if (todoIndex < 0) {
+    res.status(404).send();
+    return;
+  }
+  const text = (req.body as { text: string }).text;
+  TODOS[todoIndex] = { id, text };
+  res.send();
+};
+
+export const deleteTodo: RequestHandler<{ id: string }> = (req, res, next) => {
+  const id = req.params.id;
+  const todoIndex = TODOS.findIndex((todo) => todo.id === id);
+  if (todoIndex < 0) {
+    res.status(404).send();
+    return;
+  }
+  TODOS.splice(todoIndex, 1);
+  res.send();
+};
+
+
+
+// ./routes/todo.ts
+import { Router } from "express";
+import {
+  createTodo,
+  deleteTodo,
+  getTodos,
+  updateTodo,
+} from "../controllers/todo";
+
+const router = Router();
+
+router.post("/", createTodo);
+router.get("/", getTodos);
+router.patch("/:id", updateTodo);
+router.delete("/:id", deleteTodo);
+
+export default router;
+
+
+
+
+
+
+
+
+
+
+8. Wrap up
+
+
+
+
+
+

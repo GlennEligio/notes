@@ -1,0 +1,72 @@
+04.07. Modals
+
+~~~~~ COMPONENT - MODALS ~~~~~
+Modals
+	> we can create modals using Bootstrap class
+	> for functionality (open/close), we can use the data api
+	> by default, modal closes when user click outside the modal
+
+Creating Modal
+1. Create div for wrapping entire modal
+	-> .modal class
+	-> tabindex of -1
+2. Create div inside the div.modal for wrapping the modal dialog
+	-> .modal-dialog class
+3. Create another div inside the div.modal-dialog
+	-> .modal-content class
+4. Inside the .modal-content div, we can create three div
+	-> 1st div for modal header
+	-> 2nd div for modal body
+	-> 3rd div for modal footer
+5. For modal header div
+	-> .modal-header class
+	-> inside, we can define the modal title and a close button
+		=> modal title will have .modal-title class
+		=> button can have .btn-close for predefined close button style
+6. For modal body, we can modify it whenever we want
+7. For modal footer, we can add some buttons
+	-> these buttons can also be used to close the modal
+
+
+Adding Opening/Closing functionality
+1. Create a button to open the modal
+	-> data-bs-toggle="modal"
+	-> data-bs-target="#{modal-id}" must MATCH the id value of the .modal element
+		=> ex: if .modal element have id="modalEx1", then data-bs-target="#modalEx1"
+2. Add attributes to the buttons inside Modal to be used for closing it
+	-> data-bs-dismiss="modal"
+
+
+
+Static backdrop
+	> with this, User will be able to close the modal ONLY by using buttons inside modal with 'data-bs-dismiss="modal"'
+	> to do this, we will need to add data-bs-backdrop="static" and data-bs-keyboard="false"
+
+data-bs-backdrop="static"
+	> prevent user from closing modal by touching outside it
+data-bs-keyboard="false"
+	> prevent user from closing modal by using ESC key in keyboard
+
+
+
+Scrollable Modal
+	> to make modal scrollable, add .modal-dialog-scrollable class in CONJUNCTION to .modal element
+	
+<!-- Scrollable modal -->
+<div class="modal-dialog modal-dialog-scrollable">
+
+
+
+
+Vertically Centered Modal
+	> to make modal vertically centered, add .modal-dialog-centered in CONJUNCITON to .modal element
+
+<!-- Vertically centered modal -->
+<div class="modal-dialog modal-dialog-centered">
+
+
+
+Adding fade effect to Modal
+	> to add fade effect, we can use .fade class ALONGSIDE .modal element
+		=> <div class="modal fade">
+

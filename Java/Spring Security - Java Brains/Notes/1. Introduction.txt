@@ -1,0 +1,72 @@
+Spring Security Introduction
+
+
+Topics to learn
+1. Secure Spring MVC Web Apps
+2. Develop login pages (default and custom)
+3. Define users and roles with simple authentication
+4. Protect URLs based on role
+5. Use JSP tags to hide/show content based on role
+6. Store users, passwords and roles in DB (plain-text -> encrypted)
+
+
+Goals:
+1. Cover the most common Spring Security tasks that you will need on daily projects
+
+
+
+SPRING SECURITY MODEL
+	> Spring Security defines a framework for security
+	> Implemented using Servlet filters in the background
+	> Two methods of securing a Web app:
+		1. Declarative
+		2. Programmatic
+
+
+
+SECURITY CONCEPTS
+
+Authentication
+	> Check user id and password with credentials stored in app / db
+
+Authorization
+	> Check to see if user has an authorized role
+
+
+
+DECLARATIVE SECURITY
+	> define application's security constraints in configuration, can be either
+		1. All Java Config (@Configuration, no xml)
+		2. Spring XML config
+	> provides separation of conerns between application code and security
+
+
+
+PROGRAMMATIC SECURITY
+	> Spring Security provides an API for custome application coding
+	> Provides greater customization for specific app requirements
+
+
+
+DIFFERENT LOGIN METHODS
+	
+1. HTTP Basic Authentication
+2. Default login form
+	> Spring Security provides a default login form
+3. Custom login form
+	> your own look-and-feel, HTML + CSS
+
+
+
+HTTP Basic Authentication
+	> Built-in Dialog from browser
+	> Not preferred since its not good user experience
+
+
+
+Authentication and Authorization
+1. In-memory
+2. JDBC
+3. LDAP
+4. Custom/Pluggable
+5. etc.

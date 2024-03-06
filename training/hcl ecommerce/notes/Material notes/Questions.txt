@@ -1,0 +1,7 @@
+1. With regards to custom controller tasks you've given before. I encountered an error where it says it does not found that specific ControllerCmd. Is it related to the Access Policy, since Commands can also be considered as resource for Command level Access policy
+2. Do we need indepth knowledge when it comes to Elasticsearch, Zookeeper	
+	> no need
+	
+	
+Search profile
+	> when a custom search profile is added in wc-search.xml, it will also fetch the data defined in the custom search profile and add it in the index

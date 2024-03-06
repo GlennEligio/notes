@@ -1,0 +1,31 @@
+92 AWS Snow Family Hands On
+
+
+NOTE:
+1. Do not finalize creating an AWS Snow Family. This is not included in the free tier and you will be charged
+2. No need to download the AWS OpsHub 
+3. For data migration purpose, choose either 'Import into Amazon S3' or 'Export from Amazon S3', based on whether we are doing import or export
+4. For edge computing, choose the 'Local compute and storage only'
+5. You have the option to do the following in the Snow devices
+	> load Bucket data to it
+	> load custom AMI inside it
+6. Some Snow Devices may not be available in all regions
+7. For import jobs, the data in the directories will be transferred back to S3. 
+8. For export jobs, the data in the directory will be erased when the devices are returned to AWS.
+
+
+
+Creating a Snow Family job - Data Migration
+1. Search Snow Family in AWS
+2. Select 'Create job' at the top left
+3. Select 'Import into Amazon S3' for Snow job type
+	> import/export for data migration
+	> local compute and storage only for edge computing
+4. Acknowledge 'Get started with import to S3 job' page
+5. Pass necessary Shipping info
+6. For Job details
+	> pass a name
+	> select the Snow device to use
+	> select S3 bucket where you will import/export the data from/to the Snow device
+7. Set the Security preferences by default
+8. Configure notification preferences

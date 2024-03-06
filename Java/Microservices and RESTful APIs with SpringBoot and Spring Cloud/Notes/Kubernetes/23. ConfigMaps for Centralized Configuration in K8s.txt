@@ -1,0 +1,53 @@
+23. ConfigMaps for Centralized Configuration in K8s
+
+
+ConfigMaps
+	> resource inside K8s cluster
+	> here, we can store data (in key=value pairs) that we can use in the Pods or Containers
+	> we typically use the data stored for Environment Variables of Containers to run
+
+
+Creating ConfigMap
+1. Through CLI
+2. Through YAML file
+
+Commands:
+kubectl create configmap <NAME>
+	> used to create a configmap
+	> to add data in a configmap when creating it, we can use the "--from-literal" option
+		- "--from-literal" option takes a key=value pair
+	> ex: kubectl create configmap currency-conversion --from-literal=CURRENCY_EXCHANGE_URI=http://currency-exchange
+
+kubectl apply -f <configmap-yaml-file>
+	> used to create a configmap through YAML file
+
+EX: yaml file for configmap
+
+apiVersion: v1
+data:
+  CURRENCY_EXCHANGE_URI: http://currency-exchange
+kind: ConfigMap
+metadata:
+  name: currency-conversion
+  namespace: default
+
+
+
+Adding ConfigMap as Environment Variable of Container
+1. Add envFrom property in the one of the containers
+	- envFrom, like env, takes an array of values (in this case, the configMapRef)
+2. Add configMapRef property in the envFrom array
+3. Define the name property of the configMapRef
+4. Apply the changes
+
+EX:
+      containers:
+      - image: shuntjg/mmv2-currency-conversion-service:0.0.12-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        name: mmv2-currency-conversion-service
+        envFrom:
+          - configMapRef:
+              name: currency-conversion
+#        env:
+#          - name: CURRENCY_EXCHANGE_URI
+#            value: http://currency-exchange

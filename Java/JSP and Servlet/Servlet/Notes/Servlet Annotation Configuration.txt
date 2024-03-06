@@ -1,0 +1,12 @@
+Servlet Annotation Configuration
+
+@WebServlet(String url)
+	> defines the route url mapping of the Servlet to the tomcat
+
+EX:
+Tomcat Server				localhost
+Tomcat HTTP/1.1				8080
+Dynamic Web Project Name		Example
+@WebServlet() of Login Servlet		"/login"
+
+Url to access Login Servlet		http://localhost:8080/Example/login

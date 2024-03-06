@@ -1,0 +1,720 @@
+16 Bonus Topics
+
+Contents:
+1. Deploying your App to Tomcat as a Web Application Archive (WAR) file
+2. POST/REDIRECT/GET pattern for resolving Issue Clicking RefreshReload button results in adding same student
+3 FAQ How to use Bootstrap with JSP
+4 How to Secure your Web Application - Security
+5 FAQ Sensitive Data in the URL Maybe use POST instead
+6 FAQ How to use Maven with JSP-Servlet Projects
+7 FAQ How to use Maven with Student Tracker Project
+8 FAQ How to add Search features to the App
+
+
+
+
+
+
+
+
+
+
+1. Deploying your App to Tomcat as a Web Application Archive (WAR) file
+
+Bonus: Deploying your App to Tomcat as a Web Application Archive (WAR) file
+
+When you deploy your Java web apps, you can make use of a Web Application Archive (WAR) file.
+
+The Web Application Archive (WAR) file is a compressed version of your web application. It uses the zip file format but the file has the .war extension.
+
+If you are using Eclipse, then the best way to visualize it is think of your "WebContent" directory being compressed as a zip file with the .war extension.
+
+This includes all of your web pages, images, css etc. It also includes the WEB-INF directory which includes your classes in WEB-INF/classes and supporting JAR files in WEB-INF/lib.
+
+The WAR file format is part of the Java EE / Servlet specification. As a result, all Java EE servers support this format (ie jboss, weblogic, websphere, glassfish and tomcat).
+
+Below, I provide the steps on how to create a WAR file in Eclipse. I also show how to deploy the WAR file on Tomcat.
+
+---
+
+1. In Eclipse, stop Tomcat
+2. Right-click your project and select Export > WAR File
+3. In the Destination field, enter: <any-directory>/mycoolapp.war
+4. Outside of Eclipse, start Tomcat
+	> If you are using MS Windows, then you should find it on the Start menu
+5. Make sure Tomcat is up and running by visiting: http://localhost:8080
+6. Deploy your new WAR file by copying it to <tomcat-install-directory>\webapps
+	> Give it about 10-15 seconds to make the deployment. You'll know the deployment is over because you'll see a new folder created in webapps ... with your WAR file name.
+7. Visit your new app. If your war file was: mycoolapp.war then you can access it with:  http://localhost:8080/mycoolapp/
+
+
+
+
+
+
+
+
+
+2. POST/REDIRECT/GET pattern for resolving Issue Clicking RefreshReload button results in adding same student
+
+Problem: 
+
+If the user clicks the brower's refresh/reload button after adding a student, that student is being added again.
+
+Solution:
+
+To prevent this issue, then we need to implement the Post/Redirect/Get design pattern. This patterns is designed to prevent duplicate form submissions.
+
+Detailed information on this pattern is available here: - https://en.wikipedia.org/wiki/Post/Redirect/Get
+
+---
+
+For our class project, we'll make the following modifications to resolve this problem.
+
+- Update student form to POST data
+
+- Modify servlet code to handle POST data and redirect to the StudentControllerServlet with the LIST command.
+
+----
+
+Details
+
+1. Update student form to POST data
+
+Edit the file, add-student-form.jsp
+
+Change the form action method to POST
+
+Replace
+
+        <form action="StudentControllerServlet" method="GET">
+
+With
+
+        <form action="StudentControllerServlet" method="POST">
+
+
+
+2. Modify servlet code to handle POST data and redirect to the StudentControllerServlet with the LIST command.
+
+In the doGet() method, delete this code:
+
+            case "ADD":
+                addStudent(request, response);
+                break;
+
+3. Add a new method for doPost(). This method will handle the case
+for adding students and it will redirect back to lists the students
+
+Here's the doPost() method
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        try {
+            // read the "command" parameter
+            String theCommand = request.getParameter("command");
+                    
+            // route to the appropriate method
+            switch (theCommand) {
+                            
+            case "ADD":
+                addStudent(request, response);
+                break;
+                                
+            default:
+                listStudents(request, response);
+            }
+                
+        }
+        catch (Exception exc) {
+            throw new ServletException(exc);
+        }
+        
+    }
+
+
+
+4. Modify the code for the addStudent() method
+
+The last line of code uses a sendRedirect. This will solve the problem of multiple browser reloads by the user.
+
+
+
+    private void addStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        // read student info from form data
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String email = request.getParameter("email");        
+        
+        // create a new student object
+        Student theStudent = new Student(firstName, lastName, email);
+        
+        // add the student to the database
+        studentDbUtil.addStudent(theStudent);
+                
+        // send back to main page (the student list)
+        // SEND AS REDIRECT to avoid multiple-browser reload issue
+        response.sendRedirect(request.getContextPath() + "/StudentControllerServlet?command=LIST");
+    }
+
+ 
+
+---
+
+Test your app. You will now be able to add a student. 
+
+Then click the browser reload button multiple times. Notice that only one student will be added despite multiple browser reload attempts by the user.
+
+That's it.
+
+Let me know your results :-)
+
+---
+
+Full source code is available here:
+
+- https://gist.github.com/darbyluv2code/282fe4e82117fb813916a2a34398dcb5
+
+---
+
+
+
+
+
+
+
+
+
+
+3 FAQ How to use Bootstrap with JSP
+
+Question
+
+How do I use Bootstrap with JSP?
+
+Answer
+
+You would use the exact same technique of using bootstrap with any regular HTML file.
+
+1. Load the bootstrap files in the <head> section of your JSP file
+
+2. Apply the bootstrap styles in the JSP file on html tags.
+
+---
+
+Here's a demo JSP file that makes use of Bootstrap. 
+
+- https://gist.github.com/anonymous/6ebacea6eebbfa2d08364b26755dd9cf
+
+---
+
+
+
+
+
+
+
+
+
+
+
+4 How to Secure your Web Application - Security
+
+Question
+
+How do I secure my web application?
+
+Answer
+
+Here's a link that shows how to set up app security with Tomcat
+
+- http://www.avajava.com/tutorials/categories/tomcat
+
+If you need more background on Java EE web security, here's another good reference.
+
+- https://docs.oracle.com/javaee/7/tutorial/security-webtier.htm#BNCAS
+
+
+
+
+
+
+
+
+
+
+
+5 FAQ Sensitive Data in the URL Maybe use POST instead
+
+Student Question
+
+I want a solution for hiding sensitive data in URL (social security number, credit card number etc). Maybe, I should change request from GET to POST?
+
+Answer
+
+Using the POST method does not add security. It simply "hides" the request data. But any web user can still easily see the data. All they have to do is use Chrome Dev Tools or FireFox Firebug. So, using POST is only giving you "security by obscurity" which is weak if you have highly sensitive data.
+
+If you have highly sensitive data such as social security number, credit card number, then you should use SSL encryption on your server.
+
+Note, simply using the POST method does not add secure encryption. The data is still sent in the clear without any protection or encryption.
+
+SSL is required for data encryption.
+
+You can use SSL for enterprise-grade network security and encryption.
+
+Here's a tutorial on Tomcat SSL: https://www.mulesoft.com/tcat/tomcat-ssl
+
+---
+
+Is either GET or POST more secure than the other?
+
+See this link:
+
+https://stackoverflow.com/questions/198462/is-either-get-or-post-more-secure-than-the-other
+
+
+
+
+
+
+
+
+
+
+6 FAQ How to use Maven with JSP-Servlet Projects
+
+How to use Maven with JSP-Servlet projects
+
+This document explains the step required to use the Maven with JSP-Servlet projects.
+
+This document assumes you understand the basics of Maven. If not, here's a Maven tutorial: - https://maven.apache.org/guides/index.html
+
+You should already have Maven installed and configured. 
+
+- Download: https://maven.apache.org/download.cgi 
+
+- Install: https://maven.apache.org/install.html
+
+--
+
+Overview
+
+At a high level, you will perform the following steps:
+
+1. Download Maven version of the project 
+
+2. Compile the project
+
+3. Package the project as a WAR file 
+
+4. Deploy the WAR file to Tomcat
+
+--
+
+Detailed Steps
+
+1. Download the Maven version of the project files
+
+Download: http://www.luv2code.com/downloads/udemy-jsp/jsp-servlet-maven-demo.zip
+
+Unzip the file.
+
+The standard Maven directory structure in your project:
+
+ |-- pom.xml
+ `-- src
+     `-- main
+         |-- java
+         |-- webapp
+             `-- resources
+             `-- WEB-INF
+
+The pom.xml contains a list of all JAR file dependencies for your
+project. Maven will download these JAR files from the Internet and copy
+to your WEB-INF/lib directory
+
+- Your Java source code is in: src\main\java
+- Your configs (*.xml) are in: src\main\webapp\WEB-INF
+- Your index.jsp is in: src\main\webapp
+- Your view JSPs are in: src\main\webapp\WEB-INF\view
+
+You can read more about the Maven directory structure here:
+
+- https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html
+
+2. Compile the project
+
+- Open a terminal window.
+- Navigate to the directory where you unzipped the file.
+- Compile the project by typing: mvn compile
+
+3. Package the project as a WAR file
+
+- Create the WAR file using: mvn package
+
+A WAR file is a compressed archive of your web app.
+
+4. Deploy the WAR file to Tomcat
+
+- We will deploy the WAR file to Tomcat. We will run Tomcat outside of Eclipse.
+- If you have Eclipse running, make sure you stop Tomcat in Eclipse
+
+- Open a terminal window.
+- Navigate to your Tomcat installation directory
+- Once you are in the Tomcat installation directory
+-- Start Tomcat with the following command: bin\startup.bat  (or use bin/startup.sh if on Linux/Mac)
+
+- In your web browser, visit http://localhost:8080
+-- You should see the Tomcat success page.
+
+- Open up your GUI File Manager for your operating system (Windows Explorer / Mac Finder)
+
+-- Navigate to your project directory
+-- Move into the sub-directory: target
+
+-- Select the file: jsp-servlet-maven-demo.war
+-- Copy this file to your Tomcat installation directory: ${my-tomcat-install-dir}\webapps
+
+This is Tomcat's hot-deployment directory. After about 15 seconds, Tomcat will notice your new WAR file and automatically expand it.
+
+- Test your app
+-- Visit: http://localhost:8080/jsp-servlet-maven-demo
+
+Congrats! You deployed your app to Tomcat using Maven.
+
+--
+
+Bonus: Import the project to Eclipse
+
+If you'd like to import the Maven project into Eclipse, follow these steps.
+
+1. Click File > Import
+
+2. Type Maven in the search box under Select an import source:
+
+3. Select Existing Maven Projects
+
+4. Click Next
+
+5. Click Browse and select the folder that is the root of the Maven project (probably contains the pom.xml file)
+
+6. Click OK
+
+7. Under Projects: click the checkbox next to the pom.xml file
+
+8. Click Finish
+
+
+
+
+
+
+
+
+
+
+7 FAQ How to use Maven with Student Tracker Project
+
+How to use Maven with Student Tracker Project
+
+This document explains the step required to use the Maven with JSP-Servlet projects.
+
+This document assumes you understand the basics of Maven. If not, here's a Maven tutorial: - https://maven.apache.org/guides/index.html
+
+You should already have Maven installed and configured. 
+
+- Download: https://maven.apache.org/download.cgi 
+
+- Install: https://maven.apache.org/install.html
+
+--
+
+Overview
+
+At a high level, you will perform the following steps:
+
+1. Download Maven version of the project 
+
+2. Compile the project
+
+3. Package the project as a WAR file 
+
+4. Deploy the WAR file to Tomcat
+
+--
+
+Detailed Steps
+
+1. Download the Maven version of the project files
+
+Download: http://www.luv2code.com/downloads/udemy-jsp/maven-web-student-tracker.zip
+
+Unzip the file.
+
+
+
+2. Compile the project
+- Open a terminal window. 
+
+- Navigate to the directory where you unzipped the file. 
+
+- Compile the project by typing: mvn compile
+
+
+
+3. Package the project as a WAR file
+
+- Create the WAR file using: mvn package
+
+A WAR file is a compressed archive of your web app.
+
+
+
+4. Deploy the WAR file to Tomcat
+
+- We will deploy the WAR file to Tomcat. We will run Tomcat outside of Eclipse. - If you have Eclipse running, make sure you stop Tomcat in Eclipse
+
+- Open a terminal window. 
+
+- Navigate to your Tomcat installation directory 
+
+- Once you are in the Tomcat installation directory 
+
+-- Start Tomcat with the following command: bin\startup.bat  (or use bin/startup.sh if on Linux/Mac)
+
+- In your web browser, visit http://localhost:8080
+
+ -- You should see the Tomcat success page.
+
+- Open up your GUI File Manager for your operating system (Windows Explorer / Mac Finder)
+
+-- Navigate to your project directory 
+
+-- Move into the sub-directory: target
+
+-- Select the file: maven-student-web-tracker.war 
+
+-- Copy this file to your Tomcat installation directory: ${my-tomcat-install-dir}\webapps
+
+This is Tomcat's hot-deployment directory. After about 15 seconds, Tomcat will notice your new WAR file and automatically expand it.
+
+- Test your app 
+
+-- Visit: http://localhost:8080/maven-student-web-tracker
+
+Congrats! You deployed your app to Tomcat using Maven.
+
+--
+
+Bonus: Import the project to Eclipse
+
+If you'd like to import the Maven project into Eclipse, follow these steps.
+
+1. Click File > Import
+
+2. Type Maven in the search box under Select an import source:
+
+3. Select Existing Maven Projects
+
+4. Click Next
+
+5. Click Browse and select the folder that is the root of the Maven project (probably contains the pom.xml file)
+
+6. Click OK
+
+7. Under Projects: click the checkbox next to the pom.xml file
+
+8. Click Finish
+
+
+
+
+
+
+
+
+
+8 FAQ How to add Search features to the App
+
+FAQ: How to add Search features to the App?
+
+A number of students have asked how to add search features to the app? I'll walk through this process.
+
+Basically, we will allow the user to search for a customer by name. We'll add a search box at to the screen and the user can enter a name. On the backend, we'll compare this name to the customer's first name or last name.
+
+
+Overview of Development Process
+1. Create the HTML form
+2. Add routing logic in StudentControllerServlet
+3. Add method in the StudentDbUtil to perfom search
+
+
+
+Download Source Code
+All of the complete solution code is available for download here.
+
+http://www.luv2code.com/downloads/udemy-jsp/jsp-student-tracker-bonus-search.zip
+
+I show you the detailed steps below so you can see what is added to each file.
+
+
+
+Detailed Steps
+
+1. Create the HTML form
+
+You need to add a search form to read the user input and submit it to your Spring controller mapping
+
+a. Edit the file: list-students.jsp
+
+b. Add a search form right after the search button
+
+         <!--  add a search box -->
+            <form action="StudentControllerServlet" method="GET">
+        
+                <input type="hidden" name="command" value="SEARCH" />
+            
+                Search student: <input type="text" name="theSearchName" />
+                
+                <input type="submit" value="Search" class="add-student-button" />
+            
+            </form>
+This sends over a search request to our StudentControllerServlet. It includes theSearchName that the user entered. 
+
+The form also includes a hidden form field for the "SEARCH" command. This is a similar pattern we used in the previous servlet controller code for list, add, update and delete.
+
+---
+
+2. Add routing logic in StudentControllerServlet
+
+You need to add routing logic in the StudentControllerServlet to handle the search form submission
+
+a. Edit the file: StudentControllerServlet.java
+
+b. Move to the doGet() method. Add the following code in your switch statement. This should appear right after the code for delete. But it should appear BEFORE the "default" case.           
+
+case "SEARCH":
+                searchStudents(request, response);
+                break;
+
+
+Your code fragment in this section should look like.         
+
+  case "DELETE":
+                deleteStudent(request, response);
+                break;
+            case "SEARCH":
+                searchStudents(request, response);
+                break;
+                
+            default:
+                listStudents(request, response);
+            }
+c. You may have syntax errors on call for "searchStudents", but we'll resolve that in the next step.
+
+d. In your servlet, add the new search method
+
+    private void searchStudents(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // read search name from form data
+        String theSearchName = request.getParameter("theSearchName");
+        
+        // search students from db util
+        List<Student> students = studentDbUtil.searchStudents(theSearchName);
+        
+        // add students to the request
+        request.setAttribute("STUDENT_LIST", students);
+                
+        // send to JSP page (view)
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/list-students.jsp");
+        dispatcher.forward(request, response);
+    }
+e. You may have syntax errors on the studentDbUtil, but we'll resolve that in the next section.
+
+---
+
+3. Add method in the StudentDbUtil to perfom search
+
+Now, we'll add methods in the StudentDbUtil to search for a student by first name or last name
+
+a. Edit the file: StudentDbUtil.java
+
+b. Add the method:
+
+    public List<Student> searchStudents(String theSearchName)  throws Exception {
+        List<Student> students = new ArrayList<>();
+        
+        Connection myConn = null;
+        PreparedStatement myStmt = null;
+        ResultSet myRs = null;
+        int studentId;
+        
+        try {
+            
+            // get connection to database
+            myConn = dataSource.getConnection();
+            
+            //
+            // only search by name if theSearchName is not empty
+            //
+            if (theSearchName != null && theSearchName.trim().length() > 0) {
+                // create sql to search for students by name
+                String sql = "select * from student where lower(first_name) like ? or lower(last_name) like ?";
+                // create prepared statement
+                myStmt = myConn.prepareStatement(sql);
+                // set params
+                String theSearchNameLike = "%" + theSearchName.toLowerCase() + "%";
+                myStmt.setString(1, theSearchNameLike);
+                myStmt.setString(2, theSearchNameLike);
+                
+            } else {
+                // create sql to get all students
+                String sql = "select * from student order by last_name";
+                // create prepared statement
+                myStmt = myConn.prepareStatement(sql);
+            }
+            
+            // execute statement
+            myRs = myStmt.executeQuery();
+            
+            // retrieve data from result set row
+            while (myRs.next()) {
+                
+                // retrieve data from result set row
+                int id = myRs.getInt("id");
+                String firstName = myRs.getString("first_name");
+                String lastName = myRs.getString("last_name");
+                String email = myRs.getString("email");
+                
+                // create new student object
+                Student tempStudent = new Student(id, firstName, lastName, email);
+                
+                // add it to the list of students
+                students.add(tempStudent);            
+            }
+            
+            return students;
+        }
+        finally {
+            // clean up JDBC objects
+            close(myConn, myStmt, myRs);
+        }
+    }
+In this method, we need to check "theSearchName", this is the user input. We need to make sure it is not empty. If it is not empty then we will use it in the search query.  If it is empty, then we'll just ignore it and simply return all of the students.
+
+For the condition when "theSearchName" is not empty, then we use it to compare against the first name or last name. We also make use of the "like" clause and the "%" wildcard characters. This will allow us to search for substrings. For example, if we have students with last name of "Patel", "Patterson" ... then we can search for "Pat" and it will match on those names.  
+
+Also, notice the query uses the lower case version of the values to make a case insensitive search. If you'd like to make a case sensitive search, then simply remove the lower references.
+
+You can read more on the SQL "like" clause here:
+https://www.w3schools.com/SQl/sql_like.asp
+
+---
+
+4. Test the app
+
+Once you've made all of the updates then you can test your application.
+
+The app will now have the search form at the top. You can enter a name to search and the app will give you the desired results.
+
+Congrats!

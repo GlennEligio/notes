@@ -1,0 +1,50 @@
+04 Async in server side apps
+
+Current situation for Java backend dev
+1. Never had to think about concurrency
+2. We code like 
+	> Its a single request
+	> Multiple simultaneous users abstracted out
+	> Delays abstracted out
+3. Because of these assumptions
+	> We pay with sequential blocking operations
+	> We pay with idling threads
+
+
+Concurrency APIs
+ > as of now, we have Concurrency APIs to be able to write asynchronous code
+ > example is the Future and CompletableFuture
+ > CompletableFuture
+	- available since Java 8
+	- implements 'Future' and goes beyond it!
+	- works with 'CompletionStage' to coordinate async operations
+
+
+Using CompletableFuture in the @Controller endpoint earlier
+1. Call userService
+2. Call userProfileService in parallel
+3. When both return, merge the data strucctures
+4. Return merged object
+
+
+Result Code
+@GetMapping("/users/{userId}")
+public User getUserDetails(@PathVariable String userId) {
+	CompletableFuture<User> userAsync = CompletableFuture.supplyAsync(() -> userService.getUser(userId));
+	CompletableFuture<UserPreferences> userPreferencesAsync = CompletableFuture.supplyAsync(() -> userPreferencesService.getUserPreferences(userId));
+	CompletableFuture<Void> bothFutures = CompletableFuture.allOf(userAsync, userPreferencesAsync);
+	bothFutures.join();
+	User user = userAsync.join();
+	UserPreferences prefs = userPreferencesAsync.join();
+	user.setUserPreferences(prefs);
+	return user;
+}
+
+
+Problems
+1. The code is still synchronous
+	> while the fetching of User and UserPreferences is not async, it still synchronous since we still need to WAIT for both Futures to finish before we can proceed
+2. Also, this method is too much for the dev to do
+3. Error handling is messy
+4. We need a new paradigm to make this operation async
+5. We also need a framework that can support this async 

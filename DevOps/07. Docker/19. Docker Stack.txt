@@ -1,0 +1,29 @@
+19. Docker Stack
+
+
+Docker Stack
+	> included with the Docker engine
+	> no need to install additional packages to use it 
+	> deploying Docker Stacks is a part of the Swarm mode
+	> supports the same kinds of Docker Compose files, but the handling happens in Go code, inside the Docker Engine
+	
+
+COMMANDS FOR Docker Stack
+
+docker stack --help
+	> used to show information regarding "docker stack" command
+
+docker stack deploy [OPTIONS] <NAME>
+	> used to deploy a Docker Stack with specified name
+	> options include
+	> "-c" 			defines the Compose yaml file to use
+	> "--orchestrator"	defines the orchestrator to use (swarm|kubernetes|all)
+
+docker stack ls
+	> shows list of Stacks
+
+docker stack services <NAME>
+	> used to show the Services running in a Stack
+
+docker stack rm <NAME>
+	> used to remove a Stack in a Swarm

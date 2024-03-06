@@ -1,0 +1,227 @@
+WCS V9 Business Logic Layer
+
+BUSINESS LOGIC Layer
+	> Business Logic layer supports two methods of commands processing:
+		1. Traditional name-value pair processing
+		2. SOA-compliant processing of Business Object Documents (BODs)
+		3. Can be both 1 and 2
+	> Both methods use the WebSphere Commerce command framework
+	> Name-value pair processing includes:
+		1. Controller commands
+		2. Task commands
+	> BOD processing includes:
+		1. Get, Change, Process, Sync
+		
+		
+BUSINESS CONTEXT SERVICE
+Business Context
+	> Context establish an execution environment that affects output of a business component
+	> Clients do not directly interact with contexts; business components use the information present in a context to fulfill operations
+	
+Benefits
+1. Enablement of generic components
+2. Tailored content and experience
+3. Precisely targeted offers
+4. Enforcement of business policies
+5. Appropriate prices, entitlements, and terms for a particular user
+
+
+Business Context Service Architecture
+	> composed of the following components
+		1. Solution Controller - Web application
+		2. Business Context service
+			- Business Component
+			- Business context engine
+				- BCS (Business Context Service)
+				- Solution Context
+	> process flow includes:
+		1. Web application can either
+			- executes a commands
+			- execute activity cloning or sending complete signal to BCS
+		2. Business component receives the command
+		3. startRequest and endRequest will be executed by BCS
+		4. API calls will be done by Business component to the Solution Context
+		5. BCS sends SPIs to the Solution context
+		
+		
+		
+Types of Business Context
+1. BaseContext
+	> This context contains the basic attributes that an activity needs, such as store ID, called ID, and the run-as ID
+2. EntitlementContext
+	> this context holds information about entitlement criteria, such as reduced prices for gold club membership
+3. GlobalizationContext
+	> this context helps components determine locale-specific information such as what language a message should be rendered in, or what currency should be used in the calculation of a price
+4. ContentContext
+	> If Workspaces are enabled, this context determines the content or business objects that can be displayed or edited based on versioning information
+5. TaskContext
+	> If Workspaces are enabled, this context determines which task an administrator is currently performing
+6. AuditContext
+	> This context is usually provided by third party components. You might want to bridge the gap to the third party interface instead of programming to it directly
+	> This context enables you to connect to a different vendor's implementation of the service in the future without the need to rewrite your component
+7. PreviewContext
+	> The preview context is the attempt to solve both problems by allowing multi-users to validate independent content without influencing other users and ensuring the content does not require additional changes after validation
+	> In order to achieve this, 
+		- a context object will be associated with the preview operation that will represent the state information that will be used when deciding the content to preview along with other external events
+		- By associating a preview context with an activity, operations can use this content state information as a basis to decice what content to dispaly. 
+		- To solve the date issue, the preview context will contain the preview date which will be used to render the content to be displayed.
+		- By having activities having a unique preview context, this will allow multiple users to preview independent content without having to change content data or global system inforamtion
+8. ExperimentContext
+	> ExperimentContext is used to store the result of all active experiments for individual users, where result is a system-generated number which determines the control or test element to be selected in the experiments
+	> This information is persisted throughout the user session, so the same result will be used in the same session without re-generation of the number
+9. CatalogContext
+	> This context contains information related to the catalog in the current session, such as the catalog ID, the catalog owner, and whether this is a master catalog or not
+10. GiftRegistryContext
+	> This context contains gift registry information for a user in the current session, such as a list of gift registries that the user has accessed, the relationship the user has to specific gift registries (gift giver, registrant, or coregistrant), and the external ID of the gift registry the user is currently managing
+	
+	
+	
+Name-value pair command framework
+	> the name-value pair command framework uses name-value pairs as input to the business logic layer, and returns the responses as name-value pairs
+	> NOTE: The HCL Commerce BOD command framework provides an alternative means to model and assemble your business logic layer. The name-value pair command framework was assigned a name to distinguish it from the new, noun-based, command framework
+	
+Command Types
+	> HCL Commerce commands are Java beans that contain the programming logic associated with handling a particular request.
+	> Commands perform a specific business process, such as 
+		- adding a product to the shopping cart
+		- processing an order
+		- updating a customer's address book
+		- displaying a specific product page
+	> depending on its nature, a command can:
+		- call enterprise beans to perform database operations
+		- call one or more task commands that are assigned to process tasks to process and write information to the database
+		- return a view task on completion
+	> the HCL Commerce programming model defined the following command types
+		1. Controller commands
+		2. Task commands
+		
+Controller commands
+	> Encapsulate the logic related to a particular business process
+	> Examples of controller commands include 
+		- the OrderProcessCmd command for order processing
+		- LogonCmd that allows users to log on
+	> In general, a controller command contains the control statements (ex: if, then, else) and invokes task commands to perform individual tasks in the business process
+	> Upon completion, a controller command returns a view name.
+	> Based on the view name, the store identifier, and the device type, the solution controller determines the appropriate implementation class for the view and then invokes it
+	
+Task commands
+	> Implement a specific unit of application logic.
+	> In general, a controller command and a set of task commands togehter implement the application logic for a URL request.
+	> Task commands are executed in the same container as the controller command
+
+Data bean commands
+	> They are invoked by the data bean manager when a JSP page needs to instantiate a data bean
+	> The primary function of a data bean command is to populate the fields of a data bean with data from a persistent objects
+	
+View commands
+	> View commands, used to compose a view as a response to a client request, are DEPRECATED in this release of HCL Commerce. 
+	> Since HCL Commerce is a Struts application, the view command has been REPLACED by global forwards.
+	> For compatibility with previous releases, view command of previous releases will continue to work
+	
+	
+Creating New or Modifying Existing Commands
+	> When creating new business logic for your e-commerce application, it is expected that you might need to create new controller and task commands
+	> New commands must implement their corresponding interface (which, in turn, should extend an existing interface (ex: CommandCmd)). To simplify command writing, HCL Commerce includes an abstract implementation class for each type of command. New commands should extends these class (ex: CommandCmdImpl)
+	
+EX:
+#1
+Type: Controller command
+Example command name: MyControllerCmdImpl
+Extends: com.ibm.commerce.command.ControllerCommandImpl
+Implements example interface: MyControllerCmd
+
+#2
+Type: Task command
+Example command name: MyTaskCmdImpl
+Extends: com.ibm.commerce.command.TaskCommandImpl
+Implements example interface: MyTaskCmd
+
+#3
+Type: Data bean command
+Example command name: MyDataBeanCmdImpl
+Extends: com.ibm.commerce.command.DataBeanCommandImpl
+Implements example interface: MyDataBean
+
+
+HCL Commerce Data Beans
+	> HCL Commerce and the HCL Commerce development environment include a set of Java beans, called HCL Commerce data beans, that access information from the tables in the database
+	> Creating store pages using these beans allows you to display information that may change often, such as catalog groups and product lists, or product prices
+	
+	
+Command Context
+	> Commands can obtain information uisng the command context
+		- ex: user's id, user object, language id, store id
+	> When writing a command, you have access to the command context by calling the  "getCommandContext()" method of the command's superclass.
+	> The command context is set to the controller command when the command is invoked by the component facade.
+	> A controller command should propagate the command text to any task or controller commands that are invoked during processing.
+	
+Command Context methods
+getUserId() and getUser()
+	> get the user id or user object the current request should run against
+getStoreId(), getStore()
+	> get the store associated with the current request
+getLanguageId()
+	> returns the language id that should be used for the current request
+getCurrentcy()
+	> returns the currency to be used for the current request
+getCurrentTradingAgreements()
+getCurrentTradingAgreements(CommandContext)
+
+
+Controller Command
+	> the abstract class and interface are both found in the "com.ibm.commerce.command" package
+	> The following diagram illustrates the relationship between the implementation class and interface of a new controller command with existing abstract implementation class and interface
+	
+EX:
+New controller command
+Implementation Class					Interfaces
+ControllerCommandImpl				ControllerCommand
+	|									|
+	| extends							| extends
+	V					implements				V
+MyControllerCmdImpl  <-------------- MyControllerCmd
+
+
+Controller Command methods
+isGeneric(): boolean
+isRetriable(): boolean
+	> determines if the Controller can be retried after failing
+setRequestProperties(com.ibm.commerce.datatype.TypedProperty reqParams)
+	> sets the request parameters
+	> takes a TypedProperty, which is a Map
+validateParameters()
+	> validates the parameters present in request
+getResources()
+performExecute()
+	> will be executed when Controller command is called
+	
+	
+	
+Task Command
+	> A new task command should extend the abstract task command class "com.ibm.commerce.command.TaskCommandImpl" and implement an interface that extends the "com.ibm.commerce.command.TaskCommand" interface
+	
+EX:
+New controller command
+Implementation Class			Interfaces
+TaskCommandImpl					TaskCommand
+	|								|
+	| extends						| extends
+	V				implements		V
+MyTaskCmdImpl  <-------------- 	MyTaskCmd
+
+
+EX: Task command code
+public class MyTaskCmdImpl extends 
+com.ibm.commerce.command.TaskCommandImpl
+implements MyTaskCmd
+{
+... 
+} 
+
+public void performExecute() throws ECException
+{
+super.performExecute();
+// Include your business logic here.
+// Set output properties so the controller command
+// can retrieve the result from this task command.
+}

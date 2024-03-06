@@ -1,0 +1,11 @@
+13. Setting up Curreny Exchange MicroService
+
+Currency Exchange Microservice
+	> dependencies
+		1. Spring Boot DevTools
+		2. Spring Boot Actuator
+		3. Spring Web
+		4. Config Client
+	> define these properties
+		- spring.application.name=currency-exchange
+		- server.port=8000

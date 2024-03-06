@@ -1,0 +1,24 @@
+04. Spring Initialzr
+
+Spring Initialzr
+	> tool in order to create a barebone or template of a Spring Boot project
+	> can be access by going to this website
+		start.spring.io
+	> inside the website, we can do the following
+		- edit the properties of the Spring Boot Application
+			a. Project type	
+			b. Language
+			c. Spring Boot version
+			d. Project Metadata (Group, Artifact, Name, Packaging Type, JDK version)
+		- add specific Dependencies to be added in the Project
+	> to generate the project, click the "Generate"
+
+
+
+Dependencies to add
+1. Spring Web	
+	> Build web, including RESTful, applications using Spring MVC.
+	> Uses Apache Tomcat as the default embedded container / application server.
+2. H2 Database
+	> provides a fast in-memory database that supports JDBC API and R2DBC access, with a small (2mb) footprint.
+	> Supports embedded and server modes as well as a browser based console application

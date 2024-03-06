@@ -1,0 +1,387 @@
+Tasks, Async and Await
+
+Topics to discuss:
+1. What is the asynchronous programming model
+2. How to use tasks, async and await to add asynchronous programming to your REST API
+
+
+Asynchronous programming
+
+Two models when executing Task
+1. Synchronous model
+	> Task are executed SEQUENTIALLY
+	
+2. Asynchronous model
+	> Task are executed in PARALLEL
+
+
+
+Catalog REST API Asynchronous model
+	> called Async all the way
+
+	  async			   async		    async
+Request ------------> Controller ------------> Repository ------------> Database
+
+
+
+I. Change Repository Interface into an Asynchronous one
+
+
+1. Change the return types of abstract method of Repository interface to Task
+	> Task object contains instructions to be executed and the result that will be expected
+	> the type of the Task<> will determine the result type of the said Task
+	> a Task with no expected result to be pull will not have a type
+
+	EX: 	Task<Item> object will expect an Item object return
+		Task object will expect no result/return
+
+
+INSIDE the IItemRepository interface
+
+    public interface IItemRepository 
+    {
+        Task<Item> GetItem(Guid id);
+        Task<IEnumerable<Item>> GetItems();
+        Task CreateItem(Item item);
+        Task UpdateItem(Item item);
+        Task DeleteItem(Guid id);
+    }
+
+
+
+2. Change the name of the abstract methods of Repository interface
+	> asynchronous method, by convention, should have an -Async suffix to its name
+
+INSIDE IItemRepository interface
+
+    public interface IItemRepository 
+    {
+        Task<Item> GetItemAsync(Guid id);
+        Task<IEnumerable<Item>> GetItemsAsync();
+        Task CreateItemAsync(Item item);
+        Task UpdateItemAsync(Item item);
+        Task DeleteItemAsync(Guid id);
+    }
+
+
+
+
+II. Change the Concrete Implementation classes of Repo interface into Asynchronous (MongoDbItemsRepository class)
+
+
+3. Make the methods inside MongoDbItemsRepository ASYNCHRONOUS	
+	> to make a method asynchronous, we will need to do the following
+		- add async modifier to the method
+		- change return type to Task<>, whose type is the expected return type of the method
+		- change the methods called inside the asynchronous methods into their Async counterpart
+			= i.e. InsertOne into InsertOneAsync()
+		- add await modifiers to all asynchronous method calls inside the asynchronous method
+	a. CreateItemAsync()
+		> add async modifier to method
+		> change return type from void to Task
+		> for CreateItemAsync, change the InsertOne() into the InsertOneAsync()
+		> add await to the InsertOneAsync() call
+	b. DeleteItemAsync()
+		> add async modifier to method
+		> change return type from void to Task
+		> change DeleteOne() to DeleteOneAsync()
+		> add await to DeleteOneAsync() call
+	c. GetItemAsync(Guid id)
+		> add async modifier to method
+		> change return type from Item to Task<Item>
+		> change SingleOrDefault() to SingleOrDefaultAsync()
+		> add await to SingleOrDefaultAsync() call
+	d. GetItemsAsync()
+		> add async modifier to method
+		> change return type from IEnumerable<Item> to Task<IEnumerable<Item>>
+		> change ToList() to ToListAsync()
+		> add await to ToListAsync() call
+	e. UpdateItemAsync(Item item)
+		> add async modifier to method
+		> change return type from void to Task	
+		> change ReplaceOne() to ReplaceOneAsync()
+		> add await to ReplaceOneAsync() call
+		
+
+INSIDE MongoDbItemsRepository class
+
+        public async Task CreateItemAsync(Item item)
+        {
+            await itemsCollection.InsertOneAsync(item);
+        }
+
+        public async Task DeleteItemAsync(Guid id)
+        {
+            var filter = filterBuilder.Eq(item => item.Id, id);
+            await itemsCollection.DeleteOneAsync(filter);
+        }
+
+        public async Task<Item> GetItemAsync(Guid id)
+        {
+            var filter = filterBuilder.Eq(item => item.Id, id);
+            return await itemsCollection.Find(filter).SingleOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Item>> GetItemsAsync()
+        {
+            return await itemsCollection.Find(new BsonDocument()).ToListAsync();
+        }
+
+        public async Task UpdateItemAsync(Item item)
+        {
+            var filter = filterBuilder.Eq(existingItem => existingItem.Id, item.Id);
+            await itemsCollection.ReplaceOneAsync(filter, item);
+        }
+
+
+
+
+
+III. Change the Concrete Implementation classes of Repo interface into Asynchronous (InMemItemsRepository class)
+
+4. Make the methods inside InMemItemsRepository ASYNCHRONOUS	
+	> earlier in MongoDbItemsRepository class, we have asynchronous methods called inside the method
+	> but here we dont have any asynchronous methods (which by default returns a Task object)
+	> so in this case, we will use Task.FromResult() and Task.CompletedTask, both of which returns a Task object
+		- Task.FromResult()
+			= Task with a result object inside
+			= needs an object to be passed
+			= the object passed will be the result
+		- Task.CompletedTask
+			= used for return Task with no result
+
+	a. GetItems()
+		> add async on method and change return type to Task
+			= set type of Task to the original return type
+		> use Task.FromResult() and pass the items object to it
+		> add await to Task.FromResult() call
+	b. GetItem()
+		> add async on method and change return type to Task
+			= set type of Task to the original return type
+		> use Task.FromResult() and pass the item object to it
+		> add await to Task.FromResult() call
+	c. CreateItemAsync(), UpdateItemAsync(), DeleteItemAsync()
+		> add async on method and change return type to Task
+			= set type of Task to the original return type
+		> use Task.CompletedTask at the end of the method bodies
+		> add await to the Task.CompletedTask call
+
+
+INSIDE InMemItemsRepository class  
+
+    public class InMemItemsRepository : IItemRepository
+    {
+        private readonly List<Item> items = new()
+        {
+            new Item { Id = Guid.NewGuid(), Name = "Potion", Price = 9, CreatedDate = DateTimeOffset.UtcNow },
+            new Item { Id = Guid.NewGuid(), Name = "Iron Sword", Price = 20, CreatedDate = DateTimeOffset.UtcNow },
+            new Item { Id = Guid.NewGuid(), Name = "Bronze Shield", Price = 18, CreatedDate = DateTimeOffset.UtcNow },
+        };
+
+        public async Task<IEnumerable<Item>> GetItemsAsync()
+        {
+            return await Task.FromResult(items);
+        }
+
+        public async Task<Item> GetItemAsync(Guid id)
+        {
+            var item = items.Where(item => item.Id == id).SingleOrDefault();
+            return await Task.FromResult(item);
+
+
+        }
+
+        public async Task CreateItemAsync(Item item)
+        {
+            items.Add(item);
+            await Task.CompletedTask;
+        }
+
+        public async Task UpdateItemAsync(Item item)
+        {
+            var index = items.FindIndex(existingItem => existingItem.Id == item.Id);
+            items[index] = item;
+            await Task.CompletedTask;
+        }
+
+        public async Task DeleteItemAsync(Guid id)
+        {
+            var index = items.FindIndex(existingItem => existingItem.Id == id);
+            items.RemoveAt(index);
+            await Task.CompletedTask;
+        }
+    }
+
+
+
+IV. Change the ItemsController class' methods into Asynchronous
+
+5. Modify the ItemsController class' methods
+	> in making a method asynchronous
+		- add async modifier to method
+		- change return dataType to Task whose type is the original return dataType
+		- add await to the asynchronous method calls inside the method body
+
+	a. GetItems()
+		- add async modifer to method
+		- add -Async suffix to method name
+		- change return type from IEnumerable<ItemDto> to Task<IEnumerable<ItemDto>>
+		- add await to the GetItemsAsync() call of repository inside the method body
+			= since theres a Select() call after the GetItemsAsync(), if we add await, the compiler will think that the  Select() is the asynchronous method call
+			= to make the compiler do await on the GetItemsAsync(), we will encapsulate the GetItemsAsync() and the await modifier
+			= EX: (await repository.GetItemsAsync()).Select()
+	b. GetItem(Guid id)
+		- add async modifer to method
+		- add -Async suffix to method name
+		- change return type from ActionResult<ItemDto> to Task<ActionResult<ItemDto>>
+		- add await to the GetItemAsync() call of repository inside method body
+	c. CreateItem(CreateItemDto itemDto)
+		- add async modifer to method
+		- add -Async suffix to method name
+		- change return type from ActionResult<ItemDto> to Task<ActionResult<ItemDto>>
+		- add await to the CreateItemAsync() call of repository
+		- change the RouteName parameter of the CreateAtAction() call
+			= from GetItem to GetItemAsync
+	d. UpdateItem
+		- add async modifer to method
+		- add -Async suffix to method name
+		- change return type from ActionResult to Task<ActionResult>
+		- add await to both the GetItemAsync() and UpdateItemAsync() call of repository inside the method body
+	e. DeleteItem
+		- add async modifer to method
+		- add -Async suffix to method name
+		- change return type from ActionResult to Task<ActionResult>
+		- add await to both GetItemAsync() and DeleteItemAsync() call of repository inside the method body
+		
+
+INSIDE ItemsController class
+
+    [ApiController]
+    [Route("items")]
+    public class ItemsController : ControllerBase
+    {
+        private readonly IItemRepository repository;
+
+        public ItemsController(IItemRepository repository)
+        {
+            this.repository = repository;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<ItemDto>> GetItemsAsync()
+        {
+            var items = (await repository.GetItemsAsync()).Select(item => item.AsDto());
+            return items;
+        }
+
+        // GET /items/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ItemDto>> GetItemAsync(Guid id)
+        {
+            var item = await repository.GetItemAsync(id);
+            if(item is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(item.AsDto());
+        }
+
+        // POST /items
+        [HttpPost]
+        public async Task<ActionResult<ItemDto>> CreateItemAsync(CreateItemDto itemDto)
+        {
+            var item = new Item
+            {
+                Id = Guid.NewGuid(),
+                Name = itemDto.Name,
+                Price = itemDto.Price,
+                CreatedDate = DateTimeOffset.UtcNow
+            };
+
+            await repository.CreateItemAsync(item);
+
+            return CreatedAtAction(nameof(GetItemAsync), new {Id = item.Id}, item.AsDto());
+        }
+
+
+        // PUT /items/{"id"}
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateItemAsync(Guid id, UpdateItemDto itemDto)        
+        {
+            var existingItem = await repository.GetItemAsync(id);
+
+            if(existingItem is null)
+            {
+                return NotFound();
+            }
+
+            Item updatedItem = existingItem with 
+            {
+                Name = itemDto.Name,
+                Price = itemDto.Price
+            };
+            
+            await repository.UpdateItemAsync(updatedItem);
+            return NoContent();
+        }
+
+
+        // DELETE /items/{"id"}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteItem(Guid id)
+        {
+            var item = await repository.GetItemAsync(id);
+
+            if(item is null)
+            {
+                return NotFound();
+            }
+
+            await repository.DeleteItemAsync(id);
+
+            return NoContent();
+        }
+    }
+
+
+
+
+
+V. Testing the Async all the way REST API
+
+6. Test the REST API
+	> save all, run and debug
+	> run the MongoDb Docker container
+	> test all the Route endpoints of the REST API
+
+	As we can see, all the route endpoints work the same as before EXCEPT the PUT request. When sending POST request, we get a 500 Internal Server Error. Also the Exception error states that
+
+	System.InvalidOperationException: No route matches the supplied values
+
+	This is because at runtime, the framework suppress/ignore the -Async suffix which means the framework sees the Route endpoint name as if the -Async suffix is not there. And since in the UpdateItemAsync(), we used the nameof(GetItemAsync) at the CreateAtAction() parameter. The CreateAtAction() cant find the GetItemAsync since its is GetItem in runtime. 
+
+	For us to make the runtime NOT IGNORE/SUPPRESS the -Async suffix, we would need to add configuration in the services.AddController() in ConfigureServices() method of StartUp class.
+	
+	Using the lambda expression, call the SuppressAsyncSuffixInActionName and set it to FALSE.
+
+
+
+
+
+7. Disable SuppressAsyncSuffixInActionName in Controllers in services.AddControllers() of ConfigureServices() of StartUp class
+
+INSIDE ConfigureServices() of StartUp class
+
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
+
+
+
+
+
+8. Test the REST API PUT endpoint again
+	> this time, there should be no error anymore
+

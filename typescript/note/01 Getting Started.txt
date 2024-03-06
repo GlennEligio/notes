@@ -1,0 +1,189 @@
+TypeScript Academind
+
+Content:
+002 What is TypeScript & Why Should you use it
+004 Installing & Using TypeScript
+005 TypeScript Advantages - Overview
+006 Course Outline
+008 Setting Up A Code Editor
+009 The Course Project
+
+
+002 What is TypeScript & Why Should you use it
+
+TypeScript
+ > A JavaScript superset
+    - A language building up on JavaScript
+    - Adds new Feature + Advantages to JavaScript
+ > TypeScript can NOT be executed by the Browser or NodeJS
+    - Instead, it is compiled by into a JavaScript code using TypeScript Compiler
+ > TypeScript features (ex: Static Types) are compiled to JS "workarounds", possible errors are thrown
+    - These errors are sometimes caught at compile time wherein using JavaScript, these may be cause during runtime
+ > Has ONE IMPORTANT FEATURE added over JavaScript, "Types"
+
+
+Why TypeScript?
+ > with Types, we can 
+    1. Prevent Unwanted Behavior
+      - with TypeScript, we can define the Type of a Variable which will have its own defined behavior
+    2. Catch most error during Compile time
+
+EX:
+In example below, the function add takes two input, then adds them MATHEMATICALLY.
+But when we used the add function in console.log(), we passed two String variables, which will create unwanted behavior since our goal is to add two number inputs mathematically.
+In this case, the add function will return a result of the two string input concatenated
+
+// JS file
+function add(num1, num2) {
+  return num1 + num2;
+}
+
+console.log(add('2','3'))
+
+
+
+
+004 Installing & Using TypeScript
+
+
+ADDING TYPESCRIPT
+1. Install TypeScript
+	- if through npm, use "npm i -g typescript" command
+
+
+CREATING TYPESCRIPT FILE
+1. Create a file with extension ".ts" or ".tsx"
+	- ex: using-ts.ts
+
+COMPILING TYPESCRIPT FILE
+ > to compile a typescript (.ts) file, we will need to use the command
+    	- tsc <filename>
+	- ex: if we have App.ts, we will need to use "tsc App"
+ > this command will result a new file "App.js"
+	- this will be the the result of the compilation of App.ts file
+
+EX:
+// using-ts.js
+const button = document.querySelector("button");
+const input1 = document.getElementById("num1")! as HTMLInputElement;
+const input2 = document.getElementById("num2")! as HTMLInputElement;
+
+function add(num1: number, num2: number) {
+  return num1 + num2;
+}
+
+button.addEventListener("click", function () {
+  console.log(add(+input1.value, +input2.value));
+});
+
+
+// using-ts.js, the result of compiling using-ts.ts
+var button = document.querySelector("button");
+var input1 = document.getElementById("num1");
+var input2 = document.getElementById("num2");
+function add(num1, num2) {
+    return num1 + num2;
+}
+button.addEventListener("click", function () {
+    console.log(add(+input1.value, +input2.value));
+});
+
+
+
+
+
+
+
+
+
+
+005 TypeScript Advantages - Overview
+
+TypeScript Overview
+ > with TypeScript, we add several features like
+1. Types
+ > with types, it forces us to be more explicit with how things work
+ > we can avoid several unexpected and unnecessary errors like wrong dataType used
+ > several IDEs can pick up this wrong Type errors and give us better autocompletion and show us errors
+2. Next-gen JavaScript Features (compiled down for older browser) 	
+ > with TypeScript, it allows us to write next-gen JavaScript features, and it will take care of compiling it to a JS file that is compatible with older browsers
+3. Non-JavaScript features (Intefaces, Generics, etc)
+ > TypeScript provide features that cant be compiled by JavaScript itself
+4. Meta-Programming Features like Decorators
+5. Rich Configuration Options
+6. Modern Tooling that helps even in non-TypeScript Projects
+
+
+
+
+
+
+
+
+006 Course Outline
+
+Course Outline
+1. Getting Started
+2. TypeScript Basics
+3. Compiler & Configuration Deep Dive
+4. Working with Next-gen JS Code
+5. Classes & Interface
+6. Advanced Types & TypeScript Features
+7. Generics
+8. Decorators
+9. Time to Practice - Full Project
+10. Working with Namespaces & Modules
+11. Webpack & TypeScript
+12. Third-Party Libraries & TypeScript
+13. React + TypeScript & NodeJS + TypeScript
+
+
+
+
+
+
+
+
+008 Setting Up A Code Editor
+ 
+Extensions in VSCode
+1. ESLint
+2. Material Icon
+3. Path Intellisense
+4. Prettier - Code Formatter
+
+
+
+
+
+
+
+
+009 The Course Project
+
+npm init
+ > used to initialize a nodeJS project
+
+lite-server
+ > npm package used to serve html file in the localhost server
+ > specifically, it will serve index.html file besides package.json (same directory location) under "localhost:3000" address
+ > also, any changes made inside nodeJS project will have the lite-server reload the server
+
+
+Setting up Course Project
+1. Add index.html
+	> inside, add "app.js" as script
+		- make sure to add "defer" property to the script element
+		- this will make sure the scripts runs AFTER the DOM is loaded
+2. Create app.ts and compile it to create app.js
+3. Initialize Node project
+	> use "npm init" command
+4. Install "lite-server" package
+	> npm install --save-dev lite-server
+	> --save-dev make sure that this package is only available in dev environment
+5. Configure package.json
+	> add in scripts property
+		- "start": "lite-server"
+6. Run the lite-server
+ 	> use the "npm start" script we created earlier
+

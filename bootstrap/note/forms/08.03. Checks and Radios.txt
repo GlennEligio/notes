@@ -1,0 +1,115 @@
+08.03. Checks and Radios
+
+~~~~~ FORMS - CHECKS AND RADIOS ~~~~~~
+1. Checks
+	a. Intederminate
+	b. Disabled
+2. Radios
+	a. Disabled
+3. Switches
+4. Default Stacking
+5. Inline sstacking
+6. Without labels
+7. Toggle Buttons
+	a. Checkbox toggle button
+	b. Radio toggle button
+	c. Outlined style 
+
+
+1. Checks
+	> to create a Bootstrap check
+		- create div with class .form-check
+		- inside each div.form-check, add
+			a. input with 
+				- type="checkbox" and 
+				- class .form-check-input
+				- id
+			b. label with 
+				- class .form-check-label
+				- for attribute which match the id of input
+
+.form-check
+	> added in div that wraps both input and label
+.form-check-input
+	> added in the input inside the .form-check
+.form-check-label
+	> added in the label inside the .form-check
+
+
+
+a. Indeterminate Checks
+	> we can utilize the ::indeterminate pseudo class when manually set via JS
+
+ex:
+              <script>
+                let checkbox = document.getElementById(
+                  "flexCheckIndeterminate"
+                );
+                checkbox.indeterminate = true;
+	      </script>
+
+
+
+b. Disabled
+	
+disabled
+	> attribute of element
+	> added so that it disables the checkbox
+
+
+
+2. Radios
+	> same format as the Checkbox, but with input whose type is "radio"
+
+a. Disabled
+	> same as disabling checkbox, we add disabled attribute to input
+
+
+
+3. Switches
+	> works like a custom checkbox
+	> for ARIA, add role="switch" to input
+		-> by default its announced as regular checkbox
+
+.form-switch
+	> added in div.form-check element
+	> used in CONJUNCTION with .form-check
+
+disabled
+	> html attribute
+	> added in input to disable it
+
+
+
+4. Default Stacking (VERTICAL)
+	> by default, any number of checkbox/radios inside .form-check wrapper is stack VERTICALLY
+
+
+5. Inline 
+	> to change the arrangement of checkbox/radio inside div wrapper, ADD .form-check-inline to the div wrapper
+
+.form-check-inline
+	> align the checkboxes HORIZONTALLY
+
+
+6. Without labels
+	> to create checkbox/radio without labels
+		a. remove .form-check class in div wrapper
+		b. remove label element inside each div wrapper
+
+
+7. Toggle Buttons
+	> we can do this by using .btn styles instead of .form-check-label in label elements
+	> to create toggable buttons, we will need to
+		1. Create input with following properties
+			- type="checkbox" or "radio"
+			- class .btn-check
+			- id that MATCHES that for value of label
+			- autocomplete="off"
+		2. Create label with following properties
+			- class of .btn and .btn-{variants} (.btn-primary)
+			- for that MATCHES the id value of input
+	> to create Outlined style of toggle buttons
+		1. Use .btn-outline-{variant} instead of .btn-{variant} in the label
+
+

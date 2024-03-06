@@ -1,0 +1,22 @@
+37. Wrap Up
+
+
+Recap
+ > Understanding the cloud
+ > How we got to the cloud
+ > On prem characteristics and contrast
+ > Cloud characteristics and definition
+ > Service models - *aaS
+ > Shared Responsibility Principle
+ > Cloud deployment models and tradeoffs
+ > Economies of scale
+ > Base cloud architecture
+ > Regions and availability zones
+ > Factors to choose them
+ > Service types and examples
+
+
+Next step:
+1. Pick a Cloud provider and study their services
+2. Build application that are more native to Cloud (referred to as Cloud Native applications)
+	> you can do Cloud Native Essentials or study Twelve Factor to determine if the application is a Cloud Native one

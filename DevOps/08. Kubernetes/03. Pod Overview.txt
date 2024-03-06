@@ -1,0 +1,135 @@
+03. Pods Overview
+
+
+Pods
+	> are the smallest deployable units of computing that you can create and manage in Kubernetes
+
+
+What is a Pod?
+	> the shared context of a Pod is a set of Linux namespaces, cgroups, and potentially other facets of isolation
+		- same things that isolate a Docker container
+	> within a Pod's context, the individual applications may have further sub-isolations applied
+		- in terms of Docker concepts, a Pod is similar to a GROUP of Docker Containers with shared namespaces and shared filesystem volumes
+
+
+
+Pod Usage
+1. Pod running SINGLE Container
+	> The "one-Container-per-Pod" model is the most common K8s use case
+	> In this case, you can think of a Pod as a wrapper around a single Container
+	> Kubernetes manages Pods rather than managing the container directly
+2. Pods that run MULTIPLE Container that need to work together
+	> A Pod can encapsulate an application composed of multiple co-located Containers that are tightly coupled and need to shared resources.
+	> These co-located Container form a SINGLE COHESIVE UNIT of Service
+		- ex: one Container serving data stored in a shared volume to the public while a separate "sidecar" Container refreshes or updates those files
+
+
+
+
+Pod networking
+	> Each Pod is assign a unique IP address for each address family
+	> Every Container in a Pod shared network namespaces, including the IP address and network ports space
+		- Containers of same Pod can communicate with one another using "localhost"
+	> When Containers in Pod communicates with entities OUTSIDE THE POD, they must coordinate how they used the shared network resources (such as ports)
+
+
+
+
+
+Pod Lifecycle
+	> Pods follow a defined lifecycle, starting in Pending phase, moving through Running.
+	> If at least one of its primary containers starts OK, and then through either the Succeeded or Failed phase, depending on whether any container in the Pod terminated in failure		
+		- All Container terminated in Success = Succeeded
+		- At least one Container terminated in failure = Failed
+
+1. Pending
+	> The Pod has been accepted by the Kubernetes cluster, but one or more Container has not been set up and made ready to run
+	> This includes time a Pod spends waiting to be scheduled as well as the time spent downloading container image over the network
+2. Running
+	> The Pod has been bound to a node, and all of the containers have been created
+	> At least one container is still running, or is in the process of starting or restarting
+3. Succeeded
+	> All container in the Pod have terminated in success, and will not be restarted
+4. Failed
+	> All container in the Pod have terminated, and at least one container has terminated in failure
+	> That is, the container either exited with non-zero status, or was terminated by the system
+
+
+
+Creating Pod	
+	> to create a Pod, we can either use
+		- adhoc command	
+		- manifest yaml file
+
+
+Ad-hoc command
+
+kubectl run <POD NAME> --image=<IMAGE>
+	> run a Pod with a Container that runs a specific Docker image
+
+
+
+Manifest file
+
+kubectl create -f <MANIFEST FILE>
+	> used to create K8s resources using a Manifest file
+
+EX: 
+# nginx-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+    tier: dev
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+
+
+
+COMMANDS 
+
+CREATE RESOURCE
+kubectl run <POD NAME> --image=<IMAGE>
+	> used to run a Pod with a Container of specific Image
+
+kubectl create -f <MANIFEST FILE>
+	> used to create a K8s resource using a manifest yaml file
+
+
+DISLAY INFO
+kubectl get pod
+	> display all pods
+
+kubectl get pod -o wide
+	> display all pods with more information
+		- ip addresses
+		- node which they are running
+
+kubectl get pod <POD NAME> -o yaml
+	> display information of specific Pod
+	> "-o" lets you choose the output format (yaml or json)
+
+kubectl describe pod <POD NAME>
+	> display full information of a pod
+
+
+INTERACT WITH POD
+kubectl exec -it <POD NAME> -- /bin/sh
+	> lets you connect to the Pod's terminal
+
+kubectl expose <RESOURCE TYPE> <RESOURCE NAME> --type=<SERVICE TYPE> --port=<PORT>
+	> expose is used to expose a K8s resource
+	> this command does the following
+		1. Create a Service of specific type (ClusterIP, NodePort, LoadBalancer)	
+		2. Expose a Port in K8s resource (Pod, Deployment, etc) so it can be accessed outside (either from inside Cluster or outside Cluster)
+
+DELETE RESOURCE
+kubectl delete <RESOURCE TYPE> <RESOURCE NAME>
+kubectl delete svc <SERVICE NAME>
+kubectl delete pod <POD NAME>
+	> used to delete a specific resource in the K8s cluster
+

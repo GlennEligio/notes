@@ -1,0 +1,80 @@
+READING REQUEST PARAMETERS RECEIVED IN THE @Controller's METHOD
+1. Add HttpServletRequest in the method parameter and do the normal way
+2. Use @RequestParam() and pass the parameter name
+	> attach this annotation to the Parameter whose Type is the same as the expected Type of RequestParam
+
+
+
+READING REQUEST PARAMETERS RECEIVED IN THE Jsp page using JSTL
+	> use this syntax
+
+		${param.parameterName}
+
+	> ex: if you pass a parameter in Request with name "password", we will access it using
+
+		${param.password}
+
+
+
+PARENT-SUB URL MAPPING
+@Controller level mapping 
+	> we can add a specific url mapping for a @Controller class	
+	> we do this by adding @RequestMapping to the @Controller class
+	> if we add a mapping to the @Controller, it will change the final url to access its Route method
+
+EX:
+
+@Controller
+@RequestMapping("/user")
+public class UserController{
+
+	@RequestMapping("/login")
+	public String login(){
+		return "login"
+	}
+}
+
+
+	> in this example, if we dont have the @RequestMapping in @Controller class, we will be able to access the login() Route by calling base-url + relative-url of the login()
+
+		localhost:8080/login
+
+	> but since we added @RequestMapping to the Controller class, we will now need to append the Controller us to the base-url first, then we will append the Route url to the result
+
+		localhost:8080/user/login	
+
+
+
+
+SPRING MODEL
+	> The Model is a container for your application data
+	> In your Controller
+		- you can put anything in the model
+			=> works like a Map<String, Object>
+		- to put data inside the Model, we can call addAttribute()
+			=> we will pass a String id and an Object
+	> Your View page (JSP) can access data from the model
+
+
+
+FETCHING MODEL ATTRIBUTES IN JSP pages
+	> use this syntax
+
+		${modelAttributeStringId}
+
+	> ex: if you add a User object inside Model with String id of "studentUser", we will fetch this User object in JSP using
+	
+		${studentUser}
+
+	> fetching the properties of the User object studentUser will be
+
+		${studentUser.name}
+
+ 
+
+READING HTML FORM DATA WITH @RequestParam Annotation	
+	> we can use the @RequestParam to read Form Data
+	> to read a specific Request parameter, we will pass the Form parameter name to the @RequestParam
+	> it will then "bind" it to the parameter it is assigned
+	> ex: if we want to fetch a form data parameter with name "password", we will use the @RequestParam
+		@RequestParam("password")

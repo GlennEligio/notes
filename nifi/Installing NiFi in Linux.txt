@@ -1,0 +1,186 @@
+Installing NiFi in Linux
+
+https://medium.com/gbtech/installing-apache-nifi-on-ubuntu-9bca3cfe65d0
+
+
+Steps:
+1. Install the Java JDK package and setup JAVA_HOME environment variable
+2. Download and Install the Apache NiFi package
+3. Configuring NiFi inside
+4. Configure Linux machine's network
+4. Run the Apache NiFi
+5. Logging in to the NiFi
+
+
+Install the Java JDK package and setup JAVA_HOME environment variable
+ > Note that Java 8 support for NiFi is already deprecated
+ 
+1. Install Java JDK
+$ apt-get update
+$ apt-get install openjdk-11-jdk
+
+2. Find the JDK installation directory, and copy it
+$ update-alternatives --config java
+
+example output:
+There is only one alternative in link group java (providing /usr/bin/java): /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+
+
+
+3. Setup the environment variable JAVA_HOME
+$ vi /etc/profile.d/java.sh
+
+4. Inside, paste the directory where java is installed
+#/bin/bash
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+
+5. Reboot the computer
+$ reboot
+
+6. Validate the Java installation
+$ java -version
+$ env | grep JAVA_HOME
+
+
+Example output
+openjdk version "1.8.0_222"
+OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~19.04.1-b10)
+OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
+
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ 
+ 
+ 
+ 
+Download and Install the Apache NiFi package
+1. Create directory to place the Apache NiFi
+$ mkdir /downloads/apache-nifi -p
+
+2. Go inside the directory
+$ cd /downloads/apache-nifi
+
+3. Download the Apache NiFI server
+	> change the url used to the download link of the Apache NiFi
+$ wget https://dlcdn.apache.org/nifi/1.23.2/nifi-1.23.2-bin.zip
+
+4. In case your downloaded file is a zip file, install unzip and using apt-get
+$ apt-get update
+$ apt-get install unzip
+
+
+4. Unzip and Install the Apache NiFi
+$ unzip nifi-1.23.2-bin.zip
+$ mv nifi-1.23.2 /opt/
+$ ln -s /opt/nifi-1.23.2/ /opt/nifi
+$ cd /opt/nifi
+$ bin/nifi.sh install
+	> this install the nifi as a SERVICE with default name "nifi"
+
+
+
+
+Configuring NiFi inside Linux machine
+1. Edit the <install-dir>/conf/nifi.properties
+	> change the following properties
+		a. nifi.web.https.host
+		b. nifi.web.https.port
+	> for host, change it to the url where you access your Cloud VM
+		- it can be the public ipv4 address, or the url that points/routes to that ipv4 address as well
+		- alternatively, if you have created an alias in the /etc/hosts file for the public ipv4 or ipv6 address of the VM, you can use that as well
+	> for port, change the default port (8443)
+		- best practice
+		- choose port that is NOT used (ex: 8445)
+		- take note of this port as well, for configuring firewall later
+
+EX:w
+nifi.web.https.host: 123.45.45.65
+nifi.web.https:port: 8445
+
+EX: with /etc/hosts alias
+# /etc/hosts file
+123.45.45.65 nifi-node-1
+
+# nifi.properties file
+nifi.web.https.host: nifi-node-1
+nifi.web.https:port: 8445
+
+
+Configuring Liux machine network
+1. For Cloud VMs, there are two types of firewalls being used
+	a. network-based firewall
+		- Network-based firewalls are deployed in line with the traffic flow, protecting the entire network.
+		- configured OUTSIDE the VM
+		- provided by the Cloud provider via their CLI or Console GUI
+	b. host-based firewall
+		- Host-based firewalls are operated on single computers, via OS-run software
+		- configured INSIDE the VM
+		- example tools to use: ufw (disabled by default)
+2. Configure network-based firewall
+	> allow inbound request to the port you specified in nifi.web.https.port
+	> ex: 8445/tcp for all ipv4 and ipv6
+3. Configure host-based firewall
+	> enable ufw
+		- $ ufw enable
+	> make sure to allow port used by ssh
+		- $ ufw allow 22
+		- $ ufw allow 22/tcp
+	> allow the port used by nifi as well
+		- $ ufw allow 8445
+		- $ ufw allow 8445/tcp
+4. Reboot the VM
+	> $ reboot
+
+
+
+
+Run the Apache NiFi
+1. Start the nifi service
+$ service nifi start
+
+2. Check status of the nifi service
+$ service nifi status
+
+
+
+Logging in to the NiFi
+1. Check the generated Username and password in the /logs/nifi-app.log
+	> $ grep "Username" <install-dir>/nifi/logs/nifi-app.log
+	> $ grep "Password" <install-dir>/nifi/logs/nifi-app.log
+2. Alternatively, change the credentials of the nifi account. Be sure to restart the nifi service if you do so
+	> $ <install-dir>/bin/nifi.sh set-single-user-credentials <USERNAME> <PASSWORD>
+
+
+
+Credentials for each NiFi instance
+
+droplet1
+Username: sample_username
+Password: sample_password
+
+droplet3
+username: sample_username
+password: sample_password
+
+droplet2
+username: sample_username
+password: sample_password
+
+
+
+Ports to open for the NiFi instances, and for cluster configuration
+ > If these machines are subject to a firewall, ensure that the following ports are open:
+
+2181, 2888, 3888 	ZooKeeper ports 
+ > or the values specified in the server indices of zookeeper.properties
+
+6342	Load-balancing port
+ > or the value specified in nifi.cluster.load.balance.port of nifi.properties
+
+9443	HTTPS port for NiFi UI/API
+ > or the value specified in nifi.web.https.port of nifi.properties
+
+10443	Site to site port
+ > or the value specified in the nifi.remomte.input.socket.port of nifi.properties
+
+11443	Cluster communications port
+ > or the value specified in nifi.cluster.node.protocol.port of nifi.properties

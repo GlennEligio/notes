@@ -1,0 +1,32 @@
+15 Key Interfaces and Types
+
+Reactive Streams
+ > introduced in Java 9
+ > this includes the Flow API
+ 
+Flow API
+ > consist of THREE abstractions
+ 	1. Publisher
+	2. Subscriber
+	3. Subscription
+ > with Project Reactor, you will most commonly use the Subscription
+ > again, these are the interfaces only, which means we will not use any of these directly
+	- instead, we will use a library that implement these interfaces
+	- with this, we dont need to bother ourselves with the implementations  
+
+
+Flux and Mono
+ > two Types that you will commonly use
+ > Flux represents an asynchronous sequence of items
+	- it can also support synchronous event by defining how fast the emission of event is
+ > Mono represents an asynchronous item that may or may not come in the future
+ > main difference between the two is the number of items that it intents to send
+	- for Flux, it could be 0 to N items
+	- for Mono, it could be 0 to 1 item
+
+Dependency used
+1. reactor-core
+	> from io.projectreactor
+	> currently we are using version 3.4.14
+	> we are using the class implmentations in this library
+

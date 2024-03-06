@@ -1,0 +1,72 @@
+34 RHCSA RHEL 8 - Create and configure set-GID directories for collaboration
+
+GOAL:
+1. Create a group with specific rwx permission on a specific directory
+
+
+/etc/group
+ > files that contains all the groups in the system and their corresponding group id
+
+
+Create a group specific directory
+1. Create a group 
+	$ groupadd accounts
+2. Check if the group is added
+	$ cat /etc/group | grep accounts
+3. Create the shared directory for the group
+	$ mkdir -p /home/shared/accounts
+4. Change ownership of the directory so that no user owns it and only the users of group "accounts" have rwx permissions
+	$ chown nobody:accounts /home/shared/accounts
+	$ chmod g+s /home/shared/accounts
+	$ chmod 770 /home/shared/acounts
+5. Check permissions of the shared directory
+	$ ls -lhtra /home/shared
+6. Adds new user in the "accounts" group
+	$ useradd -G accounts accountant1
+	$ useradd -G accounts accountant2
+7. Switch user to the newly created one
+	$ su - accountant1
+8. Navigate to the shared directory and create a new file
+	$ cd /home/shared/accounts/
+	$ touch accountsfile1
+	$ ls -l
+9. Exit the accountant1 user and change it to a user that does not belong to "accounts" group
+	$ su - user1
+10. Check if you have rwx permission to shared directory
+	$ cd /home/shared/accounts
+	$ ls /home/shared/accounts
+	$ vi /home/shared/accounts/accountsfile1
+
+
+
+
+Commands
+groupadd
+ > create a new group
+ > sypnosis
+	$ groupadd [options] groupt
+ > ex:
+	$ groupadd accounts
+		- adds a group named "accounts"
+
+
+chown
+ > change file owner and group
+ > sypnosis
+	$ chown [OPTION]... [OWNER][:[GROUP]] FILE...
+ > EX:
+	$ chown nobody:accounts /home/shared/accounts
+		- this means "nobody" (as user) and the accounts group owns the "/home/shared/accounts"
+		- "nobody" is a special keyword to refer to no user
+
+
+useradd
+ > create a new user or update default new user information
+ > sypnosis
+	useradd [options] LOGIN
+	useradd -D
+ > options
+	-G	specify the group user will belong to
+ > ex:
+	$ useradd -G accounts accountant1
+		- adds "accountant1" user in the "accounts" group

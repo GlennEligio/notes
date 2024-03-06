@@ -1,0 +1,28 @@
+29 Avoid these issues with reactive programming
+
+
+NOTE:
+1. Operators/Subscription is not using/pointing in the correct Flux
+	> mostly encountered in non one-liner Flux definitions
+ 
+EX:
+Flux<Integer> flux = getFlux();
+flux.map(n -> getNewValue(n));
+flux.subscribe(next -> System.out.println("Received: " + next));
+
+// In this example, the flux.subscribe() is not using the transformed Flux of integer.
+// Instead, it is using the old Flux
+// To fix this, we will need to contain the new transformed Flux in a variable and do the subscribe there
+
+Flux<Integer> flux = getFlux();
+Flux<Obj> tranformedFlux = flux.map(n -> getNewValue(n));
+transformedFlux.subscribe(next -> System.out.println("Received: " + next));
+
+
+2. Not calling subscribe() at the end of operator method chain calls
+	> making an analogy with conveyor belt and Flux, the subscribe() is similar to the conveyor start switch
+	> if we don't call it, no item will be received by the operators
+
+
+3. subscribe() is a terminal method
+	> it does not return another Flux/Mono, instead it returns a Subscription/Disposable

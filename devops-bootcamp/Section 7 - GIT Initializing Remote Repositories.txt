@@ -1,0 +1,587 @@
+Section 7 - GIT Initializing Remote Repositories
+
+49. Initialize Remote Repositories
+
+Remote Git repositories
+ > these git repo are available online, and using these, we can store our changes in the internet, and pull the changes as well from internet to our local machines
+ 
+Example platforms which we can host remote git repositories
+1. GitHub
+2. GitLab
+3. Bitbucket
+
+Connection String
+ > connection string is used in order for Git to know where that remote repository is located
+ > example syntax for this is
+	- https://...//.../[name].git
+ > ex:
+	https://github.com/kodekloudhub/stories.git
+	https://gitlab.com/kodekloudhub/stories.git
+	https://bitbucket.org/kodekloudhub/stories.git
+ > in addition, we can give these connection string 'aliases', so that we do not need to know the entire connection string of remote repository to push changes to
+	- to assign alias to a remote repository, use the command 'git remote add'
+
+Listing Remote git repositories
+ > to do this, we can use the 'git remote -v' command
+	
+	
+Commands
+git remote add ALIAS CONNECTION_STRING
+ > used to give an alias to a connection string of remote git repository
+ > ex:
+	git remote add origin https://.../.../[name].git
+ 
+git remote -v
+ > list all the remote repositories we have in the local git repo
+
+
+
+
+50. Pushing to remote repositories
+
+Pushing to remote repositories
+ > sometimes, the remote repositories are not aligned with the changes we have made in our local machines
+ > in order to make our remote repo be up-to-date with our local git repo, we can push our changes from local to git. to do so, we can use the 'git push' command
+ 
+Commands:
+git push ALIAS BRANCH
+ > used to push changes from local repository to remote repository on a specific branch
+	- 'git push origin master' will push changes from 'master' branch of local git repo to the 'master' branch of remote git repo with alias 'origin'
+ > if the branch is not present in the remote git repo, it will create a new one for it
+
+
+
+
+
+51. Lab: Remote repositories
+
+Q1: Explore the local repository that Sarah has been working on at /home/sarah/story-blog and check the log to see the number of commits.
+S: 
+1. Go to /home/sarah/story-blog
+	$ cd /home/sarah/story-blog
+2. Print the commits currently present in the local git repo
+	$ git log --oneline
+	
+Q2: How many stories has Sarah written so far?
+Count the number of stories in the master branch
+S:
+1. Switch to master branch
+	$ git checkout master
+2. Print the files present in the master branch
+	$ ls
+	
+Q3: Great going Sarah 👏 ! So far Sarah has been working by herself in her own local repository on her laptop. It's time to share her work with the team. Let's push the code to the remote git repository
+
+Q4: Github is awesome! But for the purpose of our lab exercises we will be using the Gitea platform. It is a lighter version of Github. However a lot of basic functions are the same. So it should suffice our needs for practice.
+You may access the Gitea web portal by clicking on the Git Portal UI link at the top of your terminal
+
+Q5: No one in Sarah's team has created a remote repository yet for this project. So Sarah decides to create one so everyone in the team can collaborate. Let's now create a remote git repository named story-blog in Gitea using the GUI. Click on Git Portal UI to access the UI, login with the below details and create a new repository.
+	UI login info:
+		Username: sarah
+		Password: Sarah_pass123
+		Repository Name: story-blog
+Keep other options default when creating repo
+A: Follow direction i guess
+
+Q6: From within the lab environment (terminal) the remote repository is accessible at the URL http://git.example.com. Let's now configure the remote repository for the local repository at /home/sarah/story-blog
+Target remote repo URL : http://git.example.com/sarah/story-blog.git
+remote repo alias : origin
+Note: This URL won't be accessible from your personal laptop as it is only available within the lab environment.
+S:
+1. Use 'git remote add' to add the remote git repo specified
+	$ git remote add origin 'http://git.example.com/sarah/story-blog.git'
+	
+Q7: Which command can be used to push data to our remote repo?
+remote repo alias : origin
+remote branch : master
+A: git push origin master
+
+Q8: Now push our current stories to the remote git repository we created
+Login info:
+Username: sarah
+Password: Sarah_pass123
+remote repo alias : origin
+remote branch : master
+S: 
+1. Execute 'git push' command
+	$ git push origin master
+2. Enter the credentials provided
+
+Q9: View the changes in the remote repository using the GUI.
+Refresh the remote Gitea page if its already open or click on the Git Portal UI button at the top of your terminal.
+
+Q10: Looking at the remote repository on Gitea can you identify the total disk space consumed by this repository?
+Choose the closest option below
+S: Find the total space consumed in the remote git UI
+
+Q11: Let's explore the repositories and teams in our organization and see who is doing what.
+How many users can you see in the Gitea tool?
+S:
+1. Go to Explore tab, then in the Users section
+
+Q12: Who owns the most number of repositories?
+A. Fucking tej
+
+Q13: Tej seems to be working on an ecommerce application. How many commits have been made in that repository?
+A: 19, god you are making me a stalker at this point
+
+Q14: Sarah seems to have accidentally created a repository for story-blog mis-spelt as story-bloggg. Please delete it.
+Select the repository and go to settings.
+
+
+
+
+52. Cloning remote repositories
+
+Cloning remote repositories
+ > by cloning a remote repository, we can get access to the entire history of changes of that specific remote repository
+ > in order to clone a remote repository, we will need to use the 'git clone' command, followed by either the http or ssh link of the remote git repo
+	- one can easily get the http or ssh link by going to the remote git UI of the said repo (ex: GitHub)
+ > note that when cloning a repo, the remote git repos are already configured
+	
+Commands:
+git clone SSH_LINK
+git clone HTTP_LINK
+ > used to clone a remote git repository to our local machine
+ > this will create a new folder of the same name as the remote git repo, where the contents of the folder will be the contents of the remote git repo as well
+ > ex:
+	git clone git@github.com:account/remote-repo.git
+
+
+
+53. Lab: Cloning Remote repositories
+
+Q1: Max would like to contribute to the story blog. Let's help Max share(push) his story to the remote repository created by Sarah.
+
+Q2: First max needs to download the current code (stories) uploaded by Sarah in remote repository. As user Max, clone the remote repo to his home directory - /home/max
+Target repo web URL : http://git.example.com/sarah/story-blog
+You can also find this URL from UI
+S:
+1. Go to the dir /home/max
+	$ cd /home/max
+2. Clone the remote git repo
+	$ git clone http://git.example.com/sarah/story-blog
+
+
+Q3: Check the contents of the cloned repository. Confirm that you can see Sarah's story and history of commit by running git log and validate author info, commit message etc.
+
+Q4: Max has written his story about The 🦊 Fox and Grapes 🍇
+View the file he created and its contents. You may read the story if you wish to. But don't spend all day 😝
+
+Q5: Let us now try to commit the changes. Try to commit the changes with the message Added fox-and-grapes story. And you might get an error that says Please tell me who you are
+This is because Max has cloned the repository, but Git doesn't know who Max is. Max needs to tell Git his username and email address. For this use the command git config user.email "max@example.com" and git config user.name "max"
+S:
+1. Go to the local git repo
+	$ cd /home/max/story-blog
+2. Check the git status
+	$ git status
+3. Configure git user name and email
+	$ git config user.name "max"
+	$ git config user.email "max@example.com"
+3. Add and commit the changes
+	$ git add fox-and-grapes.txt
+	$ git commit -m "Added fox-and-grapes story"
+	
+Q6: Great! It's time to push our changes to remote. Do we need to add a remote repository, as Sarah did, before pushing?
+Check the configured remotes on the repository
+A: No, the remotes are already configured as we cloned the repository
+
+Q7: Now try to push Max's story to remote git repository hosted on Gitea using the below details. If you might run into a permission denied error, proceed to next question.
+login info:
+	Username: max
+	Password: Max_pass123
+remote repo alias : origin
+remote branch : master
+S:
+1. List the remote repositories present
+	$ git remote -v
+2. Push the changes in the remote repo specified in output from #1
+	$ git push origin master
+3. Pass the credentials provided
+
+Q8: If you ran into an issue it is because the repository is public but not everyone can change it. It is public but read-only. To push changes to the repository you need to be a collaborator or a member of the project.
+The account owner - Sarah needs to add you as a collaborator. While logged in to the Gitea UI as user sarah go to Settings -> Collaborators of the project and add max as collaborate with Write permissions.
+Use Sarah's credentials:
+Username: sarah
+Password: Sarah_pass123
+S: Follow instructions
+
+Q9: Now try to push Max's story to remote git repository hosted on Gitea
+Login info:
+Username: max
+Password: Max_pass123
+remote repo alias : origin
+remote branch : master
+S:
+1. Push the changes to remote repo now
+	$ git push origin master
+2. Pass the credentials provided
+
+Q10: Confirm the changes in the remote repository using the GUI. Make sure both the stories of Sarah and Max are visible there.
+Refresh the remote Gitea page if its already open or click on the Git Portal UI button at the top of your terminal.
+
+
+
+
+
+
+54. Pull Requests
+
+Pull Request (or PR)
+ > PR is a request done in remote git platforms like GitHub, to pull changes from one specific branch of remote git repository and merge it to another branch of the same remote git repository
+ > This is done as an alternative of pulling both the branches from remote git repo to local git repo, merging them locally, and pushing the merge commit back to remote git repo
+ > With PR, we basically do the pull and merge of remote git repository branches online, thru the remote git platforms GUI typically
+
+
+Creating a PR
+ > to create a PR, we must have the following
+	1. source branch in the remote git repository
+	2. merging branch in the remote git repository
+		- this branch is where we push the changes we've done locally
+	3. right access level to do a PR in the first place
+ > when creating a PR, we must specify the following
+	1. source branch to do the pull request
+	2. merging branch where we will be pulling the changes
+ > optionally, we can also specify the following
+	1. reviewers of the PR, typically your leads or colleague
+	2. comments of PR to explain the PR itself
+	
+	
+NOTE:
+1. Typically, developers will not have the right to MERGE the PR
+	> there will be a person or a team responsible for managing, reviewing, and declining/approving PRs
+
+
+
+
+
+55. Lab: Pull Requests
+
+Q1: In the previous lab we got Max to push his changes to the remote repository. But he pushed them to the master branch directly. We don't want people to do that.
+The master branch is the final version of the story. It should always only have content that has been reviewed and approved. We cannot just allow everyone to directly push to the master branch. So let's do it the right way this time.
+
+Q2: First max needs to download the current code (stories) uploaded by Sarah in remote repository. As user Max, clone the remote repo to his home directory - /home/max
+Target repo web URL : http://git.example.com/sarah/story-blog
+You can also find this URL from UI
+S:
+1. Go to /home/max dir
+	$ cd /home/max
+2. Clone the remote git repo specified
+	$ git clone http://git.example.com/sarah/story-blog
+3. Go inside the cloned repo
+	$ git cd story-blog
+	
+Q3: Check the contents of the cloned repository. Confirm that you can see Sarah's story and history of commits by running git log and validate author info, commit message etc.
+
+Q4: Max has written his story about The 🦊 Fox and Grapes 🍇
+View the file he created and its contents. You may read the story if you wish to. What's the status of the file in the git repo?
+S:
+1. Check status of the new file in local git repo
+	$ git status
+	
+Q5: Unlike last time, let's not commit the story to the master branch directly. Instead commit it to a new branch named story/fox-and-grapes with the commit message 'Added fox-and-grapes story'
+Even though you are in master branch already since the file is not tracked you can switch to a new branch and commit the file to the new branch.
+S:
+1. Create new branch
+	$ git checkout -b story/fox-and-grapes
+2. Add the file created and commit it
+	$ git add fox-and-grapes.txt
+	$ git commit -m "Added fox-and-grapes story"
+	
+Q6: Now push Max's story to remote git repository hosted on Gitea but to the story/fox-and-grapes branch
+Login info:
+Username: max
+Password: Max_pass123
+remote repo alias : origin
+remote branch : story/fox-and-grapes
+S:
+1. Push the changes in new branch we've created to a remote branch specified
+	$ git push origin story/fox-and-grapes
+2. Use the credentials specified
+
+
+Q7: Max has pushed his story, but his story is still not in the Master branch. Let's create a Pull Request(PR) to merge Max's story/fox-and-grapes branch into the master branch
+Click on Git Portal UI to access git UI
+UI login info:
+- Username: max
+- Password: Max_pass123
+PR title : Added fox-and-grapes story
+PR pull from branch: story/fox-and-grapes (source)
+PR merge into branch: master (destination)
+
+Q8: Before we can add our story to the master branch, it has to be reviewed first. So lets ask tom to review our PR by assigning him as a reviewer
+Add tom as reviewer through the Git Portal UI
+
+Q9: Approve the PR as tom
+UI login info:
+- Username: tom
+- Password: Tom_pass123
+
+
+Q10: Great stuff!! The story has been approved! 👏. It's now time to Merge the Pull Request to make the story available in the master branch.
+Login as user sarah and merge the PR.
+- Username: sarah
+- Password: Sarah_pass123
+S:
+
+Q11: Congratulations!!! 👏 👏 Your PR has been merged and the story is now available in the master branch. View the story in the master branch on the remote repository.
+
+
+
+NOTES:
+1. When we push our changes to a remote branch that does not exist in that remote git repo, it will automatically create a new one for it
+
+
+
+
+
+56. Fetching and Pulling
+
+Fetching and Pulling
+ > when we fetch, we are basically 'fetch' the changes made on a specific remote git repo branch, we are not merging it to any of the local git repo branches
+ > when we pull, not only we fetch the changes, but also merging these changes to our current local branch
+ 
+ 
+Commands
+git fetch ALIAS REMOTE_BRANCH
+ > used to fetch the changes done in the remote branch online in our own remote branch local copy
+ > ex:
+	$ git fetch origin master
+ > this is used alongside the git merge to push our local git branch
+	- ex:
+		$ git fetch origin master
+		$ git checkout master
+		$ git merge origin/master
+			- merges the changes from remote 'master' branch to our current branch 'master'
+			
+git pull ALIAS REMOTE_BRANCH
+ > used to fetch the changes in the remote branch of remote git repo, then merge it to the current branch we are in locally
+ > combination of git fetch and git merge commands
+ > ex:
+	$ git checkout master
+	$ git pull origin master
+		- pulls changes from remote 'master' branch, and merges it to our  current branch 'master'
+
+
+
+
+57. Lab: Fetching and Pulling
+
+Q1: In the previous labs we got Max to push his changes to the remote repository. The remote repository now has the 2 stories contributed by Sarah and the one contributed by Max.
+Sarah's local repository does not have the new story pushed by Max. Let's update our local repository to be in sync with the remote.
+Login credentials for git UI :-
+User Name: sarah
+Password: Sarah_pass123
+S:
+1. Go to the local git repo dir
+	$ cd /home/sarah/story-blog
+	
+Q2: There are 2 ways to go about this. The first approach is to Fetch the remote branch and Merge it.
+From the local repository Fetch the information about the changes in the remote.
+S:
+1. Fetch the changes in 'origin/master' remote branch
+	$ git fetch origin master
+
+Q3: To view all the branches- both local and remote - run the git branch -a command.
+The remote branches have the prefix remotes
+S: Execute 'git branch -a'
+
+Q4: Now that we’ve fetched the origin master branch, we can update our local master branch with the latest changes made on origin/master branch.
+Merge the remote master branch to local master
+Syntax: git merge <other-branch>
+S:
+1. Switch to local 'master'
+	$ git checkout master
+2. Merge changes from remote master to local master
+	$ git merge remotes/origin/master
+
+Q5: Max just pushed another story to remote. Let's retrieve that using the second approach. Use git pull origin master to pull all remote changes.
+S:
+1. Pull the changes done in remote 'master' to our local 'master'
+	$ git checkout master
+	$ git pull origin master
+	
+Q6: Great! What's the name of the new story added by Max?
+Check your local repository
+S:
+1. Use 'git log --name-only' to check the files added
+
+
+
+
+58. GIT - Merge Conflicts
+
+Merge Conflicts
+ > sometimes when merging changes, Git is smart enough to be able to resolve it
+ > but sometimes, it does not know how to resolve these conflicts when merging
+ > this is called Merge conflicts, and when it happens, Git will notify you of the files that do have the conflicts
+ 
+ 
+Resolving Merge conflicts
+ > then a file contains a merge conflict, Git will display the current content of the said file, as well as the previous state of the file and the new state or changes
+ > these conflicts will be presents as TWO section in the file, where one indicates the previous content, while the other indicates the new changes that creates the said conflict
+ > after resolving the conflicts by editing the files, you can then 'add' these changes and commit them
+	- this will be represent 'merge' commit of the said merge
+	
+EX:
+## Fourth Story
+<<<<<<<<< HEAD
+This is Sarah's version
+=========
+This is Max's version
+>>>>>>>>> max
+of the fourth story!
+
+Some extra stuff Sarah added.
+
+
+
+
+59. Lab: Merge Conflicts
+
+Q1: Max and Sarah have been contributing stories. And they are available on the remote repository.
+Max's local repository has all the latest changes from the remote and is in sync with it. Check it out!
+Note: You can Login to git UI with sarah user and password: Sarah_pass123
+
+Q2: During a meeting the team decides to add an Index file to the repository named story-index.txt which would contain a list of all stories written.
+It wasn't clear who would own this task, so Max decides to do it himself 💪 . He creates a file named story-index.txt and adds a list of stories to it. Check it out under the /home/max/story-blog directory.
+
+Q3: Let's now stage and commit the story-index.txt file.
+Use the message - Add index of stories
+S:
+1. Go to local git repo dir
+	$ cd /home/max/story-blog
+2. Check status
+	$ git status
+3. Add new index file and commit
+	$ git add story-index.txt
+	$ git commit -m "Add index of stories"
+	
+Q4: Let's now push the file to the remote repository.
+Try with the git push origin master command, and select the response you 
+get
+S:
+1. Push the changes
+	$ git push origin master
+	
+Q5: Read the error message and identify the cause of the failure.
+A: The remote contains work that you do not have locally
+	
+Q6: Looks like someone has pushed changes to the remote that needs to be pulled first, before we can push any of our own changes to remote.
+Pull the remote changes.
+S: Pull the changes using 'git pull origin master'
+	
+Q7: What was the result of the Pull operation?
+Read the last 2 lines of the output of the git pull command.
+A: Merge Conflict
+
+Q8: We are now in a merge conflict 🙅‍♂️ ! Looks like there was already a file named story-index.txt on remote. Someone beat us to it! Let's find out who.
+Check the log of the origin/master branch to see what was the last commit on the repository and identify who added the story-index.txt file.
+S: 
+1. Check logs of origin/master branch
+	$ git log origin/master
+
+Q9: Looks like Sarah already pushed a version of the file. When we pulled latest changes, git tried to merge Max's and Sarah's versions of the story-index.txt file, but was unsuccessful. However the local story-index.txt file is updated with changes from both Max and Sarah to allow you to merge manually.
+Inspect the file (use vi editor or just cat story-index.txt) and select the most appropriate statement below. The first section shows Max's data and the second section shows Sarah's data.
+S: Print content of story-index.txt using 'cat' command
+	$ cat story-index.txt
+	
+Q10: Looks like both of them were partially wrong. Let's fix the file to remove the errors done by each of them. Let's manually merge changes from both users.
+Update the contents of the file (use vi editor) to keep the correct version of the Lion and Mouse story and keep the Donkey and Dog story as well. Remove all the extra lines added by GIT
+S:
+1. Edit story-index.txt using 'vi'
+
+Q11: Now that we have made a change, we must now commit it.
+Commit the current changes with the message - Resolved merge conflicts and merged story index
+S:
+1. Add the changes to resolve conflict and commit it
+	$ git add .
+	$ git commit -m "Resolved merge conflicts and merged story index"
+
+Q12: Now that we have merged the changes, everything's clean ✨ . We can now push the changes to remote.
+S: Use 'git push origin master' command
+
+
+
+
+60. Fork
+
+Fork
+ > 'Fork' is a process of creating a copy of an entire project
+ > we can then be use this copy in order to experiments and tests that you want
+ > Forking is only available in remote Git platforms like GitHub
+ 
+Use case of Forking
+1. Adding changes to the codebase of a project (typically open source projects)
+	> normally, remote git repositories is only accessible within a select group of people (ex: organization member)
+	> this means that as an outsider, we would not have privilege to create a new branch in that remote git repo
+	> in order to do so, we would need to first fork the project
+	> then, we will create a new branch in the forked project, add the changes that we want to add
+	> lastly, we can create a PR from a branch in original remote git repo, using a branch from the forked remote git repository
+2. Creating a copy of project as a reference (ex: tutorial notes)
+
+
+
+
+61. Lab: Fork
+
+Q1: A new developer, named jon, is not part of the team. However he would like to contribute to the story blog. Lets see how he can contribute in the next steps.
+
+
+Q2: What are the privileges for user jon to the remote story-blog git repo on Gitea UI?
+Login to git UI with sarah user and password: Sarah_pass123 and check jon's privileges.
+A: Read
+
+Q3: How can jon add a story to the git repo story-blog?
+A: By forking sarah's story-blog repo and raising a PR to it from his forked repo
+
+Q4: Login to Git Portal UI with the user jon and fork sarah's story-blog repo
+- Username: jon
+- Password: Jon_pass123
+Note: Keep all options default when you fork the repo
+
+Q5: Click on the Explore button and view the list of repositories. There are now 2 separate repositories. One each in Sarah's and Jon's accounts
+Next to the jon/story-blog repo you will see a small fork icon which indicates that its a forked repo.
+
+Q6: It's now time to add our story to the git repo. For this we first clone the story-blog repository which was forked in previous step to /home/jon/ directory on Jon's system.
+S: 
+0. Create the dir if it does not exist
+	$ mkdir -p /home/jon
+1. Go to /home/jon dir
+	$ cd /home/jon
+2. Clone the forked repo
+	$ git clone http://git.example.com/jon/story-blog.git
+3. Go inside the cloned repo
+	$ cd story-blog
+	
+	
+Q7: Push the new changes to the master branch on jon's story-blog repo which was forked in previous step
+commit message: Added fox-and-grapes story
+- Username: jon
+- Password: Jon_pass123
+S:
+1. Add and commit the changes
+	$ git add fox-and-grapes.txt
+	$ git commit -m "Added fox-and-grapes story"
+2. Push the changes to remote 'master'
+	$ git push origin master
+3. Pass the credentials
+
+
+Q8: Raise a PR from jon's forked repo to sarah's repo.
+Login to the Gitea UI as user Jon.
+Username: jon
+- Password: Jon_pass123
+Merge into(destination) branch: sarah:master
+Pull from(source) branch: jon:master
+PR name: Added fox-and-grapes story
+
+
+Q9: Note that user jon can't merge PR to story-blog repo created in previous step because he only has Read permissions on sarah's repo.
+Hence you can't see a Merge button
+
+Q10: As user sarah review and merge the PR.
+User name:sarah
+Password: Sarah_pass123
+
+Q11: Even though jon was not a part of team, he could contribute to story-blog repo for which he had only Read access by raising a PR.

@@ -1,0 +1,36 @@
+16. Configure JPA and Initialzied Data
+
+
+Dependencies to Add
+1. Spring Boot Data JPA
+2. H2 database
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+
+
+Properties to add
+spring.jpa.show-sql=true
+	> shows the SQL queries JPA makes in the Console
+spring.datasource.url=jdbc:h2:mem:testdb
+	> sets the datasource url of the h2 in memory database
+	> reason is that H2 create a random DB URL whenever it is made
+spring.h2.console.enabled=true
+	> enables the h2 console webpage in the application
+	> with this, the Request Mapping URI "/h2-console" becomes available
+	> in console
+		H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+spring.jpa.defer-datasource-initialization=true
+	> tell Spring Boot that first the Hibernate DDL generation is done and then the execute the SQL files
+
+
+data.sql file content
+INSERT INTO currency_exchange (id, currency_from, currency_to, conversion_multiple, environment) VALUES (10001, 'USD', 'INR', 65, '');
+INSERT INTO currency_exchange (id, currency_from, currency_to, conversion_multiple, environment) VALUES (10002, 'USD', 'INR', 75, '');
+INSERT INTO currency_exchange (id, currency_from, currency_to, conversion_multiple, environment) VALUES (10003, 'USD', 'INR', 65, '');

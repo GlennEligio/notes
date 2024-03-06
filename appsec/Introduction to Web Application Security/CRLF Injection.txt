@@ -1,0 +1,424 @@
+CRLF Injection
+
+Content:
+I. AppSec Tutorial - CRLF Injection
+01. Welcome
+02. Introduction
+03. Objectives
+04. Module outline
+
+II. CRLF Injection Overview
+05. Introduction
+06. CRLF injection risks
+07. Scenario introduction
+	> Scenario
+	> Users' grievance
+
+III. CRLF Injection Example
+08. Introduction
+09. Examples
+10. HTTP response splitting
+11. Log injection
+12. Remediation
+	> HTTP Response Splitting
+	> Login Injection
+ 
+IV. Conclusion
+13. Best practices
+14. Problem identification
+15. Scenario resolution
+
+V. Summary
+16. Module Summary
+
+
+
+
+
+
+
+
+
+
+
+I. AppSec Tutorial - CRLF Injection
+01. Welcome
+02. Introduction
+
+Carriage Return - Line Feed (CRLF)
+ > what traditionally happends when you finish typing on one line, and are read to start the next
+ > the terminology is left over from manual typewriter use, when the "carriage" would return to the left side of the paper, and then the paper rolled up one-line distance
+
+CRLF injection
+ > a common web application vulnerability
+ > it occurs when user input is directly passed to response header fields without properly sanitizing the input
+
+
+
+
+
+
+
+
+
+03. Objectives
+
+Objectives
+1. Describe the CRLF injection vulnerability
+2. Identify code that harbors the CLRF vulnerability
+3. Recognize methods to eliminate the vulnerability
+
+
+
+
+
+
+
+
+
+04. Module outline
+
+Module outline
+Section 1: CRLF injection
+Section 2: CRLF injection
+Section 3: Conclusion
+
+
+
+
+
+
+
+
+
+
+II. CRLF Injection Overview
+05. Introduction
+
+CRLF characters		ASCII	HEX	DEC
+1. Carriage return: 	'\r'	0x0D	13
+2. Line feedd:		'\n'	0x0A	10
+
+CRLF characters
+ > denotes the termination of a line
+	- note that these characters are not malicious in nature
+ > these characters can have a special functionality in log files or HTTP response
+	- ex: CRLF cna be used to separate the HTTP response headers from the response body
+	
+CRLF vulnerability
+ > occurs when an attacker injects a CRLF character sequence where it impacts functionality negatives
+
+
+
+
+
+
+
+
+
+06. CRLF injection risks
+
+CRLF vulnerability
+ > a server-side injection
+ > occurs when user input is NOT properly sanitized before it enters the system
+	- as a result, CRLF caharacter sequences can be injected into an input field, resulting in a CRLF injection attack
+ > typically a MEDIUM severity vulnerability
+ > exploitation of this vulnerability can result in modification of application data, in which it can
+	- compromise data integrity
+	- create avenues for exploitation of other vulnerabilities in the application
+ > it can become the precursor to a variety of other security threats, including
+	1. cross-site scripting
+	2. cache-poisoning
+	3. cache-based defacement
+	4. page injection
+
+
+
+
+
+
+
+
+
+07. Scenario introduction
+
+Scenario
+ > John and his team at Tech inc. are managing an online learning management application
+ > this application allows anyone to enroll and follow short courses online
+ > the application displays files uploaded by students as attachments, by setting HTTP headers when rendering the HTTP response
+ 	- this is done using the code shown here
+
+// Code
+Response.AppendHeader("Content-Disposition", "attachment: filename=" + Session["fileName"]);
+
+
+Users' grievance
+ > John's team recently started receiving a peculiar complain from some of the users
+ > When some files are listed, users are getting malicious content displayed as part of the HTTP response
+
+
+
+
+
+
+
+
+
+
+
+III. CRLF Injection Example
+08. Introduction
+09. Examples
+
+CRLF injection attacks
+1. HTTP response splitting
+2. Log injection
+
+HTTP response splitting
+ > attacker manipulates the response headers to include malicious data in the HTTP response header of the application
+
+Log injection
+ > Attacker forges log entries or injects malicious content into the logs
+
+
+
+
+
+
+
+
+
+10. HTTP response splitting
+
+HTTP Response Splitting
+Occurence
+ > occurs through untrusted input in an HTTP request
+ > results from improper input validation
+ > results in malicious CRLF characters in the response header
+
+// original response
+HTTP/1.1 200 OK \r\n
+Date: Sun, 10 Oct 2010 23:26:07 GMT \r\n
+Server: Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g \r\n
+Last-Modified: Mon: 11 Sep 2020 12:04:35 GMT \r\n
+Content-Type: text/html \r\n
+Set-Cookie: user=Maria Jones \r\n
+Content-Length: 12 \r\n
+Connection: close \r\n\r\n
+<html>...</html>
+
+// injected response
+HTTP/1.1 200 OK \r\n
+Date: Sun, 10 Oct 2010 23:26:07 GMT \r\n
+Server: Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g \r\n
+Last-Modified: Mon: 11 Sep 2020 12:04:35 GMT \r\n
+Content-Type: text/html \r\n
+Set-Cookie: user=Smart Attacker \r\n
+Content-Length: 999 \r\n   	
+\r\n	-> injected CRLF, attacker added a malicious user value
+<html>malicious content</html>
+Content-Length: 12 \r\n
+Connection: close \r\n\r\n
+<html>...</html>
+
+
+Impacts
+ > Attacker can take control of the application's response headers and bodies
+ > Attacker can create new response that will be solely under the attacker's control
+ > XSS vulnerability can be introduced
+
+
+Example
+ > the cookie value is obtained from UNVALIDATED user input
+ > if the user input contains CRLF charactersm the response generated will be different
+
+// Code
+String user = request.getParameter(USER_NAME);
+...
+Cookie cookie = new Cookie("user", user);
+cookie.setMaxAge(cookieExpiration);
+resposne.addCookie(cookie)
+
+// Normal response
+HTTP/1.1 200 OK
+...
+Set-Cookie: user=Maria Jones
+
+// Malicious response with user cookie value set to "Smart Attacker\r\nContent-Length:999\r\n\r\n"
+HTTP/1.1 200 OK
+...
+Set-Cookie: user=Smart Attacker
+Content-Length: 999
+<html>malicious content...</html> (to 999th character in ths example, which means original content starting with 1000 is IGNORED by web browser)
+
+
+
+
+
+
+
+
+
+
+11. Log injection
+
+Log injection
+Occurence
+ > Log files store history, statistics, and debugging data
+ > Log files can be manipulated
+ > Log injections occur from entry of unsanitized input
+ > Log injection occur from false log entries
+
+Impacts
+ > manipulated logs can compromise the monitoring system
+ > log injections can create XSS vulnerabilities
+ > Log injections can cause the parser to execute malicious commands
+
+EX:
+INFO: User logged in = Scott
+INFO: User logged out = Scott
+ERROR: Failed to parse productId = twenty-one
+ERROR: Failed to parse productId = twenty-one
+INFO: User logged out = smartattacker
+
+Malicious input
+twenty-one %0d%0a INFO: +User+logged+out+%3dsmarthacker
+
+
+Example
+// Code
+final static Logger log = Logger.getLogger(ProductDetails.class)
+...
+String productStr = request.getParameter("productid");
+try {
+  int product = Integer.parseInt(productStr);
+} catch (NumberFormatException) {
+  log.error("Failed to parse productId = " + productStr);
+}
+
+// Normal log
+ERROR: Failed to parse productId = twenty-one
+
+// Malicious input "twenty-one%0d%0aINFO:+User+logged+out%3dsmarthacker"
+ERROR: Failed to parse productId = twenty-one
+INFO: User logged out = smartattacker
+
+
+
+
+
+
+
+
+
+
+
+12. Remediation
+
+HTTP Response Splitting remediation
+ > Encode the values so that the CRLF charcters cannot be used to split the response
+ > For Java, you can use Encode.forJava() so the input string escapes the CRLF characters
+
+// Original Code
+String user = request.getParameter(USER_NAME);
+...
+Cookie cookie = new Cookie("user", user);
+cookie.setMaxAge(cookieExpiration);
+resposne.addCookie(cookie)
+
+// Remediated Code
+String user = request.getParameter(USER_NAME);
+...
+Cookie cookie = new Cookie("user", Encode.forJava(user));
+cookie.setMaxAge(cookieExpiration);
+resposne.addCookie(cookie)
+
+
+
+Login Injection
+ > you can use ESAPI's logger from OWASP for Java application or an equivalent functionality in other platform and languages
+
+// Original Code
+final static Logger log = Logger.getLogger(ProductDetails.class)
+...
+String productStr = request.getParameter("productid");
+try {
+  int product = Integer.parseInt(productStr);
+} catch (NumberFormatException) {
+  log.error("Failed to parse productId = " + productStr);
+}
+
+// Remediated code:
+final static Logger log = ESAPI.getLogger(ProductDetails.class)
+...
+String productStr = request.getParameter("productid");
+try {
+  int product = Integer.parseInt(productStr);
+} catch (NumberFormatException) {
+  log.error("Failed to parse productId = " + productStr);
+}
+ 
+
+Preparing Zip file
+ > delete output folder and .bin folder
+
+
+
+
+
+
+
+
+IV. Conclusion
+13. Best practices
+
+Best practices
+1. Treat user inputs as untrustworthy and always sanitize them
+2. Validate user input before they reach response headers of your application
+3. Encode CRLF characters in order to sanitize the data before it is processed by the server
+
+
+
+
+
+
+
+
+
+
+14. Problem identification
+
+Problem identification
+ > they found that when setting the HTTP header, the application was using the user input directly from the query string
+ > the user input was not being sanitizeds
+
+
+
+
+
+
+
+
+
+15. Scenario resolution
+
+Scenario resolution
+ > John's team learned that not sanitizing the user input can invite CRLF injections
+ > They all start treating all user inputs as untrustworthy
+ > they also have started sanitizing all user input before it reaches the response headers of the application
+ > John's team uses methods like Server.UrlEncode to clean up user input before it enters the application
+
+
+
+V. Summary
+16. Module Summary
+
+Module Summary
+1. CRLF refers to the special character elements "Carriage Return" and "Line Feed"
+2. The CRLF vulnerability is a type of server-side injection
+3. CRLF injection is a result of improper sanitization of user input
+4. Exploitation of a CRLF vulnerability can compromise data integrity and open avenues for other attacks
+5. CRLF injections can be executed through HTTP response splitting or log injection
+	> HTTP response splitting - Attacker manipulates the response headers such that malicious data is included in the HTTP response header of the application
+ 	> Log injection - Attacker forges log entries or injects malicious content into the logs
+6. Proper validation and encoding practices can help avoid CRLF injections

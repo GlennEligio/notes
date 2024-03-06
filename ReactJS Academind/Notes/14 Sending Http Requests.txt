@@ -1,0 +1,355 @@
+14 Sending Http Requests
+
+001 Module Introduction
+
+Module Content
+1. How do React Apps Interact with Databases?
+2. Sending Http Requests & Using Responses
+3. Handling Error & Loading State
+
+
+
+
+
+
+002. How to NOT Connect To A Database 
+
+Browser-side Apps Don't Directly Talk to Databases
+ > Browser-side Apps like React doesnt communicate directly to Databases
+ > Instead, a Backend App (which is connected to the database) will be the "middleman" between the React App and Database
+ > This Backend app typically exposes Http endpoints and React App will create Http request to those endpoints to do CRUD operations to db
+
+NOTE:
+1. React App DOESNT DIRECTLY talk to the Database
+	> this would be a huge issue since React App source code can be access through the browser
+	> which means the Database credentials would be exposed in the browser, and will cause performance issue due to DB Communication
+
+
+
+
+
+005 Sending a GET Request
+
+Sending Request
+ > to send an Http request, we can either use
+	1. Axios
+	2. Fetch API (built-in in JS)
+
+Sending Request using Fetch API
+ > to send an Http request using Fetch api, we will need to call the method "fetch"
+ 
+fetch(url, init)
+ > method call from Fetch API
+ > used to send Http request
+ > takes two arguments
+	1. url, refers to the Http url link where we can send data
+	2. init, refers to the Object used to initialize properties of Request like headers, body, method, etc.
+ > returns a Promise whose resolve is the Response of the Http request
+	- we can then use this Response promise to get its headers, body, method content
+
+EX:
+  function fetchMoviesHandler() {
+    fetch("https://swapi.dev/api/films/")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        const trasformedMovies = data.results.map((movieData) => {
+          return {
+            id: movieData.episode_id,
+            title: movieData.title,
+            openingText: movieData.opening_crawl,
+            releaseDate: movieData.release_date,
+          };
+        });
+        setMovies(trasformedMovies);
+      });
+  }
+
+
+
+
+
+006 Using async and await
+
+async and await keywords
+ > used to make functions asynchronous
+ > "async" is added in function while "await" is added to method calls that returns Promises
+ > alternative to the then() method chain calls
+
+EX:
+  async function fetchMoviesHandler() {
+    const response = await fetch("https://swapi.dev/api/films/");
+    const data = await response.json();
+    const trasformedMovies = data.results.map((movieData) => {
+      return {
+        id: movieData.episode_id,
+        title: movieData.title,
+        openingText: movieData.opening_crawl,
+        releaseDate: movieData.release_date,
+      };
+    });
+    setMovies(trasformedMovies);
+  }
+
+
+
+
+
+
+007 Handling Loading & Data States
+
+Handling Loading & Data States in React
+ > earlier, when fetching data from remote Backend API, theres a DELAY before the data show up
+ > a better way of handling this delay is to show something to indicate that the request is still loading
+ > we can do this by adding a State to signify the loading, and modify it based on the asynchronous operation like fetch()
+
+EX:
+function App() {
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function fetchMoviesHandler() {
+    setIsLoading(true);
+
+    const response = await fetch("https://swapi.dev/api/films/");
+    const data = await response.json();
+    const trasformedMovies = data.results.map((movieData) => {
+      return {
+        id: movieData.episode_id,
+        title: movieData.title,
+        openingText: movieData.opening_crawl,
+        releaseDate: movieData.release_date,
+      };
+    });
+    setMovies(trasformedMovies);
+
+    setIsLoading(false);
+  }
+
+  return (
+    <React.Fragment>
+      <section>
+        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
+      </section>
+      <section>
+        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
+        {!isLoading && movies.length === 0 && <p>Found no movies</p>}
+        {isLoading && <p>Loading...</p>}
+      </section>
+    </React.Fragment>
+  );
+}
+
+
+
+
+
+
+008 Handling Http Errors
+
+Handling Http Error in React App
+ > there might be times where our request is unsuccessful
+ > for this case, we can also handle it in the same way as the loading  where we created a State to signify if an error occurred
+ > inside the function where we perform the Http request, we can modify this Error State
+ > there are two ways of changing Error State:
+	1. try-catch
+		- for Http request that is handled using async-await
+	2. .catch()
+		- called after a method call that returns a Promise (ex: fetch().catch(() = {}))
+		- for Http request that is handled using method chain calls with then() and catch()
+ > there are also two ways of handling JSX code in response to Error (and Loading) State
+	1. Use conditional JSX code
+		- ex: {isLoading && <p>Loading...</p>}
+	2. Use variable to store the JSX, then make if checks to modify the JSX value
+
+EX:
+Using Conditional JSX
+function App() {
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function fetchMoviesHandler() {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("https://swapi.dev/api/films/");
+
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
+
+      const data = await response.json();
+      const trasformedMovies = data.results.map((movieData) => {
+        return {
+          id: movieData.episode_id,
+          title: movieData.title,
+          openingText: movieData.opening_crawl,
+          releaseDate: movieData.release_date,
+        };
+      });
+      setMovies(trasformedMovies);
+    } catch (error) {
+      setError(error.message);
+    }
+
+    setIsLoading(false);
+  }
+
+  let content = <p>Loading...</p>;
+
+  if (movies.length > 0) {
+  }
+
+  return (
+    <React.Fragment>
+      <section>
+        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
+      </section>
+      <section>
+        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
+        {!isLoading && movies.length === 0 && <p>Found no movies</p>}
+        {!isLoading && error && <p>{error}</p>}
+        {isLoading && <p>Loading...</p>}
+      </section>
+    </React.Fragment>
+  );
+}
+
+
+
+With Variable that holds JSX
+// Inside App.js
+  let content = <p>Found no movies</p>;
+
+  if (movies.length > 0) {
+    content = <MoviesList movies={movies} />;
+  }
+
+  if (error) {
+    content = <p>{error}</p>;
+  }
+
+  if (isLoading) {
+    content = <p>Loading...</p>;
+  }
+
+  return (
+    <React.Fragment>
+      <section>
+        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
+      </section>
+      <section>{content}</section>
+    </React.Fragment>
+  );
+
+
+
+
+
+
+009 Using useEffect() for Request
+
+useEffect() for Request
+ > earlier, we need to click the button to fetch the movies
+	- this is often not the case, wherein we want to immediately show all info when page loads
+ > we can use the useEffect() to immediately fetch data from a backend API to populate the UI
+ 
+EX:
+useEffect(() => {
+  fetchMoviesHandler();  // will fetch the movies and populate the UI
+}, [fetchMoviesHandler])
+
+
+NOTE:
+1. For variables used inside useEffect and added in dependency array of useEffect, we can either use useCallback() or useMemo() hooks to avoid making the useEffect() executed in infinite loop 
+
+EX:
+const fetchMoviesHander = useCallback(...,[])
+
+useEffect(() => {
+  fetchMoviesHandler();  // will fetch the movies and populate the UI
+}, [fetchMoviesHandler])
+
+
+
+
+
+
+
+010 Firebase for creating REST API backend
+
+Firebase
+ > platform developed by Google for creating mobile and web application
+ > offers multiple services, which includes creating Backend REST API, with NoSQL database with "Real time Database"
+
+Creating Firebase Project
+1. Go to Firebase console
+	> console.firebase.google.com
+2. Create a new Firebase project
+	> give it any name you want
+	> "react-http"
+3. Go to "Real time Database"
+4. Create a Database
+	> choose the Server location
+	> Start the database in test mode (important)
+		- if not, you will not be able to access the database
+5. Copy the base url of the Realtime database
+	> we will need this in order to do CRUD operation to our realtime database
+6. Paste the base url of Realtime database to the fetch() call
+	> DONT FORGET to add the name of the json file that will be used to store/access data
+	> This will create a new Node inside Realtime Database
+	> ex: https://react-http-83f5f-default-rtdb.firebaseio.com/movies.json
+		- in this case, all data that we GET or POST will be stored in "movies" Node inside Realtime Database
+
+
+
+
+
+
+011 Sending a POST Request
+
+Sending a POST Request
+1. Call fetch()
+2. Pass the URL of the Backend API	
+	> in our case, its the Firebase's Realtime Database base url + Node name + ".json"	
+	> ex: https://react-http-83f5f-default-rtdb.firebaseio.com/movies.json
+3. Define the init Object (second argument of the fetch())
+4. Inside the init Object, define the following key:value pair
+	> method: "POST"
+	> body: JSON.stringify(Object)
+	> "Content-Type": "application.json"
+5. Receive the response of the request and do something about it 
+	> like show an error, or notify user that request body is wrong
+
+EX:
+  async function addMovieHandler(movie) {
+    const response = await fetch(
+      "https://react-http-83f5f-default-rtdb.firebaseio.com/movies.json",
+      {
+        method: "POST",
+        body: JSON.stringify(movie),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+  }
+
+NOTE:
+1. POST request also receives Response
+2. Request bodies only accepts Strings, it cannot accept JavaScript Objects
+	> for this, we can use the JSON.stringify() and pass the JS Object to it in order to make it into String
+3. We can access the properties values the same way as the members in Arrays
+
+EX:
+const object = {
+  name: "value1",
+  age: 8
+}
+
+console.log(object["name"]) // value1

@@ -1,0 +1,5 @@
+Installing Ivy in Apache Ant
+
+1. Download the Apache Ant Ivy Zip file
+2. Copy the ivy jar file inside the zip file
+3. Paste it in the lib folder of ANT_HOME directory

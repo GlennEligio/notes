@@ -1,0 +1,56 @@
+006 Sample User Flow 3
+
+
+Navigation Schemes
+ > helps you figure out which options user can choose, the directions they can move in in the various parts of our product
+ > helps define navigation and the hierarchy within
+
+
+3 STRUCTURES
+1. Home screen
+	> contains welcome message, and profile image
+	> contains products featured, and some deals
+	> contains bottom sticky bar at the bottom
+		- this bar nest several icons for navigation like home
+2. Saved page
+	> contains products that user "saved" or "favourited"
+ 	> the product item component may have button to quickly add it on the cart to buy
+	> contains sticky bottom navbar, with home and saved icons for navigation
+3. Cart page
+	> contains list of products that user added for checkout
+	> at the bottom, instead of the sticky navbar, we will use checkout button
+	> then at the top, we will provide a back button
+	> reasoning is that in cart page, the checkout button have higher priority than back button
+4. Orders page
+	> contains order items that we have
+	> these order items contains information like item ordered, status, price, ETA delivery, etc
+5. Navbar component
+	> the bottom sticky navbar component will have the following icons for specific pages
+		- home
+		- favorite/saved
+		- cart
+
+
+Creating User flows
+ > from the structures and navigation we created earlier, we can now define user flows
+
+Example user flows
+1. Home -> Products details page -> Checkout
+	> have higher priority
+	> happens when user click a featured product in home and check it out immediately
+2. Home -> Profile page -> Order screen
+
+
+
+Sitemaps
+ > a map that contains all the pages/screen in the product and how they are interconnected
+ > drawn as a navigation tree
+
+
+Example sitemaps
+1. Home 	-> Items
+		-> Category
+		-> Interests
+2. Saved	-> Item 	-> Cart
+		-> Other
+		-> Checkout

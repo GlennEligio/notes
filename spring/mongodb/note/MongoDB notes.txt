@@ -1,0 +1,3 @@
+New stuff:
+1. Avoid using "Set" to contain the MongoDB Documents
+	> for some reason, it does not take account of the "id" when doing equality

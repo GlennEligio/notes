@@ -1,0 +1,115 @@
+18. CSS part 9 - Element positioning
+
+includes
+float, clear
+overflow
+position CSS property
+	- static
+	- relative
+	- absolute
+	- fixed
+media-queries
+z-index
+::before and ::after pseudo elements
+
+
+
+float
+	> CSS property that specifies whether an element should float to the left, right, or not at all.
+	> NOTE: Absolutely positioned elements IGNORE the float property!
+	> NOTE: Elements next to a floating element will FLOW around it. 
+		 - To avoid this, use the clear property or the clearfix hack (see example at the bottom of this page).
+	> can have different values like
+		1. none
+			- default value
+			- element will not float left or right
+		2. right
+			- element will float to the right of its block container (e.g. div)
+		3. left
+			- element will float to the left
+
+
+
+clear
+	> CSS property that controls the flow next to floated elements.
+	> specifies what should happen with the element that is NEXT to a floating element
+	> can have values like
+		1. none
+			- default value
+			- element is not pushed below left or right floated elements
+		2. left
+			- element is pushed below left floated elements
+		3. right
+			- element is pushed below RIGHT floated elements
+		4. both
+			- element is pushed below BOTH left and right floated elements
+
+
+USAGE
+1. In case where you want text beside a float element (e.g. image), add margin to the float element to ADD SPACE between text and float image
+
+
+
+
+overflow
+	> CSS property that specifies what should happen if content overflows an element's box.
+	> specifies whether to
+		1. clip content if child element goes outside the specified parent element dimension
+		2. add scrollbar when an element's content is too big to fit in a specified area
+	> USAGE includes 
+		1. image is contained inside a div	
+			- we will add overflow property in the div element
+	> NOTE: The overflow property only works for block elements with a specified height
+	> values include
+		1. visible
+			- default value	
+			- overflow is not clipped
+			- element is rendered outside the element box
+		2. hidden
+			- overflow is clipped
+			- the rest of the content will be INVISIBLE
+		3. scroll
+			- overflow is clipped
+			- adds a scroll-bar to see the rest of the content
+		4. auto
+			- if overflow is clipped, a scroll-bar should be added to see the rest of the content 
+
+
+
+position
+	> defines the type of positioning method used for an element
+	> used in conjunction with top, right, bottom, and left properties to specify the position
+	> can have multiple values like
+		1. static
+			- default value
+			- static position elements are NOT AFFECTED by the top, bottom, left, and right properties
+			- element with position:static; is not position in any special way;
+			- it is always position according to the normal flow of the page
+		2. relative
+			- element with position:relative is positioned relative to its NORMAL POSITION
+			- setting the top, right, bottom, and left propertties of a relatively-position element will cause it to be adjusted away from its NORMAL POSITION
+			- other content will NOT be adjusted to fit into any gap left by the element
+		3. fixed
+			- positioned relative to the VIEWPORT, which means it always stays in the SAME PLACE even if the page is scrolled
+			- top, right, bottom, and left properties are used to position the element
+			- a fixedd element does not leave a gap in the page where it would normally have been located
+			- used mostly for FLOATING ELEMENTS like Chat Icon, Navbar, Navigation buttons, etc.
+		4. absolute
+			- positioned relative to the NEAREST POSITIONED ANCESTO (instead of positioned relative to the viewport, like fixed)
+			- however, if an absolute positioned element has no positioned ancestor/parent elemenet, it uses DOCUMENT BODY, and moves along with page scrolling
+			- used mostly for positioning element inside a specific container
+			- NOTE: Absolute positioned elements are REMOVED from the normal flow, and can overlap elements
+		5. sticky
+			- positioned based on the user's SCROLL POSITION
+			- toggles between relative and fixed, depending on the scroll position
+				= positioned relative until a given offset position is met in the viewport,the it "sticks" in place (like position:fixed)
+
+
+
+top:
+left:
+right:
+bottom:
+	> CSS properties used to define the position of an element
+	> used conjunction with position: property
+	> we can pass different values here like em, rem, px, vw, vh, x%, etc 

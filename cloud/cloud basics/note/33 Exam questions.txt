@@ -1,0 +1,21 @@
+33 Exam questions
+
+Question: AWS
+What best describes the purpose of having many Availability Zones in each AWS region?
+A. Multiple AZs allow for fault tolerance but not high availability
+B. Multiple AZs allow for cheaper prices due to competition between them
+C. Multiple AZs allow for duplicate and redundant compute, and data backups.
+D. None of the above
+
+My answer: C
+Option C is the best description, since with this, we can ensure that even if one Availability zone goes down due to disaster, we can make sure that the services of the Cloud on that specific region is still present
+
+
+Correct answer: C
+Explanation
+A. Multiple AZs allow for fault tolerance but not high availability
+	> this should be built into the applications
+B. Multiple AZs allow for cheaper prices due to competition between them
+	> prices of server in a region will be close to each other, so no competition will happen
+C. Multiple AZs allow for duplicate and redundant compute, and data backups.
+D. None of the above

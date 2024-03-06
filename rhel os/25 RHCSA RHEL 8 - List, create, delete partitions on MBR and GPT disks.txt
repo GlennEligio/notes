@@ -1,0 +1,122 @@
+25 RHCSA RHEL 8 - List, create, delete partitions on MBR and GPT disks
+
+MBR
+ > Master Boot Record disk
+ > for MBR, we will use the "fhdisk" to manipulate the disk and its partitions
+
+GPT
+ > GUID Partition table disk
+ > for GPT format, we will use the "gdisk" command
+
+
+Creating additional partition disk
+1. Shutdown the VM
+2. Go to VM Setting -> Storage
+3. In the Controller: SATA, add a hard disk
+	> Create
+	> Choose VDI
+	> 10gb size
+	> Dynamically allocated
+4. In the list of Hard Disk, select the newly created one and click Choose
+	> it should now be under Controller: SATA
+
+
+
+Example Filesystem
+/dev/sda1
+ > sda stands for SATA Disk A
+ > the 1 stands for the Partition number
+ > typically mounted in "/boot"
+/dev/mapper/rhel-root
+ > mounted in "/" 
+/tmpfs
+ > temporary filesystems
+ > typically mounted in different directories like	
+	- /dev/shm
+	- /run
+	- /run/user/42
+	- /sys/fs/cgroup
+
+
+
+
+Commands
+df [option]
+ > report file system disk space usage
+ > list all file systems and their information
+ > options:
+	-h	print sizes in powers of 1024 (e.g., 1023M) 
+
+
+blkid
+ > locate/print block device attributes
+ > attributes includes
+	- UUID
+	- TYPE
+	- PARTITION UUID
+
+
+lsblk
+ > list all block devices
+ > information includes 
+	- block device name
+	- partition tree
+	- MAJ:MIN -> internal identificator for each device the kernel uses according to the device type.
+	- RM -> shows if the device is removable (where 1 yes and 0 no), in this case last 2 disk are external and the last device is the DVD.
+	- SIZE -> displays the size of each of the disk devices listed.	
+	- RO -> means Read Only, being 1 positive and 0 negative, if 0 then devices are not read only, if 1, they are read-only.
+	- TYPE -> displays the type of device such as devices, partitions, optical devices,  encrypted partitions and more.
+	- MOUNTPOINT -> shows the mount point of each device or partition, the next image shows the partitions of the device sda.
+
+
+partprobe [-d] [-s] [devices...]
+ > inform the OS of partition table changes
+ > get updates on the partition changes
+
+
+fdisk [option] device
+fdisk -l [device...]
+ > used for viewing and manipulating disk partition table
+ > ex:
+	$ fdisk -l
+		- list all disk and its partitions
+	$ fdisk /dev/sdb
+		- opens the fdisk UI to make changes the SATA DISK B
+ > fdisk commands
+	m	help, shows all command available
+	p 	print partition table
+	q 	quit fdisk ui
+	w 	write, similar to save
+	n	create new partition, will be prompted to choose the following
+			1. either a primary or extended partition type
+				- primary for bootable partition	
+				- extended for logical partition
+			2. partition number
+			3. First sector of partition (default is the first available)
+			4. Last sector of partition (default is the last available)
+				- ex: +5G will make the partition size 5GiB
+				- if we choose default in first and last, the partition will occupy all space
+	d 	delete a partition, will be  prompted to choose the partition number to delete
+	t	change type of a partition, will be prompted to either 
+			1. enter the partition type number
+			2. press L to see the list of partition types then enter the partition type number
+ > ex:
+	$ fdisk -l
+	$ fdisk /dev/sdb
+
+
+gdisk [-l] device
+ > Interactive GUID partition table (GPT) manipulator
+ > we can either list the disk, or manipulate them
+ > $ gdisk -l device will list the disk information and its partitions
+ > $ gdisk device will open the GPT guid to manipulate the said disk
+ > GPT GUID commands
+	? 	help
+	d	delete partition
+	n	create partition, same information prompts as fhdisk UI but it wil give you option to choose the partition type
+	l 	list all partition type and its corresponding code
+	w	write, similar to save
+	p	show the partitions of the current disk
+ > ex:
+	$ gdisk -l /dev/sdb
+	$ gdisk /dev/sdb

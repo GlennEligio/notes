@@ -1,0 +1,15 @@
+12. Launching Zipkin Container using Docker
+
+
+Zipkin
+	> a Distributed Tracing System
+	
+
+Launching Zipkin
+1. Run a Docker container using a Zipkin Docker image
+	> Zipkin runs on port 9411 by default
+
+	docker run -p 9411:9411 openzipkin/zipkin:latest
+
+2. Access the Zipkin interface
+	localhost:9411/zipkin/

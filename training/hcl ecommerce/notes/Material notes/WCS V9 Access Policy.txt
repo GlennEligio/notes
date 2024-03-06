@@ -1,0 +1,121 @@
+WCS V9 Access Policy
+
+HCL Access Policies
+	> Access control in an HCL Commerce application is composed of the following elements:
+		- users
+		- actions
+		- resources
+		- relationships
+	
+Users	
+	> Users are the people that use the system. 
+	> For access control purposes, users must be grouped into relevant access groups. 
+	> One common attribute that is used to determine membership of an access groups is roles
+	> Roles are assigned to users on a per ogranization basis. 
+		- For more information about roles, see Roles
+	> Some examples of access groups include:
+		- Registered customers
+		- Guest customers
+		- Administrative groups like customer service representatives
+		
+Actions
+	> Actions are the activities that users can perform on the resource.
+	> For access control purposes, actions must also be grouped into relevant actions groups
+	> For example, a common action used in a store is a View. 
+		- A view is invoked to display a store page to customers. 
+		- The views used in your store must be declared as actions and assigned to an action group before they can be accessed.
+
+Resources
+	> Resources are the entities that are protected
+	> For example, if the action is a view, the resource to be protected is the command that invoked the view
+		- ex: "com.ibm.commerce.command.ViewCommand"
+	> For access control purposes, resources are grouped into resource groups
+	
+Relationships
+	> Relationships are the relationship between the user and the resource
+	> Access control policies may require that a relationship between the user and the resouce be satisfied.
+	> For example, users may only be allowed to display the orders that they have created
+	> In an HCL Commerce application, there are two main levels of access control.
+		1. The first level of access control is performed by the WebSphere Application Server
+			- In this respect, HCL Commerce uses WebSphere Application Server to protect enterprise beans and servlets
+		2. The second level of access control is the fine-grained access control system of HCL Commerce
+		
+
+Types of Access Control
+	> There are two types of access control, both of which are policy-based:
+		1. Command-level access control
+		2. Resource-level access control
+		
+Command level access Control
+	> Command-level (also known as "role-based") access control uses a broad type of policy.
+	> You can specify that all users of a particular role can execute certain types of commands.
+		- ex: You can specify that users with the Account Representative role can execute any command in the AccountRepresentativesCmdResourceGroup resource group
+		- ex 2: Another example policy is to specify that all seller administrators can perform any action specified in the SellerAdministratorsViews Group on any resource that is specified by the ViewCommandResourceGroup
+		
+EX:
+ACPOLICY table row
+PolicyName: SellerAdminstrators, ExecuteSellerAdministrators, View
+Member_id: -2001
+MbrGrp_id: -85
+AcActGrp_id: 10060
+AcResGrp_id: 10021
+AcRelGrp_id: Null
+
+MBRGRP table row
+MbrGrp_id: -85
+MbrGrpName: SellerAdministratorsViews
+
+MBRGRPCOND table row
+MbrGrp_id: -85
+Conditions: <profile>
+				<simpleCondition>
+					<variable name="role"/>
+					<operator name="="/>
+					<value data="Seller Administrator"/>
+				</simpleCondition>
+			</profile>
+			
+ACACTGRP table row
+AcActGrp_id: 10060
+GroupName: SellerAdministratorsViews
+
+ACRESGRP table row
+AcRelGrp_id: 10021
+GroupName: ViewCommandResourceGroup
+
+
+Implementing Access Control
+	> This topic describes how to implement access control in customized code.
+	> In general, enterprise beans and data beans are resources that you may want to protect. 
+		- However, not all enterprise beans and data beans should be protected.
+		- Within the existing HCL Commerce applications, resources that require protection already implement the protectable interface.
+	> Typically, the question of what to protect comes into play when you create new enterprise beans and data beans. Deciding which resources to protect depends upon your application
+	
+	
+Create Access Policy
+	> You must have Site Administrator authority to create an access control policy	
+	> Procedure:
+		1. Open the Organization Administration Console
+		2. From the Access Management menu, click Policies. A list of policies displays
+		3. Click New.
+		4. On the New Policy page:
+			- For Name, specify the unique policy name
+			- For Display Name, specify the locale specific name for the new policy
+			- For Description, type a description of the policy
+			- For User Group, click Find. The Find User Group page display
+		5. On the Find User Group page:
+			- Check the box beside the user group you want to work with and Click OK; or
+			- Click the user group hyperlink to select that user group and to return to the previous page
+		6. For Resource Group
+			- Select the resource group to which the policy applies.
+			- Note that only those resource groups that have actions grops associated with them are displayed.
+			- In addition, the Action Group and Relationship fields are dependent on the resource group you select
+		7. For Action Group, select the action group
+		8. For Relationship, select the relationship
+			- Note that this field is OPTIONAL
+		9. If the Policy type is for the default organization, select Default Organization Policy
+			- Note that this option is available only for the Site Administrator.
+		10. Click OK	
+			- A message box tells you that a policy has been added and prompts you to refresh the Policy Registry to apply recent changes to the run-time environment.
+			- Click OK
+			

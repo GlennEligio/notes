@@ -1,0 +1,75 @@
+6. Configuring Spring Security Authorization
+
+
+"/login"
+	> default URL mapping for login form of Spring Security
+	> if one tries to access a URL mapping they are not authenticated with, they will be redirected here
+
+"/logout"
+	> default URL mapping for logging out of Web Application
+	> used to logout a User to the system
+
+
+STARTING POINT
+1. A Spring Boot application with:
+	- Spring Security dependency added
+	- In-memory authentication configured
+
+
+API URL mappings	Roles allowed to access it
+"/"			All
+"/user"			USER and ADMIN roles
+"/admin"		ADMIN role
+
+
+HttpSecurity
+	> lets you configure 
+		- what are the paths and their access restriction of those paths
+	> contains the methods to chain call
+
+authorizeRequests()
+	> opens up the method chaining for setting up path mapping and its allowed roles
+antMatchers(String... antPatterns)
+	> takes a String... antPatterns to define the URL mapping paths to restrict
+	> can use wildcards in order to define the path(s)
+		- ex: "/user/*" will restrict all URL mappings that starts with "/user/*" like "/user/home"
+		- ex: "/**" will restrict all URL mappings at current level and its subsequence sublevel
+	> for more information about Ant Pattern check this link
+		https://www.bojankomazec.com/2019/07/apache-ant-patterns.html
+hasRole(String role)
+	> called after antMatchers()
+	> takes a single String that defines the Role that can access the restricted URL mapping
+hasAnyRole(String... roles)
+	> takes a single or multiple String 
+	> as long as the Role is included, it will have access to the URL mapping
+permitAll()
+	> makes the URL mapping to have NO restrictions
+	> used for static files like css, resource locations like images, scripts, etc
+and()
+	> ends the method chaining for defining URL mapping path and restrictions
+formLogin()
+	> called after the and()
+	> defines the way for the User to authenticate
+		- in this case, the User will be sent to Spring Security default Login form
+
+
+
+
+How to get hold of HttpSecurity class
+	> to get access to HttpSecurity and modify it, we will override the configure(HttpSecurity http) of WebSecurityConfigurerAdapter
+
+
+configure(HttpSecurity http)
+	> one of the method to override in WebSecurityConfigurerAdapter
+	> using the HttpRequest, we can set the paths and the allowed roles to access it by chaining methods
+
+
+
+
+CONFIGURING AUTHENTICATION FOR EACH URL MAPPING PATHS
+1. Override the configure(HttpSecurity http) of WebSecurityConfigurerAdapter
+
+2. Inside the configure(HttpSecurity http), call these specific methods
+	- antRequests() then either permitAll(), hasRole(), hasAnyRole() to set restrictions to the URL path mappings
+	- and() to end the Restriction setup
+	- formLogin() to direct Users if they are not authenticated yet

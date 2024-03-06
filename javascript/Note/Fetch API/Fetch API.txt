@@ -1,0 +1,185 @@
+JavaScript Fetch API
+
+
+Fetch API
+	> The Fetch API provides an interface for fetching resources (including across the network). 
+	> It will seem familiar to anyone who has used XMLHttpRequest, but the new API provides a more powerful and flexible feature set.
+	> provide Abstractions of HTTP Requests, Reponses, and Headers, along with a fetch() method for initiating asynchronous resource request
+
+
+Fetch API Interfaces
+fetch(resource [, init])
+	> method used to fetch a resource
+	> MANDATORY to define the String resourcePath, which can be
+		- file in project folder ('sample.txt', 'src/users.json')
+		- external api url path ('http://exampleapi.com/users')
+	> we can define the request properties by passing an init object
+		- init represents an object containing any custom settings that you want to apply to the request. The possible includes but not limited to:
+			1. method
+			2. headers
+			3. body	
+			4. mode
+			5. credentials
+	> returns a Promise that resolves with the result of the Response object of said request
+
+Headers
+	> Represents response/request headers, allowing you to query them and take different actions depending on the results
+
+Request
+	> represents the resource request
+	> have the following properties which includes but not limited to
+		a. body
+			> a ReadableStream of body contents
+		b. cache	
+			> contains the cache mode of the request
+		c. destination
+			> returns a string describing the request's destination
+		d. credentials
+			> contains the credentials of the request (e.g. omit, same-origin, include)
+			> default is same-origin
+		e. headers
+			> contains the associated Headers object of the request
+			> takes a value of key-value pairs
+			> ex: {Accept: 'application/json', Content-type: 'application/json'}
+		f. method
+			> contains the request's method (GET, POST, etc.)
+	> have the follwoing methods which includes but not limited to:
+		a. json()
+			> returns a promise that resolves with the result of parsing the request body as JSON
+		b. text()
+			> returns a promise that resolves with a text represntation of request body
+
+Response
+	> represents the resource response
+	> have the following properties which includes but not limited to:
+		a. body
+			> a ReadableStream of body contents
+		b. headers
+			> The Headers object associated with the response
+		c. ok
+			> boolean indicating whether the response was successful (status in the range 200-299) or not
+		d. status
+			> status code of the response
+		e. statusText
+			> status message corresponding to the status code
+		f. url
+			> the url of the response
+	> have the following METHODS which includes but not limited to:
+		a. json()
+			> returns a promise that resolves with the result of parsing the response body text as JSON
+		b. redirect()
+			> creates a new response with a different URL
+		c. text()
+			> returns a promise that resolves with the result of text represenatation of the response body
+
+
+
+SYNTAX OF A TYPICAL fetch() method call
+	> first, we initialize the Fetch API using fetch()
+	> in fetch(), passing the Resource path is MANDATORY
+	> for the init Object, it represents the Request properties in form of key:value pairs
+		ex: {method: 'POST', header: {Content-type: 'application/json'}, body: {title: 'MyTitle', body: 'MyBody'}}
+	> this fetch() returns a Promise that resolves with the Response object
+	> we can then use the Response object to do some modification to it like
+		1. Extract status and check it
+		2. Extract response body and use it on HTML elements
+
+fetch(String resource, Object init)
+	.then((response) =>  {
+		// some logic
+	})
+
+
+
+
+
+Usage of fetch()
+I. Fetch a text/file from project folder
+1. Here, we define the resource path to be "sample.txt", a local file in project
+2. Then the Promise's resolve result value (which is a Response object) is used to call its text()
+	- this converts the Response body, into text (similar to XHR.responseText)
+3. Then, we used that text to define the innerHTML of a specific element (with id "output")
+
+        fetch("sample.txt")
+          .then((res) => res.text())
+          .then((data) => {
+            document.getElementById("output").innerHTML = data;
+          });
+
+
+
+II. Fetch a json file from local project folder
+1. Here, we define the resource path to be "users.json", a local json file in project
+2. Then the Promise's resolve result value (which is a Response object) is used to call its json()
+	- this converts the Response body into JSON format
+3. Then, after some logic than using the Response JSON body, we used the output to define the innerHTML of a specific element (with id "output")
+
+        fetch("users.json")
+          .then((res) => res.json())
+          .then((data) => {
+            let output = "<h2>Users</h2>";
+            data.forEach((user) => {
+              output += `
+                    <ul>
+                        <li>ID: ${user.id}</li>
+                        <li>Name: ${user.name}</li>
+                        <li>Email: ${user.email}</li>
+                    </ul>
+                  `;
+            });
+            document.getElementById("output").innerHTML = output;
+          });
+
+
+
+III. Fetch Resource from External API
+1. Initialize Fetch api
+	- define the request resource url
+2. Use the resolve() value of the Promise object return of fetch()
+	- here, we called the Response object's json() which converts the Response body into JSON
+3. Use the JSON object to create a list of UI that displays Post's Title and Body
+
+
+        fetch("http://jsonplaceholder.typicode.com/posts")
+          .then((res) => res.json())
+          .then((data) => {
+            let output = "<h2>Post</h2>";
+            data.forEach((post) => {
+              output += `
+                    <div>
+                        <h3>Title: ${post.title}</h3>
+                        <p>Body: ${post.body}</p>
+                    </div>
+                  `;
+            });
+            document.getElementById("output").innerHTML = output;
+          });
+
+
+
+IV. Send a POST request using Fetch API
+1. Initialize Fetch API
+	- define the resource path
+	- define the init, which defines the custom settings
+	- in our case, we:
+		a. specify the HTTP Method
+		b. specify the header ('Accept', and 'Content-type')
+			-> Content type header must be define if we want to send request
+			-> Accept can be "*/*", which means it can accept any format
+		c. specify the request body content
+			-> body content type must match the Content-type header
+2. Using the Response return value (from Promise's resolve value), we called and returned value of json()
+	> converts the Response's body content to json object
+3. Using the Response body content (now in JSON), log the content in Console
+
+
+        fetch("http://jsonplaceholder.typicode.com/posts", {
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({ title: title, body: body }),
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(data));

@@ -1,0 +1,171 @@
+Spring MVC Overview
+
+What is Spring MVC?
+	> Framework for building web applications in Java
+	> Based on Model-View-Controller design pattern
+	> Leverags features of the Core Spring Framework (IoC, DI)
+
+
+Spring MVC Benefits
+	> The Spring way of building web app UIs in Java
+	> Leverage a set of resuable UI components
+	> Help manage application state for web requests
+	> Process form data: validation, coversion, logging, etc
+	> Flexible configuration for the view layer
+		- can use other view layers like
+			a. Thymeleaf
+			b. Velocity
+			c. FreeMarker
+
+
+Components of a Spring MVC Application
+	> A set of web pages to layout UI components
+	> A collection of Spring beans (controllers, services, etc...)
+	> Spring configuration (XML, Annotations, or Java)
+
+
+
+Spring MVC Components
+
+1. Spring MVC Front Controller
+	> Front controller known as DispatcherServlet
+		- part of Spring Framework
+		- already developed by Spring Dev Team
+	> you will create
+		- Model objects
+		- View templates
+		- Controller classes
+
+
+2. Controller
+	> code create by developer
+	> contains your business logic
+		- handle the request
+		- store / retrieve data (db, web service..)
+		- place data in model
+	> send to appropriate view template
+
+
+3. Model
+	> contains your data
+	> store / retrieve data via backend systems
+		- database, web service, etc
+		- use a spring bean if you like
+	> place your data in the model
+		- data can be any Java object / collection
+
+
+4. View Template
+	> Spring MVC is flexible
+		- supports many view templates
+	> Most common is JSP + JSTL
+	> Developer creates a page
+		- displays data
+	> Other view templates supported
+		- Thymeleaf, Groovy
+		- Velocity, Freemaker, etc.
+
+
+Configuring Spring MVC
+Part 1 - Adding configuration to the file: WEB-INF/web.xml
+1. Configure Spring MVC Dispatcher Servlet
+2. Set up URL mappings to Spring MVC Dispatcher Servlet
+
+Part 2 - Adding configuration to the file: WEB-INF/spring-mvc-demo-servlet.xml
+		> this is the config xml of the Spring Container
+3. Add support for Spring component scanning
+4. Add support for conversion, formatting and validation
+5. Configure Spring MVC View Resolver
+
+
+Part 1 - Adding configuration to the file: WEB-INF/web.xml
+Step 1: Configure Spring MVC Dispatcher Servlet
+1. create a Servlet in the web.xml of WEB-INF
+	> this will be the Front Controller in MVC
+	> add servlet-name and servlet class inside the servlet tag with values
+
+	servlet-name: dispatcher
+	servlet-class: org.springframework.web.servlet.DispatcherServlet
+
+2. add <init-param> inside the servlet
+	> this will point the servlet where to locate the config xml file for creating Spring Container
+	> add param-name and param-value inside init-param with values
+
+		param-name: contextConfigLocation
+		param-value: /WEB-INF/spring-mvc-demo-servlet.xml
+		
+3. Add Load-on-startup inside <servlet>
+	> pass 1 to the load-on-startup body
+
+
+Step 2: Set up URL mappings to Spring MVC Dispatcher Servlet
+1. Inside web.xml, add a <servlet-mapping> in same level as <servlet> earlier
+	> inside servlet-mapping, add servlet-name and url-pattern with values
+
+		servlet-name: dispatcher
+		url-pattern: /
+	
+	> the servlet-name should be the same as the servlet-name from servlet earlier
+	> url-pattern will be added to base-url (localhost:8080)
+	> this means that we can call the dispatcher servlet using localhost:8080/
+	> all subsequent Route method / Controller method url mapping with then be appended to this dispatcher servlet
+
+
+Part 2 - Adding configuration to the file: WEB-INF/spring-mvc-demo-servlet.xml
+Step 3: Add support for Spring component scanning
+1. Add <context:component-scan> inside <beans> of config xml of Spring Container
+	> add base-package parameter inside context:component-scan
+		- pass the package location on where we want to scan for @Components of @Bean
+
+Step 4: Add support for conversion, formatting, and validation
+1. Add <mvc:annotation-driven/> tag inside the <beans>
+
+Step 5: Define / Configure Spring MVC View Resolver
+1. Add a <bean> inside config xml with following parameter and value
+	class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+2. Add two <property> inside <bean> with following parameter and value
+	name="prefix" value="/WEB-INF/view/"
+	name="suffix" value=".jsp"
+
+
+View Resolver Configs 
+	> When our app (or the Route method / @Controller method) provides / returns a "view" name, Spring will
+		- prepend the prefix of the InternalResourceViewResolver bean
+		- append the suffix of the InternalResourceViewResolver bean
+	> using the resulting string from prepending and appending, the ViewResolver will then look for the specific .jsp file to know where to navigate user
+
+
+
+Installing the necessary JAR files or Maven Dependencies
+	> we will need the following dependencies
+		1. tomcat-embed-jasper
+		2. spring boot starter web
+		3. spring boot starter test
+		4. spring boot dev tools
+			= added so that spring boot will configure its own tomcat server to use
+For maven dependencies
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>

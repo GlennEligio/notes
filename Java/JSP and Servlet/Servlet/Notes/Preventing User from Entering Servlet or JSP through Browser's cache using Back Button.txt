@@ -1,0 +1,21 @@
+Preventing User from Entering Servlet / JSP through Browser's cache using Back Button
+
+I. Inside Servlet / JSP
+
+1. Add the following Headers in the response of Servlet/JSP
+	> we can add headers to response using setHeader("header-name", "value");
+
+For HTTP 1.1 and above
+	
+	response.setHeader ("Cache-Control", "no-cache, no-store, must-revalidate");
+
+For HTTP 1.0
+
+	response.setHeader ("Cache-Control", "no-cache, no-store, must-revalidate");
+	response.setHeader ("Pragma", "no-cache");
+
+For Proxies
+
+	response.setHeader ("Expires", "0")
+
+	

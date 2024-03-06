@@ -1,0 +1,44 @@
+Java Annotations
+	> special labels / markers added to Java classes
+	> provides meta-data about the class
+	> processed at compile time or run-time for special processing
+
+
+Why Spring Configuration with Annotations over XML configuration
+	> XML Configuration can be verbose
+	> Configure your Spring beans with Annotations instead of XML elements
+	> Annotations minimizes the XML configuration
+
+
+Scanning for Component Classes
+	> Spring will scan your Java classes for special annotation
+		- @Component, @Service, etc
+	> to define the location on where to scan
+		- add @ComponentScan("package-location") to the @Configuration class	
+		- typically, we pass "com" to @ComponentScan
+	> Automatically registers the beans in the Spring container
+
+
+
+Development Process
+1. Enable component scanning in Spring config file
+	> for Config class
+		- add @ComponentScan("package-location") to the @Configuration class	
+		- typically, we pass "com" to @ComponentScan
+	> for Config file inside xml file
+		- inside <beans>, add <context:component-scan> element to enable component scanning
+		- in <context:component-scan>, add a base-package="" parameter
+		- pass the package-location of the beans to scan
+2. Add the @Component Annotation to our Java classes
+	> @Component() takes a String parameter
+	> this String serves as an "id" to the @Component or Bean
+3. Retrieve bean from Spring Container
+	> call getBean() of the Spring Container (or ApplicationContext class)
+		- we will pass the id of the @Component and the desired class output of the getBean()
+		- ex: Coach theCoach = context.getBean("thatSillyCoach", Coach.class)
+
+
+NOTE: In case we didnt pass a String id to the @Component, it will create a default id which will have a syntax of
+	> Class name, but the first letter is in lowercase
+	> ex: TennisCoach class will have an id of "tennisCoach"
+		- we will then pass this "tennisCoach" to the getBean() of ApplicationContext

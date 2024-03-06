@@ -1,0 +1,20 @@
+111 AWS Glue
+
+AWS Glue
+ > Managed Extract, Transform, and Load (ETL) service 
+ > Useful to prepare and transform data for analytics
+ > Fully serverless service
+	- you only need to worry about the data transformation
+
+
+Diagram
+S3 Bucket ------|
+		|
+		|------------->	Glue ETL  --------------> Redshift
+		|   Extract	(Transform)	Load
+Amazon RDS -----|
+
+
+Glue Data Catalog
+ > catalog of datasets
+ > can be used Athena, Redshift, EMR

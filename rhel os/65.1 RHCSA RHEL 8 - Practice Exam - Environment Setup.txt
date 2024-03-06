@@ -1,0 +1,5 @@
+66 RHCSA RHEL 8 - Practice Exam - Environment Setup
+
+
+Source:
+ > https://github.com/rdbreak/rhcsa8env

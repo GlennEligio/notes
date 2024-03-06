@@ -1,0 +1,42 @@
+007 Sketching User Flows 4
+
+Screen States
+ > focuses in drawing the entire screen for different interaction
+ > ex: user comes to a search page, clicks on a search bar, and an overlay pops up, they type and get the suggested searches
+
+
+Creating Screen States sketches
+Example: Home page
+1. Intially for home page, we might want to have the following components
+	> search bar
+	> profile image thumbnail
+	> a card carousel that list the saved products alongside the info like name, price, and additional info 
+	> interest, where its a list of categories that user might like
+		- this list will be a card again, with image and name related to the said category (sport, videogame, fitness, fashion, etc)
+2. When the search bar is clicked, we will modify the home page
+	> show an overlay (can add animation like drop from up to down)
+	> we will need to take account of the keyboard that may pop up in mobile devices
+	> while we type, a list of suggested search queries will pop uSportsp	
+		- similar to autosuggest/autocomplete feature
+		- this will help the user when it comes to searching
+3. When a search query is chosen, the screen will then show the search result of the query
+	> we will still maintain the search bar, but now we have a back button and filter button on its side
+	> we might also want to show the number of result items to the user
+	> and finally, we will list the search result in terms of "cards"
+	> this card will contain brief product information like product image, name, rating, price
+		- we can also add heart icon in the card, so that we can add the product as "saved/favorite"
+4. When a product in search result is clicked, the screen will change to the product details page
+5. When a product's heart icon is clicked, the saved/favorite page is shown with the saved product added
+6. When the filter button is click, we might also show an overlay
+	> the filter overlay may be shown animated in the screen from top -> bottom or from sides like a sidebar
+	> the filter overlay might contain filter options like price, date added, reviews
+
+
+NOTES:
+1. In sketching Screen States, think about what are different types of features and different types of element that this page should have
+2. For mobile screens, we prefer to have the buttons larger
+3. We should incorporate motion into screen state changes early on
+4. Main point of sketching is to just be lean, be agile, and dont get bogged down by the details	
+	> ignore things like dribble or where you see like really high definition
+
+	

@@ -1,0 +1,761 @@
+HCL Devops training
+SOURCE: https://www.youtube.com/watch?v=GBo52wGNbBU
+
+
+HCL Commerce Now -  The Path Forward - Operational Model
+
+DevOps
+ > continuous improvement process/cycle for software development that is composed of the following steps
+	- Dev - plan, code, build, test
+	- Ops - release, deploy, operate, monitor
+ 
+ 
+AGENDA
+1. Commerce Overview
+	> V9.1 Architecture
+	> Commerce components
+2. Commerce Runtime Environments
+	> Selecting Commerce Components
+	> Runtime environment configuration
+	> Environment details
+3. CI/CD Pipeline
+	> Kubernetes deployment
+	> Pre-requisites of Deploying HCL Commerce in Kubernetes Cluster
+	> Pipeline Process
+4. Current Setup
+	> Hosted Architecture (CLE PROD)
+	> Container startup logic
+	> Commerce current memory/cpu configuration
+	> HPA configuration
+	> CLE PROD Disaster Recovery (DR) Setup
+	> Configuration in vault
+	> HCL Cache
+	> Jenkins repo structure
+	> Jenkins job workflow
+	> New Jenkins job creation
+	> HCL Commerce Search Ingest Image Customization
+	> Performance fine tuning of HCL Commerce Components
+5. Monitoring and Logging
+	> Monitoring with Appdynamics and Grafana
+	> Logging with Kibana
+6. Troubleshooting
+	> Common Jenkins job error
+	> Kubernetes deployment / pod errors
+
+
+
+V9.1 Architecture
+
+HCL Architecture over the years
+1. Legacy Commerce Architecture
+2. V9 Architecture
+3. V9.1 Architecture
+
+Legacy Commerce Architecture
+ > composed of the following
+	1. Transaction Server
+	2. Search Server
+ > Monolithic architecture
+	- Transaction and Search server is a monolith
+
+V9 Architecture
+ > composed of the following
+	1. Auroa Store Server - Frontend
+	2. Transaction Server
+	3. XC Server
+	4. Search Server
+	5. Utilities Server
+ > Microserver architecture
+	- all the components are decoupled from each other
+ > support for Containerization
+	- the components can also be containerized and deployed in a Container environment like Docker or Kubernetes
+ > from previous version, they broke down the Transaction Server, which is now the following
+	- Aurora Store
+	- XC Server
+	- Utilities
+
+V9.1 Architecture
+ > composed of the following
+	1. Aurora Store Server
+	2. Store Web Server
+	3. Tooling Web Server
+	4. Transaction Server
+	5. XC Server
+	6. Solr Search Server
+	7. Utilities Server
+	8. ElasticSearch Search Server, which is divided into the following components:
+		a. Query server
+		b. Registry server
+		c. Indexing Server
+		d. Configuration Server
+		e. Ingest Server
+		f. Search Engine
+ > similar to the V9 Architecture, where in:
+	- deployed in Microserver architecture
+	- supports Containerization as well
+ > in V9.1:
+	1. support for Elasticsearch as an option for Search server is provided
+	
+
+Compoment components
+ > only deploy the components that you need
+ > depending on the features and options that you are using, some options will not be necessary and don't have to be deployed to optimize resources
+ > separate business component can be deployed independently
+ > the components can be grouped into the following:
+1. Tools
+	- administrative user interface and background jobs based in AngularJS (ex: CMC)
+	- components:
+		- Utilities Server
+			= handles dataloading, stage and index propagation
+		- Tooling Web Server
+			= handles CMC website
+2. Core group (legacy)
+	- basic components required to run the system
+	- components:
+		- Transaction Server
+			= contains the main logic related to e-commerce
+3. UI group	
+	- can be either
+		a. Java Server Pages based (JSP) - traditional storefront development
+		b. Single Page Application based (SPA) - Using AngularJS or React
+	- components includes:
+		- Aurora Store Server
+		- Store Web Server
+4. eXtended Customization group
+	- User Exit (UE) based extensions
+	- components
+		- XC Server
+			= contains customization code (ex: Algolia buildIndex, pushToLive, etc)
+5. Search group
+	- can be the following
+		a. Solr based - Extensible and fully integrated with the Commerce engine
+		b. Elastic based - Extensible and fully integrated. Provides Natural Language Proecssing (NLP) and Machine Learning (ML)
+	- components includes:
+		- Solr based
+			- Search Server
+			- Solr Search Server
+		- Elasticseach based
+			- Query Server
+			- Registry Server
+			- Indexing server
+			- Configuration server
+			- Ingest server
+			- Search engine	
+
+
+
+Reference framework
+ > the current HCL Commerce deployed by EssilorLuxottica is composed for an Infrastructure with several layers, with Core Technologies used in each of them
+ > the following Infrastructure layers and the Core technologies used for them is defined below
+	1. Load Balander layer
+		- Nginx Ingress - LB
+	2. Application layer
+		- HCL Commerce
+	3. Support Layer
+		- Apache Kafka
+		- Redis
+		- Elastic
+		- NiFi
+		- Zookeeper
+	4. Control layer
+		- Kubernetes (Azure)
+	5. Monitoring and Logging layer
+		- Elastic-Logstash-Kibana
+		- Graphana
+		- Prometheus
+	6. Persistence layer
+		- GlusterFS
+		- Vault
+	7. Hardware, Virtualization, & Network Layer
+		- Bare metal / Virtual machine
+ > each Infrastructure layer consist of one or more components:
+	1. Load balance layer
+		- Load Balancer
+	2. Application layer
+		- Search
+		- ts-app
+		- tooling
+		- utilities
+		- xc-app
+		- crs-app
+		- crs-web
+		- SPA store
+	3. Supporting layer
+		- Indexing
+		- Search engine
+		- Registry
+		- Configuration
+		- Ingest
+		- Query
+	4. Control layer
+		- Auto-recovery
+		- Deployment orchestration
+		- Service registry
+		- Docker orchestration
+	5. Monitoring and Logging layer
+		- Logging
+		- Monitoring
+	6. Persistence layer
+		- Configuration management (ex: Vault)
+		- Remote storage (Persistence volumes)
+	7. Hardware, Virtualization and Network layer
+		- Network
+		- Bare metal machine
+		- Hypervisor
+
+
+
+
+
+Common solution configurations
+ > Composed of the following Layers:
+	1. Load balancer
+	2. Application
+	3. Support
+	4. Control
+	5. Monitoring & Logging
+	6. Persistence
+	7. Virtualization
+	8. Development
+ > Each vendors provides different solutions for each layers:
+	1. Google
+		- Load balance
+			- Nginx LB - ingress
+		- Application
+			- HCL Commerce
+		- Support
+			- Apache Kafka
+			- Redis
+			- Elastic
+			- NiFi
+			- Zookeeper
+		- Control
+			- Google Kubernetes Engine
+		- Monitoring and Logging
+			- Monitoring
+			- Logging
+			- Graphana
+			- Prometheus
+		- Persistence
+			- GCE Persistence disk
+			- Vault (secret storage app)
+		- Virtualization
+			- Google Cloud Platform
+		- Development
+			- GitHub
+			- Jenkins
+	2. Amazon
+		- Load balance
+			- Nginx LB - ingress
+		- Application
+			- HCL Commerce
+		- Support
+			- Kafka
+			- Redis
+			- Elastic
+			- NiFi
+			- Zookeeper
+		- Control
+			- Amazon Kubernetes Service
+		- Monitoring & Loggin
+			- Amazon Analytics
+			- Graphana
+			- Prometheus
+		- Persistence
+			- Amazon Storage Servics
+			- Vault
+		- Virtualization
+			- AWS
+		- Development
+			
+	3. Amazon
+		- Load balance
+		- Application
+		- Support
+		- Control
+		- Monitoring & Loggin
+		- Persistence
+		- Virtualization
+		- Development
+ > each Cloud vendor also provide Worker node VM, which is a basic unit of computation:
+	1. Google
+		- machine: n2-standard-8
+		- vCPU: 8
+		- Memory: 30
+		- SSD Storage (GB): 128
+		- Egress Bandwidth (Gbps): 16
+	2. Amazon
+		- marchine: n5x.2xlarge
+		- vCPU: 8
+		- Memory: 32
+		- SSD Storage (GB): 128
+		- Egress Bandwidth (Gbps): up to 25
+	3. Microsoft
+		- machine: D8a V4
+		- vCPU: 8
+		- Memory: 32
+		- SSD Storage: 200
+		- Egress Bandwidth (Gbps): 4
+ > note:
+	1. We are using VM configuration with higher specification that the one specified above 
+
+			
+			
+V9.x COMMERCE RUNTIME ENVIRONMENT
+ > A commerce environment includes
+	- Two separate application instances
+	- Individual databases per instance
+ > Daily operations are done by the administrators on the Authoring server
+ > Customer use the Live server to navigate and place orders
+ > A Common platform provides Searching and other support services
+ > separation of Auth and Live is done so that the Admin Users can make changes and see it take effect before pushing it to the Live stage, where Buyers can see the said changes
+ > Components under Common, which is said between Authoring and Live stages includes:
+	- Search
+	- Redis
+	- Zookeeper
+ 
+ Users				Stages				Users
+ 
+Admin Users --> Authoring --> Live <----- Buyers
+					|			|
+					|			|
+					-> Common <-|
+
+
+
+Environment Details (Elastic & SPA)
+ > below are the components that has their own pods/instance in each stage (AUTH and LIVE)
+	1. Commerce server
+	2. Commerce web server
+	3. Cache
+	4. Utilities
+	5. Store UI
+	6. Query
+	7. Store web server
+	8. Auth or Live database
+		- this can be either 
+			-> 1 DB, but two schema for each stage
+			-> 2 DB, for each stage (CLE PROD)
+ > below are the components where their pods/instances is SHARED between AUTH and LIVE
+	1. Search Engine (Elasticsearch)
+	2. Configuration Server (Zookeeper)
+	3. Indexing Server (Queries)
+	4. Registry 
+	5. Ingest
+	6. Vault
+	7. Business Tools
+	8. Redis (slave)
+	9. Redis (master)
+ > each components is grouped into the following
+	1. Tooling group
+		- Vault
+		- Business Tools (CMC)
+	2. Core group
+		- Commerce Server
+		- Commerce Web Server
+	3. Caching group
+		- Cache
+		- Redis (Slave and Master)
+	4. UI Group
+		- Store UI
+		- Store web server
+	5. IT Utilities
+		- Utilities
+	6. Search Group
+		- Query
+		- Search Engine
+		- Configuration Server
+		- Indexing Server
+		- Registry
+		- Ingest
+		
+		
+
+BASELINE DEPLOYMENT (ElasticSearch and SPA Store)
+ > below are the detail example of HCL Commerce K8s resource configuration necessary for minimal test deployments
+	
+1. Third party group
+	> ElasticSearch
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB): 8
+	> Redis
+		- Replica: 1
+		- Suggested CPU: 1
+		- Suggested Memory (GB): 8
+	> Zookeeper
+		- Replica: 1
+		- Suggested CPU: 0.5
+		- Suggested Memory (GB): 1
+	
+HCL Commerce Groups
+1. Shared
+	> tooling-web
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 2
+	> nifi-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 10
+	> registry-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 2
+	> ingest-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> query-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+2. Auth
+	> ts-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> ts-web
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> xc-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> query-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> store-web
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> cache-app (optional)
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 2
+	> ts-util (optional)
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> graphql-app (optional)
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 2
+3. Live
+	> ts-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> ts-web
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> xc-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> query-app
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> store-web
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> cache-app (optional)
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 2
+	> ts-util (optional)
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 4
+	> graphql-app (optional)
+		- Replica: 1
+		- Suggested CPU: 2
+		- Suggested Memory (GB) 2
+4. Other
+	> Vault
+		- Replica: 1
+		- Suggested CPU: 0.5
+		- Suggested Memory (GB): 0.5 
+	> Consul
+		- Replica: 1
+		- Suggested CPU: 0.5
+		- Suggested Memory (GB): 0.5
+	> mustgatherApp
+		- Replica: 1
+		- Suggested CPU: 1
+		- Suggested Memory (GB): 4
+
+Total:
+ > Replica: 24
+ > Suggested CPU: 45.5
+ > Suggested Memory (GB): 88
+ 
+ 
+NOTE:
+1. Typically, shared resources is maintain to only have 1 replica
+		
+		
+		
+
+		
+CI/CD Pipeline
+
+Kubernetes Deployment
+ > the helm charts are provided in a separate git bundle called HCL_Commerce_Helm_Charts_9.1.x.0.bundle available in Flexnext
+ > To make it easier to deply for non-production and testing environments, and to learn about how HCL Commerce consumes data from VAULT, Helm charts are provided alongside HCL Commerce for deployment to a Kubernetes cluster.
+	- Once Vault is deployed and set up, you can deploy HCL Commerce Version 9.1 with different deployment topologies based on your site requirements
+ > The following Helm charts are provided for deployment on Kubernetes:
+	- hcl-commerce-vaultconsul-helmchart
+		= it is used to deploy your development Vault
+		= Vault is used as a remote configuration center for HCL Commerce Version 9.1, storing environment data, and acting as the certification agent to issue certificates to each HCL Commerce application
+	- hcl-commerce-helmchart
+		= the HCL Commerce Version 9.1 Helm chart, used to deploy the various HCL Commerce applications, depending on your selected topology
+
+NOTE:
+1. The environment that you create should not be used for live production site without further consideration toward security hardening, load balancing, ingress routing, and performance tuning.
+2. To operate HCL Commerce Version 9.1 in a live production environment, you must commit further time and resources to both performance and security considerations
+3. With load balancing and ingress routing specifically, you can configure which services you want to expose externally, and restrict the remaining serviecs within the cluster network.
+4. This configuration limits their access from and exposure to the wider internet
+5. The configuration reference is also available in the README.md file of the git bundle HCL_Commerce_Helm_Charts_9.1.x.0.bundle that can be downloaded from Flexnet
+	- https://github.com/HCL-TECH-SOFTWARE/hcl-commerce-helmchart/blob/master/hcl-commerce-helmchart/stable/hcl-commerce/README.md
+	
+	
+	
+	
+	
+Prerequisites for deploying HCL Commerce on a Kubernetes Cluster
+1. There are multiple software, environment, and deployment configuration prerequisites to deploy HCL Commerce on K8s. 
+	> HCL Commerce provides a large degress of FLEXIBILITY, and each available option should be considered for viability in your resulting production deployment
+2. The default configuration mode used by the provided Helm Chart is the Vault configuration mode. 
+	> Vault is also the recommended configuration mode for HCL Comemrce, as Vault is designed to store configuration data SECURELY.
+	> In addition to storing configuration data, Vault is also used by HCL Commerce as a CERTIFICATE AUTHORITY, to issue certificate to each application to communicate with one another securely
+	
+TABLE: Components and their Request/Limit resources
+1. ts-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 4096Mi
+	> Limit Memory: 5120Mi
+2. ts-db
+	> Replica: 1
+	> Request CPU: 2000m
+	> Limit CPU: 2
+	> Request Memory: 4096Mi
+	> Limit Memory: 6144Mi
+3. ts-web
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+4. search-app-master
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+5. search-app-repeater (live)
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+6. search-app-slave (live)
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+7. crs-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+8. xc-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+9. tooling-web
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 1024Mi
+	> Limit Memory: 2048Mi
+10. store-web
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 1024Mi
+	> Limit Memory: 2048Mi
+11. nifi-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 6144Mi
+	> Limit Memory: 10240Mi
+12. registry-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 1024Mi
+	> Limit Memory: 2048Mi
+13. ingest-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+14. query-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+15. mustgather-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 1
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+16. ts-utils
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 4096Mi
+17. graphql-app
+	> Replica: 1
+	> Request CPU: 500m
+	> Limit CPU: 2
+	> Request Memory: 2048Mi
+	> Limit Memory: 2048Mi
+	
+	
+Search solution:
+1. Solr-based search solution
+	> vCPUs: 40
+	> Memory: 68GB
+2. Elasticsearch-based search solution
+	> vCPUs: 48
+	> Memory: 82GB
+	
+NOTES:
+1. Table for Request/Limit resources for components is baseline for ONE node
+2. Table for search solution is base line used for reference
+
+
+
+
+
+
+Persistent Volumes
+ > the Assets Tool was reintroduced in HCL Commerce 9.1.8.0
+	- this tool REQUIRES persistent volume storage for your deployment.
+	- this storage allows for all assets that are added and managed via the Assets Tool in Management Cetner for HCL Commerce to be acccessed and persisted
+ > to make files accessible by multiple pods across your deployment, and to allow for the files to be persisted, a "ReadWriteMany" type of persistent volume is required
+ > example uses of PV in HCL Commerce:
+	1. index storage for Algolia usages
+		- xc-app and NiFi share a PV so that NiFi can send data to xc-app for Algolia propagation
+ 
+EX:
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+	name: hcl-commerce-sample-readwritemany-pv
+spec:
+	capacity:
+		storage: 5Gi
+	acccessModes:
+		- ReadWriteMany
+	mountOptions:
+		- hard
+		- nolock
+	nfs:
+		path: /file-share
+		server: ip-address
+		
+
+
+
+
+The pipeline process
+ > composed of three parts:
+	1. Commit
+	2. Build
+	3. Deploy
+	
+Commit
+1. All programmers commit to the code repository
+	> we at EssilorLuxottica uses BitBucket as remote code repository
+	
+Build
+1. initially, we will be using the HCL docker images provided by HCL themselves which contains the following:
+	1. HCL Commerce - Application Layer
+	2. WebSphere - App Server Layer
+	3. CentOS - OS Layer
+2. Any changes that we do to the HCL Commerce code (ex: new feature), we will need to build a new Docker image for it
+	> the resulting docker image will have all the HCL Commerce layers plus the extra code layers
+3. The build  process will create a new custom docker image that will be stored in the docker registry
+	> Azure Container Registry is what we use for containing this docker images
+
+Deploy
+3. Kubernetes pulls docker images from the registry to be deployed in the runtime environments (AUTH and LIVE)
+
+
+Notes:
+1. Dockers are constructed by layers and building a docker image is a simple process. It just matter of adding the extra layer(s) that will contain the code customizations
+2. Docker images are named based on the branch which it is pulled from and the build number
+3. We have separate Docker registries for each environments (INT, UAT, PROD)
+
+
+
+
+
+
+
+Current Envi
+
+
+
+
+	
+
+
+
+
+	
+NOTES:
+1. Most of the HCL commerce communication happens WITHIN the cluster
+	> main reason as to why we dont have cross-region setup at this point
+2. We have different TS-APP server for each brand
+	> this may mean that each brand may have different TS server for each region
+3. Configuration server is Zookeeper, Search Engine is the Elasticseach
+4. Auth and Live database can be configured either by:
+	> one DB, with two Schemas for each stage
+	> two DB with one Schema for each stage
+5. Shared components between stages includes:
+	> tooling-web
+	> nifi-app
+	> registry-app
+	> ingest-app
+	> query-app
+6. Other components outside hcl commerce stages are:
+	> vault
+	> consul
+	> mustgatherApp
+7. Vault is REQUIRED/MANDATORY before we deploy the K8s cluster
+	> default configuration mode used by the provided Helm Chart
+	> we can also used the environment variables for configuration, but vault is recommended
+8. Persistence volumes are when we want to persist data across time
+	> ex: index output of the NiFi to be used for Algolia, to be accessed by ts-app and xc-app
+7. Azure Container registry is what the EssilorLuxottica is using for Docker image registry
+	> there are separate registries for each environments (ex: int, uat, prod)

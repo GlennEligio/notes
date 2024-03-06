@@ -1,0 +1,88 @@
+97 RDS Hands On
+
+Creating an Amazon RDS
+1. Search RDS
+2. Go to Database tab, and click 'Create Database'
+3. Select 'Standard create' for us to configure the database
+4. In Engine Options
+	> Select 'MySQL' 
+	> Select 'MySQL community'
+	> Select the latest version
+5. In the Template section
+	> Select 'Free tier'
+6. In the Settings section
+	> Pass a password to use for authentication
+7. In the DB instance class
+	> select 'Burstable classes' with db.t2.micro
+		- this should be autofilled when we selected 'Free tier'
+8. In Storage, set the Allocated storage to 20GB
+9. In Connectivity
+	> select 'Yes' for Public access so we can access the DB outside the VPC
+	> for VPC security group, 'Create New'
+	> pass a name for it 'demo-database-rds'
+	> for AZ, select 'No preference'
+	> leave the Database port at default (3306 for MySQL)
+10. In Database authentication
+	> select 'Password authentication'
+11. Create the database
+
+
+
+Checking the newly created RDS
+1. Go to RDS > Databases
+2. You should see the new database created
+3. Select the database
+4. You should see different tabs for database like 
+	- Connectivity & Security
+	- Monitoring
+	- Logs & events
+	- Configuration
+	- Maintenance & backups
+	- Tags
+5. Go to Connectivity & Security
+	> in the Security, you should see the Security group created for the RDS
+	> click it, and check the Outbound and Inbound rules
+	> it should reflect what we set earlier when we created the RDS
+
+
+
+Creating a RDS Snapshot
+1. Select an RDS
+2. Click Actions > Take a snapshot
+3. Give it a name - 'demo-snapshot'
+	> you can only do this when the Snapshot is Available
+
+
+
+Restore an RDS through a Snapshot
+1. Select a Snapshot
+2. Click Action > Restore Snapshot
+3. Fill up the form
+4. Create the RDS (we will not do this, instead just cancel it)
+
+
+
+Copy an RDS to another Region
+1. Select a Snapshot
+2. Click Action > Copy snapshot
+3. Fill up the form, which include the Region where it will be copied
+4. Cancel the form
+
+
+
+Clean up
+1. Delete Snapshot
+2. Delete RDS
+	> uncheck the create Final snapshot, and check the agreement checkbox
+
+
+
+
+NOTE:
+1. Templates will autopopulate the Settings section
+	> ex: if we select 'Free Tier' template, it will lock the DB Instance class to db t2.micro
+2. Similar to EBS Snapshot, we also have RDS Snapshots
+	> we can create an RDS through an RDS snapshot
+	> we can also copy and share the Snapshot to a DIFFERENT REGION
+3. RDS Storage can autoscale
+4. With RDS, we can easily Monitor its resource consumption like CPU, RAM, and ROM, check the Logs and events, and configure it through the AWS RDS dashboard

@@ -1,0 +1,51 @@
+10. Json Web Token (JWT)
+
+
+Json Web Tokens
+	> one way of doing Authorization
+
+
+JWT structure
+	> JWT consist of three parts	
+		- these parts are separated by period (.)
+	> consist of three parts
+		1. Header
+			- defines type of Algorithm and Token type used
+			- encoded in base64
+		2. Payload
+			- consist of any information, but typically it contains
+				a. User credentials and identification
+				b. Expiration date of token
+				c. Creation date of token
+			- encoded in base64
+		3. Signature
+			- encrypted with the Algorithm Type specified in Header part
+			- can be verified using the Signature that the Server holds
+			- only the Server have access to it
+
+ENCRYPTION METHOD OF Signature
+	> here, we will need to pass the Secret key
+
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  
+your-256-bit-secret
+
+) secret base64 encoded
+
+
+Questions about JWT
+1. HOW SECURE IS JWT IF ITS READABLE TO ANYONE?
+	> In JWT, there should be no confidential / sensitive information in JWT
+		- ex: password, sss no. , tax id
+	> Just enough info for the server to know who the user is
+		- ex: username
+
+2. What is someone steals my JWT and uses it themselves?
+	> Yes they can steal the JWT and uses it for themselves
+	> One way to secure this is to use OAuth
+
+
+3. How do you disable a JWT?
+	> We can add a list of JWT to BlackList

@@ -1,0 +1,17 @@
+71 Auto Scaling Groups ASG Strageties
+
+Auto Scaling Groups - Scaling Strategies
+1. Manual Scaling: Update the size of an ASG manually
+2. Dynamic Scaling: Respond to changing demand
+ > Simple/Step Scaling
+	- ex: When a CloudWatch alarm is triggered (example CPU > 70%), then add 2 units
+	- ex: When a CloudWatch alarm is triggered (example CPU < 30%), then remove 1
+ > Target Tracking Scaling
+	- ex: I want to average ASG CPU to stay at around 40%
+ > Scheduled Scaling
+	- Anticipate a scaling based on known usage patterns
+	- ex: increase the min. capacity to 10 at 5pm on Fridays
+3. Predictive Scaling
+ 	> Uses Machine Learning to predict future traffic ahead of time
+	> Automatically provisions the right number of EC2 instance in advance
+	> Useful when your load has predictable time-based patterns

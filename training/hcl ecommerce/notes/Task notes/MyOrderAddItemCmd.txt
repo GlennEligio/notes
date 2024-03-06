@@ -1,0 +1,85 @@
+package com.abc.commerce.orders.commands;
+
+import com.ibm.commerce.command.CommandFactory;
+import com.ibm.commerce.datatype.TypedProperty;
+import com.ibm.commerce.exception.ECApplicationException;
+import com.ibm.commerce.exception.ECException;
+import com.ibm.commerce.order.objects.OrderAccessBean;
+import com.ibm.commerce.orderitems.commands.OrderItemAddCmd;
+import com.ibm.commerce.orderitems.commands.OrderItemAddCmdImpl;
+import com.ibm.commerce.sample.messages.MyNewMessages;
+
+public class MyOrderItemAddCmdImpl extends OrderItemAddCmdImpl implements OrderItemAddCmd {
+
+	@Override
+	public void performExecute() throws ECException {
+		// to execute command;
+		// from source >
+		// override/implement
+		// methods
+		// TODO Auto-generated method stub
+//		System.out.println(SaveRatingCmdImpl.class.getName());
+//		System.out.println(SaveRatingCmd.class.getName());
+		String[] orderIds = getOrderId();
+
+		// calling Controller Command
+
+		try {
+
+			TypedProperty tp = new TypedProperty();
+
+			tp.put("orditemextattrId", 3);
+			tp.put("name", "GiftWrappable");
+			tp.put("value", "Yes");
+
+			SaveOrditemextattrCmd cmdSave = (SaveOrditemextattrCmd) CommandFactory
+					.createCommand("com.abc.commerce.orders.commands.SaveOrditemextattrCmd", getStoreId());
+			cmdSave.setCommandContext(getCommandContext());
+			cmdSave.setRequestProperties(tp);
+
+			cmdSave.execute();
+
+			TypedProperty rtp = cmdSave.getResponseProperties();
+
+			System.out.println("Result of saving gift wrappable data:" + rtp.getString("result"));
+			
+			
+
+
+		} catch (ECException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.print(getUserId());
+
+		if (orderIds != null && orderIds.length > 0) {
+
+			String orderId = orderIds[0];
+
+			if (numberOfItems(orderId) >= 100) {
+				// throw new ECApplicationException(new ECMessage("You cannot
+				// add more than 5 items"),
+				// this.getClass().getName(), "performExecute");
+
+				throw new ECApplicationException(MyNewMessages._ERR_TOO_MANY_ITEMS, this.getClass().getName(),
+						"performExecute");
+				
+
+			}
+		}
+		super.performExecute();
+
+		
+	}
+
+	private int numberOfItems(String orderId) {
+		OrderAccessBean oab = new OrderAccessBean();
+		// fetches the data from the OrderItemsTable using Order id
+		oab.setInitKey_orderId(orderId);
+		int numberOfItems = oab.getOrderItems().length;
+
+		return numberOfItems;
+	}
+
+}

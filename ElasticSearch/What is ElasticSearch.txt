@@ -1,0 +1,68 @@
+What is ElasticSearch
+SOURCE:
+https://www.youtube.com/watch?v=ZP0NmfyfsoM
+
+
+ElasticSearch - Characteristics
+ > JSON Based DataStore
+	- similar to NoSQL database like MongoDB
+ > interactions to the ElasticSearch is done through RESTful API calls includes:
+	- building indices
+	- querying documents
+ > application source can be anything, ranging from
+	- business data (ex: products, items)
+	- logs
+	- metric
+	- application trace data
+ > these data will then be pushed in ElasticSearch as JSON documents in different indices for them
+ > in terms of CAP theorem, the ElasticSearch falls in the AP
+	- CAP acronyms stands for Consistency, Availability, Partition Tolerance
+ 
+ 
+ElasticSearch - Comparison vs RDBMS
+ > the following table will be the RDBMS terms and their ElasticSearch equivalent
+	- Database = Indexes/Indices
+	- Tables = Patters/Types
+	- Rows = Documents
+	- Columns = Fields
+	
+
+ELK stack
+ > ELK stack, or more recently called Elastic Stack, is a combination of three open source projects, which are:
+	- Elasticsearch
+	- Logstash
+	- Kibana
+ > These three application are all developed by Elastic and are used for storing and analyzing logs
+ > Even though these are three separate projects, they compliment each other to the extend that they have come to be recognised as one
+ 
+ 
+ELK stack process flow
+		
+Beats ------> Logstash ------> Elasticsearch ------> Kibana
+ 
+ 
+ 
+Kibana
+ > similar to Grafana
+ > used to create UI Dashboard
+	- these dashboard will be used as the MAIN INTERFACE for monitoring and analyzing data (in this case, the logs)
+ > also used to create Widgets/Visualization of the data
+	- these widget CONTINUOUSLY UPDATE as well as the data comes in
+
+Logstash
+ > an open-source, server side, processing pipeline
+ > Logstash have three main jobs:
+	1. Input
+		- Logstash can receive logs from different sources as its input
+		- We typically set up "Beats", an application that we install as  we install in a server to as a client to listen/fetch the logs it gets
+	2. Transform
+		- Logstash can also transform the logs it receives, ranging from changing formatting to doing structuring to the data
+	3. Stash
+		- Logstash can send/stash its output to different places. This includes the Elasticsearch
+		
+Beats
+ > Beats is a free and open platform for single-purpose data shippers. 
+ > They send data from hundreds or thousands of machines and systems to Logstash or Elasticsearch.
+
+NOTE:
+1. There are containers out there (specically container images like Docker images) that we can use to install the complete infrastructure for this in order to test these out in a much smaller scale

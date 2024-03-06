@@ -1,0 +1,55 @@
+08. Playing with Docker Images
+
+
+Docker Official Images
+	> a curated set of Docker repositories hosted on Docker Hub
+	> these Images must meet certain standards
+	> recommended to use these Docker Official Images
+
+NOTES:
+1. latest doesnt always mean the latest version
+	> latest tag is not automatically updated when we create newer tag in Repository
+	> these latest tag are created MANUALLY using 'docker image tag'
+	> ex: if we created a latest tag from 1.0.0.RELEASE using 'docker image tag' and then created a tag '1.0.1.RELEASE', then if we pull the latest, it will refer to the 1.0.0.RELEASE, not the 1.0.1.RELEASE
+
+
+Docker Image commands
+
+docker image ls
+docker image list
+	> list all the images available in locally
+
+docker image pull <REPOSITORY>:<TAG>
+	> used to pull a Docker image from a remote repository
+	> this will make the said Image available in Local Docker
+
+docker search <REPOSITORY>
+	> used to search for remote Docker Repositories
+	> the search result will also show if the Docker Repositories are Official or not
+
+docker image rm <ImageID>
+docker image remove <ImageID>
+	> remove a specific local Docker image
+	> can also use the Image Name if its unique in Local Docker Images
+
+docker image history <ImageID>
+	> shows the history of a Docker Image
+	> these includes the steps/layers (in Dockerfile) done to create the said Docker Image
+
+docker image inspect <ImageID>
+	> inspect a specific Docker Image
+	> shows some information like
+		- ID
+		- RepoTags (in case weve done docker image tag)
+		- Digests
+		- Date Created
+		- Containers created using it
+		- Entrypoint commands
+		- Docker version used to create it
+		- Exposed Ports
+		- Environment variables
+
+docker image tag <SourceImageTag> <NewImageTag>
+	> used to create a new Docker Image from a specified Source Image tag
+	> the new Image and source Image will have SAME IMAGE IDE
+	> ex: docker image tag in28min/todo-rest-api-h2:1.0.0.RELEASE in28min/todo-rest-api-h2:latest

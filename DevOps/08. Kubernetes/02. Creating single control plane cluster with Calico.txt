@@ -1,0 +1,131 @@
+02. Creating a single control-plane cluster with kubeadm with Calico Pod Network
+
+
+
+kubeadm
+	> tool that helps us bootstrap a minimum viable Kubernetes cluster that conforms to best practices
+	> the kubeadm tool is good if you need:
+		a. A simple way for you to try out K8s, possible for the first time
+		b. A way for existing users to automate setting up a cluster and test their application
+		c. A building block in other ecosystem and/or installer tools with a larger scope
+
+
+Hardware Requirements
+1. One or more machines running deb/rpm-compatible Linux OS
+	- EX: Ubuntu or CentOS
+2. 2GiB or more of RAM per machine
+	> any less leaves little room for your apps
+3. At least 2CPUs on the machine that we use as a Control Plane node
+4. Full Network Connectivity among all machines in the cluster
+	- can be either Public or Private Network
+
+
+
+Require Ports to be Open
+For Control Plane
+64430-64439/TCP
+	> Inbound
+	> For Kubernetes API server
+	> Used by all
+2379-2380/TCP
+	> Inbound
+	> etcd server client API
+	> used by kube-apiserver, etcd
+10250/TCP
+	> Inbound
+	> Kubelet API
+	> used by Self, Control plane
+10251/TCP
+	> Inbound
+	> for kube-scheduler
+	> used by itself
+10252/TCP
+	> Inbound
+	> for kube-controller-manager
+	> used by itself
+
+
+Worker Nodes
+10250/TCP
+	> Inbound
+	> for Kubelet API
+	> used by itself and Control plane
+30000-32767
+	> Inbound
+	> for NodePort Services
+	> used by all
+
+
+
+Installing Container runtime
+	> By default, Kubernetes uses the Container Runtime Interface (CRI) to interface with your chosen container runtime.
+	> If you don't specify a runtime, kubeadm automatically tries to detect an installed container runtime by scanning through a list of well known Unix domain sockets.
+
+
+Container Runtimes examples
+Runtime			Path to Unix domain socket
+1. Docker		/var/run/docker.sock
+2. containerd		/run/containerd/containerd.sock
+3. CRI-O		/var/run/crio/crio.sock
+
+
+
+Installing kubeadm, kubelet and kubectl
+kubeadm	
+	> the command to bootstrap the cluster
+kubelet
+	> the component that runs on all of the machines in your cluster and does things like starting pods and containers
+kubectl
+	> the command line util to talk to your cluster
+
+
+
+Infrastructue
+	> 3 VMs (1 Master Node and 2 Worker Node)
+	> Must have network connectivity among these VMs
+
+
+Installation on Ubuntu (Master and Worker Nodes)
+
+sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+
+EOF
+
+sudo apt-get update
+
+apt install -qq -y kubeadm=1.21.0-00 kubelet=1.21.0-00 kubectl=1.21.0-00
+
+sudo apt-mark hold kubelet kubeadm kubectl
+
+
+
+
+Creating a Master Server
+1.  kubeadm init --apiserver-advertise-address=52.221.200.255 --pod-network-cidr=192.168.0.0/16
+	> insert Private address of Control panel as apiserver-advertise-address
+
+2.  mkdir -p $HOME/.kube
+
+3.  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+4.  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+
+
+Install Calico for 3rd party Pod Network layer
+
+	kubectl create -f https://docs.projectcalico.org/v3.18/manifests/calico.yaml
+
+
+
+Checking K8s nodes , Node should be in Ready state if the installation is working
+	
+	kubectl get nodes
+

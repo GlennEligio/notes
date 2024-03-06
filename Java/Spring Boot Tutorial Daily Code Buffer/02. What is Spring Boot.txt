@@ -1,0 +1,33 @@
+Spring
+	> Java Framework built to create an enterprise ready application
+	> can integrate different modules into the Spring application for additional functionalities
+		- Spring Core, Spring MVC, Spring Web, Spring Data, Spring JPA
+	> need to setup a lot of configurations and property files in order to get the application running
+
+
+Spring Boot
+	> extension of the Spring framework
+		- uses Spring framework internally
+	> used to alleviate the problem of setting up configurations for the developers
+		- this is so that developers can focus on creating codes instead of setup up the application
+	> key benefits includes:
+		1. Rapid Application Development (RAD)
+			- can create application very fast with minimal setup needed
+		2. Dependency Management 
+			- Spring Boot provide "Starter" dependencies
+			- These Starter dependencies GROUP UP several dependencies that are related to each other into ONE depedency
+				= ex: Spring boot starter web, data-jpa, security, jdbc, test
+		3. Auto-configuration
+			- Spring Boot configures the necessary configurations for libraries (ex: Hibernate, MessagingQueue)
+		4. Embedded Servers
+			- Spring Boot have application servers embedded into them in order to run the Spring boot applications
+			- with these, theres no need to 
+				a. Build application into jar or war file
+				b. Setup and run an application server (ex: Tomcat, JBoss)
+				c. Run the .jar or .war file there
+
+
+WHY LEARN SPRING BOOT?
+1. Market moves toward Microservice architecture, away from the Monolithic architectures
+2. To create these Services inside a Microservice architure application, Spring Boot is the default option
+

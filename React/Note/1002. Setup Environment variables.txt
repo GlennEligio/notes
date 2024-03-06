@@ -1,0 +1,28 @@
+Setting up Environment Variables in React app
+
+SOURCE: 
+https://stackoverflow.com/questions/61461142/how-can-i-configure-my-prod-env-vars-when-i-run-my-build-process
+
+NOTE:
+1. Only works with React app that is bootstrapped using create-react-app
+2. Can only create these at build phase
+
+
+Creating Environment variable
+1. Create a file named .env
+2. Inside, create a key=value pairs
+	> they must be separated by LINEBREAKS only
+	> must start with REACT_APP_VARIABLENAME
+
+EX:
+REACT_APP_GATEWAY_URI=http://gateway
+REACT_APP_PORT=9001
+
+
+Accessing the Environment variable in JS file
+1. Use process.env object
+	> this Object contains all Environment variables
+	> by default, it contains NODE_ENV variable
+
+Ex:
+const gatewayUri = process.env.REACT_APP_GATEWAY_URI

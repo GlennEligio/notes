@@ -1,0 +1,100 @@
+15.1 Ingress
+
+SOURCE:
+https://kubernetes.github.io/ingress-nginx/deploy/#quick-start
+
+
+NOTE: Read 15. Service first, this is just an additional information
+
+Ingress
+	> exposes HTTP and HTTPS routes from outside the cluster to Services within Cluster
+	> Traffic routing is controlled by rules is defined on the Ingress Resource
+		Internet Client -> Ingress Managed LB -> Ingress -> Routing rule	-> Service 1 	-> Pods 1 2 3 
+											-> Service 2	-> Pods
+	> NOTE: We can only use this to ClusterIP Services
+	> An Ingress may be configured to give Services 
+		- externally-reachable URLs
+		- load balance traffic
+		- terminate SSL/TSL
+		- offer name-based virtual hosting
+	> An Ingress controller is responsible for fulfilling the Ingress, usually with a load balancer, though it may also configure your edge router or additional frontends to help handle the traffic
+
+
+
+Installation of Ingress
+1. Apply the ingress-nginx yaml file using an external URL
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/baremetal/deploy.yaml
+2. Check the Namespaces (ingress-nginx should be here)
+	kubectl get ns
+3. Check Services running under namespace "ingress-nginx" (ingress-controller should be one of them)
+	kubectl get svc -n ingress-nginx
+
+
+
+Creating Ingress
+	> we must have ingress controller to create an Ingress resource
+	> we can only create an Ingress using Manifest files
+
+
+
+Ingress Manifest file Guide
+	> inside the Manifest file, we must have the following
+		1. apiVersion	(for now, put "networking.k8s.io/v1")
+		2. kind must be "Ingress"
+		3. metadata 
+			a. name must be a valid DNS subdomain name 
+				= less than 253 char
+				= only lowercase, '-', or '.'
+				= starts with alpahnumeric
+				= ends with alphanumberic
+				= no "/" or "%"
+			b. nginx.ingress.kubernetes.io/rewrite-target: must be "/"
+				= similar to base-url of Spring REST API
+		4. spec includes
+			a. rules
+				> contains the Routing rules
+				> Routing rules include 
+					- protocol, which include
+						- paths, where in each path have
+							- pathType (if exact or prefix, prefix is similar to exact but with wildcard at end)
+							- associated Service with name and its Service Port 
+					
+
+EX:
+#ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-fanout-example
+  annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+     paths:
+     - path: /nginx
+       pathType: Prefix
+       backend:
+        serviceName: nginx
+        servicePort: 80
+     - path: /tomcat
+       pathType: Exact
+       backend:
+        serviceName: tomcat
+        servicePort: 8080
+
+
+	> In this Manifest file, we created an Ingress resource
+	> This Ingress resource have the following
+		a. name is simple-fanout-example
+		b. base-url is "/"
+		c. spec of Ingress include
+			- One routing rule
+				> this routing rule operates in HTTP protocol
+				> inside this, we defined paths
+				> this paths have associated backend Service defined in serviceName and servicePort
+				> in this case:
+					1. "/nginx" path refers to Service "nginx" and will forward request to servicePort 80
+						- we can access this with either "/nginx/someword" or "/nginx"
+					2. "/tomcat" path refers to Service "tomcat" and will forward request to servicePort 8080
+						- we can only access this with "/tomcat"

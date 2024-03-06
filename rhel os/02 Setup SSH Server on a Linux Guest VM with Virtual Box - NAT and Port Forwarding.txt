@@ -1,0 +1,63 @@
+02 Setup SSH Server on a Linux Guest VM with Virtual Box - NAT and Port Forwarding
+
+
+OpenSSH
+ > OpenSSH is the premier connectivity tool for remote login with the SSH protocol. 
+ > It encrypts all traffic to eliminate eavesdropping, connection hijacking, and other attacks. 
+ > In addition, OpenSSH provides a large suite of secure tunneling capabilities, several authentication methods, and sophisticated configuration options.
+ > The OpenSSH suite consists of the following tools:
+	1. Remote operations are done using ssh, scp, and sftp.
+	2. Key management with ssh-add, ssh-keysign, ssh-keyscan, and ssh-keygen.
+	3. The service side consists of sshd, sftp-server, and ssh-agent.
+
+
+Why add SSH Server?
+1. We connect and use the RHEL8 VM WITHOUT using its GUI
+	> can save video memory
+
+
+Installing OpenSSH
+1. Use the command below to install (may differ based on package manager of os like yum, apt, dnf, apt-get)
+	$ sudo dnf install openssh-server
+2. Start the OpenSSH service
+	$ sudo service sshd start
+3. Chec OpenSSH service status
+	$ sudo service sshd status
+	$ sudo systemctl status sshd
+4. Configure OpenSSH service to be enabled on boot up
+	$ sudo systemctl enable sshd
+	$ sudo chkdconfig sshd 
+		- this is for older Linux distro, will be forwarded to first command if used in newer linux distro
+5. Configure Firewall to make SSH in public zone and make the change permanent
+	$ firewall-cmd --zone=public --permanent --add-service=ssh
+6. Check if ssh port is now allowed in firewall
+	$ ssh yourusername@127.0.0.1
+		> choose yes when prompted to continue
+		> enter your password
+	$ logout
+		> to logout on ssh connection
+
+
+Setting up Port Forwarding Rule for SSH connection to VM
+1. Make the Network Adapter of RHEL8 VM to NAT
+2. On Advanced Setting, go to Port Forwarding
+3. Add a Port Forward rule to forward request from a port in host machine ip to the local machine ip on specific port as well
+	> Protocol		TCP
+	> Host IP		127.0.0.1 (default loopback ip)
+	> Host Port	2222 (can be anything, will be used in SSH client later)
+	> Guest IP		Ip address assigned by the NAT adapter, can be checked by running "ip addr" command and checking "enp0s3" inet
+	> Guest Port	22 (default port OpenSSH service listens to)
+
+
+Connect to RHEL8 Server using SSH Client
+1. Open SSH Client (ex: PuTTy)
+2. Pass the Host IP and Host Port we added earlier in the Port Forward rule to the SSH Client
+3. Pass the needed credentials
+
+
+Running the RHEL8 VM Server as a Headless VM
+ > a Headless VM is where the VM will not be started from the VirtualBox GUI, but rather from the COMMAND LINE
+ > we can use remote desktop or SSH connection to connect to this Headless VM
+ > to make a VM run in Headless mode, we can click the dropdown in the Start icon, then choose Headless
+
+

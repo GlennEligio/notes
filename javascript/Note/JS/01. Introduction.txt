@@ -1,0 +1,47 @@
+01. Introduction
+
+Javascript Crash Course
+
+What is JavaScript
+	> High level, interpreted programming language
+		- high level as in lots of Abstraction
+		- interpreted where theres NO NEED FOR COMPILER to run a Javascript file
+	> Conforms to the ECMAScript specification
+	> Multi-paradigm
+		- programs can be written in many ways (OOP, Functional)
+	> Runs on the client/browser as well as on the server (with Node.js)
+
+
+Why learn JavaScript
+1. It is the programming language of the browser
+2. Build very interactive user interfaces with frameworks like React
+3. Used in building very fast server side and full stack application
+4. Used in mobile development (React Native, NativeScript, Ionic)
+5. Used in desktop application development (Electron JS)
+
+
+Topics to discuss
+1, Variables and Data Types
+2. Arrays
+3. Object Literals
+4. Methods for string, arrays, object, etc
+5. Loops - for, while, for...of, forEach, map
+6. Conditionals (if, ternary & switch)
+7. Functions (normal and arrow)
+8. OOP (prototypes and classes)
+9. DOM Selection
+10. DOM manipulation
+11. Events
+12. Basic Form Validation
+
+
+Further Learning
+1. Fetch API & Ajax 
+	- used for sending HTTP request to backend api
+
+
+
+Tools used
+1. VS Code for text editor
+2. Live Server extension in VSCode
+

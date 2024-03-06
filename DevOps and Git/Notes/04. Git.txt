@@ -1,0 +1,74 @@
+04. Git
+
+Git	
+	> a Version Control System for tracking changes in computer files.
+	> generally used for Source Code Management in software development
+	> Allows multiple developers to work together
+	> Supports non-linear development because of its thousands of parallel branches
+
+
+Features of Git
+1. Tracks History
+2. Free and Open Source
+3. Supports Non-Linear Development
+4. Creates Backup
+5. Scalable
+6. Supports Collaboration
+7. Branching is easier
+8. Distributed Development
+
+
+
+Git Workflow
+	> there are 3 States in Git Workflow
+		1. Working Directory
+		2. Staging Area (Index)
+		3. Git Directory (Repository)
+
+Working Directory
+	> here we can do Stage files (edit, add, move files)
+		- Modify working copy (edit, add, move files)
+		- Review changes we made (status and diff operation)
+
+Staging Area (Index)
+	> here we can commit the changes to Git Directory (Repository)
+		- Commit changes (commit and push operation)
+		- Review Changes
+		
+Git Directory (Repository)
+	> here, we can do operations like clone, update, and push operations
+		- clone the repository to get a working copy
+		- update the local git repository to get latest source code in Git Server
+		- push the codes we have in local git to the Git server to update the Git Server source code
+		- checkout the changes in order to update the local git repo in machine
+
+
+
+BRANCHING IN GIT
+	> Branch in Git is used to keep your changes until they are ready
+	> you can do your work on a branch while the main branch (master or main) remains stable
+		- after you are done with your work, you can merge it to the main branch
+
+
+
+COMMANDS IN GIT
+	> commands are made in the Command Line interface (CLI)
+
+1. Create Repositories
+	git init
+		> convert the file location into a local git repository
+
+2. Makes Changess
+	git add
+	git commit
+	git status
+
+3. Sync Repositories
+	git push
+	git pull
+	git add origin
+
+4. Parallel Development	
+	git branch
+	git merge
+	git rebase

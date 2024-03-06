@@ -1,0 +1,12 @@
+33 IAM Section - Summary
+
+IAM Section - Summary
+1. Users are mapped to a physical user, has a password for AWS Console
+2. Group can contain users only
+3. Policies are JSON document that outlines permissions for users or groups
+4. Roles are assign to define permission/policies for EC2 instances or AWS services in general
+5. Security of Account includes MFA + Password Policy
+6. AWS CLI is used to manage your AWS services using the command-line
+7. AWS SDK is used to manage your AWS services programmatically
+8. Access Keys is created and used to access AWS using the CLI or SDK
+9. Auditing tool in IAM includes IAM Credential Reports & IAM Access Advisor

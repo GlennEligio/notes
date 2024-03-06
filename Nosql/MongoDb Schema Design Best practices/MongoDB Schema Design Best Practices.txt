@@ -1,0 +1,125 @@
+Agendas
+
+I. Relational vs. MongoDB Schema Design Approaches
+II. Embedding vs Referencing
+III. Types of Relationships
+
+
+
+
+I. Relational vs. MongoDb Schema Design Approaches
+
+Relational Schema Design 
+1. Model data is independent of queries
+2. Normalize in the 3rd form	
+	- uses different tables with foreign keys and JOINing them in order to create a specific set of data\
+
+MongoDb Schema Design
+1. No rules, no process, no algorithm
+2. Considerations:
+	> How to store the data
+	> Query Performance
+3. Design a schema that works for your applications
+
+
+
+
+II. Embedding vs. Referencing
+
+1. Embedding
+	> same as JOIN in legacy sql
+	> all data is in a single Document
+	> EX: All product and its details are inside the Transaction
+ 
+Pros:
+	- Retrieve all data with a single query
+	- Avoids expense JOINs or $lookup
+		> JOINs 
+	- Update all data with a single atomic operation
+
+
+Cons:
+	- Large docs === more overhead
+		> takes more time for the Document to be transferred
+	- 16 MB Document size limit
+
+
+
+2. Referencing
+	> some data in the Document is not completely included
+	> that only thing inside the Document is a reference where we can use to get the additional information from another Collection
+	> EX: Inside Transaction Document, there might be a ProductId property that might refer to a specific Product Document specification
+
+
+Pros:
+	- Smaller documents
+	- Less likely to reach 16 MB limit
+	- No duplication of data
+	- Infrequently accessed data not accessed on every query
+
+Cons:
+	- Two queries or $lookup required to retrieve all data
+
+
+
+
+
+III. Types of Relationships
+
+
+RULES:
+
+RULE 1
+	Favor embedding unless there is a compelling reason not to
+RULE 2
+	Needing to access an object on its own is a compelling reason not to embed it
+RULE 3
+	Avoid JOINs and $lookups if they can be, but don't be afraid if they can provide a better schema design
+RULE 4
+	Arrays should not grow without bound
+RULE 5 
+	How you model your data depends - entirely - on your particular application's data access patterns
+
+
+
+1. One-to-one
+	> Use Key-value pairs
+	> One value per property
+
+
+2. One-to-few
+	> One property may have two or more value
+	> May use embedding or referencing
+	> PREFERRED to use Embedding
+	> typically, you would have an ARRAY of Reference on the ONE to the MANY
+
+
+
+
+
+3. One-to-many
+	> PREFER Referencing
+	> since we may have many values in a single property, and if these values have properties of their own, we may exceed the 16 MB limit per Document
+	> using Referencing, we will only need to use one key pair to make a reference to an object	
+	> typically, you would have an ARRAY of Reference on the ONE to the MANY
+
+
+
+
+
+4. One-to-squillion
+	> Squallion is a massive amount of object
+	> Referencing is PREFERRED
+
+
+
+
+5. Many to Many
+	> EX: In To-do list, one user may have MANY To-dos. But also one To-do may have MANY users.
+	> We have a Collection for User and To-do task
+	> Each Document in User and Task have a reference to the User
+	> Typically, you would have an ARRAY of Tasks in User document and ARRAY of Users in Task document
+
+
+
+

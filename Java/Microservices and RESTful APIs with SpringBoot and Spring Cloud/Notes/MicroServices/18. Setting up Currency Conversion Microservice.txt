@@ -1,0 +1,19 @@
+18. Setting up Currency Conversion Microservice
+
+
+URL
+http://localhost:8100/currency-conversion/from/USD/to/INR/quantity/10
+
+Dependencies needed
+1. Spring Boot DevTools
+2. Spring Boot Actuator
+3. Spring Web
+4. Config Client
+
+Properties to add
+spring.application.name=currency-conversion
+server.port=8100
+spring.config.import=optional:configserver:
+	> needed since Config Client will be looking for a source of Config props to import
+	> passing optional:configserver will allow the application to run
+

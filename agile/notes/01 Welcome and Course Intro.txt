@@ -1,0 +1,20 @@
+Week 1
+Course Introduction
+01 Welcome and Course Intro
+
+Structure of this Course
+Module 1: Agile Fundamentals
+Module 2: Agile requirements and planning
+Module 3: SCRUM
+Module 4: XP and Wrap up
+
+Projects:
+ > both peer reviewed
+1. Applying Agile Mindset
+2. Creating a Story Map
+
+After completing this course, you will be able to:
+1. Ability to participate effectively in agile practices/process for software development.
+2. Explain the purpose behind common agile practices
+3. Ability to apply agile principles and values to a given situation
+4. Ability to identify and address most common problems encountered in adopting Agile methods.

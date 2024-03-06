@@ -1,0 +1,57 @@
+35 EC2 Basics
+
+
+Amazon EC2
+ > EC2 is one of the most popular of AWS' offering
+ > EC2 stands for Elastic Compute Cloud
+ > a way to do Infrastructure as a Service in AWS
+ > it mainly cosists in the capability of:
+	- renting Virtual Machines (EC2 instances)
+	- Storing data on virtual drives (EBS volumes)
+	- Distributing load across machines (ELB - Elastic Loadbalancer)
+	- Scaling the services (ASG - Auto-scaling group)
+ > Knowing EC2 is fundamental to understand how the Cloud works
+
+
+
+EC2 sizing & configuration opti ons:
+1. Operating System (OS): Linux, Windows or Mac OS
+2. How much compute power & cores (CPU)
+3. How much random access memory (RAM)
+4. How much storage space:
+	- Network-attached (EBS & EFS)
+	- Hardware (EC2 instance storage)
+5. Network card: speed of the card, public IP address
+6. Firewall rules: Security groups
+7. Bootstap script (configure at first launch): EC2 User Data
+
+
+
+EC2 User Data
+ > with EC2 User data script, we can BOOTSTRAP our instances
+ 	- bootstrapping means launching commands when a machine starts
+ > this scripts is only run ONCE at the instance FIRST start
+ > EC2 user data is used to automate boot tasks such as:
+	- installing updates
+	- installing software
+	- downloading common files from the internet
+	- anything you can think of
+ > The EC2 User data scripts runs with the root user of EC2 instance
+
+
+
+Example EC2 instance types:
+t2.micro
+ > 1 vCPU, 1Gib memory, EBS-Only storage, Low to moderate network performance, and no EBS Bandwidth
+t2.xlarge
+ > 4 vCPU, 16Gib memory, EBS-Only storage, Moderate network performance, and no EBS Bandwidth
+c5d,4xlarge
+ > 16 vCPU, 32Gib memory, 1x400 NVMe SSD storage, Up to 10Gbps, and 4750Mbps EBS Bandwidth
+r5.16xlarge
+ > 64 vCPU, 512Gib memory, EBS-only storage, Up to 20Gbps, and 13600Mbps EBS Bandwidth
+m5.8xlarge
+ > 32 vCPU, 128Gib memory, EBS only storage, Up to 10Gbps, and 6800Mbps EBS Bandwidth
+
+
+NOTE:
+1. t2.micro is part of the AWS free tier (up to 750 hours per month)

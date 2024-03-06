@@ -1,0 +1,41 @@
+01. Introduction
+
+Bootstrap
+
+Topics to discuss:
+1. What is Bootstrap?
+2. Installation / Setup
+3. Grid System
+4. Components
+
+
+What is Bootstrap?
+	> Most popular Front-end framework
+	> Used for building responsive, mobile first websites and web applications
+	> Uses HTML / CSS / JavaScript 
+
+
+Why uses Bootstrap?
+	> Increase development speed
+	> Assure responsiveness
+	> Prevent repetition between projects
+	> Add consistency
+	> Ensure cross browser compatibility
+	> Large community
+	> Customizable
+
+
+Bootstrap Components and Helpers
+	> Alerts		> Popovers
+	> Badges		> Progress bars
+	> Breadcrumbs		> Scrollspy
+	> Buttons		> Spinners
+	> Cards			> Toasts
+	> Carousel		> Clearfix
+	> Collapse		> Icons
+	> Dropdowns		> Tables
+	> List group		> Responsible Utilities
+	> Modal			> Gutters
+	> Navbars
+	> Panels
+	> Paginations

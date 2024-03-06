@@ -1,0 +1,80 @@
+06.02. Utilities - Border
+
+II. Border
+1. Border
+	> adds or removes a border in the element
+	> for removing the border, add "-0" at the end of the Border class
+		-> ex: "border-top-0" removes border at top
+
+NOTATION
+border-{side}
+	> no side specified will apply border in ALL SIDES
+
+Sides
+top
+bottom
+left
+right
+start
+end
+
+
+2. Border color
+	> adds color to the border
+	> we will do this by adding "border-{color}" class
+		-> ex: "border border-primary"
+
+NOTATION:
+border-{color}
+
+Colors
+primary
+secondary
+success
+danger
+warning
+info
+light
+dark
+white
+
+
+
+3. Border width
+	> adds width to the border
+
+NOTATION:
+border-{size}
+
+Sizes
+1-5	1 being the thinnest, 5 being the thickest
+
+
+
+4. Border radius
+	> adds and defines the Border radius of the element
+	
+NOTATION
+rounded-{side}
+	> blank means border radius is applied to all sides
+
+Side/s
+top
+end
+bottom
+start
+circle
+pill
+
+
+
+5. Border radius size
+	> scales the border radius sizes
+
+NOTATION
+rounded-{size}
+
+Sizes
+0-3	0 having no radius, 3 being highest radius
+
+

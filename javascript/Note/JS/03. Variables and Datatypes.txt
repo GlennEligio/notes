@@ -1,0 +1,74 @@
+03. Variables and Datatypes
+
+III. Variables
+
+Initializing Variable
+	> we can use the following keyword to create variables
+		a. var
+			- used to create global scope variables
+		b. let
+			- used to make block level scope
+			- MUTABLE, variable can be reassigned to another value again
+		c. const
+			- used to make block level scope
+			- IMMUTABLE, meaning variable can NOT be reassign to another value again
+	> var is typically avoided since global variable may messed up the program
+	> let and const are added in ES6 (EcmaScript 6) update
+		- with this keywords, garbage collection of variables are easier to do
+	> prefer using "const" UNLESS you are sure that you will REASSIGN the variable's value, in which case, use "let"
+
+
+
+IV. Datatypes
+
+Primitive Datatypes
+	> data is directly assigned to memory (not a resource)
+	> includes the following
+		a. String
+		b. Numbers
+		c. Boolean
+		d. null
+		e. undefined
+		f. Symbol
+	> we can use typeof to check datatype of a variable
+		- ex: console.log(typeof name)
+
+
+String 
+	> datatype that represents text, characters, and Strings
+	> in String datatype, we can do CONCATENATION
+		- concatenation is where we combine two or more String to form new String
+	> to do concatenation, we can do it in two ways
+		a. Use plus signs to concatenate Strings
+		b. Use ES6 Template String to combine Strings
+			- we can insert Strings and Object into the Strings with this
+			- the syntax will be
+				= Whole string is nested in back ticks (`String`)
+				= Objects to insert must be of syntax ${Object}
+
+EX:
+const name = "John";
+const age = 30;
+
+// Concatenation
+console.log("My name is " + name + " and I am  " + age);
+// Template String
+console.log(`My name is  ${name} and I am ${age}`);
+
+
+
+String methods and properties
+
+String.length
+	> returns the character length of a String
+String.toUpperCase()
+	> returns the String in UPPERCASE
+String.toLowerCase()
+	> returns the String in lowercase
+String.substring(number startIndex, number endIndex)
+	> returns a substring of the String based on the startIndex and endIndex of its Characters
+String.split(String separator)
+	> splits the String based on the String separator
+	> returns the result String parts into a String array
+	> passing empty String ("") will break the String into Character array
+

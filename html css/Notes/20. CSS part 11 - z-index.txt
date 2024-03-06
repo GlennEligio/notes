@@ -1,0 +1,23 @@
+20. CSS part 11 - z-index 
+
+
+includes
+z-index
+
+
+z-index
+	> CSS property that specifies the stack order of an element
+	> an element with greater stack order is always in FRONT of an element with lower stack order
+	> we can pass values like
+		1. auto
+			- default value
+			- set the stack order equal to its parents
+			- if not defined, the default value is 0
+		2. integer numbers
+			- set the stack order of the element
+			- negative numbers are ALLOWED
+	
+
+NOTE:
+1. z-index only works on POSITIONED ELEMENTS (position: absolute|relative|fixed|sticky, WONT WORK WITH static) and flex items (elements that are direct children of display:flex elements)
+2. If two positioned elements overlap without a z-index specified, the element positioned LAST in the HTML code will be shown on top.

@@ -1,0 +1,57 @@
+Capstone part 2
+
+Setting up Github Webhook for CI/CD Build trigger
+1. Go to Github repository
+2. Go to Github repository Settings
+3. Go to Webhooks tab
+4. Add a Webhook
+	- for payload url, pass the url of the Jenkins + "/github-webhook/" (NOTE: slash at the end is very important)
+	- for content type, set to application/json
+	- as for other settings, leave it as is
+
+
+Configuring Jenkins
+1. Install Jenkins
+2. Go to Jenkins dashboard
+3. Install Maven Integration plugin
+	> go to Dashboard > Manage Jenkins > Manage Plugins
+	> search "Maven Integration"
+	> check the plugin
+	> install without restart
+4. Add Maven Installations in the Global Tool Configuratio
+	> go to Dashboard > Manage Jenkins > Global Tool Configuration
+	> Go to Maven section
+	> Add Maven
+		- give it any name
+		- leave other settings as is
+4. Create a new Item
+	> "MavenJob"
+	> use Maven Project template
+	> in General tab
+		- check GitHub project and pass the https url of github repo
+	> in Source Control Management
+		- check Git
+		- pass the https url of github repo again
+	> in Build Trigger
+		- check GitHub hook trigger for GITScm polling
+	> in Build Section
+		- in Goals and options
+			"clean package"
+	> save
+5. Go to MavenJob project
+	> press Build now
+	> check Build History
+	> if build success, check the output file inside Jenkins Server
+		- in the machine running Jenkins, Job outputs go to
+			/var/lib/jenkins/workspace/<Job name>
+	> check if you can run the App.java from the .jar file created
+		cd /var/lib/jenkins/workspace/<Job name>
+		java -cp target/<jar file name> App.java
+
+
+Trigger CI/CD by Github repo push event
+1. Go to Github repo
+2. Edit the App.java inside src/main/java/com/<aaa>
+3. Commit and push the change
+4. Check the Webhook's Recent Deliveries
+5. Check the MavenJob's build history if build was triggered

@@ -1,0 +1,31 @@
+11 Defining Cloud Computing (Gartner and NIST definition)
+
+
+Cloud
+ > "rent data center hardware"
+
+
+Gartner's Definition of Cloud
+ > widely cited definition
+ > "Cloud computing is a style of computing in which scalable and elastic IT-enabled capabilities are delivered as a service using Internet technologies"
+
+Key elements
+1. Scalable
+	> you can increase the capacity of application by providing resources
+2. Elastic
+	> elastic means the resources used is adaptable, based on the demand
+	> example is increase and reduce the resources used in a server procured in Cloud whenever we want
+3. Delivered as service
+	> with On Prem, the resources is delivered physically, where you install the tangible servers to data center
+	> with Cloud, you will be provided an interface, typically through Internet, in order to use their services
+
+
+
+NIST 
+ > National Institure of Standards in Technology
+ 
+NIST's Definition of Cloud
+ > pretty old definition
+ > (Five) essential characteristics they define that needs to be applied to an architecture for it to be called a "Cloud"
+ > Service models to be used to create the architecture
+ > Deployment models to be used to have a proper Cloud computing infrastructure

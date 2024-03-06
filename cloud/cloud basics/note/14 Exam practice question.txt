@@ -1,0 +1,34 @@
+14 Exam practice question
+
+
+NOTES:
+1. EC2 is a service provided by Amazon to handle compute workloads
+
+
+Exam question
+From AWS Certified Cloud Practitioner Exam
+
+Why is AWS more economical than traditional data centers for applications with varying compute workloads?
+a. Amazon EC2 costs are billed on a monthly basis
+b. Users retain full administrative access to their Amazon EC2 instances
+c. Amazon EC2 instances can be launched on demand when needed
+d. Users can permanently run enough instances to handle peak workloads
+
+
+My Answer: C
+Only this question relateds to the "varying compute workloads" since to sovle this, we will need to make sure that we can create/launch EC2 instances on demand based on the traffic.
+
+
+
+
+Explanation for each items:
+a. Amazon EC2 costs are billed on a monthly basis
+	> this does not really relate to the varying compute workload as it is related more on the cost effectiveness
+b. Users retain full administrative access to their Amazon EC2 instances
+	> not related to making AWS more economical in terms of app with varying compute workload
+	> related more on configuration flexibility and security
+c. Amazon EC2 instances can be launched on demand when needed
+	> fits perfectly to the problem of handling app with varying compute workload
+d. Users can permanently run enough instances to handle peak workloads
+	> we can do this in AWS, but it does not make it economical
+	> also this will be similar to traditional data center

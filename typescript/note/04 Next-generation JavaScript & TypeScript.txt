@@ -1,0 +1,267 @@
+04 Next-generation JavaScript & TypeScript
+
+Contents:
+01 Module Introduction
+02 let and const
+03 Array Functions
+04 Default Function Parameter
+05 The Spread Operator (...)
+06 Rest Parameters
+07 Array & Object Destructuring
+08 How Code Gets Compiled & Wrap Up
+
+
+
+
+
+
+01 Module Introduction
+02 let and const
+
+Next-gen-JS-Feature-Table
+ > https://kangax.github.io/compat-table/es6/
+ > table that contains compatibility of several browser and JS compiler to the JavaScript language (i.e. ES6)
+
+Next gen JS features
+ > by next gen, it means ES6 and later
+ > new features includes
+	1. let and const
+	2. Arrow functions
+	3. Default Function Parameters
+	4. Spread operator (...)
+	5. Rest parameters
+	6. Array & Object destructuring
+	
+1. let and const
+ > Before, we have var to use when creating variables
+	- And this var only have two scopes available, global and function scrop
+	- This means that variables defined inside if, switch, for loops are globally scope, which doesnt make any sense
+ > With let and const, we now have one more scope, the BLOCK SCOPE
+	- This means that variables defined inside curly braces (function, if and switch statement) will only be available inside those curly braces as well
+ > Difference between let and const is that
+	1. const are IMMUTABLE, can not be reassigned to a new value
+	2. let are MUTABLE, can be reassigned to a new value
+
+EX:
+const username = "Glenn";
+// username = "John" // throws error
+
+let age = 30;
+age = 29; // doesnt throw error
+
+function add(a: number, b: number) {
+  let result;
+  result = a + b;
+  return result;
+}
+
+if (age > 20) {
+  var isOld = false; // global variable
+  let notOld = true; // block scope variable
+}
+
+console.log(isOld);
+console.log(notOld); // notOld is undefined since its only scoped within if statement
+
+
+
+
+
+
+
+
+03 Array Functions
+
+Arrow functions
+  > another way of writing functions in JS
+  > here, we basically assign a function to a variable, which we can use to call the function itself
+  > NOTE: for passing function as callback input to other function, theres no need to specify the callback function type
+	- TypeScript can infer the function type based on the main function that have callback fn parameter
+
+SYNTAX:
+// normal arrow function
+const fnName = (p1: type, p2: type) => {
+  // some logic
+}
+
+// arrow function with one expression inside body can omit the curly braces
+const fnName = (p1: type, p2: type) => // some logic
+
+// arrow function with one parameter can omit the parenthesis
+const fnName = p1 => // some logic
+
+// arrow function with one parameter having function type assigned
+const fnName: (p1: paramType) => returnType = input => {
+  // someLogic that returns value with same type
+}
+
+EX:
+const add = (a: number, b: number) => a + b;
+
+const printOutput: (a: number | string) => void = output => console.log(output);
+
+const button = document.querySelector("button");
+
+if(button) {
+    button.addEventListener('click', event => console.log(event))
+}
+
+
+
+04 Default Function Parameter
+
+Default Function Parameters
+  > we can also set default values to function parameters
+	- this will be the value in case no value is passed in function call for specific parameter	
+	- this allows us to omit passing values to the parameters which have default value
+		-> only works for parameters that are in the END of function parameter list
+  > default function parameters are NOT SKIPPED when a function call reads the arguments passed to it
+	- function still assign values to parameters based on the position of arguments
+	- this means that if we have function with two parameter, the 1st one having a default value, we cant just pass only one argument when we call the fn
+		-> TypeScript or JS will assume that the first argument we pass will be the value of the first parameter
+		-> which means we still need to pass another argument for second parameter
+
+EX:
+// last parameter with default value
+const add = (a: number, b: number = 3) => a + b;
+console.log(add(1));	// will work and output 4
+
+// first parameter with default value
+const add = (a: number = 3, b: number) => a + b;
+console.log(add(1));	// will not work and TS assumes 1 is for parameter "a"
+
+
+
+
+
+
+
+
+
+
+05 The Spread Operator (...)
+
+Spread Operator (...)
+ > from the name itself, used to spread Array elements or Object key:value pairs to another Array or Objects
+ > typically used to either
+	- pass the elements of Array or properties of Object to Array or Object respectively
+	- make a complete copy of Array or Objects
+		-> remember that Arrays and Objects are reference types
+		-> meaning that if we assign them directly as values to another variable, it will just create another reference, not a new value
+
+SYNTAX:
+// for arrays
+const sourceArray = [e1, e2, e3];
+const destArray = [e4, ...sourceArray]
+console.log(destArray) // output [e4, e1, e2, e3]
+
+// for objects
+const sourceObj = {e1: "1", e2: "2", e3: "3"}
+const destObj = {e4: "4", ...sourceObj}
+console.log(destObj) // outputs {e4: "4", e1: "1", e2: "2", e3: "3"}
+
+EX:
+const hobbies = ["Sports", "Cooking"];
+const activeHobbies = ["Hiking"];
+
+activeHobbies.push(...hobbies);
+
+const person = {
+  name: "Max",
+  age: 30,
+};
+
+const copiedPerson = { ...person };
+
+
+
+
+
+
+
+
+06 Rest Parameters
+
+Rest Parameters
+ > parameters that can take one or more comma separated values
+ > this parameter will be treated as an array parameter with definite or indefinite size (which is typically cant be done normally)
+ > these Rest parameters can be assign a type of either Arrays (i.e. string[]) or Tuples (i.e. [number, string , boolean])
+
+SYNTAX:
+const fnName = (...restParam: type[]) => { // some logic }
+const fnName = (...restParam: [type, type, type]) => { //some logic }
+
+EX:
+const add = (...numbers: number[]) => {
+  return numbers.reduce((curResult, curValue) => {
+    return curResult + curValue;
+  }, 0);
+};
+
+const addedNumbers = add(1, 2, 3, 4, 5);
+console.log(addedNumbers);
+
+
+
+
+
+
+
+
+
+
+07 Array & Object Destructuring
+
+Array & Object Destructuring
+ > with these, we can pull elements of Array or properties of Object to other variables in shorter form
+ > with Array Destructuring, the values will be based on the index position of the variable used to hold pulled data
+ > with Object Destructuring, the values will be based on the name of the variable used to hold pulled data
+
+SYNTAX:
+ > note: we can use either const or let in destructured variables
+
+const [var0, var1, var2] = sourceArray
+let {propName1, propName2, propName3} = sourceObj
+
+The array destructuring expression is equivalent to
+const var0 = sourceArray[0];
+const var1 = sourceArray[1];
+const var2 = sourceArray[2];
+
+The object destructuring experssion is equivalent to
+let propName1 = sourceObj.propName1;
+let propName2 = sourceObj.propName2;
+let propName3 = sourceObj.propName3;
+
+NOTE:
+1. We can use rest parameter to fetch remaining element in array destructuring
+	> ex: const [e1, e2, ...remainingElem] = sourceArray;
+		- with this, we can use "remainingElem" variable to fetch elements from index 2 up to the end
+2. We can rename the variables used to fetch properties in Object
+	> the syntax will be
+		- const {propName1: aliasName, propName2} = sourceObj
+		- here, we can now use "aliasName" instead of "propName1"
+
+EX:
+const hobbies = ["Sports", "Cooking"];
+const person = {
+  firstName: "Max",
+  age: 30,
+};
+
+const [hobby1, hobby2, ...remainingHobbies] = hobbies;
+console.log(hobbies, hobby1, hobby2); // [ "Sports", "Cooking" ] Sports Cooking
+
+const {firstName: userName, age} = person;
+console.log(userName, age); // Max 30
+
+
+
+
+
+08 How Code Gets Compiled & Wrap Up
+
+How Code Gets Compiled
+ > the TypeScript files get compiled based on the compilerOptions.target value
+ > the resulting JS file after compilation will change based on the target value
+	- includes the syntax and features used in compiled JS

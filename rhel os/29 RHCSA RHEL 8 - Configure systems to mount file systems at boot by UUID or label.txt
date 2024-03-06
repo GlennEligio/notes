@@ -1,0 +1,122 @@
+29 RHCSA RHEL 8 - Configure systems to mount file systems at boot by UUID or label
+
+
+/etc/fstab
+ > The “/etc/fstab” file is a very important file in Linux. 
+ > Populating filesystems in this file is one way out of the two ways that is used to automatically mount filesystems or devices in Linux.
+ > In the process of the system booting, the “/etc/fstab” file is read and the options specified in this file is used to mount the device/filesystems.
+ > Some of the parameters in this file are populated by default during system installation, while others can be self populated by the administrator.
+ > To view the “/etc/fstab” file, use the command,
+	$ cat /etc/fstab
+
+EX:
+#
+# /etc/fstab
+# Created by anaconda on Mon Sep 19 06:34:31 2022
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+/dev/mapper/rhel_rhel8--rhce-root /                       xfs     defaults        0 0
+UUID=af0dd933-50a6-4abf-8b27-77afe131f5da /boot                   xfs     defaults        0 0
+/dev/mapper/rhel_rhel8--rhce-swap none                    swap    defaults        0 0
+
+
+Columns of the /etc/fstab
+1. Device name, device UUID or label names
+2. Drive/partition's mount point
+3. Device/partition's filesystem type
+	> for swap, the filesystem type is swap
+	> for other filesystem type can be ext4, ext3, etc.
+4. Device/partition's mount options
+	> can be either
+		a. auto and noauto
+			- "auto" mount option signifies that the drive/filesystem will be mounted automatically at boot time
+			- "noauto" option signified otherwise
+		b. user and nouser
+			- "user" option signifies that users on the system will be able to mount the drive/filesystem
+			- "nouser" signifies that only one user, which is the root user will be able to mount the drive/filesystem
+		c. exec and noexec
+			- "exec" mount option signifies that the files/binaries that resides on the drive/filesystem should be executable
+		d. sync and async 
+			- "sync" option signifies that the I/O or changes on the filesystem be done synchronously or instantly
+			- "async" option signifies that the I/O or changes on the filesystem be done asynchronously or not immediately
+		e. ro and rw
+			- "ro" option signifies that the drive/filesystem should be readonly
+			- "rw" mount option signifies that the drive/filesystem should be a read write
+		f. suid and nosuid
+			- this option signifies that the drive/filesystem should support SUID and SGID bit, while the "nosuid" option signifies otherwise
+		g. defaults
+			- the option signifies that the filesystem should use default mount options which include auto, exec, rw, suid, async, dev, and nouser
+5. Device dump option
+	> if set to 0, it means that the filesystem cannot be dumped or backed up with the dump utility
+	> if set to 1, it means the filesystem can be dumped or backed up
+	> if no dump utility installed, use 0
+6. Can be checked (fsck) for erros at boot time or not
+	> if set to 0, it means that the filesystem should NOT be checked
+	> if set to 1 or above, it means that the filesystem should be checked
+		- the value should take an order starting with the root filesystem with the highest priority of value 1
+		- this means the root filesystem be checked first
+		- others can be set to 2 and above, which means they will be checked next
+
+
+Adding filesystems in the etc/fstab file
+ > with blkid and grep, we can easily add the necessary data in the /etc/fstab
+ > though we still need to change some text
+	$ blkid | grep vg1-lv1
+
+
+Mounting filesystem at boot by UUID or label
+1. Create a Logical Volume and add it to a Volume Group
+	$ lvcreate -L 2G -n lv1 vg1
+2. Create a filesystem with the Logical Volume
+	$ mkfs.ext4 /dev/vg1/lv1
+3. Add the filesystem in the "etc/fstab" 
+	$ blkid | grep vg1-lv1 >> /etc/fstab
+		> edit the fstab file
+	> ex:
+		UUID=65d6d336-ee61-41f9-8efa-82996a276cb2       /mnt     ext4   defaults       0 2
+		LABEL=LogicalVol1	/mnt	ext	defaults	0 2
+4. Mount the filesystem 
+	$ mount /mnt
+5. Write something in the mount point, like create a file
+	$ touch /mnt/sample.txt
+6. Check the content of the mount path
+	$ ls /mnt
+7. Unmount the filesystem using "umount"
+	$ umount /mnt
+8. Check the mount path again, the created file should be gone as well
+	$ ls /mnt
+
+
+
+Commands
+mkfs.ext4 DEVICE
+ > used to create an ext2/ext3/ext4 filesystem
+ > syntax will be 
+	$ mkfs.ext DEVICE
+ > ex:
+	$ mkfs.ext /dev/vg1/lv1
+ > notes:
+	1. the Filesystem UUID will be displayed after creating the Filesystem
+
+
+blkid
+ > locate/print block device attributes
+ > displays informations such us
+	- device name
+	- uuid
+	- type
+	- partition uuid
+
+
+e2label
+ > change the label on an ext2/ext3/ext4 filesystem
+ > syntax:
+	$ e2label DEVICE VOLUME-LABEL		assign a label
+	$ e2label DEVICE					check the label assigned
+ > EX:
+	$ e2label /dev/vg1/lv1 LogicalVol1

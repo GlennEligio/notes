@@ -1,0 +1,227 @@
+04.02. Components - Cards
+
+Cards
+	> A card is a flexible and extensible content container. 
+	> It includes options for
+		- headers and footers, 
+		- a wide variety of content, 
+		- contextual background colors, and 
+		- powerful display options. 
+	> If you’re familiar with Bootstrap 3, cards replace our old panels, wells, and thumbnails. Similar functionality to those components is available as modifier classes for cards.
+
+
+Creating Card
+	> to create a Card, we will need to have a div with class "card"
+	> inside the "card" element, we can need several elements/components with classes like
+
+
+Class hierarchy when creating Card Component of Bootstrap
+> "card"
+	> "card-header"
+	> "card-body"
+		> "card-img-top"
+		> "card-title"
+		> "card-text"
+	> "card-footer"
+
+
+"card"
+	> class in Bootstrap to make an element (mostly div) look like a card	
+	> gives some properties as well like
+		- display: flex and flex-direction: column
+		- light gray 1px border
+		- border radius of 0.25rem
+
+"card-header"
+	> represents the header of the card
+	> properties include
+		- gray background
+		- top/bottom padding 0.5rem, left/right padding 1rem
+		- 1px gray bottom border
+
+"card-footer"
+	> represents the footer of card
+	> same properties as "card-header"
+	> typically used with "text-muted"
+		-> text-muted makes the text less opaque
+
+"card-body"
+	> represents the body of the card
+	> contains the content of the card
+	> have the following properties
+		-> flex: 1 1 auto
+		-> padding of 1rem in all sides
+
+"card-title"
+	> represents the title of the card's body
+	> properties include
+		-> bottom margin 0.5rem
+
+"card-text"
+	> represents the text content of card's body
+	> properties include
+		-> last child will have margin bottom of 0
+
+"card-img"
+"card-img-top"
+"card-img-bottom"
+	> represents the image inside card's body
+	> properties include
+		-> width: 100%
+		-> 0.25rem top-left and top-right border radius
+			=> only in card-img and card-img-top
+		-> 0.25rem bottom-left and bottom-right border radius
+			=> only in card-img and card-img-bottom
+
+
+
+
+Sizing of Cards
+	> by default, the Card will take ALL the space available in the screen (width:100%)
+	> to prevent this, we will need to define the size of the Card
+	> instead of specifying the size of the element with "card", we will instead do it in the element that NEST the Card
+
+ex: 
+<div class="col-2">
+	<div class="card">
+		<!-- Card content here -->
+	</div>
+</div>
+
+	> there are several ways to do the sizing of the Card
+		1. Using grid markup
+			-> adding "col" class in the element that nest the Card
+			-> ex: <div class="col-2">
+		2. Using utilities
+			-> using Width and Height utilities in the "card" element
+			-> ex: <div class="card w-50">
+		3. Using custom CSS in the "card" element
+			-> <div class="card" style="width:18rem">
+
+
+
+Creating Card Groups
+	> card groups is used to group up Card
+	> in Card group, all Cards under it will
+		-> occupy all WIDTH (total width of Cards = total width available in parent container)
+		-> all Cards will have SAME WIDTH and HEIGHT
+	> to create a card group, we will need to use the class "card-group"
+
+"card-group"
+	> used to group Cards
+	> added in the element that nest the "card" elements
+
+EX:
+<div class="card-group">
+	<div class="card">
+	</div>
+	<div class="card">
+	</div>
+	<div class="card">
+	</div>
+</div>
+
+
+
+
+
+Creating List Group
+	> we can create a list of Card items/contents stack VERTICALLY with "list-group"
+		-> for horizontal List Group, use "list-group-horizontal"
+	> for the items inside the List Group, we will need to add "list-group-item" class to them
+
+Hierarchy
+> "card"
+	> "list-group"
+		> "list-group-item"
+
+
+"list-group"
+	> used to group items (ex. Card content) VERTICALLY
+	> properties include
+		- display: flex; flex-direction: column
+
+"list-group-item"
+	> represents an item in List groups
+	> properties include:
+		- display: block; grayish border; top-bottom padding 0.5rem; left-right padding 1rem
+
+
+EX:
+<div class="card" style="width: 18rem;">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">An item</li>
+    <li class="list-group-item">A second item</li>
+    <li class="list-group-item">A third item</li>
+  </ul>
+</div>
+
+
+
+
+
+Horizontal Card
+	> in a horizontal Card, the card image and card body is arranged horizontally instead of default vertically
+	> to do this, we will do several steps
+		1. Create a "card" element
+		2. Create a "row" element inside the Card
+			-> this element must have "g-0" class to remove the gutter at the sides
+		3. Create two "col" elements inside the row
+			-> one for nesting the img
+				=> must have "card-img" class or at least width:100% to occupy the whole column
+			-> one for nesting the card-body
+
+EX:
+<div class="col-6">
+	<div class="card">
+		<div class="row g-0">
+			<div class="col-4">
+				<img src="someImage.jpg" class="card-img-top"/>
+			</div>
+			<div class="col-8">
+				<div class="card-body">
+					<!-- Some content -->
+				</div>
+			</div>
+		</div>
+	</div>
+</>
+
+
+
+
+Styling Cards
+	> we can use the Bootstrap Utilities for applying text, background, and border color
+		-> ex: "text-white" "text-dark" "bg-primary" "bg-warning" "border-info"
+	> we typically apply these Bootstrap Utility classed in "card" element
+		-> if we do this, all element nested inside the Card will INHERIT the said properties
+
+EX:
+        <div class="col-3">
+          <div class="card text-white bg-primary mb-3" style="max-width: 18rem">
+            <div class="card-header">Header</div>
+            <div class="card-body">
+              <h5 class="card-title">Primary card title</h5>
+              <p class="card-text">
+                Some quick example text to build on the card title and make up
+                the bulk of the card's content.
+              </p>
+            </div>
+          </div>
+        </div>
+
+In this example, we can see the "text-white" and "bg-primary" being used to style the card's text and background color
+
+
+          <div class="card border-primary mb-3" style="max-width: 18rem">
+            <div class="card-header">Header</div>
+            <div class="card-body text-primary">
+              <h5 class="card-title">Primary card title</h5>
+              <p class="card-text">
+                Some quick example text to build on the card title and make up
+                the bulk of the card's content.
+              </p>
+            </div>
+          </div>
+
+In this example, we can see the "border-primary" in Card and "text-primary" in Card body

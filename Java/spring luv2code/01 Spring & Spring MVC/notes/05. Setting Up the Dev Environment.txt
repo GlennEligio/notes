@@ -1,0 +1,99 @@
+Setting up Dev Environment
+
+
+Tools needed:
+1. JDK
+	> Java 8 or higher is required
+2. Java Application Server
+	> for web development
+	> We will use Tomcat 
+3. Java Integrated Development Environment (IDE)
+	> we will use Eclipse IDE 
+4. Spring JAR files
+
+
+Apache Tomcat Version
+	> Tomcat 10 was release to support Jakarta EE 9
+		- renamed packages from javax.* to jakarta.*
+	> Spring 5 currently does NOT support the new package renaming Jakarta EE 9
+	> With this, Tomcat 10 is NOT supported by Spring 5
+	> For now, we will USE Tomcat 9 for our Spring 5 apps
+
+Eclipse IDE for JEE
+	> install latest version
+
+Benefits of using Eclipse IDE and Tomcat
+	> can start Tomcat from Eclipse
+	> easily deploy application directly to Tomcat
+
+
+Creating Tomcat Server inside Eclipse
+1. Click on Server tab below
+2. Go to Apache > Tomcat v9.0 server then click next
+3. Browse where we installed the Tomcat
+	Default: C:\Program Files\Apache Software Foundation\Tomcat x.x
+4. Define the JRE that we will use
+	> add the JDK we installed earlier in the library
+		- Eclipse will automatically detect the JRE inside it
+	> after adding the JDK, use its JRE for the Tomcat Server
+
+
+Adding Spring JAR Files in an Eclipse Project
+1. Create Eclipse Project
+2. Download Spring JAR Files
+3. Add JAR files to Eclipse Project in its Build path
+
+
+
+Changing Eclipse IDE perspective
+	> perspective means the template and UI of the IDE
+1. Right now, we are in Java EE perspective
+2. Change to vanilla Java perspective
+	Window > Perspective > Open Perspective > Java perspective
+3. Create a simple Java project
+	> spring-demo-one
+4. Download the Spring 5 JAR file
+	> choose the latest Spring 5 Version
+	> select the dist.zip file
+5. Extract contents of zip file
+	> copy the jar file inside the zip file contents
+6. Create a folder inside the Java project
+	> name it lib
+7. Paste the JAR files inside the lib folder
+8. Add the lib folder in the Classpath of the sample project
+	> right click the project root folder
+	> Properties -> Java Build Path -> Libraries
+	> Select Classpath -> Add JARs...
+	> go to the lib folder we created earlier and select all the JAR files
+	> press OK 
+9. There should be a Referenced Libraries folder added in the Project after Step 8
+
+
+DOWNLOAD LINK FOR Spring JAR files
+
+	https://repo.spring.io/release/org/springframework/spring/
+
+
+
+
+
+Importing a Maven Project
+1. Create a Maven Project in Spring.io website
+
+	LINK:	https://start.spring.io
+
+2. Fill up the necessary information
+	> Maven
+	> Java SDK available in your machine
+	> Artifact ID which is your Project name
+	
+3. Extract the generated project
+	> download the zip file
+	> extract contents of the zip
+
+4. In Eclipse IDE
+	> go to File -> Import -> Maven -> Existing Maven Project
+	> select the contents of the zip file we have downloaded earlier
+	
+5. Wait for the IDE to import the necessary files in your Maven project
+	> you can see the status at bottom right

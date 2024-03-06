@@ -1,0 +1,278 @@
+Git
+
+Contents:
+
+I. What is Git?
+
+Git
+	Free and open source version control system.
+
+Version Control
+	The management of changes to documents, computer programs, large websites, and other collections of information
+
+
+II. TERMS
+
+Directory
+	-> also means Folder
+Terminal or Command Line
+	-> an Interface for Text Commands
+CLI
+	-> Command Line Interface
+cd
+	-> Change Directory
+Code Editor
+	-> Work Processor for Writing Code
+Repository
+	-> Project, or the folder/place where your project is kept
+Github
+	-> A website to host your repositories online
+
+
+
+
+III. GIT COMMANDS TO BE USED
+
+Clone
+	-> git clone <remote-repository-url>
+	-> Bring a repository that is hosted SOMEWHERE like Github into a folder on your local machine 
+add
+	-> git add <file-directory>
+	-> track your files and changes in Git
+commit
+	-> git commit
+	-> save your files in Git
+push
+	-> git push
+	-> upload Git commits to a remote repo, like Github
+pull
+	-> Download CHANGES from remote repo to your local machine, the opposite of push
+	-> will update the branch in the local git repo based on branch we pulled
+
+
+
+IV. GITHUB DEMONSTRATION
+
+1. Create a new repository in the GitHub account (assuming you already made one)
+	> name it demo-repo
+
+
+
+2. Inside the demo-repo, create a new file
+	> name the file README.md
+	> .md stand for markdown file
+	> used for showing text that describes the project
+
+
+3. Add these following lines inside the README.md
+	> add these text inside
+
+	# DEMO
+
+	Some description.
+
+	> single hashtag (#) denotes the MAIN HEADER, double hashtag (##) denotes SUB HEADER
+
+
+4. Commit the new file
+	> at the bottom we can see the Commit new file option
+	> if we dont add something in the Main message and Sub message, it will input the hint text at the textbox by default
+		= Create <file-name> for first commit of new file by default
+		= Update <file-name> for subsequent commit/edit of the file by default
+
+
+5. Edit the README.md file
+	> change the text from "Some description." to "Some description!"
+	> if we look at the commit tab, we can see that the default commit title is "Update README.md"
+
+
+6. Check commits that we made in the repo
+	> to see the commits we made in the demo-repo, we can click the Commits option in the demo-repo page
+	> if we take a look at the commits, we can see that the commits have their own UNIQUE ID.
+	> this UNIQUE ID is used to identify each of the commits
+
+
+
+7. Check one of the commits
+	> inside the commit, we can see the files that is affected by the commit
+	> inside the file, we can see lines of code in GREEN, RED, and WHITE
+		= GREEN means that the line is ADDED in the file
+			> this lines also have the plus signs (+) at the start
+		= RED means that the line is REMOVED in the file
+			> this lines also have the minus signs (-) at the start
+		= WHITE means that the line is unchanged
+
+
+
+
+V. LOCAL GIT REPO DEMONSTRATION
+
+8. Check the Git version install in the local machine
+	> to check the Git version in the local machine, use the following command
+
+		git --version
+
+
+
+9. Create a folder that will contain the project that we will make in order to demonstrate the Git
+	
+
+10. Open the project folder inside the IDE (Visual Studio Code)
+	
+
+
+11. Open the Terminal in the IDE
+	> for Visual Studio Code, its View -> Terminal OR use the shortcut CTRL + `
+
+
+12. Clone the repository we made earlier in GitHub to our local machine
+	> in order to do so, use the following command
+
+		git clone <remote-git-repository-link>
+
+	> in our case, it will be
+
+		git clone https://github.com/GlennEligio/demo-repo.git
+
+	> after cloning, we should see the demo-repo folder with the README.md file inside it
+
+
+
+
+13. Change directory to be inside the demo-repo folder
+	> to do this, use the following code
+
+		cd demo-repo
+
+	> whenever we clone a repository from a remote source, there will be a .git hidden folder that will be included in clone
+	> this .git hidden folder STORES all the commit history we made in the said local repository directory
+	> to see all the files and folder (hidden or not) in the Terminal, use the command
+
+		ls -Force
+
+	> we should see something like this
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d--h--         10/7/2021   5:29 PM                .git
+-a----         10/7/2021   5:29 PM             29 README.md
+
+
+
+
+14. Add a subheader inside the README.md
+	> inside the IDE, edit the README.md
+	> add a SUBHEADER and another line of text after it
+	> save the changes we made
+		- if we look at the file explorer, we can see that the README.md file color has changed
+		- also, theres a "M" letter next to it which means MODIFIED
+
+INSIDE README.md
+
+# DEMO
+
+Some description!
+
+## SUB HEADER
+
+Watch tutorial on Youtube!
+
+
+
+
+15. Check status of the demo-repo git repo
+	> to do this, use the command
+
+		git status
+	
+	> we should see something like this
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+
+	> this means that the README.md file is MODIFIED, but the changes in not ADDED in the local git
+
+
+
+16. Add another file
+	> name it index.html
+	> add a <div> inside it
+
+INSIDE index.html
+
+<div>Hello</div>
+
+
+
+17. Check the status of local git once again
+	> we should see something like this
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        index.html
+
+	> now, the index.html is UNTRACKED, we will still to ADD this file in the local git in order for it to track the changes
+
+
+
+
+18. Add all our files inside the demo-repo folder into the local git
+	> to do this, we will use the following commands
+	
+	FOR SINGLE FILE ADDITION
+	
+		git add <file-name>
+
+	FOR MULTIPLE FILE INSIDE THE FOLDER
+
+		git add <file-directory-location>
+
+	FOR ADD ALL ITEMS INSIDE THE ROOT FOLDER
+
+		git add .
+
+	> in our case, we will use the git add .
+
+
+
+19. Check the status of the local git repo in demo-repo folder
+	> use git status to see the status
+	> we should see that both the index.html and README.md is included in local git and ready to be committed
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   README.md
+        new file:   index.html
+
+
+
+20. Commit the modification we have in the demo-repo git repo
+	> to commit the changes, we will use the following command
+
+		git commit -m "<commit-title>" -m "<commit-description>"
+
+	> first -m flag refers to the commit title 
+	> second -m flag refers to the commit description
+	> in our case, we will put
+
+
+
+21. Push the commits we have in local git repo to the remote git repo
+
+
+
+
+
+
+
+
+
+
+

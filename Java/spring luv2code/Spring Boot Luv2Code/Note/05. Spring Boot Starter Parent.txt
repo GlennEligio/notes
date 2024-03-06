@@ -1,0 +1,26 @@
+05. Spring Boot Starter Parent
+
+
+Spring Boot Starter Parent
+	> special starter that provides Maven defaults
+		- these includes
+			= Default compiler level (currently Java 8)
+			= UTF-8 source encoding
+			= others...
+	> provided by Spring Boot by default
+		- included in pom.xml when using Spring Initialzr
+	> with spring-boot-starter-parent, we dont need to specify the versions of the Starter dependencies inside <dependencies>
+		- the Starter dependencies will INHERIT the version from Starter parent
+	> also provides default configuration of Spring Boot plugin
+		
+
+
+MAIN BENEFITS OF Spring Boot Starter Parent
+	> default Maven configuration
+		- Java version
+		- UTF- encoding
+	> Dependency management
+		- Use version on parent only
+		- spring-boot-starter-* dependencies inherit version from parent
+	> Default configuration of Spring Boot plugin
+	

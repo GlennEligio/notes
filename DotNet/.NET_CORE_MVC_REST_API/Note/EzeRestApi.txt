@@ -1,0 +1,605 @@
+EzeRestServer
+
+PART 1. Model, Repository, Controller
+
+1. MODEL OBJECT
+
+using System.ComponentModel.DataAnnotations;
+
+namespace EzeRestServer.Models
+{
+    public class Request
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public string StudentName { get; set; }
+
+        [Required]
+        public string ItemName { get; set; }
+
+        [Required]
+        public string ItemTime { get; set; }
+
+        [Required]
+        public string TransactionCode { get; set; }
+
+        [Required]
+        public int RequestStatus { get; set; }
+
+        [Required]
+        public string ProfessorName { get; set; }
+    }
+}
+
+
+2. MOCK REPOSITORY
+
+using System.Collections.Generic;
+using EzeRestServer.Models;
+
+namespace EzeRestServer.Data
+{
+    public class MockRequestRepo : ITransactionRepo
+    {
+        public IEnumerable<Request> GetAllRequest()
+        {
+            var requests = new List<Request>
+            {
+                new Request{Id=1, StudentName="John Glenn Eligio", ItemName="Tester", ItemTime="2021-01-01 12:03:01", TransactionCode="swikna1", RequestStatus=0, ProfessorName="Tithesis"},
+                new Request{Id=2, StudentName="John Glenn Eligio", ItemName="Tester", ItemTime="2021-01-01 12:03:01", TransactionCode="swikna1", RequestStatus=0, ProfessorName="Tithesis"},
+                new Request{Id=3, StudentName="John Glenn Eligio", ItemName="Tester", ItemTime="2021-01-01 12:03:01", TransactionCode="swikna1", RequestStatus=0, ProfessorName="Tithesis"},
+                new Request{Id=4, StudentName="John Glenn Eligio", ItemName="Tester", ItemTime="2021-01-01 12:03:01", TransactionCode="swikna1", RequestStatus=0, ProfessorName="Tithesis"}
+            };
+
+            return requests;
+        }
+
+        public Request GetRequestProfessorName(string profName)
+        {
+            return new Request{Id=3, StudentName="John Glenn Eligio", ItemName="Tester", ItemTime="2021-01-01 12:03:01", TransactionCode="swikna1", RequestStatus=0, ProfessorName="Tithesis"};
+
+        }
+    }
+}
+
+
+
+3. CREATE CONTROLER CLASS ALONGSIDE ACTIONRESULTS
+	> add a MOCK REPO object inside it that we will use in the ACTIONRESULT
+	> call the MOCK REPO methods inside the ACTIONRESULTs
+
+RequestController class
+
+using Microsoft.AspNetCore.Mvc;
+using EzeRestServer.Models;
+using EzeRestServer.Data;
+using System.Collections.Generic;
+
+namespace EzeRestServer.Controllers
+{
+    [ApiController]
+    [Route("api/requests")]
+    public class RequestsControllers : ControllerBase
+    {
+        private readonly MockRequestRepo _repository = new MockRequestRepo();
+
+        [HttpGet]
+        public ActionResult<IEnumerable<Request>> GetAllRequest()
+        {
+            var requestsFromRepo = _repository.GetAllRequest();
+            return Ok(requestsFromRepo);
+        }
+
+        [HttpGet("{profName}")]
+        public ActionResult<Request> GetRequestByProfessorName(string profName)
+        {
+            var requestFromRepo = _repository.GetRequestProfessorName(profName);
+            return Ok(requestFromRepo);
+        }
+    }
+}
+
+
+
+PART 2. ENTITY FRAMEWORK, DBCONTEXT, MIGRATION, SQL SERVER IMPLEMENTATION
+
+
+3. LOGIN INFO SQL FOR REST API
+Login SQL
+Name: ezerestadmin
+Pass: ezerestpass
+
+
+4. PACKAGES FOR ENTITY FRAMEWORK, MIGRATION, SQL SERVER IMPLEMENTATION
+	a. Microsoft.EntityFrameworkCore		
+		= dotnet add package Microsoft.EntityFrameworkCore  
+	b. Microsoft.EntityFrameworkCore.Design 
+		= dotnet add package Microsoft.EntityFrameworkCore.Design 
+	c. Microsoft.EntityFrameworkCore.SqlServer
+		= dotnet add package Microsoft.EntityFrameworkCore.SqlServer	
+
+NOTE: CHECK .csproj file in root folder if packages has been added 
+
+
+
+
+
+5. ADD ENTITY FRAMEWORK IN PROJECT
+TO ADD: dotnet tool install --global dotnet-ef
+TO CHECK: dotnet-ef
+
+
+
+
+6. DBCONTEXT CLASS WITH DBSET<REQUEST> PROPERTY
+
+using Microsoft.EntityFrameworkCore;
+using EzeRestServer.Models;
+
+namespace EzeRestServer.Data
+{
+    public class RequestContext : DbContext
+    {
+        public RequestContext(DbContextOptions<RequestContext> options) : base(options)
+        {
+            
+        }
+
+        public DbSet<Request> Requests { get; set; }
+    }
+}
+
+
+
+
+7. ADD CONNECTION STRING IN THE appsettings.json
+
+INSIDE appsettings.json item
+
+  "ConnectionStrings": {
+      "RequestConnection":"Server=YARO\\YARO;Initial Catalog=EzeRestDB;User ID=ezerestadmin;Password=ezerestpass"
+  }
+
+
+
+
+
+8. SET UP THE DBCONTEXT IN THE ConfigureServices() of StartUp class
+	> need Microsoft.EntityFrameworkCore in using directive
+
+INSIDE ConfigureServices() of StartUp
+
+            services.AddDbContext<RequestContext>(opt => opt.UseSqlServer
+            (Configuration.GetConnectionString("CommanderConnection")));
+
+
+
+
+
+8. ADD MIGRATION FILE INTO THE PROJECT
+	> finish setting up data annotations to Model class before you set up the MIGRATION file
+
+TO ADD MIGRATION: dotnet ef migrations add <MigrationName>
+
+
+
+
+
+9. RUN THE MIGRATION TO APPLY THE CHANGES IN THE SQL SERVER DATABASE
+
+TO APPLY MIGRATION TO SQL: dotnet ef database update
+
+
+10. CREATE NEW CONCRETE IMPLEMENTATION OF THE REPOSITORY INTERFACE
+	> add the DbContext into it using DEPENDENCY INJECTION
+	> using the Linq functions, modify the DbSet properties of the DbContext injected in each of the implemented methods and return the needed item
+
+SQLREQUESTREPO CLASS
+
+using System.Collections.Generic;
+using EzeRestServer.Models;
+using System.Linq;
+
+namespace EzeRestServer.Data
+{
+    public class SqlRequestRepo : ITransactionRepo
+    {
+        private readonly RequestContext _context;
+        public SqlRequestRepo(RequestContext context)
+        {
+            _context = context;
+        }
+
+        public IEnumerable<Request> GetAllRequest()
+        {
+            var requestList = _context.Requests.ToList();
+            return requestList;
+        }
+
+        public IEnumerable<Request> GetRequestProfessorName(string profName)
+        {
+            var requestList = _context.Requests.Where(item => item.ProfessorName == profName);
+            return requestList;
+        }
+    }
+}
+
+
+
+
+
+10. ADD THE REPOSITORY INTERFACE ALONGSIDE ITS CONCRETE IMPLEMENTATION TO THE CONFIGURESERVICES()
+	= call AddScope<>(), and pass the Interface and Concrete Implementation in the <>
+
+INSIDE ConfigureServices()
+
+	services.AddScoped<ITransactionRepo, SqlRequestRepo>();
+
+
+
+11. CHANGE IMPLEMENTATION OF REPOSITORY IN CONTROLLER
+	> use dependency injection in the Constructor	
+	> also, use the new Concrete implementation instead of the Mock repo
+
+INSIDE RequestsController class
+
+        private readonly ITransactionRepo _repository;
+
+        public RequestsController(ITransactionRepo repository)
+        {
+            _repository = repository;
+        }
+
+
+
+
+12. MODIFY THE CONTROLLER
+
+NEW REQUESTCONTROLLER
+
+using Microsoft.AspNetCore.Mvc;
+using EzeRestServer.Models;
+using EzeRestServer.Data;
+using System.Collections.Generic;
+
+namespace EzeRestServer.Controllers
+{
+    [ApiController]
+    [Route("api/requests")]
+    public class RequestsController : ControllerBase
+    {
+        private readonly ITransactionRepo _repository;
+        
+        public RequestsController(ITransactionRepo repository)
+        {
+            _repository = repository;
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<Request>> GetAllRequest()
+        {
+            var requestsFromRepo = _repository.GetAllRequest();
+            return Ok(requestsFromRepo);
+        }
+
+        [HttpGet("{profName}")]
+        public ActionResult<Request> GetRequestByProfessorName(string profName)
+        {
+            var requestFromRepo = _repository.GetRequestProfessorName(profName);
+            return Ok(requestFromRepo);
+        }
+    }
+}
+
+
+
+PART 3: DTO, AUTOMAPPER, POST
+
+13. INSTALL PACKAGES FOR AUTOMAPPER
+
+TO INSTALL AUTOMAPPER: dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
+
+
+
+
+14. ADD AUTOMAPPER IN STARTUP CLASS
+
+INSIDE ConfigureServices()
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
+
+
+15. IMPLEMENT IMAPPER SERVICE IN THE CONTROLLER USING DEPENDENCY INJECTION
+
+INSIDE RequestsController class
+
+        private readonly ITransactionRepo _repository;
+        private readonly IMapper _mapper;
+        
+        public RequestsController(ITransactionRepo repository, IMapper mapper)
+        {
+            _repository = repository;
+            _mapper = mapper;
+        }
+
+
+
+
+
+19. USE IMAPPER IN THE ACTIONRESULTS OF CONTROLLER
+	> change ActionResult body from Request to RequestReadDto
+
+INSIDE RequestsController class
+
+        [HttpGet]
+        public ActionResult<IEnumerable<RequestReadDto>> GetAllRequest()
+        {
+            var requestsFromRepo = _repository.GetAllRequest();
+            if(requestsFromRepo == null){
+                return NotFound();
+            }
+            var requestsReadDto = _mapper.Map<IEnumerable<RequestReadDto>>(requestsFromRepo);
+            return Ok(requestsReadDto);
+        }
+
+        [HttpGet("{profName}")]
+        public ActionResult<IEnumerable<RequestReadDto>> GetRequestByProfessorName(string profName)
+        {
+            var requestsFromRepo = _repository.GetRequestProfessorName(profName);
+            if(requestsFromRepo == null){
+                return NotFound();
+            }
+            
+            var requestsReadDto = _mapper.Map<IEnumerable<RequestReadDto>>(requestsFromRepo);
+            return Ok(requestsReadDto);
+        }
+
+
+
+
+
+20. ADD THE FOLLOWING METHODS IN THE REPOSITORY INTERFACE
+	> for POST functionality
+
+INSIDE ITransactionRepo interface
+
+        bool SaveChanges();
+        void CreateRequest(Request request);
+
+
+
+
+
+21. IMPLEMENT THE METHODS IN THE CONCRETE IMPLEMENTATION CLASS OF ITransactionRepo
+
+INSIDE SqlRequestRepo class
+
+        public bool SaveChanges()
+        {
+            return (_context.SaveChanges() >= 0);
+        }
+
+        public void CreateRequest(Request request)
+        {
+            if(request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            _context.Add(request);
+        }
+
+
+
+
+
+22. MAKE A DTO FOR CREATING REQUEST
+	> SUPPLY ALL PROPERTY OF REQUEST EXCEPT ID
+	> SQL SERVER WILL TAKE CARE OF ID GENERATION
+
+RequestCreateDto.cs
+
+using System.ComponentModel.DataAnnotations;
+
+namespace EzeRestServer.Models
+{
+    public class RequestCreateDto
+    {
+        [Required]
+        public string StudentName { get; set; }
+
+        [Required]
+        public string ItemName { get; set; }
+
+        [Required]
+        public string ItemTime { get; set; }
+
+        [Required]
+        public string TransactionCode { get; set; }
+
+        [Required]
+        public int RequestStatus { get; set; }
+
+        [Required]
+        public string ProfessorName { get; set; }
+    }
+}
+
+
+
+
+23. CREATE ANOTHER MAPPING IN REQUESTS PROFILE CLASS
+	> SOURCE = RequestCreateDto, TARGET = Request
+
+INSIDE RequestProfile constructor
+
+	CreateMap<RequestCreateDto, Request>();
+
+
+
+
+24. CREATE AN HTTPGET FOR GETTING REQUEST BY ID of REQUEST for CREATEATROUTE() return type of POST ACTIONRESULT
+
+INSIDE RequestsController class
+
+        [HttpGet("{id}", Name = "GetRequestById")]
+        public ActionResult<RequestReadDto> GetRequestById(int id)
+        {
+            var requestFromRepo = _repository.GetRequestById(id);
+            if(requestFromRepo == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(_mapper.Map<RequestReadDto>(requestFromRepo));
+        }
+
+
+
+
+
+24. CREATE THE POST ACTIONRESULT METHOD FOR CREATING A REQUEST
+
+INSIDE RequestsController class
+
+        [HttpPost]
+        public ActionResult<RequestReadDto> CreateRequest(RequestCreateDto requestCreateDto)
+        {
+            var requestFromClient = _mapper.Map<Request>(requestCreateDto);
+            _repository.CreateRequest(requestFromClient);
+            _repository.SaveChanges();
+
+            var requestReadDto = _mapper.Map<RequestReadDto>(requestFromClient);
+            return CreatedAtRoute("GetRequestById", new{id = requestReadDto.Id}, requestReadDto);
+        }
+
+
+
+
+
+
+PART 4. PUT, PATCH, DELETE FUNCTIONALITY
+
+
+25. ADD THE FOLLOWING METHODS IN REPOSITORY INTERFACE FOR PUT, DELETE ENDPOINTS
+
+INSIDE REPOSITORY INTERFACE
+
+        void UpdateRequest(Request request);
+        void DeleteRequest(Request request);
+
+
+
+
+26. IMPLEMENT THE METHODS IN THE CONCRETE IMPLEMENTATION AND MODIFY IT
+
+INSIDE SqlRequestRepo class
+
+        public void UpdateRequest(Request request)
+        {
+            // Do nothing since modification of DbSet + SaveChanges 
+            // applies changes to the SQL Server already
+        }
+
+        public void DeleteRequest(Request request)
+        {
+            if(request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            _context.Remove(request);
+        }
+
+
+
+
+27. CREATE DTO FOR UPDATE REQUEST
+	> same as the RequestCreateDto but different class name
+
+
+
+
+28. ADD MAPPING IN PROFILE CLASS
+	> SOURCE -> RequestUpdateDto, TARGET -> Request
+
+INSIDE RequestProfile constructor
+
+	CreateMap<RequestUpdateDto, Request>();
+
+
+
+
+29. CREATE PUT AND DELETE ROUTE ENDPOINTS IN THE REQUEST CONTROLLER CLASS
+
+INSIDE RequestsController class
+
+        [HttpPut("{id}")]
+        public ActionResult UpdateRequest(int id, RequestUpdateDto requestUpdateDto)
+        {
+            var requestFromRepo = _repository.GetRequestById(id);
+            if(requestFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(requestUpdateDto, requestUpdateDto);
+            _repository.SaveChanges();
+            _repository.UpdateRequest(requestFromRepo);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeleteRequest(int id)
+        {
+            var requestFromRepo = _repository.GetRequestById(id);
+            if(requestFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            _repository.DeleteRequest(requestFromRepo);
+            _repository.SaveChanges();
+
+            return NoContent();
+        }
+
+
+
+
+
+30. INSTALL NECESSARY PACKAGES FOR PUT ROUTE ENDPOINT
+
+ADD THE FOLLOWING PACKAGES IN TERMINAL
+
+	dotnet add package Microsoft.AspNetCore.JsonPatch
+	dotnet add package Microsoft.AspNetCore.Mvc.NewtonsoftJson
+
+
+
+
+31. CHANGE SERIALIZATION CONFIGURATION OF PROJECT FROM System.Text.Json to Newtonsoft.Json
+
+INSIDE ConfigureService()
+
+            services.AddControllers().AddNewtonsoftJson(s => {
+                s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
+
+
+
+
+32. CREATE ANOTHER MAPPING FOR PATCH ENDPOINT
+
+INSIDE RequestProfile constructor
+
+	CreateMap<Request, RequestUpdateDto>();
+
+
+
+
+33. 

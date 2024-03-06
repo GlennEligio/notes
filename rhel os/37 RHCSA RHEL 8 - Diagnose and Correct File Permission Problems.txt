@@ -1,0 +1,44 @@
+37 RHCSA RHEL 8 - Diagnose and Correct File Permission Problems
+
+ACL
+ > stands for Access Control Lists
+ > ACL (Access Control Lists) are the more granular option for file and directory permissions. 
+ > It allows multiple groups or users to have varying access.
+ > when a file is have extended permission, it will have the plus sign at the end of permission output of "ls -l"
+	ex: -rw-rwxr--+ 1 jglenn jglenn     0 Sep 20 16:12 file2.txt
+ > with ACL, we can get and set the extended permissions using two commands
+	- getfacl
+	- setfacl
+
+
+Commands
+getfacl
+ > get file access control list
+ > provides informations like filename, owner, group, and the list of extended permissions to specific user, groups, others, etc
+ > sypnosis:
+	$ getfacl [-aceEsRLPtpndvh] file ...
+	$ getfacl [-aceEsRLPtpndvh] -
+ > ex:
+	$ getfacl file2.txt
+
+OUTPUT of getfacl file2.txt
+# file: file2.txt
+# owner: jglenn
+# group: jglenn
+user::rw-
+user:user1:rwx
+group::rw-
+mask::rwx
+other::r--
+
+
+setfacl 
+ > set file access control list
+ > sypnosis:
+	$ setfacl [-bkndRLPvh] [{-m|-x} acl_spec] [{-M|-X} acl_file] file ...
+	$ setfacl --restore=file
+ > ex:
+	setfacl -m u:user1:rwx file2.txt
+		- add an extended permission to file2.txt where the user "user1" have rwx permission
+	setfacl -m g:accounts:rwx file2.txt
+		- add an extended permission to file2.txt where the group "accounts" have rwx permission 

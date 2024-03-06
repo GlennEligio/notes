@@ -1,0 +1,523 @@
+HCL DevOps Training Day 2
+
+Architecture Overview (CLE PROD)
+ > SOURCE: https://luxotticaretail.atlassian.net/wiki/spaces/EECOM/pages/1602617439/Architecture+overview
+ > the Architecture system has three tiers:
+	1. Presentation layer
+		- host the logic for visualizing the data stored into the core tier
+	2. Core tier
+		- host the application logic
+	3. Integration tier
+		- hosts the logic for connecting to external systems
+		
+Components:
+Core tier
+1. HCL Transaction server
+	> Payment and Custom commands
+2. HCL Dataload
+3. HCL Index
+4. HCL Commerce search (Liberty)
+5. CMS
+6. Other systems
+	> Vto
+	> One Configurator
+	> TrustPilot
+	> etc
+7. Bash scripts
+
+Presentation tier
+1. BFF
+2. FE
+
+Integration tier
+1. Forter
+2. SAP
+3. Responsys
+4. Vertex
+5. PIM
+6. SFTP
+7. FS
+8. Preprocessor
+9. Bash scripts
+		
+Presentation tier
+ > responsible to provide one or more front-ends for the stores and sites hosted into the FDR platform
+ > this functionality is provided with a set of different front-end. These frontends are, by nature, different from each other, as every brand/country will have different look, possibly different functionalities and a different backend in terms of other systems in the core and integration tiers
+ > The BFF is a layer that orchestrates the calls to the different core tier modules to provide the front-end with the set of data it needs to build the page, hiding the complexity of the backend layout and standardising the functionalities.
+	- it can be shared by a set of front-ends, in case they have the same functionality set
+ > By its nature, the presentation tier is different for every product; even though some parts can be resued, the user experience and interface are different for every store
+ 
+Core tier
+ > the core tier host all the logic that govern the store
+ > there are two main systems that are used into the core tier
+	1. HCL provides the e-commerce logics, such as catalog, checkout, payment, user storage
+	2. CMS provides a set of content for the site header and footer, and enrichments for the HCL Catalog
+ > HCL is split in two different sub-systems:
+	1. HCL Transaction Server, which hosts the main e-commerce logic such as cart management, checkout process, order history, product catalog
+	2. HCL Search Server, which hosts an elastic search server that allows the front-end to navigate the catalog more efficiently
+	
+Integration tier
+ > The integration tier provides the HCL core to access external data and functionalities in a standardised way.
+ > As a business request is to allow different sites to use different services to provide the same functionality, we have chosen to put middleware systems to handle the complexity of standardising the interfaces toward (e.g. messaging systems)
+ > This choice has been done for external systems that do not have to interact often with the HCL data; payment needs a strong integration with the database, and therefore we have chosen to handle the complexity directly into the HCL transaction server
+ > Integrations are both inbound and outbound
+ > Inbound integrations are:
+	- from PIM, for product catalog
+	- from SAP, for prices and stock
+ > Outbound integrations are:
+	- to Vertex for tax calculation
+	- to Responsys, for customer emails
+	- to Cybersources to manage payments via
+		a. credit card
+		b. paypal
+	- to Apply pay
+	- to SAP for order information
+	- to Forter for fraud check
+
+
+
+Container Startup Logic
+ > the following diagram illustrates the underlying logic and commands that run when you start a container
+ > composd of the following components
+	1. Entrypoint scripts
+		- main script, contains logic about the configurations in the runtime pods, etc
+	2. License Acceptance Check
+		- since HCL Commerce is an enterprise application, we need to accept its license for installation
+	3. Pre-configure
+		- custom script
+		- used to add additional configurations before we ran the actual Configuration logic
+	4. Configure mode
+		- here, the actual configuration logic happens, and by default it uses the Vault
+		- we can also use the environment variables for configurations as well
+		- we will execute vaultConfigure.sh, which will do a REST api call to fetch configurations from the Vault using Vault URL and a Token
+	5. Vault CA / Post-Configure
+		- for Vault CA, we will use "updateCerts.sh" to apply certificates dynamically and import certificates as well
+		- for Post-Configure, we will use "postConfigure.sh", which calls "updateLocalCerts.sh" and "custConfiguration.sh" (custom configurations)
+		
+		
+	
+Process flow
+1. entrypoint.sh
+	2 > If first parameter == License View
+		> Show License File, then exit 0
+	2 > If License !== accept
+		> Exit with code 1
+	2 > If first parameter == License View
+		3 > ** Call preConfigure.sh if it exists
+			4a > If CONFIGURE_MODE = EnvVariables
+				> Call envVariablesConfigure.sh
+				> Get Parameters from OS
+				> Read Parameter and call Run Engine to configure
+			4b > If CONFIGURE_MODE = Vault
+				> Call vaultConfigure.sh
+				> If VAULT_TOKEN & VAULT_URL
+				> Get Parameters from Vault
+			4c > elseif CONFIGURE_MODE does not exist
+				> Call entrypoint.sh
+				> Get Parameters from OS
+		5a > iF VAULT_CA=true
+			> Call updateCerts.sh
+				> Apply certificates dynamically
+				> Import Certificates
+		5b > Call postConfigure.sh
+			> Call updateLocalCerts.sh and apply local certs if they exist
+			> ** Call certConfiguration.sh if it exist
+	6 > Start WAS Liberty or TWAS Server
+	
+	
+NOTES:
+1. All the scripts used in the process flow are located inside /SETUP/bin/ folder of all pods in Kubernetes clusters
+	
+	
+	
+	
+Active pods and replicas (CLE PROD)
+ > Below is the glimpse of all pods runnin
+ 
+Pods configuration
+CLE PROD
+ > Machine: E32s_v3
+ > vCPU: 32
+ > Memory: 256
+ > SSD Storage (GB): 512
+ 
+
+Auth:
+  ts-app
+	> replicas: 1
+	> request cpu: 500m
+	> limit cpu: 3
+	> request memory: 6Gi
+	> limit memory: 6Gi
+  ts-util
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 4Gi
+  ts-web
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 4Gi
+  xc-app
+	> replicas: 1
+	> request cpu: 500m
+	> limit cpu: 2
+	> request memory 4Gi
+	> limit memory 4Gi
+  cache-app
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 2Gi
+  query-app
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 4Gi
+  store-web
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 1Gi
+	> limit memory 2Gi
+  bff
+	> replicas: 1
+	> request cpu: 300m
+	> limit cpu: 500m
+	> request memory 256Mi
+	> limit memory: 512Mi
+  cst
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 1Gi
+	> limit memory 2Gi
+  mdt
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 1Gi
+	> limit memory 2Gi
+	
+Live:
+  ts-app
+	> replicas: 4
+	> request cpu: 500m
+	> limit cpu: 3
+	> request memory: 6Gi
+	> limit memory: 6Gi
+  ts-util
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 4Gi
+  ts-web
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 4Gi
+  xc-app
+	> replicas: 1
+	> request cpu: 500m
+	> limit cpu: 2
+	> request memory 4Gi
+	> limit memory 4Gi
+  cache-app
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 2Gi
+  query-app
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 4Gi
+  store-web
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 1Gi
+	> limit memory 2Gi
+  bff
+	> replicas: 1
+	> request cpu: 300m
+	> limit cpu: 500m
+	> request memory 256Mi
+	> limit memory: 512Mi
+  cst
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 1Gi
+	> limit memory 2Gi
+	
+share/common:
+  ingest-app
+	> replicas: 1
+	> request cpu: 500m
+	> limit cpu: 2
+	> request memory: 4Gi
+	> limit memory: 4Gi
+  nifi-app
+	> replicas: 1
+	> request cpu: 4
+	> limit cpu: 16
+	> request memory: 12Gi
+	> limit memory 30Gi
+  query-app
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 3Gi
+  registry-app
+	> replicas: 1
+	> request cpu: 500m
+	> limit cpu: 2
+	> request memory: 2Gi
+	> limit memory: 2Gi
+  tooling-web
+	> replicas: 1
+	> request cpu: 100m
+	> limit cpu: 2
+	> request memory 2Gi
+	> limit memory 2Gi
+  vault
+	> replicas: 1
+	> request cpu: 200m
+	> limit cpu: 500m
+	> request memory 256Mi
+	> limit memory: 512Mi
+  elasticsearch-master
+	> replicas: 3
+	> request cpu: 3
+	> limit cpu: 6
+	> request memory: 8Gi
+	> limit memory: 20Gi
+  ingress-nginx-controller
+	> replicas: 2
+	> request cpu: 100m
+	> request memory 90Mi 
+  redis-master
+	> replicas: 1
+  redis-replicas
+	> replicas: 3
+  zookeeper
+	> replicas: 1
+	> request cpu: 250m
+	> limit cpu: 256Mi
+ 
+ 
+ 
+NOTE:
+1. Since pods in auth is not customer facing, we will just have 1 replica/instance for each Pods
+2.  Most shared/common instances/pods, excluding elasticsearch, nginx, redis-replicas, will have 1 replicas as well
+3. In CLE PROD, we have three E32s_v3 will holds of the pods mention above
+
+
+
+
+HPA Configuration
+ > K8s uses Horizontal Pod Autoscaler (HPA) to monitor the resource demand and automatically scale the number of pods.
+	- By default, the HPA checks the Metrics API every 15 seconds for any required changes in replica count, and the Metrics API retrieves data from the Kubelet every 60 seconds
+ > HPA can be used to scale pods based on metrics such as average CPU utilization or average memory utilization
+ > In CLE PROD, we have configured to scale up the pods based on AVERAGE CPU Utilization, and it can max scale up to 6 replicas
+ > So ideally, when the cpu average usage would cross 400%, then HPA will scale the ts-app replica count from 4 to max of 6
+ 
+ 
+ 
+ 
+CLE PROD Disaster recovery (DR) setup
+ > As you manage clusters in Azure Kubernetes Service (AKS), application uptime becomes important
+ > By default, ASK provides high availability by using multiple nodes in a Virtual Machine Scale Set (VMSS)
+ > But these multiple nodes don't protect your system from a region failure
+	- To maximize your uptime, plan ahead to maintain business continuity and 
+ > in Jenkins, we can see the build pipelines for DR in Dashboard > cle > dr > deploy
+ > Here, we have multiple AKS clusters across different region to meet DR scenario
+ 
+ 
+Difference between Production site and DR site
+1. Different Azure Virtual Network (VNET)
+	> production site is situated in West Europe Region wile DR site is in Nort Europe
+	> production site uses TWO E32s_v3 machines while the DR site uses only ONE E32s_v3
+ 
+
+
+What is Vault
+ > Vault is a tool that allows you to SAFELY MANAGE SECRETS
+ > Any sensitive information like 
+	- digital certificates, 
+	- database credentials, 
+	- passwords, and 
+	- API encryption keys
+ > Vault is also the RECOMMENDED configuration mode for HCL Commerce as it was designed to store configuration
+ > HCL commerce also uses Vault as Certificate Authority to issue certificate to each application to communicate with one another securely
+ > Therefore, ensure that you have a Vault service available for HCL Commerce to access
+ 
+
+
+
+
+Deploy & Configuration in Vault
+ > As discussed in previous slides, Vault is deployed using the helm-chart
+ > We deploy Vault using Jenkins job which refers the helm chart and environment specific yaml file 
+ > The configuration pushed into Vault is referenced from respective env.yaml from ops-config-<brand> repo under location "luxottica_rona/ops-config-cle/helm/vault" in Bitbucket
+
+NOTE:
+1. For local certificate, it uses the podname + both.domainName from env.yaml files
+	> ex: for cleprodauthts-utils pods, if we have "commerce.svc.cluster.local" as 'both.domainName' in env.yaml file, to access the cleprodauthts-utils pods from anywhere (ex: inside cleprodauthts-app), we will be using the certificate "cleprodauthts-utils.commerce.svc.cluster.local" hostname
+	> to test it out, we can issue the command below
+		$ curl -vk https://cleprodauthts-utils.commerce.svc.cluster.local
+2. For accessing a pod, we can either use the port forwarding provided to the pod itself, or the url defined in the ingress for that pod
+
+
+
+
+
+HCL Cache
+ > The HCL Cache extends the capabilities of DynaCache by ADDING REMOTE CENTRALIZED CACHING WITH REDIS, with additional operationsal and monitoring support
+ > Starting with HCL Commerce 9.1, the HCL Cache provider is enabled by default in all containers, and the default caches are configured to use HCL Caches
+ > Dedicated Cache Manager container - The Cache Manager REST endpoints are available from within Kubernetes and can be made available externally by creating a port-forwarding or ingress configuration
+ > The Cache Manager application is DISABLED BY DEFAULT. It can be enabled and deployed with Authoring and Live
+	- if you enable the ingress option (cacheApp.ingress.enabled), the deployment creates an ingress definition for the Cache Manager pod
+	- ex:
+	
+		cacheApp:
+			enabled: true
+			ingress:
+				enabled: false
+ > Sample url from CLE INT: https://cache-cleintlive.luxgroup.net/openapi/ui
+ > Reference: https://help.hcltechsw.com/commerce/9.1.0/developer/concepts/CacheManager.html
+ 
+
+NOTES:
+1. We can see in the getRegisteredCaches endpoint all the caches for each services via Cache Manager application REST API
+2. We have an option to store cache locally. Right now, we have a remote cache using Redis
+3. We can see the cache configuration of each services in the '/SETUP/hcl-cache/cache_cfg.yaml' of the pods
+
+
+
+
+
+
+Repository structure
+ > We have below list of repositories used for ops and backend for the brands that are migrated to N1 product
+	1. Shared Ops Code Repository (ops-code-n1)
+		- It is mandatory that no brand specific configuration or credential is stored in this repository
+	2. Project Ops Configuration repository (ops-config-cle)
+		- This repo contains credentials, configurations, certificates, etc, which which specific for the brand
+	3. Project Ops Configuration specific to dataload (hc-config-cle)
+	4. Backend Code Repository (hc-bp)
+ > repositories that are common in all brands are "hc-bp" and "ops-code-n1"
+ > repositories that are brand specific are "hc-config-<brand>" and "ops-config-<brand>"
+	
+
+
+
+
+Jenkins job workflow
+ > We have multiple Jenkins jobs to support CI/CD like build, deploy, and operationsal
+ > Any job invoked from Jenkins follows the workflow "Jenkins job -> groovy script -> Makefile -> shell script / python / helm"
+ > We can monitor the workflow from Jenkins console
+
+NOTES:
+1. The groovy scripts for all Jenkins jobs are located inside "ops-code-n1/HCLCommerce/jenkins"
+
+
+
+New Jenkins job creation - Example
+Scenario: Add a new "dbclean" Jenkins job
+Files modified:
+ > Create a new groovy file "ops-code-n1/HCLCommerce/Jenkins/dbclean.groovy"
+ > Update "ops-code-n1/Crons/Makefile"
+ > Here, the dbclean.sh script was already available in ts-utils
+	- if the script called from Makefile is new, then commit it
+ > Additionally, to retain this job with Jenkins config reload, we need to add it to the "ops-code-n1/Jenkins/common/Jenkins-job.yaml"
+
+NOTE:
+1. Depending on the job type, we use the 
+corresponding Makefile from "ops-code-n1/"
+	> ex: ops-code-n1/Monitoring, ops-code-n1/HCLCommerce, ops-code-n1/Crons
+3. Each pipeline will have their own groovy script inside ops-config-n1/HCLCommerce/Jenkins folder
+3. We first create the Jenkins job in the int environment, before we push it in the higher environment
+
+
+
+
+HCL Commerce Search Ingest Image Customization
+ > Scenario: Add a new custom connector "auth.analytics" in search ingest pod image
+ > Modifications:
+	1. Developer to commit corresponding json file here
+		- SearchConfig/ingest/connector/auth.analytics/json in hc-bp repository
+	2. From DevOps, we need to ensure this file is copied to the pod during the build	
+		- Update the dockerfile "HCLCommerce/dockerfiles/df-search-ingest-app" with below snippet
+			= COPY connectors/auth.analytics,json /profile/apps/search-ingest.ear/search-ingest.war/WEB-INF/classes/deployments/commerce/
+		- We need to add below snippet to "HCLCommerce/Makefile" to call nifi upgrade connectors/auth
+			= $(KUBECTL) exec $(TS_UTILS) --namespace=$(COMMERCE_NAMESPACE) --base -c "curl -v -X POST http://localhost:30800/connectors/auth.analytics/upgrade -H 'Content-Type:application/json' --data '@/patches/auth.analytics.json'"
+	3. Proceed with build and deployment
+	4. Post deployment validate the pod for updates performed
+	
+	
+NOTE:
+1. Any configurations done inside a pod (ex: search ingest image), will be lost when the pod is restarted. For this reason, we want to edit the actual source code that is used to create the image instead of editing the pod configuration itself. This way, the custom configuration is preserved even after pod restarts
+
+
+
+
+Performance Fine tuning of HCL Commerce Components
+ > Scenario: Initially we had the default configurations of cpu and memory in HCL Commerce
+ > As part of fine tuning, we adjusted the cpu, memory, and java heal for below pods
+	- ElasticSearch
+	- NiFi
+	- ts-application
+	- Query-app
+
+Pods and resource changes due to performance fine tuning
+Nifi:
+ - CPU
+	- request: 500m -> 4
+	- limit: 4 -> 16
+ - Memory
+	- limit: 20G -> 30G
+ - Heap
+	- max: 12G -> 24G
+ - Configurations:
+	1. product stage 1e:
+		- scroll.bucket.size: original value: 1000 -> 175
+		- scroll.page.size: original value: 100000 -> 200000
+	2. N1_customization:
+		- scroll.bucket.size: 1500 -> 1000
+		
+Comments:
+1. Updated nifi conf + update cpu request/limit along with heap value
+
+
+Elastic
+ - CPU
+	- request: 1 -> 3
+	- limit: 2 -> 6
+ - Memory
+	- limit: 10G -> 20G
+ - Heap
+	- request: 8G -> 16G
+	- limit: 8G -> 16G
+ - Configurations:
+	1. Added - indices.memory.index_buffer_size: "20%"
+	
+Comments:
+1. Increase mem limit and heap + index_buffer_size + cpu req and limit
+
+
+
+
+GENERAL NOTES:
+1. ops-code-n1 is where all the docker files for each application/service is stored

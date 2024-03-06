@@ -1,0 +1,526 @@
+Coding 2 - Entity Framework and Implementation of SQL Server DB to Web API
+
+Goal
+Modify SQL Server
+	- add Login
+Add necessary Packages in the Project
+Add .NET Entity Framework Tool
+Create DbContext class and modify it
+Connect SQL Server to WebAPI using ConnectionString
+Add the DbContext to the IServiceCollections in ConfigureService()
+Create a Migration for the Application to SQL Server
+Modify the Model class 
+	- by adding decorations to properties like CONSTRAINTS
+Create new Concrete implementation of ICommanderRepo for SQL server
+	- we will use the DbContext to fill up the implemented methods
+	- we call DbContext by using Dependency Injection
+Replace the Concrete Implementation of the ICommanderRepo in ConfigureService() with the newly created 
+
+Includes:
+
+Migrations
+	> list of instructions given to the Database that to create or recreate a Database Schema that knows our internal representation of our Data within our Application
+	> ex: we have 1 DbSet defined, then the Migration will send an instructor using the DbSet to modify Database Schema by adding a table that represent the said DbSet
+	> if we take a look inside the Migration.cs file, we can see two methods
+		a. Up()
+			= this will create stuff in Database
+		b. Down()	
+			= this will remove/drop stuff in Database
+	> in Up, we can see the functions necessary to create a table, and its define its properties like
+		a. Columns, and its dataType and constraints
+		b. General Constraints of Table
+	> in Down, we can see functions regarding removing/deleting/dropping items in the Database
+
+
+
+
+
+VII. Create the Entity Framework
+	> composed of the Following
+		a. creating DbContext
+		b. configuring SQL Server DB
+
+
+17. Create a new Login account in SQL Server
+	> to create a new Login, go to Logins folder which is in
+		= ServerName > Security > Logins
+	> then rightclick the Logins and select new Login
+	> add a new Login with following property	
+		a. General
+			= fill up Login name and Password (we will use this in connection string later in .NET Core WebAPI)
+			= SQL Server authentication checked
+			= Enforce password policy 
+		b. Server Roles
+			= sysadmin
+	> Creds: CommanderAPI , password
+
+
+
+18. Check if Login is registered in SQL Server
+	> refresh the Server
+	> check Login folder if the Login we made is there
+	
+
+
+19. Disconnect and Connect the Server again
+	> important as to refresh the Login
+	> we can also test the Login we made earlier	
+
+
+
+20. Add neccesary Packages in the Project
+	> open the Commander.csproj file
+		= we will observe it for changes when we install the packages
+	> we will go for .NET CLI method and observing the Commander.csproj file as to not miss any wrong / null installation
+	> not specifying version in .NET CLI command will have the Terminal install the latest stable version
+	> go to nuget.org to search for the packages and search for following packages
+		a. Microsoft.EntityFrameworkCore
+			= to add this to project, type the line below in Terminal			
+			= dotnet add package Microsoft.EntityFrameworkCore  
+		b. Microsoft.EntityFrameworkCore.Design 
+			= dotnet add package Microsoft.EntityFrameworkCore.Design 
+		c. Microsoft.EntityFrameworkCore.SqlServer
+			= dotnet add package Microsoft.EntityFrameworkCore.SqlServer	
+
+
+
+21. Install .NET Entity Framework tool into the project
+	> to add it, type the line below in Terminal
+		= dotnet tool install --global dotnet-ef
+	> to check the version and functionalities of Entity Framework, type 
+		= dotnet-ef
+	> if you have the EntityFramework tools install, when you type dotnet-ef, you should see something like this
+
+                     _/\__       
+               ---==/    \\
+         ___  ___   |.    \|\
+        | __|| __|  |  )   \\\
+        | _| | _|   \_/ |  //|\\
+        |___||_|       /   \\\/\\
+
+Entity Framework Core .NET Command-line Tools 5.0.7
+
+Usage: dotnet ef [options] [command]
+
+Options:
+  --version        Show version information
+  -h|--help        Show help information
+  -v|--verbose     Show verbose output.
+  --no-color       Don't colorize output.
+  --prefix-output  Prefix output with level.
+
+Commands:
+  database    Commands to manage the database.
+  dbcontext   Commands to manage DbContext types.
+  migrations  Commands to manage migrations.
+
+
+
+
+
+22. Creating DbContext C# file and Class
+	> inside the Data folder create a new C# file
+		= name it CommanderContext.cs
+	> inside the CommanderContext.cs, add the following
+		a. namespace the corresponds to file location
+		b. class named CommanderContext
+
+
+namespace Commander.Data
+{
+    public class CommanderContext
+    {
+        
+    }
+}
+
+
+
+
+23. Modify the CommanderContext class
+	> inherit the DbContext class from the Microsoft.EntityFrameworkCore
+		= we need to add the Microsoft.EntityFrameworkCore in the using directive
+	> add a Constructor to the CommanderContext
+		= ctor for shortcut
+		= parameters include
+			a. DbContextOptions<> opt
+				= pass CommanderContext as type inside <>
+		= inherit the DbContext class contructor by attaching : base() at the Constructor method
+			> pass the DbContextOptions<> parameter to base()
+
+INSIDE CommanderContext.cs file
+
+using Microsoft.EntityFrameworkCore;
+
+namespace Commander.Data
+{
+    public class CommanderContext : DbContext
+    {
+       public CommanderContext(DbContextOptions<CommanderContext> opt) : base(opt)
+       {
+           
+       } 
+    }
+}
+	
+
+
+
+
+24. Create a representation of Model object into the DbContext
+	> this will make the DbContext make a table in Database that represents the Model data (in our case the Command model)
+	> to do this, we will add a DbSet properties to the DbContext class
+	> this DbSet<> property will have Command class as type
+		= the name of this DbSet<> will be the table Name of the Entity inside the Database
+	> if we have more Models, to map them in Database, we will also need to CREATE a DbSet property for each of them in DbContext class
+
+INSIDE CommanderContext class
+
+	public DbSet<Command> Commands { get; set; }
+
+
+
+
+25. Define the ConnectionString for us to connect the Application to SqlServer
+	> go to appsettings.json and create another item in appsettings.json
+		= name it ConnectionStrings
+	> give the ConnectionStrings a list of item as value
+	> inside this list, add another item that will hold the string to connect to our SQL Server
+	> as for the format of ConnectionString, refer to this link
+		= https://www.connectionstrings.com/sql-server/
+	> if your connectionString have backslash \, then replace it with double backslash \\
+
+INSIDE appsettings.json as one of its item
+
+  "ConnectionStrings": 
+  {
+    "CommanderConnection" : "Server=YARO\\YARO;Initial Catalog=CommanderDB;User ID=CommanderAPI;Password=password"
+  }
+
+
+
+
+
+26. Add the DbContext in the ConfigureServices()
+	> call the AddDbContext<>() of IServiceCollection parameter of ConfigureServices()
+	> set the type of AddDbContext<>() to the CommanderContext class we created earlier
+	> for the parameter, pass an opt variable using lambda expression
+		= define the opt var as opt.UseSqlServer()
+		= inside UseSqlServer(), pass our ConnectionString using Configuration.GetConnectionString()
+		= pass the item inside the ConnectionString item (in our case, the CommanderConnection)
+
+INSIDE ConfigureServices() of StartUp class
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<CommanderContext>(opt => opt.UseSqlServer
+            (Configuration.GetConnectionString("CommanderConnection")));
+            
+            services.AddControllers();
+            services.AddScoped<ICommanderRepo, MockCommanderRepo>();
+        }
+
+
+
+
+
+27. Create a Migration for the Application to SQL Server
+	> make sure that the build has no error, else the Migration will not be created
+	> type the following line in the Terminal
+		= dotnet ef migrations add MigrationName
+	> also to remove a Migration, type this line
+		= ef migrations remove
+	> replace the MigrationName to anything you want
+	> typically, you want to name it based on the changes made
+	> for our case, since its the initial migration made we will name it InitialMigration
+		= dotnet ef migrations add InitialMigration
+	> if the Migration creation is successful, we will a Migration folder inside the Root folder of project and the MigrationName inside it
+
+
+INSIDE InitialMigration.cs
+
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace Commander.Migrations
+{
+    public partial class InitialMigration : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Commands",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HowTo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Line = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Platform = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Commands", x => x.Id);
+                });
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "Commands");
+        }
+    }
+}
+
+
+
+
+
+
+28. Remove the Migration that we made, since we will modify some of the CreateTable content
+	> we will do this by modifying the Model class but for now, lets remove the Migrations we created
+	> we do this by typing the following in Terminal
+		= ef migrations remove
+
+
+
+
+29. Modify the Model class
+	> we will need System.ComponentModel.DataAnnotations library in the using directives in order to add decorations
+	> add these decorations to the properties of the Model class (Command class)
+		a. [Required]
+			= equivalent of NOT NULL constraint of column 
+			= the properties needs to have data to be passed to it
+			= add this on the HowTo, Line, Platform properties
+		b. [Key]
+			= will set the column that represent this properties the PRIMARY KEY
+			= add this on the Id property
+			= even if we dont add this, the Migration will know that it will be the PRIMARY KEY based on its name
+		c. [MaxLength()]
+			= set the max length of data in the column that represent the property by specific amount in the argument
+			= add this to the HowTo property
+	
+
+INSIDE Command.cs
+
+using System.ComponentModel.DataAnnotations;
+
+namespace Commander.Models
+{
+    public class Command
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(250)]
+        public string HowTo{ get; set; }
+
+        [Required]
+        public string Line { get; set; }
+
+        [Required]
+        public string Platform { get; set; }
+    }
+}
+
+
+
+
+
+30. Create the Migration again
+	> call this line in Terminal again
+		= dotnet ef migrations add InitialMigration
+	> observe changes in the content of Migration file
+
+
+INSIDE InitialMigration.cs
+
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace Commander.Migrations
+{
+    public partial class InitialMigration : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Commands",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HowTo = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Line = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Platform = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Commands", x => x.Id);
+                });
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "Commands");
+        }
+    }
+}
+
+
+
+
+31. Run the Migration file to update the database
+	> we do this by calling
+		= dotnet ef database update
+	> observe changes in the SQL Server database
+	> if we look at the Database, we will see the following
+		a. CommanderDB
+			> corresponds to the Initial Catalog property in appsettings.json > ConnectionStrings > CommanderConnection
+			> inside the DB, we can see two tables
+		b. EFMigrationsHistory table
+			> composed of two columns
+				= MigrationID and Product Version
+		c. Commands
+			> corresponds to the name attribute in the CreateTable() of InitialMigration.cs
+			> this is the DbSet we define earlier in the DbContext
+			> the columns corresponds to the properties we defined in the Command class
+
+
+
+
+
+32. Populate the Commands table for testing later in SQL Server
+	> right click Commands table then Edit Top 100
+	> input some data into it
+	> 1, How to create migrations, dotnet ef migrations add <Name of Migration>, EF Core
+	> 2, How to run migrations, dotnet ef database update, EF Core
+	> for whatever reason the id DOES NOT START at 1, TRUNCATE the table first
+		= TRUNCATE TABLE tableName
+
+
+	Now, we will create another Concrete Implementation for the ICommandRepo (SQLCommanderRepo). This will use the DbContext (CommanderContext) in order to fetch the return data directly from the SqlServer. For us to do this, we will need to Inject the DbContext dependency to the Repository class all call the method inside the DbContext to fetch data from SQL Server.
+
+
+33. Create another Concrete Implementation for the ICommandRepo
+	> name the file SQLCommanderRepo.cs
+	> inside the file, add the following
+		a. namespace corresponding to the file location
+		b. create a class that implements ICommanderRepo
+			> name it SqlCommanderRepo
+		c. Implement the methods necessary from ICommanderRepo
+
+
+INSIDE SqlCommanderRepo.cs
+
+using System.Collections.Generic;
+using Commander.Models;
+
+namespace Commander.Data
+{
+    public class SqlCommanderRepo : ICommanderRepo
+    {
+        public IEnumerable<Command> GetAllCommands()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Command GetCommandById(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}
+
+
+
+
+
+34. Inject the DbContext Service into the SqlCommanderRepo
+	> create a Constructor that accepts CommadnerContext class as parameter
+	> add a CommanderContext field member in SqlCommanderRepo
+	> assign the CommanderContext parameter of Constructor to the Field member one
+
+INSIDE SqlCommanderRepo class
+
+        private readonly CommanderContext _context;
+
+        public SqlCommanderRepo(CommanderContext context)
+        {
+            _context = context;            
+        }
+
+
+
+
+35. Use the CommanderContext field member to add functionality to the implemented methods
+	> we can use the Commands method of the CommanderContext to fetch the data from SQL
+	> the DbSet object that the Commands() return represents the data inside the Commands table in SQL Server	
+	> using the ToList() and FirstOrDefault() of the System.Linq library, we will fetch all of data AND fetch a specific data inside the DbSet given a certain condition (like if Model data's ID inside DbSet is equal to a certain number)
+	
+
+INSIDE the SqlCommanderRepo() class
+
+        public IEnumerable<Command> GetAllCommands()
+        {
+            return _context.Commands.ToList();
+        }
+
+        public Command GetCommandById(int id)
+        {
+            return _context.Commands.FirstOrDefault(p => p.Id==id);
+        }
+			
+
+
+
+
+36. In the ConfigureServices() of StartUp class, replace the Concrete Implementation class of the ICommanderRepo
+	> from MockCommanderRepo to SqlCommanderRepo
+
+INSIDE StartUp class
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<CommanderContext>(opt => opt.UseSqlServer
+            (Configuration.GetConnectionString("CommanderConnection")));
+            
+            services.AddControllers();
+            services.AddScoped<ICommanderRepo, SqlCommanderRepo>();
+            // services.AddScoped<ICommanderRepo, MockCommanderRepo>();
+        }
+
+
+
+
+37. Test the application
+	> save all, build and run the WebApi
+	> send an http request using Postman to the WebApi
+	> observe the response
+
+RESPONSE to http://localhost:5000/api/commands
+
+[
+    {
+        "id": 1,
+        "howTo": "How to create migrations",
+        "line": "dotnet ef migrations add <Name of Migration>",
+        "platform": "EF Core"
+    },
+    {
+        "id": 2,
+        "howTo": "How to run migrations",
+        "line": "dotnet ef database update",
+        "platform": "EF Core"
+    }
+]
+
+
+RESPONSE FROM http://localhost:5000/api/commands/2
+
+{
+    "id": 2,
+    "howTo": "How to run migrations",
+    "line": "dotnet ef database update",
+    "platform": "EF Core"
+}

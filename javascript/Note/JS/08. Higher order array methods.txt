@@ -1,0 +1,59 @@
+08. Higher order array methods
+
+	
+Higher order array methods
+	> methods used to iterate, manipulate, or create new array based on a source array
+	> these methods TAKES function as parameter
+		- these functions defines what we will do to each of the elements inside array
+	> each of these methods have the item as parameter
+	> some of these Higher order array methods are
+		a. forEach(consumer function(item))
+			> just iterates to all the items in the array
+			> the function have access to the items in array
+		b. filter(predicate function(item))
+			> filters the array
+			> takes a function that contains a condition for an item to pass through the filter
+				- returns a boolean value
+				- if it fails, will not be included in resulting array
+		c. map(callbackFn function(item))
+			> creates a new array based on source array
+			> takes a function that contains how the items from source array will be mapped to an item to new array
+				- returns an object
+
+EX:
+const todos = [
+  {
+    id: 1,
+    text: "Take out trash",
+    isCompleted: true,
+  },
+  {
+    id: 2,
+    text: "Meeting with boss",
+    isCompleted: true,
+  },
+  {
+    id: 3,
+    text: "Dentist appt",
+    isCompleted: false,
+  },
+];
+
+// forEach
+todos.forEach((todo) => {
+  console.log(todo.text);
+});
+
+// map, returns an array
+const text = todos.map((todo) => todo.text);
+console.log(text);
+
+// filter
+const filteredArray = todos.filter((todo) => todo.isCompleted);
+console.log(filteredArray);
+
+// filter + map
+const filteredText = todos
+  .filter((todo) => todo.isCompleted)
+  .map((todo) => todo.text);
+console.log(filteredText);

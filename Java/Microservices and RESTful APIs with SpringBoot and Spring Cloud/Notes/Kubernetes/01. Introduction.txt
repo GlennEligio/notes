@@ -1,0 +1,75 @@
+01. Introduction
+
+
+Docker (review)
+	> Create Docker images for each microservice
+	> Docker image contains everything a microservice needs to run:
+		- Application RUntime (SDKs, Runtimes, etc)
+		- Application code
+		- Dependencies
+	> You can run these docker containers the same way on any infrastructure
+		- Your local machine
+		- Corporate data center
+		- Cloud
+
+
+Container Orchestration
+	> tools used to orchestrate/manage Containers
+	> typical features include:
+		1. Auto Scaling 		- Scale containers based on demand
+		2. Service Discovery		- Help microservices find one another
+		3. Load Balancer		- Distribute load among multiple instances of a microservice
+		4. Self Healing			- Do health checks and replace failing instances
+		5. Zero Downtime Deployment	- Release new versions without downtime
+
+
+Container Orchestration Tools Options
+1. AWS Specific
+	- AWS Elastic Container Service  (ECS)
+	- AWS Fargate: Serverless version of AWS ECS
+2. Cloud Neutral - Kubernetes
+	> can be run in anywhere, like data center or any k8s services like
+		a. AWS - Elastic Kubernetes Service (EKS)
+		b. Azure - Azure Kubernetes Service (AKS)
+		c. GCP - Google Kubernetes Engine (GKE)
+			-> have free trial for Google accounts
+	> EKS/AKS does not have a free tier
+
+
+Docker
+1. Standaridized Application Packaging
+	> same packaging for all types of application (Docker Image)
+2. Features include
+	a. Language Neutral	
+		> we can create Docker image of application of any languages
+	b. Cloud Neutral
+		> major companies have available Container Solutions to be used
+	c. Enables Standardization
+3. Challenges includes
+	- Managing multiple microservices with multiple instances (like 1000's of them)
+
+
+
+Kubernetes
+1. Container Orchestration tools
+	> K8s is an Container orchestration tools
+	> with K8s , we can manage thousands of instances or microservices DECLARATIVELY
+		- we only need to send commands and K8S will do the work for us
+2. Features includes
+	a. Auto scaling
+		- we can easily scale up or down any deployment we have in K8s cluster with a simple command
+	b. Service Discovery
+		- we can easily set up Service Discovery inside a K8s cluster
+		- we can do this by "exposing" Deployments through specific Ports in the K8s cluster
+	c. Load Balancing
+		- K8s will automatically do the Load balancing for us by sharing the load/traffic between each instances
+	d. Self Healing
+		- K8s will monitor the deployments it manages
+		- When it sees that one of the instances running goes down, it immediately creates a new one to replace it
+	e. Zero Downtime Deployments
+		- When migrating to new Deployment, we can set the strategy on how to do it, which includes
+			-> how many percentage/amount of total instances with old version will be down
+			-> how many percentage/amount of instances with new version will be up/created
+		- with this, we can create a Zero Downtime Deployment
+3. Cloud Neutral
+	> there are K8s solution provided by major companies like Amazon, Microsoft Azure, and Google

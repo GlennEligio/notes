@@ -1,0 +1,35 @@
+06 Working with the on prem model
+
+
+Steps on build Data Center
+ > Company hires infrastructure engineers
+ > Sets up one or more data centers
+	- includes buying real estate where we will build the datacenters
+ > Estimates the capacity needed to build data centers
+ 	- includes hardware
+	- TRICKIEST PART, since we will need to do some guessing to know how much resources we needed
+ > Procure the hardware needed
+ > Setup hardware on data center
+	- put machines on rack, and setup cabling
+ > Setup deployment process
+	- add software and network security setup
+
+
+Estimating Data Center capacity
+ > in estimating capacity, we typically plan for the peak
+ > Peak refers to the maximum usage/traffic being loaded in the Data Center
+	- this typically happen during peak hours where many users use the services at the same time
+
+
+
+Typical Data Center
+1. Contains farms of servers
+2. The data center can easily handle typical loads
+3. There will be an occasional peak handling
+	- the data center performance will depend on how much capacity it is designed to handle
+
+
+
+Problem with Data Center
+1. Hardware idle times
+	> since the data center is designed around peak handling, and the peak only happens occasionally, the hardware sits idly in normal occasion

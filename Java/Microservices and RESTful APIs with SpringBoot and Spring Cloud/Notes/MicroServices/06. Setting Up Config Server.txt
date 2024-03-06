@@ -1,0 +1,21 @@
+06. Setting Up Config Server
+
+Config Server
+	> will serve as a centralized server for containing config properties
+	> we will assign this in TCP port 8888
+		server.port=8888
+	> we will give this application a name of spring-cloud-config-server
+		spring.application.name=spring-cloud-config-server
+
+INSIDE application.properties
+# Defines which port it will listen
+server.port=8888
+# Defines the name of this application
+spring.application.name=spring-cloud-config-server 
+
+
+
+Config Server dependencies
+1. Spring Boot DevTools
+2. Spring Cloud Config Server
+	> central management for configuration via Git, SVN, or HashiCorp Vault

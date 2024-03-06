@@ -1,0 +1,21 @@
+03. Maven Archetypes
+
+
+Maven Archetypes
+	> Archetypes can be used to create new Maven projects
+	> Can be created inside the command-line with Maven
+	> Contains template files for a given Maven project
+	> Think of it as a collection of "starter files" for a project
+		- Java Project, Web Project, etc
+
+		archetype := starter project
+
+	> similar to the .NET Framework templates to use
+		- dotnet new webapi, dotnet new webmvc, etc.
+
+
+Common Archetypes
+
+Archetype Artifact ID			Description
+maven-archetype-quickstart		An archetype to generate a sample Maven project
+maven-archetype-webapp			An archetype to generate a sample Maven Webapp project

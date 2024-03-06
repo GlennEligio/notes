@@ -1,0 +1,11 @@
+Introduction
+
+Topics to discuss
+1. HTML Tutorial - setup, vs-code, elements...
+2. HTML Project - HTML in Action
+3. CSS Tutorial - setup, general rules, selectors, colors, units, typography, units in css, css box model, display, options,
+background images, transition, animation
+
+Tools needed:
+1. Web Browser 	ex: Google Chrome
+2. Text Editor	ex: Visual Studio

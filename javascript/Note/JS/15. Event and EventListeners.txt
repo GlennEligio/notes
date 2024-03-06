@@ -1,0 +1,67 @@
+15. Event and EventListeners
+
+EVENTS
+addEventListener(String event, Function event)
+	> method of an HTML element
+	> used to add an eventListener to the said HTML	
+	> this method takes two arguments
+		1. String event
+			- refers to the event that it will listen to
+			- ex: 'click' 'mouseover' 'hover'
+		2. Function event
+			- refers to the action that will be triggered if said event happened
+			- this function have 1 parameter called event
+	> event parameter have several properties and functions like
+		a. preventDefault()
+			- method
+			- prevent the default behavior of the event when it happens
+			- ex: when form button is click, by default, it will refresh the page
+		b. target
+			- property
+			- refers to the HTML element that triggered the event
+			- we can then use typical element function and properties to the target
+
+EX: Button's onClickListener
+const btn = document.querySelector(".btn");
+
+btn.addEventListener("click", (e) => {
+  e.preventDefault();
+  console.log(e.target);
+  document.querySelector("#my-form").style.background = "#ccc";
+  document.querySelector("body").classList.add("bg-dark");
+  document.querySelector(".items").lastElementChild.innerHTML =
+    "<h1>Hello</h1>";
+});
+
+
+EX: Form's onSubmitListener
+// Initialize the Form input elements
+const myForm = document.querySelector("#my-form");
+const nameInput = document.querySelector("#name");
+const emailInput = document.querySelector("#email");
+const msg = document.querySelector(".msg");
+const userList = document.querySelector("#users");
+
+// Add eventListener to the form's submit event
+myForm.addEventListener("submit", onSubmit);
+
+function onSubmit(e) {
+  e.preventDefault();
+  if (nameInput.value === "" || emailInput.value === "") {
+    msg.classList.add("error");
+    msg.innerHTML = "Please enter all fields";
+
+    setTimeout(() => msg.remove(), 3000);
+  } else {
+    const li = document.createElement("li");
+    li.appendChild(
+      document.createTextNode(`${nameInput.value} : ${emailInput.value}`)
+    );
+
+    userList.appendChild(li);
+
+    // Clear fields
+    nameInput.value = "";
+    emailInput.value = "";
+  }
+}

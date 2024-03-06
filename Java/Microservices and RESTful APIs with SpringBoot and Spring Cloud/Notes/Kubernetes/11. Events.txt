@@ -1,0 +1,19 @@
+11. Events
+
+Events
+	> resource in K8s that defines the events that is happening in cluster
+	> shows information which include
+		- creationTimeStamp
+		- type
+		- reason
+		- object
+		- message
+
+Commands
+kubectl get events
+	> shows all events that happened inside K8s cluster
+	> options include
+		--sort-by=.<EventField>
+			> used to sort the "kubectl get event" command
+			> to see the event fields, use "kubectl explain event"
+			> to sort these by creationTime, use "--sort.by=.metadata.creationTimestamp"

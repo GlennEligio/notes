@@ -1,0 +1,519 @@
+Capstone Problem Statement.
+
+Part 1: 
+Step1. add data into catentry table field 3,4  (hint via dataload)
+Field 3: product ranking
+field 4 : rating Company
+Table Updated : CATENTRY, CATENTRYDESC
+
+Products with updated field3, field4
+CAC024_2401 - Product Bean - Widescreen LCD Monitor 12623
+CAC024_240101	12624
+CTA023_2301	- Product Bean - Reading Table 12672
+CTA023_230101 12673
+CAC024_2402, Inkjet Printer 12625 - DELETED ACCIDENTALLY
+CAC024_240201 12626
+HBA031_3101 - Product Bean - Klaus Silver Towel Rack 12806
+HBA031_310101 12807
+HME037_3701, Cold-Be-Gone Vitamin C and Zinc Lozenges 12786
+HME037_370101 12787
+CAC024_2403, Wireless Access point, 12627
+CAC024_240301, 12628
+CAC024_2404, Wireless Adapter 12629
+CAC024_240401 12630
+CDE021_2101, Bedroom Computer 12652
+CDE021_210101 12653
+CDE021_2102, Office Computer 12654
+CDE021_210201 12655
+CTA023_2302, Kitchen Table 12674
+CTA023_230201 12675
+CTA023_2303, Portable Table 12676
+CTA023_230301 12677
+CTA023_2304, Budget Table 12678
+CTA023_230401 12679
+CTA023_2305, Multimedia Tablet 12680
+CTA023_230501 12681
+CTA023_2306, Home Table 12682
+CTA023_230601 12683
+CLA022_2201, Child Laptop 12660
+CLA022_220101 12661
+CLA022_2202, Bedroom Laptop 12662
+CLA022_220201 12663
+CLA022_2203, Travel Laptop 12664
+CLA022_220301 12665
+CLA022_2204, Student Laptop 12666
+CLA022_220401 12667
+CLA022_2205, Office Laptop 12668
+CLA022_220501 12669
+CLA022_2206, Budget Laptop 12670
+CLA022_220601 12671
+
+
+
+
+Step2: 
+ADd these 2 fields to SOlr index and display the information on PDP page  (Solr Index extension, refer to product ranking customization)
+
+
+
+
+
+Step3: 
+Add one attribute for product (dataload) : is product gift wrapable
+Tables to be updated :  ATTR, ATTRVAL, ATTRVALDESC, 
+
+ATTR_ID: 7000000000000000014
+
+
+
+
+
+
+Step4 : 
+On PDP page : Add product to basket
+
+
+
+
+Step5: allow customer to add gift wrap service and add a message save in Order if Gift wrap is available and customer selects the checkbox for gift wrap
+Hint (Data to be saved in ORDITEMEXTATTR
+
+AddOrderItem action
+AjaxRESTOrderItemAdd
+Add2ShopCartAjax
+AddItem2ShopCartAjax
+crs-web/WebContent/AuroraStorefrontAssetStore/javascript/Common
+ShopperActions.jsp
+ShopperActions_UI.jspf 
+ShopperAction_Data.jspf
+
+/crs-web/WebContent/Widgets_801/com.ibm.commerce.store.widgets.PDP_ShopperActions/ShopperActions_UI.jspf
+	> line 70
+/crs-web/WebContent/AuroraB2BStorefrontAssetStore/javascript/Common/ShoppingActions.js
+	> line 388, 413, 424, 472
+/Stores/WebContent/WEB-INF/config/com.ibm.commerce.order/rest-template-config.xml
+	> line 146
+	
+	
+WebSphereCOmmerceServerExtensionsData
+	> EAR Libraries
+		> Order-OrderCaptureLogic.jar
+			> com.ibm-commerce.order.beans
+	
+
+Step6: 
+On Order confirmation: display if gift warp service was selected by customer and display the gift message
+
+
+/crs-web/WebContent/AuroraStorefrontAssetStore/ShoppingArea/CheckoutSection/SingleShipment/OrderItemDetailSummary.jsp
+	> line 355
+	
+<%-- START: CUSTOMVIEW SHOW IF GIFTWRAPPED AND THE MESSAGE --%>
+<c:if test="${!empty orderItem.orderItemExtendAttribute}">
+	<c:if test="${orderItem.orderItemExtendAttribute[0].attributeName == 'GIFT_MESSAGE'}">
+		<span>Gift wrapped? Yes</span>
+		<br/>
+		<span>Gift Message: <c:out value="${orderItem.orderItemExtendAttribute[0].attributeValue}"/></span>
+	</c:if>
+</c:if>
+<%-- END: CUSTOMVIEW SHOW IF GIFTWRAPPED AND THE MESSAGE --%>
+
+
+
+
+
+
+
+This will cover below:
+1. dataload
+2. Solr index customization
+3. extend controller command
+4. extend shopping cart view, PDP view and Order Confirmation View
+5. Update Rest handlers
+
+Part 2:
+Step1:
+Complete User registration : add 2 fields
+User favourite colour
+favourite food
+Save in custom table, using JPA. Extend the user registration command
+	> favourite colour and food are MANDATORY
+	
+NOTES:
+1. Use wcst:message next time in the RegistrationForm_UI, line 407
+	
+/crs-web/WebContent/Widgets_801/com.ibm.commerce.store.widgets.RegistrationForm/RegistrationForm.jsp
+/crs-web/WebContent/AuroraStorefrontAssetStore/javascript/UserArea/LogonForm.js
+/Stores/WebContent/WEB-INF/config/com.ibm.commerce.person/rest-template-config.xml
+/Stores/src/struts-wcs-stores.xml
+/Stores/WebContent/WEB-INF/struts-config.xml
+com.ibm.commerce.usermanagement.commands.UserRegistrationAddCmd
+	> located in WebSphereCommerceServerExtensionsData, EAR Libraries, Member-MemberManagementLogic.jar, com.ibm.commerce.usermanagement.commands
+com.ibm.commerce.usermanagement.commands.UserRegistrationAddUBFCmdImpl
+	> original classname impl
+com.abc.commerce.usermanagement.commands.CustomUserRegistrationAddCmdImpl
+com.ibm.commerce.usermanagement.commands.UserRegistrationCmd
+com.abc.commerce.usermanagement.commands.CustomUserRegistrationCmdImpl
+	
+WC_UserRegistrationAddForm_div_7
+WC_AddressEntryForm_div_firstname
+WC_UserRegistrationAddForm_div_19 email
+WC_UserRegistrationAddForm_div_23 phone number
+WC_UserRegistrationAddForm_FormInput_email1_In_Register_1
+WC_UserRegistrationAddForm_div_16
+WC_UserRegistrationAddForm_div_34
+WC_UserRegistrationAddForm_div_38 - highest number div
+
+
+									<%-- START: CUSTOMVIEW ADDING CUSTOM INPUT FOR FAVOURITE FOOD AND COLOR --%>
+									<div class="column" id="WC_UserRegistrationAddForm_div_39">
+										<div class="column_label"
+											id="WC_UserRegistrationAddForm_div_40">
+											<span class="spanacce"> <label
+												for="WC_UserRegistrationAddForm_FormInput_favouriteFood_In_Register_1">
+													<%-- USE THE wcst:message tags after --%> <%-- <wcst:message bundle="${widgetText}" key="VERIFY_PASSWORD3" /> --%>
+													Favourite food
+											</label>
+											</span>
+											<%-- <wcst:message bundle="${widgetText}" key="VERIFY_PASSWORD3" /> --%>
+											Favourite food <span class="required-field"
+												id="WC_UserRegistrationAddForm_div_41"> *</span>
+										</div>
+										<input class="inputField" size="35" maxlength="50"
+											aria-required="true" name="favouriteFood"
+											id="WC_UserRegistrationAddForm_FormInput_favouriteFood_In_Register_1"
+											type="text" autocomplete="off"
+											value="<c:out value="${paramSource.favouriteFood}"/>" />
+									</div>
+									<div class="column" id="WC_UserRegistrationAddForm_div_42">
+										<div class="column_label"
+											id="WC_UserRegistrationAddForm_div_43">
+											<span class="spanacce"> <label
+												for="WC_UserRegistrationAddForm_FormInput_favouriteColour_In_Register_1">
+													<%-- USE THE wcst:message tags after --%> <%-- <wcst:message bundle="${widgetText}" key="VERIFY_PASSWORD3" /> --%>
+													Favourite colour
+											</label>
+											</span>
+											<%-- <wcst:message bundle="${widgetText}" key="VERIFY_PASSWORD3" /> --%>
+											Favourite colour <span class="required-field"
+												id="WC_UserRegistrationAddForm_div_44"> *</span>
+										</div>
+										<input class="inputField" size="35" maxlength="50"
+											aria-required="true" name="favouriteColour"
+											id="WC_UserRegistrationAddForm_FormInput_favouriteColour_In_Register_1"
+											type="text" autocomplete="off"
+											value="<c:out value="${paramSource.favouriteColor}"/>" />
+									</div>
+									<%-- END: CUSTOMVIEW ADDING CUSTOM INPUT FOR FAVOURITE FOOD AND COLOR --%>
+									
+									
+									<method name="registerPerson" httpMethod="POST" path="">
+			<template>
+				<![CDATA[{
+				"storeId" : "$storeId",
+				"catalogId" : "$catalogId",
+				"errorViewName" : "$errorViewName",
+				"registerType" : "$registerType",
+	
+				"logonId" : "$logonId",
+				"logonPassword" : "$logonPassword",
+				"logonPasswordVerify" : "$logonPasswordVerify",
+			  	"firstName" : "$firstName",
+			    "lastName" : "$lastName",
+			    "appendRootOrganizationDN" : "$appendRootOrganizationDN",
+			    "parentMember" : "$parentMember",
+			    "parentMemberId" : "$parentMemberId",
+				"orgizationId" : "$orgizationId",
+				"organizationDistinguishedName" : "$parentMember",
+				"authToken" : "$authToken",
+			    "receiveEmailPreference": [
+					{
+						"value": "$receiveEmail",
+						"storeID": "$storeId"
+					}
+				],			
+				"receiveEmail" : "$receiveEmail",
+				"receiveSMSNotification" : "$receiveSMSNotification",
+				"receiveSMS" : "$receiveSMS",
+				"receiveSMSPreference": [
+					{
+						"storeID": "$storeId",
+						"value": "$receiveSMSNotification"
+					}
+				],
+			   	"bestCallingTime" : "$bestCallingTime",
+		    	"businessTitle" : "$businessTitle",
+		    	"organizationUnitName" : "$organizationUnitName",
+		    	"organizationName" : "$organizationName",
+		    	"personTitle" : "$personTitle",
+	
+			   	"profileType" : "$profileType",
+			    "challengeAnswer":"$challengeAnswer",
+				"challengeQuestion" : "$challengeQuestion",
+	
+				"city" : "$city",
+				"state" : "$state",
+				"country" : "$country",
+				"zipCode" : "$zipCode",
+				"gender" : "$gender",
+			    "preferredLanguage" : "$preferredLanguage",
+				"preferredCurrency" : "$preferredCurrency",
+				"addressLine": [
+			      		"$address1",
+			      		"$address2",
+			      		""
+			      		],
+	
+				"email1" : "$email1",
+		    	"email2" : "$email2",
+		    	"phone1" : "$phone1",
+		    	"fax1" : "$fax1",
+				"mobileDeviceEnabled" : "$mobileDeviceEnabled",
+				"mobilePhone1" : "$mobilePhone1",
+				"mobilePhone1Country" : "$mobilePhone1Country",
+				"mobileCountryCode" : "$mobileCountryCode",
+	
+				"birthdayEnabled" : "$birthdayEnabled",
+				"curr_year" : "$curr_year",
+				"curr_month" : "$curr_month",
+				"curr_date" : "$curr_date",
+				"dateOfBirth" : "$dateOfBirth",
+				"birth_year" : "$birth_year",
+				"birth_month" : "$birth_month",
+				"birth_date" : "$birth_date",
+				"privacyNoticeVersion" : "$privacyNoticeVersion",
+    			"marketingTrackingConsent" : "$marketingTrackingConsent",
+    			"favouriteFood": "$favouriteFood",
+    			"favouriteColour":"$favouriteColour"
+				
+	     			}
+				]]>
+			</template>
+		</method>
+		
+		com.abc.commerce.favourites.beans.FavouriteDataBean
+		com.abc.commerce.favourites.commands.SaveFavouriteControllerCmd
+		saveFavouriteDetails
+									
+									
+CREATE TABLE X_CUSTOM_USER_INFORMATION (
+CUSTOM_USER_INFORMATION_ID BIGINT NOT NULL,
+X_USER_ID VARCHAR(254),
+FAVORITE_COLOR VARCHAR(254),
+FAVORITE_FOOD VARCHAR(254),
+OPTCOUNTER SMALLINT NOT NULL DEFAULT 0;
+);
+
+ALTER TABLE X_CUSTOM_USER_INFORMATION
+ADD PRIMARY KEY (CUSTOM_USER_INFORMATION_ID);
+
+CREATE UNIQUE INDEX I0000_X_CUSTOM_USER_INFORMATION ON X_CUSTOM_USER_INFORMATION
+(
+CUSTOM_USER_INFORMATION_ID ASC
+);
+
+CREATE UNIQUE INDEX I0000_X_CUSTOM_USER_INFORMATION ON X_CUSTOM_USER_INFORMATION
+(
+X_USER_ID ASC
+);
+
+INSERT INTO KEYS (KEYS_ID, TABLENAME, COLUMNNAME, COUNTER, PREFETCHSIZE, LOWERBOUND, UPPERBOUND,
+OPTCOUNTER)
+VALUES ((SELECT MAX(KEYS_ID) + 1 FROM KEYS), 'X_CUSTOM_USER_INFORMATION', 'CUSTOM_USER_INFORMATION_ID', 0000, 1, 1000, 999999, 1);
+
+commit;
+
+
+	@Override
+	protected Response registerPerson(HttpServletRequest request, String responseFormat, String storeId)
+			throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> requestMap = getMapFromRequest(request, responseFormat);
+		String favouriteFood = (String) requestMap.get("favouriteFood");
+		String favouriteColor = (String) requestMap.get("favouriteColour");
+		System.out.println("Fav color, " + favouriteColor + " favouriteFood " + favouriteFood);
+		return super.registerPerson(request, responseFormat, storeId);
+	}
+									
+
+
+Step2:
+Display user information in profile
+
+/crs-web/WebContent/WEB-INF/spring/AuroraStorefrontAssetStore/controllers-ext.xml
+/crs-web/WebContent/Widgets_801/com.ibm.commerce.store.widgets.AccountSummary/AccountSummary_Data.jspf
+/WebSphereCommerceServerExtensionsLogic/src/com/abc/commerce/favourites/handler/FavouriteHandler.java
+
+/crs-web/WebContent/Widgets_801/com.ibm.commerce.store.widgets.PersonalInformation/PersonalInformation_UI.jspf
+/crs-web/WebContent/WEB-INF/xml/config/com.abc.commerce.favourite/rest-template-config.xml
+/crs-web/WebContent/WEB-INF/spring/AuroraStorefrontAssetStore/controllers-ext.xml
+wc-server.xml
+
+
+Questions:
+1. Do we need to add new catalog entries in the database? Or we will just update the field3 and field4 of the catalog entries present
+
+Part 1 Step 5
+1. How to make the HCL Commerce use the -ext.jspf file instead of the original
+
+
+
+	<c:when test="${!empty definingAttributeList }>
+		<c:forEach var="attribute" items="${definingAttributeList}"
+				varStatus="aStatus">
+				<c:set var="attributeName" value="${attribute[0]}" />
+				<c:set var="attributeValues" value="${attribute[1]}" />
+		</c:forEach>
+	</c:when>
+	
+	
+	
+		<c:when test="${!empty definingAttributeList }">
+		<c:forEach var="attrHolder" items="${definingAttributeList}"
+				varStatus="aStatus">
+			<c:set var="attrName" value="${attrHolder[0]}" />
+			<c:set var="attrVal" value="${attrHolder[1]}" />
+			<c:if test="${attrName == 'GiftWrappable'} " >
+				<br/>
+				<span>Gift wrapped?</span><input type="checkbox">
+			</c:if>
+		</c:forEach>
+	</c:when>
+	
+	<c:when test="${!empty definingAttributeList }">
+		<c:out value="${definingAttributeList}">
+	</c:when>
+	
+	
+	
+	
+						<script type="text/javascript">
+							$(document).ready(function() {
+								$("#giftServiceCheckboxInput").change(function() {
+									if(this.checked) {
+										$("#giftServiceMessageInput").show();
+									} else {
+										$("#giftServiceMessageInput").hide();
+									}
+								})
+							})						
+						</script>
+						
+						
+						
+	<!-- START: CUSTOMVIEW SHOWING GIFT SERVICE UI IF PRODUCT IS GIFTABLE -->
+	<c:forEach var="attrHolder" items="${definingAttributeList}">
+		<c:set var="attrName" value="${attrHolder[0]}" />
+		<c:set var="attrValues" value="${attrHolder[1]}" />
+		<c:if test="${attrName == 'Gift Wrappable' }">
+			<c:if test="${fn:replace(attrValues, search, replaceStr) == 'Yes' }">
+				<div>
+					<span>Gift wrap?</span> <input type="checkbox"
+						id="giftServiceCheckboxInput"> <br>
+				</div>
+				<div id="giftServiceMessageSection" style="display: none">
+					<span>Gift Message:</span> <br />
+					<textarea id="giftServiceMessageTextInput"></textarea>
+				</div>
+				<script type="text/javascript">
+						$(document).ready(function() {
+							$("#giftServiceCheckboxInput").change(function() {
+								if(this.checked) {
+									$("#giftServiceMessageSection").show();
+								} else {
+									$("#giftServiceMessageSection").hide();
+								}
+							})
+						})						
+				</script>
+			</c:if>
+		</c:if>
+	</c:forEach>
+	<!-- END: CUSTOMVIEW SHOWING GIFT SERVICE UI IF PRODUCT IS GIFTABLE -->
+						
+
+
+/crs-web/WebContent/Widgets_801/com.ibm.commerce.store.widgets.PDP_DescriptiveAttributes/DescriptiveAttributes_Data.jspf
+
+
+
+	@Override
+	public void performExecute() throws ECException { //to execute command; from source > override/implement methods
+		// TODO Auto-generated method stub
+		
+		String[] orderIds = getOrderId();
+		
+		// calling Controller Command
+		
+		try {
+	    	 
+	    	 TypedProperty tp = new TypedProperty();
+	    	 
+	    	 tp.put("productId", "3434344");
+	    	 tp.put("rating", 3);
+	    	 
+			SaveRatingCmd cmd = (SaveRatingCmd) CommandFactory.createCommand("com.abc.commerce.orders.command.SaveRatingCmd", getStoreId());
+			cmd.setCommandContext(getCommandContext());
+           cmd.setRequestProperties(tp);
+		     
+		     cmd.execute();
+		     
+		     TypedProperty rtp = cmd.getResponseProperties();
+		     
+		     System.out.println("Result of saving rating data:"+rtp.getString("result"));
+		     
+		} catch (ECException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.print(getUserId());
+		
+		if (orderIds != null && orderIds.length > 0) {
+
+			String orderId = orderIds[0];
+
+			if (numberOfItems(orderId) >= 5) {
+				throw new ECApplicationException(MyNewMessages._ERR_TOO_MANY_ITEMS,
+						this.getClass().getName(), "performExecute");
+			}
+		}
+		super.performExecute();
+	}
+
+	private int numberOfItems(String orderId) {
+		OrderAccessBean oab = new OrderAccessBean();
+		// fetches the data from the OrderItemsTable using Order id
+		oab.setInitKey_orderId(orderId);
+		int numberOfItems = oab.getOrderItems().length;
+		
+		return numberOfItems;
+	}
+	
+	
+	private static final Logger LOGGER = LoggingHelper.getLogger(AbcCompanyApplyCalculationUsageCmdImpl.class);
+	
+	
+	
+	
+Favourite.java 		
+https://codeshare.io/ZJxAPz
+FavouriteDaoImpl.java	
+https://codeshare.io/YLZdVE
+FavouriteDataBean.java	
+https://codeshare.io/Odx3jj
+GetFavouriteControllerCmd.java	
+https://codeshare.io/6pW7Z0
+GetFavouriteControllerCmdImpl.java	
+https://codeshare.io/eVZ9Bl
+SaveFavouriteControllerCmd.java	
+https://codeshare.io/mpZM90
+SaveFavouriteControllerCmdImpl.java		
+https://codeshare.io/LwxnKg
+FavouriteHandler.java	
+https://codeshare.io/0gWrk8
+FavouriteInfoForm.jspf	
+https://codeshare.io/QnpWow
+com.abc.commerce.favourites.beans.FavouriteDataBean.xml
+https://codeshare.io/8pWy4A
+com.abc.commerce.favourites.commands.SaveFavouriteControllerCmd 	https://codeshare.io/oQZPJX

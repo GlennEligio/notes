@@ -1,0 +1,42 @@
+66 Elastic Load Balancing ELB Overview
+
+Load balancing
+ > Load balancers are servers that FORWARD internet traffic to multiple servers (EC2 instances) downstream
+
+EX:
+Here, the Load balancer redirects the request from User 1,2,3 to the EC2 instances of the applications. Typically, the LB uses instance status like CPU and RAM to determine which instance it will forward the traffic
+
+User 1	---->	|		| <-->	EC2 instance 1
+User 2	---->	| Load balancer	| <-->	EC2 instance 2
+User 3	---->	|		| <--> 	EC2 instance 3
+
+
+Why use Load Balancer?
+ > Spread load across multiple downstream instance
+ > Expose a single point of access (DNS) to your application
+ > Seamlessly handle failures of downstream instances
+ > Do regular health checks to your instances
+	- if health check sent by LB to an EC2 instances fails, it will not be included to the traffic destination
+ > Provide SSL termination (HTTPS) for your websites
+ > High availability across zones
+
+
+
+Why use an Elastic Load Balancer?
+ > An ELB (Elastic Load Balancer) is a managed load balancer
+	- AWS guarantees that it will be working
+	- AWS takes care of upgrades, maintenance, high availability
+	- AWS provides only a few configuration knobs
+ > It costs less to setup own load balancer, but it will be a lot more effort on your end (maintenance, integrations)
+ > Three kinds of load balancers offered by AWS:
+	- Application Load Balancer (HTTP/HTTPS only) - Layer 7
+	- Network Load Balancer (ultra-high performance, allows for TCP) - Layer 4
+		-> good for handling gaming scenario where you need to handle millions of requests per second
+	- Classic Load Balancer (slowly retiring) - Layer 4 & 7
+
+
+
+NOTES:
+1. Loadbalancer in general allows our application/system to be more elastic 
+2. Layers in the Loadbalancer types refers to the OSI layers that it handles
+3. Network Load Bla

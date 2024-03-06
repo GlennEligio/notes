@@ -1,0 +1,56 @@
+15. Docker Compose
+
+Docker Compose
+	> a tool for defining and running multi-container Docker applications
+	> we can do this by creating the yaml file and configuring it for the application's services
+
+Docker Compose installation
+	> for Docker Desktop, Docker Compose is included by default
+	> for other OS (e.g. Linuxx), go to https://docs.docker.com/compose/install
+
+
+Creating Docker Compose
+1. Create a yaml file named docker-compose.yaml
+2. Inside, add the following lines
+
+version: '3.7'
+
+services:
+  currency-exchange:
+    image: shuntjg/mmv2-currency-exchange-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8000:8000"
+    networks:
+      - currency-network
+
+networks:
+  currency-network:
+
+	> version refers to version of Docker Compose file
+	> services: contains services where we can run several service (which then contain Containers) inside
+		-> in this case, theres curreny-exchange service that host the Docker Image of the curreny-exchange service Spring Boot app
+	> networks: contains the Docker Networks to be created using Docker Compose
+
+
+
+
+Docker Compose Command
+1. docker-compose up
+	> create and starts containers
+	> checks all the yaml file in the directory where command is executed
+		-> by convention, we create docker-compose.yaml file
+
+
+EXAMPLE OUTPUT:
+
+[+] Running 2/2
+ - Network 04docker_currency-network       Created                                                                 1.0s
+ - Container 04docker-currency-exchange-1  Created                                                                 1.9s
+Attaching to 04docker-currency-exchange-1
+04docker-currency-exchange-1  | Setting Active Processor Count to 16
+04docker-currency-exchange-1  | Calculated JVM Memory Configuration: -XX:MaxDirectMemorySize=10M -Xmx67617K -XX:MaxMetaspaceSize=137182K -XX:ReservedCodeCacheSize=240M -Xss1M (Total Memory: 700M, Thread Count: 250, Loaded Class Count: 21806, Headroom: 0%)
+04docker-currency-exchange-1  | Enabling Java Native Memory Tracking
+04docker-currency-exchange-1  | Adding 128 container CA certificates to JVM truststore
+04docker-currency-exchange-1  | Spring Cloud Bindings Enabled
+04docker-currency-exchange-1  | Picked up JAVA_TOOL_OPTIONS: -Djava.security.properties=/layers/paketo-buildpacks_bellsoft-liberica/java-security-properties/java-security.properties -XX:+ExitOnOutOfMemoryError -XX:ActiveProcessorCount=16 -XX:MaxDirectMemorySize=10M -Xmx67617K -XX:MaxMetaspaceSize=137182K -XX:ReservedCodeCacheSize=240M -Xss1M -XX:+UnlockDiagnosticVMOptions -XX:NativeMemoryTracking=summary -XX:+PrintNMTStatistics -Dorg.springframework.cloud.bindings.boot.enable=true

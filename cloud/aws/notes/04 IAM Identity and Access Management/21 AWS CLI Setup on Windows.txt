@@ -1,0 +1,15 @@
+21 AWS CLI Setup on Windows
+
+
+Installation page link:
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+Installtion Steps for Windows
+1. Download the msi for AWS CLI V2
+2. Run the msi installer
+3. After installation, check the version of AWS CLI by runnning the command below in CMD
+	> aws --version
+4. You should see something similar to this
+	> aws-cli/2.9.13 Python/3.9.11 Windows/10 exe/AMD64 prompt/off
+
+

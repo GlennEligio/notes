@@ -1,0 +1,47 @@
+01 When To Use (and not to use) Algolia
+
+Algolia
+ > Algolia is a HOSTED SEARCH ENGINE accessible via an API powering CONSUMER GRADE SEARCH for websites and apps
+ > designed in the strong points in SPEED and RELEVANCE
+ > some websites that uses Algolia are:
+	- Twitch auto complete menu
+	- Arc'teryx
+	- AllTrails
+	
+	
+Elements of Algolia
+1. Search Engine
+	> Algolia's brain, highly optimized for consumer grade
+	> In Algolia, it "stores" all the object, with their properties, for the search engine to search
+		- the object data will most likely come from some database of a system
+	> the power of Algolia resides in unique way the engine is able to search specifically in those attributes/properties
+	> the Algolia can also do the following
+		- set priority to each of the attributes to configure their importance
+		- set attributes to be used for filtering
+	> NOTE:
+		1. for other use case, like analyzing huge amount of blogs or numerical data points, then other tools like Elasticsearch would be a better match
+		2. Algolia, while it stores data, should not be confused with a Database. Algolia is primarily only for Full Text Search experience
+		
+2. Hosted
+	> Algolia is a hosted service, meaning that it is operating remotely. The two main reasons for this is 
+		- provide their users with great customization powers without the hassle and complexity of managing and maintaining clusters, nodes, and charts
+		- Speed is so crucial to deliver a good search experience that they have assembled custom servers that meet very specific requirements by controlling the whole stack from hardware to software, and every step on the way, they are able to optimize for speed everywhere
+		
+3. API
+	> Algolia's API allows a vast degree of control over everything we can do with Algolia from 
+		- handling of data pushed to our servers, 
+		- to customization of each aspect of relevance, 
+		- to the final implementation of the frontend
+		
+		
+Summary
+When to use Algolia
+1. Consumer grade search for website or mobile
+2. Fast response time
+3. Relevant results
+4. Dont want to manage servers
+
+When not to use Algolia
+1. No need for speed and relevance
+2. If you have unstructured data
+3. On premise is required

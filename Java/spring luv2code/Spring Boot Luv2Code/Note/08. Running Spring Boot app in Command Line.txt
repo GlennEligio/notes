@@ -1,0 +1,77 @@
+08. Running Spring Boot app in Command Line
+
+
+Why use CLI to run the Spring Boot app
+	> no need to use IDE to run the application
+	> no need to have separate server installed/running
+		- Spring Boot app comes with an embedded server
+	> Spring Boot apps are self-contained
+		- jar file includes application code AND server
+
+
+TWO APPROACHES
+1. java command
+	> to do this, we will need a JDK installed in local machine
+	> to run a Spring Boot app in CLI we will use
+		 ex: java -jar mycoolapp.jar
+	> but, to be able to do this, we would need to build the app using mvnw command
+	> then after building, we will CHANGE DIRECTORY by going to target folder of project
+		- inside the target folder, we will see the final .jar file of the Spring Boot application
+	> then, inside the target folder, we will use the java command
+		ex: java -jar mycoolapp.jar
+
+PROCESS
+1. Build the app
+	mvnw package
+2. Change directory to target folder
+	cd target
+3. Run the jar file
+	java -jar buildname.jar
+
+		
+
+2. mvn or mvnw command
+	> unlike java command, we will not need to have Maven installed to run Spring Boot apps
+		- we can use the wrapper files
+		- but if we have Maven installed we can just use the normal mvn commands
+	> to do this, we must have the Spring Boot Maven plugin in the pom.xml file
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	> to run a Spring Boot app in CLI we will use
+		mvnw package
+		mvnw spring-boot:run
+	> or if we have Maven installed in the local machine
+		mvn package
+		mvn spring-boot:run
+
+PROCESS
+1. Build the Maven project
+	mvnw package
+2. Run the Maven project
+	mvnw spring-boot:run
+
+
+NOTE:
+1. The location of the command line must be the project folder of the Spring Boot what are trying to run
+
+	EX: D:\Study\programming\java the hutt\Workspaces\spring-boot-tutorial-luv2code\04-command-line-demo
+
+2. For the JAVA_HOME error, 
+	- create an system environment variable of JAVA_HOME
+	- set value to the bin folder inside the JDK installation folder
+		ex: JAVA_HOME 
+		     C:\Program Files\Java\jdk-11.0.12\bin
+
+3. To stop the Spring Boot app in Command line, press CTRL+C
+
+
+	
+

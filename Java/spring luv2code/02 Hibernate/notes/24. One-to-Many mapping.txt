@@ -1,0 +1,17 @@
+One to Many Mapping
+
+EXAMPLE:
+	
+An instructor can have many courses
+	> Bi-directional
+
+Many-to-One mapping
+	> many courses can have one structor
+	> inverse/opposite of One-To-Many
+
+Real-World Project Requirement
+1. If you delete an instructor, DO NOT delete the courses
+2. If you delete a course, DO NOT delete the instructor
+	> this means we will not add CascadeType.REMOVE to the mapping annotations
+
+

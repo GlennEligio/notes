@@ -1,0 +1,867 @@
+02 TypeScript Basics & Basic Types
+
+Contents
+01 Module Introduction
+02 Using Types
+03 TypeScript Types vs JavaScript Types
+04 Important Type Casing
+05 Working with Numbers, String & Booleans
+06 Type Assignment & Type Inference
+07 Object Types
+08 Nested Objects & Types
+09 Array Types
+10 Working with Tuples
+11 Working with Enums
+12 The any Type
+13 Union Types
+14 Literal Types
+15 Type Aliases Custom Types
+16 Type Aliases & Object Types
+17 Function Return Types * void
+18 Function as Types
+19 Function Types & Callbacks
+20 The unknown Type
+21 The never Type
+22 Wrap Up
+23 Useful Resources
+
+
+
+
+
+01 Module Introduction
+02 Using Types
+
+Core Types
+ > available in JavaScript
+
+1. number
+	> includes positive, negative, and decimal numbers
+	> ex: 1, 5.3, -10
+2. string
+	> includes characters, string
+	> can be written using single quote, double quote, or with backticks
+	> with backticks, we can create a template literal
+	> ex: 'Hi', "Hi", `Hi`
+3. boolean
+	> just true or false
+	> no "truthy" or "falsy" values (only done behind the scene with JavaScript)
+
+Adding Types to Function parameters in TypeScript
+ > we can assign Types to Function parameters
+ > with this, if we passed value of different Type:
+	1. when we compile the TypeScript, it will give us an error and point to the source of it
+	2. in some IDEs, it will also show an indication to developers that value of different Type is used
+ > to assign Type to function parameter
+	1. add colon next to parameter
+	2. define the 
+
+SYNTAX:
+function fnName(param1: type, param2: type) {
+  // some logic
+}
+
+EX:
+function add(n1: number, n2: number) {
+  return n1 + n2;
+}
+
+
+NOTE:
+1. TypeScript only helps us developers in Compilation time
+	> TypeScript doesnt do anything during Runtime
+
+
+USAGE EX:
+Before TypeScript, if we pass string in one of the parameter, the add function will do a string concatenation.
+But after TypeScript, it will give us compilation error if we dont pass number to add function, and it will only add two input mathematically
+
+// before using Types
+function add(n1, n2) {
+    return n1+n2;
+}
+
+const num1 = '5';
+const num2 = 2.8;
+
+console.log(add(num1, num2));
+
+
+// after using Type
+function add(n1: number, n2: number) {
+    return n1+n2;
+}
+
+const num1 = 5;
+const num2 = 2.8;
+
+console.log(add(num1, num2));
+
+
+
+
+
+
+
+03 TypeScript Types vs JavaScript Types
+
+typeof
+ > keyword available in vanilla JS
+ > used to check the Type of a value/variable
+ > with this, we can strengthen the security when it come to function parameter data type
+	- with this approach, we can resolve type mismatch at RUNTIME
+	- but, as developer, we want to ensure that theres no error happening in RUNTIME
+
+EX:
+function add (n1, n2) {
+  if (typeof n1 !== "number" || typeof n2 !== "number") {
+    throw new Error("Incorrect input!")'
+  }
+  return n1 + n2;
+}
+
+
+TypeScript Types vs JavaScript Types
+ > with JavaScript, it uses "dynamic types"
+	- here, the type of variable is resolved at RUNTIME
+	- uses type inference to determine the type
+ > with Typescript, it uses "static types"
+	- here, the type of variable is set during DEVELOPMENT
+	- uses, defined Types to determine the type
+
+
+
+
+
+
+
+
+04 Important Type Casing
+
+Type Casing
+ > refers whether the Type is written in lowercase or UPPERCASE
+ 
+NOTE:
+1. Core primitive types in Typescript (boolean, number, string) are all in lowercases!
+
+
+
+
+
+
+
+
+
+05 Working with Numbers, String & Booleans
+
+NOTE:
+1. By default, number in JavaScript all numbers are floats
+	- ex: 5 === 5.0 returns true
+
+EX:
+function add(n1: number, n2: number, showResult: boolean, phrase: string) {
+  //   if (typeof n1 !== "number" || typeof n2 !== "number") {
+  //     throw new Error("Incorrect input!");
+  //   }
+  const result = n1 + n2;
+  if (showResult) {
+    console.log(phrase + result);
+  } else {
+    return n1 + n2;
+  }
+}
+
+const num1 = 5;
+const num2 = 2.8;
+const printResult = true;
+const resultPhrase = "Result is: ";
+
+add(num1, num2, printResult, resultPhrase);
+
+
+
+
+
+
+
+
+
+
+06 Type Assignment & Type Inference
+
+Type Assignment
+ > in TypeScript, we can also assign Types to the variables
+
+SYNTAX:
+let | const varName: type = varValue;
+let | const varName: type;
+
+EX:
+let number1: number = 1
+let number2: number;
+const printResult: boolean = true;
+
+
+Type Inference
+ > TypeScript can INFER what type the variable is based on its value
+ > EX: let number2 = 2.8;
+	- here, the TypeScript can easily infer that number2 variable is a number type based on value assign
+	- if we assign new value to "number2" with different Type (i.e. "5"), the TypeScript will show to developer that type mismatch through IDE or Compilation error
+
+NOTES:
+1. Letting the TypeScript type inference feature to determine the type of variable is the best practice
+	- only applicable to variable that hold primitive values (number, string, boolean)
+2. The only time we want to assign Type to variables is when we DECLARE BUT NOT INITIALIZE them;
+	- ex: let number1: number;
+	- this will make sure that TypeScript will warn us if we assign wrong type
+
+EX:
+let number1: number;
+number1 = 5;
+const number2 = 2.8;
+const printResult = true;
+let resultPhrase = "Result is: ";
+// resultPhrase = 5; // this will throw compilation error and show error in IDE
+
+add(number1, number2, printResult, resultPhrase);
+
+
+
+
+
+
+
+
+
+07 Object Types
+
+object
+ > core type of TypeScript
+ > composed of one or more key: value pairs
+	- ex: { age: 30 }
+ > any JavaScript object, more specific types (type of object) are possible
+ > also, this generic object type ("object" or "{}") is the base of all custom object types
+ > this object type is composed of one or more key: type; pairs
+
+EX:
+Here, we defined that the "person" variable will be an object with properties name and age.
+Also, we define the properties types as well
+
+const person: {
+  name: string;
+  age: number;
+} = {
+  name: 'Glenn',
+  age: 30
+}
+
+
+NOTE:
+1. If we assign a variable of type "object" or "{}", the TypeScript will not know the Object property and throws an error if we access them
+	- this is because with "object" type, the TypeScript will NOT RECEIVED information about the Object's properties
+
+EX:
+const person: object = {
+  name: 'Glenn',
+  age: 30
+}
+
+OR
+
+const person: {} = {
+  name: 'Glenn',
+  age: 30
+}
+
+console.log(person.name);   // will throw compilation error since TS doesnt know "person" properties
+
+2. Same with assigning types to variables, we typically dont explicitly assign object with defined key: type pairs
+	> we instead let TypeScript's type inference to do its job
+	> the only time we will do this is when we are declaring and not initializing the variable
+
+EX:
+// Sub-optimal
+const person: {
+  name: string;
+  age: number
+} = {
+  name: 'Glenn',
+  age: 30
+}
+
+// Optimal, letting TS's type inference do the job
+const person = {
+  name: 'Glenn',
+  age: 30
+}
+
+// Declaring the variable to hold object but not initializing its value
+let person: {
+  name: string;
+  age: number
+};
+
+person = {
+  name: "glenn",
+  age: "30"  // throws error
+}
+
+
+
+
+
+
+
+08 Nested Objects & Types
+
+Nested Objects
+ > objects that are nested inside an object
+ > ex: details object inside products object
+
+EX:
+Of course object types can also be created for nested objects.
+Let's say you have this JavaScript object:
+
+const product = {
+  id: 'abc1',
+  price: 12.99,
+  tags: ['great-offer', 'hot-and-new'],
+  details: {
+    title: 'Red Carpet',
+    description: 'A great carpet - almost brand-new!'
+  }
+}
+
+
+This would be the type of such an object:
+
+{
+  id: string;
+  price: number;
+  tags: string[];
+  details: {
+    title: string;
+    description: string;
+  }
+}
+
+So you have an object type in an object type so to say.
+
+
+
+
+
+
+
+
+
+09 Array Types
+
+Array
+ > any JavaScript
+ > type that composed of several elements stored in it
+ > types of the elements stored can be flexible or strict
+	- depends on what type we assign to element
+	- assign type "any" will allow elements to be any type
+ > with TypeScript's type inference, it can also know the type of the elements of the array
+	- ex: let hobby = ["Singing", "Dancing"] will be inferred by TS to type "string[]"
+	- with this, if we used for loops to the array, it can also give us better autocompletion (ex: show properties/functions of element )
+
+EX:
+const person = {
+  name: "glenn",
+  age: 30,
+  hobbies: ["Sports", "Cooking"]
+};
+
+let favoriteActivities: string [];
+favoriteActivities = ["Sports"];
+
+for (const hobby of person.hobbies) {
+    console.log(hobby.toUpperCase());
+    // console.log(hobby.map()); // will throw error since map() is only for arrays
+}
+
+
+
+
+
+
+
+
+
+
+10 Working with Tuples
+
+Tuples
+ > special kind of array
+ > difference is that Tuples have 
+	1. fixed length
+	2. fixed types of the elements
+ > ex: [1, "ADMIN"]
+ > with this, TypeScript compiler or IDE will give us errors if we
+	1. assign element to an index with different element
+	2. assign an array value to a Tuple variable with more or less element size
+ > NOTE: Array.push() sadly bypass this TypeScript compilation check, so make sure you take this in mind when we use Tuples
+
+EX:
+const person: {
+    name: string;
+    age: number;
+    hobbies: string[];
+    role: [number, string];
+} = {
+  name: "glenn",
+  age: 30,
+  hobbies: ["Sports", "Cooking"],
+  role: [2, "author"]
+};
+
+person.role.push("some"); // bypass the TypeScript check
+person.role[1] = 20; // error since 1th index should be string
+person.role = [2, "author", 3000]; // error since we assign array with different element size
+
+
+
+
+
+
+
+11 Working with Enums
+
+Enums
+ > Added by TypeScript
+ > Automatically enumerated global constant identifies
+ 	- ex: enum Roles = {ADMIN, USER, SADMIN};
+ > it works by giving us human-readable identifiers, which behinds the scenes, have values assigned to the identifiers
+	- we can assign the values of these identifiers explicitly
+		-> ex: enum Roles = {ADMIN = 7, USER = 10, SADMIN = 1000}
+	- if we dont explicitly assign values to identifiers, first enum will have value of ZERO, then next id values are increments of the previous id values
+	- if we only assign value to first identifier and its a number, next id values will be increment of it
+
+SYNTAX:
+ > by convention, enums are Capitalized and enum identifiers are UPPERCASE
+
+enum Name { ID1, ID2, ID3 }
+enum Name { ID1 = value1, ID2 = value2, ID3 = value3}
+
+EX:
+enum Role { ADMIN, READ_ONLY, AUTHOR };
+
+const person: {
+  name: string;
+  age: number;
+  hobbies: string[];
+  role: Role;
+} = {
+  name: "glenn",
+  age: 30,
+  hobbies: ["Sports", "Cooking"],
+  role: Role.ADMIN,
+};
+
+if (person.role === Role.ADMIN) {
+    console.log(person.name + "is an admin");
+}
+
+
+JS equivalent when we compiled enum variable declaration
+var Role;
+(function (Role) {
+    Role[Role["ADMIN"] = 0] = "ADMIN";
+    Role[Role["READ_ONLY"] = 1] = "READ_ONLY";
+    Role[Role["AUTHOR"] = 2] = "AUTHOR";
+})(Role || (Role = {}));
+
+
+
+
+
+
+
+
+12 The any Type
+
+any
+ > core type of TypeScript
+ > added by TypeScript
+ > any kind of value, no specific type assignment
+	- TypeScript compiler will not give any error with regards to type mismatch
+ > avoided as much as possible
+	- takes away any advantage TypeScript gives you
+	- same experience to vanilla JavaScript
+ > can be used as fallback if you dont know the type of the variable to receive
+
+EX: 
+let someArray = any [];
+someArray = ["STRING", 5, true]; // will not throw compilation error
+
+
+
+
+
+
+13 Union Types
+
+Union Types
+ > from the name itself, it is basically a Union of two or more types
+	- this means that the type of a variable, function parameter or return can be two or more
+
+EX: 
+In this case, the "input" variable can take either number 
+let input: number | string;
+input = 5;
+input = "5";
+
+In this case, the function parameter can accept either number or string
+function combine (input1: number | string, input2: number | string) {
+  // some logic
+}
+
+NOTE:
+1. In scenarios where we have function parameters whose type is a Union type, we might need to do "typeof" checks based on the function's logic
+
+EX:
+In this case, we need to do typeof checks since we either want to add input mathematically or just concatenate them
+function combine(input1: number | string, input2: number | string) {
+  let result;
+  if (typeof input1 === "number" && typeof input2 === "number") {
+    result = input1 + input2;
+  } else {
+    result = input1.toString() + input2.toString();
+  }
+  return result;
+}
+
+const combinedAges = combine(30, 20);
+console.log(combinedAges);
+
+const combinedName = combine("Azade", "Ased");
+console.log(combinedName);
+
+
+
+
+
+
+14 Literal Types
+
+Literal Types
+ > types where there can only be ONE DEFINED VALUE
+ > similar on how const variables' type are assigned
+ > we can use the Union alongside Literal types to make a variable take two or more defined values
+
+SYNTAX:
+variableName: literalValue1
+variableName: literalValue1 | literalValue2
+
+EX:
+In example below, we have a "combine" function with resultConversion parameter.
+This parameter have a union of Literal type which are "as_number" and "as_text"
+This means resultConversion can only take values which are one of the two
+
+// app.ts
+function combine(
+  input1: number | string,
+  input2: number | string,
+  resultConversion: "as_number" | "as_text"
+) {
+  let result;
+  if (
+    (typeof input1 === "number" && typeof input2 === "number") ||
+    resultConversion === "as_number"
+  ) {
+    result = +input1 + +input2;
+  } else {
+    result = input1.toString() + input2.toString();
+  }
+  return result;
+}
+
+const combinedAges = combine(30, 20, "as_number");
+console.log(combinedAges);
+
+const combinedStringAges = combine("30", "20", "as_number");
+console.log(combinedStringAges);
+
+const combinedName = combine("Azade", "Ased", "as_text");
+console.log(combinedName);
+
+
+
+
+
+
+
+
+
+15 Type Aliases Custom Types
+
+Type Aliases
+ > Type Aliases are aliases used to refer to another type
+ > Type Aliases can also be used to wrap one or more type (with union types)
+ > makes more sense to use for wrapping up union types
+ > also works with literal types
+
+SYNTAX:
+
+type typeAliasName = type1;
+type typeAliasName = type1 | type2;
+
+
+EX:
+type Combinable = number | string;
+type ConversionDescriptor = "as_number" | "as_text";
+
+function combine(
+  input1: Combinable,
+  input2: Combinable,
+  resultConversion: ConversionDescriptor
+) {
+  let result;
+  if (
+    (typeof input1 === "number" && typeof input2 === "number") ||
+    resultConversion === "as_number"
+  ) {
+    result = +input1 + +input2;
+  } else {
+    result = input1.toString() + input2.toString();
+  }
+  return result;
+}
+
+const combinedAges = combine(30, 20, "as_number");
+console.log(combinedAges);
+
+const combinedStringAges = combine("30", "20", "as_number");
+console.log(combinedStringAges);
+
+const combinedName = combine("Azade", "Ased", "as_text");
+console.log(combinedName);
+
+
+
+
+
+
+
+
+16 Type Aliases & Object Types
+
+Type Aliases & Object Types
+ > we can also use to alias a specific Object type
+ > Type aliases can be used to "create" your own types. 
+ > You're not limited to storing union types though - you can also provide an alias to a (possibly complex) object type.
+
+EX:
+
+type User = { name: string; age: number };
+const u1: User = { name: 'Max', age: 30 }; // this works!
+This allows you to avoid unnecessary repetition and manage types centrally.
+
+For example, you can simplify this code:
+
+function greet(user: { name: string; age: number }) {
+  console.log('Hi, I am ' + user.name);
+}
+
+function isOlder(user: { name: string; age: number }, checkAge: number) {
+  return checkAge > user.age;
+}
+
+
+To:
+
+type User = { name: string; age: number };
+
+function greet(user: User) {
+  console.log('Hi, I am ' + user.name);
+}
+
+function isOlder(user: User, checkAge: number) {
+  return checkAge > user.age;
+}
+
+
+
+
+
+
+
+
+
+17 Function Return Types * void
+
+Function Return Types
+ > we can also assign types to the return value of a function
+ > like variables, TypeScript can infer what type the return value is based on the return value
+ > but for function that doesnt have a return statement, the return type will be "void"
+
+SYNTAX:
+function fnName(param1: paramType): returnType {
+  // some logic
+  return returnValue;
+}
+
+void
+ > special type used for function return value
+ > specifies that the function doesnt return anything
+ > but, if we take a look at the return value of a function with return type "void", we will get undefined
+
+
+BEST PRACTICE:
+1. Let TypeScript infer the return type of function
+
+
+EX:
+function add(n1: number, n2: number) {
+  return n1 + n2;
+}
+
+function printResult(num: number): void {
+  console.log("Result is " + num);
+}
+
+printResult(2);
+console.log(printResult(2)); // will print undefined
+
+ 
+
+
+
+
+
+
+
+
+
+18 Function as Types
+
+Function as Types
+ > with TypeScript, we can create Function as Types
+ > this means that we can specify the following 
+	1. number and types of the function parameters
+	2. return value of the function
+ > we typically would only use this when we DECLARE BUT NOT INITIALIZE a function variable
+
+SYNTAX:
+let fnName: (param1: paramType, paramType) => returnType;
+
+EX:
+In example below, we declare "combineValues" with specific function type.
+We then assign it the value of "add" function which matches the function type it have
+
+function add(n1: number, n2: number) {
+  return n1 + n2;
+}
+
+function printResult(num: number): void {
+  console.log("Result is " + num);
+}
+
+let combineValues: (a: number, b: number) => number;
+
+combineValues = add;
+// combineValues = printResult; // will throw TS compilation error
+
+console.log(combineValues(4, 8));
+
+
+
+
+
+
+
+
+19 Function Types & Callbacks
+
+Function Types & Callbacks
+ > we can also assign Function types to the Callback functions
+ 	- uses similar syntax when assigning Function types to variables
+ > if we assign function type to a Callback function in some function's parameter, it will check the following
+	1. the number and types of the callback function parameters
+	2. return type of the callback function
+ > NOTE: if we assign "void" to callback function return type, it means that the main function which uses the callback function will NOT USE the return type
+
+EX:
+Below, we have "addAndHandle" function which take a callback function.
+We assign a function type to this callback function with number parameter and void return type
+With this, we can make sure that the function type that we pass as argument whenever we use "addAndHandler" will be static
+
+function addAndHandler(n1: number, n2: number, cb: (num: number) => void) {
+  const result = n1 + n2;
+  cb(result);
+}
+
+const result = addAndHandler(2, 3, (result) => {
+  console.log(result);
+});
+
+
+
+
+
+
+
+
+
+
+20 The unknown Type
+
+unknown
+ > similar to any type but with few differences
+ > if a variable type is unknown, we can assign values of ANY Type to it
+ > but we cant assign an unknown variable to other variable with static type without doing a "typeof" check
+
+EX:
+let userInput: unknown;
+let userName: string;
+
+userInput = 5;
+userInput = "Name"
+// userName = userInput; // will throw an error
+if(typeof userInput === "string") {
+    userName = userInput;  // will be accepted by TypeScript
+}
+
+
+
+
+
+
+
+
+
+21 The never Type
+
+never
+ > a type in TypeScript which doesnt return anything
+ > typically assigned to function return values whose function logic is
+	1. throws error
+	2. contains infinite loop
+ > if we try to fetch the result of such function, we will not get anything
+ 
+BEST PRACTICE:
+1. Explicitly add "never" return type to function that contains logic that includes throwing error or infinite loops
+2. Having a centralized location to contain utility function for throw errors
+
+EX:
+function generateError(message: string, code: number): never {
+  throw { message: message, code: code };
+  // while (true) {}
+}
+
+// console.log(generateError("Exception thrown", 500)); returns nothing
+generateError("Exception thrown", 500);
+
+
+
+
+
+
+
+
+
+
+22 Wrap Up
+23 Useful Resources

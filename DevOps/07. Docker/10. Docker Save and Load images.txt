@@ -1,0 +1,17 @@
+10. Docker Save and Load images
+
+
+docker save <REPOSITORY> > <TAR FILE>
+	> used to save one or more images to a tar archive (streamed to STDOUT by default)
+		- ex: docker save mywebserver > mywebserver.tar
+
+docker load < <TAR FILE>
+	> used to load an image from a tar archive or STDIN
+		- ex: docker load < mywebserver.tar
+
+docker export <CONTAINER NAME OR ID> -o <TAR FILE>
+	> used to create a tar file from a running/stopped container
+	> "-o" flag specifies the output file
+
+docker import <TAR FILE> <IMAGE NAME>
+	> used to load the tar file specified into a Docker Image

@@ -1,0 +1,106 @@
+Day 17 Chat
+
+Francis Jan S Dimata  to  Everyone 9:02 AM
+good morning
+Francis Jan S Dimata  to  Everyone 9:32 AM
+brb
+Francis Jan S Dimata  to  Everyone 9:55 AM
+back
+rohit  to  Everyone 9:57 AM
+Lets take 10 min  break
+Jeorge Emprese  to  Everyone 9:58 AM
+brb bio break
+Jeorge Emprese  to  Everyone 10:00 AM
+back
+rohit  to  Everyone 10:15 AM
+back
+Francis Jan S Dimata  to  Everyone 10:17 AM
+here
+Presmelito Rapatan Villanueva  to  Everyone 10:27 AM
+https://github.com/HCL-TECH-SOFTWARE/Commerce-Stripe-Payment-Integration/blob/main/backend/V9_Stripe_Payment_Integration.zip
+Francis Jan S Dimata  to  Everyone 10:36 AM
+brb
+Francis Jan S Dimata  to  Everyone 10:49 AM
+back
+rohit  to  Everyone 10:54 AM
+WC_eardir\xml\config\payments\edp\groups\default\PayPal
+PaymentMappings.xml, PaymentMethodConfigurations.xml
+rohit  to  Everyone 11:41 AM
+public class ExtPunchoutPaymentCallBackCmdImpl extends PunchoutPaymentCallBackCmdImpl implements 
+ExtPunchoutPaymentCallBackCmd
+rohit  to  Everyone 12:03 PM
+INSERT INTO policy (POLICY_ID,POLICYNAME,POLICYTYPE_ID,STOREENT_ID,PROPERTIES,STARTTIME,ENDTIME,OPTCOUNTER) 
+VALUES ((select max(POLICY_ID)+1 from policy),'Stripe','Payment',11,'attrPageName=StandardStripe&paymentConfigurationId=default&display=true&compatibleMode=false',null,null,1);
+
+INSERT INTO policydesc (POLICY_ID,LANGUAGE_ID,DESCRIPTION,LONGDESCRIPTION,TIMECREATED,TIMEUPDATED,OPTCOUNTER) 
+VALUES (( select POLICY_ID from policy where policyname = 'Stripe' ), -1 ,'Stripe','Stripe',CURRENT TIMESTAMP,CURRENT TIMESTAMP,1);
+INSERT INTO POLICYCMD (POLICY_ID,BUSINESSCMDCLASS,PROPERTIES,OPTCOUNTER) VALUES ((select POLICY_ID from policy where policyname = 'Stripe'),'com.ibm.commerce.payment.actions.commands.DoPaymentActionsPolicyCmdImpl',null,1);
+INSERT INTO POLICYCMD (POLICY_ID,BUSINESSCMDCLASS,PROPERTIES,OPTCOUNTER) VALUES ((select POLICY_ID from policy where policyname = 'Stripe'),'com.ibm.commerce.payment.actions.commands.EditPaymentInstructionPolicyCmdImpl',null,1);
+INSERT INTO POLICYCMD (POLICY_ID,BUSINESSCMDCLASS,PROPERTIES,OPTCOUNTER) VALUES ((select POLICY_ID from policy where policyname = 'Stripe'),'com.ibm.commerce.payment.actions.commands.QueryPaymentsInfoPolicyCmdImpl',null,1);
+execute above sql  and restart your server
+will be back in 10 min
+Marjorie Cabalhao  to  Everyone 12:14 PM
+Hi Team,
+
+We will have our Team Catch-Up at 2PM with Jenna Loque.I will send link in our viber group.
+Thank you and see you later.
+rohit  to  Everyone 12:25 PM
+back
+INSERT INTO policy (POLICY_ID,POLICYNAME,POLICYTYPE_ID,STOREENT_ID,PROPERTIES,STARTTIME,ENDTIME,OPTCOUNTER) 
+VALUES ((select max(POLICY_ID)+1 from policy),'TestPay','Payment',11,'attrPageName=StandardStripe&paymentConfigurationId=default&display=true&compatibleMode=false',null,null,1);
+
+INSERT INTO policydesc (POLICY_ID,LANGUAGE_ID,DESCRIPTION,LONGDESCRIPTION,TIMECREATED,TIMEUPDATED,OPTCOUNTER) 
+VALUES (( select POLICY_ID from policy where policyname = 'TestPay' ), -1 ,'TestPay','TestPay',CURRENT TIMESTAMP,CURRENT TIMESTAMP,1);
+INSERT INTO POLICYCMD (POLICY_ID,BUSINESSCMDCLASS,PROPERTIES,OPTCOUNTER) VALUES ((select POLICY_ID from policy where policyname = 'TestPay'),'com.ibm.commerce.payment.actions.commands.DoPaymentActionsPolicyCmdImpl',null,1);
+INSERT INTO POLICYCMD (POLICY_ID,BUSINESSCMDCLASS,PROPERTIES,OPTCOUNTER) VALUES ((select POLICY_ID from policy where policyname = 'TestPay'),'com.ibm.commerce.payment.actions.commands.EditPaymentInstructionPolicyCmdImpl',null,1);
+INSERT INTO POLICYCMD (POLICY_ID,BUSINESSCMDCLASS,PROPERTIES,OPTCOUNTER) VALUES ((select POLICY_ID from policy where policyname = 'TestPay'),'com.ibm.commerce.payment.actions.commands.QueryPaymentsInfoPolicyCmdImpl',null,1);
+INSERT INTO policy (POLICY_ID,POLICYNAME,POLICYTYPE_ID,STOREENT_ID,PROPERTIES,STARTTIME,ENDTIME,OPTCOUNTER) 
+VALUES ((select max(POLICY_ID)+1 from policy),'TestPay','Payment',1,'attrPageName=StandardStripe&paymentConfigurationId=default&display=true&compatibleMode=false',null,null,1);
+rohit  to  Everyone 12:52 PM
+
+wcService.declare({
+		id: "AjaxSaveRating",
+		actionId: "AjaxSaveRating",
+		url: "AjaxSaveRating",
+		formId: ""
+
+		/**
+		 * Clear messages on the page.
+		 * @param (object) serviceResponse The service response object, which is the JSON object returned by the service invocation
+		 */
+		,successHandler: function(serviceResponse) {
+			console.debug("Save Rating Success");
+			cursor_clear();
+		}
+
+		/**
+		 * Displays an error message on the page if the request failed.
+		 * @param (object) serviceResponse The service response object, which is the JSON object returned by the service invocation.
+		 */
+		,failureHandler: function(serviceResponse) {
+			console.debug("save rating failed");
+			if (serviceResponse.errorMessage) {
+				MessageHelper.displayErrorMessage(serviceResponse.errorMessage);
+			}
+			cursor_clear();
+		}
+	})
+	
+com.ibm.commerce.store.mvc.controller.spring.AjaxRESTActionController
+
+
+SaveRatingData: function (productId, rating) {
+	params = [];
+	params["storeId"] = this.storeId;
+	params["catalogId"] = this.catalogId;
+	params["langId"] = this.langId;
+	params.productId = productId;
+	params.rating = rating;
+	
+	// For handling multiple clicks
+	if (!submitRequest()) {
+		return;
+	}
+	cursor_wait();
+	wcService.invoke("AjaxSaveRating", params);
+}

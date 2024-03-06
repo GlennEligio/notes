@@ -1,0 +1,238 @@
+JSP Tags
+
+TWO TYPES OF JSP TAGS
+1. JSP Custom Tags
+	> made by us developer
+2. JSP Standard Tag Library (JSTL)
+	> Oracle create a common set of tags that we can make use of in our JSP environment
+
+
+OPTIONS OF CREATING LOGIN IN JSP PAGES
+1. Use of Scriptlet
+2. JSP Custom tags
+
+
+Bad Practice : Usage of Scriptlet in JSP to do functions
+	> mix business code with presentation code
+	> not reusable
+	> hard to maintain
+
+BENEFITS OF JSP CUSTOM TAGS
+1. Minimize the amount of scriptlet code in a JSP
+2. Avoids dumping thousands of lines of code in a JSP
+3. Lets JSP page focus on the presentation side
+4. Tags are reusable
+
+
+JSP Standard Tag Library (JSTL)
+	> Oracle created a Specification for standard tags
+
+1. Core
+	> handling variables looping conditionals
+2. Messages Formatting I18N
+	> internalization and formatting
+3. Functions
+	> doing string manipulation, getting sizes of collection
+4. XML
+	> for parsing and setting xml data
+5. SQL
+	> for accessing the database
+	> bad practice, only for prototyping
+
+
+INSTALLING / ADDING JSTL IN PROJECT
+1. External JAR
+	> javax.servlet.jsp.jstl
+		- This contains the JSTL API interfaces and support classes. However a large number of the interfaces do not have implementation classes.
+	> javax.servlet.jsp.jstl.api
+		-This contains an implementation of the JSTL API. This code implements all of the interface from the API above.
+
+2. Maven dependencies
+
+<dependency>
+    <groupId>javax.servlet.jsp.jstl</groupId>
+    <artifactId>javax.servlet.jsp.jstl-api</artifactId>
+    <version>1.2.2</version>
+</dependency>
+
+<dependency>
+    <groupId>javax.servlet.jsp.jstl</groupId>
+    <artifactId>javax.servlet.jsp.jstl</artifactId>
+    <version>1.1.2</version>
+</dependency>
+
+
+ADDING JSTL LIBRARY IN JSP PAGE EXAMPLE
+1. Add <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	> here, we are using the JSTL Core and for us to call its tags, we will use "c"
+
+EX: INSIDE <body>
+
+	<c:set var="stuff" value="<%= new java.util.Date()%>"/>
+	Time on the server is ${stuff}
+
+	> here we are using the set of Core to setup a variable name "stuff"
+	> we will use the "stuff" variable by enclose it inside the curly brackets of ${}
+
+
+
+CORE TAGS	
+	> to add the tag library, we MUST ADD this to the JSP page
+
+		<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+catch
+	> catches any throwable to occur in the body
+choose
+	> conditional tag that can be used for exclusive operations
+	> similar to switch statement, except we will not declare a variable here
+	> this SHOULD NEST AT LEAST ONE <when> and ONE <otherwise>
+	> ex:
+		<c:choose>
+			<c:when test="">
+				case1
+			</c:when>
+			<c:when test="">
+				case2
+			</c:when>
+			<c:otherwise>
+				default case
+			</c:otherwise>
+		</c:choose>
+if
+	> simple if/then conditional
+	> have the parameter
+		1. test=""
+			- check if the condition inside is true
+			- if condition is true, it will execute whatever is nested inside its body
+		2. not
+			- added before the condition
+			- reverses the condition result
+	> ex:
+		<c:if test="${car.engine}">
+			Has engine
+		</c:if>
+	> here, we will call the car.isEngine() and check the result of it
+import
+	> retrieves a URL and exposes its contents on the page or a variable	
+	> similar to <%@ include%>
+forEach
+	> iterates over a collection of values
+	> have the following parameters
+		1. var="" 
+			- defines the name to refer to each item
+		2. items="" 
+			- defines the source of the collection we will iterate
+	> EX: 
+		<c:forEach var="itemName" items="${itemCollection}">
+			${itemName} <br/>
+		</c:forEach>
+forTokens
+	> iterates over a collection of tokens
+out
+	> used in scriptlets to display output
+	> similar to <%=...%>
+otherwise
+	> used with the <choose> tag to handle the else clause
+	> similar to default case in a switch statement
+	> no parameter
+	> will run the body if no <when> tags are executed
+	> ex:
+		<c:otherwise>
+			Car has no engine
+		</c:otherwise>
+param
+	> adds a parameter to a URL
+redirect
+	> redirects the browser to a new URL
+remove
+	> removes a scoped variable
+set
+	> assigns an expression value to a variable
+url
+	> defines a URL with query parameters
+when
+	> used with the <choose> tag, 
+	> similar to a case item inside a statement
+	> structure is similar to an <if> tag
+	> have same parameters as <if> tag
+		1. test=""
+			- contains the condition to check
+			- if condition is true, it will run the code inside its body
+		2. not
+			- added before the condition
+			- reverses the condition result
+	> ex:
+		<c:when test="${car.engine}">
+			Car has engine
+		</c:when>
+
+
+
+FUNCTION TAGS
+	> to add the tag library, we MUST ADD this to the JSP page
+		<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+	> also, we dont need to create a typical tag for this like Core functions
+	> we can just call it anywhere
+		ex: String lowerCaseCAR = "${fn:toLowerCase(CAR)}"
+
+
+For Collection Length
+	> takes a Collection object as parameter
+length
+	> takes a string as parameter
+	> ex: ${fn:length(itemsCollection)}
+
+For String manipulation
+	> takes a String object as parameter
+	> all function calls here have similar input parameters as their counterpart in java.lang.String class
+	> though, we would need to pass the String that we want to transform as the first parameter and the default parameters of its java.lang.String counterpart next
+		java.lang.String		string.method(param1, param2, param3)	string.subString(int startIndex)
+		JSTL function tag		fn:method(string, )			fn:substring(string, startIndex)
+		
+	> ex: 
+
+		String exampleString = "exampleString"
+		exampleString.subString(3);		// "mpleString"
+		fn:substring(exampleString, 3)		// "mpleString"
+	
+toUpperCase
+	> transforms the String input into all UPPERCASE
+	> takes String input
+toLowerCase
+	> transforms the String input into all lowercase
+substring
+	> gets a substring of the String input
+substringAfter
+	> get the substring of the String input after a specific character or string
+substringBefore
+	> get the substring of the String input before a specific character or string
+trim
+	> trim the String
+replace
+	> replaces a substring or char into another string or char
+indexOf
+	> returns the index of the substring or char of a String
+startsWith
+	> check what char the String starts with
+endsWith
+	> return what char the String ends with
+contains
+	> return a boolean if the string input is inside the String object
+containsIgnoreCase
+	> return a boolean if the string input (ignored Case) is inside the String object
+split
+	> split the String based on the regex given
+join
+	> joins a String array into ONE String
+	> take an Array of String an a delimiter char
+	> ex:
+		String[] examples = {"hello", "im", "glenn"}
+		${fn:join(examples, "-")}			// hello-im-glenn
+escapeXml
+	> prevents the String parts to be interpreted as XML markup
+	> ex: 
+		String example = "Example <br> String"
+		${fn:escapeXml(example)} 		// Example <br> String
+		${example}				// Example
+							// String

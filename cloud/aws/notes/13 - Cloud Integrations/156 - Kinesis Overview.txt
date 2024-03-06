@@ -1,0 +1,29 @@
+156 - Kinesis Overview
+
+
+Amazon Kinesis
+ > Kinesis use case is for real-time big data streaming
+ > Kinesis is a managed service to collect, process, and analyze real-time streaming data at any scale
+ 
+ 
+Kinesis components
+1. Kinesis Data Streams
+	> low latency streaming service to ingest data at scale from hundreds of thousands of sources
+	> sources can be anything, like a truck, boat, an IOT device 
+2. Kinesis Data Firehouse
+	> service that is used to load the Streams into S3, Redshift, ElasticSearch, etc
+3. Kinesis Data Analytics
+	> perform real-time analytics on Streams using SQL
+4. Kinesis Video Streams
+	> monitor real-time video streams for analytics or ML
+	
+	
+Kinesis high level overview
+ > Kinesis is composed of several components like	
+	1. Amazon Kinesis Streams
+	2. Amazon Kinesis Analytics
+	3. Amazon Kinesis Firehouse
+ > typical process flow is:
+	1. Amazon Kinesis Streams collect/ingest data from several sources like Click streams, IoT devices, Metrics and Logs, etc
+	2. Amazon Kinesis Analytics uses the data from Amazon Kinesis Streams to do analytics
+	3. Amazon Kinesis Firehose gets the analytics output and load them in the Amazon S3 bucket, Amazon Redshift, etc

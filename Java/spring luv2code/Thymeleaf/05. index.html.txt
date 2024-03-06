@@ -1,0 +1,18 @@
+05. index.html
+
+
+index.html
+	> loaded when to relative-path is added to the base-path
+		- ex: localhost:8080 instead of localhost:8080/employees
+
+Redirect from index.html to any API endpoint
+	> inside the index.html, it must have <meta> with following properties
+		a. http-equiv
+			- pass "refresh"
+		b. content
+			- pass "0; URL='relative-url-to-redirect'"
+
+EX:
+<meta http-equiv="refresh"
+	content="0; URL='employees/list'"/>
+		

@@ -1,0 +1,668 @@
+Section 30 - Ansible Conditionals, Loops & Roles
+
+164. Ansible Conditionals
+
+Conditionals
+ > in Ansible playbook, we can use conditionals in order execute tasks based on a condition
+ > to create a condition
+	1. we can use 'when' field in each 'tasks' items to define the condition
+	2. in the 'when' field, we will be using the double equal sign (==) for checking equality
+	3. we could also have multiple conditions using either AND and OR
+		- with AND, both condition must be satisfied to have the task executed
+		- with OR, at least one condition must be satisfied to have the task executed
+ > below are the examples
+	1. Installing packages on machines with different Linux flavor with different package managers
+	
+	
+EX 1. Installing packages on machines with different Linux flavor with different package managers
+ > in this case, debian and redhat uses different package managers, 'apt' and 'yum' respectively
+ > to solve this, we can create a conditional where it will check the OS flavor of the machine before running a tasks
+	- in this case, we can use the 'ansible_os_family', which is a built-in variable that Ansible populates with the flavor of operating system
+ 
+# Previous TWO playbooks yaml files
+---
+- name: Install NGINX
+  hosts: debian_hosts
+  tasks:
+  -	name: Install NGINX
+	apt:
+		name: nginx
+		state: present
+		
+---
+- name: Install NGINX
+  hosts: redhat_hosts
+  tasks:
+  -	name: Install NGINX
+	yum:
+		name: nginx
+		state: present
+		
+# New playbook yaml file where two playbooks earlier is combined
+---
+- name: Install NGINX
+  hosts: all
+  tasks:
+  -	name: Install NGINX
+	apt:
+		name: nginx
+		state: present
+	when: ansible_os_family == "Debian"
+  -	name: Install NGINX
+	yum:
+		name: nginx
+		state: present
+	when: ansible_os_family == "RedHat"
+	
+	
+	
+Conditionals - OR and AND
+ > OR and AND is used for creating one or more conditions in the tasks
+ > below is an example of OR and AND usage
+	
+# playbook
+---
+- name: Install NGINX
+  hosts: all
+  tasks:
+  -	name: Install NGINX
+	apt:
+		name: nginx
+		state: present
+	when: ansible_os_family == "Debian" and ansible_distribution_version == "16.04"
+  -	name: Install NGINX
+	yum:
+		name: nginx
+		state: present
+	when: ansible_os_family == "RedHat" or ansible_os_family == "SUSE"
+	
+	
+Conditionals in Loops	
+ > we could also add a conditionals on loops defined in Ansible 
+ > to loop through a variable, and execute a Task for each items, we can use 'loop' field in the Task
+	- note that the variable must be a list in order for loop to work
+ > then, using the 'item', which is the placeholder of the loop for each list variable items, we can populate the task information
+	- this includes the 'when' field, which is used for creating condition
+ > with 'loop' and 'when', we can now create a conditionals in Loops
+
+Ex: Looping through list variable and create condition using list variable item field
+ > in example below, we loop through the 'packages' list variable, and using the 'item' as a placeholder for each entry, we populated the task's information, which includes the 'when' field for conditional
+
+---
+- name: Install Softwares
+  hosts: all
+  vars:
+	packages:
+	-	name: nginx
+		required: True
+	-	name: mysql
+		required: True
+	-	name: apache
+		required: False
+  tasks:
+  -	name: Install "{{ item.name }}" on Debian
+	apt:
+		name: "{{ item.name }}"
+		state: present
+	when: item.required == True
+	loop: {{ packages }}
+
+
+# Behind the scene for better understanding
+---
+- name: Install Softwares
+  hosts: all
+  vars:
+	item:
+	-	name: nginx
+		required: True
+  tasks:
+  -	name: Install "{{ item.name }}" on Debian
+	apt:
+		name: "{{ item.name }}"
+		state: present
+	when: item.required == True
+
+- name: Install Softwares
+  hosts: all
+  vars:
+	item:
+	-	name: mysql
+		required: True
+  tasks:
+  -	name: Install "{{ item.name }}" on Debian
+	apt:
+		name: "{{ item.name }}"
+		state: present
+	when: item.required == True
+	
+- name: Install Softwares
+  hosts: all
+  vars:
+	item:
+	-	name: apache
+		required: False
+  tasks:
+  -	name: Install "{{ item.name }}" on Debian
+	apt:
+		name: "{{ item.name }}"
+		state: present
+	when: item.required == True
+	
+	
+	
+Conditionals & Register
+ > we could also create a conditional based on the output of previous task
+ > to do so, 
+	1. we will need to add 'register' field in the previous tasks, and pass it a string value
+		- the value will search as the variable to be used by the next tasks
+	2. then in the next tasks, use the variable for conditional
+
+Example: Playbook.yaml
+ > in example playbook below, it first reads the output of initial tasks and assign it to the 'result' variable using 'register' field
+ > then in the next tasks, it reads the stdout of the result and checks if it contains 'down' text. If it DOES NOT, it will execute the mail tasks to send alert that service is up
+
+- name: Check status of a service and email if its down
+  hosts: localhost
+  tasks:
+  -	command: service httpd status
+	register: result
+  - mail:
+		to: admin@company.com
+		subject: Service Alert
+		body: Httpd service is down
+	when: result.stdout.find('down') != -1
+	
+	
+	
+NOTE:
+1. There are built-in variables that we can use for conditionals, below are the examples
+	> ansible_os_family
+		- automatically populated by Ansible based on OS family of the remote node
+	> ansible_distribution_version
+		- automatically populated by Ansible based on the OS version of the remote node
+2. string.find() of Ansible returns -1 if the specific text is not found
+	> result.stdout.find('down') returns -1 if result.stdout does not contain 'down'
+	
+	
+	
+
+		
+165. Lab - Conditionals
+
+#1
+Q: In this lab exercise you will use below hosts. Please note down some details about these hosts as given below :
+student-node :- This host will act as an Ansible master node where you will create playbooks, inventory, roles etc and you will be running your playbooks from this host itself.
+
+node01 :- This host will act as an Ansible client/remote host where you will setup/install some stuff using Ansible playbooks. Below are the SSH credentials for this host:
+	User: bob
+	Password: caleston123
+
+node02 :- This host will also act as an Ansible client/remote host where you will setup/install some stuff using Ansible playbooks. Below are the SSH credentials for this host:
+	User: bob
+	Password: caleston123
+Note: Please type exit or logout on the terminal or press CTRL + d to log out from a specific node.
+
+
+
+#2
+Q: Which of the following Ansible 'built-in' variable populates the flavour of the operating system?
+A: ansible_os_family
+
+
+#3
+Q: Which keyword is used to define a condition in an Ansible playbook?
+A: 'when'
+
+
+#4
+Q: As per the given playbook, will Ansible install the 'vim' package on a 'RedHat' based machine?
+
+---
+- name: Install package
+  hosts: app1
+  tasks:
+    - name: Install
+      package:
+        name: vim
+        state: present
+      when: ansible_os_family != "RedHat"
+	  
+A: NO, since the condition is that task will only execute if ansible_os_family IS NOT RedHat
+
+
+#5
+Q: There is a playbook named 'nginx.yaml' under '/home/bob/playbooks' directory. It is starting 'nginx' service on all hosts defined in '/home/bob/playbooks/inventory' inventory file. Use the 'when' condition to run this task only on node02 host
+
+# inventory file
+node01 ansible_host=node01 ansible_ssh_pass=caleston123
+node02 ansible_host=node02 ansible_ssh_pass=caleston123
+[web_nodes]
+node01
+node02
+
+# nginx.yaml
+---
+-  name: 'Execute a script on all web server nodes'
+   hosts: all
+   become: yes
+   tasks:
+     - name: 'Install nginx'
+       package:
+         name: nginx
+         state: present
+     - name: 'Start nginx'
+	   service: 'name=nginx state=started'
+       when: 'ansible_host=="node02"'
+	   
+	   
+#6 
+Q: The playbook under '/home/bob/playbooks/age.yaml', has a variable defined called 'age'. The two tasks attempt to print if I am a child or an Adult. Use the when conditional to print if I am a child or an Adult based on whether my age is '< 18 (Child)' or '>= 18 (Adult)'.
+
+# age.yaml
+---
+- name: 'Am I an Adult or a Child?'
+  hosts: localhost
+  vars:
+    age: 25
+  tasks:
+    - name: I am a Child
+      command: 'echo "I am a Child"'
+      when: age < 18 
+    - name: I am an Adult
+      command: 'echo "I am an Adult"'
+      when: age >= 18
+	  
+	  
+  
+#7
+Q: Playbook '/home/bob/playbooks/nameserver.yaml' attempts to add an entry in '/etc/resolv.conf' file to add a new nameserver.
+The first task in the playbook is used the 'shell' module to display the existing contents of '/etc/resolv.conf' file and the second one is adding a new line containing the name server details into the file. However, when this playbook is run multiple times, it keeeps adding new entries of same line into the resolv.conf file. To resolve this issue, update the playbook as per details mentioned below.
+	1. Add a register directive to store the output of the first task to a variable called 'command_output'
+	2. Then add a 'conditional' to the second task to check if the output already contains the name server (10.0.250.10). Use 'command_output.stdout.find(<IP>) == -1'
+NOTE:
+a. A better way to do this would be to use the 'lineinefile' module. This is just for practice
+b. 'shell' and 'command' modules are similar in a way that they are used to execute a command on the system. However, shell executes the command inside a 'shell' giving us access to environment variables and redirection using '>>'.
+
+# nameserver.yaml
+---
+- name: 'Add name server entry if not already entered'
+  hosts: localhost
+  become: yes
+  tasks:
+    - shell: 'cat /etc/resolv.conf'
+      register: command_output
+    - shell: 'echo "nameserver 10.0.250.10" >> /etc/resolv.conf'
+      when: command_output.stdout.find('10.0.250.10') == -1
+
+# nameserver.yaml with lineinfile module
+---
+- name: 'Add name server entry if not already entered'
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: 'Add DNS server 10.0.250.10'
+      lineinfile:
+	    path: /etc/resolv.conf
+		line: nameserver 10.0.250.10
+
+
+
+
+166. Ansible Loops
+
+Loops
+ > Loops are used in playbooks in order to reduce the repetition
+ > in order to do loops in a task, we can use the 'loop' field
+	- in this field, we will need to pass either a list that we define under 'loop', or a variable representing a list
+ > then after defining the 'loop' field, we can use the 'item' variable to represent an entry to the list we are looping
+	- we can think of 'item' as a placeholder value
+	- we will need to Jinja2 formatting as well to use 'item'
+ > note that the entries can range from a single value (string, boolean, number), to dictionary
+	- if we have a dictionary entry, we can access its fields via 'item' field as well
+	- ex: item.uid
+	
+EX: With no loops used
+- name: Create users
+  hosts: localhost
+  tasks:
+  -	user: name=joe		state=present
+  -	user: name=george	state=present
+  -	user: name=ravi		state=present
+  -	user: name=mani		state=present
+  
+EX: With loops used and value defined under it
+- name: Create users
+  hosts: localhost
+  tasks:
+  -	user: name='{{ item }}'		state=present
+    loop:
+	  - joe
+	  - george
+	  - ravi
+	  - mani
+	  
+EX: Visualization of loop usage
+- name: Create users
+  hosts: localhost
+  tasks:
+  -	var: item=joe
+	user: name='{{ item }}'		state=present
+  -	var: item=george
+	user: name='{{ item }}'		state=present
+  -	var: item=ravi
+	user: name='{{ item }}'		state=present
+  -	var: item=mani
+	user: name='{{ item }}'		state=present
+	
+EX: With loops using dictionary as list entries
+- name: Create users
+  hosts: localhost
+  tasks:
+  -	user: name='{{ item.name }}'	state=present	uid='{{ item.uid }}'
+    loop:
+	  - name: joe
+		uid: 1010
+	  - name: george
+		ui: 1011
+	  - name: ravi
+		uid: 1012
+	  - name: mani
+		uid: 1013
+	  
+EX: Visualization of loop usage for dictionary entries
+- name: Create users
+  hosts: localhost
+  tasks:
+  -	var: 
+		item:
+			name: joe
+			uid: 1010
+	user: name='{{ item }}'		state=present	uid='{{ item.uid }}'
+  -	var: 
+		item:
+			name: george
+			uid: 1011
+	user: name='{{ item }}'		state=present	uid='{{ item.uid }}'
+  -	var: 
+		item:
+			name: ravi
+			uid: 1012
+	user: name='{{ item }}'		state=present	uid='{{ item.uid }}'
+  -	var: 
+		item:
+			name: mani
+			uid: 1013
+	user: name='{{ item }}'		state=present	uid='{{ item.uid }}'
+	
+	
+	
+with_* directives
+ > in the older versions of Ansible, instead of 'loop' field, we are using 'with_items' field
+ > both of these fields do the same thing, and take the same input
+ > besides 'with_items', there are other 'with_*' directives as well for different types of list entries
+	- with_file, which is used for iterating files
+	- with_url, which is used for iterating urls
+	- with_mongodb, which is used to connect to multiple mongoDB databases
+ > there are more 'with_*' directives available, and they are under the 'Lookup plugin'
+ > Lookup plugins can be seen as script that can do specific task like read files, connect to a url, connect to a database, or connect to other systems like kubernetes or openshift
+ 
+EX: With loops using 'with_items' field
+- name: Create users
+  hosts: localhost
+  tasks:
+  -	user: name='{{ item.name }}'	state=present	uid='{{ item.uid }}'
+    with_items:
+	  - name: joe
+		uid: 1010
+	  - name: george
+		ui: 1011
+	  - name: ravi
+		uid: 1012
+	  - name: mani
+		uid: 1013
+		
+EX: with_file in playbook
+- name: View Config Files
+  hosts: localhost
+  tasks:
+  -	debug: var=item
+	with_file:
+		- "/etc/hosts"
+		- "/etc/resolv.conf"
+		- "/etc/ntp.conf"
+
+EX: with_url in playbook
+- name: Get from multiple URLs
+  hosts: localhost
+  tasks:
+  -	debug: var=item
+	with_url:
+	-	"https://site1.co,/get-servers"
+	-	"https://site2.com/get-servers"
+	- 	"https://site3.com/get-servers"
+	
+EX: with_mongodb in playbook
+- name: Check multiple mongodbs
+  hosts: localhosts
+  tasks:
+  -	debug: msg="DB={{ item.database }} PID={{ item.pid }}"
+	with_mongodb:
+	-	database: dev
+		connection_string: "mongodb://dev.mongo/"
+	-	database: prod
+		connection_string: "mongodb://prod.mongo/"
+		
+		
+		
+167. Lab - Loops
+
+Q1: In this lab exercise you will use below hosts. Please note down some details about these hosts as given below :
+
+student-node :- This host will act as an Ansible master node where you will create playbooks, inventory, roles etc and you will be running your playbooks from this host itself.
+
+node01 :- This host will act as an Ansible client/remote host where you will setup/install some stuff using Ansible playbooks. Below are the SSH credentials for this host:
+	User: bob
+	Password: caleston123
+node02 :- This host will also act as an Ansible client/remote host where you will setup/install some stuff using Ansible playbooks. Below are the SSH credentials for this host:
+	User: bob
+	Password: caleston123
+Note: Please type exit or logout on the terminal or press CTRL + d to log out from a specific node.
+
+Q2: Can loops be executed on dictionary values in Ansible?
+A: YES
+
+Q3: Which type of plugin with_* directives use in Ansible?
+A: Lookup
+
+Q4: The playbook '/home/bob/playbooks/fruits.yml' currently runs an 'echo' comand to print a fruit name. Apply a loop directive ('with_items') to the task to print all fruits defined under the 'fruits' variable
+
+---
+-  name: 'Print list of fruits'
+   hosts: localhost
+   vars:
+     fruits:
+       - Apple
+       - Banana
+       - Grapes
+       - Orange
+   tasks:
+     - command: 'echo "{{ item }}"'
+       with_items: '{{ fruits }}'
+	   
+Q5: We are attempting to install multiple packages using the yum module for a more realistic use case. The playbook '/home/bob/playbooks/packages.yml' installs only a single package. Update it to install all apackages defined under 'packages' variable
+
+---
+- name: 'Install required packages'
+  hosts: localhost
+  become: yes
+  vars:
+    packages:
+      - httpd
+      - make
+      - vim
+  tasks:
+    - yum:
+        name: '{{ item }}'
+        state: present
+      with_items: '{{ packages }}'
+	  
+	  
+168. Ansible Roles
+
+Roles
+ > Ansible Roles are used to perform specific set of tasks to a Play
+ > Typically, Roles will contain parts that are commonly used for specific service
+	- example is for mysql, typically we would need to do the following
+		1. installing pre-requisites
+		2. installing mysql packages
+		3. configuring mysql service
+		4. configuring database and users
+	- example also is for nginx
+		1. installing pre-requisites
+		2. installing nginx packages
+		3. configuring nginx service
+		4. configuring custom web pages
+ > these Roles can be shared for other tasks within the organization, or globally outside
+ > Roles are used because:
+	1. Reusability
+		- most of the time, for some service, there are commonly done tasks for it
+		- since it would be repeated for other services, using Roles can help us reuse specific parts of playbooks
+	2. Organize tasks better
+		- with Ansible Roles, we can organize the tasks, variables, defaults based on their uses
+		- with addition of other information below, we can easily organize these by creating separate directory for each under a single Role
+			a. tasks
+			b. vars
+			c. defaults
+			d. handlers
+			e. templates
+	3. Share and find roles created by others
+		- in Ansible Galaxy website, we can find Roles that are shared publicly by other users
+		- these includes tasks for things like system, monitoring, development, pacakges, networking, cloud, security, database, web, playbook bundles, etc
+	
+EX:
+- name: Install and Configure MySQL
+  hosts: db-server
+  roles:
+  -	mysql
+  
+MySQL-Roles
+tasks:
+-	name: Install Pre-Requisites
+	yum: name=pre-req-packages state=present
+-	name: Install MySQL Packages
+	yum: num=mysql	state=present
+-	name: Start MySQL Service
+	service: name=mysql	state=started
+-	name: Configure Database
+	mysql_Db: name=db1	state=present
+	
+	
+Creating Roles	
+ > to create Roles, we can use the 'ansible-galaxy' init in order to create a directory structure for Roles
+	$ ansible-galaxy init ROLE_NAME
+		- this will create a directory structure for the role with name specified
+		- this directory structure will contain the following
+			1. README.md
+			2. templates, tasks, handlers, vars, defaults, and meta folder
+	ex: $ ansible-galaxy init mysql
+
+
+Using Roles in playbook
+ > to use Roles, we will need to define a property 'roles' in the play level, and either:
+	1. pass an array of string with the role nameserver
+	2. pass an array of dictionary, where the 'role' property of the dictionary entry is the role name
+		- this will let you add additional properties to configure the role such as
+			a. become
+			b. vars - to override variables
+ > when we use a role in a play inside a playbook, it will look for a role on the following directory
+	1. on the directory where the playbook yaml file is located
+		- higher priority
+		- if the role is not found here, it will look on the second place
+	2. on the directory specified in 'roles_path' of the config file '/etc/ansible/ansible.cfg'
+		- by default, it is set to '/etc/ansible/roles'
+ > note that we can pass MULTIPLE Roles to a single play
+		
+EX:
+# /home/bob/playbooks/my-playbook/playbook.yml
+- name: Install and Configure MySQL
+  hosts: db-server
+  roles:
+  -	mysql
+  
+# /home/bob/playbooks/my-playbook/playbook.yml with dictionary entry
+- name: Install and Configure MySQL
+  hosts: db-server
+  roles:
+  -	role: mysql
+	become: yes
+	vars:
+		mysql_user_name: db_user
+
+# /home/bob/playbooks/my-playbook/playbook.yml with multiple roles
+- name: Install and Configure MySQL
+  hosts: db-server
+  roles:
+  -	geerlingguy.mysql
+  - nginx
+  
+# directory structure under /home/bob/playbooks/my-playbook
+my-playbook
+	- playbook.yml
+	> roles
+		> mysql
+			- README.md
+			> template
+			> tasks
+			> handlers
+			> vars
+			> defaults
+			> meta
+
+	
+Finding Roles to use	
+ > to find Roles to use, we can either
+	1. Go to Ansible Galaxy and find Roles to use
+	2. Use 'ansible-galaxy search QUERY' command
+		ex: $ ansible-galaxy search mysql
+ > to install the role thru CLI, use the command below
+	$ ansible-galaxy install geerlingguy.mysql
+	- it will be added under the default '/etc/ansible/roles' directory
+	
+	
+Using Mutiple roles in a single playbooks
+ > note that we can use multiple roles in a single play
+ > we can see the example scenarios below, and how we can do this in an Ansible playbook
+	1. configure the db and webserver in a single play
+	2. configure the db and webserver separated in two plays
+	
+# 1. playbook-all-in-one.yml
+- name: Install and Configure MySQL
+  hosts: db-and-webserver
+  roles:
+  -	geerlingguy.mysql
+  - nginx
+  
+# 2. playbook-distributed.yml
+- name: Install and Configure MySQL
+  hosts: db-server
+  roles:
+  -	geerlingguy.mysql
+- name: Install and Configure Web Server
+  hosts: web-server
+  roles:
+  -	nginx
+	
+	
+List Roles
+ > to check all downloaded roles using 'ansible-galaxy', use the command below
+	$ ansible-galaxy list
+ > to check the possible locations of roles installed in Ansible, use the command below
+	$ ansible-config dump | grep ROLE
+ > to install a Role in different directory, use the '-p' flag and pass the directory
+	$ ansible-galaxy install ROLE_NAME -p NEW_DIRECTORY
+	# 
+	
+	
+NOTE:
+1. Before creating a Role, make sure to check in Ansible Galaxy website if the said playbook already exist

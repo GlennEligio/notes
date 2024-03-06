@@ -1,0 +1,18 @@
+Bean Scopes using @Annotations
+
+Defining Bean Scope
+	> add @Scope() to the Class that have @Component 
+	> pass the scope that we want on the @Component
+		- singleton
+		- prototype
+		- request
+		- session
+		- global-session
+
+
+Defining the init and destroy() method 
+	> add @PostConstruct to the method inside @Component
+		- the method will be the init() that will be executed during Bean initialization
+	> add @PreDestroy
+		- the method will be the destroy() that will be executed during Bean destruction
+	> the methods with @PostConstruct and @PreDestroy SHOULD NOT HAVE ANY parameters/arguments

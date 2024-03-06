@@ -1,0 +1,1189 @@
+Algolia 101: A comprehensive and hands-on developer training from Data Ingestion to Front-End
+
+SOURCE: https://www.youtube.com/watch?v=d5GpPTk_E2w&list=PLuHdbqhRgWHKQpmwZWPxVxE36Awb8FE1r&index=20
+PPT:
+docs.google.com/presentation/d/1ehy0sb-PB_nrMJT9nR6JEoBplNU0PUUVAGoUNK0CP1Q/edit#slide=id.g25538591cc8_0_0
+
+Workshop agenda:
+1. Welcome!
+2. Data model & synchronization
+3. Live coding: Indexing
+4. Break
+5. Building the UI
+6. Live coding: UI (vanillaJS and REACT)
+7. Break
+8. Relevancy and Live Demo
+9. Wrap up 
+
+
+About Live coding:
+1. Indexing
+	> Single tracking using a NodeJS script
+2. Building the UI
+	> 2 tracks, same UI using:
+		a. InstantSearch.js ("vanilla JS")
+		b. React InstantSearch Hooks
+		
+		
+What you need?
+1. A ready to be used Algolia App with 10k available records
+	> we'll provide one shared App if needed
+2. A dev environment including NodeJS and IDE
+	> we'll be using online solution Codesandbox.io
+	> we recommend you to use an online solution in case you need our help during live coding
+	
+	
+The Mission: Algoflix, the new streaming company
+ > we are going to build a new streaming platform, focusing on the search experience today!
+ > dataset from IMDB will be provided as a JSON file 
+ > a simple CSS file will be shared as well
+ 
+ 
+ 
+Data model & synchronization
+
+Data organization in Algolia
+ > the Algolia Dashboard (Index) consist of the following:
+	1. App Id
+		- a segmented space for data relating to one domain or project
+	2. Facets
+		- filters related to a specific query
+	3. Index
+		- a group of records of similar type
+		- i.e. products or articles
+	4. Records
+		- a single item stored in Algolia
+		- this can represent anyting, from a product, article, etc
+	5. Attributes
+		- a field within a record
+		
+		
+Data format
+ > Records must be in JSON format
+	- Out API handle this for you is most cases
+	- Acceptable data types: booleans, strings, integers/floats, arrays, and objects (incl. nested)
+ > Records should have an objectID (a unique alphanumberic value) to identify record
+	- if you do not provide one, Algolia will automatically generate one for you
+ > Custom ranking attributes: numberical or boolean
+	- if you use "string" datatype for your custom ranking attribute, it will NOT HAVE ANY EFFECT in your Ranking Strategy
+ > Dates: UNIX timestamp (recommended)
+ > Listing: tables (arrays) and not a string with commas
+ > Hierarchical categories:
+	- Category.level0: ["Woman", "Sales"]
+	- Category.level1: ["Woman>Woman tops", "Sales>Women"]
+ > NOTE:
+	1. Algolia is NOT a database. Only information used for text searching should be indexed
+	
+	
+Index naming best practices
+ > <env>_[<domain>_]<data type>[_<language>][_<sort>|_query_suggestions]
+	- Environment: prod, staging, dev
+	- Domain: For multi domain applications
+	- Data Type: product, category, article, etc
+	- Language: en, fr, ca
+	- sort: Price_asc, price_desc, rating
+ > examples:
+	- prod_mysite_products_en
+	- prod_mysite_products_en_price_asc
+	- prod_mysite_products_en_price_desc
+	- prod_mysite_products_en_query_suggestions
+	
+	
+Types of Data to be indexed
+ > only these 4 types should be indexed
+	1. Searchable data
+		- ex: name, category
+		- attributes that match agains what users type into the search bar
+	2. Filterable data
+		- ex: category, shipping
+		- attributes that users can filter on to refine results
+	3. Business ranking data
+		- ex: customer
+		- attributes used to influence ranking of results
+	4. Display data
+		- ex: thumbnail image, url
+		- attributes used to display on the frontend
+ > example record of e-commerce
+	name: Sony - Playstation 4 (500GB)
+	shortDescription: Experience the evolution of gaming
+	bestSellingRank: 95
+	salePrice: 399.99
+	manufacturer: Sony
+	type: HardGood
+	customerReviewCount: 7461
+	category: PS4 Consoles
+	shipping: Free shipping
+	salePrice_range: 201-500
+	objectID: 8240103
+	thumbnailImage: http://img.bbystatic.com/BestBuy_US/images/product/qweqweqwe
+	url: "http://www.bestbuy.com/site/sony+playstation+4?id=123123123&skuId=8240103&cmp=RMX"
+	image: "http://img.bbystatic.com/BestBuy_US/images/product"
+	
+	
+	
+	
+Sending data to Algolia
+
+7 ways to push Data
+No Code
+1. JSON/CSV upload from Dashboard, for dev & test
+2. Algolia connectors
+	> When: For commercetools, bigQuery, or online accessible JSON/CSV files
+	> How: Directly from the Dashboard, setup your connector (URLs, authentication, schedule...)
+3. Algolia Crawler
+
+Low Code
+4. Integrations
+	> When: You're using one of the platforms or frameworks with a ready to be used integration
+	> How: Simply install and follow the instructions to set up your data flow
+	> ex: Frameworks like Rails, Django, Symfony, Laravel
+	> ex: Platforms like Magento 2, WordPress, Shopify, Salesforce Commerce Cloud B2C, Netlify, Zendesk
+5. Algolia CLI (https://github.com/algolia/cli)
+	> When: Mainly for test purposes or when your backend exports a JSON file usable for Algolia
+	> How: Algolia CLI is a command line tool that makes it easy to perform common data manipulations and interactions with your Algolia app or indices
+	> ex: $ algolia objects import <index> -F <file>
+
+Custom Code
+6. REST API
+7. API Client (most used by Algolia's customers)
+	> When: You have direct or indirect access to the data and need to transform it programmatically before sending it to Algolia
+	> How: Use Algolia's open source API clients to facilitate indexing script
+	
+	
+	
+DATA SYNCHRONIZATION
+
+3 Synchronization Components
+1. Realtime Updates
+	> Updates to the database are immediately reflected to Algolia by using single updates
+2. Buffered Updates
+	> Updates are buffered before being sent, improving the indexing performance and fewer network calls
+3. Full reindexing
+	> Operation reads the full database content and override pre-existing content of the Algolia
+	> recommended to do once in a while
+	
+	
+	
+Shared App
+ > (use yours if you have one available)
+ > EU Cluster
+	APP ID: QDDE6ECCK1
+	Admin API key: 5a57f4724517e284a2bc3a588a1ef71d
+	Read API key: 7a291ee30130c6b303b301d04d270a2c
+ > US Cluster
+	APP ID: YS0MNKGIQM
+	Admin API key: dc900991cad38d36dbbfb682f7bf3aa8
+	Read API key: 544c9265d256129a6397d541860df1ae
+ > the dataset in these App is available in the Algolia's github
+	- see https://github.com/algolia/datasets > devcon2023
+
+
+Live coding: Indexing
+Requirements:
+1. Environment where NodeJS is installed
+	> we can either use our local machine, or use online sandbox like "codesanbox.io"
+2. Add "algoliasearch" library into the NodeJS project
+	> either use:
+		- npm i algoliasearch --save
+		- yarn add algoliasearch --save
+		
+
+API keys in Algolia
+ > by default, there are two API keys available
+	1. Search-only API keys
+	2. Admin API keys
+ > we can also create our custom API keys with relevant access/permissions set to the said API keys
+ 
+ 
+Fetching the API keys in Algolia
+1. Go to the Dashboard of Algolia
+2. Go to the Settings by clicking the Gear icon at lower left
+3. In the Organization Settings, go the "Team and Access" -> "API keys"
+
+
+
+Creating NodeJS app for Algolia indexing
+1. Create new js file (index.js) in root directory of NodeJS project
+2. Inside the index.js, do the following
+	> initialize algoliasearch
+		- const algoliasearch = require('algoliasearch')
+	> create Algolia client using the imported algoliasearch, pass the App Id and Admin API Key into the constructor of Algolia client
+		- const client = algoliasearch('V41OTE1K6R', '7ebbd57334fb6fe076f24a4d66c32a72');
+	> create an Index using the Algolia client we created earlier, pass the name of the said index
+		- const index = client.initIndex('glenn_movies');
+3. Create a json file in the root directory to represent a Record
+	> https://github.com/algolia/datasets/blob/master/devcon2023/movies.json
+	> download the json file and add it to the root directory
+4. Back to the index.js
+	> import the JSON file as javascript object inside
+		- const movies = require("./movies");
+	> using the Algolia index object and the javascript object "movies", we can save objects in the said index
+		- index.saveObjects(movies).then(() => console.log("That's all folks"));
+5. Run the index.js. In the CLI, execute
+	> node index.js
+6. Look at the Algolia dashboard based on AppId and Index name used
+	> we should that it is populated by records that corresponds to the "movies.json" that we used
+	
+	
+Classes/Methods available in "algoliasearch" library
+index.saveObjects(array objects)
+index.saveObjects(array objects, object requestOptions)
+index.saveObject(object objects)
+index.saveObject(object objects, object requestOptions)
+ > used to save an array of objects into the Index directly
+ > we can also pass an object to configure the request options like
+	- autoGenerateObjectIdIfNotExist: boolean
+		= specifies if Algolia will create "objectId" attribute to record if it does not exist
+ > this can either save or update a record in the Index, based on whether a Record with similar objectId exist
+ 
+ 
+index.replaceAllObjects(array objects)
+index.replaceAllObjects(array objects, object requestOptions)
+ > used to replace ALL objects in the Index
+ > used for doing FULL REINDEXING operation
+ > Full reindexing operation works by:
+	1. creating a temporary index to hold all the updated records
+	2. once the reindexing is done, it will just switch the live and temporary index
+ > requestOptions fields includes:
+	- safe: bool
+	
+
+index.partialUpdateObjects(array objects)
+index.partialUpdateObjects(array objects, object requestOptions)
+index.partialUpdateObject(object objects)
+index.partialUpdateObject(object objects, object requestOptions)
+ > used for doing partial update on the records in Index
+ > used for updating one or many attributes in the records of Index
+ > requestOptions fields includes:
+	- createIfNotExist: bool
+	
+
+index.deleteObjects(array objectIds)
+index.deleteObjects(array objectIds, object requestOptions)
+index.deleteObject(string objectId)
+index.deleteObject(string objectId, object requestOptions)
+ > used for deleting one or more records in the index
+ > uses the object ids to locate the records to delete
+ > more recommended to use than "index.deleteBy" due to performance efficiency
+ 
+ 
+ 
+ 
+Update attribute of a Record
+ > in this case, we want to update the popularity of a specific movie record in movies.json
+1. In the root directory, create a json file
+	> get one json object inside movies.json file, and paste it here
+2. Modify the "popularity" attribute of the json object inside the newly created json file
+3. Inside the index.js
+	> import the json file which contains updated movie information into a javascript object
+		- const spidermanNWH = require("SpidermanNWH");
+	> call the saveObjects() of index, and pass an array with the json object inside
+		- index.saveObjects([spidermanNWH]).then(() => console.log("Done."))
+4. Run the index.js file by executing
+	> node index.js
+5. Check in the Algolia index if the value for record corresponding to the movie you updated has changed
+
+
+
+
+WHAT IS A FACET?
+https://www.algolia.com/doc/guides/managing-results/refine-results/faceting/#whats-a-facet
+ > think of facets as a set of FILTERABLE CATEGORIES that allow users to refine results by multiple categories simultaneously.
+ > Algolia derives these facets from attributes
+	- for a book index, facets might be "author" or "genre" attributes
+	- for a luxury shop, facets might be "brand" or "designer"
+ > Algolia's faceting features allow you to:
+	- List all possible values for selected attributes and return contexttual values and counts with each search result
+	- Compute a facet count or the number of records matching each attribute's value
+	- enable search within an attribute's values (search for facet values)
+
+
+
+
+SETTING UP ATTRIBUTES FOR FACETING - DASHBOARD
+1. Go to the Algolia Index dashboard
+2. In the Index dashboard, select Configuration panel
+3. From here, go to Filtering and Faceting -> Facets
+4. In the "Attributes for faceting", add an Attribute
+	- in our case, the "genre" attribute for movies
+	
+	
+	
+SETTING UP ATTRIBUTES FOR FACETING - API library - JavaScript
+0. Remove any attributes we added for faceting earlier in dashboard
+1. Go to the index.js
+2. Using the index object, call setSettings()
+	> pass an object with field "attributesForFaceting"
+	> this attribute takes an array of string, corresponding to the name of the attributes to add for faceting
+		- index.setSettings({attributesForFaceting: ["genres"]});
+3. Execute the index.js file using
+	> node index.js
+4. Check in the dashboard if the settings reflected
+
+
+
+
+
+
+BUILDING THE UI
+
+Why FrontEnd? Because Milliseconds Matter
+ > Algolia search library is focused on Frontend integration
+ > Below are the following reasons as to why they focused on frontend integration instead of providing backend libraries for search feature
+	1. Algolia's main goal is to have SMOOTH and almost INSTANT search experience which helps to convert searches into something
+	2. In the search process, each additional step in the architecture brings computation time and network latency
+	3. Building an As-You-Type search experience is most of the time too demanding for traditional backends while Algolia is tailored for it
+ > Because of this, Algolia is the one doing the searching processes since they have servers tailored for this process
+
+Can someone still go backend?
+ > Yes they can, we can do this in two ways:
+	1. With Algolia's frontend libraries, but using their servers as an endpoint to serve as proxy, they can leverage their own servers
+	2. With their own frontend + backend development leveraging only the Algolia's client
+		- to get all the value of Algolia, all request should be served live WITHOUT any cache
+ > We typically do this if we want to enrich the response data of the Algolia search result
+ > Also, in a typical search page, there will be multiple options to add in search like filters, categories, etc
+	- with approach 1, Algolia's frontend libraries can take care of these easily
+	- with approach 2, it will be much harder to do so
+	
+	
+What Algolia Provides
+ > 3 UI libraries
+	1. InstantSearch
+		- build your search result page
+		- also include category page, product listing page, etc
+	2. Autocomplete
+		- build your search autocomplete menu
+	3. Recommend
+		- display recommended content
+		
+	
+	
+InstantSearch
+ > use InstantSearch when:
+	1. Search result page and all listing page (categories, brand pages, ...)
+	2. full page or overlays
+	3. single or multi index (federated search)
+	4. Standard pagination or infinite scroll
+ > available in 7 flavors
+	- InstantSearch.js
+	- React InstantSearch
+	- React InstantSearch hooks
+	- Vue InstantSearch
+	- Angular InstantSearch
+	- InstantSearch iOS
+	- InstantSearch Android
+	
+	
+Structure (Frontend)
+ > consist of the following
+	1. Rest APIs (Algolia)
+		- Algolia Insights
+		- Algolia Search
+	2. Web
+		-> API Client
+			- SLA
+			- Retries
+			-> Algolia JS Helper
+				- State (ex: search input, search result, etc)
+				-> InstantSearch JS
+					- Widgets
+				-> InstantSearch React
+					- Widgets
+				-> InstantSearch Vue
+					- Widgets
+				-> InstantSearch Angular
+					- Widgets
+	3. Native Mobile
+		-> Android API Client
+			-> InstantSearch core for Android and Objective C
+				-> InstantSearch for android
+		-> Swift API Client
+			-> InstantSearch for iOS
+ > it all start with API clients from either Web or Native Mobile apps sending request to Algolia's REST APIs using their API clients
+ 
+ 
+Widgets
+ > Building blocks that have predefined behavior and render output
+ > You can also style, extend or create custom widgets
+ > you can test out these widgets here
+	- https://www.algolia.com/doc/guides/building-search-ui/widgets/showcase/react/
+	
+	
+Progressive Customization API
+ > InstantSearch provides three layers of usage that get progressively more powerful, with each level giving you more control:
+ > Widget progression includes:
+	1. Predefined widgets:
+		PROS: Up and running in seconds
+		CONS: No access to the DOM output
+	2. Extending widgets
+		PROS: Take over control of the render output
+		CONS: More coding required (outputted markup)
+	3. Create custom widget
+		PROS: Full control over the UI component as well as its render output
+		CONS: Logic of widget must be coded
+		
+		
+Insights
+ > in order to build a good ranking strategy, in order to show proper item based on the context, we need to know about the user behavior. this includes:
+	- knowing where the user is clicking
+	- knowing where the user converts (from PLP to PDP)
+ > Insight library helps us understand the user behavior, which in turn helps us to show more relevant content
+	- Accenture said that 91% of consumers say they are more likely to shop with brands that provide offers and recommendations that are relevant to them 
+ > Insights includes features that extends search capacities and used for learning user journey like
+	- Neural
+	- Dynamic ranking
+	- Personalization
+	- Recommend
+
+
+How Algolia Insights works?
+ > Algolia insights works by collecting "events" from the website/frontend, and using the data from the events to improve the Algolia Search and Algolia Recommend
+ > Events can be either
+	- View
+	- Click
+	- Conversion events
+ > Event sources includes:
+	- Mobile
+	- PC
+	- TV
+	- Voice
+ > Algolia Insights API processes these events to improve Algolia Search by:
+	1. Click and Conversion Analytics
+		- to track KPIs
+	2. A/B Testing
+		- to make informed decisions
+	3. Dynamic Re-ranking
+		- to leverage AI-driven merchandising
+	4. Personalization
+		- create unique experiences
+	5. Neural
+		- Better query understanding
+ > Algolia Recommend is improved by Algolia Insights API using events to
+	1. Determine Frequently Bought Together
+		- increase order value
+	2. Related/Trending Content
+		- increase engagement
+		
+		
+What should I track for Algolia Insights?
+ > the bare minimum
+	- Clicks and Conversions on Search result pages (or autocomplete)
+	- Conversions on Product Detail Page (PDP) after search
+		-> You will have to FORWARD the "queryID" to your PDP in order to track effectively
+ > Extend user knowledge
+	- Clicks on product cards (everywhere)
+	- Content viewed
+	- Listing page viewed
+	- Conversion in all context (ex: outside site -> PDP)
+	- Clicks on facets
+	
+	
+What's a conversion
+ > conversion is an action that proved that user had REAL INTEREST in that specific concept
+ > eCommerce
+	- Add to basket as main conversion
+	- Final order as an additional events
+	- Add to wishlist
+ > Non eCommerce
+	- Read (articles) using triggers like after X seconds, scroll position
+	- Downloaded (software, PDFs...)
+	- Watched (streaming
+	
+	
+LIVE CODING: CREATING ALGOFLIX
+Requirements
+1. Environment that cna ho
+
+
+Preparing index.html
+1. Inside the index.html, import the following
+	- src/index.js
+2. Then add the algoliasearch and instantsearch js file in index.html
+	- https://www.algolia.com/doc/guides/building-search-ui/installation/js/
+	- copy the <script> tags in the "Directly in your page" section
+	- this will make the "algoliasearch" and "instantsearch" available in the "window" object to be used
+	
+Final index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InstantSearch</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/algoliasearch@4.18.0/dist/algoliasearch-lite.umd.js"
+      integrity="sha256-V3GHVlMSAsogT3wL0OY/l4d3fRLa56gNzlnzdIMBIWg="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.56.4/dist/instantsearch.production.min.js"
+      integrity="sha256-U62jq/Jnfr93B4FQceG9WxzOg0o6WqJShZXL20/iKXQ="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <script src="src/index.js"></script>
+  </body>
+</html>
+
+
+USING INSTANTSEARCH AND ITS WIDGETS
+0. Go to index.js
+1. Get the algoliasearch and instantsearch from the window object
+2. Initialize "searchClient" object using "algoliasearch"
+	> algoliasearch() takes two arguments
+		- AppId
+		- Read-only API key
+	> assign the result on a variable
+3. Initialize "search" object using the "instantsearch" object
+	> instantsearch() takes an object, and this object needs to have the following fields
+		- searchClient
+		- indexName, string
+5. Add a widget to show all the record hits
+	> call the search.addWidgets()
+	> inside addWidgets(), pass an array. and inside the array, pass instantsearch.widgets.hits()
+		- this represent the "hits" widget 
+	> inside hits(), pass an object with field "container"
+		- the container represents the html element where the hits widget will be rendered
+		- container takes a string value, which represents the id of the html element (ex: "#hits")
+6. Add a widget to show a search bar
+	> add another object inside search.addWidgets()
+	> pass instantsearch.widgets.searchBox()
+	> inside searchBox(), pass an object with field "container"
+	> the value of container will be the id of the div that will contain the searchbox widget (ex: "#searchbox")
+	> we can also specify the placeholder value to display while theres no input by passing "placeholder" field in the object
+7. Go to index.html
+8. Inside the <body> tag, create two div
+	> 1st div will have id of "searchbox"
+	> 2nd div will have id of "hits"
+9. Restart the live server to host the index.html
+10. We should see two things
+	> search bar
+	> json string which represent results
+11. Try typing something in the search bar
+	> the json string should be updated, and matches within the json string should be highlighted
+	
+Customizing style for "hits" widget
+1. In the instantsearch.widgets.hits(), we can pass another field to the object, which is the "templates"
+	> https://www.algolia.com/doc/guides/building-search-ui/widgets/customize-an-existing-widget/js/#using-html-strings-with-html
+	> with templates, we can transform the results of "hits" into another thing, either another text, or even a markup for adding styles
+	> in "templates" field, we will need to pass an item field which is a function,
+		- this item() function takes two parameters
+			a. hit, the object inside the results
+			b. object containing "html", "components", "sendEvents" fields
+				- this three are destructured in the function parameters
+	> inside the item() function, we can use the hits, and html parameter to add styling in the search results
+	
+ex:
+search.addWidgets([
+  instantsearch.widgets.searchBox({
+    container: "#searchbox",
+    placeholder: "Search for the movie here"
+  }),
+  instantsearch.widgets.hits({
+    container: "#hits",
+    templates: {
+      item(hit, {html, components, sendEvents}) {
+        return html`<h3>${hit.title}</h3>`
+      }
+    }
+  }),
+]);
+
+
+Adding Pagination Widget
+0. SOURCE: https://www.algolia.com/doc/api-reference/widgets/pagination/js/
+1. In the index.html
+	> add another div below and assign a new id for it
+		- "pagination"
+2. In the src/index.js
+	> add another widget inn search.addWidgets([])
+	> use instantsearch.widgets.pagination()
+		- pass an object with field "container"
+		- assign the field with the id of the div earlier
+3. Restart server and we should see the pagination UI, albeit its just a simple unordered list right now
+
+ex:
+index.html
+  <body>
+    <div id="searchbox"></div>
+    <div id="hits"></div>
+    <div id="pagination"></div>
+    <script src="src/index.js"></script>
+  </body>
+  
+index.js
+search.addWidgets([
+  instantsearch.widgets.searchBox({
+    container: "#searchbox",
+    placeholder: "Search for the movie here"
+  }),
+  instantsearch.widgets.hits({
+    container: "#hits",
+    templates: {
+      item(hit, {html, components, sendEvents}) {
+        return html`<h3>${hit.title}</h3>`
+      }
+    }
+  }),
+  instantsearch.widgets.pagination({
+    container: "#pagination"
+  })
+]);
+
+
+
+Configure search request query
+ > we can do so by adding another widget in the search, with "configure" widget
+1. In the index.js
+	> add another widget in search.addWidgets()
+		- use instantsearch.widgets.configure()
+		- make sure it is place first in the addWidgets() array input
+	> inside instantsearch.widgets.configure(), pass an object with the following fields and values
+		- hitsPerPage: number
+		- pass the number of hits you want per page
+2. Restart the server and check if the number of results per page has changed
+
+
+
+Add "refinementList" widgets
+ > this widgets is used to add "filters" on the search request, based on the attribute used for refinement
+ > https://www.algolia.com/doc/api-reference/widgets/refinement-list/js/
+ > note that the attribute to be used SHOULD BE CONFIGURED AS AN "attributeForFaceting" in the index configurations
+1. In the index.html
+	> add another div, and assign an id on it
+		- we will use this id later for container field
+2. In the src/index.js
+	> add another widget, before the "configure" widget	
+		- instantsearch.widgets.refinementList
+	> in the refinementList, pass an object, and add two mandatory fields
+		- container (string), which will be the id of the div earlier
+		- attribute (string), the attribute that we will use for refinement
+		- sortBy (string[]), defines how the options in refinementList is sorted (define is whether option is checked or not, which will change the order of the list very often)
+3. Restart the server and check if changes have reflected
+
+ex:
+index.js
+search.addWidgets([
+  instantsearch.widgets.configure({
+    hitsPerPage: 10
+  }),
+  instantsearch.widgets.refinementList({
+    container: "#refinements",
+    attribute: "genres",
+    sortBy: ["count"]
+  }),
+  instantsearch.widgets.searchBox({
+    container: "#searchbox",
+    placeholder: "Search for the movie here"
+  }),
+  instantsearch.widgets.hits({
+    container: "#hits",
+    templates: {
+      item(hit, {html, components, sendEvents}) {
+        return html`<h3>${hit.title}</h3>`
+      }
+    }
+  }),
+  instantsearch.widgets.pagination({
+    container: "#pagination"
+  })
+]);
+
+index.html
+  <body>
+    <div id="searchbox"></div>
+    <div id="refinements"></div>
+    <div id="hits"></div>
+    <div id="pagination"></div>
+    <script src="src/index.js"></script>
+  </body>
+  
+  
+Finalizing the style of the Algoflix website 
+ > https://github.com/algolia/datasets/tree/master/devcon2023
+ > inside the devcon2023 folder, we have the following:
+	1. App.css file for styling
+	2. Readme.md file which contains the following:
+		- HTML Markup that will utilize the App.css content
+		- HTML Markup for "hits" widgets templating
+1. Create file "src/styles.css', and copy the content of App.css inside it
+2. Inside the index.html	
+	> copy the first HTML markup in the Readme.md, which uses App.css classes
+	> paste the divs in the specified locations in the HTML Markup added
+	> import the src/styles.css using <link>
+3. Inside the src/index.js
+	> use the HTML Markup specified in Readme.md for the "hits" template
+	
+
+	
+Final code:
+index.js
+const algoliasearch = window.algoliasearch;
+const instantsearch = window.instantsearch;
+
+const searchClient = algoliasearch(
+  "V41OTE1K6R",
+  "119c55c041cc7d897ed25e80d035b4e9"
+);
+
+const search = instantsearch({
+  indexName: "glenn_movies",
+  searchClient,
+});
+
+search.addWidgets([
+  instantsearch.widgets.configure({
+    hitsPerPage: 10
+  }),
+  instantsearch.widgets.refinementList({
+    container: "#refinements",
+    attribute: "genres",
+    sortBy: ["count"]
+  }),
+  instantsearch.widgets.searchBox({
+    container: "#searchbox",
+    placeholder: "Search for the movie here"
+  }),
+  instantsearch.widgets.hits({
+    container: "#hits",
+    templates: {
+      item(hit, {html, components, sendEvents}) {
+        return html`<div class="items">
+        <img src="https://image.tmdb.org/t/p/w185${hit.poster}" alt=${hit.title} />
+        <div class="items-info">
+          <div class="items-info--title">
+            <h3>
+              ${hit.title}
+            </h3>
+          </div>
+          <div className="items-info--genres">
+            <span className="genre-title">${hit.genres[0]} - ${hit.vote_average}</span>
+          </div>
+        </div>
+      </div>`
+      }
+    }
+  }),
+  instantsearch.widgets.pagination({
+    container: "#pagination"
+  })
+]);
+
+search.start();
+
+
+
+index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InstantSearch</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/algoliasearch@4.18.0/dist/algoliasearch-lite.umd.js"
+      integrity="sha256-V3GHVlMSAsogT3wL0OY/l4d3fRLa56gNzlnzdIMBIWg="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.56.4/dist/instantsearch.production.min.js"
+      integrity="sha256-U62jq/Jnfr93B4FQceG9WxzOg0o6WqJShZXL20/iKXQ="
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="src/styles.css">
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-wrapper">
+        <div class="header-nav">
+          <h3>Home</h3>
+        </div>
+        <!-- Searchbox goes here -->
+        <div id="searchbox"></div>
+      </div>
+    </div>
+    <div class="container">
+      <div>
+        <!-- Refinementlist goes here -->
+        <div id="refinements"></div>
+      </div>
+      <div>
+        <!-- Hits go here -->
+        <div id="hits"></div>
+        <!-- Pagination goes here -->
+    <div id="pagination"></div>
+
+      </div>
+    </div>
+    <script src="src/index.js"></script>
+  </body>
+</html>
+
+
+BONUS: Adding highlighting for search results
+ > it is a best practice to highlight the search result to let users know HOW the result item is added in the result list
+1. In the instartsearch.widgets.hits()
+	> to the item() function passed in the templates, we can destructure the "components" parameter and fetch the "Highlight" field, which is a function
+	> the Highlight function takes an object with two fields
+		- hit (object): the result hit
+		- attribute (string): the attribute that we want to highlight
+			-> in our case, since we are showing the 'title' attribute of the hit, we will pass this one
+2. Restart the server and check again to see the changes
+
+ex:
+index.js
+  instantsearch.widgets.hits({
+    container: "#hits",
+    templates: {
+      item(hit, {html, components: {Highlight}, sendEvent}) {
+        return html`<div class="items">
+        <img src="https://image.tmdb.org/t/p/w185${hit.poster}" alt=${hit.title} />
+        <div class="items-info">
+          <div class="items-info--title">
+            <h3>
+              ${Highlight({hit, attribute: 'title'})}
+            </h3>
+          </div>
+          <div className="items-info--genres">
+            <span className="genre-title">${hit.genres[0]} - ${hit.vote_average}</span>
+          </div>
+        </div>
+      </div>`
+      }
+    }
+  }),
+  
+  
+BONUS 2: Adding barebone Algolia Insights
+ > with recent versions of instantsearch, we can add a barebone Algolia Insights in the instantsearch
+ > we can do this by adding "insights" to the instantsearch constructor
+1. Add "insights" field to the instantsearch() constructor
+	> set value to true
+2. Go to the page, open the devtools -> network, search using "event"
+3. Click a search result item, and check if a new request has come
+	> if the server we host our html is our local machine, we might encounter a CORS related error when sending the insights API call
+	
+
+BONUS 3: Adding/Sending events for Algolia Insights
+ > we can also add events data to the Algolia insights like clicks, conversion, etc
+ > by default, instantsearch's "hits" widget comes with function to send "click" event when we click one of the hits
+1. Add another parameter in the item() that we pass in the "templates" field for instantsearch.widgets.hits()
+	> name of parameter is "sendEvent"
+	> used for sending events to Algolia insights, assuming that we have Algolia Insights setting turned on (which we did earlier)
+2. Inside the HTML Markup of item(), add a button on tops
+	> this button will have the following
+		- onClick, a function that calls sendEvent(), which will have the following arguments
+			a. eventType (string), specifies the event type to send
+			b. hit (object), the result hit
+			c. eventName (string), user given event name
+		- "Convert on this" text
+3. Restart the server, and check if we are sending event to Algolia Insights of type "conversion"
+	> if the server we host our html is our local machine, we might encounter a CORS related error when sending the insights API call
+	> we should also have two event send request due to the built in event sending for "hits" widgets of type "click"
+4. OPTIONAL: Remove the default "click" event "hits" widget send
+	> we can do so by 
+		- adding "event" parameter in button onClick
+		- calling event.stopPropagation() function before the sendEvent() call
+	
+	
+ex: index.js
+  instantsearch.widgets.hits({
+    container: "#hits",
+    templates: {
+      item(hit, {html, components: {Highlight}, sendEvent}) {
+        return html`<div class="items">
+        <button onClick=${(event) => 
+			event.stopPropagation();
+			sendEvent("conversion", hit, "Movie converted")}>
+          Convert on this
+        </button>
+        <img src="https://image.tmdb.org/t/p/w185${hit.poster}" alt=${hit.title} />
+        <div class="items-info">
+          <div class="items-info--title">
+            <h3>
+              ${Highlight({hit, attribute: 'title'})}
+            </h3>
+          </div>
+          <div className="items-info--genres">
+            <span className="genre-title">${hit.genres[0]} - ${hit.vote_average}</span>
+          </div>
+        </div>
+      </div>`
+      }
+    }
+  }),
+  
+  
+  
+  
+  
+
+RELEVANCY & LIVE DEMO
+
+Agenda:
+1. How the ranking works?
+	> Tie breaking algorithm
+2. Ranking in detail
+3. Demo
+
+
+Algolia Relevance Layers:
+1. Textual Ranking
+2. Business Ranking
+3. User-centric Ranking
+4. Manual Ranking
+
+
+Tie-breaking algorithm: Example:
+ > Dataset (Legos):
+	- 4 studs Green square
+	- 4 studs blue circle
+	- 4 studs pink circle
+	- 8 studs blue rectangle 
+	- 4 studs green circle
+	- 4 studs blue square
+ > you can think of these Legos as records with following properties
+	- Color, Shape, Studs
+ > Ranking formula
+	1. Color (Blue > Pink > Green)
+	2. Shape (more corners is best, ex: square = rectangle > circle)
+	3. Studs (less is best)
+	
+Ranking steps:
+ > By color (Blue > Pink > Green)
+	1st 4 studs blue circle
+	1st 4 studs blue square
+	1st 8 studs blue rectangle
+	2nd 4 studs pink circle
+	3rd 4 studs blue square
+	3rd 4 studs green circle
+ > Then by shape (rectangle = square > round)
+	1st 8 studs blue rectangle
+	1st 4 studs blue square
+	2nd 4 studs blue circle`
+	3rd 4 studs pink circle
+	4th 4 studs green square
+	5th 4 studs green circle
+ > Then by Studs (less is best)
+	1st 4 studs blue square
+	2nd 8 studs blue rectangle
+	3rd 4 studs blue circle
+	4th 4 studs pink circle
+	5th 4 studs green square
+	6th 4 studs green circle
+	
+	
+Ranking Formula
+ > composed of FOUR components:
+	1. Hard sorts
+		- one or many attributes can be used
+		- ex: sort by "free_shipping" desc
+	2. Textual relevance
+		- composed of 7 predefined rules
+		- recommended to not touch this
+		- ex: textual Ranking criteria
+	3. Business relevance
+		- you can use one or many attributes for this
+			-> two or three attribute is what recommended
+		- ex: custom ranking where result ranking is arrange by "popularity" in descending order
+	4. Ultimate tie breaker
+		- engine default (not displayed in Dashboard)
+		- uses the "objectId" field in descending order alphabetically
+		
+		
+Ranking Criteria in Details
+ > tie break the bag according to ranking criteria
+	1. Typo
+		- less amount of typo will be ranked higher
+	2. Geo
+	3. Matching words
+	4. Filters
+		- ranks on how many matching filter the record has
+		- more matched filter will be ranked higher
+	5. Proximity
+	6. Attribute
+		- how many attributes in the record does the query matches
+		- more attribute matches will be ranked higher
+		- ex:  
+	7. Exact
+ > Buckets are what you call to the records that have the EXACT SAME VALUE on ALL the ranking criteria
+	- ex: Record 1 and 2 have the same typo and attribute ranking
+ > Records are boosted but are still textually relevant
+	
+	
+Boosting/Burying rules
+ > Boosting rules create new textual relevance bucket
+ > Boosting facets is implemented as an OPTIONAL FILTER
+	- Filter = 1 for boosting
+	- Filter = -1 for burying
+ > we can add this optional filters in our query in the dashboard or API call to the Algolia API
+ 
+ 
+Optional filter vs Filter
+ > Optional filters are INCLUSIVE
+	- records that do not match STAY in the bag
+ > Filters are EXCLUSIVE
+	- records that do not match are REMOVED from the bag
+ > ex:
+	Optional filter used
+		Record 1,2,3,4 = Typo 0, Filter 1
+		Record 5,6,7,8,9 = Typo 0, Filter 0 (stays even if does not match filter)
+		Record 10,11 = Typo 1, Filter 1
+		Record 12,13 = Typo 1, Filter 0 (stays even if does not match filter)
+	Filter used
+		Record 1,2,3,4 = Typo 0, Filter 1
+		Record 10,11 = Typo 1, Filter 1
+		
+
+Applying Custom Ranking
+ > with custom ranking applied, the records STAY in their textual relevance bucket
+	- this means that records are custom ranked within the scope of their relevant bucket
+	- ex: Record in bucket 1 will still stay in bucket 1 but is sorted according to custom ranking
+	
+	
+Pinning rules
+ > for pinning rules, we have two options:
+	1. Only display the pinned records if it matches the active filter
+	2. Display pinned records even if it does not match the active filter as long as it is within the index iteself
+ > we can do this by checking (1) or unchecking (2) the option
+	- "Pinned items must match active filters to be displayed"
+	
+	
+Custom Ranking
+ > leverages business metrics to powerfully rank serach
+ 
+Ranking Metrics: Example:
+ > Business metrics	
+	- number of sales, margin
+	- is featured item, released date
+ > Popularity
+	- number of views, number of saves
+	- customer rating
+ > Seller quality (Marketplace)
+	- Seller score
+	- Is Top/Suggested seller
+ > Record quality
+	- Is high quality record, record has image
+	
+	
+Custom ranking strategies
+ > typically, Low and Medium Cardinality Attributes is enough, but in a very niche use cases, you may want to also use the High Cardinality attributes
+1. Textual Ranking
+	> Algolia's textual ranking
+	> Often left as default
+2. Low Cardinality Attributes
+	> Large impact
+	> Great place for important booleans, buckets
+	> ex: isFeatured, record has image, isTopSeller, inStock
+3. Medium Cardinality Attributes
+	> Medium impact
+	> Attributes that are shared across multiple products
+	> ex: customer rating, seller score
+4. High Cardinality Attributes
+	> An ultimate tie breaker
+	> Used only when we have very similar products
+	> ex: margin, number of sales
+	
+	
+Impact of custom ranking order
+ > below are the items to demonstrate the impact of custom ranking order
+	1. Item A
+		> nbSales: 15
+		> margin: 0.10
+	2. Item B
+		> nbSales: 12
+		> margin: 0.08
+	3. Item C
+		> nbSales: 6
+		> margin: 0.30
+ > for Textual Ranking (nbSales - desc, then margin - desc), order will be
+	- Item A -> B -> C
+ > for Textual Ranking (margin - desc, then nbSales - desc), order will be
+	- Item C -> A -> B
+	
+	
+	
+Custom Ranking Issues
+1. Fine distribution of records ranked by custom ranking
+	> imagine graphing distribution of the number of records based on the attribute used for custom textual ranking where:
+		- Y axis = value of numerical record attribute (ex: nbSales, margin)
+		- X xis = individual records
+	> if the distribution graph of the ranking is a smooth curve and have more continuous values, this would mean that there are MULTIPLE points at which we will rank the records. This would cause a performance issue with regards to the custom ranking
+		- you can think of this as "categories" to filter/sort the records
+		- this would mean that the "categories" to filter/sort the records will be too high
+		- ex: 759, 758, 757, 756, 755
+	> FIX: Bucketing
+		- bucketing is a data pre-processing technique to group numbers or more or less continuous values into a smaller number of "bins" or "buckets"
+		- ex: grouping the "nbSales" attribute by hundreds
+			-> from 759, 758, 757, 689, 688, 588, 587, 576
+			-> to 700, 600, 500
+			
+			
+			
+Live Demo: Relevance
+ > we will be using the index where we imported record using "movies.json" file
+ 
+Configuration - Relevance Essentials
+Searchable attributes
+ > searchble attributes are the attributes that the user might search to when looking for specific record (ex: movie)
+ > this is because the searchable attribute will be one used in textual ranking (ex: typo, attribute, matched words)
+ > note that the ORDER at which you are defining these searchable attribute MATTERS
+ > ex: for movies, users may use the following attributes for searching
+	- title
+	- actors
+	
+Ranking and Sorting
+ > used to control the way results are sorted
+ > by default, contains the textual Ranking Criteria of Algolia, but you can add custom ranking attribute of your own like your application's business metrics
+ > typically, we add attributes that have high cardinality here
+ > IMPORTANT: attributes added in ranking and sorting should be NUMBER, no strings
+	- for dates, you may want to convert it to unix timestamp
+ > ex: 
+	movies - popularity, vote count, vote average
+	
+	
+Search results: Ranking Criteria
+ > when searching in the index, we can see the ranking criteria scores of all the result item
+ > we can do this by clicking the "medal" icon at the bottom right of the record UI card
+ 
+ 
+ 
+WRAP UP:
+
+Want to go deeper? Algoflix Home page additions
+Build carousels
+ > "New on Algoflix"
+	- Algolia Search sorted by date
+ > "For you"
+	- Algolia Search using user profile personalization
+ > "Popular on Algoflix"
+	- Algolia Recommend Trending items model
+ > "Popular in XXX"
+	- List of popular categories using Algolia Recommend Trending facet value model
+	- + Trending items for each category
+ > "You may also like / Similar content"
+	- Algolia Recommend Related content model
+ > "Others also watched"
+	- Algolia Recommend Frequently Bought Together model
+	
+	
+Algolia Search - Beyond Search
+ > Dynamic Re-Ranking is an Algolia feature that uses AI to find trends in your user's behavior
+ > Learn from clicks & conversions, automatically adapts search ranking
+ 
+ 
+Algoflix Personalized Search Experience
+ > Personalize Search Experience based on user navigation and content consumption using Algolia's Automated Personalization
+	- Automatic build of user profile based on events
+	- Tailor your strategy to select important content characteristics
+	
+	
+Algolia NeuralSearch
+1. AI creates a map of ideas
+2. The ideas in the user's query get placed on the map
+3. The search engine brings back the closest ideas to the query
+
+
+What do you need to build such an experience? EVENTS	
+ > refers to the click, conversion, etc events that we push to the Algolia Insights

@@ -1,0 +1,40 @@
+18. Richardson Maturity Model
+
+
+Richardson Maturity Model
+	> test if how RESTful the API is
+
+Level 0
+Expose SOAP Web Services in REST style
+	> typically, URI exposed represent the actions that consumer of web service can do
+EX:
+http://server/getPosts
+http://server/deletePosts
+http://server/doThis
+
+
+Level 1
+Expose Resources with a proper URI
+	> note: here, there is still an IMPROPER use of HTTP methods (GET, POST, DELETE, PUT, PATCH)
+EX:
+http://server/accounts
+http://server/accounts/10
+http://server/deleteaccount/1
+
+
+Level 2
+Level 1 + HTTP methods
+	> here, we have proper use of HTTP method
+	> with this, we can lessen URI polution
+EX:
+POST 	http://server/accounts
+GET	http://server/accounts
+GET	http://server/accounts/1
+DELETE	http://server/accounts/1
+
+
+Level 3
+Level 2 + HATEOAS
+	> contains not only Data, but also the next possible Actions
+		- ex: from fetching a single item, we will also receive link for fetch all items
+	> same URI usages as the Level 2

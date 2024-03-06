@@ -1,0 +1,14 @@
+103 Redshift Overview
+
+Redshift Overview
+ > Redshift is based on PostgreSQL, but it's not used for OLTP
+	- OLTP: OnLine Transaction Processing
+ > It's OLAP - Online Analytical processing (for analytics and data warehousing)
+ > Load data once every hour, not every second
+ > 10x better performance than other data warehouses, scale to PBs of data
+ > Columnar storage of data (instead of row based)
+ > Massively Parallel Query Execution (MPP),  highly available
+ > Pay as you go based on the instances provisioned
+ > Has a SQL interface for performing the queries
+ > BI tools such as AWS Quicksight or Tableau integrate with it
+	- BI: Business Intelligence tools

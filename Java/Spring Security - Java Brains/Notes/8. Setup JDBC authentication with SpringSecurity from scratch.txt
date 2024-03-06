@@ -1,0 +1,158 @@
+8. Setup JDBC authentication with SpringSecurity from scratch
+
+
+
+jdbcAuthentication()
+	> method of AuthenticationManagerBuilder class
+	> by calling this, we will tell the AuthenticationManager to user a Jdbc source to fetch the source of User to authenticate with
+
+
+dataSource(DataSouce dataSource)
+	> called after the jdbcAuthentication()
+	> defines the DataSource of the User list we can use to authenticate incoming User credential
+
+
+
+withDefaultSchema()
+	> called after the dataSource()
+	> tells the AuthenticationManager to create the default schema in its DataSource
+	> the schema added by default look something like this
+
+  create table users(
+      username varchar_ignorecase(50) not null primary key,
+      password varchar_ignorecase(50) not null,
+      enabled boolean not null);
+
+  create table authorities (
+      username varchar_ignorecase(50) not null,
+      authority varchar_ignorecase(50) not null,
+      constraint fk_authorities_users foreign key(username) references users(username));
+      create unique index ix_auth_username on authorities (username,authority);
+
+
+
+withUser()
+	> called after the withDefaultSchema()
+	> used to populate the Jdbc with Users
+	> inisde this method, we can pass a User and call its builder methods
+
+
+User
+	> class from org.springframework.security.core.userdetails.User
+	> used in order to create User that we will use to authenticate a User credential coming
+	> to create we will use its builder methods with includes
+		- withUser(String user)
+		- password(String password)
+		- roles(String... roles)
+
+
+EX:
+INSIDE configure(AuthenticationManagerBuilder auth)
+
+		auth.jdbcAuthentication()
+			.dataSource(dataSource)
+			.withDefaultSchema()
+			.withUser(
+				User.withUsername("user")	
+				.password("pass")
+				.roles("USER")
+			)
+			.withUser(
+				User.withUsername("admin")
+				.password("pass")
+				.roles("ADMIN")
+			);
+
+
+
+WAYS OF SETTING UP JDBC FOR AUTHENTICATION
+	> before we use JDBC for authentication we will have to setup dependencies in the project
+	> add the following dependencies
+		- JDBC api for database connection
+		- Spring Security for security
+		- Spring Web for mvc
+
+I. Using Spring Security default schema and populate it with Users
+	> not recommended in production
+	> to do this, we will do the following
+
+1. Create @EnableWebSecurity class
+	> extend it to WebSecurityConfigurerAdapter
+
+2. Override the two methods
+	> configure(AuthenticationManagerBuilder auth)
+	> configure(HttpSecurity http)
+
+3. Add PasswordEncoder Bean inside @EnableWebSecurity class
+
+4. Setup the configure(HttpSecurity http)
+
+5. Add DataSource property inside the @EnableWebSecurity class
+	> add @Autowired annotation
+
+6. Inside the configure(HttpSecurity http), add these code 
+	> with this, the Spring Security will create a default schema inside the database
+	> then it will populate this with what we pass inside withUser() below
+
+		auth.jdbcAuthentication()
+			.dataSource(dataSource)
+			.withDefaultSchema()
+			.withUser(
+				User.withUsername("user")	
+				.password("pass")
+				.roles("USER")
+			)
+			.withUser(
+				User.withUsername("admin")
+				.password("pass")
+				.roles("ADMIN")
+			);
+
+
+
+II. Providing your own database schema and database content
+	> here we will have our own database schema to work with
+	> the database schema should at least have the following property
+		- table that contains the following (users)
+			= username, password, enabled column
+		- table that contains the following (authorities)
+			= username, authority
+		- username column of authorities table should be mapped to username column of users table using foreign key
+
+
+1. Create @EnableWebSecurity class
+	> extend it to WebSecurityConfigurerAdapter
+
+2. Override the two methods
+	> configure(AuthenticationManagerBuilder auth)
+	> configure(HttpSecurity http)
+
+3. Add PasswordEncoder Bean inside @EnableWebSecurity class
+
+4. Setup the configure(HttpSecurity http)
+
+5. Add DataSource property inside the @EnableWebSecurity class
+	> add @Autowired annotation
+
+6. Inside the configure(AuthenticationManagerBuilder auth), do the following
+	> using the AuthenticationManagerBuilder parameter, call these chain methods
+		a. jdbcAuthentication()
+		b. dataSource()
+			- pass the @Autowired DataSource
+		c. call usersByUsernameQuery(String query)
+			- here, we will fetch the username, password, and enabled column from users table where username = ?
+				= the ? is where the Authentication will inject the Username of Authentication object into
+		d. call authoritiesByUsernameQuery(String query)
+			- here, we will fetch the username, and authority from authorities table where username = ?
+				= the ? is where the Authentication will inject the username of Authentication object to
+
+INSIDE configure(AuthenticationManagerBuilder auth)
+
+		auth.jdbcAuthentication()
+			.dataSource(dataSource)
+			.usersByUsernameQuery("select username,password,enabled "
+					+ "from users "
+					+ "where username = ?")
+			.authoritiesByUsernameQuery("select username,authority "
+					+ "from authorities "
+					+ "where username = ?");

@@ -1,0 +1,58 @@
+19. Creting the Currency Conversion Service
+
+URL:
+http://localhost:8100/currency-exchange/from/USR/to/INR/quantity/10
+
+JSON response
+{
+    "id":10001,
+    "from":"USD",
+    "to":"INR",
+    "conversionMultiple":65.00,
+    "quality":10,
+    "totalCalculatedAmount":650.00,
+    "environment":"8000 instance-id"
+}
+
+
+
+1. Create CurrencyConversion class
+	> have following properties
+		- Long id
+		- String from
+		- String to
+		- BigDecimal conversionMultiple
+		- BigDecimal quantity
+		- BigDecimal totalCalculatedAmount
+		- String environment
+2. Create @RestController
+	> use the URL above for Request Mapping URI reference
+		- three PathVariables
+	> create a GetMapping
+		- use the URL above for Request Mapping URI reference (three PathVariables)
+		- returns a CurrencyConversion object (uses the PathVariables)
+		
+CurrenyConversion Class
+public class CurrencyConversion {
+	private Long id;
+	private String from;
+	private String to;
+	private BigDecimal conversionMultiple;
+	private BigDecimal quantity;
+	private BigDecimal totalCalculatedAmount;
+	private String environment;
+
+
+CurrencyConvertionController class
+
+@RestController
+public class CurrencyConversionController {
+
+	@GetMapping("/currency-exchange/from/{from}/to/{to}/quantity/{quantity}")
+	public CurrencyConversion calculateCurrencyConversion(
+			@PathVariable("from") String from,
+			@PathVariable("to") String to,
+			@PathVariable("quantity") BigDecimal quantity) {
+		return new CurrencyConversion(1000L, from, to, quantity, BigDecimal.ONE, BigDecimal.ONE, "");
+	}
+}

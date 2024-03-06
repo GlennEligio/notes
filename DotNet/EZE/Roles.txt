@@ -1,0 +1,25 @@
+Items Controller
+C Admin
+R Admin
+U Admin, Student
+D Admin
+
+Account Controller
+C		Admin
+R		Admin
+U		Prof, Admin, Student
+D		Admin
+Login		No auth
+RefreshToken	Prof, Admin, Student
+
+Request
+C	Admin, Student
+R	Admin
+U	Prof, Student
+D	Admin
+
+RequestPendingController
+GetRequestPending	Prof
+UpdateRequestPending	Prof
+
+

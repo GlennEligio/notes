@@ -1,0 +1,143 @@
+04 RHCSA RHEL 8 - Use input-output redirection
+
+Input-Output redirection
+
+Input-Output redirection streams
+ > input output in RHEL8 is distributed in three different streams
+	1. Standard Input or stdin
+		> used for picking up information from a file, line by line
+	2. Standard Output or stdout
+		> used for pushing information to other command like "echo" or to a file like log files
+	3. Standard Error or stderror
+		> used for sending errors that happens when executing program or script
+ > these streams are also numbers
+	- 0 for stdin, 1 for stdout, 2 for stderror
+
+
+Command
+cat FILE
+ > used to print the content of the file
+ > ex: cat names.txt
+
+
+echo
+ > used to print the content of the file in terminal
+ > uses stdout stream behind the scene
+ > ex: echo "Standard Output"
+
+
+less FILE
+ > Less is a utility command in Linux that displays the content of the file or the output of a command. 
+ > The contents are displayed one page at a time. 
+ > The less command is particularly useful in viewing large files since it doesn’t load the complete file instead it loads the file part by part. 
+ > By doing so the access time is much faster.
+ > ex: less largefile.txt
+
+
+Streams Demonstration
+1. stdin
+	> used command below
+		- $cat
+	> this will prompt the user to enter input
+	> this input is sent to the cat command using stdin
+	> then cat sends its output in stdout, hence printing the input
+2. stdout
+	> use the command below
+		$ echo "Standard Output"
+	> the echo will send the string in the stdout, hence printing it
+3. stderror
+	> $ ls %
+	> the ls command will encounter an error, which it will send to stderror and print the error message
+
+
+Input-Output Redirection
+ > to do an input or output redirection, we will use the following symbol
+	">" for stdout redirection
+	"<" for stdin redirection
+	"2>" for stderror redirection
+ > note that the symbols above will OVERWRITE the content we previously passed
+ > to append the data that we will redirect, we will just add another greater or less than
+	">>" for stdout redirection append
+	"<<" for stdin redirection append
+	"2>>" for stderror redirection append
+
+
+find [option] "name"
+ > used to search for files and directories in a directory hierarchy based on a user given expression and can perform user-specified action on each matched file
+ > the string can use wild cards as well
+ > options include
+	-name 	the string to use for searching
+ > ex: find -name "*.bash*"
+
+
+grep "string"
+ > used to search a body of text line by line that matches the string query
+ > string can also use wildcards
+ > ex: grep ".bash"
+
+
+tee [options] FILE
+ > used to write both in stdout and to another file
+ > typically used with another program where that other program will send its output to "tee" via Pipe and it will both print the output and save it in a file
+ > ex: cat test.txt | tee test2.txt
+
+
+wc [option] FILE
+ > word count
+ > used to find how many lines, word, byte, character in its input
+ > options
+	-l	output the number of lines in input
+	-w 	output the number of words in the input
+	-c 	output the number  of bytes in the input
+	-m	output the number of characters in the input
+
+
+tail [option] FILE
+ > opposite of Head
+ > takes a last N amount of line, or byte on a file
+ > options
+	-f 		follow, similar to watch
+	-n num	print the last 'num' lines istead of the last 10 lines (default)
+ > ex: tail /var/log/secure | grep error
+
+
+Input-Output Redirection Demonstration
+
+stdout redirection
+1. Execute the command below 
+	$ cat > test.txt
+2. You will be prompted to input data
+3. End the command using CTRL + D
+4. Execute the command below
+	> $ cat test.txt
+	> you should see the input that you passed earlier
+5. Execute first command again, and enter new data
+6. Execute the second command again, and check if the data inside test.txt is OVERWRITTEN
+	> it should be overwritten since we didnt use the append version
+
+stdout redirection append
+1. Add data in test.txt using cat and output redirection
+	$ cat > test.txt
+2. Append data inside test.txt using cat and output append redirection
+	$ cat >> test.txt
+3. Check if the data inside the test.txt is the combination of two inputs you passed earlier
+	$ cat test.txt
+
+
+Pipe
+ > used to redirection the stdout stream of an application to the stdin stream of another
+ > symbol for this is the "|"
+
+Pipe Demonstration
+1. ls -lhtra | less
+	> here, the stdout stream of "ls" command will be redirected to the stdin of the "less"
+2. ls -lhtra | find -name "*.bash*"
+	> here, the stdout stream of "ls" command will be redirected to the stdin of the "find"
+	> the find will then filter the outline line by line where the line contains the phrase ".bash"
+3. ls -lhtra | grep ".bash"
+	> the output of ls -lhtra will be sent as input to grep command
+4. cat | tee test2.txt
+	> executes cat to take input, then tee command prints it and saves it to test2.txt
+5. cat test2.txt | wc -w
+	> wc command counts the words present in the output of cat test2.txt command
+6. cat /var/log/vboxadd-setup.log | grep failed

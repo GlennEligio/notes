@@ -1,0 +1,77 @@
+11. Service Definition for Spring REST webservice
+
+
+Swagger
+	> used for REST Service Definition / Documentation
+	> to add Swagger in Spring, we will need to add these dependency
+
+For Spring Boot Version >= 2.2
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+
+@EnableSwagger2
+	> Indicates that Swagger support should be enabled. 
+	> This should be applied to a Spring java config and should have an accompanying '@Configuration' annotation. 
+	> Loads all required beans defined in SpringSwaggerConfig
+
+Docket
+	> A builder which is intended to be the primary interface into the Springfox framework.
+	> Provides sensible defaults and convenience methods for configuration.
+
+
+
+To add Swagger
+1. Add the dependency
+2. Create new Class
+	> add @EnableSwagger2 and @Configuration to the class
+2. Add @EnableSwagger2 to a class with @Configuration
+	- reason is that we will add @Bean inside the class itself
+3. Create a @Bean
+	- Docket return type
+	- api() method name
+	- returns a new Docket with DocumentationType.SWAGGER_2 passed in its constructor
+
+
+Usage
+1. springfox-boot-starter add these URL mappings in webservice
+
+2021-12-20 15:41:40.677 TRACE 12472 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	s.d.s.w.Swagger2ControllerWebMvc:
+	{GET [/v2/api-docs], produces [application/json || application/hal+json]}: getDocumentation(String,HttpServletRequest)
+2021-12-20 15:41:40.682 TRACE 12472 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	s.d.s.w.ApiResourceController:
+	{GET [/swagger-resources/configuration/ui], produces [application/json]}: uiConfiguration()
+	{GET [/swagger-resources], produces [application/json]}: swaggerResources()
+	{GET [/swagger-resources/configuration/security], produces [application/json]}: securityConfiguration()
+2021-12-20 15:41:40.685 TRACE 12472 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	s.d.o.w.OpenApiControllerWebMvc:
+	{GET [/v3/api-docs], produces [application/json || application/hal+json]}: getDocumentation(String,HttpServletRequest)
+
+2. For Swagger UI page, visit
+	> base_url + swagger-ui/
+	> ex: localhost:8080/swagger-iu/
+	> the slash at the end is IMPORTANT
+
+
+
+
+
+SwaggerConfig class
+
+// Enables Spring to fetch @Beans added inside
+@Configuration
+// Enables Swagger
+@EnableSwagger2
+public class SwaggerConfig {
+
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.SWAGGER_2);
+	}
+	
+}

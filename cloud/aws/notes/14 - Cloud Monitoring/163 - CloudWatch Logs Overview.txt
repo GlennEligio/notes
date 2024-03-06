@@ -1,0 +1,29 @@
+163 - CloudWatch Logs Overview
+
+Amazon CloudWatch Logs
+ > CloudWatch Los can collect logs from:
+	- Elastic Beanstalk: collection of logs from application
+	- ECS: Collection from containers
+	- AWS Lambda: collection from function logs
+	- CloudTrail based on filter
+	- CloudWatch log agents
+		-> installed inside EC2 machines or on-premises servers
+	- Route53: Log DNS queries
+ > Enables REAL-TIME MONITORING of logs
+ > Adjustable CloudWatch Logs retention
+	- EX: 1 week, 30 days, or infinitely
+ 
+ 
+CloudWatch Logs for EC2
+ > By default, NO logs from your EC2 instance will go to CloudWatch
+ > You need to run a CloudWatch agent on EC2 to push log files you want from EC2 / On premise servers to the Cloudwatch log service
+ > Make sure that EC2 has the correct IAM permissions in order to send logs into the CloudWatch Logs
+ > The CloudWatch log agent can ALSO be setup on-premsises too
+ 
+ 
+EX:
+CloudWatch Logs
+	|	|
+	|	------- On premise server (with CloudWatch Logs agent)
+	|
+	----------- EC2 instance (with CloudWatch Logs agent)

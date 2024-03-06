@@ -1,0 +1,53 @@
+MongoDB Transactions in Spring Data MongoDB
+
+SOURCE:
+https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongo.transactions
+
+
+MongoDB Transactions in Spring Data MongoDB
+ > As of version 4, MongoDB supports Transactions. Transactions are built on top of Sessions and, consequently, require an active ClientSession.
+ > Unless you specify a MongoTransactionManager within your application context, transaction support is DISABLED BY DEFAULT. 
+ > You can use setSessionSynchronization(ALWAYS) to participate in ongoing non-native MongoDB transactions.
+ > to enabled it, we can use the following methods
+	1. Specify the start, commit, and abort Transaction inside SessionCallback
+	2. Do all the queries that you want to encapsulate in a Transaction within the TransactionTemplate execute callback input
+	3. Create MongoTransactionManager @Bean, and then add @Transactional on the method you want to encapsulate in a Transaction
+
+
+Creating MongoTransactionManager @Bean
+ > to create a MongoTransactionManager @Bean, we can create a Configuration class that EXTENDS to "AbstractMongoClientConfiguration"
+ > inside the config class, we will create the @Bean method that returns a MongoTransactionManager
+	- this method will inject MongoDatabaseFactory bean to itself
+
+
+EX:
+@Configuration
+static class Config extends AbstractMongoClientConfiguration {
+
+    // 1
+    @Bean
+    MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {  
+        return new MongoTransactionManager(dbFactory);
+    }
+
+    // ...
+}
+
+@Component
+public class StateService {
+
+    // 2
+    @Transactional
+    void someBusinessFunction(Step step) {                                        
+
+        template.insert(step);
+
+        process(step);
+
+        template.update(Step.class).apply(Update.set("state", // ...
+    };
+});
+
+
+1. Register MongoTransactionManager in the application context.
+2. Mark methods as transactional.

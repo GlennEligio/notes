@@ -1,0 +1,72 @@
+02. Jenkins Installation
+
+
+I. Install Java (and Maven for later actions)
+1. Use root user
+	sudo su
+2. Update list of packages for upgrades
+	apt-get update
+3. Install Maven (Java 8 is AUTOMATICALLY installed alongside Maven)
+	apt install maven
+3.1 For standalone Java installation use this commands (no need to do if step 3 is done)
+	apt search openjdk		- for searching available packages
+	apt install openjdk-11-jdk	- for installing jdk version 11
+4. Update packages
+	apt upgrade
+5. Fetch the LTS release of Jenkins (use commands below)
+
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+6. Update list of packages for upgrades
+	apt-get update
+7. Install Jenkins
+	apt-get install jenkins
+8. Allow firewall access of port 8080 (default port Jenkins listens to)
+	sudo ufw allow 8080
+9. Add "jenkins" user to sudoers list
+	vi /etc/sudoers
+10. Copy these after line where we give root privilege specification
+	jenkins ALL=(ALL) NOPASSWD: ALL
+11. Access the jenkins of Node1 from an External Broser
+	> type in the browser the public ip address of Node1 then access the tcp port 8080
+		ex: http://65.1.149.68:8080/
+12. Enter the contents of the initialAdminPassword file when Jenkin site prompted for password
+	cat /var/lib/jenkins/secrets/initialAdminPassword
+13. Select install suggested plugin in next page
+14. Create the First Admin User
+15. In instance configuration page, no need to modify the default URL
+
+
+For AWS instance user, in case you cant access any port using instance Public IP, configure a security group where you can access the AWS instance for specific ports/ssh.
+
+Opening TCP/SSH in AWS instance using Security Group
+1. Go to EC2 dashboard
+2. Click three dash icon at top left to open sliding navbar
+3. Go to Network & Security Section and click Security Groups
+4. Press "Create security group" at the top
+5. Fill up basic details
+	- Security group name
+	- Description
+6. Create Inbound rules (since we will try to access/enter the instance)
+	> press Add rule
+	> Select type, port range, and source
+	> For Jenkins, these will be
+		a. type 	=  	CUSTOM TCP
+		b. port range 	=	8080
+		c. source	= 	Anywhere IPV4 or 0.0.0.0/0
+7. Finalize creating security group
+	> press "Create security group" at bottom left
+
+Setting Security Group to the AWS instance
+8. Right click the instance
+9. Go to Security > Change security groups
+10. In Associated security group, search the security group you've made and add it
+11. Click "Save" at bottom right
+
+You should be able to access Jenkins now at url 
+	<public ip>:8080

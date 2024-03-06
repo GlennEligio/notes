@@ -1,0 +1,76 @@
+AOP Pointcut Declaration
+	> used to create a shortcut for declaring a Pointcut expression
+
+CREATING Pointcut Declaration
+	> made by creating a method which is
+		- private 
+		- void return typ
+		- empty method body
+	> we then annotate it with @Pointcut
+		- inside @Pointcut(), we pass the Pointcut expression that we want to use multiple times
+
+USING Pointcut Declaration
+	> create a normal @Advice method inside @Aspect
+	> inside the @Aspect() annotation (@Before, @After, ...), pass the name of the Pointcut Declaration method name
+
+EX:
+
+	@Pointcut("execution(* com.dao.*.*(..))")
+	private void forAllDAOMethods() {}
+	
+	@Before("forAllDAOMethods()")
+	public void printBeforeAllDAOMethod() {
+		System.out.println("INSIDE DAO CLASS METHOD");
+	}
+
+
+
+	> here, the second method's @Before parameter references the first method which is a PointCut
+
+
+
+Combining PointCut declarations
+	> works like an "if" statement
+	> execution happens only if it evaluates to true
+
+EX:
+	@Before("expressionOne() && expressionTwo()")
+	@Before("expressionOne() || expressionTwo()")
+	@Before("expressionOne() && !expressionTwo()")
+
+
+
+	// Pointcut method, will be reference in any Advice @Before, @After, etc using its method name
+	/*
+	 * With this pointcut, it will target all the methods of all classes inside com.dao package
+	 */
+	@Pointcut("execution(* com.dao.*.*(..))")
+	private void forDaoPackage() {}
+	
+	// create pointcut for getters
+	@Pointcut("execution(* com.dao.*.get*(..))")
+	private void getter() {}
+	
+	// create point cut for setters
+	@Pointcut("execution(* com.dao.*.set*(..))")
+	private void setter() {}
+	
+	// create point cut, include package, exclude getters and setters
+	@Pointcut("forDaoPackage() && !(getter() || setter())")
+	private void forDaoPackageNoGetterSetter() {}
+	
+
+
+
+
+CREATING UTILITY CLASS TO HOLD Pointcut Declarations
+
+1. Create the Utility class
+2. Annotate with @Aspect and @Component
+3. Insert the @Pointcut declarations
+4. When we will use this @Pointcut declarations in another class, we will pass the fully qualified name of the method
+
+
+EX: INSIDE @Aspect class outside Utility class
+
+	@Before(com.aspect.UtilityAOPExpressionClass.pointcutDeclarationName())

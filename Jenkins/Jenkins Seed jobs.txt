@@ -1,0 +1,9 @@
+Jenkins Seed jobs
+
+SOURCE: https://www.digitalocean.com/community/tutorials/how-to-automate-jenkins-job-configuration-using-job-dsl
+
+Seed jobs
+
+
+NOTES:
+1. Everything as Code (EaC) paradigm allowed administrators to define these manual tasks as declarative code that can be version-controlled and automated. This includes Jenkins jobs, credentials, configurations, etc.

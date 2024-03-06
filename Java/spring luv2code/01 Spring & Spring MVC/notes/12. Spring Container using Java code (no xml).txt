@@ -1,0 +1,68 @@
+Spring Container using Java Code (no xml)
+
+
+Java Configuration
+	> instead of configuring Spring container using XML	
+	> we can configure the Spring container using Java Code
+
+
+THREE WAYS OF CONFIGURING SPRING CONTAINER
+1. Full XML Config
+2. XML Component Scan
+3. Java Configuration Class
+
+
+Development Process - Java Configuration Class
+1. Create a Java class and annotate as @Configuration
+2. Add component scanning support by adding @ComponentScan to Java Class
+	> this is optional
+	> we will pass the package-location of all @Component Java Classes that we want to include in Spring Container
+3. Read Spring Java configuration class
+	> we will create an AnnotationConfigApplicationContext instance 
+	> in its Constructor, we will pass the Class of the Java Class with @Configuration annotation
+4. Retrieve bean from Spring container
+	> we will use the AnnotationConfigApplicationContext object and call its getBean() method 
+
+
+TWO WAYS OF DEFINING BEANS IN SPRING
+1. Full XML Config
+2. Java Configuration Class
+
+
+Development Process - Creating Beans in Configuration Class
+1. Define method to expose bean
+	> create method inside @Configuration class
+	> it may either
+		- return a specific Interface whose value is one of its Implementation Classes
+		- return a Object by calling a specific Class that have a factory method for the Object inside it
+	> we will then add @Bean annotation to the method
+2. Inject bean dependencies
+	> the method name itself is the Bean Id of the said @Bean
+
+Development Process - Java Configuration Class
+1. Create a Java class and annotate as @Configuration
+2. Add component scanning support by adding @ComponentScan to Java Class
+	> this is optional
+	> we will pass the package-location of all @Component Java Classes that we want to include in Spring Container
+3. Read Spring Java configuration class
+	> we will create an AnnotationConfigApplicationContext instance 
+	> in its Constructor, we will pass the Class of the Java Class with @Configuration annotation
+4. Retrieve bean from Spring container
+	> we will use the AnnotationConfigApplicationContext object and call its getBean() method 
+	> we will pass the method name of the @Bean that we want to fetch
+
+
+
+Injecting Values from a Properties File
+1. Create Properties File
+	> populate it with variables in this format
+		- name:value
+2. Load Properties File in Spring config
+	> add @PropertySource() and pass the location of the .properties file
+	> if we added the .properties file inside src, we will pass
+		- "classpath:fileName.properties"
+3. Reference values from Proerties File
+	> when we want to inject the values from Properties file to one of the field members, use @Value
+	> add @Value to the field member that we want to inject literal values
+	> pass the variable name in this syntax
+		@Value(${name})

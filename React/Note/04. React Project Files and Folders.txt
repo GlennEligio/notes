@@ -1,0 +1,36 @@
+04. React Project Files and Folders
+
+
+React Project Files and Folders
+package.json
+	> contains the following data
+		1. name of React app
+		2. version of React app
+		3. dependencies installed
+			-> react
+			-> react-dom
+			-> react-script (development server, script tools)
+		4. scripts used to start/build/test the React app
+
+public/index.html
+	> the Single HTML page that nest the React.Components
+		- these means that all the data inside the <head> is also applied to the Components (such us BootStrap CSS)
+	> inside the html, theres a <div> with id of "root"
+		- this is where all the React Components 
+
+src/index.js
+	> acts as the ENTRYPOINT for React
+	> inside the index.js, we
+		1. Imported the React, ReactDOM, index.css, App from App.js
+		2. Call the ReactDOM.render()
+
+
+ReactDOM.render()
+	> renders a JSX inside the specified element
+	> takes two parameters
+		1. JSX to render
+		2. HTML element in index.html where the JSX will be Nested/Render
+			
+
+src/App.js
+	> serves as the "root" Component of React App

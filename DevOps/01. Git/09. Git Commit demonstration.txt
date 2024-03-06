@@ -1,0 +1,15 @@
+09. Git Cloning
+
+git clone demonstration
+	
+1. Create a public repository in your GitHub account
+2. CHECK the "Initialize this repository with a README"
+	- this is so that theres a content in this repository
+3. Dont forget to copy the SSH link to this repository
+4. In CLI, go to the directory where you want to clone the repository we made
+5. Type in CLI
+	> git clone <SSH link of GitHub repo>
+6. In case you havent added github.com in your SSH agent, it will ask for a passphrase
+7. After entering passphrase we should see the content of GitHub repo in the directory	
+	> enter "dir" or "ls" to see content of the current directory
+	

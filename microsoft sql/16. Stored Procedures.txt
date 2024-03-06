@@ -1,0 +1,54 @@
+STORED PROCEDURES
+	> reusable units that encapsulate a specific business logic of the application.
+	> So, it is a group of SQL statement and logic, compiled and stored together to perform a specific task
+
+SYNTAX:
+Creating Procedure
+
+CREATE [ OR REPLACE] PROCEDURE
+procedure_name 
+[(parameter_name [IN | OUT | IN OUT] type [])]
+{IS | AS}
+BEGIN [declaration_secion]
+executable_section
+//SQL statement used in the stored procedure
+END 
+GO
+
+Executing Procedure
+EXEC procedure_name @variableName = valuePassed;
+
+EXAMPLE:
+
+CREATE PROCEDURE Students_City @SCity varchar(8000)
+AS
+SELECT * FROM StudentsInfo
+WHERE City = @SCity
+GO 
+SELECT * FROM StudentsInfo
+
+EXEC Students_City @SCity = 'Hyderabad'
+
+This have almost the same syntax as creating a method in the Java or C programming. 
+1. CREATE PROCEDURE Students_City @Scity varchar(8000)
+	> first we create the procedure with its name, and the variableName and variableDataType included
+	> the variableName will be used inside the procedure
+	> after creating the procedure, when executing the procedure, we need to call the name, the variableName, and a value to the variableName
+
+2. AS
+	> declaration of start of the queries that will be stored in the procedure
+
+3. SELECT * FROM StudentsInfo
+   WHERE City = @SCity
+	> here, we create a query that will return a table whose rows are FROM StudentsInfo and City columnvalues is equal to the @SCity that we will pass later on when we execute it
+
+4. GO
+	> declaration of end of the queries that will be stored in the procedure
+
+5. EXEC Students_City @SCity = 'Manila'
+	> this will execute the Students_City procedure and will use the 'Manila' as the @SCity value
+	> with this, the stored procedure will execute like this
+
+SELECT * FROM StudentsInfo
+WHERE City = 'Manila'
+

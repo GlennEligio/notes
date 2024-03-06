@@ -1,0 +1,218 @@
+07 Debugging React Apps
+
+001 Module Introduction
+
+Module Content
+1. Understanding Error Messages
+2. Debugging & Analyzing React Apps
+3. Using the React DevTools
+4. Creating Error Boundaries
+
+
+
+
+
+002 Understanding React Error Messages
+
+React Error Message
+ > Error message in React are composed of the following information
+	1. File source
+	2. Line and column source of error in File
+	3. Error message/description
+	4. Code snippet
+		- not all error message contains code snippet
+
+EX:
+Failed to compile.
+
+./src/App.js
+SyntaxError: D:\Study\programming\React Udemy\Workspace\07-debugging-react-app\src\App.js: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (43:6)
+
+  41 |         <CourseInput onAddGoal={addGoalHandler} />
+  42 |       </section>
+> 43 |       <section id="goals">
+     |       ^
+  44 |         {content}
+  45 |       </section>
+  46 |
+
+
+
+
+
+
+003 Analyzing Code Flow and Warning
+
+Analyzing Code Flow
+ > check the flow of function/logic of the behavior that is not working currently
+ > go from the lowest Component in lowest level and work your way up
+ > check each logic if they are correct
+
+Warning
+ > sometimes, the Console will print out error messages / warning that might help us solve the issue
+
+
+
+
+
+
+004 Working with Breakpoints
+
+Breakpoints
+ > added in a specific line(s) of source code
+ > used to "pause" or "freeze" the application after reaching the breakpoint
+ > while in pause, we can do the following
+	1. Check the values of the variables in the code
+
+
+Adding Breakpoint
+ > to add a breakpoint in ReactJS project, we will first run the application
+ > then in Browser, go to the following section
+	1. Google Chrome
+		- Inspect
+		- Source tab
+		- Then look for the source code in the Page section
+	2. Firefox
+		- Inspect
+		- Debugger tab
+		- In Sources tab, look for the source code	
+ > then in source code, add breakpoint by click the line number where you want to add one
+
+
+Action that we can do while App is "pause" with breakpoint
+1. Check the values of the variables
+	> we can do so by hovering to the said variables
+2. Step in to the next function call in stack
+3. Step over to the current function to finish it
+	> this will break the cursor to the end of the function
+	> with this, we can observe all the values of the variables inside the function
+
+
+
+
+
+
+005 Using the React DevTools
+
+React DevTools
+ > an extension in Browser
+ > available in most Browser that uses Chromium as base
+ > contains the following sections
+  	1. Components 
+	2. Profile
+
+Components
+ > in this section, we can se the following information
+	1. Component tree
+	2. Properties of Components, such as:
+		- props
+		- Components that rendered the selected Component
+		- hooks
+		- source (what Component it is rendered from and the line-code location)
+
+EX:
+CourseGoalItem
+props:
+ children: "qwe"
+ id: "goal1"
+ onDelete: f deleteItemHandler() {}
+ new entry: ""
+rendered by:
+ CourseGoalList
+ App
+ createLegacyRoot() 	
+ react-dom@17.0.2
+source
+ CourseGoalList.js:10
+
+
+
+
+
+
+
+
+006 Error Boundaries
+
+Error Boundaries
+ > concept where we create boundary in React to catch Error
+ > with this, we can handle the Error that will be thrown GRACIOUSLY
+
+Creating Error Boundary
+ > in essence, it is a Class Component that have a logic inside the componentDidCatch() lifecycle method
+ 	- only Class Component can access the Component lifecycle methods like componentDidCatch(), componentDidMount(), etc
+ > componentDidCatch() receives two parameter inputs
+	- Error that is thrown
+	- Information / Message attach to the said Error
+ > inside componentDidCatch(), we can use the error and information to display / render specific Views inside Error Boundary Component
+
+EX:
+In the Component below, it defines the componentDidCatch() lifecycle method. 
+ > This method is executed whenever an Error is THROWN.
+Inside the componentDidCatch(), we change the State values based on the error parameter.
+Then inside the render() method, we create an if-else statement based on the "hasError" State
+ > if true, then display a HTML to show the error message
+ > else, display the props.children
+  	- props.children are the JSX element nested inside the Component
+
+
+import React, {Component} from 'react';
+
+class ErrorBoundary extends Component {
+  state = {
+    hasError: false,
+    errorMessage: ''
+  }
+
+  componentDidCatch = (error, info) => {
+    this.setState({hasError: true, errorMessage: error});
+  }
+
+  render() {
+    if(this.state.hasError) {
+      return <h1>{this.state.errorMessage}</h1>
+    } else {
+      return this.props.children;
+    }
+  }
+}
+
+
+
+Usage of ErrorBoundary Component
+
+const deletePersonHandler = (index) => {
+  const rndNum = Math.random();
+
+  if(rndNum > 0.7){
+    throw new Error ("Error thrown")
+  }
+}
+
+return (
+  <ErrorBoundary>
+    <Person
+      click={() => this.deletePersonHandler(index)}
+      name={person.name}
+      age={person.age}
+      key={person.id}
+    />
+  </ErrorBoundary>
+)
+
+
+1000: Common Errors
+1. Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>?
+	> typically shows when the JSX returned in Component doesnt have ONE ROOT ELEMENT
+	> in case of two or more Adjacent JSX root element in Component, we can use JSX fragment (<></>) to enclose them
+		- in the render output, these JSX fragment will not shown
+2. 'variableName' is not defined
+	> tells that a variable name is not defined
+	> typically results in a typo error of the said variable
+3. Encountered two children with the same key, `goal1`. Keys should be unique so that components maintain their identity across updates.
+	> check how the values you assign as keys in Component are created
+	> they should be unique to each other
+
+
+
+

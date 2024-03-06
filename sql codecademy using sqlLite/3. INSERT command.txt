@@ -1,0 +1,23 @@
+INSERT
+	> used to insert data rows in a table,
+	> often used in conjuction with INTO command
+INTO 
+	> used to determine which table is INSERT command applied to
+VALUES
+	> used to define the datarow to be inserted in the table
+
+EXAMPLE:
+
+INSERT INTO celebs (id, name, age)
+VALUES (1, 'Justin Bieber', 22);
+
+INSERT INTO celebs (id, name, age)
+VALUES (2, 'Beyonce Knowles', 33);
+
+INSERT INTO celebs (id, name, age)
+VALUES (3, 'Jeremy Lin', 26);
+
+INSERT INTO celebs (id, name, age)
+VALUES (4, 'Taylor Swift', 26);
+
+Here, we added 4 new datarows inside the "celebs" table using the INSERT. And when we look at the table using the SELECT FROM commands, we can see 4 new rows added in the table.

@@ -1,0 +1,724 @@
+HTML Components Part 2
+
+includes
+	> strong, emphasis, sup, and sub
+	> special characters
+	> Unordered and Ordered list, and List item
+	> Table, TableRow, TableHeading, and TableData
+	> Form
+	> Label
+	> Input and its types
+	> Button
+	> Textarea
+	> Select
+	> Option
+
+
+sub
+	> element that makes the text inside it SUPERSCRIPTED
+
+sup
+	> element that makes the text inside it SUBSCRIPTED
+
+strong
+	> element that makes the text inside it in BOLD
+
+em
+	> stands for emphasis
+	> element that makes the text inside it in ITALICS
+
+&iconName;
+	> format for accessing the special characters available in HTML
+	> ex: &copy; for copyright icon
+
+List item
+	> created using the <li> tags
+	> List item can nest elements such as Linktags, or another Unordered/Ordered List
+
+Unordered list
+	> created using the <ul> tag
+	> to populate the Unordered list, nest List items inside it 
+	> the list items will have some icon at the start like dark dot to show that its a list
+
+Ordered list
+	> created using the <ol> tags
+	> to populate the Unordered list, nest List items inside it 
+	> the list items will have numbers at the start to indicate their order
+
+Table
+	> created using the <table> tags
+	> have the following attributes
+		1. style - defines the style of the table
+			 - can have following values based on the string passed
+				a. "border:Npx lineStyle line color;" - defines the border that will be created
+				d. "border-spacing:Npx;" - defines the spacing between the text inside the table to the line border itself
+			- we can combine all of these string properties in one String as long as they are separated by space
+			- EX: style="border:2px solid black; border-spacing:25px"
+	> to populated the Table, we need to create a table row nested inside it
+	> nested inside the table row, we can either
+		a. create a table heading
+		b. create a table data
+
+Table Row
+	> created using the <tr> tags
+	> inside the table row, we can nest either table heading and table data
+
+
+Table Header cell
+	> created using <th> tags
+	> the text inside it is in BOLD and CENTERED
+	> mostly used for the column name at the top
+
+Table data cell
+	> created using the <td> tags
+	> the text inside it is REGULAR and LEFT-ALIGNED
+	> mostly used for populating the table with rows of data
+
+
+Form
+	> created using the <form> tags
+    	> contains the following action
+       		a. action -> defines the http url it will navigate or Action Route 
+        	b. method -> refers to the Http VERB that the action will be
+    	> can nest different types of element
+    	> we can submit the data inside a Form using a Button or Input with type="submit"
+    	> when we submit a Form, it will collect all the "name" and "value" attributes of all Input (and Select) elements nested inside it as SET OF KEY VALUE
+
+
+Input
+	> created using <input> tags
+	> same as the EditText in the Android XML Layout
+    	> user can input text inside the Input 
+    	> have the following attribute
+        	a. type - defines the type of text user can input
+                	- based on the type, the behavior of the Input will be different
+                	- ex: Password type will hide the characters User input, Email will not accept text that doesnt have @ symbol and will not submit the Form until @ is present
+                	- using Submit type, it will create some sort of "Button"
+        	b. placeholder  - same as "hint" in the EditText of Android XML Layout resource
+                        	- translucent text that will be in Input if theres no text in it
+        	c. value    - same as placeholder, except it is an actual text inside the Input and is INTERACTABLE
+        	d. name - used in order to reference the value of the text inside the Input
+	        e. id   - used to reference the element in the Html file
+
+Label
+	> created using the <label> tags
+    	> same as the paragraph, but with difference
+    	> have the following attribute
+        	a. for -> refers to the element it is referencing
+    	> can refer to a specific element in the html page based on its for attribute   
+        	- it will focus the element whose id is the same as the for attribute of Label
+
+Button (using Button element)
+	> can be created using the <button> tags
+  	> have the following attributes
+        	a. type - defines the type of action the button will do
+                	- ex: button, menu, reset, submit
+    	> the text encapsulated by the Button tags will be the Text inside it
+
+Button (using Input element)
+	> can be created using <input> tags with type="submit"
+    	> all we have to do is to use the Submit type of Input element
+    	> the value attribute will be the Text inside the Button
+
+Textarea
+	> can be created using the <textarea> tags
+    	> same as Input but the dimension of input are can be changed
+    	> will have the following attribute 
+        	a. name - used to reference in text inside the Textarea
+        	b. id   - used to reference in element inside the Html page
+        	c. cols - refers to the number of columns of characters or "width" of Textarea
+        	d. rows - refers to the number of rows of characters or "height" of Textarea
+
+Radiobutton
+	> can be created using <input> tags with type="radio"
+    	> radioButton are elements where you can only choose ONE option out of many
+    	> to group radioButtons, they must have the same NAME 
+        	- meaning, only ONE radiobutton can be choose in ONE NAME 
+	> when submitted, it will send a Key value pair whose Key is the name assigned to the radiobuttons and value being the value of the radiobutton we selected
+
+Checkboxes
+	> can be created using <input> tags with type="checkbox"
+    	> checkboxes are elements where you can choose TWO or MORE options of out many  
+    	> to group checkBoxes, they must have the same NAME
+    	> have a unique attributes:
+        	a. checked - defines if the checkBox is checked or not
+        
+Select
+	> created using <select> tags
+    	> select element is similar to the "Spinner" of Android XML layout
+    	> have the following attribute  
+        	a. name - used to refer to the value in the Select
+        	b. id   - used to refer to the Select element in HTML page
+    	> when clicked, it will create a drop-down menu and show different "options"
+    	> to add an Option in Select, we need to add Option elements inside the Select
+    	> same as the Radiobutton group where only ONE option can be selected
+
+Option
+	> created using the <option> tags
+    	> an element to be nested inside the Select element
+    	> have the following attribute
+        	a. value - defines the value of the Option element
+    	> inside the Option, we can pass a Text that will be displayed in the webpage
+    
+
+		
+
+
+
+
+
+I. Strong, empahsis, sup, and sub
+
+1. Create a Heading1 element inside body
+	> and a random text as value of the heading 
+
+INSIDE index.html
+
+<body>
+    <h1>Hello I'm john and i am studying programming</h1>
+</body>
+
+
+
+
+2. Create a sup and a sub element inside the h1
+	> inside the sup and sub, place some of the text from the heading element inside it
+
+INSIDE index.html
+
+<body>
+    <h1>Hello I'm 
+        <sup>john</sup>  and i am 
+        <sub>studying</sub>  programming</h1>
+</body>
+
+
+
+3. Check the Live server
+	> as we can see, the text nested inside sup element is SUPERSCRIPTED while the text inside sub is SUBSCRIPTED
+
+
+
+
+II. strong and emphasis
+
+4. Create a paragraph element inside the body
+	> give it the text of lorem30
+
+INSIDE index.html file as body
+
+<body>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus fugiat, ex ipsum a ab provident molestias enim consequuntur. Est molestias cum inventore perferendis, iste iure distinctio nesciunt similique tempora vel.</p>
+</body>
+
+
+5. Create a strong and em elements inside the paragraph element
+	> inside the strong and em elements, put some of the text of paragraph inside it
+
+INSIDE index.html file
+
+    <p>Lorem ipsum dolor 
+        <strong>
+            sit amet consectetur adipisicing
+        </strong>  
+        elit. Possimus fugiat, ex ipsum a ab provident 
+        <em>
+            molestias enim consequuntur.
+        </em>  
+        Est molestias cum inventore perferendis, iste iure distinctio nesciunt similique tempora vel.</p>
+
+
+6. Check the Live server
+	> as we can see, those that are inside the strong element are transformed into BOLD characters, while text inside em element are transformed into ITALICS character
+
+
+
+III. Special characters
+
+7. Create a heading 
+	> inside it, add a copyright text
+
+
+8. Access the copyright icon special character
+	> to access the special characters, type the ampersand (&) and type the icon you want to use
+	> the format will be
+
+		&iconName;
+
+	> in our case, its the copyright icon, so type &copy;
+
+INSIDE index.html
+
+<body>
+    <h1>copyright &copy;</h1>
+</body>
+
+
+9. Check the Live Server
+	> we should see the copyright heading with the copyright icon beside it
+
+
+
+
+IV. Unordered list, ordered list, and list items
+
+10. Create an unordered list
+	> to create one, use the <ul> tags
+
+
+11. Populate the list with list item
+	> this list items with have linktags nested inside them
+	> give the linktags inside the list item some text to display in webpage
+	> check the webpage after
+
+INSIDE index.html
+
+<body>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="">Dummy</a></li>
+    </ul>
+</body>
+
+
+
+12. Check the Live server
+	> as we can see, theres a list in the webpage and they have these dots to indicate that they are a list
+
+
+
+13. Create an ordered list
+	> use <ol> tags
+	> populate it with List item
+	> these List items will only have Text inside it 
+
+INSIDE index.html
+
+<body>
+    <ol>
+        <li>john</li>
+        <li>peter</li>
+        <li>parker</li>
+    </ol>
+</body>
+
+
+
+14. Check the Live server
+	> as we can see, the list have these numbers beside it to indicate the order of them
+
+
+
+15. Add an unordered list inside the list items of ordered list
+	> with these, theres a nested unordered list in ordered list
+
+INSIDE index.html file
+
+<body>
+    <ol>
+        <li>john</li>
+        <li>peter
+            <ul>
+                <li>smart</li>
+                <li>not smart</li>
+                <li>globe</li>
+            </ul>
+        </li>
+        <li>parker</li>
+    </ol>
+</body>
+
+
+
+16. Check live server again
+	> as we can see, we have successfully nested a list inside another list
+
+
+
+
+V. Tables, TableRows, TableHeading, TableDatas
+
+17. Create a Table inside the body
+	> to create one, use the <table> tags
+
+
+18. Create a Table row inside the table
+	> to create one, use the <tr> tags
+
+
+19. Create a Table data inside the table row
+	> to create a table data cell. use the <td> tags
+	> populate the table row with several table data
+
+INSIDE index.html file
+
+<body>
+    <table>
+        <tr>
+            <td>john</td>
+            <td>peter</td>
+            <td>joshua</td>
+        </tr>
+    </table>
+</body>
+
+
+
+20. Observer the Live Server
+	> as we can see, theres a row of names in webpage
+
+
+
+21. Create another table row
+	> add it before the table row earlier
+
+
+22. Create Table header cells inside the table row
+	> to create a Table header cells, use the <th> tags
+	> populate it with some text
+
+INSIDE index.html file
+
+<body>
+    <table>
+        <tr>
+            <th>name</th>
+            <th>nickname</th>
+            <th>some name</th>
+        </tr>
+        <tr>
+            <td>john</td>
+            <td>peter</td>
+            <td>joshua</td>
+        </tr>
+    </table>
+</body>
+
+
+
+23. Check the live server
+	> as we can see, theres a new row added in webpage
+	> also, its style is different from the previous rows of text
+
+
+
+VI. Form
+
+24. Create a Form inside the body
+	> to create one, use the <form> tags
+	> for now, leave the action and method attribute blank
+
+
+25. Create an Input inside the the form
+	> to create an Input, use the <input> tag	
+	> have its attribute value be
+		- type = "text"
+		- name = "name"
+		- id = ""
+
+26. Create a Button under the Input
+	> to create a Button, use the <button> tags
+	> have its attribute value be
+		type = submit
+	> add "submit" inside the button
+	> also add a Linebreak between Input and Button
+
+INSIDE index.html file
+
+<body>
+    <form action="" method="">
+        <input type="text" name="name" id="">
+        <br>
+        <button type="submit">submit</button>
+    </form>
+</body>
+
+
+
+27. Test the form in Live Server
+	> input some text in the Input
+	> press Submit
+	> check the new url in the browser tab
+
+		http://127.0.0.1:5500/index.html?name=sampleText
+
+	> as we can see, the url has been appending with a key value pair
+	> these value pair came from the input, with key being the Input's name attribute and value being the Input's value
+
+
+
+28. Comment out the Button element
+
+
+29. Create another Input in the body
+	> this time, we will set the type="submit"
+
+INSIDE index.html
+
+    <form action="" method="">
+        <input type="text" name="name" id="">
+        <br>
+        <input type="submit">
+        <!-- <button type="submit">submit</button> -->
+    </form>
+
+
+30. Check the Live Server
+	> as we can see, it is similar in the Button we created earlier in terms of appearance and also function
+
+
+
+31. Set id attribute of Input to "inputId"
+
+
+
+32. Create a Label element inside the body
+	> to create one, use the <label> tag
+	> have it place at the left of the Input
+		- dont add linebreak between them
+	> set the "for" attribute to "inputId"
+		- this is so it refers to the Input element we added earlier
+	> add Text inside the Label to display in webpage
+
+INSIDE index.html body
+
+    <form action="" method="">
+        <label for="inputId">Input 1</label>
+        <input type="text" name="name" id="inputId">
+        <br>
+        <input type="submit">
+        <!-- <button type="submit">submit</button> -->
+    </form>
+
+
+
+
+33. Check the Live Server
+	> press the Label we created earlier
+	> we should be directed to the Input element and have it be the focus	
+	> change either the for attribute of the label or id attribute of the input
+	> if they are different, the behavior we saw earlier should not work now
+
+
+
+VII. Input types
+	
+34. Add a password-type Input
+	> to have a password type input, set type attribute to password
+	> add a Paragraph element next to it
+	> also add a placeholder attribute to the Input
+		- placeholder add a default text when no text is added
+
+INSIDE index.html body
+
+    <form action="" method="">
+        <label for="inputId">Input 1</label>
+        <input type="text" name="name" id="inputId">
+        <br>
+        <p>Password</p>
+        <input type="password" placeholder="Password">
+        <br>
+        <input type="submit">
+        <!-- <button type="submit">submit</button> -->
+    </form>
+
+
+
+35. Test the Input in Live Server
+	> as we can see, the placeholder value is there when no text is inputted
+	> also the character is turned into dot whenever we type one
+
+
+
+36. Add an email-type Input
+	> email-type Inputs will warn user when the input text DOESNT HAVE a @ symbol in it
+	> to create one, set the type attribute to email
+	> add one after the password input
+
+INSIDE index.html body
+
+    <form action="" method="">
+        <label for="inputId">Input 1</label>
+        <input type="text" name="name" id="inputId">
+        <br>
+        <p>Password</p>
+        <input type="password" placeholder="Password">
+        <br>
+        <input type="email" name="" id="">
+        <input type="submit">
+        <!-- <button type="submit">submit</button> -->
+    </form>
+
+
+
+37. Test the input in Live Server
+	> if we try to input text without @ and submit it, it will warn the user and will not submit the Form
+
+
+38. Add a value attribute in the email-type Input
+	> if we observer the Live Server, it will add interactable Text unlike the placeholder attribute
+
+INSIDE index.html
+
+        <input type="email" name="" id="" value="Email here">
+
+
+
+VIII. Textarea
+
+39. Create a Textarea under the Input elements in Form
+	> set the following attributes of Textarea to
+		name="textarea"
+		id=""
+		cols="20"
+		rows="10"
+	> add a linebreak before and after textarea for formating
+	> also add a paragraph element to describe the purpose of textarea
+
+INSIDE index.html body
+
+    <form action="" method="">
+        <label for="inputId">Input 1</label>
+        <input type="text" name="name" id="inputId">
+        <br>
+        <p>Password</p>
+        <input type="password" placeholder="Password">
+        <br>
+        <input type="email" name="email" id="" value="Email here">
+        <br>
+        <p>Description</p>
+        <br>
+        <textarea name="textarea" id="" cols="20" rows="10"></textarea>
+        <br>
+        <input type="submit">
+        <!-- <button type="submit">submit</button> -->
+    </form>
+
+
+40. Check live server
+	> as we can see, we have this textbox where we can input some text
+
+
+
+IX. Radiobuttons
+
+41. Create a paragraph below textarea	
+	> add text to it to ask user what programming language they prefer
+
+
+42. Add radio-type Inputs
+	> to create one, set type to "radio"
+	> create several radio-type Inputs after the paragraph element
+	> these Inputs SHOULD HAVE THE SAME NAME attribute 
+	> when we submit the form, only the Input we selected will be submitted among the radio buttons
+	> to assign the Text these Inputs will display, add the text after the Input tag
+
+INSIDE index.html body
+
+    <form action="" method="">
+        <label for="inputId">Input 1</label>
+        <input type="text" name="name" id="inputId">
+        <br>
+        <p>Password</p>
+        <input type="password" placeholder="Password">
+        <br>
+        <input type="email" name="email" id="" value="Email here">
+        <br>
+        <p>Description</p>
+        <br>
+        <textarea name="textarea" id="" cols="20" rows="10"></textarea>
+        <br>
+        <p>Please select your favorite coding language?</p>
+        <input type="radio" name="language" value="Java", id="">Java
+        <input type="radio" name="language" value="C#", id="">C#
+        <input type="radio" name="language" value="Javascript", id="">Javascript
+        <br>
+        <input type="submit">
+        <!-- <button type="submit">submit</button> -->
+    </form>
+
+
+43. Test the radiobuttons in Live Server
+	> input data in the form
+	> DONT FORGET to choose one from radio buttons
+	> submit form
+	> check the url generated from submitting form
+
+		http://127.0.0.1:5500/index.html?name=input1&email=email%40gmail.com&textarea=description&language=Java
+
+	> as we can see, the form submitted the Key value pair whose key is the name assigned to the radio buttons and value to the value of the radio button we selected
+
+
+
+X. Checkbox
+
+44. Create a paragraph for the Checkbox that we will create
+	> we can again ask user what coding language is their favorite
+
+
+45. After the paragraph, create several checkbox-type Input
+	> to create checkbox-type inputs, set type="checkbox"
+	> this time, we will set the name of these checkbox DIFFERENT from the name of the radiobutton as to avoid conflict
+
+INSIDE index.html, between radiobuttons and submit Input
+
+        <br>
+        <p>Please select your favorite coding language?</p>
+        <input type="checkbox" name="programming" value="Java", id="">Java
+        <input type="checkbox" name="programming" value="C#", id="">C#
+        <input type="checkbox" name="programming" value="Javascript", id="">Javascript
+        <br>
+
+
+46. Test the Live Server
+	> again, input data in the form
+	> select two or more choices in checkbox
+	> submit the form
+	> check the url generated
+
+		http://127.0.0.1:5500/index.html?name=input&email=email%40gmail.com&textarea=descriptionText&language=Java&programming=Java&programming=C%23
+
+	> as we can see, the checkbox submitted two Key value pairs whose name is the same
+
+		programming=Java&programming=C%23
+
+
+
+
+XI. Select and Option
+
+47. Create a Select element
+	> to create one, use the <select> tags
+	> name it coding
+		- this will be the Key when the select submit its data to the form
+	> also, create a paragraph that will ask user what their favorite coding language is
+
+
+
+48. Create several Option elements inside the Select element
+	> to create an option, use the <option> tags
+	> create several options inside the Select and give them their value and text that will be display in webpage
+	> the value of the option we select in Select element will be the value of the Key value pair the select will send to the Form
+
+INSIDE index.html, between the checkbox and the submit Input
+
+        <br>
+        <select name="coding" id="">
+            <option value="Java">Java</option>
+            <option value="Javascript">Javascript</option>
+            <option value="C#">C#</option>
+        </select>
+        <br>
+
+
+
+49. Test the form in Live Server
+	> as usual, fill up the form with data
+	> submit the data
+	> observer the url generated by the form submission
+
+	http://127.0.0.1:5500/index.html?name=input&email=email%40gmail.com&textarea=descriptionText&language=Java&programming=Java&programming=C%23&coding=Javascript
+
+	> as we can see, the Select element submitted the coding=Javascript key value pair 
+

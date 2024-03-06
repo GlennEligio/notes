@@ -1,0 +1,1274 @@
+27 React + TypeScript
+
+Contents
+01 Module Introduction
+02 What & Why
+03 Installing & Using TypeScript
+04 Exploring the Base Types
+05 Working with Array & Object Types
+06 Understanding Type Inference
+07 Using Union Types
+08 Understanding Type Aliases
+09 Function & Function Types
+10 Diving into Generics
+11 A Closer Look at Generics
+12 Creating a React + TypeScript Project
+13 Working with Components & TypeScript
+14 Working with Props & TypeScript
+15 Adding a Data Model
+16 Time to Practice
+17 Form Submission in TypeScript Project
+18 Working with refs & useRef
+19 Working with - Function Props
+20 Managing State & TypeScript
+21 Adding Styling
+22 Time to Practice - Removing a Todo
+23 The Context API & TypeScript
+24 Summary
+25 Bonus - Exploring tsconfig.json
+
+
+
+
+
+
+
+
+
+
+
+01 Module Introduction
+
+Module Content
+1. What and Why use TypeScript?
+2. TypeScript basics
+3. Combining React & TypeScript
+
+
+
+
+
+
+
+
+02 What & Why
+
+TypeScript
+ > SUPERSET to JavaScript, where it is built on top, it extends to it
+
+Features added by TypeScript
+1. Adds STATIC TYPING to JavaScript (which is a dynamically typed)
+2. Gives compilation error, and validates the source code while we are writing it
+	- with this, it can tell us earlier about the errors in the source code
+	- also, we can lessen the errors that will be happening in runtime
+
+EX:
+With typescript, we can enforce proper typing by assign types to variables, function parameter and return values, etc
+// no-typescript.js
+function add(a, b) {
+  return a + b;
+}
+const result = add(2, 5);
+console.log(result);
+
+
+// with-typescript.js
+function add(a: number, b: number) {
+  return a + b;
+}
+const result = add(2, 5);
+console.log(result);
+
+
+
+
+
+
+
+
+
+
+03 Installing & Using TypeScript
+
+Installing Typescript
+ > we can either install it locally in the workspace, or globally in the machine
+	- if local installation, TypeScript commands are available only in that workspace
+ > to install, use the command
+	- npm install typescript
+ > adding "-g" make the installation global
+	- npm install -g typescript
+
+
+Using Typescript
+ > to use typescript, we can use the command
+	- npx tsc <filename>
+	- ex: npm tsc app.ts
+ > when we use this command, the TypeScript will COMPILE the .ts file into a JavaScript file
+	- ex: app.ts -> app.js
+ > we can specify the target JavaScript version that output compiled .js file will be written to
+	- for this, we will need to edit the
+
+
+Assigning types to variables
+ > to assign types to variables, function parameters or return values, we can use the colon (:) symbol
+
+Assigning type to variables
+let age: number;
+let name: string;
+let items: string[];
+let person: {
+  name: string,
+  age: number
+}
+
+
+Assigning type to function parameter and return value
+function fnName(p1: paramType, p2: paramType): returnType {
+
+}
+
+
+
+
+
+
+
+
+
+
+04 Exploring the Base Types
+
+Exploring the Base Types
+1. Primitive
+2. Complex types
+3. Function types
+
+Primitive types
+ > available to default JavaScript
+ > these includes
+	1. number
+	2. string
+	3. boolean
+	4. null
+	5. undefined
+
+EX: 
+// basics.ts
+// Primitive types
+let age: number;
+let username: string;
+let isValid: boolean;
+
+age = 2;
+username = "Glenn"
+isValid = true;
+
+
+
+
+
+
+
+
+
+
+05 Working with Array & Object Types
+
+Assigning a array type to a variable
+let | const varName: type[];
+
+ex:
+let names: string[];	// can only store string elements
+const ages: number[];	// can only store number elements
+
+
+
+Assigning an object type to a variable
+let | const objName: {
+  prop1: type;
+  prop2: type;
+};
+
+Ex:
+// below, we can only assign object to "person" that contains age and name properties ONLY with matching types
+let person: {
+  age: number;
+  name: string;  
+}
+
+
+
+Assigning a array of object as type to a variable
+let | const objects: {
+  prop1: type;
+  prop2: type;
+}[];
+
+EX:
+// here, we can only add object with properties id, name, year ONLY with matching types as an element of "students"
+let people: {
+  age: number,
+  name: string
+}[];
+
+
+
+
+
+
+
+
+
+
+06 Understanding Type Inference
+
+Type Inference
+ > feature of the TypeScript where it can "infer" the 
+	1. Type of the variables based on the value assign to it
+	2. Type of return value based on what we returned inside a function 
+
+EX:
+// TypeScript can infer that "name" variable is of type string
+let name = "John Glenn"
+
+// TS can infer that "add" return value type is a number
+const add = (a: number, b: number) => {
+  return a + b;
+}
+
+
+NOTE:
+1. Embrace the Type Inference feature
+	> we only explicitly assign type when we are just declaring a variable or a function definition
+ 	> if we declare and assign the value to a variable in single expression, its better to let TypeScript infer the type
+
+EX:
+let name: string;
+name = 23; // throws an Error
+
+
+
+
+
+
+
+
+
+
+07 Using Union Types
+
+Union Types
+ > union of two or more types
+ > this means that a variable, function parameter, or function return value can have one or more types
+ > to create a union type, we will need to use the single OR symbol (|) 
+
+EX:
+// below, we have a variable "course" which can be either a string or variable
+let course: number | string = "ECEN2015"
+course = 2015 // allowed
+
+
+
+
+
+
+
+
+
+
+08 Understanding Type Aliases
+
+Type Aliases
+ > Type Aliases works like an "alias" to specific types
+ > this means that we make an alias to act as a placeholder to specific types
+ > to create a Type Alias, we will need to use "type" keyword
+	- this will NOT EXIST in the compiled JS output file
+
+EX:
+// the "Joinable" type will then represent the union type of number and string
+type Joinable = number | string;
+const partOne: Joinable = "Count: ";
+partOne = partOne + 3;		// valid
+
+
+// the "Person" type represents an object type with properties name and age whose type is a string and number respectively
+type Person = {
+  name: string;
+  age: number;
+}
+const glenn: Person = {
+  name: "Glenn",
+  age: 30
+}
+
+
+
+
+
+
+
+
+
+
+
+09 Function & Function Types
+
+Function Types
+ > Function Type can be determined based on two factors
+	1. the types and amount of parameter in the function
+	2. the type of the return value
+ > TypeScript can INFER the return value based on the parameter type and function logic
+ > Also, for function that doesnt have a return value, it will be inferred to the type "void"
+
+void
+ > the return type of a function that doesnt explicitly returned a value
+ > similar to undefined
+
+EX:
+// here, TypeScript can infer that the return type is number
+function add(a: number, b: number) {
+  return a + b;
+}
+
+// here, the TypeScript infer that the return type is void
+function printSomething(value: any) {
+  console.log(value);
+}
+
+
+
+
+
+
+
+
+
+10 Diving into Generics
+
+Generics
+ > Generics is used to make functions/classes TYPE-SAFE and FLEXIBLE
+	- Flexible where we can it a generic function/class to any type
+	- Type-safe since after executing/creating function/class, its "type" is locked
+ > This flexibility of working with any type is possible through TYPE PARAMETER
+	- we can see a Type parameter to function or class definition using angle brackets <>
+	- then inside the function/class definition, we can use it to define
+		1. for function -> parameter type and return type
+		2. for class -> property type, function parameter and return type
+ > Sometimes, we dont need to pass a type argument when using generic function/class
+	- only possible if we assign all the generic function/class type parameters in the 
+		1. function's parameters
+		2. classes' constructor
+
+
+EX:
+function insertAtBeginning<T>(array: T[], value: T) {
+  const newArray = [value, ...array];
+  return newArray;
+}
+
+const demoArray = [1, 2, 3];
+const numArray = insertAtBeginning<number>(demoArray, -2); 
+
+// here, we didnt explicitly passed a type argument but it still works since TypeScript can infer the Type parameter values from the arguments
+const updatedArray = insertAtBeginning(demoArray, -1); 		// [-1, 1, 2, 3]
+
+const stringArray = insertAtBeginning(["a", "b", "c"], "e");
+
+// updatedArray[0].split(""); // throws Error
+
+
+
+
+
+
+
+
+
+
+11 A Closer Look at Generics
+
+Array<T>
+ > this generic class is used to hold several data of the same type
+ > the number[] or string[] are just a SYNTACTIC SUGAR for this Array generic class declaration
+
+EX:
+// Array generic class
+const numbers = Array<number>(1,2,3,4);
+console.log(numbers)    // [1,2,3,4]
+
+
+Generic and Type parameter inference
+ > if we used all the Type parameter of generic function/class definition in either
+	1. function's parameter
+	2. class' constructor
+ > then we DONT NEED to explicitly pass a type argument, since TypeScript can easily infer the values of the Type parameters
+
+EX:
+function insertAtBeginning<T>(array: T[], value: T) {
+  const newArray = [value, ...array];
+  return newArray;
+}
+
+const demoArray = [1, 2, 3];
+const updatedArray = insertAtBeginning(demoArray, -1); // [-1, 1, 2, 3]
+
+
+
+
+
+
+
+
+
+
+12 Creating a React + TypeScript Project
+
+
+Creating a React with TypeScript support
+ > to create a React with TypeScript, we can use the command
+	- npx create-react-app <app-name> --template typescript
+	- ex: npx create-react-app clock-app --template typescript
+ > to add TypeScript support to an existing React app, use the command
+	- npm install --save typescript @types/node @types/react @types/react-dom @types/jest
+	- we typically install this @types modules as devDependencies
+
+
+React + TypeScript
+ > earlier, we only used vanilla Javascript to write our react app
+	- with this, the only process React needs to do is to run the entrypoint JavaScript file
+ > but with TypeScript, it will compile the said TypeScript files first, and then execute the entrypoint JavaScript file
+
+
+@types/ modules
+ > this npm modules acts as translation bridge between vanilla JavaScript libraries and TypeScript projects
+ > when added, it will give us TypeScript support to the module it is used for
+	-> ex: @types/react will give us Type support to the react module (which is written in pure vanilla JavaScript)
+
+
+EX:
+// dependencies in a react app with typescript template
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.11.43",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.7.4",
+    "web-vitals": "^2.1.4"
+  },
+
+
+react-app-env.d.ts 
+ > a file used to link the compiled JavaScript output to the original TypeScript source code
+
+
+
+
+
+
+
+
+13 Working with Components & TypeScript
+
+Working with Components & TypeScript
+ > working with Component with TypeScript added is the same as before, where
+	1. we need to create a functional or classical component
+	2. we then need either
+		- return a jsx if functional
+		- define the "render" method and inside, return a jsx if classical
+ > but with TypeScript, we can do the following things on top of basic TypeScript features like
+	1. define the type of the props the Component will receive
+	2. define the type the useState hook will store
+	3. define the type the useRef will store
+	- and many more
+
+
+
+
+
+
+
+
+
+14 Working with Props & TypeScript
+
+Working with Props & TypeScript
+ > with TypeScript, we can now define the type a Component's property should have
+ > but default, the "children" property in props object will always be included
+	- "children" refers to the nested JSX code of the said Component
+	- NOTE: As of React v18, "children" property in "props" object is not included by default
+		-> for this, we will need to add an optional property "children" of type React.ReactNode
+
+Defining props type of Component
+1. Functional component - pre ES6 function syntax
+export interface TodosProps {
+  items: string[];
+  children?: React.ReactNode;
+}
+
+function Todos(props: TodosProps) {
+  return (
+    <ul>
+      <li>{props.items}</li>
+      <li>Learn TypeScript</li>
+    </ul>
+  );
+}
+
+
+2. ES6 Arrow functions syntax
+import { FC, ReactNode } from "react";
+
+export interface TodosProps {
+  items: string[];
+  children?: ReactNode;
+}
+
+const Todos: FC<TodosProps> = (props) => {
+  return (
+    <ul>
+      <li>{props.items}</li>
+      <li>Learn TypeScript</li>
+    </ul>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+15 Adding a Data Model
+
+Data Model
+ > right now, we have to pass an object literal to the todos array
+ > but, using TypeScript, we can create a class that represents a Todo item
+
+EX:
+// todo.tsx
+export class Todo {
+  id: string;
+  text: string;
+
+  constructor(t: string) {
+    this.text = t;
+    this.id = new Date().toISOString();
+  }
+}
+
+
+// in Todos.tsx
+import { FC, ReactNode } from "react";
+import { Todo } from "../models/todo";
+
+export interface TodosProps {
+  todos: Todo[];
+  children?: ReactNode;
+}
+
+const Todos: FC<TodosProps> = (props) => {
+  return (
+    <ul>
+      {props.todos.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
+      ))}
+    </ul>
+  );
+};
+
+
+// in App.tsx
+import "./App.css";
+import Todos from "./components/Todos";
+import { Todo } from "./models/todo";
+
+function App() {
+  const todos = [new Todo("Sleeping"), new Todo("Eating")];
+  return (
+    <div className="App">
+      <Todos todos={todos} />
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+16 Time to Practice
+
+GOAL:
+1. Create a component to render a Todo item
+
+EX:
+// Todos.tsx
+export interface TodosProps {
+  todos: Todo[];
+  children?: ReactNode;
+}
+
+const Todos: FC<TodosProps> = (props) => {
+  return (
+    <ul>
+      {props.todos.map((todo) => (
+        <TodoItem key={todo.id} text={todo.text} />
+      ))}
+    </ul>
+  );
+};
+
+
+// TodoItem.tsx
+interface TodoProps {
+  text: string;
+}
+
+const Todo: React.FC<TodoProps> = (props) => {
+  return <li>{props.text}</li>;
+};
+
+
+
+
+
+
+
+
+
+
+17 Form Submission in TypeScript Project
+
+Function/Object/Types used
+React.FormEvent
+ > this type refers to the events happening that is related to <form> (i.e. onSubmit)
+ > this is also the type of event the eventListener of form elements receives 
+
+onSubmit
+ > a property to the <form> element
+ > takes a function value that contains a parameter whose type is of React.FormEvent
+	- passing a function with different type (i.e. contains parameter with different type) will have the TypeScript throw an error
+
+
+Form Submission in TypeScript Project
+ > dealing with form submission is the same as React with vanilla JS, but in TypeScript, we will need to add the following
+	1. define the type of Event to receive by the eventListener function
+		- TypeScript will throw an error if we pass an eventListener function that doesnt match the expected Event type
+		- ex: eventListener with React.MouseEvent for form's onSubmit OR React.FormEvent for button's onClick
+
+
+EX:
+// NewTodo.tsx
+const NewTodo = () => {
+  const submitHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+  };
+
+  return (
+    <form onSubmit={submitHandler}>
+      <label htmlFor="text">Todo text</label>
+      <input type="text" id="text" />
+      <button type="submit">Add Todo</button>
+    </form>
+  );
+};
+
+
+
+
+
+
+
+
+
+18 Working with refs & useRef
+
+Function/Object/Types used
+
+useRef<T>(initialValue: T): MutableRefObject<T>
+ > generic variation of useRef in React + TypeScript
+ > takes one type argument and one function argument
+	1. T	-> refers to the type of data the useRef will store
+	2. init	-> refers to the initial/default value that will be stored in useRef
+ > we typically use null as the initial value
+ > returns a MutableRefObject
+	- this object contains one property - "current"
+	- current contains the latest value of the said useRef
+ > when using the useRef value (located in the "current" property of the output object), we either need to use
+	1. Non-null assertion operator if we are SURE that the useRef will NOT BE NULL when we used it
+	2. Optional chaining if we are NOT SURE that useRef will have a value
+
+
+Non-null assertion operator (!.)
+ > tells the TypeScript type checker that WE ARE SURE that the variable is NOT NULL or UNDEFINED
+ > ex: const enteredText = inputRef.current!.value;
+	-> here, the type checker will infer the enteredText will JUST BE a "string"
+
+Optional chaining operator (?.)
+ > permits reading the value of a property located deep within a chain of connected objects without having to expressly validate that each reference in the chain is valid.
+ > functions similarly to the . chaining operator, except that instead of causing an error if a reference is nullish (null or undefined), the expression short-circuits with a return value of undefined.
+ > When used with function calls, it returns undefined if the given function does not exist.
+ > ex: const enteredText = inputRef.current!.value;
+	-> here, the TypeScript will infer that "enteredText" can be either a string or undefined
+
+
+
+Working with refs & useRef
+ > similar to using useRef in React + Vanilla JS, but with additional settings
+	1. we need to specify the Type of data useRef will store
+	2. we need to specify the initial/default value of the useRef
+
+
+EX:
+// NewTodo.tsx
+const NewTodo = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const submitHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const enteredText = inputRef.current!.value;
+    console.log(enteredText);
+  };
+
+  return (
+    <form onSubmit={submitHandler}>
+      <label htmlFor="text">Todo text</label>
+      <input type="text" id="text" ref={inputRef} />
+      <button type="submit">Add Todo</button>
+    </form>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+19 Working with - Function Props
+
+Function type SYNTAX
+type fnType = (param1: type, param2: type) => returnType
+
+
+Working with Function Props
+ > working with function props is the same as before, but when using with TypeScript, we need to be EXPLICIT about the function type that we are passing 
+ > to create a function type, we will need to consider the following
+	1. amount and type of the parameters of function
+	2. the return value type of function
+
+EX:
+// NewTodo.tsx
+interface NewTodoProps {
+  onAddTodo: (text: string) => void;
+}
+
+const NewTodo: React.FC<NewTodoProps> = (props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const submitHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const enteredText = inputRef.current!.value;
+    props.onAddTodo(enteredText);
+  };
+
+  return (
+    <form onSubmit={submitHandler}>
+      <label htmlFor="text">Todo text</label>
+      <input type="text" id="text" ref={inputRef} />
+      <button type="submit">Add Todo</button>
+    </form>
+  );
+};
+
+
+
+// App.tsx
+function App() {
+  const todos = [new Todo("Sleeping"), new Todo("Eating")];
+
+  const todoAddHandler = (todoText: string) => {
+    todos.push({
+      id: new Date().toISOString(),
+      text: todoText,
+    });
+  };
+
+  return (
+    <div className="App">
+      <NewTodo onAddTodo={todoAddHandler} />
+      <Todos todos={todos} />
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+20 Managing State & TypeScript
+
+Function/Objects/Types used
+
+useState<T>(init: T)
+ > generic variation of the useState hook
+ > takes one type argument and one function argument
+	1. T	-> refers to the type of State that it will manage
+	2. init	-> refers to the initial value of the State
+ > returns a Tuple that contains the following
+	1. the latest State value
+	2. function to modify the State
+		-> takes either 
+			a. the new State value
+			b. function that receives the previous State value whose return value will be the new State value
+
+
+
+Managing State & TypeScript
+ > managing State with React + TS will be the same as React + Vanilla JS, except here we will need to EXPLICITLY DEFINE the State's Type
+
+EX:
+// App.tsx
+function App() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const todoAddHandler = (todoText: string) => {
+    setTodos((prevTodos) => [...prevTodos, new Todo(todoText)]);
+  };
+
+  return (
+    <div className="App">
+      <NewTodo onAddTodo={todoAddHandler} />
+      <Todos todos={todos} />
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+21 Adding Styling
+
+Adding Styles
+ > in this case, we will use the CSS modules to add styles
+
+
+NewTodo.module.css
+ > add "form" class to the form element
+
+.form {
+  width: 40rem;
+  margin: 2rem auto;
+}
+
+.form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.form input {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #f7f5ef;
+  border: none;
+  border-bottom: 2px solid #494844;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-bottom: 0.5rem;
+}
+
+.form button {
+  font: inherit;
+  background-color: #ebb002;
+  border: 1px solid #ebb002;
+  color: #201d0f;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form button:hover,
+.form button:active {
+  background-color: #ebc002;
+  border-color: #ebc002;
+}
+
+
+
+TodoItem.module.css
+ > add the "item" class to the li element
+
+.item {
+  margin: 1rem 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  background-color: #f7f5ef;
+}
+
+
+
+Todos.module.css
+ > add "todos" class to the ul element
+
+.todos {
+  list-style: none;
+  margin: 2rem auto;
+  padding: 0;
+  width: 40rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+22 Time to Practice - Removing a Todo
+
+GOAL:
+1. Add a functionality where if we click a TodoItem, it will be removed from Todos
+
+SOLUTION
+1. Use prop drilling to send a deleteTodo function from App -> Todos -> TodoItem
+
+
+EX:
+// App.tsx
+function App() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const todoAddHandler = (todoText: string) => {
+    setTodos((prevTodos) => [...prevTodos, new Todo(todoText)]);
+  };
+
+  const todoDeleteHandler = (todoId: string) => {
+    setTodos((prevTodos) => {
+      return prevTodos.filter((todo) => todo.id !== todoId);
+    });
+  };
+
+  return (
+    <div className="App">
+      <NewTodo onAddTodo={todoAddHandler} />
+      <Todos todos={todos} onDeleteTodo={todoDeleteHandler} />
+    </div>
+  );
+}
+
+
+// Todos.tsx
+export interface TodosProps {
+  todos: Todo[];
+  onDeleteTodo: (id: string) => void;
+  children?: ReactNode;
+}
+
+const Todos: FC<TodosProps> = (props) => {
+  const deleteTodoHandler = (id: string) => {
+    props.onDeleteTodo(id);
+  };
+
+  return (
+    <ul className={classes.todos}>
+      {props.todos.map((todo) => (
+        <TodoItem key={todo.id} todo={todo} onDeleteTodo={deleteTodoHandler} />
+      ))}
+    </ul>
+  );
+};
+
+
+// NewTodo.tsx
+interface TodoProps {
+  todo: Todo;
+  onDeleteTodo: (id: string) => void;
+}
+
+const TodoItem: React.FC<TodoProps> = (props) => {
+  const clickHandler = (event: React.MouseEvent) => {
+    event.preventDefault();
+    props.onDeleteTodo(props.todo.id);
+  };
+  return (
+    <li className={classes.item} onClick={clickHandler}>
+      {props.todo.text}
+    </li>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+23 The Context API & TypeScript
+
+Function/Object/Types used
+
+createContext<T>(defaultValue: T)
+ > generic variation of the React.createContext()
+ > this generic function takes one Type argument and one function argument
+	1. T
+		-> refers to the Type of the Context object that will be stored/managed
+	2. defaultValue
+		-> refers to the initial/default value of the Context obj
+
+
+
+The Context API & TypeScript
+ > using React's Context API is the same as before, except we will need to define the Type of the Object the Context API will manage
+
+EX:
+// todo-context.js
+import { Todo } from "../models/todo";
+import React, { useState } from "react";
+
+interface TodoContextObj {
+  todos: Todo[];
+  addTodo: (text: string) => void;
+  deleteTodo: (id: string) => void;
+}
+
+export const TodoContext = React.createContext<TodoContextObj>({
+  todos: [],
+  addTodo: (text: string) => {},
+  deleteTodo: (id: string) => {},
+});
+
+const TodoContextProvider: React.FC<{ children?: React.ReactNode }> = (
+  props
+) => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const addTodoHandler = (text: string) => {
+    setTodos((prevTodos) => [...prevTodos, new Todo(text)]);
+  };
+
+  const deleteTodoHandler = (id: string) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  };
+
+  const todoCtxObj: TodoContextObj = {
+    todos,
+    addTodo: addTodoHandler,
+    deleteTodo: deleteTodoHandler,
+  };
+
+  return (
+    <TodoContext.Provider value={todoCtxObj}>
+      {props.children}
+    </TodoContext.Provider>
+  );
+};
+
+export default TodoContextProvider;
+
+
+
+
+// App.tsx
+function App() {
+  return (
+    <TodoContextProvider>
+      <NewTodo />
+      <Todos />
+    </TodoContextProvider>
+  );
+}
+
+export default App;
+
+
+
+// NewTodo.module
+const NewTodo: React.FC = () => {
+  const todoCtx = useContext(TodoContext);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const submitHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const enteredText = inputRef.current!.value;
+    todoCtx.addTodo(enteredText);
+  };
+
+  return (
+    <form onSubmit={submitHandler} className={classes.form}>
+      <label htmlFor="text">Todo text</label>
+      <input type="text" id="text" ref={inputRef} />
+      <button type="submit">Add Todo</button>
+    </form>
+  );
+};
+
+
+// Todos.tsx
+const Todos = () => {
+  const todoCtx = useContext(TodoContext);
+
+  return (
+    <ul className={classes.todos}>
+      {todoCtx.todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          text={todo.text}
+          onDeleteTodo={todoCtx.deleteTodo.bind(null, todo.id)}
+        />
+      ))}
+    </ul>
+  );
+};
+
+
+// TodoItem.tsx
+interface TodoProps {
+  text: string;
+  onDeleteTodo: () => void;
+}
+
+const TodoItem: React.FC<TodoProps> = (props) => {
+  const clickHandler = (event: React.MouseEvent) => {
+    event.preventDefault();
+    props.onDeleteTodo();
+  };
+  return (
+    <li className={classes.item} onClick={clickHandler}>
+      {props.text}
+    </li>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+24 Summary
+
+
+
+
+
+
+
+
+
+
+
+25 Bonus - Exploring tsconfig.json
+
+tsconfig.json
+ > contains all the configuration to be used by the TypeScript compiler
+ > by default, the typescript template of create-react-app adds a tsconfig.json that is preconfigured for React apps
+
+
+// default create-react-app tsconfig.js
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "src"
+  ]
+}
+
+
+Notable properties in tsconfig.json
+
+compilerOptions properties
+
+target
+ > defines the JS version target of the output JS file from compiling TS files
+
+lib
+ > defines the libraries that will be available by default in the TypeScript
+ > these libraries provides "types" that we can use when writing .ts files
+
+strict
+ > defines whether the TypeScript will enforce a "strict" type checking
+ > this includes
+	1. checking if we have implicit "any" type
+		- happens if we dont specify type of a variable, parameter, or function return value in case TypeScript CAN NOT INFER the type
+	2. if we have variable that we didnt use
+
+module
+ > specify what module code is generated
+
+noEmit
+ > specify if TypeScript will still generate the .js file EVEN IF theres a compilation error in process
+
+
+Other properties in tsconfig.json
+
+include
+ > specified that directory whose .ts file will be included in compilation
+

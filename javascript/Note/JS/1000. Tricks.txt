@@ -1,0 +1,11 @@
+1. Converting string into number
+ 	> add + in front of the variable that contain a string number
+	
+EX:
+var stringNum = "3";
+var num = +stringNum;
+console.log(num)	// 3
+
+
+2. Using double NOT operator for getting the truthy and falsey value
+	> adding !! at the front 

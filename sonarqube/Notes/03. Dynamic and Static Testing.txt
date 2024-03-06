@@ -1,0 +1,13 @@
+03. Dynamic and Static Testing
+
+Dynamic Testing
+	> Testing where the Tester observes/inspects the behavior of the Code WHILE RUNNING
+
+Static Testing
+	> It is a method of debugging by examining source code before program is run
+		- i.e. test the code without actually executing it
+	> It does so by analyzing the code agains a pre-set of coding rules and ensure that it conforms to the guidelines
+	> The cycle includes:
+		1. Developer writes code
+		2. Static testing tool examines the code and informs Dev about error in code
+		3. Developer fixes the error

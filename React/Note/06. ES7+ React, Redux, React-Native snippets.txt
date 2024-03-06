@@ -1,0 +1,27 @@
+06. ES7+ React, Redux, React-Native snippets
+
+ES7+ React/Redux/React-Native snippets
+	> extension used to access snippets related to React
+	> to see all snippets and shortcuts, go to
+		https://github.com/dsznajder/vscode-react-javascript-snippets/blob/HEAD/docs/Snippets.md
+	> some of these snippets include:
+
+React Compnents
+1. rafce
+import React from 'react';
+
+const $1 = () => {
+  return <div>$0</div>;
+};
+
+export default $1;
+
+2. rcc
+import React, { Component } from 'react';
+
+export default class FileName extends Component {
+  render() {
+    return <div>$2</div>;
+  }
+}
+

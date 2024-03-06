@@ -1,0 +1,50 @@
+19. BEST practices for RESTful design
+
+
+BEST practices for RESTful design
+
+1. Consumer First
+	> always think about the consumer of RESTful webservice (or services in general)
+	> Will they be able to understand the naming of your resources?
+
+2. Have proper Service Definition / Documention for the APIs
+	> make sure that consumres understand the documentation of your API
+
+3. Make best use of HTTP
+	> make best use of REQUEST METHOD
+		- GET, POST, PUT, DELETE
+	> use the right request method appropriate for your specific action
+	> Send a proper RESPONSE STATUS back for the action
+		- 200 OK
+		- 404 NOT FOUND
+		- 400 BAD REQUEST
+		- 201 CREATED
+		- 401 UNAUTHORIZED
+		- 500 SERVER ERROR
+
+4. No SECURE/SENSITIVE INFO in URI
+	> includes username, password, ssn
+
+5. Always use PLURALS for URI naming
+	> prefer /users instead of /user
+	> prefer /users/1 instead of /user/1
+
+6. Use NOUNS for RESOURCES
+	> examples
+1.	/deleteAccount/1
+	DELETE /accounts/1
+2. 	/getAccounts
+	GET /accounts/
+
+
+7. Define a CONSISTENT APPROACH for exceptions
+
+EX:
+for actions not related to CRUD, use /{actionName}
+
+/search
+/refresh
+PUT /gist/{id}/star
+DELETE /gist/{id}/star
+
+	

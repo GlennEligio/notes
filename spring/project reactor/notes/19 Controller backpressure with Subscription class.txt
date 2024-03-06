@@ -1,0 +1,92 @@
+19 Controller backpressure with Subscription class
+
+Subscription
+ > implements Disposable
+ > returned by the subscribe() of Flux and Mono
+ > we can use this to cancel the subscription to reactive sources by calling the dispose()
+
+Methods:
+Subscription.dispose()
+ > disposes the Subscription, hence cancelling it
+
+EX:
+        Disposable subscriber = ReactiveSources.intNumbersFlux().subscribe(
+                number -> System.out.println(number),
+                err -> System.out.println(err.getMessage()),
+                () -> System.out.println("Completed")
+        );
+        subscriber.dispose();
+
+
+
+
+BaseSubscriber<T>
+ > A simple base class for a Subscriber implementation that lets the user perform a request(long) and cancel() on it directly. 
+ > As the targeted use case is to manually handle requests, the hookOnSubscribe(Subscription) and hookOnNext(Object) hooks are expected to be implemented, but they nonetheless default to an unbounded request at subscription time. If you need to define a Context for this BaseSubscriber, simply override its CoreSubscriber.currentContext() method.
+ > Override the other optional hooks hookOnComplete(), hookOnError(Throwable) and hookOnCancel() to customize the base behavior. 
+ > You also have a termination hook, hookFinally(SignalType).
+ > Most of the time, exceptions triggered inside hooks are propagated to onError(Throwable) (unless there is a fatal exception). 
+ > The class is in the reactor.core.publisher package, as this subscriber is tied to a single Publisher
+
+EX:
+class MySubscriber<T> extends BaseSubscriber<T> {
+    
+    protected void hookOnSubscribe(Subscription subscription) {
+        System.out.println("Subscribed!!");
+        request(1);
+    }
+
+    @Override
+    protected void hookOnNext(T value) {
+        System.out.println("Value received: " + value);
+        request(1);
+    }
+}
+
+
+
+
+BaseSubscriber<T> use cases
+Backpressure Control
+ > with this, we can define HOW MUCH is the rate of event being received by the Subscriber through request(int itemCount)
+ > besides this, it is very similar to the way we are defining a Subscribe through lambda expression
+
+EX:
+// using lambda to define hookOnNext, hookOnError, hookOnComplete functions
+        ReactiveSources.intNumbersFlux().subscribe(
+                number -> System.out.println(number),
+                err -> System.out.println(err.getMessage()),
+                () -> System.out.println("Completed")
+        );
+
+
+// using BaseSubscriber implementation
+class MySubscriber<T> extends BaseSubscriber<T> {
+    @Override
+    protected void hookOnNext(T value) {
+        System.out.println(value);
+        super.hookOnNext(value);
+    }
+
+    @Override
+    protected void hookOnComplete() {
+        System.out.println("Completed");
+        super.hookOnComplete();
+    }
+
+    @Override
+    protected void hookOnError(Throwable throwable) {
+        System.out.println(throwable.getMessage());
+        super.hookOnError(throwable);
+    }
+}
+
+
+ReactiveSources.intNumbersFlux().subscribe(new MySubscriber<>());
+
+
+
+
+
+NOTES:
+1. When using BaseSubscriber, make sure to call the request() method inside hookOnSubscribe and hookOnNext

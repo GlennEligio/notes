@@ -1,0 +1,18 @@
+FIXING LOG MESSAGES NOT SYNCHRONIZED / NOT IN ORDER
+	> use info(String msg) of Logger object to send logs
+		- this will have them be sent in single output stream
+
+
+Logger class
+	> used to create a output stream for log messages
+	> to create a Logger, we will use the getLogger() factory method of Logger class
+
+getLogger(String name)
+	> one of the static method of Logger class
+	> used to create Logger object
+	> common or best practice is to pass the Class name where we create this Logger object
+	> ex: static Logger myLogger = Logger.getLogger(ExampleClass.class.getName())
+		- for static Logger
+	> ex: Logger myLogger = Logger.getLogger(getClass().getName())
+		- for non static Logger
+

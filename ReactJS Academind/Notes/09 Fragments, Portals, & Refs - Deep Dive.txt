@@ -1,0 +1,325 @@
+09 Fragments, Portals, & Refs - Deep Dive
+
+001 Module Introduction
+
+Module Content
+1. JSX Limitations & Fragments
+2. Getting a Cleaner DOM with Portals
+3. Working with Refs
+
+
+
+
+002 JSX Limitations and Workarounds
+
+JSX Limitation
+ > JSX can only have ONE Root JSX element
+	- you also cant store more than one "root" JSX element in a variable
+ > this is because behind the scene, we are returning a result of function call React.createElement
+ > having two or more root JSX element will result in returning two or more React.createElement result, which is INVALID
+
+EX:
+return (
+ <h2>Hi there!</h2>
+ <p>This does not work :-(</p>
+)
+
+is equivalent to 
+
+return (
+ React.createElement('h2', {}, 'Hi there!')
+ React.createElement('p', {}, 'This does not work :-(')
+)
+
+which is invalid
+
+
+
+Workaround
+1. Wrap the adjacent JSX element in an Array
+ 	> downside is that each JSX element must have a "key" property in them
+	> not having "key" will result in undesired behavior
+
+EX:
+return [
+ <div key="01">Hi there!</div>,
+ <div key="02">This should work</div>
+]
+
+2. Wrap the adjacent JSX element with another DOM element
+	> downside is that it can result to "<div> Soup"	
+	> "<div> Soup" is where every JSX element is wrapped around div, resulting with tons of unnecessary <div>s (or other elements)
+		- these element may not add semantic meaning or structure to page but are only there because of React's/JSX' requirement
+
+EX:
+return (
+ <div>
+   <div key="01">Hi there!</div>,
+   <div key="02">This should work</div>
+ </div>
+)
+
+
+
+
+
+
+003 Creating a Wrapper Component
+
+Wrapper Component
+ > Component that acts as a Wrapper to other Component/JSX code
+ > one of the solutions to the error related to adjacent JSX element problem
+
+Creating a Wrapper Component just for creating ONE ROOT JSX element 
+1. Create a empty Component
+	> add props parameter to functional component
+2. Return "props.children"
+
+EX:
+const Wrapper = (props) => {
+  return props.children;
+};
+
+export default Wrapper;
+
+
+Usage of Wrapper
+  return (
+    <Wrapper>
+      {error && (
+        <ErrorModal
+          title={error.title}
+          message={error.message}
+          onConfirm={errorHandler}
+        />
+      )}
+      <Card className={classes.input}>
+        <form onSubmit={addUserHandler}>
+          <label htmlFor="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            value={enteredUsername}
+            onChange={usernameChangeHandler}
+          />
+          <label htmlFor="age">Age (Years)</label>
+          <input
+            id="age"
+            type="number"
+            value={enteredAge}
+            onChange={ageChangeHandler}
+          />
+          <Button type="submit">Add User</Button>
+        </form>
+      </Card>
+    </Wrapper>
+  );
+
+
+
+
+
+
+004 React Fragments
+
+React Fragment
+ > an empty wrapper component
+ > doesnt render any real HTML element to the DOM
+ > but it still fulfills React's/JSX' requirement
+ > to create a React Fragment, we can use two of the Component name and nest the element inside
+	1. <React.Fragment>{elements}</React.Fragment>
+	2. <>{elements}</>
+ > works the same way as the Wrapper Component we created earlier
+
+EX:
+return (
+ <React.Fragment>
+    <h2>Hi there!</h2>
+    <p>This does not work :-(</p>
+ </React.Fragment>
+)
+
+return (
+ <>
+    <h2>Hi there!</h2>
+    <p>This does not work :-(</p>
+ </>
+)
+
+
+NOTE:
+1. In case (<></>) doesnt work, use (<React.Fragment></React.Fragment>)
+
+
+
+
+
+
+
+005 Introducing React Portals
+
+React Portals
+ > used properly structure the Real DOM result of the JSX
+ > with React Portals, we can render a Component/JSX anywhere in DOM no matter how nested the Component is in the Component Tree
+	- ex: We can render a Modal as direct child of <body> even if its nested deeply in Component Tree
+ > Available in React DOM library
+
+EX:
+Original JSX code
+return (
+  <React.Fragment>
+    <MyModal />
+    <MyInputForm />
+  </React.Fragment>
+)
+
+Resulting DOM without React Portal
+<section>
+  <h2>Some other content ... </h2>
+  <div class="my-modal">
+    <h2>A Modal Title!</h2>
+  </div>
+  <form>
+    <label>User</label>
+    <input type="text" />
+  </form>
+</section>
+
+
+Resulting DOM with React Portal
+<div class="my-modal">
+  <h2>A Modal Title!</h2>
+</div>
+<section>
+  <h2>Some other content ... </h2>
+  <form>
+    <label>User</label>
+    <input type="text" />
+  </form>
+</section>
+
+
+
+
+
+
+
+006 Working with Portals
+
+PREREQUISITES:
+1. React libraries ('react' and 'react-dom')
+
+Using React Portal to render Component inside any DOM element of page
+1. Import react-dom in Component
+	> import ReactDOM from 'react-dom'
+2. In the return value of Component, use the createPortal() function from ReactDOM import
+	> these function needs to two parameters
+		a. ReactNode, or the JSX to render
+		b. DOM element where the JSX will be nested inside
+
+EX:
+In example below, when ErrorModal is rendered, it will 
+	- create/render a Backdrop Component
+	- place it inside the DOM element with id of "backdrop-root"
+
+const ErrorModal = (props) => {
+  return (
+    <React.Fragment>
+      {ReactDOM.createPortal(<Backdrop onConfirm={props.onConfirm}/>, document.getElementById("backdrop-root"))}
+    </React.Fragment>
+  )
+}
+
+
+NOTES:
+1. 'react' contains React features
+	> these features include
+		- state management
+		- hook
+		- etc.
+		- creating Components
+	> 'react' itself doesnt care about the DOM
+2. 'react-dom' uses 'react' and these features into the web browser 
+	> makes the 'react' compatible to working with the DOM
+	> responsible for rendering the React Components into the Real DOM
+
+
+
+
+
+
+
+007 Working with refs
+
+useRef
+ > hook available in React
+ > used to hold a value, and be able to update it WITHOUT rerendering the Component
+ > works similarly to useState() for holding value
+ > this functional hook takes one parameter
+	- this parameter will be the default value of the ref
+ > this functional hook returns an Object
+	- this Object have a property called "current"
+ 	- this "current" hold the value of the useRef
+ > to access value of useRef(), you need to use the current property of the return value  
+
+EX:
+const age = useRef(0);
+console.log(age.current);
+
+
+ref
+ > special, built-in property that we can add to any HTML element
+ > in this property, we can assign the useRef() variable
+  	- what this does is it assigns the value of useRef() variable to the DOM element itself where ref property is defined
+
+EX:
+useRef() hooks
+  const ageInputRef = useRef();
+  const nameInputRef = useRef();
+
+DOM element with ref property
+        <form onSubmit={addUserHandler}>
+          <label htmlFor="username">Username</label>
+          <input id="username" type="text" ref={nameInputRef} />
+          <label htmlFor="age">Age (Years)</label>
+          <input id="age" type="number" ref={ageInputRef} />
+          <Button type="submit">Add User</Button>
+        </form>
+
+
+NOTE:
+1. Manual DOM element manipulation should be avoided if possible
+	> let React do the heavy lifting
+	> in our example earlier, we edited the value of input manually using useRef
+EX:
+const nameInputRef = useRef()
+nameInputRef.current.value = ''	// Should be avoided if possible
+
+
+
+
+
+
+008 Controlled vs Uncontrolled Components
+
+Controlled Components
+ > Components whose internal State is "controlled" by other Component (typically their Parent Component)
+
+Uncontrolled Components
+ > Components whose internal State is not controlled by other Component except itself
+
+
+Internal State of DOM elements
+ > some DOM elements have internal state natively in the Browser
+ > these DOM elements include
+	- form components
+	- input components
+
+Uncontrolled vs Controlled in context of form components
+ > earlier, we did use two approaches when fetching data from an input component
+	- useState()
+	- useRef()
+ > in useState(), not only we are fetching data from the input, we are also feeding the State's value to the input's internal State
+	- in this case, we can say that the <input> is a Controlled Component
+ > in useRef(), we are only trying to access the properties of the input (except in the resetting logic)
+	- in this case, we can say that the <input> is an Uncontrolled Component

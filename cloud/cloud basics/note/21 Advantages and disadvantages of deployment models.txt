@@ -1,0 +1,75 @@
+21 Advantages and disadvantages of deployment models
+
+
+
+Public cloud
+Advantages:
+1. Scales well
+	> to scale, you just have to "rent" more resources
+2. Pay as you go pricing
+	> you only need to think about the cost of resources you are using at the moment
+3. Low initial costs
+	> it allows anybody to start an application
+	> reduces the barrier of entry for cloud consumption
+
+Disadvantages:
+1. Security concerns
+	> because of resource pooling, the hardware is NOT UNIQUELY alloted to you
+2. Data regulations
+	> each country have their own data regulations
+	> this regulations applies to the servers located in the country as well
+	> though, this responsible falls to the Cloud providers so make sure they meet this regulations
+	> ex: servers must be certified, though this responsibility falls to the Cloud Providers themselves (AWS, Azure)
+3. Cloud provider has the primary control
+	> when using services of a specific Cloud Provider, "Vendor locking" may occur
+	> Vendor locking refers to your applications being tied to a specific vendor (ex: application only works with AWS DynamoDB)
+	> With Vendor locking, you may face issues where you need to migrate to another Cloud Provider and may face 
+ 
+  
+
+
+Private Cloud
+Advantages:
+1. Orgs have full control
+	> since they own it, they have full control of its customization and configurations
+2. Orgs can meet the strictest security requirements
+3. Orgs can meet the strictest data compliance requirements
+	> for 2 and 3, since they have full control on the private Cloud, they can ensure that they meet the needed security and data compliance requirements
+4. Orgs can align the cloud with the org's current model
+
+Disadvantages:
+1. Scaling is a challenge (similar as on-prem)
+2. Initial costs is high
+3. Provisioning can be time consuming
+4. Need staffing to manage infrastructure
+
+
+
+
+Hybrid cloud:
+Advantages:
+1. Strategy to move to public cloud from on-prem, instead of full public cloud
+2. Flexible with costs and regulations
+3. Supports legacy workflows and architectures
+
+
+Disadvantages
+1. Extra complexity when handling on-prem and cloud architecture
+2. Costs can be higher than going all in on one
+3. Usually a Transitionary model (usually, from on-prem to cloud)
+
+
+
+Other models
+1. Community cloud
+	> accessible to a community/industry
+	> ex: medical related industry where medical information can be exposed for all medical institutions
+2. Multicloud
+	> multiple public or private cloud
+	> typically done by large companies to avoid vendor locking
+
+
+
+What to choose?
+ > Real world: Depends on the regulations and the organization momentum and general consensus of moving to Cloud
+ > Certifications: Public cloud (more often than not!)

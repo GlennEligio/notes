@@ -1,0 +1,44 @@
+81 S3 Versioning Hands On
+
+
+Delete Marker
+ > when we delete an Object with only ONE version, instead of deleting it permanently, the S3 Bucket will add a 'Delete marker' to it
+ > 'Delete marker' will be new version on top of the said deleted Object
+ > We can delete this 'Delete marker' version of the Object to restore the Object
+ > to delete PERMANENTLY, turn on the 'Show versions' and delete all the versions
+
+
+
+Enabling Versioning
+1. Go to the Bucket > Properties tab > Bucket Versioning section
+2. Click Edit, and select Enable
+3. Save changes
+
+
+Demonstrating Versioning at Object level
+1. Modify the HTML file you upload earlier
+	> change it so that we will know if the html rendered is different
+2. Upload it again in the same directory in the Bucket
+	> make sure it have the same name as well
+3. Check the URL exposed by S3 Website hosting if its different
+4. Check the directory of the HTML file in the S3 Bucket\
+5. In the Objects tab of S3 Bucket, turn on the 'Show versions' checkbox
+	> you should see that the HTML file have two items, one is null and one is a random string
+	> initially, all Objects in Bucket will have version of null if they are uploaded BEFORE versioning is turned on
+6. Delete the newer version
+7. Check the URL again to see if the changes reflected in the HTML page rendered
+
+
+
+Demonstrating Delete Marker
+1. Turn off 'Show versions' to use this feature
+2. Delete one of the Objects
+	> delete the image used in the HTML file
+3. Turn on 'Show version' again
+4. We should see another version of the Object with version id of 'Delete marker', alongside the original version
+5. Delete the one with 'Delete marker'
+6. Check the Object list again with 'Show versions' turned off
+
+
+NOTES:
+1. When 

@@ -1,0 +1,13 @@
+23 Operators and why they are needed
+
+Operators
+ > can be used to process the items emitted by the Mono
+ > these may include
+	1. logging
+	2. data modification/sanitization
+	3. using the item to fetch more info
+
+EX:
+flux
+ .filter(element -> element != null)
+ .subscribe(element -> System.out.println(element))

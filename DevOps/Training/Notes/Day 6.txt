@@ -1,0 +1,604 @@
+Day 6
+
+Monitoring Tool
+	> used to AUTOMATICALLY monitor the application running
+		- app is down
+		- server down
+		- "heartbeat" is present
+			= some sort of ping being sent every set of time interval
+
+Operation Team
+	> responsible for monitoring the application running in Production/Live Server
+
+Continuous Monitoring
+	> Continuous monitoring is a process to detect, report, respond all the attacks which occur in its infrastructure.
+
+	> example are	
+		- data dog
+		- nagios (free)
+		- elk
+		- splunk
+			= alongside elk, mostly used for data science
+		- prometeus
+		- garfana
+		
+	
+
+Nagios
+	> a continuous monitoring tool
+	> used for continuous monitoring of systems, applications, service and business process in a DevOps culture
+	> Nagious comes in two parts, which are running in SAME server
+		- Nagios Core
+			= basic software of Nagios
+		- Nagios Plugin
+			= adds additional functionality for the Nagios
+
+
+Why we need Nagios?
+	> 
+
+
+Nagios Architecture
+	> Nagios uses Client-Server architecture
+	> Nagios have GUI (Nagios Web Interface) 
+	> Communicate using SSL certificates
+
+
+Use cases of Plugins
+	-> NRPE (plugin for Linux servers) can be used to check status of the Linux remote servers
+	-> NSClient+ (plugin for Window servers) can be used to fetch data in Window remote servers
+
+
+
+STEPS:
+1. Connect to Ubuntu 1 Server
+2. Execute commands
+sudo su
+apt update
+sudo apt install wget build-essential apache2 php libapache2-mod-php7.2 php-gd libgd-dev unzip postfix
+	- press enter multiple times when prompted with something
+Configure User and group configuration
+3. Add nagios user and nagcmd group
+	$ useradd nagios
+	$ groupadd nagcmd
+4. Add nagios user in nagcmd group
+	$ usermod -a -G nagcmd nagios
+	$ usermod -a -G nagios,nagcmd www-data
+5. Download Nagios Core using wget
+	$ wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.2.0.tar.gz
+6. Go inside nagios-4.2.0 directory
+6. Extract Nagios core 
+	$ tar -xzf nagios*.tar.gz
+7.
+
+NOTES: 
+1. After Extracting Nagios core, cd to the new folder created
+1. Before Install Nagios Plugin step, do a cd .. command
+2. After Extracting Nagios Plugin, cd to the new folder created
+3. default username of nagiosadmin is nagiosadmin
+4. After Restarting Apache2, go to the Nagios website
+	- website is Server's Public Ip address + /nagios
+	- ex: http://3.110.100.216/nagios/
+	- use the credentials you set when
+
+/usr/local/nagios/etc/object
+	> contains all the configuration files for nagios
+
+localhost.cfg
+	> contains configuration of localhost server
+templates.cfg
+	> contains templates of the host servers to use
+	> templates defines the configuration settings for host servers
+	> example below is a template configuration for "linux-server" template
+EX:
+# Linux host definition template - This is NOT a real host, just a template!
+
+define host{
+        name                            linux-server    ; The name of this host template
+        use                             generic-host    ; This template inherits other values from the generic-host template
+        check_period                    24x7            ; By default, Linux hosts are checked round the clock
+        check_interval                  5               ; Actively check the host every 5 minutes
+        retry_interval                  1               ; Schedule host check retries at 1 minute intervals
+        max_check_attempts              10              ; Check each Linux host 10 times (max)
+        check_command                   check-host-alive ; Default command to check Linux hosts
+        notification_period             workhours       ; Linux admins hate to be woken up, so we only notify during the day
+                                                        ; Note that the notification_period variable is being overridden from
+                                                        ; the value that is inherited from the generic-host template!
+        notification_interval           120             ; Resend notifications every 2 hours
+        notification_options            d,u,r           ; Only send notifications for specific host states
+        contact_groups                  admins          ; Notifications get sent to the admins by default
+        register                        0               ; DONT REGISTER THIS DEFINITION - ITS NOT A REAL HOST, JUST A TEMPLATE!
+        }
+
+timeperiods.cfg
+	> contains definitions of time period variable names
+	> example below is a timeperiod named "24x7"
+		- we can see this being used in "linux-server" template above
+
+EX:
+define timeperiod{
+        timeperiod_name 24x7
+        alias           24 Hours A Day, 7 Days A Week
+        sunday          00:00-24:00
+        monday          00:00-24:00
+        tuesday         00:00-24:00
+        wednesday       00:00-24:00
+        thursday        00:00-24:00
+        friday          00:00-24:00
+        saturday        00:00-24:00
+        }
+
+
+commands.cfg
+	> contains the command names and their actions that they will do
+	> below is the command 'check_ping' is defined
+EX:
+# 'check_ping' command definition
+define command{
+        command_name    check_ping
+        command_line    $USER1$/check_ping -H $HOSTADDRESS$ -w $ARG1$ -c $ARG2$ -p 5
+        }
+
+
+
+contacts.cfg
+	> defines the contact that where the notifications will be send (email)
+	> below is a contact defined inside contacts.cfg
+
+# Just one contact defined by default - the Nagios admin (that's you)
+# This contact definition inherits a lot of default values from the 'generic-contact'
+# template which is defined elsewhere.
+
+define contact{
+        contact_name                    nagiosadmin             ; Short name of user
+        use                             generic-contact         ; Inherit default values from generic-contact template (defined above)
+        alias                           Nagios Admin            ; Full name of user
+
+        email                           nagios@localhost        ; <<***** CHANGE THIS TO YOUR EMAIL ADDRESS ******
+        }
+
+
+
+INSIDE UBUNTU 3, INSTALLING NRPE Client in Ubuntu3 (Plugin)
+sudo su
+apt update
+sudo apt install nagios-nrpe-server nagios-plugins
+sudo nano /etc/nagios/nrpe.cfg
+	> uncomment server_address line
+	> assign the private ip of ubuntu1 server (server that contain nagios core) to the server_address
+sudo systemctl restart nagios-nrpe-server
+
+
+INSIDE UBUNTU SERVER 1, Adding Ubuntu3 (Server with NRPE client) to the Nagios Core monitoring list
+1. Use root user
+	sudo su
+2. Create host1.cfg
+	vi host1.cfg
+3. Add the following text below inside the host1.cfg
+	> NOTE: Change the address: of define host{} to the PRIVATE IP of Ubuntu 3 Server
+	> here, we created a host 
+		- named "slave"
+		- uses "linux-server" template
+		- connected to the Ubuntu3 server defined in the address (172.31.24.12)
+	> we also defined the host group and services this host "slave" will have
+		- PING
+		- Root Partition
+
+
+define host{
+        use                     linux-server            ; Name of host template to use
+                                                        ; This host definition will inherit all variables that are defined
+                                                        ; in (or inherited by) the linux-server host template definition.
+        host_name               slave
+        alias                   nrpe-nagios
+        address                 172.31.24.12
+        }
+
+
+# Define an optional hostgroup for Linux machines
+
+define hostgroup{
+        hostgroup_name  linux-servers1 ; The name of the hostgroup
+        alias           Linux Servers1 ; Long name of the group
+        members         slave     ; Comma separated list of hosts that belong to this group
+        }
+
+
+
+
+
+
+# Define a service to "ping" the local machine
+
+define service{
+        use                             local-service         ; Name of service template to use
+        host_name                       slave
+        service_description             PING
+        check_command                   check_ping!100.0,20%!500.0,60%
+        }
+
+
+# Define a service to check the disk space of the root partition
+# on the local machine.  Warning if < 20% free, critical if
+# < 10% free space on partition.
+
+define service{
+        use                             local-service         ; Name of service template to use
+        host_name                       slave
+        service_description             Root Partition
+        check_command                   check_local_disk!20%!10%!/
+        }
+
+
+
+
+4. Go to /usr/local/nagios/etc#
+	cd .. 
+		> if you are in objects folder
+	cd /usr/local/nagios/etc 
+		> if you are not
+5. Edit the nagios.cfg inside etc folder
+	vi nagios
+
+6. Add the host1.cfg in the # Definitions for monitoring the local (Linux) host part
+	
+# Definitions for monitoring the local (Linux) host
+cfg_file=/usr/local/nagios/etc/objects/localhost.cfg
+cfg_file=/usr/local/nagios/etc/objects/host1.cfg
+
+7. Restart the Nagios
+	systemctl restart nagios
+
+8. Go to the Nagios website and wait for the changes to happen
+	> Host should have new item named "slave"
+	> Service should have two more items in "slave" host 
+		- PING
+		- Root Partition
+
+
+
+~~~~~~~ DOCKER ~~~~~~~~~~
+
+Docker vs HyperVisor
+
+HyperVisor (Hyper-V)
+	> create several 
+	> have its OWN OS (OS ESXI)
+	> responsible for communication with the hardware (e.g. fetching hardware resources)
+
+
+Kernel
+	> brain of the Operating System
+
+Type-1 Virtualization Structure
+	> Virtualization where a Hypervisor (Hyper-V) is installed
+	> first the Hyper-V is loaded
+	> inside Hyper-V, Image OS of the VMs are loaded
+	> inside VM, the binaries and libraries are loaded (used for running an application)
+	> then, the applications are loaded (web applications or databases)
+
+Hardware
+	> Hyper-V
+		> Guest 0S 1
+			> bins/lib (Binaries and Libraries)
+			> webapp
+		> Guest OS 2 
+			> bins/lib (Binaries and Libraries)
+			> db
+
+
+Container-Microservices
+	> best for agile methodology practices
+	> first, Host OS of Hardware is loaded
+	> inside the Host OS, Docker Engine (or docker daemon) is loaded
+	> using Docker Engine, Docker Containers are created for each Docker Images
+		- we can define a specific resources a Docker Container uses (ram, cpu, space)
+	> these Docker Images contains bin/lib 
+	
+Hardware
+	> Host OS
+		> Docker Engine (dockerd or docker daemon)
+			> bins/lib
+				> webapp
+			> bins/lib
+				> db
+			> bins/lib
+				> services
+
+
+Docker Image
+	> a very lightweight image
+	> similar to OS images but without the Kernel
+		- reason is that Docker Container uses the Host's OS to do stuff (like resources to be used e.g. ram, cpu, storage)
+	
+
+Horizontal Scaling
+
+Orchestration
+	> management of Containers
+
+Docker Engine	
+	> a process
+	> composed of the following components
+		a. Docker CLI
+			- used to send commands to the docker containers
+			- ex: docker build, docker pull, docker run
+		b. Docker Container
+			- runs the Docker
+
+
+Docker Architecture
+
+Docker Private Registry
+	> local repository for Docker Images
+	> Docker first look in the local repository if needed Docker Image is available
+		- if not, it will download the Docker Image in Docker Global Repository
+Docker Global Registry
+	> global repository for Docker Images created
+			- 
+
+
+STEPS:
+Install Docker
+sudo su
+apt update
+apt install docker.io -y
+docker --version
+systemctl status docker
+	> docker is running as daemon (background service)
+
+Run a test Docker image (hello-world)
+docker run hello-world
+
+list all the docker images
+docker image ls
+
+list all the docker containers
+docker container ls --all
+
+help command for docker commands
+docker <command> --help
+	> ex: docker container --help will show informations for "docker container"
+	> not passing a command will show all help text of all commands
+
+
+Types of Docker Commands
+1. Management Commands
+	> used for managing the Docker Images and Containers
+	> below are the management commands
+
+Management Commands:
+  builder     Manage builds
+  config      Manage Docker configs
+  container   Manage containers
+  context     Manage contexts
+  image       Manage images
+  manifest    Manage Docker image manifests and manifest lists
+  network     Manage networks
+  node        Manage Swarm nodes
+  plugin      Manage plugins
+  secret      Manage Docker secrets
+  service     Manage services
+  stack       Manage Docker stacks
+  swarm       Manage Swarm
+  system      Manage Docker
+  trust       Manage trust on Docker images
+  volume      Manage volumes
+
+2. Commands
+	> typically used for taking actions for specific image/container
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  build       Build an image from a Dockerfile
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  diff        Inspect changes to files or directories on a container's filesystem
+  events      Get real time events from the server
+  exec        Run a command in a running container
+  export      Export a container's filesystem as a tar archive
+  history     Show the history of an image
+  images      List images
+  import      Import the contents from a tarball to create a filesystem image
+  info        Display system-wide information
+  inspect     Return low-level information on Docker objects
+  kill        Kill one or more running containers
+  load        Load an image from a tar archive or STDIN
+  login       Log in to a Docker registry
+  logout      Log out from a Docker registry
+  logs        Fetch the logs of a container
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  ps          List containers
+  pull        Pull an image or a repository from a registry
+  push        Push an image or a repository to a registry
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  rmi         Remove one or more images
+  run         Run a command in a new container
+  save        Save one or more images to a tar archive (streamed to STDOUT by default)
+  search      Search the Docker Hub for images
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  version     Show the Docker version information
+  wait        Block until one or more containers stop, then print their exit codes
+
+
+
+Docker Images
+	> read only set of instruction
+	> collection of encrypted files inside a Docker Image (SHA 256 algorithm)
+	> set of instruction "layers"
+		- these layers are linked to each other logically
+	> is stored locally in the directory (which includes container, image, network)
+		- /var/lib/docker/
+
+/var/lib/docker/image/overlay2/imagedb/content/sha256
+	> contains the images's Dockerfile
+
+
+DockerHub (hub.docker.com)
+	> website where we can search for Docker Images of other people (or company)
+	> a GLOBAL REPOSITORY, where everyone can download it
+
+
+docker pull <docker-image>
+	> used to pull Docker Image from Global repository
+	> ex: docker pull ubuntu
+
+
+/var/lib/docker
+	> contains related files in docker
+		- container	
+		- images
+		- overlay2
+		- plugin
+
+
+dokcer ps -a
+	> list all docker images
+docker rm <container id>
+	> used to remove a specific docker image using container id
+docker rmi <image name>
+	> used to remove a specific docker image using image name
+docker images <name>
+	> used to show docker images in local repository that matches the name
+	> name can have wildcards (*)
+docker images --no-trunc
+	> used to show list of images, but the Image id is NOT TRUNCATED
+
+
+
+docker image ls
+	> list all images with its properties, which includes
+		a. Repository
+			- defines the Repository where the Docker image is pulled
+			- typically refers to the name of the Docker image
+		b. Tag
+			- refers to the tag of the Docker image
+			- typically used to refer to the version of Docker image
+			- latest means latest version
+		c. Image ID
+			- used to uniquely identify a Docker image
+			- no Docker image have same Image id
+		d. Created
+			- date when docker image is created
+		e. Size
+			- size of the docker image
+
+
+Inject docker command output in docker command
+	> to inject an output of docker command in another docker commands, we can use the syntax
+		docker command $(docker injectedCommand)
+	> ex: docker rmi $(docker  images)
+
+
+docker images --filter "<search string>"
+	> used to search a specific docker image with specific name
+	> can also define the tag of the docker image
+		"ubuntu:18.04.12"
+	> this search string can also take a query search
+	> this search string can also use wildcards
+		"ubunt*:*.04.12"
+
+query string
+1. before=imageName
+	- show images before the imageName
+2. since=imageName
+	- show iamges after the imagesName
+
+
+docker images --format "table {{.column3}}\t{{/column1}}\t{{.column2}}"
+	> used to modify the format of the docker images output
+	> we can define the columns that we want to show like repository, id, tag, etc
+		ex: docker images --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"
+
+
+
+Docker Containers
+	> applications (like Microservices, webapp, dbapp, etc) are deployed on container
+
+Use case of Docker
+	> ease of deployment
+		- one can just create a Docker Image of an application
+		- this Docker Image can be run in any machine as long as it have a Docker Engine
+
+
+docker container --help
+	> shows information about docker related to docker container
+
+docker container run -it ubuntu
+	> "-it" is also used to open an interactive terminal that is INSIDE the docker container
+	> after this command, you will be transferred to the Docker Container terminal
+
+docker container run -it -d ubuntu
+	> "-d" flag makes the container run in detached mode, where container is being run in BACKGROUND
+		- this means that you will NOT be transferred to Docker Container terminal
+	> by default, container is ran in attached mode, where container is being run in FOREGROUND
+
+docker run -it --name <name> <image name>
+	> "--name" is used to define the name of the Docker Container instance
+	> if --name is not provided, Docker will assign a random name to the said container
+
+docker run -m 8m -dit --name web1 nginx
+	> "-m" is used to define the memory limit / allocated to the Docker Container
+	> in the command example above, Docker Container "web1" have 8mb memory limit
+
+docker stats <container name>
+	> stats command is used to show statistics of the Docker Container
+
+docker run -c 614 -dit --name db nginx
+	> "-c" flag is used to specify the cpu allocation (cpu share) to the Docker Container
+	> 614 is 60% of 1024 (default cpu allocation of Docker is 1024mb)
+
+docker container inspect <container name>
+	> used to inspect all the informations of a specific container
+	> typically used alongside grep command of linux to check for specific information
+		- ex: docker container inspect web1 | grep Cpu
+
+docker logs <container name>
+	> used to show the CLI logs of a specific Docker Container
+		- ex: docker logs web1
+
+docker container update <options1> <value1> <container name>
+	> used to update a specification of a Docker Container
+	  	- ex: docker container update -m 16m web1		
+			= this will update memory allocation of web1 Docker Container
+
+docker exec -it <container name> bash
+	> used to interact with running Docker Container 
+		- this means entering the Docker Container's terminal
+
+docker stop <container name>
+docker container stop <container name>
+	> used to stop a running Docker Container instance
+		- when this Docker Container instance is viewed using "docker ps -a", it will show Exited(0)
+		- Exited (0) means it was stopped normally
+
+docker start <container name>
+	> used to start a stopped Docker Container instance
+
+docker kill <container name>
+	> used to stop a running Docker Container instance FORCEFULL
+		- when this Docker Container instance is viewed using "docker ps -a", it will show Exited(137)
+		- Exited (137) means it was stopped normally
+
+docker restart <container name>	
+	> used to restart a running Docker Container instance 	
+		- in this case, the Status will start from zero again
+
+docker pause <container name>
+	> used to pause a running Docker Container
+	> when this Docker Container instance is viewed using "docker ps -a", the Status will show (Paused)
+
+docker unpause <container name>
+	> used to unpause a paused Docker Container
+	> will remove the (Paused) in Docker Container's status and start the Status from where it left
+		- unlike restart where it will start from zero again

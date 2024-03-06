@@ -1,0 +1,11 @@
+	/* 
+		Do while loop, will execute the loop ONCE, then after the first run, will check if condition is TRUE to run again
+
+                do {
+                    // logic or function
+              	}while(condition)
+         */
+
+	do {
+            System.out.println("Hello");
+        }while(a<5);

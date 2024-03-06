@@ -1,0 +1,385 @@
+Cross Site Scripting (XSS)
+
+Contents:
+I. AppSec Tutorials - Cross-Site Scripting (XSS)
+01. Welcome
+02. Introduction
+03. Objectives
+04. Module outline
+
+II. Cross-Site scripting overview
+05. Introduction
+06. Types of cross-site scripting attacks
+07. Impacts of cross-site scripting attacks
+08. Scenario	
+	> Vulnerable application code
+
+III. Cross-Site Scripting - Example
+09. Introduction 
+10. Example XSS attack
+11. Attack and remediation
+
+IV. Conclusion
+12. Best practices
+13. Problem Identification
+14. Scenario resolution
+
+V. Summary
+15. Module summary
+
+
+
+
+
+
+
+
+
+
+I. AppSec Tutorials - Cross-Site Scripting (XSS)
+01. Welcome
+02. Introduction
+
+Cross-Site Scripting (XSS)
+ > one of the most common vulnerabilities in web application
+ > occurs when a web application accepts user data and dynamically includes it in a web page without first performing data sanitization
+	- in other words, the data is not properly validated or encoded
+ > this vulnerability allows an attacker to execute arbitrary commands and display arbitrary content in a victim's browser
+	- attacker might even gain control of the victim's browser or account on the vulnerable web application
+
+
+
+
+
+
+
+
+
+
+03. Objectives
+
+Objectives
+1. Describe the cross-site scripting vulnerability
+2. Identify code that contains the cross-site scripting vulnerability
+3. List methods to eliminate XSS vulnerabilities
+
+
+
+
+
+
+
+
+
+
+04. Module outline
+
+Module outline
+Section 1: Cross-Site Scripting Overview
+Section 2: Cross-Site Scripting - Example
+Section 3: Conclusion
+
+
+
+
+
+
+
+
+
+
+
+II. Cross-Site scripting overview
+05. Introduction
+
+XSS
+ > a type of injection attack
+ > executed on the client-side
+ > occurs when the browser executes malicious code injected by an attacker through untrusted data
+ > occurs when untrusted input data is NOT properly sanitized before being included as part of the HTTP response
+ > commonly manifest in client-side scripting languages, like
+	- HTML, and JavaScript
+ > but may also manifest in 
+	- VBScript, ActiveX, Flash, and CSS
+
+
+
+
+
+
+
+
+06. Types of cross-site scripting attacks
+
+Types of Cross-Site scripting attacks
+1. Stored XSS
+2. Reflected XSS
+3. DOM-Based XSS
+
+
+Stored XSS
+ > also known as persistent or type 1 attacks
+ > can be executed on sites that allow user input (ex. social media sites)
+ > cause malicious code to run on page load
+
+Steps on Stored XSS
+1. An attacker discovers a vulnerable website that allows product reviews to be submitted without input validation
+2. Attacker injects <script>/*malicious script content*/</script> as product review and stored in database
+3. Victim sends a request to display the product review with malicious script content
+4. Malicious script content previously inserted by attacker is retrieved
+5. Malicious script content runs on the page
+7. Attacker access cookies, session, tokens, and other sensitive information belonging to the victim
+
+
+Reflected XSS
+ > also known as non-persistent, or type 2 attacks
+ > malicious code is added to the end of a legitimate website URL
+ > when the link is loaded, the browser executes URL content, and the malicious code
+ > this only happens when data in URL is used in the webpage
+
+Steps in Reflected XSS
+1. Attacker discovers a vulnerable website that allows to search products by sending the search term in the URL and displaying it on the results page without validation
+	> E.g. /Search?query=Gadgets
+2. Attacker adds malicious script content and sends the URL "/Search?query<script>/*malicious script content*/</script>" by email to victim
+3. Victim clicks the URL from his email. Malicious script content is executed
+4. Attacker accesses cookies, session tokens, and other sensitive information of the victim
+
+
+DOM-Based XSS
+ > also known as type 0 attakcs
+ > vulnerability is tored within the DOM
+ > malicious payload observed with code executed and updates the DOM with malicious payload
+
+Steps in DOM-Based XSS
+1. The attacker creates a malicious URL and sends it to the victim
+2. Victim clicks the malicious URLs and a request is sent to the website
+3. The website receives the request, but the malicious code is not included in the response
+4. The legitimate code is executed in the user's browser. This causes the malicious code to be inserted into the page. The malicious code is then executed in the victim's browser
+5. This allows the attacker to reap the benefits of the malicious code execution
+
+
+
+
+
+
+
+
+
+
+
+07. Impacts of cross-site scripting attacks
+
+Impacts of cross-site scripting attacks
+ > Attackers can perform
+	1. Session hijacking
+	2. Phishing
+	3. Control target accounts
+	4. Spoof the content of public pages, like a press release, news item, or stock price
+ > XSS attacks can also be employed to
+	1. View sensitive files
+	2. Install malware
+	3. Unvalidated redirects to harmful websites
+
+
+
+
+
+
+
+
+
+
+
+
+08. Scenario	
+
+Scenario
+ > John and his team manage the online learning management application at Technologies inc.
+ > Users, when click the Submit button to submit course assignments, complained that they are receiving strange emails after they click the Submit button
+
+
+Vulnerable application code
+ > Johns team discovers that the phishing emails received by users have malicious content for courseNumber query string parameter
+
+// Code
+<button type="submit" class="btn btn-primary" onclick="alert('You are about to submit the assignment for course @Request.QueryString["courseNumber"]');"Submit></button>
+
+
+
+
+
+
+
+
+
+
+
+
+III. Cross-Site Scripting - Example
+09. Introduction 
+10. Example XSS attack
+
+Example XSS attack
+
+Vulnerable Code
+// Vulnerable because Html.Raw doesn't apply encoding
+<div>
+  <h1>You searched for @Html.Raw(Request.Query["username"])</h1>
+</div>
+
+Example attack
+// url passed by attacker to victim
+http://trustedSite.example.com/welcome?username=<script language="javascript">/* Malicious code content */</script>
+
+Result of malicious code in the URL
+// Vulnerable because Html.Raw doesnt apply encoding
+<div>
+  <h1>You searched for 
+    <script language="javascript">/* Malicious code content */</script>
+  </h1>
+</div>
+
+
+Possible remediation:
+// removing Html.Raw will make the query parameter be URL decoded, replaces the reserved HTML characters with code that will NOT be interpreted as HTML tags
+<div>
+  <h1>You searched for @Request.Query["username"]</h1>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+11. Attack and remediation
+
+Attack and remediation
+ > in ASP.NET Razor web pages, HtmlString is avoided at all cost when used in combination with untrusted input
+ 	- this is because it takes the query param AS IS, with no sanitization/decoding whatsoever
+ > for this, we can use (for ASP.NET Razor) Request.Query to make the query parameter be url decoded
+	- this decodes and sanitizes the query parameter input
+
+EX:
+// Vulnerable code
+@{
+  HtmlString userName = new HtmlString(Request.Query["userName"]);
+}
+<div>
+  <h1>Welcome, @userName</h1>
+</div>
+
+
+// Remediated Code
+@{
+  var userName = Request.Query["userName"];
+}
+<div>
+  <h1>Welcome, @userName</h1>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+IV. Conclusion
+12. Best practices
+
+Best practices
+XSS prevention rules provided by OWASP
+Rule number 0
+ > states that you must NEVER insert untrusted data except in allowed locations defined in rule one to five
+
+Rule number 1
+ > you must HTML encode untrusted HTML element data
+ > this prevents untrusted data from being parsed as executable code in the HTML body
+ > HTML encoding replaces the characters shown on-screen with hex entities
+	- ex: ampersand (&) will be replaced with &amp
+
+Rule number 2
+ > Attribute encode untrusted HTML attribute data
+	- this prevents untrusted data from being parsed as code in HTML attribute values like width, name, value, and so on
+ > Attribute encoding requires us to encode all characters other than the alphanumberic characters with ASCII value less than 256 to its hex format
+
+Rule number 3
+ > JavaScript encode untrusted data in JavaScript
+ 	- this prevents untrusted data from being parsed as dynamically generated JavaScript code
+ > in doing so, you neutralize potentially malicious data before including it in a script block or event-handler attributes
+
+Rule number 4
+ > Perform CSS sanitization
+ 	- this prevents untrusted data from being parsed as CSS in a stylesheet or a style tag
+
+Rule number 5
+ > URL encode untrusted URL parameters
+ 	- this prevents untrusted data from affecting HTTP GET request in unintentional ways
+
+
+
+
+
+
+
+
+
+
+13. Problem Identification
+
+Problem Identification
+ > John and his team decided to use a web scanner tool
+ 	- they also detected input vectors in the webpage with the issue and tested the inputs by passing known attack string
+ > John's team disovered that attackers were able to successfully execute XSS on the assignment submission page in the learning management application by using phishing emails
+	- this phishing emails contains URL to the Submit course assignment page, BUT the "courseNumber" query parameter, which is used in the page backend, is INJECTED with XSS
+
+
+
+
+
+
+
+
+
+
+14. Scenario resolution
+
+Scenario resolution
+ > the team address the vulnerability by ENCODING the query string parameter for JavaScript
+	- this ensures that the query string value is used as DATA, and not parsed as code
+
+// Original code
+<button type="submit" class="btn btn-primary" onclick="alert('You are about to submit the assignment for course @Request.QueryString["courseNumber"]');">Submit</button>
+
+// Revised code:
+<button type="submit" class="btn btn-primary" onclick="alert('You are about to submit the assignment for course @HttpUtility.JavaScritpStringEncode(Request.QueryString["courseNumber"])');">Submit</button>
+
+
+
+
+
+
+
+
+
+
+
+
+V. Summary
+15. Module summary
+
+Module Summary
+1. Cross-Site Scripting (XSS) is one of the most common vulnerabilities in web applications
+2. XSS is a type of injection attack that is executed on the client-side
+3. XSS vulnerabilities allow an attacker to execute arbitrary commands and display arbitrary content in a victim user's browser
+4. XSS attacks can be grouped into three types = stored, reflected, and DOM-based XSS attacks
+5. Understanding the context where data is being entered is key in preventing XSS attacks
+6. XSS attacks can be prevented by following the OWASP XSS prevention rules

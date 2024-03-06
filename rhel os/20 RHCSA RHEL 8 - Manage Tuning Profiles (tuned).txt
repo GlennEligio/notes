@@ -1,0 +1,25 @@
+20 RHCSA RHEL 8 - Manage Tuning Profiles (tuned)
+
+tuned
+ > a dynamic adaptive system tuning daemon
+ > tunes the system settings dynamically depending on usage
+ 	- ex: if it sees that the machine is running as virtual machine it will tune the system for that
+ > built into most RHEL OS machines, but if not, we can use the command below to install
+	$ dnf install tuned
+ > to start and enable the "tuned" daemon, we can use the systemctl command
+	$ systemctl start tuned
+	$ systemctl enable tuned
+	$ systemctl status tuned
+
+
+Commands
+tuned-adm [list | active | profile [profile]... | off | verify | recommend]
+ > command line tool for switching between different tuning profiles
+ > we can use several arguments like
+	tuned-adm active				outputs the active tuning profile
+	tuned-adm list				list all available tuning profiles
+	tuned-adm profile PROFILE		changes the current tuning profile to the profilename passed
+	tuned-adm recommend			prints the recommended tuning profile
+	tuned-adm off				removes the current assigned tuning profile
+	tuned-adm profile_info PROFILE	prints the description of specified profile
+	

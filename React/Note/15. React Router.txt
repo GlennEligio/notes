@@ -1,0 +1,86 @@
+15. React Router
+
+REACT ROUTER DOM
+	> a node package module that gives React routing capabilities
+	> with this, we can reroute any request to a specific page/component based on its request url
+	> to add React Router in the React app, use the command
+		npm i react-router
+		npm i react-router-dom
+	> to verify the installation, look at these line in "dependencies" section of package.json file
+	    	"react-router": "^6.2.1",
+		"react-router-dom": "^6.2.1"
+	> We will need two Components inside the react-router-dom
+		1. BrowserRouter
+			- nest all the Routes
+		2. Route
+			- provide definition which Components will show/render based on the Request URL
+			- in Route, we will 
+
+
+Components in React Router
+	> We will use four Components inside the react-router-dom
+		1. BrowserRouter
+		2. Route	
+		3. Routes
+		4. Link
+	> BrowserRouter 
+		-> is where we will nest all the Routes
+	> Routes
+		-> nest all the Routes in a group
+	> Route 
+		-> defines the logic on how we will HANDLE a specific Request
+		-> contains two parameter
+			a. path		URL to check/match
+			b. exact	Specifies the request url must EXACTLY match the path defined in Route
+					Not needed anymore since url path is exact by default
+			c. element	React Component to render in case Request URL and Route's URL match
+	> Link 
+		-> serves as a replacement to HTML link tag <a>
+		-> contains one property/parameter to define
+			a. to		defines which Route that request will be redirected to
+		-> with Link from React, the page will NOT LOAD in order to render the Component
+	> Outlet
+		-> component in the 'react-router-dom'
+		-> defines where in the parent Component/Route its child Routes will be displayed
+		-> ex:
+	
+
+React Router Usage
+	> main use of the React Router is to SHOW/RENDER COMPONENTS BASED ON THE REQUEST URL
+	> to use React Router, we must first import the following items
+		a. for creating the Routing logic
+			import { BrowserRouter as Router, Route} from 'react-router-dom'
+		b. for rerouting request
+			import { Link } from 'react-router-dom'
+
+A. For Creating the Routing Logic
+1. Add <Router></Router> in render of App.js
+	> App.js serves as the root component so this is where we will define the Routing logic
+	> if we didnt use alias in BrowserRoute, we will use <BrowserRouter></BrowserRouter>
+2. Add <Routes></Routes> inside <Router>
+3. Nest <Route></Route> components inside the <Routes>
+4. Define the Route definition
+	> define the parameters of the Route Component
+		a. path for the request url to match
+		b. exact if request url must exactly match the path url
+			- as of React Router V6, theres no need to use exact prop
+			- Route paths are exact by default
+		c. element to specify the JSX or Components to render
+
+B. For Rerouting request
+1. Add <Link> component
+2. Define the "to" parameter to define the Route the request will go
+
+
+C. For Nesting Routes inside a Route
+1. Define the Parent Route
+	> in the "element" that it will render, there must be an <Outlet/> Component
+		- <Outlet/> component defines WHERE in the Parent Component the Child components will be rendered
+2. Define and Nest the Child Route
+	> in the "path" parameter of Child Routes, it must be the COMBINATION of parent's path and the route relative url path
+		- eX: if parent (ex: home page) path is "/", then its children (ex: login page) path must be "/login" ("/" + "login")
+
+
+NOTES:
+1. <Routes> can only nest <Route> components
+2. <Link> can only be used on Components that is nested inside <BrowserRouter>

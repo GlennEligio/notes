@@ -1,0 +1,183 @@
+Entity Framework
+
+Content:
+00 Introduction
+01 Set up our Form
+02 Set Up Entity Framework
+03 Creating Our First Class
+04 Seed Data
+05 Migration Gone Wrong
+06 Reading Data part 1
+08 Creating Data
+09 Reading Data part 2
+10 Deleting Data
+11 Updating Data
+
+
+
+
+
+
+
+
+
+
+
+00 Introduction
+
+Entity Framework
+ > persistence framework created by Microsoft
+ > lets you map the application objects to the database objects
+
+GOAL:
+1. Understand what Entity Framework (EF) is
+2. Understand what "code first" and "database first" approaches are
+3. Perform CRUD operations on a DB using C# & Entity Framework
+4. Understand what Linq is and how it relates to EF
+
+
+TOOLS:
+1. Visual Studio Community Edition
+2. SQL Server, DB
+
+
+Wireframe of the application
+ > the form will contain the following components
+	1. component to add/save/delete a Task	
+		- contains dropdown to define if task is to do or done
+		- contains datepicker to define task deadline
+		- contains button for task create, save, delete, and cancel operation
+	2. components to show the task data and its information
+
+
+Class Diagram
+tmDbContext
+ > contains properties like
+	- Statuses	
+	- Tasks
+
+Status
+ > properties include:
+	- Id
+	- Name
+ > methods include
+	- ToString
+
+Task 
+ > Properties include:
+	- DueDate
+	- Id
+	- Name
+	- Status
+	- StatusId
+
+
+Database Schema
+ > if we go "code first" approach, the EF will generate the db schema for us
+
+Task
+ > contains column like
+	- Id, the primary key
+	- Name
+	- StatusId, foreign key to reference Status
+	- DueDate
+
+Status
+ > columns include:
+	- Id, primary key
+	- Name
+
+
+
+Entity Framework
+ > A "Persistence" Framework
+ > A layer of abstraction between the application and DB
+ > May also be referred to as an Object Relational Mapper (ORM)
+
+EF Advantages
+ > Productivity
+ > Application Design is much simpler to understand
+ > Code Reusability, applied DRY principle
+ > Maintainability 
+
+Code First vs Database First
+Code First
+ > Creates the Classes that is needed to be "persisted" or "saved" to the Database
+ > Then, using Entity Framework, we will do a "migration"
+	- it will convert all the Classes you add in the DbContext, and converts the said Classes into an associated Db Schema
+	- the relationship between the said Classes will also be maintain, using primary and foreign keys
+ > preferred if you control the said Database
+
+Database First
+ > starts with a database schema, with database tables and their constraints configured
+ > EF will then "generate" the Code Classes using the said db schema
+ > preferred if someone else handles the Database to use (ex, DBAs)
+
+
+Alternatives to EF
+1. Linq to SQL
+	> create by Microsoft as well
+	> merged with EF group, where EF is prioritized and Linq to SQL is dropped
+2. nHibernate
+
+
+Linq
+ > stands for Language Integrated Query
+ > not a persistence framework
+ > its a ubiquitous way to query data from within your code (programmatically)
+ > serves as an abstraction to the SQL query we use when using ADO.NET
+ > can be used with ANY TYPE of data source (RDBMS, XML)
+	- with this, we can also use the same syntax to query different data
+
+
+
+
+
+
+
+
+
+
+
+Part 2 Set Up Entity Framework
+
+GOAL:
+1. Install Entity Framework
+2. Create Db Context Class
+3. Update app.config file
+4. Enable Migrations
+
+NOTE:
+1. We will do a Code First in the Tutorial
+
+
+Install Entity Framework
+1. Open Package Manager console
+2. Type the command below
+	install-package entityframework
+3. Check the package.config and Reference folder to verify EntityFramework installation
+
+
+Create DbContext Class
+1. Create a class
+2. Import the System.Data.Entity namespace
+3. Make the class inherit DbContext
+
+
+Update App.config
+1. We will add a <connectionString> will point the migrated db schema in some database
+2. Create an <add> element
+	- name will be the same name as the DbContext class
+	- connectionString will be your typical Microsoft SQL server conn url
+	- providerName will be the System.Data.SqlClient class
+
+Enable Migrations
+1. In the Package Manager Console, type the command below	
+	> Enable-Migration
+	> this will check if the DbContext created targets an existing database
+2. This should create a new folder in Project call Migrations, with Configuration.cs file inside
+
+
+NOTES:
+1. DbContext serves as an abstraction for us to load or save data
+2. Enable-Migration, if we have defined nothing inside the DbContext present in source, will not generate a DbSchema

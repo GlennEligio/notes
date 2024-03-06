@@ -1,0 +1,45 @@
+04.08 Additional Components
+
+~~~~~ COMPONENTS ~~~~~~
+Accordion
+	> similar to collapse
+	> Accordion can only have ONE Active item
+
+Badge	
+	> adds a icon/badge to an element
+	> typically used for notification with number or just a dot
+
+Breadcrumb
+	> used to indicate the current page's location within a navigational hierarchy that automatically adds separators via CSS
+
+Button groups
+	> used to group up buttons
+	> similar to input groups
+
+Dropdowns
+	> uses dropdown plugin JS
+	> gives an option to use dropdown to show contents
+
+Listgroups
+	> similar to Cards and Panels
+	> uses list and list elements as base
+
+Popovers
+	> similar to tooltips
+	> make a Content appear/disappear when certain elements are clicked
+	> uses PopperJS
+
+Tooltips
+	> shows an messages when hovering to certain elements
+
+Spinners
+	> indicate loading state of a component or page
+	> can be similar to loading icons
+
+Progress
+	> indicate the progress state of a component or page
+	> similar to a progress bar
+
+Scroll spy
+	> used to automatically update Bootstrap navigation or list group components based on scroll position to indicate which link is currently active in the viewport.
+	> used in nav components or list groups

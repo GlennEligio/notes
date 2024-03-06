@@ -1,0 +1,22 @@
+151 Global Application Architecture
+
+
+Global Application Architecture
+1. Single Region, Single AZ
+	- NOT High Availablity
+	- HIGH Global Latency
+	+ LOW Difficulty
+2. Single Region, Multi AZ
+	+ High Availability
+	- HIGH Global Latency
+	- MEDIUM Difficulty
+3. Multi Region, Active-Passive
+	> Active passive is where only one application instance have write operation
+	+ Global Reads' latency is low
+	+ Global Writes' latency is high
+	+ MEDIUM Difficulty
+3. Multi Region, Active-Passive
+	> Active passive is where only all application instance have read/write operations
+	+ Global Reads' latency is low
+	+ Global Writes' latency is low
+	- HIGH Difficulty

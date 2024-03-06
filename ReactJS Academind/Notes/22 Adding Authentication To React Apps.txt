@@ -1,0 +1,1040 @@
+22 Adding Authentication To React Apps
+
+Contents
+001 Module Introduction
+002 What, How & Why
+003 More on "Authentication Tokens"
+004 Starting Setup & First Steps
+005 Adding User Signup
+006 Showing Feedback To The User
+007 Adding User Login
+008 Managing The Auth State with Context
+009 Using The Token For Requests To Protected Resources
+010 Redirecting The User
+011 Adding Logout
+012 Protecting Frontend Pages
+013 Persisting The User Authentication Status
+014 Adding Auto-Logout
+015 Finishing Steps
+
+
+
+
+
+
+
+
+001 Module Introduction
+
+Module Content
+1. How Authentication Works In React Apps
+2. Implementing User Authentication
+3. Adding Auth Persistence & Auto-Logout
+
+
+
+
+
+
+
+
+
+002 What, How & Why
+
+What is Authentication?
+ > answers the question "Who are you?"
+ > typically uses some user credentials to uniquely identify users
+ > types of Authentication
+	1. Knowledge Based Authentication	
+	2. Possession based authentication
+ > these types of authentication can be combined, creating whats known as MFA or Multi Factor Authentication
+
+Knowledge Based Authentication
+	> authentication based on knowledge that the user have
+	> examples includes:
+		1. Password
+		2. Pin code
+		3. Answer to a secret / personal question
+	> Advantages includes:
+		1. Easy to implement and use
+	> Disvantages includes:
+		1. Not fully safe
+			- can be stolen and used to impersonate as you
+
+Possession based authentication
+	> tries to identify if you possess something that the REAL User should have
+	> examples includes
+		- Phone / Text messages
+		- Key cards and badges
+		- Access token device
+
+MultiFactor Authentication
+	> combination of two or more Authentications
+
+
+Why use Authentication?
+ > needed if Content in frontend should be protected (not accesible by everyone)
+	- ex: User Profile page should not be accessible if User havent logged in yet
+
+
+Authentication Two-step Process:
+1. Get access / permission
+	> ex: logging in to authenticate the user in backend API server
+2. Send request to protected resource
+	> ex: using an Authentication Token (for Stateless server) or some unique ID stored in Server session (for Stateful Servers)
+
+
+Two main approaches for Authentication
+1. Server-side Sessions
+2. Authentication Token
+
+Server-side Session
+ > here, after the Client sends credentials, the Server stores unique identifier on server, and then send same identifier to client
+ > Client then sends identifier along with request to protected server
+ > applied on Application whose frontend and backend are TIGHTLY COUPLED
+
+Authentication Tokens
+ > after the Client sends credentials, the Server CREATE (but not store) "permission" token on server, and sends the token to Client
+ > Client then sends the token along with request to protected resources
+ > example is JWT
+
+
+
+
+
+
+
+003 More on "Authentication Tokens"
+004 Starting Setup & First Steps
+
+Backend Auth Server
+ > for this section, we will use the Firebase Auth REST API
+ > documentation is in this page:
+	- https://firebase.google.com/docs/reference/rest/auth
+
+
+
+
+
+
+
+
+
+005 Adding User Signup
+
+Setup Firebase Auth REST API
+1. Go to a Firebase project
+2. Go to Authentication tab
+3. Go to Sign-in method section
+4. Click "Email/Password" as the Sign-in provider
+5. Enable the "Email/password" but not the "Email link"
+
+Signing up with Email/Password
+ > You can sign in a user with an email and password by issuing an HTTP POST request to the Auth verifyPassword endpoint. 
+ > The request properties should be:
+	METHOD: POST
+	Content-Type: application.json
+	Endpoint url: https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=[API_KEY]
+		-> where [API-KEY] is the Web API Key of the project
+		-> can be found by going to the Project -> Project Settings -> General
+ > Request payload includes
+	1. email		- string	The email the user is signing in with.
+	2. password		- string 	The password for the account
+	3. returnSecureToken	- boolean	Whether or not to return an ID and refresh token, Should always be true
+ > Response payload includes
+	1. idToken		- string 	A Firebase Auth ID token for the authenticated user.	
+	2. email		- string 	The email for the authenticated user.
+	3. refreshToken		- string 	A Firebase Auth refresh token for the authenticated user.
+	4. expiresIn		- string 	The number of seconds in which the ID token expires.
+	5. localId		- string 	The uid of the authenticated user.
+	6. registered		- boolean 	Whether the email is for an existing account.
+
+
+EX:
+// inside submitFormHandler of sign up form
+fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=GOOGLE_API_KEY",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: enteredEmail,
+            password: enteredPassword,
+            returnSecureToken: true,
+          }),
+        }
+      ).then((res) => {
+        if (res.ok) {
+          // provide feedback ui to user
+        } else {
+          return res.json().then((data) => {
+            // provide feedback ui to user when error as well
+            console.log(data);
+          });
+        }
+      });
+
+
+
+
+
+
+
+006 Showing Feedback To The User
+
+Showing Feedback To The User
+ > in certain scenarios, we want to show user some feedback with regards to the authentication status
+ > these includes:	
+	1. if authentication is successful or not
+	2. if authentication is still processing/loading
+ > for the feedback, we can use:
+	1. built-in feedback tools (alert, prompt, confirm)
+	2. show/modify UI Component
+
+EX:
+Below, we can see several things that we added for showing authentication feedback
+1. Loading State
+	> we also change this value inside the submitFormHandler
+2. Showing an alert for response that is not successful
+	> we used the data.error.message payload from response
+3. Show different UI component based on the Loading State inside JSX
+
+// AuthForm.js
+const AuthForm = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
+
+  const switchAuthModeHandler = () => {
+    setIsLogin((prevState) => !prevState);
+  };
+
+  const submitFormHandler = (event) => {
+    event.preventDefault();
+
+    const enteredEmail = emailInputRef.current.value;
+    const enteredPassword = passwordInputRef.current.value;
+
+    // optional: validation since password must be 6 chars or longer in firebase
+
+    setIsLoading(true);
+
+    if (isLogin) {
+      // for login
+    } else {
+      fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=GOOGLE_API_KEY",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: enteredEmail,
+            password: enteredPassword,
+            returnSecureToken: true,
+          }),
+        }
+      ).then((res) => {
+        setIsLoading(false);
+        if (res.ok) {
+          // provide feedback ui to user
+        } else {
+          return res.json().then((data) => {
+            let errorMessage = "Authentication failed";
+            if (data && data.error && data.error.message) {
+              errorMessage = data.error.message;
+            }
+            alert(errorMessage);
+          });
+        }
+      });
+    }
+  };
+
+  return (
+    <section className={classes.auth}>
+      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+      <form onSubmit={submitFormHandler}>
+        <div className={classes.control}>
+          <label htmlFor="email">Your Email</label>
+          <input type="email" id="email" required ref={emailInputRef} />
+        </div>
+        <div className={classes.control}>
+          <label htmlFor="password">Your Password</label>
+          <input
+            type="password"
+            id="password"
+            required
+            ref={passwordInputRef}
+          />
+        </div>
+        <div className={classes.actions}>
+          {!isLoading && (
+            <button>{isLogin ? "Login" : "Create Account"}</button>
+          )}
+          {isLoading && <p>Sending request...</p>}
+          <button
+            type="button"
+            className={classes.toggle}
+            onClick={switchAuthModeHandler}
+          >
+            {isLogin ? "Create new account" : "Login with existing account"}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+007 Adding User Login
+
+Adding User Login
+ > if you notice in the Firebase Auth REST API documentation for signing in and up using email/password, you can see that they have THE SAME response payload
+ > this means that we can have the same response processing logic to both login and register function
+	- the only difference between these two is the URL used to pass the credentials
+
+EX:
+As we can see, we used the isLogin State to determine the url value.
+Then we just injected it in the fetch() call that is shared between login and register
+
+// submitFormHandler for login/register user
+  const submitFormHandler = (event) => {
+    event.preventDefault();
+
+    const enteredEmail = emailInputRef.current.value;
+    const enteredPassword = passwordInputRef.current.value;
+
+    // optional: validation since password must be 6 chars or longer in firebase
+
+    setIsLoading(true);
+
+    let url;
+
+    if (isLogin) {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=GOOGLE_API_KEY";
+    } else {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=GOOGLE_API_KEY";
+    }
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: enteredEmail,
+        password: enteredPassword,
+        returnSecureToken: true,
+      }),
+    })
+      .then((res) => {
+        setIsLoading(false);
+        if (res.ok) {
+          return res.json();
+        } else {
+          let errorMessage = "Authentication failed";
+          throw new Error(errorMessage);
+        }
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+
+
+
+
+
+
+
+008 Managing The Auth State with Context
+
+Managing the Auth States
+ > for managing Auth State, we have different options
+	1. Context API
+	2. Redux
+	3. LocalStorage
+ > for now, we will use Context API
+ > for Auth State, we typically store
+	1. access token string
+	2. isLoggedIn boolean
+ > for modifying this States, we can either
+	1. for Context API, add handler to modify this State and EXPOSE it as well
+	2. for Redux, create an Action to modify this
+
+EX:
+As we can see below, we created a Component that provides a Context.Provider for Auth States.
+We also used it inside the AuthForm where we used the login function in Context and in MainNavigation where using the isLoggedIn from Context to dynamically display the Navigation Links
+
+// auth-context.js
+import React, { useState } from "react";
+
+const AuthContext = React.createContext({
+  token: "",
+  isLoggedIn: false,
+  login: (token) => {},
+  logout: () => {},
+});
+
+export const AuthContextProvider = (props) => {
+  const [token, setToken] = useState(false);
+
+  const isLoggedIn = !!token;
+
+  const loginHandler = (token) => {
+    setToken(token);
+  };
+
+  const logoutHandler = () => {
+    setToken(null);
+  };
+
+  const contextValue = {
+    token,
+    isLoggedIn,
+    login: loginHandler,
+    logoutHandler: logoutHandler,
+  };
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {props.children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthContext;
+
+
+// index.js
+ReactDOM.render(
+  <AuthContextProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </AuthContextProvider>,
+  document.getElementById("root")
+);
+
+
+// inside AuthForm
+const authCtx = useContext(AuthContext);
+
+// inside AuthForm submitFormHandler
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: enteredEmail,
+        password: enteredPassword,
+        returnSecureToken: true,
+      }),
+    })
+      .then((res) => {
+        setIsLoading(false);
+        if (res.ok) {
+          return res.json();
+        } else {
+          let errorMessage = "Authentication failed";
+          throw new Error(errorMessage);
+        }
+      })
+      .then((data) => {
+        authCtx.login(data.idToken);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+
+
+// MainNavigation component
+const MainNavigation = () => {
+  const authCtx = useContext(AuthContext);
+  const { isLoggedIn } = authCtx;
+
+  return (
+    <header className={classes.header}>
+      <Link to="/">
+        <div className={classes.logo}>React Auth</div>
+      </Link>
+      <nav>
+        <ul>
+          {!isLoggedIn && (
+            <li>
+              <Link to="/auth">Login</Link>
+            </li>
+          )}
+          {isLoggedIn && (
+            <li>
+              <Link to="/profile">Profile</Link>
+            </li>
+          )}
+          {isLoggedIn && (
+            <li>
+              <button>Logout</button>
+            </li>
+          )}
+        </ul>
+      </nav>
+    </header>
+  );
+};
+
+
+
+
+
+
+
+
+
+009 Using The Token For Requests To Protected Resources
+
+Using The Token For Requests To Protected Resource
+ > in this section, we will now use the token for accessing protected resource
+ > we can make the realtime database protected, but for now, we will just use the token to change the password
+	- we will also need the access token for changing password
+ > for now, we will just focus on using the token and not provide any user feedback through ui changes
+
+Firebase Auth REST API - Change password
+ > to change password, you must send a request with following properties
+	METHOD: POST
+	Content-Type: application/json
+	Endpoint url: https://identitytoolkit.googleapis.com/v1/accounts:update?key=[API_KEY]
+ > the request also must have payload with following properties
+	idToken 		string 		A Firebase Auth ID token for the user.
+	password 		string 		User's new password.
+	returnSecureToken 	boolean 	Whether or not to return an ID and refresh token.
+ > the response, will then have payload with following properties
+	localId 		string 			The uid of the current user.
+	email 			string 			User's email address.
+	passwordHash 		string 			Hash version of password.
+	providerUserInfo 	List of JSON objects 	List of all linked provider objects which contain "providerId" and "federatedId".
+	idToken 		string 			New Firebase Auth ID token for user.
+	refreshToken 		string 			A Firebase Auth refresh token.
+	expiresIn 		string 			The number of seconds in which the ID token expires.
+
+EX:
+// ProfileForm component
+const ProfileForm = () => {
+  const authCtx = useContext(AuthContext);
+  const newPasswordInputRef = useRef();
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+    const enteredNewPassword = newPasswordInputRef.current.value;
+
+    fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=GOOGLE_API_KEY",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idToken: authCtx.token,
+          password: enteredNewPassword,
+          returnSecureToken: false,
+        }),
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          // successful password reset
+          return res.json();
+        } else {
+          throw new Error("Reset password failed");
+        }
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  return (
+    <form className={classes.form} onSubmit={submitHandler}>
+      <div className={classes.control}>
+        <label htmlFor="new-password">New Password</label>
+        <input
+          type="password"
+          id="new-password"
+          minLength="7"
+          ref={newPasswordInputRef}
+        />
+      </div>
+      <div className={classes.action}>
+        <button>Change Password</button>
+      </div>
+    </form>
+  );
+};
+
+
+
+
+
+
+
+
+010 Redirecting The User
+
+Redirecting the User
+ > in our current app, we would like to add a feature where we redirect user to homepage ("/") after a successful login/register or change password
+ > for this, we could these hooks from react-router-dom
+	- for v5, useHistory hook 
+	- for v6, useNavigate hook
+
+EX:
+// AuthForm.js
+const history = useHistory();
+// inside AuthForm submitFormHandler
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: enteredEmail,
+        password: enteredPassword,
+        returnSecureToken: true,
+      }),
+    })
+      .then((res) => {
+        setIsLoading(false);
+        if (res.ok) {
+          return res.json();
+        } else {
+          let errorMessage = "Authentication failed";
+          throw new Error(errorMessage);
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        authCtx.login(data.idToken);
+        history.replace("/");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+
+// ProfileForm component
+const history = useHistory();
+// inside submitHandler of ProfileForm
+    fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=GOOGLE_API_KEY",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idToken: authCtx.token,
+          password: enteredNewPassword,
+          returnSecureToken: false,
+        }),
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          // successful password reset
+          return res.json();
+        } else {
+          throw new Error("Reset password failed");
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        history.replace("/");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+
+
+
+
+
+
+
+
+
+
+
+011 Adding Logout
+
+Adding Logout
+ > since we used the Authentication Token approach, all we need to do to logout is to remove the token in the React app (or localStorage, Context, Redux, etc)
+ > in our case, we used Context. So what we will do is to modify the token stored inside Context using one of its function
+
+EX:
+Below, we can see the logoutHandler() function which uses the logout function in the AuthContext.
+We then passed it as onClickHandler of the logout button
+
+// MainNavigation component
+const MainNavigation = () => {
+  const authCtx = useContext(AuthContext);
+  const { isLoggedIn, logout } = authCtx;
+
+  const logoutHandler = () => {
+    logout();
+  };
+
+  return (
+    <header className={classes.header}>
+      <Link to="/">
+        <div className={classes.logo}>React Auth</div>
+      </Link>
+      <nav>
+        <ul>
+          {!isLoggedIn && (
+            <li>
+              <Link to="/auth">Login</Link>
+            </li>
+          )}
+          {isLoggedIn && (
+            <li>
+              <Link to="/profile">Profile</Link>
+            </li>
+          )}
+          {isLoggedIn && (
+            <li>
+              <button onClick={logoutHandler}>Logout</button>
+            </li>
+          )}
+        </ul>
+      </nav>
+    </header>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+012 Protecting Frontend Pages
+
+Navigation Guards 
+ > in essence, they protect the Frontend pages from being accessed by user
+ > in our case with React, what we can do is to conditionally "render" Route components based on some specific condition (ex: Authentication data)
+
+EX:
+In example below, we used the "isLoggedIn" property inside the State managed by Context to conditionally "render" some Route components
+
+// App.js
+function App() {
+  const authCtx = useContext(AuthContext);
+
+  const { isLoggedIn } = authCtx;
+
+  return (
+    <Layout>
+      <Switch>
+        <Route path="/" exact>
+          <HomePage />
+        </Route>
+        {!isLoggedIn && (
+          <Route path="/auth">
+            <AuthPage />
+          </Route>
+        )}
+        <Route path="/profile">
+          {!isLoggedIn && <Redirect to="/" />}
+          {isLoggedIn && <UserProfile />}
+        </Route>
+        <Route path="*">
+          <Redirect to="/" />
+        </Route>
+      </Switch>
+    </Layout>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+013 Persisting The User Authentication Status
+
+Persisting the User Authentication Status
+ > right now, we have the Auth Status stored in the Context
+ > but if we refresh the page, these Context States will be lost
+ > for these, we want to persist these Auth State either by using
+	1. localStorage
+		- data will persist even if we refresh the page or close and open the browser
+	2. sessionStorage
+		- data will be available as long the session is up
+
+EX:
+Below, we used the localStorage to store the token when we logged in and removed it in the logout handler
+
+// auth-context.js
+const AuthContext = React.createContext({
+  token: "",
+  isLoggedIn: false,
+  login: (token) => {},
+  logout: () => {},
+});
+
+export const AuthContextProvider = (props) => {
+  const initialToken = localStorage.getItem("token");
+  const [token, setToken] = useState(initialToken);
+
+  const isLoggedIn = !!token;
+
+  const loginHandler = (token) => {
+    setToken(token);
+    localStorage.setItem("token", token);
+  };
+
+  const logoutHandler = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+  };
+
+  const contextValue = {
+    token: token,
+    isLoggedIn: isLoggedIn,
+    login: loginHandler,
+    logout: logoutHandler,
+  };
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {props.children}
+    </AuthContext.Provider>
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+014 Adding Auto-Logout
+
+Adding Auto-Logout
+ > right now, unless the user explicitly logout or validity of the token from Firebase expires, the user will not be logged out
+ > typically, we want to add a time limit as to when the User will be automatically logged out of the webapp
+	- ex: "Session timeout. Please login again"
+ > for us to do this, we can set a timeout call to the logoutHandler function if we login
+	- this will automatically log us out
+ > to do this:
+	1. create a function to determine time difference of two dates in miliseconds (we need ms since setTimeout only accept ms)
+	2. modify the loginHandler by:
+		a. adding an expirationDate parameter
+		b. use the expirationDate parameter to calculate remainingTime using the function we made earlier
+		c. call setTimeout() function, and pass a pointer to logoutHandler function and the calculated remaining time
+ > with this changes in AuthContext (specifically in loginHandler function), we need to also make changes to this loginHandler function calls inside Components
+	- for this, we will just add the "expiresIn" property from response payload when we log in to the Firebase
+
+Ex:
+// auth-context.js
+const AuthContext = React.createContext({
+  token: "",
+  isLoggedIn: false,
+  login: (token) => {},
+  logout: () => {},
+});
+
+const calculateRemainingTime = (expirationDate) => {
+  const currentTime = new Date().getTime();
+  const expirationTime = new Date(expirationDate).getTime();
+
+  const remainingTime = expirationTime - currentTime;
+
+  return remainingTime;
+};
+
+export const AuthContextProvider = (props) => {
+  const initialToken = localStorage.getItem("token");
+  const [token, setToken] = useState(initialToken);
+
+  const isLoggedIn = !!token;
+
+  const logoutHandler = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+  };
+
+  const loginHandler = (token, expirationDate) => {
+    setToken(token);
+    localStorage.setItem("token", token);
+
+    const remainingTime = calculateRemainingTime(expirationDate);
+    setTimeout(logoutHandler, remainingTime);
+  };
+
+  const contextValue = {
+    token: token,
+    isLoggedIn: isLoggedIn,
+    login: loginHandler,
+    logout: logoutHandler,
+  };
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {props.children}
+    </AuthContext.Provider>
+  );
+};
+
+
+// inside AuthForm submitHandler fetch call, when the response is successful
+      .then((data) => {
+        const expirationDate = new Date(
+          new Date().getTime() + parseInt(data.expiresIn) * 1000
+        );
+        authCtx.login(data.idToken, expirationDate);
+        history.replace("/");
+      })
+
+
+
+
+
+
+
+
+
+015 Finishing Steps
+
+Finishing Steps
+1. Find way for the logoutHandler to clear the setTimeout call inside loginHandler 
+	> for this, we will create a global variable that will store setTimeout for executing logoutHandler
+2. Add expirationTime as well in Local Storage when we login
+3. Remove expirationTime in LocalStorage when we logout
+4. Retrieve the stored token and duration in the localStorage
+5. Used to retrieved token and duration to initially set the token State in AuthContextProvider
+6. Create a side effect where everytime the retrieve token and duration changes, we update the logoutTime
+	> make sure the dependencies are right
+	> for function dependencies, use the useCallback hook
+
+1. Find way for the logoutHandler to clear the setTimeout call inside loginHandler 
+ 	> for this, we would want to create a global variable to hold the setTimeout() call
+	> then, we can then use this global variable inside logoutHandler
+
+// global variable in auth-context
+let logoutTimer;
+
+// login and logoutHandler inside AuthContextProvider component
+  const logoutHandler = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+    clearTimeout(logoutTimer);
+  };
+
+  const loginHandler = (token, expirationDate) => {
+    setToken(token);
+    localStorage.setItem("token", token);
+
+    const remainingTime = calculateRemainingTime(expirationDate);
+    logoutTimer = setTimeout(logoutHandler, remainingTime);
+  };
+
+
+2. Add expirationTime as well in Local Storage when we login
+
+// inside loginHandler
+localStorage.setItem("expirationDate", expirationDate);
+
+
+3. Remove expirationTime in LocalStorage when we logout
+
+// inside logoutHandler
+localStorage.removeItem("expirationDate");
+
+
+4. Retrieve the stored token and duration in the localStorage
+	> also, do check if the remainingTime using stored expirationDate is less than 1 min
+
+// inside auth-context.js
+const retrieveStoredToken = () => {
+  const storedToken = localStorage.getItem("token");
+  const storedExpirationDate = localStorage.getItem("expirationDate");
+
+  const remainingTime = calculateRemainingTime(storedExpirationDate);
+  if (remainingTime <= 60000) {
+    // 60000ms for 1min
+    localStorage.removeItem("token");
+    localStorage.removeItem("expirationDate");
+    return null;
+  }
+
+  return {
+    token: storedToken,
+    duration: remainingTime,
+  };
+};
+
+
+5. Used to retrieved token and duration to initially set the token State in AuthContextProvider
+
+// inside AuthContextProvider
+  const tokenData = retrieveStoredToken();
+  let initialToken;
+  if (tokenData) {
+    initialToken = tokenData.token;
+  }
+  const [token, setToken] = useState(initialToken);
+
+
+6. Create a side effect where everytime the retrieve token and duration changes, we update the logoutTime
+	> make sure the dependencies are right
+	> for function dependencies, use the useCallback hook
+
+// inside AuthContextProvider
+  const logoutHandler = useCallback(() => {
+    setToken(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("expirationDate");
+    clearTimeout(logoutTimer);
+  }, []);
+
+  useEffect(() => {
+    if (tokenData) {
+      logoutTimer = setTimeout(logoutHandler, tokenData.duration);
+    }
+  }, [tokenData, logoutHandler]);
+
+

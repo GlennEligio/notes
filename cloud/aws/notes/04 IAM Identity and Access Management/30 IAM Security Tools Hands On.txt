@@ -1,0 +1,35 @@
+30 IAM Security Tools Hands On
+
+Creating Credentials Report
+1. Go to IAM Dashboard
+2. Go to Access reports > Credential report
+3. Download the Credential report as .csv file
+
+Credential Report csv file
+ > contains information related to all users
+ > users info includes but not limited to:
+	- user
+	- arn (Amazon Resource Names)
+	- user
+	- user_creation_time	
+	- password_enabled	
+ 	- password_last_used
+	- password_last_changed		- password_next_rotation	
+	- mfa_active
+	- access_keys
+	- certificates
+
+
+
+Checking Access Advisor
+1. Go to IAM Dashboard
+2. Go to Access management > Users
+3. Click on any User
+4. In the User summary page, open the "Access Advisor" tab
+5. Here you can see all the Service permission granted to the user and when those services were last accessed
+	> we can use this info to revise the policies given
+
+
+
+NOTES:
+1. In Access Advisor, recent activity usually appears within 4 hours. Data is stored for a maximum of 365 days, dependencing when your region began supporting this feature

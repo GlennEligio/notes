@@ -1,0 +1,148 @@
+Configuration Strategy -  When to use what?
+
+Goals of the Distributed Configuration pattern:
+1. Externalized
+	> can be achieved by fetching config props externally
+2. Environment specific
+	> config props must be environment sensitive (dev/qa/prod, etc)
+	> config props values must change based on its environment
+3. Consistent
+4. Version history
+5. Real-time management
+
+
+
+
+Ways of providing configuration properties
+1. Internal .properties file
+	> config props source comes from the application.properties file found in /src/main/resources
+	> can be overwritten easily
+2. External .properties file
+	> application.properties file located in same folder as the .jar file executed will be applied to the same Spring Boot app of said .jar file
+		- command used is "java -jar <jar file name>"
+	> will OVERRIDE the internal .properties file
+3. CLI flag 
+	> key-value pairs added as command flag in "java -jar <filename>" command will be added as one of Spring Boot app's config props
+	> will OVERRIDE the internal .properties file
+4. Config Server
+	> must have Config Client added in dependency and have appropriate configuration set up
+
+
+
+Grouping config props
+I. Spring profile
+	> implemented by default in any Spring Boot app	
+	> can be seen as a set of config prop values
+
+1. Creating Config Props file for specific Profiles
+	> to create config prop files for specific profiles, add "-profileName" suffix to the config prop file name
+		- ex: application.properties for default
+			application-qa.properties for qa profile
+			application-dev.properties for dev profile
+
+2. Setting Spring profile to use
+	> to specific the Spring profile to use, we can either
+		a. Set "spring.profile.active" config prop value
+			-> application level
+		b. Set @Profile("profileName") annotation in a bean that fetches config prop
+			-> bean level
+	> to set the current Spring profile of Spring boot app, define "spring.profiles.active" config prop
+		- ex: spring.profile.active: dev
+			-> this will fetch all config props for "dev" profile (ex: application-dev.properties)
+	> we can pass this config in command line arguments as well
+		- ex: java -jar spring-boot-0.0.1-SNAPSHOT.jar --spring.profile.active=dev
+
+
+
+Fetching Config values
+1. @Value()
+	> added in a property of a Class / @Bean
+	> annotation added to define value to an injected variable (int, String, etc)
+	> using SpEL, we can fetch config props using this annotation
+	> for fetching config props, we will use the syntax
+		- @Value("${configKeyName}")
+		- ex: @Value("${token.jwtSecretKey}")
+			-> this will fetch the token.jwtSecretKey config value from the config source
+	> we can also define the default value in case the config props does not exist
+	> for defining default value, we can use the syntax
+		- @Value("${configKeyName: defaultValue}")
+		- ex: @Value("${token.jwtSecretKey: secrett}")
+			-> this will set the value to "secrett" in case the token.jwtSecretKey is not available
+	> for fetching LIST of values, the values must be separated by comma (,)
+		- list.values=One,Two,Three
+		- 	@Value("${list.values}")
+			private List<String> values;
+
+2. @ConfigurationProperties()
+	> added in a Class (typically a POJO)
+	> annotation used to fetch a specific configuration property and BIND it to the property of the said Class
+	> syntax is:
+		@ConfigurationProperty("configProps")
+	> all of the "subproperties" of the configProps we passed will be binded to the Class
+	> NOTE: 
+		a. Property name of the Class MUST MATCH the name of the sub-properties to bind
+		b. Class must have GETTERS AND SETTERS
+
+EX:
+db.connectionUrl="someexampleconnectionUrl"
+db.port=3060
+db.host=127.0.0.1
+
+@ConfigurationProperties("db")
+@Getters
+@Setters
+public class DbConfig{
+	private String connectionUrl;
+	private int port;
+	private String host;
+}
+
+
+
+
+BEST PRACTICES:
+
+Choosing the right place to add the Config props
+1. Property files
+	> properties that wont be changed at runtime
+	> examples are internal properties like spring.application.name
+
+	-> Specificity:		Microservice specific
+	-> Changing:		No
+
+
+2. Config Server
+	> properties that might be changed at runtime		
+	-> Specificity:		Microservice specific
+	-> Changing: 		Yes
+
+
+3, System variables with alias
+	> environment specific variables that providers (AWS, Azure) gave you 
+	> we will create an alias for these variables given to us
+	> we can then use that alias when refering to the env vars
+	-> Specificity:		Microservice specific
+	-> Type:		Environment config
+
+EX:
+// Most likely given by provider (differs between each provider as well)
+host.environment.port: 8080 		
+
+// we will create an alias for the env var above with "env.port" 
+env.port = ${host.environment.port}
+
+// we can the use this env.port when refering to host.environment.port
+server.port = ${env.port}
+
+
+
+Securing Config Server
+1. Add Spring Security to Spring Config Server
+2. Use encryption when saving config props in a git or any external source
+	-> encrypt the data that is being stored
+	-> Spring Cloud Config Server has the ability to decrypt/encrypt data that are being passed around
+	-> uses Java Cryptography Extension (JCE)
+3. Use defaults for local development
+	> provide defaults in values being passed in config props will ease up the local development
+	> ex: config.uri=http://localhost:${config.port:8888}
+		-> here, we provided a default value for config.port which is 8888

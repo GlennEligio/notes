@@ -1,0 +1,15 @@
+40 SSH Overview
+
+
+SSH Summary Table
+SSH
+ > terminal command
+ > available in Mac, Linux, and Windows >= 10
+
+Putty
+ > application used to do SSH connection
+ > available in any version of Windows
+
+EC2 Instance Connect
+ > uses web browser to connect to your Instance
+ > only works if your EC2 instance uses Amazon Linux 2 as OS

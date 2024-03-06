@@ -1,0 +1,33 @@
+07.02. Components - Alerts
+
+~~~~~ COMPONENTS - ALERTS ~~~~~
+Alerts
+	> used to provide contextual feedback messages for typical user actions with the handful of available and flexible alert messages.	
+	> typically have the following
+		1. Alert header (RARE)
+		2. Alert content
+		3. Button for closing the alert (needs Bootstrap JS alert plugin)
+
+Creating Alert
+1. Add "alert" to the element
+2. Add "alert-{color}" to decorate the alert
+3. Add role="alert" for ARIA
+
+Optional
+1. "alert-heading" for the element to be used for alert heading
+2. "alert-link" for links inside the alert
+	-> this will make the link inherit the properties of alert (specifically COLOR)
+3. Specify the alert icon by adding element inside the "alert"
+
+
+Dismissing an alert
+	> needs to have the alert JS plugin
+1. Add a close button
+2. Add "alert-dismissible" class to the "alert" element
+	> adds extra padding to the right of the alert and positions the close button
+3. Add "data-bs-dissmiss="alert"" attribute to the close button
+	> triggers the JS functionality
+	> be sure to use button element
+4. Add "fade" or "show" to add animations to alert
+	> fade for adding fade effect when closing
+	> show for adding show effect when closing

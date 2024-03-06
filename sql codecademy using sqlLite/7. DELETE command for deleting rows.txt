@@ -1,0 +1,13 @@
+DELETE DATA ENTRIES IN THE TABLE
+	> in order to delete, we will need two things
+		a. call DELETE FROM command and pass the table Name
+		b. a conditional WHERE if a row has met it, it will delete that row
+
+EXAMPLE:
+
+ DELETE FROM celebs
+ WHERE twitter_handle IS NULL;
+
+Here, we will first call the DELETE FROM command in order to get permission to delete rows in the "celebs" table. Then we will create a conditional (if twitter handle IS NULL) that if the row met the condition, then it will be DELETED.
+
+

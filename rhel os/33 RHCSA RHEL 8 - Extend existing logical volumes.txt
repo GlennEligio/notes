@@ -1,0 +1,34 @@
+33 RHCSA RHEL 8 - Extend existing logical volumes
+
+
+Commands
+lvextend
+ > add space to a logical volume
+ > synposis
+	lvextend -L| --size [+]Size[m|UNIT] [options] LV
+ > options
+	-r 	resize the filesystem that is currently inside logical volume as well
+ > EX:
+	lvextend -L+2G /dev/vg1/lv1
+	lvextend -L+500M -r /dev/vgprac/lvprac
+ > note:
+	1. the volume group LV belongs to must have enough free space to accomodate lv extension
+
+
+resize2fs
+ > ext2/ext3/ext4 file system resizer
+ > sypnosis
+	$ resize2fs [-fFpPMbs] [-d debug-flags] [-S RAID-stride] [-z undo file] DEVICE [size]
+ > ex:
+	$ resize2fs /dev/vg1/lv1
+		- will resize the lv1 ext4 filesystem to occupy all available space in the Logical volume
+
+
+xfs_growfs
+ > used to expand an XFS filesystem
+ > sypnosis
+	$ xfs_growfs [-dilnrx] [-D size] [-e rtextsize] [-L size] [-m maxpct] [-t mtab] [-R size] [mount-point | block-device]
+	$ xfs_growfs -V
+ > ex:
+	$ xfs_growfs /mnt
+		- increase size of the filesystem to occupy all available space in the /mnt or block-device mounted in /mnt

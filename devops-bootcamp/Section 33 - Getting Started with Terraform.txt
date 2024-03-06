@@ -1,0 +1,390 @@
+Section 33 - Getting Started with Terraform
+
+Contents:
+173. Installing Terraform
+174. HashiCorp Configuration Language (HCL) Basics
+175. Update and Destroy Infrastructure
+176. Lab: HCL Basics
+
+
+173. Installing Terraform
+
+Installing TerraForm 
+ > Terraform can be downloaded as a single binary, or an executable file from the TerraForm download section
+	- link: https://developer.hashicorp.com/terraform/install
+ > To install Terraform, we will be using the downloaded file, and copying it to the system PATH
+ > We could also use the package manager present in the system in order to install TerraForm. For Ubuntu/Debian, we could use the example below
+	$ wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+	$ echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+	$ sudo apt update && sudo apt install terraform
+
+Verifying installation - Checking Version
+ > to verify the installation, we could check the TerraForm version installed using the command below
+	$ terraform version
+	
+Supported platforms for Terraform
+ - macOS
+ - FreeBD
+ - Linux
+ - OpenBSD
+ - Solaris
+ - Windows
+ 
+TerraForm's Declarative File and HashiCorp Configuration Language (HCL)
+ > TerraForm uses configuration files which are wrriten in HCL to deploy infrastructure resources
+ > These files have a .tf extension and can be created using any text editor such notepad or notepad++, or command line text editor like vim
+ 
+
+Resource
+ > Resource is any object that TerraForm MANAGES
+ > It can range from
+	- file on a local host
+	- virtual machine on the cloud like EC2 instance
+	- services like AWS S3 Bucket, ECS, DynamoDB, IAM Users, or IAM groups, roles, policies, etc
+	- resources on major cloud providers such as 
+		- the App Engine and Cloud Engine from GCP
+		- database on Azure, Azure Active Directory, etc
+ > For the first few sections, we will stick to two very easy to understand resources
+	1. local file type of resource
+	2. special kind of resource called a random pit
+ > We will be using this resources to easily understand the basic of TerraForm, such as
+	1. lifecycle of resource
+	2. the HCL format
+
+
+
+174. HashiCorp Configuration Language (HCL) Basics
+
+HashiCorp Configuration Language (HCL) Basics - Syntax
+Block
+ > a block is defined within curly braces and it contains a set of arguments in key = value pair format representing the configuration data
+ > a block in TerraForm contains information about the INFRASTRUCTURE PLATFORM, and a SET OF RESOURCES within that platform that we want to create
+ > inside the curly braces are the arguments for the block
+	- for each resource types, there are a specific set of arguments they expect
+
+Syntax:
+<block> <parameters> {
+	key1 = value1
+	key2 = value2
+}
+
+
+Sample exercise: Creating a Local file resource using Terraform
+1. Create the directory where we will be creating the TerraForm configuration file
+	$ mkdir /root/terraform-local-file
+	$ cd /root/terraform-local-file
+2. Create the TerraForm configuration file for the action we want
+
+# local.tf
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = "We love pets!"
+}
+
+Breakdown of the local.tf file
+ > the first element in this file is a block
+	- this can be identified by the curly braces inside
+	- "resource" represents the block name
+	- "local_file" represents the resource type. 
+		= In this case, we are creating a resource of type local_file
+		= This is a fixed value, and it depends on the provider where we want to create the resource
+		= 'local_file' provides two information, each is separated by the underscore
+			1. local is the provider
+			2. file is the resource that it will create
+	- "pet" represents the resource name. This can be named anything
+ > the key value pair inside is the arguments for the resource
+	- these set of key value pairs are specific to the "local_file" resource type
+	- "filename" represents the file to create. We should pass the absolute path directory to it
+	- "content" represents the content of the file to create
+
+
+Sample TerraForm config file: aws-ec2.tf
+ > resource "aws_instance"
+	- aws provider
+	- instance type
+	- "webserver" name
+ > arguments:
+	amazon machine image "ami-0c2f25c1f66a1ff4d"
+	instance_type "t2.micro"
+ 
+resource "aws_instance" "webserver" {
+	ami = "ami-0c2f25c1f66a1ff4d"
+	instance_type = "t2.micro"
+}
+
+
+Sample TerraForm config file: aws-s3.tf
+ > resource "aws_S3_bucket"
+	- aws provider
+	- s3 bucket type
+	- "data" resource name
+ > arguments
+	- bucket name "webserver-bucket-org-2207"
+	- access control level "private"
+	
+resource "aws_s3_bucket" "data" {
+	bucket = "webserver-bucket-org-2207"
+	acl = "private"
+}
+
+
+
+TerraForm workflow
+ > a simple terraform workflow consist of four steps
+	1. write the TerraForm configuration file
+	2. run the 'terraform init' command
+	3. review the execution plan using 'terraform plan' command
+	4. once we are ready, apply the changes using the 'terraform apply' command
+	
+Example: local.tf file
+# local.tf
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = "We love pets!"
+}
+	
+TerraForm COMMANDS
+terraform init
+ > used to initializing the .tf file
+ > checks the configuration file, and initialize the working directory containing the .tf file 
+ > one of the first things that this command does is to understand that we are making use of specific providers based on the resource type declared in the resource block
+	- in case above, it is checking if we are making use of 'local' provider given that we use 'local_file' as resource type
+ > it will then DOWNLOAD THE PLUGIN given the providers it detected to be able to work on the resources declared in the .tf file
+ 
+terraform plan
+ > this command will show the actions that will be carried out by the TerraForm to create the resource
+ > TerraForm knows that it has to create resources, and this is displayed in the output similar to a 'diff' command in git
+ > the plus (+) symbol implies that the resource will be created
+ > note that this command DOES NOT CREATE the infrastructure resources yet. 
+ > this is only for the user to REVIEW and ENSURE that all the actions to be performed in this execution plan is desired
+	- after the review, we can now create the resource
+ > NOTE:
+	1. Any fields that we did not explicitly define in resources will be shown, and will use their default value
+ 
+EX: Logs for execution plan
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+ + create
+Terraform will perform the following actions:
+ # local_file.pet will created
+ + resource "local_file" "pet" {
+		+ content				= "We love pets!"
+		+ directory_permission	= "0777"
+		+ file_permission 		= "0777"
+		+ filename				= "/root/pets.txt"
+		+ id					= (known after apply)
+   }
+   
+Plan: 1 to add, 0 to change, 0 to destroy
+
+
+terraform apply
+ > this command is used to apply the changes defined in the .tf file
+ > it will again display the execution plan once again, and it will then ask the user to confirm by typing 'yes' to proceed
+ > once user confirms, it will proceed with the creation of the resource, which in this case is a file
+	- it will also print the resource id of the new resource id generated
+ > after applying the configuration file, it will also print the summary of the apply command, which includes the number of resources added, changed, and destroyed
+ 
+ 
+terraform show
+ > this command is used to show details of the resources using the .tf files located in the current directory
+ 
+EX:
+$ terraform show
+ # local_file.pet will created
+ resource "local_file" "pet" {
+		content					= "We love pets!"
+		directory_permission	= "0777"
+		file_permission 		= "0777"
+		filename				= "/root/pets.txt"
+		id						= cba595b7d9f94ba1107a46f3f731912d95fb3d2c
+   }
+   
+   
+terraform destroy
+ > this command is used to destroy all resources defined in .tf files in current directory
+ > like 'terraform apply', it will also display the actions that it will 
+
+
+Providers, Resource types, and Arguments
+ > in TerraForm, there are many Providers available to use. This includes cloud providers, like AWS, Azure, GCP
+ > then for each Providers, there will be multiple resource types available to use
+ > under these resource types, there will be a specific set of arguments to be used
+ > to check, browse, and read documentations regarding providers, we can use the website below
+	- https://registry.terraform.io/browse/providers
+
+
+
+
+
+
+175. Update and Destroy Infrastructure
+
+Update and Destroy Infrastructure using Terraform
+ > to update any of the infrastructure resources, we can update the .tf file where that resource is defined, and use the 'terraform apply' command
+ > to destroy infrastructure resources, we can use 'terraform destroy' command, and it will destroy all resources defined in the .tf files in current directory 
+	- like 'terraform apply', it will print logs about the actions that it will take, which will have the minus symbol besides them, and a prompt to confirm the deletion action
+
+
+Sample .tf file to be used - local.tf
+ > as of now, the resource created by the local.tf file is present
+ > with the new local.tf file, we will be changing the 'file_permission' argument of the resource
+ > now, if we check the actions to execute using 'terraform plan', we can see that the resource block has (-/+) symbol beside it
+	- the minus/plus symbol specifies that the resource will be deleted and created again
+	- typically, this happens if we update an argument that forces a replacement action like 'file_permission'
+
+# old local.tf
+resource "local_file" "pet" {
+	filename = "/root/pets.txt"
+	content = "We love pets!"
+}
+
+# current resource in terraform
+resource "local_file" "pet" {
+	content					= "We love pets!"
+	directory_permission	= "0777"
+	file_permission 		= "0777"
+	filename				= "/root/pets.txt"
+	id						= cba595b7d9f94ba1107a46f3f731912d95fb3d2c
+}
+
+# new local.tf
+resource "local_file" "pet" {
+	filename 			= "/root/pets.txt"
+	content 			= "We love pets!"
+	file_permission		= "0700"
+}
+
+# logs in 'terraform plan'
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+ -/+ destroy and then create replacement
+ 
+Terraform will perform the following actions:
+ # local_file.pet will created
+ -/+ resource "local_file" "pet" {
+		  content				= "We love pets!"
+		  directory_permission	= "0777"
+		~ file_permission 		= "0777" -> "0700" # forces replacement
+		  filename				= "/root/pets.txt"
+		~ id					= "cba595b7d9f94ba1107a46f3f731912d95fb3d2c" -> (known after apply)
+   }
+   
+Plan: 1 to add, 0 to change, 1 to destroy
+
+
+
+
+
+176. Lab: HCL Basics
+
+#1
+N: Welcome to the very first Terraform Lab!
+In this lab, we will learn how to get started with HashiCorp Configuration Language that is used by Terraform.
+
+#2
+Q: Navigate to the directory '/root.terraform-projects/HCL'. There is a file present in this location. What is the file extension used by this file? List the file by using the ls command.
+S: ls /root/terraform-projects/HCL/
+A: .tf
+
+#3
+N: That's right! That is a .tf file and is used for writing configuration files in Terraform using HCL.
+
+#4
+Q: What is the resource type specified in this file?
+From the terminal, inspect it using tools like cat or text editors such as 'vi'. Alternatively, you can open this file on VS Code. So navigate to this directory and inspect the file.
+S: The file mentioned is the main.tf file written below
+
+resource "local_file" "games" {
+  file     = "/root/favorite-games"
+  content  = "FIFA 21"
+}
+
+A: local_file
+
+#5
+Q: What is the resource name used for the local_file resource in this configuration file?
+A: games
+
+#6
+Q: What is the name of the provider for which we are creating this resource?
+A: local
+
+#7
+Q: Which one of the below is nt an example of an argument used within the resource block?
+A: resource_type = "local_file"
+
+#8
+Q: If you run a 'terraform plan' now? Would it work?
+A: NO
+N: We need to initialize the plugins to be used using 'terraform init'
+
+#9
+Q: Run a 'terraform init' inside the configuraiton directory: '/root/terraform-projects/HCL'
+N: Current directory must contain the .tf files to initialize
+
+#10
+Q: What was the version of local provider plugin that was downloaded?
+A: 2.4.1
+
+#11
+Q: Now, try to run a 'terraform plan'
+Did it print an execution plan as expected.
+A: NO
+N: 'file' is not included in expected field
+
+#12
+Q: Why did the command fail?
+Inspect the error produced when the command was run.
+If unsure, refer to the documentation. The documentation tab is available at the top right?
+A: Invalid Arguments
+
+#13
+Q: Which of the following is not a valid argument for the local_file resource?
+If unsure, refer to the documentation.
+A: file
+
+#14
+Q: Fix the argument in the configuration file and then run a 'terraform plan' followed by 'terraform apply' to create the local_file resource called 'games'
+S:
+resource "local_file" "games" {
+  filename      = "/root/favorite-games"
+  content       = "FIFA 21"
+}
+
+
+#15
+Q: We have now created our very first resource using Terraform! Next, let's work on updating the resource.
+If you look at the output produced by the terraform plan, and terraform apply commands closely, we can see that the file content is printed on the screen.
+Since we do not want this to happen, we have updated the resource type. What is the resource type that we have updated.
+S: main.tf file content
+
+resource "local_sensitive_file" "games" {
+  filename     = "/root/favorite-games"
+  content  = "FIFA 21"
+  sensitive_content = "FIFA 21"
+}
+
+A: local_sensitive_file
+
+
+#16
+Q: That's right, we have made use of the 'local_sensitive_file' resource type to mask the contents of the file from the execution plan.
+However, something is wrong. If we run 'terraform plan' or 'terraform apply' now we see an error!
+Identify and fix the issue. Remember, we don't want the content of the file to show up in the execution plan at all.
+S: new main.tf file, use terraform plan, and terraform apply
+
+resource "local_sensitive_file" "games" {
+  filename     = "/root/favorite-games"
+  content  = "FIFA 21"
+}
+
+
+#17
+Q: Notice that the 'content' of the file was not displayed when using 'local_sensitive_file' instead of the local_file resource.
+Note: Refer to the documentation to see all the arguments supported by this resource.
+Also note that as Terraform follows an immutable infrastructure approach, the file was recreated although the contents are the same.
+
+
+#18
+Q: Finally, destroy this resource using 'terraform destroy'

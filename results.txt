@@ -1,0 +1,2 @@
+./rhel os/24 RHCSA RHEL 8 - Securely transfer files between systems.txt
+./searchwords.txt

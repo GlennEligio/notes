@@ -1,0 +1,129 @@
+Spring MVC Form Tags
+
+
+HTML Forms
+	> used to get input from the user
+
+
+Spring MVC Form Tags
+	> Spring MVC Form Tags are the building block for a web page
+	> Form Tags are configrable and resuable for a web page 
+	> can make use of a feature called "Data Binding"
+
+
+Data Binding
+	> Spring MVC Form Tags can make use of data binding
+	> Automatically setting/retrieving data from a Java object / bean
+
+
+ADDING Form Tags in Spring MVC
+	> we need to add a taglib from Spring Framework
+	> add this element outside the <!DOCTYPE html>, in same level as <%@ page %>
+		<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+
+
+Spring MVC Form Tags
+	> Form tags will generate HTML for us
+
+Form Tag		Description
+form:form		main form container
+form:input		text field
+form:textarea		multi-line text field
+form:checkbox		check box
+form:radiobutton	radio buttons
+form:select		drop down list
+form:password		password
+form:option		option that is added to the select, checkbox, or radiobutton
+
+
+
+EX:
+for input, password, textarea
+
+<form:input path="firstName">
+
+for select
+
+<form:select path="subject">
+	<form:option value="Science" label="Science">
+	<form:option value="Math" label="Math">
+	<form:option value="English" label="English">
+</form:select>
+
+
+for checkbox and radiobutton
+
+<form:checkbox path="subject" value="Science"/>
+<form:checkbox path="subject" value="Math"/>
+<form:checkbox path="subject" value="English"/>
+
+
+
+
+Development Process -> Using Model to do Data Binding of Form inputs
+1. Add Model parameter to method that will redirect user to a Spring MVC Form
+2. Add an attribute to the Model object and pass an Id and the Object we want to bind Input data to
+3. Inside the Spring MVC Form, pass the String id as the modelAttribute="" parameter of form:form
+4. Define the value of the path="" of form:input 
+	- pass the name of Setter method to pass value to
+5. To fetch the modelAttribute with Form Data, use @ModelAttribute() to the parameter of Route method we want to bind the data to
+	- pass the modelAttribute ID to the @ModelAttribute
+
+Showing Form > Loading Form > Submitting Form > Handling Form Data
+In the Spring Controller
+	> Before you show the form, you must add a "model attribute"
+	> This is a bean that will hold form data for the data binding
+
+EX: 
+Student Class
+	> have properties
+		- firstName
+		- lastName
+
+INSIDE @Controller
+
+@RequestMapping("/showForm")
+public String showForm(Model model){
+	model.addAttribute("student", new Student())
+	return "student-form"
+}
+
+	> herer, we added a Model object to hold information
+	> we added an attribute with ID of "student" and holds a new Student() object
+	> we then navigate the user to student-form.jsp using Spring MVC View Resolver
+
+INSIDE student-form.jsp
+
+<form:form action="processForm" modelAttribute="student">
+First name: <form:input path="firstName" />
+<br>
+Last nae: <form:input path="lastName" />
+<br>
+<input type="submit" value="Submit"/>
+</form:form>
+
+	> in this form, we will fetch the modelAttribute with ID of "student" (which is a Student object)
+	> then using the form:input, we will pass the values of input into the specified path
+	> the path="" refers to which methods of the modelAttribute object 
+		- when the form is LOADED, Spring MVC will call GETTERS with same name
+			= ex: path="firstName" will call student.getFirstName()
+				path="lastName" will call student.getLastName()
+		- when the form is SUBMITTED, Spring MVC will call SETTERS with same name and pass the values of input to the method
+			= ex: path="firstName" will call student.setFirstName() and pass the value of form:input to it
+	> so in this case
+		- we will pass the value of first form:input to the setFirstName() of the Student modelAttribute 
+		- same as the 2nd form:input to the setLastName() of the Student modelAttribute
+	> we will then send the Form data to the processForm
+
+
+INSIDE @Controller
+
+@RequestMapping("/processForm")
+public String processForm(@ModelAttribute("student") Student theStudent){
+	sysout("theStudent: " + theStudent.getLastName())
+	return "student-confirmation"
+}
+
+	> here, using the @ModelAttribute() annotation, we will fetch the specific modelAttribute by passing the String ID
+		- in this case, its the "student"
+	> we will then "bind" the value of the "student" modelAttribute to the Student object

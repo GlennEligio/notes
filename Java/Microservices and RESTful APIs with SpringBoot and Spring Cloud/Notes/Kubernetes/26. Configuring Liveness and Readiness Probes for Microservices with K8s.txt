@@ -1,0 +1,51 @@
+26. Configuring Liveness and Readiness Probes for Microservices with K8s
+
+
+Liveness and Readiness Probes
+	> K8s uses probes to check the health of a microservice:
+		- If readiness probe is not successful, no traffic is sent
+		- If liveness probe is not successful, pod is restarted
+	> Spring Boot Actuator (>= 2.3) provides inbuilt readiness and liveness probes
+		- /health/readiness
+		- /health/liveness
+
+
+Configuring Liveness and Readiness endpoint of Spring Boot app
+1. Add Spring Boot Starter Actuator dependency
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+2. Configure the application.properties to expose /health endpoint and enable liveness and readiness 
+
+## SPRING BOOT ACTUATOR
+management.endpoint.health.probes.enabled=true
+management.health.livenessState.enabled=true
+management.health.readinessState.enabled=true
+
+
+
+Configuring Liveness and Readiness Probes of Container in K8s
+1. In one of the Containers, add readinessProbe and livenessProbe properties
+2. Inside these probes, add httpGet property
+	> besides httpGet, we can use other methods like executing a command
+3. In the httpGet, add the following properties
+	a. port (port of the Spring Boot app)
+	b. path (just the relative path, e.g. /actuator/health/readiness)
+
+IN YAML FILE under spec.template.spec.containers
+
+      containers:
+      - image: shuntjg/mmv2-currency-exchange-service:0.0.12-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        name: mmv2-currency-exchange-service
+        readinessProbe:
+          httpGet:
+            port: 8000
+            path: /actuator/health/readiness
+        livenessProbe:
+          httpGet:
+            port: 8000
+            path: /actuator/health/liveness

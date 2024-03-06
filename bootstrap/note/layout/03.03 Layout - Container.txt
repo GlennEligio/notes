@@ -1,0 +1,16 @@
+03.03 Layout - Container
+
+
+Container
+	> Containers are the most basic layout element in Bootstrap and are required when using our default grid system. 
+	> Containers are used to contain, pad, and (sometimes) center the content within them. 
+	> While containers can be nested, most layouts do not require a nested container.
+
+Three types of Containers
+.container
+	-> sets a max-width at each responsive breakpoint
+.container-fluid
+	-> which is "width: 100%" at all breakpoints
+.container-{breakpoint} 
+	-> which is "width: 100%" until the specified breakpoint
+	-> ex: <div class="container-md"></div> will be "container-fluid" until md breakpoint (720px)

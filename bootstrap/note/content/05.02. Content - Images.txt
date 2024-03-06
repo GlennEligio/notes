@@ -1,0 +1,41 @@
+05.02. Content - Images
+
+Responsive Images
+	> Images in Bootstrap are made responsive with .img-fluid. 	
+	> This applies max-width: 100%; and height: auto; to the image so that it scales with the parent element.
+
+"img-fluid"
+	> makes image responsive
+	> add following properties
+		- width:100%
+		- height: auto
+
+ex:
+    <div class="container">
+      <div style="width: 40%; border: 5px red solid">
+        <img src="https://picsum.photos/500/300" alt="" class="img-fluid" />
+      </div>
+    </div>
+
+
+
+
+Image thumbnails
+	> In addition to our border-radius utilities, you can use .img-thumbnail to give an image a rounded 1px border appearance.
+
+"img-thumbnail"
+	> along with "img-fluid" properties, it will add additional properties like
+		1. border of 1px solid gray
+		2. border radius of 0.25rem
+
+
+
+
+Image alignment
+	> for aligning image in their parent element, we can either
+		1. Use helper float classes
+			-> if we do this, make sure to use div with "clearfix" class after the float image
+		2. Use margin x-axis: auto
+			-> mx-auto
+		3. Use text align utilities
+			-> text-center class

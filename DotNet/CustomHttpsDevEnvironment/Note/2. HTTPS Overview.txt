@@ -1,0 +1,76 @@
+HTTPS Overview
+
+
+What is HTTPS?
+
+Hyper Text Transfer Protocol Secure
+	> HTTP used as "Transport" between 2 end points with added security
+
+Data encrypted using:
+	a. SSL: Secure Sockets Layer (v3.0 Depreciated 1995) - HTTPS over SSL
+	b. TLS: Transport Layer Security (v1.3 Current) - HTTPS over TLS
+
+
+
+Certificates & Authorities
+	> A Certificate aims to "prove" the identity of the Server
+	> A Certificate will be "issued" by an Authority (CA - Certificate Authority)
+
+
+
+What does a Certificate Contain?
+1. The Domain Name
+2. Issuing Authority
+3. What the Certificate "Authories" the client to do
+4. Issue & Expiration Date
+5. Public Key (Private Key is a secret)
+
+
+
+Public & Private Keys
+
+> A Key is a (long) string used to:
+	= Encrypt (scramble) data
+	= Decrypt (unscramble) data
+
+> Public Keys are shared to anyone
+
+> Private Keys are retained by the owner of the certificate and MUST BE KEPT SECURE
+
+
+
+HTTPS Request Interaction
+
+1. Client will send a "Hello"
+	> This "Hello" will contain the following
+		a. TLS Version
+		b. Cipher Suites
+			= used to encrypt-decrypt data
+		c. "Client Random"
+			= will be used alongside the "Server Random" in order to secure the Session later
+
+2. Server will reply a "Hello"
+	> This "Hello" will contain the following
+		a. Cipher Suites
+		b. Certificate
+		c. "Server Random"
+
+3. Client will check if the Certificate received from Server's "Hello" 
+	> Some of the Trusted CA's are:
+		a. DigiCert
+		b. GlobalSign
+		c. VeriSign
+
+4. Client will send Premaster Secret
+	> this Premaster Secret is Encrypted using the Public Key from Certificate
+
+5. Server will receive and Decrypt the Premaster Secret with Private Key
+
+
+6. Client-Server Session Keys are created
+	> this Session Keys are made using Client + Server Random + Premaster Secret
+
+
+7. Using the Session Keys, a Secure Information flow is created
+
+

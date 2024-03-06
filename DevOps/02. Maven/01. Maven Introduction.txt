@@ -1,0 +1,110 @@
+01. Maven Introduction
+
+
+Build Tool
+	> a build tool is a tool that AUTOMATES everything related to building the software project
+	> building a software project includes one or more of these activities
+		- Generating source code (open a sample project)
+		- Generating documentation from the source code
+		- Compiling source code
+		- Packaging compiled code into JAR files or ZIP files
+		- Installing the packaged code on a server, in a repository or somewhere else
+
+
+Maven (Java based build tool)
+	> Maven's primary goal is to allow a developer to comprehend teh complete state of a development effect in the shortest period of time
+	> In order to attain this goal, Maven deals with several areas of concern:
+		- Making the build process easy
+		- Providing a uniform build system
+		- Providing quality project information
+		- Encouraging better development practices
+
+
+
+Maven Overview - Core Concepts
+
+POM files
+	> Maven is centered around the concept of POM files (Project Object Model)
+	> A POM file is an XML representation of project resources like 
+		- source code
+		- test code
+		- dependencies (external JARs used)
+	> The POM contains references to all of these resources
+	> The POM files should be located in the root directory of the project it belongs to
+
+
+POM file parts
+1. Build life cycles
+	> Phases
+		- Goals
+2. Dependencies (JARS)
+3. Build Plugins
+4. Build Profiles	
+
+
+Maven Execution Process
+1. Reads pom.xml
+2. Downloads dependencies into local repository
+3. Execute life cycles, build phases and/or goals
+4. Execute plugins
+
+NOTE: All of these are executed according to SELECTED build profile
+
+
+
+Maven Project Directory Structure
+
+DIRECTORY NAME			PURPOSE
+root (project home)		Contains the pom.xml and all subdirectories
+src/main/java			Contains the deliverable java source code for the project
+src/main/resources		Contains the deliverable resources for the project, such as property files
+src/test/java			Contains the testing Java source code (JUnit or TestNG test cases) for the project
+src/test/resources		Contains resources necessary for testing
+
+
+
+Apache Maven Project
+	> Maven uniquely identifies a project using
+		1. groupId
+			- written in reverse url format (com.glenn, org.springframework)
+			- arbitrary project grouping identifier
+		2. artifactId
+			- arbitrary name of the project
+		3. version
+			- version of the project
+
+
+
+Maven Build Lifecycle
+	> NOTE: Executing a Maven Build phase command will execute the build phase BEFORE it
+	> NOTE: Failing to execute a Maven Build phase command will NOT execute the build phase after it
+
+Phases
+1. prepare-resources
+	> handles resource copying
+	> resource copying can be customized in this phase
+2. validate
+	> responsible for VALIDATING the information
+	> validates if the project is correct and if all necessary information is available
+3. compile
+	> handles compilation 
+	> source code compilation is done in this phase
+4. test
+	> testing
+	> tests the compiled source code suitable for testing framework
+5. package
+	> packaging 
+	> this phase creates the JAR/WAR package as mentioned in the packaging in POM.xml
+6. install
+	> installation
+	> this phase installs the package in local/remote maven repository
+7. deploy	
+	> deploying copies the final package to the remote repository
+
+
+NOTE: We can execute this build phases by using the command template
+
+mvn <build-phase>
+
+EX:
+mvn compile for compilation of source code

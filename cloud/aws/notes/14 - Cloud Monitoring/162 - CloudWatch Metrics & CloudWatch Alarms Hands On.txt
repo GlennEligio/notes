@@ -1,0 +1,140 @@
+162 - CloudWatch Metrics & CloudWatch Alarms Hands On
+
+Parts:
+1. CloudWatch page
+2. CloudWatch Metrics dashboard\
+3. Looking for specific Metric dashboard
+4. CloudWatch Alarms dashboard
+5. Adding alarm in AWS Resources (EC2)
+6. creating Billing alarm in us-east-1
+
+
+CloudWatch page
+ > here, we can see several dashboard available in the left tab
+	1. Alarms
+		- In Alarm
+		- All alarms
+		- Billing (only available in us-east-1 region)
+	2. Logs
+		- Log groups
+		- Logs insights
+	3. Metrics
+		- All metrics
+		- Explorer
+		- Streams
+	4. Events
+		- Rules
+		- Event Buses
+	5. Application monitoring
+		- ServiceLens Map
+		- Resource Health
+		- Internet Monitor
+		- Synthetics Canaries
+		- Evidently
+		- RUM
+	6. X-Ray traces
+		- Service map
+		- Traces
+	7. Insights
+		- Container insights
+		- Lambda insights
+		- Contributor insights
+		- Application insights
+		
+		
+CloudWatch Metrics dashboard
+ > contains the following parts
+	1. All metrics
+	2. Explorer
+	3. Streams
+ > in the All metrics section, we can see the following
+	1. Panel for 
+		- Browse
+		- Query, for querying specific logs
+		- Graphed metrics
+		- Options
+		- Source
+	2. Graph to see the data for chosen metric
+	3. Time selection to select specific metric data for the last chosen period (1h, 3h, 12h, 1d, etc)
+	
+	
+Checking specific metrics in the CloudWatch Metric
+1. Go to Metrics dashboard
+2. In the Browse panel, select the Region where you want to check the metrics
+3. Select the resource you want to monitor, then the specific metrics for that resource	
+	- ex: S3 -> Storage Metrics
+4. Check any of the metrics you want to see
+	> they will be automatically added in the graph above
+
+
+CloudWatch Alarms Dashboard
+ > consist of the following
+	1. Create Alarm / Create composite alarm buttons
+	2. Alarms table
+	3. Filter dropdowns
+	
+
+Creating a CloudWatch Alarm
+1. Go to Alarms dashboard
+2. Click Create Alarm
+3. In the Create Alarm, theres 4 steps
+	> Specify the metric and conditions
+	> Configure actions
+	> Add name and description
+	> Preview and create
+4. In Specify the metric and conditions, provide the following
+	> Namespace
+	> Metric name to watch (ex: for EC2, CPUUtilization)
+	> Instance id of the specific resource (ex: EC2)
+	> Statistics, like 
+		- Average of data
+		- Sum
+		- Maximum
+		- Minimum
+		- Sample count
+		- etc 	 
+	> Sampling period (default 5mins)
+	> Condition to trigger alarm
+		- Threshold type (Static or Anomaly detection)
+		- Whenever the metric to watch is Greater, Greater or Equal, Lower or Equal, or Lower than threshold
+	> Threshold value
+4. In the Configure actions, 
+	> we can configure the following actions for
+		- Notification (SNS)
+		- Auto Scaling
+		- EC2 actions
+		- System Manager
+	> in each actions, we can configure which alarm state the action will trigger like
+		- In alarm, where the metric or expression is outside of the defined threshold
+		- OK, where the metric or expression is within the defined threshold
+		- Insufficient data, where the alarm has just started or not enough data is available
+	> for now, we can add a SNS Notification action, where we need to provide the following
+		- Alarm state trigger
+		- SNS topic to send the notification
+		- Specific receiver
+5. In the Add name and description, provide the following
+	> Alarm name
+	> Alarm description
+6. For Preview and create, we can preview the alarm to check the final configuratons of alarm before creating it
+
+
+
+Adding alarm in AWS Resources (EC2)
+ > we can also create alarms directly in the EC2 console dashboard
+ > to do this
+	- go the EC2 console, into the EC2 list table 
+	- select the EC2 instance
+	- scroll to the left until you see the Alarms column
+	- here we can add alarms
+ > the dashboard for creating alarm this way will be different, but the concept will be the same. The only different will be that we can only create alarm based on the metrics unique to EC2 instances
+ 
+ 
+
+creating Billing alarm in us-east-1
+ > Billing Alarm is ONLY AVAILABLE in us-east-1 region. So to create one, we need to change Region
+ > Go to CloudWatch, and navigate to Alarms -> Billing on left side, then click the "Create Alarm" button
+ > In the Create alarm dashboard, it will be the same as before, but 
+	- the metrics to watch is the "EstimatedCharges" and 
+	- you also need specify the Currency
+ > NOTE:
+	- We can only create Billing alarm in us-east-1 region, no where else

@@ -1,0 +1,46 @@
+20 Deployment models
+
+
+Deployment models
+ > most describe the architecture and how things are setup and accessed in their application (Cloud provided GUI/Interface)
+
+Deployment models
+1. Public cloud
+2. Private cloud
+3. Hybrid cloud
+
+
+Public cloud
+ > most common understanding of the Cloud service
+ > accessed and used via public internet
+ > not everything is done publicly
+	- for most part, only the access to the services is public (EX: AWS APP)
+	- you need to authenticate yourself to use the service, which means you can't access other Accounts AWS resources, only yours
+	- data is not shared among users, this are usually encrypted and only the data owner can read/write on it
+
+
+
+Private Cloud
+ > Cloud services on PRIVATE infrastructure
+	- similar to onPrem solution
+ 	- here, we setup the Cloud infrastructure onprem
+ > defined as computing services offered either over the Internet or a private internal network and only to select users instead of the general public
+ > sometimes called internal or corporate cloud
+ > extremely uncommon
+ > uses On prem data center
+ > benefits includes
+	1. benefits on public cloud
+	2. additional control and customization available from dedicated resources
+	3. higher level of security and privacy through
+ > disadvantages include:
+	1. company will should cost and accountability of maintenance of private cloud
+ > only large companies that supports multiple developers do this
+	- developer count must be substantial enought that going private cloud is more economical
+
+
+
+
+Hybrid Cloud
+ > mix of private and public cloud
+ > typically seen on the companies that undergoes migration strategy (onprem -> cloud) where transition happens gradually
+ > as for the new definition of Hybrid Cloud, it is where company uses a mix of public clouds (ex: Azure + AWS)

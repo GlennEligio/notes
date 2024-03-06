@@ -1,0 +1,107 @@
+07. Replication Controller
+
+
+Replication Controller
+	> A ReplicationController ensures that a specific number of pod replicas are running at anytime	
+	> In other words, a ReplicationController make sure that a Pod or a homogeneous set of Pods is always up and available
+	> In a ReplicationController, we define the following to set its Desired State
+		- Containers to run in Pod
+		- Number of Pods to run
+	> It look at these properties and if the current state is different from desired state, it will take action to go into desired state
+		- ex: if in ReplicationController we specified TWO Pods must be running, if theres running ONE, RC will create another one
+
+
+
+ReplicationController Manifest Guide
+	> to create a ReplicationController, the Manifest file must have the following
+	
+1. The kind: must be ReplicationController
+2. We must define replicas, template, and selector field inside spec: of Replica
+3. In replicas field we will pass an integer to define how many Pod replicas we will run
+4. In template field we will define the template of the Pods to run
+	> template field content is similar to the Static Pod Manifest file, without the apiVersion
+	> inside template:, we can define the following field
+		a. metadata:
+			- refers to the metadata of the Pod to run
+		b. spec:
+			- refers to the specs of the Pod to run
+5. In the selector field, we will pass the labels that will match the labels of the Pod to monitor
+	> only those Pods with labels (found in Pods's metadata) that matches one of the ReplicationController's selector will be included in the monitoring for Desired State
+	> this means that the spec: template: metadata: labels: of ReplicationController MUST MATCH the spec: selector: contents
+
+
+Manifest file example for ReplicationController
+
+# nginx-rc.yaml  
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx-rc
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+  selector:
+    app: nginx-app
+
+	
+	> In this Manifest file, we created a ReplicationController
+	> This ReplicationController have the following properties
+		- creates 3 Pod replicas
+		- this Pod have
+			-> name of nginx-pod 
+			-> label of app=nginx-app
+			-> runs 1 Container with image of nginx and have Container port 80 exposed
+		- selects Pods with label app=nginx-app to monitor for State
+
+
+
+
+COMMMANDS:
+Create ReplicationController
+kubectl create -f <MANIFEST FILE>
+	> used to create K8s resource, in this case, a ReplicationController
+
+
+Display Pods created by ReplicationController
+kubectl get pods -l <LABEL>
+	> shows Pods that matches the specified label
+		- ex: kubectl get pods -l app=nginx-app 
+		- this will show Pods with metadata: labels: app:nginx-app
+
+Display ReplicationControllers
+kubectl get <RESOURCE TYPE> <RESOURCE NAME>
+kubectl get rc <REPLICATIONCONTROLLER NAME>
+	> used to show a specific ReplicationController informations
+
+kubectl get rs
+	> used to show all replication controller
+
+kubectl describe rc <REPLICATIONCONTROLLER NAME>
+	> used to show all information of a ReplicationController
+
+
+Scaling ReplicationController up or down
+	> modify the spec: replicas: field
+	> create or delete Pods
+	> current replica GREATER THAN specified desired replica = Scale down
+	> current replica LESS THAN specified desired replica = Scale up
+
+kubectl scale rc <RC NAME> --replicas=<INTEGER>
+	> scale a specific ReplicationController up or down based on the amount pass in "--replicas" command flag
+
+
+
+Delete ReplicationController
+kubectl delete <RESOURCE TYPE> <RESOURCE NAME...>
+kubectl delete rc <RC NAME...>
+	> used to delete specific ReplicationControllers in the Cluster

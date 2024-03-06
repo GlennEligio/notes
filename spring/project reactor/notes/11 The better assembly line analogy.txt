@@ -1,0 +1,6 @@
+11 The better assembly line analogy
+
+Assembly line analogy
+ > real apt analogy for reactive programming
+ > in this case, we don't control who's putting the items in the conveyor belt
+ > but we can add machineries/operators throughout the conveyor belt to modify/add something to the items

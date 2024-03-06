@@ -1,0 +1,69 @@
+Contents
+
+01 WebSocket
+02 Architecture
+03 STOMP
+04 Creating simple WebSocket Server + Client using SpringBoot
+
+
+01 WebSocket
+
+WebSocket
+ > like http, websocket is also a communication protocol which provides bi-directional communication channel between a server and client
+ > once, a websocket connection is established between a client and a server, both can exchange information endlessly until the connection is closed by any one of the parties
+ > this is the main reason why WebSockets are preferred over HTTP where the client and server needs to exchange information at high frequency and with low frequency
+
+
+
+
+02 WebSocket Architecture
+
+WebSocket Client				Spring Application
+(Sender)							/app
+Send /app/news		----> Request Channel ------> MessageHandler ----|
+Send /topic/news					|						|
+					    /topic	|						|
+							|---> Simple Broker <------------|
+(Receiver)								|
+Message /topic/news	---------------------------|
+
+
+MessageHandler
+ > @Controller method annotation with @MessageMapping("/news")
+ > in this case, only messages with AppPrefix + "/news" will be handled by this method
+
+Simple broker
+ > will be defined with one or more destination where Clients can send and receive messages
+
+
+
+
+
+03 STOMP
+
+STOMP  
+ > WebSocket is just a communication protocol
+	- this means it doesnt know
+		1. how to send a message only to users who are subscribed to a particular topic
+		2. how to send a message to a particular user
+	- for this functionalities we will use STOMP
+ > stands for Streaming Text Oriented Messaging Protocol
+ > STOMP is a simple text-based protocol. It allows STOMP clients to talk with any message broker supporting the protocol
+ > Spring provides default support for it but you are open to choose any other messaging protocol such as RabbitMQ or ActiveMQ
+
+
+
+
+
+
+04 Creating simple WebSocket Server + Client using SpringBoot
+
+SpringBoot dependencies needed
+1. Spring Web	- Spring initialzr
+2. WebSocket	- Spring initialzr
+
+External dependencies - webjars for injecting js scripts in html
+1. webjars-locator-core
+2. sockjs-client
+3. stomp-websocket
+4. jquery (optional)

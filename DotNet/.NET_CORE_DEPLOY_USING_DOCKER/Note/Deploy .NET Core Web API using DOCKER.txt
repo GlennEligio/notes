@@ -1,0 +1,258 @@
+Deploy .NET Core App using Docker
+
+
+What is Docker?
+
+	Docker is a containerization platform, meaning that it enables you to package your applications into images and run them as “containers” on any platform that can run Docker. It negates the classic: “It works on my computer” argument as Docker images contain everything needed for the app to run.
+
+
+Are Containers the same as Virtual Machines?
+
+	They are similar, but not the same. In short:
+
+	1. Virtual Machines provide OS Level Virtualisation
+	2. Containers provide App Level Virtualisation
+
+
+
+
+Why Would You Use it?
+
+	In short you would use Docker, (and hence containers), for the following reasons:
+
+	1. Portability. As containers are self-contained they can run on any platform that runs Docker, making them easy to stand up and run on a wide variety of platforms.
+	2. Scalability. With the use of additional “orchestration” you can spin up multiple container instances to support increased load.
+	3. Performance. Containers generally perform better than their VM counterparts.
+	4. Ubiquity. The level of Docker adoption in industry means that it’s a great skill to have.
+
+
+
+
+Images & Containers
+
+	Before we set up our app to run in Docker, you should be familiar with 2 terms that you’ll hear frequently when talking about Docker: Images and Containers.
+
+	1. Images
+		> A docker image is a file that contains the “blueprint” or instructions on how our code is expected to run in Docker, so it includes things like dependencies and instructions on how our app should start.
+
+	2. Container
+		> When our image is “executed to run”, in runs in a container, which as we’ve already discussed is highly portable and independent, (from any other running containers)
+
+
+
+
+
+Requirements needed
+
+	1. VS Code text editor
+	2. .NET Core SDK
+	3. Docker Desktop (for Windows/Apple), Docker CE (Linux)
+	4. Account on Docker Hub
+	5. (optional) "Another" Local Machine
+	6. (optional) Azure Account
+
+
+
+
+
+I. Create and Test the Web API that we will deploy
+
+1. Create the Web API that we will deploy in Docker
+	> to create a Web API, type this in terminal
+		= dotnet new webapi -n <ProjectName>
+		= EX: dotnet new webapi -n DockerAPI
+
+2. Open the DockerAPI
+	> either open it through File -> Open Folder or 
+	> code -r DockerAPI in terminal, assuming you are in the same directory as the project
+
+
+
+3. Remove some code in the Startup class
+	- remove this following code in the Startup class
+
+INSIDE ConfigureServices()
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "DockerAPI", Version = "v1" });
+            });
+
+INSIDE Configure()
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DockerAPI v1"));
+            }
+
+            app.UseHttpsRedirection();
+
+
+
+
+4. Test the default api we have if its working
+	> save all, build and run
+	> check on browser the web api by calling one of its endpoints
+	> type this in browser
+		= http://localhost:5000/WeatherForecast
+		= since we remove the https redirection, we can only use http
+
+
+
+II. Create the Docker Image
+
+5. Create a Docker file
+	> inside the root folder of project create a file named Dockerfile
+	> add no extension to the Dockerfile
+	> the Dockerfile should have a Whale icon before the name
+		= if not, that means you haven't added the Docker extension to the Visual Studio Code
+
+
+
+6. Create a file named .dockerignore
+	> this file's purpose is to add items inside our project that will be ignore when we create the Docker image
+		= this means that it will not be added in the final Docker image output when we run the App to the Docker engine
+	> inside the .dockerignore, we will add the following
+
+INSIDE .dockerignore file
+
+		bin\
+		obj\
+
+
+
+
+7. Add the following code inside the Dockerfile 
+
+INSIDE Dockerfile
+
+1.	# Get base SDK Image from Microsoft
+2.	FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+3.	WORKDIR /app
+
+4.	# Copy the .csproj file and restore any dependencies (via NUGET)
+5.	COPY *.csproj ./
+6.	RUN dotnet restore
+
+7.	# Copy the project files and build our release
+8.	COPY . ./
+9.	RUN dotnet publish -c Release -o out
+
+10.	# Generate runtime image
+11.	FROM mcr.microsoft.com/dotnet/aspnet:5.0
+12.	WORKDIR /app
+13. 	EXPOSE 80
+14.	COPY --from=build-env /app/out .
+15.	ENTRYPOINT ["dotnet", "DocketAPI.dll"]
+
+Explanation
+
+Line 2: So that the Docker Engine can compile our app, we grab the .NET SDK from Microsoft*
+		> to check for the version of .NET SDK we are using, type dotnet --version in terminal
+Line 3: We specify a dedicated “working directory” where our app will eventually reside
+Line 6: We copy the .csproj file from our PC to the working container directory (/app)
+Line 7: Using dotnet restore we resolve any project dependencies (this is done using the .csproj file and retrieving any additional dependencies via Nuget)
+Line 10: We copy the rest of our project files into our working directory, so we can build the app
+Line 11: We run the dotnet publish command, specifying that it is a Release build, (-c Release), as well as specifying a folder, (out), to contain the app build dll and any support files & libraries.
+Line 14: To keep our image “lean” we retrieve only the  aspnet run time image, (as opposed t the full SDK image we used for building), as this is all our app requires to “run”.
+Line 15: Re-specify our working directory
+Line 16: We expose the port we want to use from inside our app
+Line 17: Copy the relevant files from both the dependency resolution step, (build-env), and build step, (/app/out), to our working directory /app
+Line 18: Set the entry point for the app, (i.e. what should start), in this case it’s our published .dll using “dotnet”.
+
+
+
+
+8. Create the Docker image
+	> before we build our Docker image, we must have the Docker Desktop application instance running in background
+	> check the Docker version installed by typing this in the terminal
+		= docker --version
+	> to build the Docker image, type this in the terminal
+		= docker build .
+			> this will build the Docker image as is
+			> (.) denotes that the directory output location is the same as the project
+		= docker build -t <Docker Hub ID>/<Project Name>:<Version>
+			> if we dont specify a version, a "latest" version will be placed by default  
+
+IN THE TERMINAL
+	
+	docker build -t shuntjg/dockerapi .
+
+
+
+
+9. Wait for the build to finish
+	> also check the terminal result as we can see each of the steps made in the building process
+
+
+
+10. Check if the Docker image is built 
+	> to check from terminal type:
+		= docker image
+	> to check from Visual Studio:
+		= go to Docker extension tab
+		= go to Images section and look for the Docker Image 
+
+
+
+11. Run the Docker image
+	> to run the Docker Image into a Container, type in terminal:
+		
+		docker run -p <Tcp Port in Local Machine>:<Expose Port in the Docker Image> <Docker Image name>
+
+	> Local machine refers to the machine where we will map and run the Docker Container
+	> so in our case, we will enter the following in terminal:
+
+		docker run -p 8080:80 shuntjg/dockerapi
+
+
+
+12. Test the application
+	> right now, we can access the WebAPI in the Container within our LocalMachine. In our case, we will call the WebApi in port 8080. Same URL endpoint
+
+		http://localhost:8080/WeatherForecast
+
+RESULT:
+
+[{"date":"2021-07-18T16:21:02.8760568+00:00","temperatureC":24,"temperatureF":75,"summary":"Sweltering"},{"date":"2021-07-19T16:21:02.8776266+00:00","temperatureC":9,"temperatureF":48,"summary":"Mild"},{"date":"2021-07-20T16:21:02.8776302+00:00","temperatureC":-14,"temperatureF":7,"summary":"Freezing"},{"date":"2021-07-21T16:21:02.8776305+00:00","temperatureC":41,"temperatureF":105,"summary":"Cool"},{"date":"2021-07-22T16:21:02.8776307+00:00","temperatureC":-16,"temperatureF":4,"summary":"Mild"}]
+
+
+	Right now, theres no difference since earlier, we run it through our LocalMachine and now, we run the Web API through the Container inside our Local Machine. The use of the Docker is that we can run it in ANY Local Machine OS or environment as long as it CAN SUPPORT Docker application. For instance, if we want to run a .NET Core Web API in a Linux Machine, we would need to have an IDE with SDK and RUNTIME that can build and run the said .NET Core Web API. But with Docker, as long as the Linux machine have a Docker instance, we can use the Docker in order to run the .NET Core Web API in terms of a Docker Image inside a Container.
+
+
+
+
+13. Stop the Docker Container instance
+	> to check any running Container instance, we type in Terminal:
+		
+		docker ps
+
+	> to stop a Container instance, we type in Terminal:
+		
+		docker stop <Container ID>
+
+	> so in right now, our dockerapi image is running in a Container
+
+CONTAINER ID   IMAGE               COMMAND                  CREATED          STATUS          PORTS					NAMES
+eaaec8f995af   shuntjg/dockerapi   "dotnet DockerAPI.dll"   16 minutes ago   Up 16 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   eloquent_edison
+	
+	> to stop the dockerapi, we will need to type
+
+		docker stop eaaec8f995af
+
+
+
+
+
+14. Push the Docker Image we have to the Docker Hub repository
+	> to push a Docker Image to our Docker Account Hub Repository, type the following in the terminal:
+		
+		docker push <Docker Image Name>
+
+	> in our case, we will enter
+
+		docker push shuntjg/dockerapi
+
+	> check the Repositories tab in our DockerHub account website to see if the DockerImage has been pushed

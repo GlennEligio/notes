@@ -1,0 +1,269 @@
+AJAX Crash Course
+
+
+What is AJAX?
+	> stands for Asynchronous JavaScript and XML
+	> Set of web technologies
+	> Send and receive data asynchronously
+	> Does not interfere with current web page
+	> JSON has replaced XML for the most part
+	> Can work with plain text
+
+
+
+AJAX Structure
+	> Composed of the following
+		1. Client
+		2. Server
+		3. AJAX Engine
+	> process of the communication using AJAX is:
+		1. Client sends an API Call using JavaScript (or any API/Library) to AJAX engine
+		2. AJAX engine converts the Call into an XmlHttpRequest
+		3. Server sends back either an XML or JSON Response
+		4. AJAX engine uses the Response and process it to send back an HTML response to the Client
+
+
+
+XmlHttpRequest (XHR) Object
+	> API in the form of an object
+	> Provided by the browser's JS environment
+	> Methods transfer data between client/server
+	> Can be used with other protocols than HTTP
+	> Can work with data other than XML (JSON, plain text)
+
+
+Libraries and Other Methods/Alternative for AJAX
+1. jQuery
+	> DOM Manipulation library 
+	> not suggested for doing just AJAX calls (overkill)
+2. Axios
+	> slim library for AJAX calls
+3. Superagent
+	> same with Axios
+4. Fetch API
+	> new technology (in 2018)
+	> may have compatibility issue
+5. Prototype
+6. Node HTTP
+
+
+Tools needed:
+1. Text Editor (VS Code)
+2. Server to run HTML (XAMPP or LiveServer)
+
+
+XMLHttpRequest
+	> API in the form of an object
+	> XMLHttpRequest (XHR) objects are used to interact with servers. 
+	> You can retrieve data from a URL without having to do a full page refresh. 
+	> This enables a Web page to update just part of a page without disrupting what the user is doing.
+	> Provided by the browser's JS environment
+	> Methods transfer data between client/server
+	> Can be used with other protocols than HTTP
+	> Can work with data other than XML (JSON, plain text)
+	> XMLHttpRequest is used heavily in AJAX programming.
+
+
+
+XMLHttpRequest Object properties / functions / events
+
+XMLHttpRequst.open()
+	> method
+	> open() is used to initializing a request
+		- we will use this to define properties of the Request to send
+	> this function takes three arguments
+		a. String type
+			- defines the type of Request
+			- refers to the HTTP Verb/Method ('GET', 'POST', 'PUT', 'DELETE')
+		b. String url/file	
+			- refers to either URL of request destination or file from same project folder
+			- ex: 'sample.txt', 'http://sampleapi.com/items/2', './src/app.props'
+		c. Boolean async
+			- specific if the process is Asynchronous or not
+			- passing through will make the call async
+
+EX:
+// Initial the request
+xhr.open('GET', 'sample.txt', true);
+
+XMLHttpRequest.readyState
+	> read only property
+	> defines the state of the request
+	> values are unsigned short dataType	
+	> these are the possible values of the readyState properties and their meaning
+		1	request not initialized
+		2	server connection established
+		3	request received
+		4	processing request
+		5	request finished and response is ready
+
+
+XMLHttpRequest.status
+	> property	
+	> readonly
+	> defines the status of the Response
+	> refers to the HTTP Response status codes	
+	> ex:
+		200 OK
+		201 CREATED
+		204 NO CONTENT
+		404 NOT FOUND
+		401 NOT AUTHENTICATED
+		403 NOT AUTHORIZED
+
+
+XMLHttpRequest.responseText
+	> property
+	> readonly
+	> Returns a DOMString that contains the response to the request as text, or null if the request was unsuccessful or has not yet been sent.
+
+
+XMLHttpRequest.response
+	> property
+	> readonly
+	> Returns an ArrayBuffer, Blob, Document, JavaScript object, or a DOMString, depending on the value of XMLHttpRequest.responseType, that contains the response entity body.
+
+
+
+XMLHttpRequest.onreadystatechange
+	> event
+	> triggered when the readyState property of the XHR is changed
+	> old way of defining behavior of the request-response communication of XHR
+
+
+
+XMLHttpRequest.onprogress
+	> event
+	> Fired periodically when a request receives more data. 
+		- here, the readyState of XHR is 3
+	> Used when defining behavior when 
+	> Also available via the onprogress property.
+
+
+XMLHttpRequest.onload
+	> event
+	> Fired when an XMLHttpRequest transaction completes successfully. 
+		- specifically, if readyState is 4
+	> Also available via the onload property.	
+	> Used when defining behavior after response is received XHR is still processing request
+		- maybe for loading bar/progress bar
+	> we typically assign a function to define the behavior of "load" event
+		- this function can access properties of the XMLHttpRequest after the transaction
+		- to access the XMLHttpRequest properties, we can use the "this" keyword
+
+EX: 
+// Define onload event (print 
+responseText)
+xhr.onload = function () {
+  if (this.status == 200) {
+    console.log(this.responseText);
+  }
+};
+
+
+
+XMLHttpRequest.setRequestHeader(String header, String value)
+	> method
+	> used to either add or edit a header and its value
+
+EX:
+// Setting content value of request to json and charset to utf-8
+xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+
+
+
+XMLHttpRequest.send(Object body)
+XMLHttpRequest.send()
+	> method
+	> used to send the request of the XHR
+	> based on the result of sending the request, different events of XMLHttpRequest will be triggered
+		- ex: if successful, onload event will trigger
+	> we can also pass the request body content as send() method's parameter
+		- make sure to specify the corrent "Content-type" header value using setRequestHeader() method
+EX:
+// Send the request of XHR
+xhr.send();
+
+// Send request with body content
+        var body = JSON.stringify({
+          title: "foo",
+          body: "bar",
+          userId: 1,
+        });
+
+        xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+        xhr.send(body);
+
+
+
+
+
+SEND/RECEIVE DATA USING AJAX/XHR
+1. Initialize request using open()
+2. Define the behaviors of the events of XHR
+	> can either use onreadystatechange event or other specific events of XHR (like onload)
+		a. Using onreadystatechange event
+			> old way
+			> setup the onreadystatechange event of XHR
+				- onreadystatechange event is triggered when state of XHR is changed
+				- for successful transaction, we will do a check inside function the properties of XHR (readyStatus, status, etc.)
+					-> readyStatus must be 4 and status must be 200
+		b. Using onload/onprogress/onerror/onabort
+			> define the event behaviors of the XHR using onload or onabort
+				-> onload is triggered when Transaction is successful
+					= this stage is where we access the response of XHR
+				-> onprogress is triggered when XHR is processing the request
+				-> onerror is triggered when error occured in transaction
+				-> onabort is triggered when request is aborted
+3. Send the request using send()
+
+
+FETCHING TEXT/FILE IN PROJECT FOLDER
+1. Initialize request using open()
+	> pass the following as args of open()
+		- 'GET'	
+		- directory path of the text/file (e.g. 'sample.txt', 'src/app.prop')
+		- boolean for async or not async
+2. Define bevahiors of the XHR events
+	> we can set an HTML element's innerHTML to the responseText of XHR
+3. Send the request using send()
+
+
+
+FETCHING JSON OBJECT IN PROJECT FOLDER
+1. Initialize request using open()
+	> pass the following as args of open()
+		- 'GET'	
+		- directory path of the json file (e.g. 'sample.json', 'src/user.json')
+		- boolean for async or not async
+2. Define behaviors of the XHR events
+	> note that if we will use the JSON as a Javascript Object, we will need to parse it first
+		- use JSON.parse() to the XHR's responseText
+3. Send the request using send()
+
+
+
+FETCHING JSON OBJECT IN EXTERNAL API
+1. Initialize request using open()
+	> pass the following as args of open()
+		- 'GET'	
+		- url of external api to get object (e.g. https://api.github.com/users)
+		- boolean for async or not async
+2. Define behaviors of the XHR events
+	> note that if we will use the JSON as a Javascript Object, we will need to parse it first
+		- use JSON.parse() to the XHR's responseText
+3. Send the request using send()
+
+
+
+SENDING A POST REQUEST TO EXTERNAL API
+1. Initialize request using open()
+	> pass the following as args of open()
+		- 'POST'	
+		- url of external api to get object (e.g. https://api.github.com/users)
+		- boolean for async or not async
+2. Define behaviors of the XHR events
+	> note that we must define the "Content-type" header value and it must match the Request body that we are sending
+3. Send the request using send()

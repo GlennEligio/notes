@@ -1,0 +1,253 @@
+Day 14
+
+Member vs Users vs OrgEntity
+	> member is the superclass of 
+	
+Member - ?
+Catentry - Catalog Entry  (Products)
+Member - Users / admin / org
+cmdreg - command registry .. interface to impl mapping
+Order -  basket + orders
+orderitems - items in a an order
+keys -   primary key for other tables
+uploadfile -   uploaded file
+users - users   basic info
+userreg - user registeration info
+useddemo -  demographics
+shipinfo - shipping info
+shipmode -  different modes ..
+shiparrange -  used in shipping price  setup
+
+
+list price - selling price, mrp
+offer price - 
+
+mbrgrp -  member group
+store -
+px_promotion -  main table promotion
+offer -
+offer price
+offer descriptin
+rohit  to  Everyone 9:17 AM
+ordhist
+orderhist
+inventory -  stock
+catentdesc
+address
+attr
+attrval
+attrdesc
+attrvaldesc
+catnetryattr
+stloc
+	> physical location of the store itself
+	> store refers to the Stores inside the e-commerce site that sell items
+	> different from Store of HCL Commerce site
+	
+	
+WebSphereCommerceServerExtensionsData
+	> contains all the extension logic related to data like JPA, EJB
+	
+Creating custom JPA
+1. Go to WebSphereCommerceServerExtensionsData project
+2. Create a package inside ejbModule folder
+3. Create a new class inside it
+	> extend to EntityBase
+	> implements java.io.Serializable, and com.ibm.commerce.security.Protectable
+	
+	
+
+
+package com.abc.commerce.orders.commands;
+
+import com.abc.commerce.rating.objects.Rating;
+import com.abc.commerce.rating.persistence.RatingDaoImpl;
+import com.ibm.commerce.command.TaskCommandImpl;
+import com.ibm.commerce.exception.ECException;
+import com.ibm.commerce.foundation.persistence.EntityDao;
+
+public class SaveDataTaskCmdImpl extends TaskCommandImpl implements SaveDataTaskCmd {
+	private String productId;
+	private int rating;
+	
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+	@Override
+	public void performExecute() throws ECException {
+		// TODO Auto-generated method stub
+		super.performExecute();
+		
+		// add logic to save rating in table
+		System.out.println("Rating is saved in the database");
+		
+		EntityDao<Rating, Long> ratingDao = new RatingDaoImpl();
+		Rating rating = new Rating();
+		rating.setProductId(getProductId());;
+		rating.setRating(getRating());
+		rating.setRatingId(ratingDao.generatePrimaryKey("xrating"));
+		ratingDao.persist(rating);
+	}
+
+	@Override
+	public void validateParameters() throws ECException {
+		// TODO Auto-generated method stub
+		super.validateParameters();
+		
+		System.out.println("Product id: " + getProductId());
+		System.out.println("Rating: " + getRating());
+	}
+
+//	String param1;
+//	String param2;
+//	
+//	
+//	
+//	public String getParam1() {
+//		return param1;
+//	}
+//
+//	public void setParam1(String param1) {
+//		this.param1 = param1;
+//	}
+//
+//	public String getParam2() {
+//		return param2;
+//	}
+//
+//	public void setParam2(String param2) {
+//		this.param2 = param2;
+//	}
+//	@Override
+//	public void setProductId(String string) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void setRating(int i) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+	
+	EntityDao<Rating, Long> ratingDao = new RatingDaoImpl();
+	Rating rating = new Rating();
+	rating.setProductId(getProductId());;
+	rating.setRating(getRating());
+	rating.setRatingId(ratingDao.generatePrimaryKey("xrating"));
+	ratingDao.persist(rating);
+
+}
+
+
+C:\WCDE_V9\wasprofile\logs\server1\SystemOut.log
+	> log dump file of all stdout commands
+	
+
+BASE URIs for WCS REST
+https://localhost:443/wcs/resources
+	> base uri for fetching resource information for WCS resources
+	
+https://localhost:3738/search/resources
+	> base uri for fetching resource information for Search resources
+	
+	
+Two types of users in AuroraESite
+1. Generic user
+	> users that only views/browse the store site
+	> dont have any entry in the database
+2. Guest user
+	> the moment generic user adds an item in the basket, new user will be created for this user
+	> adding to cart will create a new Order with status P, and 
+3. Registered user
+	>
+	
+	
+WCS REST API Documentation
+https://help.hcltechsw.com/commerce/9.1.0/restapi/concepts/cwvrestapi_store.html
+
+
+
+REST and JPA tutorials
+	> https://help.hcltechsw.com/commerce/9.1.0/tutorials/tutorial/twv_trans_server.html
+	
+	
+Transactions in JPA
+	> get EntityManager from the AbstractEntityDaoImpl
+	> get Transaction object from the EntityManager
+	> execute begin(), and do the modifying queries
+	> execute commit() to save
+	
+	
+REST API for Adding Item in Cart
+1. Get a guest identity
+	> URI: https://localhost:443/wcs/resources/store/1/guestidentity
+	> take note of the WCToken and WCTrustedToken for proceeding API calls
+2. Call the POST http request for adding item in cart
+	> add WCToken and WCTrustedToken headers and pass the values earlier
+3. Get the Cart item
+	> add the same WCToken and WCTrustedToken
+	
+Responses:
+1. https://localhost:443/wcs/resources/store/1/guestidentity
+{
+    "personalizationID": "1677817827667-1",
+    "resourceName": "guestidentity",
+    "WCToken": "SAMPLE_WC_TOKEN": "11002",
+    "WCTrustedToken": "SAMPLE_WC_TRUSTED_TOKEN"
+}
+
+2. 
+
+
+
+Emerald and Sapphire Stores
+	> written in React Framework
+	> doing REST calls to the Transaction Server
+	> with these, the WCS will be a Headless Architecture
+		- no UI in Transaction server
+		- uses the Emerald and Sapphire Stores for UI
+		
+Creating REST Endpoints
+1. Go to WebSphereCommerceServerExtensionsLogic project
+
+
+REST/WebContent/WEB-INF/config/
+	> create a commandMapping-ext folder
+	
+	/WebSphereCommerceServerExtensionsLogic/src/com/abc/commerce/rest/rating/handler/RatingHandler.java
+	
+	
+<?xml version="1.0" encoding="UTF-8"?>
+<command>
+   <profiles>
+      <profile name="sample">
+         <inputs>
+            <input inputName="productId" methodName="setProductId"/>
+            <input inputName="rating" methodName="setRating"/>
+         </inputs>
+         <outputs>
+            <output methodName="getResult" outputName="result"/>
+            <output methodName="getRatingId" outputName="ratingId"/>
+         </outputs>
+      </profile>
+   </profiles>
+</command>
+
+
+
+
+com.mycompany.commerce.orders.command.SaveProductRatingCmd.xml

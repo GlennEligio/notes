@@ -1,0 +1,47 @@
+56 AMI Hands On
+
+
+GOAL:
+1. Demonstrate AMI creation and usage
+
+
+Creating AMI
+1. Create an EC2 instance, the same as earlier, but with different User Data
+	> in this case, we will use a User Data that will only install the httpd and not customize its index.html page
+
+User Data script to use
+#!/bin/bash
+# Use this for your user data (script from top to bottom)
+# install httpd (Linux 2 version)
+yum update -y
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
+
+
+2. Check if the EC2 instance is working
+	> copy the Public IP address and paste it in the browser
+	> you should see the Test Page of the httpd Apache Web Server
+3. Click the EC2 instance in the EC2 Dashboard
+4. Click Actions > Image and templates > Create image
+5. Provide the name of the AMI image 
+	> DemoImage for name
+6. Go to EC2 Dashboard > Images > AMIs to see if the AMI is created
+
+
+
+
+Using the AMI
+1. Create another EC2 instance
+2. This time, in the Application and OS images, choose My AMIs and select the one we created earlier
+3. Also, change the User Data script so that it will just modify the default index.html of the Apache Webserver httpd
+
+User Data script to use
+#!/bin/bash
+# Use this for your user data (script from top to bottom)
+# install httpd (Linux 2 version)
+echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
+
+4. Launch the EC2 instance
+5. Using the Public IP address, check the Apache webserver
+	> we should now see a modified page, instead of the Test Page earlier

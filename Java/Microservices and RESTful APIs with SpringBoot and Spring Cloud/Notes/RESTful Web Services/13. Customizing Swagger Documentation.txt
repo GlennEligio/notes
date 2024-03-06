@@ -1,0 +1,277 @@
+13. Customizing Swagger Documentation
+
+
+Customizing Swagger Documentation
+	> to customize the Swagger documentation, we will need to customize the Docket @Bean 
+
+Classes / Interface
+
+ApiInfo
+	> located in springfox.documentation.service
+	> defines the info property of the Swagger Documentation JSON
+	> have the following properties
+		- String version
+		- String title
+		- String description
+		- String termsOfServiceUrl
+		- String license
+		- String licenseUrl
+		- Contact contact
+		- List<VendorExtension> vendorExtensions
+	> we can use this default constructor to create an ApiInfo
+
+  /**
+   * Default contstructor
+   *
+   * @param title             title
+   * @param description       description
+   * @param version           version
+   * @param termsOfServiceUrl termsOfServiceUrl
+   * @param contact           contact
+   * @param license           license
+   * @param licenseUrl        license url
+   * @param vendorExtensions  vendor extensions
+   */
+  @SuppressWarnings("ParameterNumber")
+  public ApiInfo(
+      String title,
+      String description,
+      String version,
+      String termsOfServiceUrl,
+      Contact contact,
+      String license,
+      String licenseUrl,
+      Collection<VendorExtension> vendorExtensions) {
+    this.title = title;
+    this.description = description;
+    this.version = version;
+    this.termsOfServiceUrl = termsOfServiceUrl;
+    this.contact = contact;
+    this.license = license;
+    this.licenseUrl = licenseUrl;
+    this.vendorExtensions = new ArrayList<>(vendorExtensions);
+  }
+
+
+Contact
+	> located in springfox.documentation.service
+	> defines the info.contact of the Swagger Documentation JSON	
+	> have the following properties
+		- String name
+			= name of owner
+		- String url 
+			= website of the owner
+		- String email
+			= email of owner
+	> we can use this constructor to create a Contact
+
+  public Contact(String name, String url, String email) {
+    this.name = name;
+    this.url = url;
+    this.email = email;
+  }
+
+
+Docket
+	> A builder which is intended to be the primary interface into the Springfox framework.
+	> Provides sensible defaults and convenience methods for configuration.
+
+Builder methods to use
+
+apiInfo(ApiInfo info)
+	> takes an ApiInfo object
+	> defines the info property of Swagger Documentation JSON
+
+produces(Set<String> produces)
+	> takes a Set of String
+	> add "produces" property in the Swagger Documentation JSON
+	> defines the representation of data it can send as response
+		- ex: application/json, application/xml
+
+consumes(Set<String> consumes)
+	> takes a Set of String
+	> add "consumes" property in the Swagger Documentation JSON
+	> defines the representation of data it can send as response
+		- ex: application/json, application/xml
+
+
+Annotations used
+
+@ApiModel
+	> added in a Class (typically DTO classes or classes that is used in API endpoint methods as parameter or return values)
+	> Provides additional information about Swagger models. 
+	> Classes will be introspected automatically as they are used as types in operations,but you may want to manipulate the structure of the models.
+	> have parameters
+
+value
+	> String type
+	> provide an alternative name for the mode
+description
+	> provide a longer decription of the class
+
+
+@ApiModelProperty
+	> added in the Class' fields
+	> Adds and manipulates data of a model property
+	> While some validation constraint annotation's message property can be shown in Swagger, other is not (e.g. @Past)
+	> have parameters
+
+notes
+	> string type
+	> adds and defines the "description" added in the definitions in Swagger Documentation JSON
+
+
+
+Customizing the Swagger Documentation JSON
+
+I. Customize Docket @Bean
+
+1. Define a Contact object inside SwaggerConfig class
+	> will be used in ApiInfo object later
+
+INSIDE SwaggerConfig class (with @Configuration and @EnableSwagger2)
+
+	private static final Contact DEFAULT_CONTACT = 
+			new Contact("John Glenn L. Eligio", 
+					"http://localhost:8080/",
+					"jg@gmail.com");
+
+
+2. Define the ApiInfo object inside SwaggerConfig class
+	> pass the Contact object we made earlier into its constructor
+
+INSIDE SwaggerConfig class
+
+	private static final ApiInfo DEFAULT_API_INFO = 
+			new ApiInfo("RESTful API", 
+					"Example RESTful API", 
+					"1.0",
+					"urn:tos", 
+					DEFAULT_CONTACT, 
+					"Apache 2.0", 
+					"http://www.apache.org/licenses/LICENSE-2.0", 
+					new ArrayList<>());
+
+
+3. Create a Set of String
+	> pass "application/json" and "application/xml" to it
+	> this will define the produces and consumes of the Swagger Documentation JSON
+
+INSIDE SwaggerConfig class
+
+	private static final Set<String> DEFAULT_PRODUCES_AND_CONSUMES = 
+			new HashSet<>(Arrays.asList("application/json", "application/xml"));
+
+
+
+4. Customize the Docket object that we return in api() @Bean	
+	> call apiInfo() and pass the ApiInfo we made
+	> call consumes() and produces() and pass the Set of String we made earlier
+
+INSIDE SwaggerConfig class
+
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.SWAGGER_2)
+				.apiInfo(DEFAULT_API_INFO)
+				.produces(DEFAULT_PRODUCES_AND_CONSUMES)
+				.consumes(DEFAULT_PRODUCES_AND_CONSUMES);
+	}
+
+BEFORE
+
+"info": {
+    "description": "Api Documentation",
+    "version": "1.0",
+    "title": "Api Documentation",
+    "termsOfService": "urn:tos",
+    "contact": {},
+    "license": {
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+}
+
+AFTER
+
+"info": {
+    "description": "Example RESTful API",
+    "version": "1.0",
+    "title": "RESTful API",
+    "termsOfService": "urn:tos",
+    "contact": {
+        "name": "John Glenn L. Eligio",
+        "url": "http://localhost:8080/",
+        "email": "jg@gmail.com"
+    },
+    "license": {
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+}
+
+
+
+II. Customize Definitions of Swagger Documentation JSON
+	> here, we will define the DTO classes we used in Controller @RequestMapping methods
+
+5. Add @ApiModel to DTO classes
+	> define the "description" parameter
+
+@ApiModel(description = "All details about the user.")
+public class User {
+
+
+6. Add @ApiModelProperty to DTO classes
+	> define the "notes" parameter of the annotation
+
+	@Past
+	@ApiModelProperty(notes = "Can't be a past date")
+	private Date birthDate;
+
+
+BEFORE
+
+"User": {
+    "type": "object",
+    "properties": {
+        "birthDate": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "id": {
+            "type": "integer",
+            "format": "int32"
+        },
+        "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2147483647
+        }
+    },
+    "title": "User"
+}
+
+AFTER
+
+"User": {
+    "type": "object",
+    "properties": {
+        "birthDate": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "id": {
+            "type": "integer",
+            "format": "int32"
+        },
+        "name": {
+            "type": "string",
+            "description": "Name must be at least 2 characters",
+            "minLength": 2,
+            "maxLength": 2147483647
+        }
+    },
+    "title": "User",
+    "description": "All details about the user."
+}

@@ -1,0 +1,55 @@
+Hibernate Many to Many
+
+EXAMPLE OF MANY TO MANY RELATIONSHIP
+
+Course and Student
+	> Course can have many student
+	> Student can take many Courses
+
+
+Join Table
+	> a table that provides a mapping between two tables
+	> It has foreign keys for BOTH table to define the mapping relationship
+
+Using a Join Table in Hibernate
+	> to tell Hibernate to create a Join Table, we would need to use @JoinTable
+
+
+@JoinTable
+	> used in a @ManyToMany relationship of entities
+	> added in the dependent/reference entity
+		- this entity is usually a List of said Object
+	> this annotation have three parameters used
+
+@JoinTable parameters
+
+1. name=""
+	> defines the name of the JoinTable to be used
+	> naming convention is tablename1_tablename2
+		- ex: course_student for course and student table
+	> takes a String value
+2. joinColumns
+	> defines the column that refers to the foreign key to the Entity we are inside right now
+		- ex: if we added this @JoinTable inside the Student Entity, the joinColumns will refer to the foreign key of Student
+	> takes a @JoinColumn value
+		- @JoinColumn value have name parameter which takes String value 
+			= name represents the name of column
+3. inverseJoinColumns
+	> defines the column that refers to the foreign key to the Dependent/Reference Entity that have relationship to the Entity we are inside right now
+	> takes a @JoinColumn value as well
+		- ex: if we added this @JoinTable in the List<Course> property of Student, the inverseJoinColumns will refer to the foreign key of the Course table that is related to Student table
+
+
+
+DEMONSTRATION OF MANY TO MANY IN HIBERNATE
+
+1. Create Student Class
+	> annotated with @Entity and @Table
+	> will have the following properties
+		a. int id
+			- @Id, @GeneratedType
+		b. string firstname, lastname, email
+		c. list of courses
+			- @ManyToMany, @JoinTable
+
+INSIDE Student.java

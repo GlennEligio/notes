@@ -1,0 +1,33 @@
+08. Connecting Spring Cloud Config Server to Local Git repo in local machine
+
+Properties to define
+
+spring.cloud.config.server.git.uri
+	> defines the Git repo location
+		- can be file directory from local machine (if theres a local git initialized there)
+		- or url from a remote Git repo (if private, we will need to define the username and password)
+spring.cloud.config.server.git.username
+	> defines the username of account needed to access a private Git repo
+spring.cloud.config.server.git.password
+	> defines the password of account needed to access a private Git repo
+spring.cloud.config.server.git.default-label	
+	> defines the default branch the Config Server will use to look up for Config props in Git repo
+
+
+@EnableConfigServer
+	> added in a @SpringBootApplication class
+	> exposes Request Mapping URI that corresponds to the configprops from its source
+		- using this mappings, others can fetch configprops from this Config Server
+	> below are the URI that is being exposed
+
+
+Enabling a Spring Boot application to be a Config Server
+	> add @EnableConfigServer
+
+	
+Connecting a Local Git repo as Config Prop source of Spring Cloud
+	> add spring.cloud.config.server.git.uri
+	> pass file:/// + location of local git repo relative to root drive location
+		- ex: file:///D:/Study/programming/java-the-hutt/Workspaces/microservices-in28minutes/git-localconfig-repo
+	> NOTE: the file path MUST NOT HAVE spaces in them
+	> NOTE: use FORWARD SLASHES instead of BACK SLASH for Windows

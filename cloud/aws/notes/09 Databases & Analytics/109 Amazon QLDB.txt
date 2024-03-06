@@ -1,0 +1,15 @@
+109 Amazon QLDB
+
+Amazon QLDB
+ > QLDB stands for 'Quantum Ledger Database'
+ > A ledger is a book recording financial transactions
+ > Fully Managed, Serverless, High Available, Replication across 3 AZs
+ > Used to review history of all the changes made to your application data over time
+ > Immutable system, which means no entry can be removed or modified, cryptographically verifiable
+ > 2-3x better performance than common ledger blockchain frameworks, can manipulate data using SQL
+ > Difference with Amazon Managed BlockChain:
+	- QLDB have NO DECENTRALIZATION COMPONENT, in accordance with financial regulation rules
+
+
+NOTE:
+1. With Centralization, there's a SINGLE database that stores/manage the data

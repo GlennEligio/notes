@@ -1,0 +1,34 @@
+02. DevOps
+
+DevOps
+	> a culture that allows Development and Operations team to work together
+	> developers continuously develop and test codes
+	> there is contiuous integration taking place through out the lifecycle
+	> operations team continuously deploy the codes to the production environment
+	> allows better collaboration, increased trust and faster software releases
+
+
+Tools of DevOps
+
+Code & Plan
+	> for this, we will use Source Code Management or Software Configuration Management tools (SCM)
+		1. Subversion (SVN)
+		2. TFS
+		3. Git
+
+Subversion (SVN)
+	> centralized version control system
+	> distributed under the open source license
+	> allows you to recover older version of your data or examine how your data changes
+
+Team Foundation Service
+	> made by Microsoft
+	> centralized source control tool like SVN
+	> distributed under the Trailware license
+	> rebranded as Azure DevOps back in Sept. 2018
+	> an application lifecycle management solution that does issue tracking and document management
+
+Git
+	> Git is a distributed version control tool
+	> distributed under the GNU license
+	> Git is used for maintaining historical and current versions of source code, web pages, etc

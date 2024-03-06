@@ -1,0 +1,78 @@
+49 RHCSA RHEL 8 - Create, delete, and modify local user accounts
+
+Relevant files/directories
+/etc/group
+ > contains all the groups present in the system, alongside their groupid
+ > syntax:
+	GROUPNAME:x:GROUPID
+
+
+/etc/passwd
+ > contains all the users present in the system, alongside their userid, groupid, homedir, and shell script used
+ > syntax:
+	USER:x:USERID:GROUPID::HOMEDIR:SHELLDIR
+
+
+/home
+ > contains all the home directory of all the user
+
+
+
+Commands
+useradd
+ > create a new user or update default new user information
+ > synopsis:
+	useradd [OPTIONS] LOGIN
+ > options:
+	-g, -G	specify the group name or group id of the user to create
+	-u		specify the user id to use for the new user
+ > note:
+	1. if no groupid is specified for the user, the command will generate a NEW GROUP for the new user
+	2. by default, no password is attached to the user when initially created. To add a password, use the command "passwd LOGIN"
+ > ex:
+	$ useradd user1
+	$ useradd -g 1002 -u 1001 user1
+	$ useradd -G IT user1
+
+
+userdel
+ > delete a user account and related files
+ > synopsis:
+	userdel [options] LOGIN
+ > options:
+	-f 	forces the removal of user account, even if its still logged in, and the user's home dir and mail spool
+	-r	files in the user's home directory will be removed along with the home directory
+		if not used, it will prompt the user for each files to be deleted to confirm the action
+ > ex:
+	$ userdel -r user1
+	$ userdel -rf user1
+
+
+usermod
+ > modify a user account
+ > synopsis:
+	usermod [options] LOGIN
+ > options
+	-d HOMEDIR		changes the home directory of the user
+	-g GROUP		changes the group that the user belong
+	-l NEWLOGIN	changes the login the user will be using, similar to username
+ > ex:
+	$ usermod -l user2 user1
+		- changes the user1 login to the "user2"
+		- will not change the home directory
+	
+
+groupadd
+ > create a new group
+ > synopsis:
+	$ groupadd [options] group
+ > options
+	-g 	specify the group id in numerical value
+ > ex:
+	$ groupadd IT
+
+
+passwd LOGIN 
+ > used to assign a password to a LOGIN
+ > EX:
+	$ passwd user2

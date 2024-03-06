@@ -1,0 +1,768 @@
+Exception Handling in Java
+
+
+Why proper Exception Handling?
+	> make programs more robust
+
+
+Topics to be discussed
+1. What is Exception handling?
+2. Error vs Exception
+3. Exception Hierarchy
+4. Check vs Unchecked Exception
+5. Basic Exception Example
+6. Types of Exceptions
+7. Exception Methods
+8. Throw vs throws
+9. final vs finally vs finalize
+
+
+
+What is Exception Handling?
+
+Exception
+	> an exception is an event that disrupts the normal flow of the program.
+
+
+Exception Handling
+	> Exception Handling is a mechanism to handle runtime errors such as ClassNotFound, IO, SQL, Remote, etc.
+
+
+
+Exception Handling process
+1. Problem Occurs
+2. Create Exception
+	> method will create an Exception Object
+	> this Exception Object contains:
+		a. Name 
+		b. Description
+		c. Current State of program where Exception has occurred
+3. Throw Exception 
+	> process where the method hands Exception off to the Runtime System
+4. Handle Exception 
+	> we use the following methods to handle exceptions
+		a. try
+		b. catch
+		c. finally
+	
+
+
+Error vs Exception
+
+Error
+	> IMPOSSIBLE to recover from error
+	> Errors are of UNCHECKED Type
+	> Happen at RUN-TIME
+	> Caused by the ENVIRONMENT on which application is running
+
+Exception
+	> POSSIBLE to recover from Exception
+	> It can be EITHER checked or unchecked	
+	> Can happen at EITHER Compile Time & Runtime
+	> Caused by Application 
+
+
+
+
+Exception Hierarchy
+
+Object
+	> Throwable
+		- base class of all Exception and Errors
+		- can be either
+			> Exceptions
+				- exceptional conditions that user program SHOULD catch
+				- ex: NullPointerException, RuntimeException
+				- can be either
+					> Checked Exceptions
+					> Unchecked Exceptions
+			> Errors
+				- used by the Java Runtime System to indicate the errors that has to do with Runtime Environment (JRE)
+				- ex: VirtualMachineError, StackOverflowError
+					> Virtual Machine Error
+					> Assertion Error
+
+
+
+
+Types of Exceptions
+1. Checked
+	> an exception that is checked by the compiler at compilation-time.
+	> these exceptions cannot simply be ignored, the programmer should handle these exceptions
+	> ex: IOExceptions
+2. Unchecked
+	> an exception that occurs at the time of execution 
+	> these are also called as RUNTIME EXCEPTIONS 
+	> Runtime exceptions are ignored at the time of compilation
+	> DivideByZero, ArrayOutOfBoundException, NullPointerException 
+
+
+
+
+Basic Example format of Exception
+
+class Exception{
+	public static void main (String args[]){
+		try{
+			// code that may raise exception
+		}
+		catch (Exception e){
+			// rest of the program
+		}
+	}
+}
+
+
+
+TRY block
+	> contains the codes that may raise exception
+CATCH block
+	> contains the code that will be executed if Exception matches the one in catch() parameter
+
+
+Types of Java Exception
+1. Built-in exception
+	> available in JDK
+	> some of the examples are
+		a. NullPointerException
+			> when pointer to a variable whose value is NULL
+		b. ArithmeticException
+			> divided by zero
+		c. NumberFormatException
+			> parsing a String into an Integer
+		d. ArrayIndexOutOfBoundException
+			> happens when try to access an index that is greater than the array's size
+
+
+
+Exception Handling Methods
+1. try
+	> used to specify a block where we should place exception code
+	> try block can nest another try-catch block
+	
+Syntax:
+Single try-catch block
+
+try{
+	//code that throws exception
+}catch(Exception_class_Name){}
+
+
+Nested try-catch block
+
+try{
+	try{
+		//nested try block
+	}
+	catch{
+		//nested catch block
+	}
+}
+
+
+2. catch
+	> used to handle the exception
+
+Syntex:
+Single catch block
+
+try {// Protected code}
+catch(ExceptionName e1){// Catch block}
+
+
+Multiple catch blocks
+
+try {// Protected code}
+catch(ExceptionName1 e1){// Catch block}
+catch(ExceptionName2 e2){// Catch block}
+catch(ExceptionName3 e3){// Catch block}
+
+Single catch block for multiple exception
+
+try {// Protected code}
+catch(ExceptionName1 e1 || ExceptionName2 e2){// Catch block}
+
+
+
+
+3. finally
+	> used to execute the important code of the program
+	> will be executed either by:
+		a. try method being done executed
+		b. try method throwing an Exception
+	> means that it will be executed REGARDLESS of whether the try block successfully executed its code or not
+	> usually used when closing a Thread, IOStream, Network Connection, etc.
+
+Syntax:
+try {// Protected code}
+catch(Exception e1) {// Catch block}
+catch(Exception e2) {// Catch block}
+finally {// This block is always executed}
+
+
+
+4. throw
+	> used to throw an exception inside the try
+
+Syntax:
+
+void a (){
+	throw new ArithmeticException("Incorrect");
+}
+
+
+
+
+5. throws
+	> used to declare exceptions
+	> when method with throws is used, the IDE will remind the programmer that the said method can throw that specific exception
+	> used to move the exception handling from the method itself to the usage of method
+
+Syntax:
+	void a() throws ArithmeticException{
+	
+	}
+
+
+
+
+
+Throw vs Throws
+
+Throw
+1. Used to explicitly throw an Exception
+2. Checked Exceptions cannot be propagated using throw only
+3. Followed by an instance.
+4. Used within a method
+5. Cannot throw multiple exceptions
+
+Throws	
+1. Used to declare an Exception
+2. Checked Exceptions can be propagated
+3. Followed by a class
+4. Used with a method signature
+5. Can declare Multiple Exceptions
+
+
+
+Final vs Finally vs Finalize
+
+final
+	> a keyword
+	> applies restrictions on class, method, and variable
+	> final class can't be inherited, method can't be overriden and the variable value cant be changed
+
+finally{}
+	> block
+	> used to place an important code
+	> it will be executed whether the exception is handled or not
+
+finalize()
+	> method
+	> used to perform clean-up processing just before the object is garbage collected
+
+
+
+
+Creating custom Exception class
+	> must inherit Exception class
+	> to modify the message being shown when Exception is printed, OVERRIDE toString()
+
+
+
+
+
+I. Exception Demonstration (NullPointerException)
+
+1. Create a new project
+	> sample
+
+2. Create new package inside src
+	> exceptionJGE
+
+3. Create new class inside 
+	> SampleException
+
+4. Create a main() 
+	
+
+INSIDE SampleException.java
+
+package exceptionJGE;
+
+public class SampleException {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+}
+
+
+
+5. Inside the main(), do the following
+	> create a String variable and assign its value to NULL
+	> call System.out.print() and pass the length of String variable using length()
+	> execute the main()
+
+INSIDE THE main()
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String str = null;
+		System.out.print(str.length());
+	}
+
+OUTPUT
+
+Exception in thread "main" java.lang.NullPointerException
+	at exceptionJGE.SampleException.main(SampleException.java:8)
+
+	> as we can see, we have gotten a NullPointerException
+
+
+
+
+II. Try-catch demonstration (ArithmeticException)
+
+6. Comment out the code from earlier
+
+6. Create a try block
+
+7. Inside try block, do the following
+	> create three int variables
+		a = 30
+		b = 0
+		c = a/b
+	> printout the value of the int c
+
+
+8. Create a catch block
+	> set parameter of catch() to ArithmeticException
+
+
+9. Inside catch block, do the following
+	> print out the statement "Cant divide a number by zero"
+
+INSIDE main
+
+	public static void main(String[] args) {
+//		String str = null;
+//		System.out.print(str.length());
+		
+		try{
+			int a = 30, b = 0;
+			int c = a/b;
+			System.out.println("Result: " + c);
+		}
+		catch(ArithmeticException e){
+			System.out.println("Can't divide by zero");
+		}
+	}
+
+
+10. Run the main()
+	> as we can see, the code inside the catch block is executed 
+	> output in console is 
+
+		Can't divide by zero
+
+
+
+III. NumberFormatException
+
+11. Create a try block
+
+12. Inside the try block, do the following
+	> create a int variable, assign value as "Edureka" parsed as Integer using parseInt()
+	> printout the int variable using println()
+
+13. Create a catch block
+	> set parameter to NumberFormatException
+	
+14. Inside the catch block do the following
+	> print "Number Format Exception"
+
+INSIDE main()
+
+		try{
+			int num = Integer.parseInt("Edureka");
+			System.out.println(num);
+		}
+		catch(NumberFormatException e){
+			System.out.println("Number Format Exception");
+		}
+
+
+15. Execute main()
+	> as we can see, both the catch blocks has been executed 
+	> output in console is
+
+Can't divide by zero
+Number Format Exception
+
+
+
+
+IV. ArrayIndexOutOfBoundsException
+
+16. Create a try block, and inside it do the following
+	> create an int array with size of 5
+	> assign the 7th index of the int array to 9
+
+17. Create a catch block
+	> set parameter to ArrayIndexOutOfBoundsException
+	> inside the body
+		- print out "Array index out of bounds"
+
+INSIDE main(), after the previous try-catch
+
+		try{
+			int[] num = new int[5];
+			num[7] = 9;
+		}
+		catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Array index out of bounds");
+		}
+
+18. Execute the main()
+	> as we can see, the catch block also get triggered and executed
+	> the output of the console is
+	
+Can't divide by zero
+Number Format Exception
+Array index out of bounds
+
+
+
+
+V. Nested try
+
+19. Nest the 2nd and 3rd try-catch block inside a try block
+
+20. In the catch block of the parent try, do the following
+	> set parameter to Exception
+	> inside method, do:
+		- print "Handled and recovered"
+
+INSIDE main(), after the first try-catch block
+
+		try{
+			try{
+				int num = Integer.parseInt("Edureka");
+				System.out.println(num);
+			}
+			catch(NumberFormatException e){
+				System.out.println("Number Format Exception");
+			}
+			try{
+				int[] num = new int[5];
+				num[7] = 9;
+			}
+			catch(ArrayIndexOutOfBoundsException e){
+				System.out.println("Array index out of bounds");
+			}	
+		}
+		catch(Exception e){
+			System.out.println("Handled and recovered");
+		}
+
+
+
+21. Execute the main()
+	> we can see that both the nested catch block is triggered
+	> but the catch of the main try is not triggered since theres no Exception thrown that is not handled by either of the nested catch blocks
+	> the output is
+
+Can't divide by zero
+Number Format Exception
+Array index out of bounds
+
+
+
+VI. Multiple catch block
+
+22. In the 1st try-catch block that is nested, add an ArithmeticException catch block before the NumberFormatException
+
+The 1st nested try-catch block
+
+			try{
+				int num = Integer.parseInt("Edureka");
+				System.out.println(num);
+			}
+			catch(ArithmeticException e){
+				System.out.println("Can't divide by zero");
+			}
+			catch(NumberFormatException e){
+				System.out.println("Number Format Exception");
+			}
+
+
+23. Execute the main()
+	> as we can see, it only triggers the NumberFormatException since it passes the try block only throw that Exception
+	> at the console, we can see
+
+Can't divide by zero
+Number Format Exception
+Array index out of bounds
+
+
+
+
+VII. finally method
+
+24. Comment out the previous codes inside main() except the 1st try-catch block
+
+
+25. Remove the catch block and add a finally block, inside finally block
+	> print "finally is always executed"
+
+INSIDE main()
+
+		try{
+			int a = 30, b = 0;
+			int c = a/b;
+			
+			System.out.println("Result: " + c);
+		}
+		finally{
+			System.out.println("finally is always executed");
+		}
+
+
+26. Execute the main()
+	> as we can see, even if the Exception is thrown, the finally block is still executed
+	> in console, the output is
+
+finally is always executed
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+	at exceptionJGE.SampleException.main(SampleException.java:11)
+
+
+
+
+VIII. throw
+
+27. Create a static method with following properties
+	> avg name
+	> inside method body:
+		- try block with ArithmeticcException thrown inside
+		- catch block that catches ArithmeticException and prints "Exception caught"
+
+28. Call the avg() method inside main()
+
+INSIDE SampleException class
+
+	public static void avg(){
+		try{
+			throw new ArithmeticException("Demo");
+		}
+		catch (ArithmeticException e){
+			System.out.println("Exception caught");
+		}
+	}
+
+	public static void main(String[] args) {
+		avg();
+	}
+
+
+
+29. Execute the main()
+	> as we can see the ArithmeticException thrown is caught and the statement is printed
+	> in the console, we can see
+
+Exception caught
+
+
+
+
+
+IX. throws
+
+30. Modify the avg() method
+	> add throws ArithmeticException in the method signature	
+	> print "Inside avg function" before the ArithmeticException throw
+	> move the content of try block outside of it
+	> remove the try-catch block
+
+
+31. Add try-finally block inside main()
+	> move the avg() call inside the try block
+	> in finally block, print "Caught"
+
+INSIDE SampleException class
+
+	static void avg() throws ArithmeticException{
+		System.out.println("Inside avg function");
+		throw new ArithmeticException("Demo");
+	}
+
+	public static void main(String[] args) {
+		try{
+			avg();
+		}
+		finally{
+			System.out.println("Caught");
+		}
+	}
+
+
+32. Execute the main()
+	> as we can see, the println() inside the avg() and finally in main() is executed alongside the Exception Error
+	> in console, we can see
+
+Inside avg function
+Caught
+Exception in thread "main" java.lang.ArithmeticException: Demo
+	at exceptionJGE.SampleException.avg(SampleException.java:7)
+	at exceptionJGE.SampleException.main(SampleException.java:12)
+
+
+
+
+
+X. Custom Exception class
+
+33. Create a class
+	> extends to Exception class
+	> have the following property
+		a. int a field member
+		b. Constructor that takes an int b, method body is
+			> assign value of int b to int a field member
+		c. Override toString()
+			> return "Exception number = " + a;
+
+INSIDE MyException class
+
+class MyException extends Exception{
+	
+	int a;
+	MyException(int b){
+		a=b;
+	}
+	
+	public String toString() {
+		return "Exception number = " + a;
+	}
+}
+
+
+
+34. Inside main(), do the following
+	> create try-catch block
+	> inside try
+		- throw an instance of our custom Exception class
+		- pass 5 to the Exception class constructor
+	> inside catch
+		- set parameter to our custom Exception class
+		- print the Exception
+
+INSIDE main()
+
+	public static void main(String[] args) {
+		try{
+			throw new MyException(5);
+		}
+		catch(MyException e){
+			System.out.println(e);
+		}
+	}
+
+
+35. Execute the main()
+	> as we can see, the value that we return in toString() of MyException is shown in console 
+
+Exception number = 5
+
+
+
+
+
+XI. Custom Exception class 2
+
+36. Create a new class
+	> name it InvalidInputException
+	> extend it to Exception class
+	> create a constructor
+		- have a String parameter
+		- inherit the Exception class' super constructor and pass the String parameter
+
+INSIDE exceptionJGE package
+
+class InvalidInputException extends Exception{
+	InvalidInputException(String exceptionText){
+		super(exceptionText);
+	}
+}
+
+
+
+
+37. Create method for validating input for Scanner
+	> static, void, int parameter, throws InvalidInputException
+	> inside the method
+		- check if int param is less than 100
+		- if more than 100, throw a new InvalidInputException() and pass a string
+		- else, print "Valid Input"
+
+INSIDE SampleException class
+
+	static void validateInput(int number) throws InvalidInputException{
+		if(number > 100){
+			throw new InvalidInputException("Exception");
+		}
+		System.out.println("Valid input");
+	}
+
+
+
+
+
+38. Modify main()
+	> Create a Scanner instance
+		- import java.util.Scanner package
+	> Print something to ask user to input number less than 100
+	> Catch the int input using scanner.nextInt() and store it in a variable
+	> Create a try-catch-finally block
+		- inside try block, call the validateInput() and pass the int variable
+		- inside catch block, 
+			= set parameter to InvalidInputException
+			= print "Caught Exception - Input is greater than 100"
+		- inside finally, close the scanner
+
+INSIDE main()
+
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Input a number less than 100: ");
+		int number = scanner.nextInt();
+		try{
+			validateInput(number);
+		}
+		catch(InvalidInputException e){
+			System.out.println("Caught Exception - Input is less than 100");
+		}
+		finally{
+			scanner.close();
+		}
+	}
+
+
+
+39. Execute the main()
+	> input a number less than 100 and more than 100
+	> observe the output
+
+FOR VALID INPUT (< 100)
+
+Input a number less than 100: 
+15
+Valid input
+
+
+FOR INVALID INPUT (> 100)
+
+Input a number less than 100: 
+101
+Caught Exception - Input is less than 100

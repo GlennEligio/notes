@@ -1,0 +1,125 @@
+Streams API
+	> defined as a sequence of elements form a source that supports aggregate operations on them.
+	> source refers to Collections or Arrays
+
+Aggregate Operations
+	> also called bulk operations
+	> performs a function
+		- written in lambda expression or method reference
+	> is a higher order function that applies a "behavior" parameter to every element in a stream
+	> behavioural parameterization simplifies coping with changing requirements
+	> allows us to express common manipulations on stream elements easily and clearly
+	> aggregate operation in a stream runs its function sequentially 
+		- SYNCHRONIZE, SINGLE THREAD
+
+
+Stream
+	> pipeline of aggregate operations that process a sequence of elements (aka, "values" or "data")
+	> a conceptually fixed data structure, in which elements are computed on demand
+		- hold NO NON-TRANSIENT storage
+	> idea is that a user will extract only the values they require from a Stream, and these element are only produced
+	> Characteristics
+		- not a data structure
+		- designed for lambdas
+	> design for processing data
+	> steps
+		1. starts with source of data
+			- data is preferred to be IMMUTABLE
+		2. process the data through a PIPELINE of INTERMEDIATE operations
+		3. Finishes with a TERMINAL operation
+	> implementation of PQSA1 Pipes & Filters pattern
+	> uses "internal" iterators 
+		- compare to "external" iterators used by Collections
+
+TYPES OF AGGREGATE OPERATIONS
+	> Intermediate operations
+	> Terminal operations
+
+INTERMEDIATE OPERATIONS
+	> process elements in their input stream & yield an output stream	
+	> intermediate operations are "lazy" & don't run until a terminal operator is reached
+TERMINAL OPERATION
+	> triggers processing of the aggregate operations in a stream
+	> each Stream MUST HAVE ONE AND ONLY ONE terminal operator
+
+
+Streams structure
+
+	-> Source (Collection)
+		- Input x
+	-> Aggregate operation (behavior f)		
+		- Output f(x)
+	-> Aggregate operation (behavior g)
+		- Output g(f(x))
+	-> Aggregate operation (behavior h)
+		- Output h(g(f(x)))
+
+
+EX:
+		/*
+		 *  Print each character in Hamlet that starts with
+		 *  'H' or 'h' in ALL CAPS & sorted order
+		 */
+		
+		Stream.of("Orphelia", "Horatio", "laertes", "Gertrude", "Hamlet", "fortinbras")
+		.filter(s -> s.toLowerCase().charAt(0) == 'h')
+		.map(m -> m.toUpperCase())
+		.sorted()
+		.forEach(System.out::println);
+	
+EX 2:
+		stream()
+		filter(not(this::urlCached))
+		map(this::downloadImage)
+		flatMap(this::applyFlters)
+		collect(toList())
+
+
+WHY Java Stream?
+1. Concise and readable
+	> declarative paradigm focuses on WHAT functions to perform, not HOW to perform them
+	> no Java control-flow opeartions are applied in stream
+2. Flexible
+	> functions are automatically composed together
+	> the output from filter is passed as the input to map()
+3. Scalable
+	> Parallelize performance without the need to write any multi-threaded code
+	> with this, we will need to use ParallelStream object instead of Stream
+
+
+
+COMMON STREAM AGGREGATE OPERATIONS
+
+Stream filter(Predicate<T> pred)	
+	> INTERMEDIATE operation
+	> tests the given predicate against each element of the input stream 
+	> returns an output stream consisting only of elements that match or "passed" the predicate
+	> takes a Predicate object
+		- this Predicate object can be written in lambda expression
+	> number of output stream elements MAY BE LESS THAN the number of input stream elements
+
+Stream map(Function<R, T> mapper)
+	> INTERMEDIATE operation	
+	> applies the given function to the elements of the input stream & returns an output stream consisting of the results
+	> accepts Function object		
+		- can be written in lambda expression or method reference
+	> number of inputs elements on stream = number of outputs elements on stream
+			
+R collect(Collector<> collector)	
+	> TERMINAL operation
+		- triggers the processing of other aggregate operations in the stream
+	> uses a Collector to perform a reduction on the elements of its input stream
+	> returns the result of the reduction
+	> used to "collect" the resulting Stream into a Collection/List/Set/Queue
+		- will depend on what method you call in Collector parameter
+
+Stream sorted()			
+	> used to sort the element in Stream
+
+int count()				
+	> returns the number of element in Stream
+	> if theres a filter() before count(), it will only count those element that passed the stream
+
+Stream<T> peek(Consumer<T>)
+	> with peek, we can use the elements of Stream to do certain action (i.e. printing the Elements)
+	> will return the same Stream that it receives

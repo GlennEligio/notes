@@ -1,0 +1,37 @@
+27 RHCSA RHEL 8 - Assign physical volumes to volume groups
+
+
+Commands
+vgs
+ > display information about volume groups
+
+vgdisplay
+ > similar to vgs
+ > display infromation about the volume groups
+
+vgcreate VG_NEW PV
+ > used to create a volume group
+ > takes two inputs
+	VG_NEW	volume group name to create
+	PV		physical volume, the disk partition that we created with type LVM
+ > ex:
+	$ vgcreate vg1 /dev/sdb1
+
+
+vgextend VG PV ...
+ > used to "extend" or add physical volumes to a volume group
+ > takes two inputs
+	VG	name of existing Volume Group
+	PV	physical volumes to add
+
+
+vgreduce VG PV...
+ > remove phyiscal volume(...) from an existing volume group
+ > takes two inputs
+	VG	name of existing Volume group
+	PV	name of the physical volume to remove
+
+vgremove VG
+ > removes a Volume group
+ > takes one input
+	VG 	name of existing volume group

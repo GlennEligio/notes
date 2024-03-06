@@ -1,0 +1,245 @@
+QUERIES
+
+1. SELECT
+	= used to select specific columns FROM the table
+	= used in conjunction with FROM command to determine which table will SELECT command be applied
+
+Example:
+
+	SELECT name FROM movies;
+
+This statement will show the name columns and data inside it from the movies table.
+
+
+2. AS
+	= used to rename a column or table using an alias when used with SELECT command
+	= will not change the name of the table or column itself in the database engine. The alias will only appear in the result screen.
+	= The alias that will replace the column or table name should be surrounded by single quotes.
+
+Exmaple:
+
+SELECT name AS 'Titles'
+FROM movies;
+
+In this statement, the "name" column of the "movies" table will be change into "Titles" in the result screen.
+
+NOTE: Line break dont have any effects in the SQL language
+
+
+
+3. DISTINCT
+	> used to return unique values in the output.
+	> filters out duplication values in the specific column(s)
+
+Example:
+
+SELECT DISTINCT tools 
+FROM inventory;
+
+This statement will return every unique values in the "tools" column. If we remove the DISTINCT query, the statement will probably return duplicate value.
+
+
+4. WHERE
+	> used to restrict the query results
+	> need a condition in order to restrict the result
+	> this conditional statement will probably use some operators
+
+Example:
+
+SELECT *
+FROM movies
+WHERE imdb_rating > 8;
+
+In this statement, it will show all the columns (*) from movies table that have imdb_rating of greater than 8. Those movies whose imdb rating is less than 8 will not be shown.
+
+OPERATORS
+	> creates a condition that can be evaluated as either true or false.
+	> often used in the conditional statement in WHERE query
+
+Examples of Operators
+
+= 	equal to
+!= 	not equal to
+> 	greater than
+< 	less than
+>= 	greater than or equal to
+<= 	less than or equal to
+
+
+5. LIKE
+	> special operator used with the WHERE clause to search for a specific pattern in a column
+	> used as a conditional where in if a Text value of column ressembles the pattern, then it will be included in the result
+
+Example:
+
+SELECT * 
+FROM movies
+WHERE name LIKE 'Se_en';
+
+In this statement, it will show all of the columns in the movies table, where the name column value resembles in 'Se_en' pattern.
+
+WILDCARD characters
+	> used to widen the options in the conditional text pattern
+	
+Example of WILDCARD characters
+1. _ (underscore)
+	> if theres an underscore in the conditional text pattern, that means that any character can fill the blank and still be accepted 
+
+Example:
+
+ WHERE name LIKE 'Se_en'
+
+This means that Se7en or Seven are VALID, and make the conditional event return true.
+
+
+2. % (percent)
+	> if theres a percent in the conditional text pattern, that means that any character, or string of character, can fill or replace the % symbol
+
+Example of % usage
+1. Suffix
+
+ WHERE name LIKE 'A%'
+
+Any character or strings can replace the %. So it means that any word that starts with A will return true in the conditional statement.
+
+2. Prefix
+
+ WHERE name LIKE '%a'
+
+In this case, any word that ends will "a" will be accepted.
+
+3. Suffix + Prefix
+	
+ WHERE name LIKE '%man%'
+
+In this case, any word that contains the string man will be accepted.
+
+
+6. IS NULL / IS NOT NULL
+	> a comparison operator that determines if the value IS NULL
+	> NULL value can't be compared using the typical operators such us = and !=
+
+Example:
+
+SELECT name
+FROM movies
+WHERE imdb_rating IS NULL;
+
+This statement will display the name column of movies table, whose imdb_rating is NULL or have no value.
+
+
+7. BETWEEN
+	> used in a WHERE clause to filter the result set within a certain range
+	> accepts two values that are either numbers, text or dates
+
+Example:
+
+SELECT *
+FROM movies
+WHERE year BETWEEN 1990 AND 1999;
+
+This will show all columns from movies table where the year is between the 1990 and 1999.
+
+
+SELECT *
+FROM movies
+WHERE name BETWEEN 'A' AND 'J';
+
+This will show all columns from movies table where the name is between the A and J.
+
+
+8. AND operator
+	> combines two conditions
+	> these two conditions must be met in order to pass the conditional statements
+
+EXAMPLE:
+
+SELECT * 
+FROM movies
+WHERE year BETWEEN 1990 AND 1999
+   AND genre = 'romance';
+
+Here we have two conditional statement: 1) year is between 1990 and 1999, and 2) genre is romance. The statement will show all the columns in movies whose rows BOTH SATISFY the conditional statements.
+
+
+9. OR operator
+	> same with AND, need two conditions
+	> but with OR, you only need to pass AT LEAST ONE of the conditions
+
+EXAMPLE:
+
+SELECT *
+FROM movies
+WHERE year > 2014
+   OR genre = 'action';
+
+In this statement, it will show all the columns, and will only select the rows that EITHER released after 2014 OR whose genre is action.
+
+
+10. ORDER BY
+	> used to sort the data alphabetically or numerically
+	> called after filtering the table using the WHERE statement
+	> can arrange ascending or descending by calling either ASC or DESC after the name of column
+
+EXAMPLE:
+
+SELECT name, year
+FROM movies
+WHERE genre = 'horror'
+ORDER BY imdb_rating ASC;
+
+In this statement, it will show the name and year column information of movies table, and it will only show the rows whose genre is horror, and it will be arranged by imdb_rating in ASCENDING ORDER.
+
+11. LIMIT
+	> limits the number of rows to display in result
+	> this is also at the very end of the query
+	> some SQL databases do not support LIMIT query
+
+EXAMPLE:
+
+SELECT * 
+FROM movies
+ORDER BY imdb_rating DESC
+LIMIT 3;
+
+This statement will show all column information from movies table, arranged by ratings in descending order, and the number of rows that can be displayed in result is 3.
+
+
+12. CASE
+	> used in order to create different outputs (usually in the SELECT statement)
+	> SQL’s way of handling if-then logic
+	> this will create a new column whose value will depend on the WHEN-THEN condition the rows has met
+	> starts with CASE, then followed by WHEN-THEN conditions, then an ELSE which is use to set a default value in case no WHEN-THEN condition, which will be ended by the END (or END AS followed by an alias for the new column created).
+
+EXAMPLE:
+
+SELECT name,
+ CASE
+  WHEN imdb_rating > 8 THEN 'Fantastic'
+  WHEN imdb_rating > 6 THEN 'Poorly Received'
+  ELSE 'Avoid at All Costs'
+ END
+FROM movies;
+
+In this statement, first we show the name column for the movies table. Then we have a case statement which have 2 conditional and 1 default value. First is WHEN imdb_rating is greater than 8, THEN the value in the new column created by CASE query will be 'Fantastic'. If the first WHEN-THEN statement is not met, then it will move on to the next WHEN-THEN which is when imdb_rating > 6, at which the value will be 'Poorly Received'. If the row didn't meet any of the WHEN-THEN contained inside the CASE query, then its value will be the one inside the ELSE, which is the 'Avoid at All Costs'. And we will close the CASE query with an END query.
+
+But the problem in this format (wherein we didn't use END AS instead of END) is that the column name will be the whole CASE query, which is a long name. If we used END AS 'alias' instead of END only, the name of the new column will be replaced by the alias used with the END AS. s
+
+Example:
+
+SELECT name,
+ CASE
+  WHEN imdb_rating > 8 THEN 'Fantastic'
+  WHEN imdb_rating > 6 THEN 'Poorly Received'
+  ELSE 'Avoid at All Costs'
+ END AS 'Thoughts'
+FROM movies;
+
+Here, we have the same statement, but we change the END to END AS 'Thoughts'. So now instead of the new column created have a name of 
+
+	 CASE WHEN imdb_rating > 8 THEN 'Fantastic' WHEN imdb_rating > 6 THEN 'Poorly Received' ELSE 'Avoid at All Costs' END AS 'Thoughts'
+
+We will have the new column title of the alias attached to the END AS, which is 'Thoughts'.
+
+
+

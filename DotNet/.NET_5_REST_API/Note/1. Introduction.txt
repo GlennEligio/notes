@@ -1,0 +1,182 @@
+.NET 5 REST API Tutorial
+
+Topics to discuss:
+1. The scenario to be used accross the tutorial
+2. How to create a .NET 5 Web API project from scratch
+3. How to use VS Code for building and debugging the project
+4. How to trust the development certificate
+
+
+Things that are needed to follow:
+1. .NET 5 SDK
+2. Visual Studio Code
+3. Basic Understanding of C# Language
+
+
+The scenario of our application
+1. Create a REST API in order for user from Browser to do CRUD operations to our Catalog
+
+Catalog
+	= contains all sorts of item like sword, potion, armor, etc.
+
+Browser
+	= tools that user use to interact to the Catalog
+
+
+
+INCLUDES:
+
+Swagger extension
+	> let us see the endpoints available in our webapi
+	> we can also test these endpoints in the swagger
+	> to go to swagger endpoint, add /swagger at the end of the applicationUrl
+
+
+
+
+1. Create a webapi for our project
+	> dotnet new webapi -n <ProjectName>
+	> project name is Catalog so it will be
+
+		dotnet new webapi -n Catalog
+
+
+
+2. Open the Catalog project
+	> if you are in the same directory as the project
+	
+		code -r <Project name>
+
+		code -r Catalog
+
+
+
+
+3. Take a look at the files inside default webapi template of vscode
+	a. Project file (Catalog.csproj)
+		> composed of
+			= Sdk used
+			= Framework used (defines set of API available)
+			= Package references (nuget packages) 
+	b. Program.cs
+		> App entry point
+		> Creates and stand up the host
+		> Set up StartUp.cs
+		> Contains
+			= Host configuration
+	c. Startup.cs, this file contains
+		> Configuration, composed of variable from multiple sources
+			=> Environment variables
+			=> Files
+			=> Folder
+		> ConfigureServices
+			= serves as the Service Registration
+			= this is where we register all Services that we use across our project
+		> Configure
+			= serves as the Request Handling and Pipeline configuration
+	d. WeatherForecast.cs
+		= default model object inside the default webapi
+	e. WeatherForecastController.cs
+		= class that handles the Route Endpoints that we expose to consumers
+	f. appsettings.json
+		= this is where we Declares application configuration variables
+	g. appsettings.Development.json
+		= variation of appsettings but for Development environment
+	h. .vscode folder, which contains the following
+		= task.json
+			> contains Task that is declare inside our project
+			> one of the example is the dotnet build command
+		= launch.json
+			> defines what type of project will be launch and executed
+	i. launchSettings.json
+		= located inside Properties folder
+		= the thing to note here is the applicationUrl item located inside the "ProjectName" item (in our case "Catalog" item)
+		= this applicationUrl defines that url we will use in order to serve our webapi
+
+
+
+
+4. Test the default webapi
+	> click the Run and Debug icon at the left side menu
+		= its the Play icon with Bug icon at the bottom left
+	> the run and debug process will take you to the https application url
+
+		https://localhost:5001
+
+	> but if we look at the output, we see an error that says that the localhost certificate is not valid and trusted
+	> we will solve this by trusting the self signed dev cert
+
+
+
+
+5. Trusting the Self-Signed Certificate
+	> to do this, we will enter in Terminal the following line
+
+		dotnet dev-certs https --trust
+
+	> this will prompt you if you trust the self signed dev cert
+	> click ok
+
+
+
+
+
+6. Test the https application url again
+	> this time we should not get any error, but still we dont have any output since we only call the application url and not the endpoints of webapi
+
+
+
+
+
+7. Check the Swagger extension
+	> to check the Swagger extension, we will add swagger to the applicationUrls
+
+		http://localhost:5000/swagger 
+
+		https://localhost:5001/swagger
+
+	> we should see the endpoints present in the WeatherForecastController class
+		a. GET (/WeatherForecast)
+
+
+
+
+8. Remove the behavior where the VSCode open the browser everytime we Run and Debug	
+	> inside the .vscode folder > launch.json > configurations item, remove the serverReadyAction item
+	> remove this part in launch.json
+
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+
+
+
+
+9. Test if the automatic web browser open is still present
+	> go to Run and Debug section
+	> press F5 (shortcut for Run and Debug)
+
+
+
+
+10. Add this code inside inside the task item of tasks.json in .vscode folder
+	> add this snippet
+
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+
+	> what this does is to easily build the project
+	> it also allow us to use this shortcut
+
+		CTRL + SHIFT + B
+
+	> this shortcut is for running build task
+
+		
+
+
+
+

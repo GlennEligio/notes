@@ -1,0 +1,39 @@
+11. Configuring Profiles in a Config Client for fetching different uses
+
+Properties to use / define
+
+spring.cloud.config.profile
+	> defines which profile of config file from cloud config server to use
+
+EX:
+# Config Props import
+spring.config.import=optional:configserver:http://localhost:8888
+
+# Spring Cloud Config name
+spring.cloud.config.name=limits-service
+
+# Spring Cloud Config profile
+spring.cloud.config.profile=qa
+
+	> in this case, it will fetch the config props in 
+		- http://localhost:8888/limits-service/qa
+	> where in local git repo, we choose limit-service-qa.properties file and fetched all the config props inside it
+
+
+
+Creating different profiles for each config file
+	> append "-profile" to the config file
+		- ex: for limits-service.properties, we can do
+			1. limits-service-dev.properties
+				= this config file can be accessed using dev profile
+			2. limits-service-qa.properties
+				= this config file can be accessed using qa profile
+			3. limits-service.properties
+				= this can be access using the default profile
+
+EX: In the Console
+
+2021-12-22 21:36:43.323  INFO 2868 --- [  restartedMain] o.s.b.context.config.ConfigDataLoader    : Fetching config from server at : http://localhost:8888
+2021-12-22 21:36:43.323  INFO 2868 --- [  restartedMain] o.s.b.context.config.ConfigDataLoader    : Located environment: name=limits-service, profiles=[qa], label=null, version=699b51bbaa05327f292dcba5c82faa6a5a7ae554, state=null
+
+	> we can see the ConfigDataLoader uses "qa" as profile

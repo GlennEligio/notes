@@ -1,0 +1,49 @@
+149 AWS Wavelength
+
+
+AWS WaveLength
+ > WaveLength Zones are infrastructure deployments embedded within the telecommunications providers' datacenters at the edge of the 5G networks
+ > Brings AWS services to the edge of the 5G networks
+  	- EX: EC2, EBS, VPC...
+ > Ultra-low latency applications through 5G networks
+ > Traffic doesn't leave the Communication Service Provider's (CSP) network
+ > High-bandwidth and secure connection to the parent AWS Region
+ > No additional charges or service agreements
+ > Use cases include:
+	- Smart Cities
+	- ML-assisted diagnostics
+	- Connected Vehicles
+	- Interactive Live Video Streams
+	- AR/VR
+	- Real-time Gaming
+
+
+Diagram
+
+|- - - - - - - - - - - -|
+| Region		|
+|			|
+| AZ 1		AZ 2	|
+| EC2		EC2	|
+|			|
+|- - - -|- - - - - - - -|
+	^
+	|
+	|
+	V
+|- - - - - - - - - - - -|
+|			|
+|   WaveLength Zone	|
+|	EC2		|
+|			|
+|			|
+| 	|- - - - -|	|
+|- - - -| Carrier |- - -|
+	| Gateway |
+	|- - -|- -|
+	      |
+	      |-----|
+		    |			
+		    V	
+Client ------>  Telecom carrier
+(Phone)		(5G network)

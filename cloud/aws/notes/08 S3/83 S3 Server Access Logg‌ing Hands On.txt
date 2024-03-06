@@ -1,0 +1,25 @@
+83 S3 Server Access Logg‌ing Hands On
+
+
+Creating the Logging Bucket
+1. Create a new Bucket
+2. Name it so that its easier to know that its a logging bucket
+3. Also choose a Region that is closest to you
+
+
+Enabling Server Access Logging
+1. Go the Bucket created earlier
+2. Go to Properties tab > Server access logging
+3. Click Edit, then
+	> check the 'Enable'
+	> specify the Target bucket
+	> here, you can also specify which directory the logs will be located inside the Bucket by appending it with prefix
+	> ex: s3://glenneligio-ccp-2022-logging/logs
+		- in this case, 'logs' folder does not exist, but it will be created automatically
+
+
+
+Creating Logs
+1. Open some objects in the Bucket with Server Access Logging
+2. Wait for the logs to appear in the Logging Bucket
+	> might take an hour at least

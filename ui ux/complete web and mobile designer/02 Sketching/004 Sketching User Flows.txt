@@ -1,0 +1,48 @@
+004 Sketching User Flows
+
+Steps:
+1. Understand what we will draw
+	> determine if we will sketch a large journey or a small interaction
+2. Define a starting point
+	> we can choose either start, middle, or end of journey
+3. Decide your next steps
+	> know which step this lead our users, 
+	> where do we want them to go, 
+	> what does the user need to do to get there
+
+
+GOAL:
+1. Create a General journey
+
+STEPS: Create a General Journey
+1. Mapping the overall journey for our user habitual
+	> draw a frame
+	> ex: 1st frame is a welcome page, with buttons for onboarding
+	> 2nd frame might be a search page, where the user can search for items
+		- this frame will have a search bar, and below will be the search result item
+		- this search result item will be a "card", with image and description below
+	> 3rd frame will be the products details page
+		- here, the page will display the products details
+		- it will contain the enlarged product image, and more detailed information about the product
+	> 4th frame will be the cart page
+		- here, we will see the products that is in the cart and ready to be checkout
+		- it will contain the list of items, with the amount of that item, and also a checkout button
+	> 5th frame will be a confirmation page
+		- the user will be navigated there if they checkout the product, it will also contain the status of the delivery
+		- contains a message to tell user the status of checkout
+	> 6th frame will be a delivered page
+		- the product is delivered
+		- contains message of the delivery status
+
+
+NOTES:
+1. Happy path will NOT ALWAYS be the user experience
+2. Alternate scenarios/paths will be the path the user will take
+	> typically, these alternate paths DIVERGES from a specific step in the Happy path
+	> this can include
+		- error messages when an operation is not successful
+		- changes in pages like when we use filter to change search result list
+		- error page when an information is unavailable to fetch
+3. Determine the user experience for each frame on the user journey
+	> for welcome page, they might be happy
+	> for search page, they might be confused, so we need to make sure to have an easy search experience

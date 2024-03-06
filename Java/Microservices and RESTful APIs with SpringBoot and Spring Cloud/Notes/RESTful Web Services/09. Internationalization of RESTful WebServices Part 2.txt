@@ -1,0 +1,48 @@
+09. Internationalization Part 2
+
+LocaleContext
+	> Strategy interface for determining the current Locale.
+	> A LocaleContext instance can be associated with a thread via the LocaleContextHolder class.
+
+LocaleContextHolder
+	> Simple holder class that associates a LocaleContext instance with the current thread. 
+	> The LocaleContext will be inherited by any child threads spawned by the current thread if the inheritable flag is set to true.
+	> DispatcherServlet automatically exposes its current Locale here.
+		- means that every Request coming through will have their Accept-Language header check
+		- based on the check result, it will create a Locale and place it in LocaleContext
+		- this LocaleContext will then be added in the LocaleContextHolder
+	> works similarly with SecurityContextHolder of Spring Security
+
+AcceptHeaderLocaleResolver
+	> LocaleResolver implementation that simply uses the primary locale specified in the "accept-language" header of the HTTP request (that is, the locale sent by the client browser, normally that of the client's OS).
+	> needed in order for the DispatcherServlet to set Locale in the LocalContext
+
+
+spring.messages.basename
+	> properties in the application.properties file
+	> set the basename of the MessageSource
+	> Spring Boot, by default, auto configures the MessageSource already
+		- so the only thing we need to do is to define the MessageSource's basename (or basenames for multiple message sources)
+
+
+@Bean for LocaleResolver that uses AcceptHeaderLocaleResolver as implementation
+
+	@Bean
+	public LocaleResolver localeResolver() {
+		AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+		localeResolver.setDefaultLocale(Locale.US);
+		return localeResolver; 
+	}
+
+
+API Endpoint in @Controller that uses LocalContextHolder to fetch Locale from Request
+	// send a Good Morning based on the Accept-Language header
+	@GetMapping("/hello-world-internationalized")
+	public String goodMorning() {
+		return messageSrouce.getMessage("good.morning.message", null, LocaleContextHolder.getLocale());
+	}
+
+
+application.properties where we set basename of Spring's MessageSource
+
+spring.message.basename=messages

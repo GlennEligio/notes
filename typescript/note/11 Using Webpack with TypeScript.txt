@@ -1,0 +1,493 @@
+11 Using Webpack with TypeScript
+
+Contents:
+01 Module Introduction
+02 What is Webpack
+03 A Note About NodeJS
+04 Installing Webpack & Important Dependencies
+05 Adding Entry & Output Configuration
+06 Adding TypeScript Support with the ts-loader Package
+07 Finishing the Setup & Adding webpack-dev-server
+08 Adding a Production Workflow
+09 Wrap Up
+
+
+
+
+
+
+
+01 Module Introduction
+
+Content:
+1 What is Webpack
+2 Example use cases
+
+
+
+
+
+
+
+
+
+
+
+02 What is Webpack
+
+What is Webpack?
+ > Webpack is a Bundling & "Build Orchestration" Tool
+
+"Normal" Setup
+ > multiple .ts files & imports (Http requests)
+ > unoptimized code (not as small as possible)
+ > "External" development server needed
+
+With Webpack
+ > code bundles, less imports required
+ > optimized (minified) code, less code to download
+ > more build steps can be added easily
+
+
+
+
+
+
+
+
+
+
+
+
+03 A Note About NodeJS
+
+NOTE:
+ > In the next lecture, we will use a third-party tool (Webpack) to create a new project. This tool, under the hood, uses NodeJS - a software which you need to download as part of the next lecture.
+ > You will learn about the details in the next lectures but make sure that you DON'T use NodeJS version 17 for the moment! Because at the moment, due to a bug, the created project won't work with that version.
+ > Instead, download the LTS version of NodeJS. You can download that version via this link (use the "LTS" version): https://nodejs.org/en/download/
+
+
+
+
+
+
+
+
+
+
+04 Installing Webpack & Important Dependencies
+
+NOTE:
+1. The dependencies below must be added as devDependencies only
+
+Dependencies needed
+1. webpack
+	> Webpack is a module bundler. 
+	> Its main purpose is to bundle JavaScript files for usage in a browser, yet it is also capable of the following to the JS file (or any resource or asset)
+		- transforming, 
+		- bundling, or 
+		- packaging just about any resource or asset.
+	> in our case, it transforms/bundles/packages the compiled JS file from the TypeScript files that we have
+2. webpack-cli
+	> webpack CLI provides a flexible set of commands for developers to increase speed when setting up a custom webpack project. 
+	> As of webpack v4, webpack is not expecting a configuration file, but often developers want to create a more custom webpack configuration based on their use-cases and needs. 
+	> webpack CLI addresses these needs by providing a set of tools to improve the setup of custom webpack configuration.
+3. webpack-dev-server
+	> Use webpack with a development server that provides live reloading. 
+		- This should be used for development only.
+	> It uses webpack-dev-middleware under the hood, which provides fast in-memory access to the webpack assets.
+4. ts-loader
+	> This is the TypeScript loader for webpack.
+5. typescript
+	> install a development only TypeScript
+	> good practice in order to avoid breaking the TypeScript code in case we change globally installed TypeScript
+
+
+
+
+
+
+
+
+
+
+
+05 Adding Entry & Output Configuration
+
+Setting up Webpack with TypeScript project
+1. Configure the tsconfig.json
+	> target must be es6 or es5
+	> module must be es2015 or es6
+	> outDir must be defined
+	> rootDir will be removed
+		- we will define it later in webpack.config.js file
+
+Creating Webpack configuration in the Project
+1. In the same directory as tsconfig.js, create "webpack.config.js"
+	> must be the same name since it is the file the webpack will look for by default
+2. Inside webpack.config.js, we will export an object using module.exports
+	> this object will represent the configuration of the webpack
+3. In the exported configuration object, we will need to add the following properties
+	a. entry
+		-> defines the entry file of the project
+		-> similar to rootDir in tsconfig.json but takes a file instead of directory
+	b. output
+		-> takes an object, which contains properties to the output bundled file like "filename", "path"
+		-> filename defines the name of output bundled file
+			- adding "[contenthash]" substring to the "filename" prop will make the webpack add a unique hash to every build
+		-> path defines the directory where the output bundled file will be created
+		
+EX:
+// webpack.config.js
+const path = require("path");
+
+module.exports = {
+  entry: "./src/app.ts",
+  output: {
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist"),
+  },
+};
+
+
+
+
+How Webpack manages/transforms/bundles the JavaScript/TypeScript files 
+ > when we defined the "entry" of the Webpack in the configuration object, it will scan that said entry file
+ > when scanning the entry file, it will look for the dependencies that entry file have (which is defined in import statements)
+ > this file and import/dependency scanning process to the files will be done in the dependencies of the entry file, and to the dependencies of that file again, until all the files needed/used in the project are COMPLETELY SCANNED
+ > after getting all necessary files, it will look into the content of the files, and start the compilation, transformation, bundling of the files
+	- with ts-loader and typescript, it will transform all scanned .ts files into .js files
+
+
+NOTE:
+1. When defining dependencies in a TypeScript file that uses ES6 module "import" and uses Webpack as build tool, we need to remove the file extension
+	> we will configure WebPack so that it will automatically find files with same name and extension defined in Webpack config object
+
+EX:
+// from
+import { ProjectInput } from "./components/project-input.js";
+// to
+import { ProjectInput } from "./components/project-input";
+
+
+
+
+
+
+
+
+
+
+
+
+06 Adding TypeScript Support with the ts-loader Package
+
+Adding TypeScript Support with the ts-loader Package
+ > to add TypeScript support, we will add several properties to the Webpack configuration object
+
+Webpack configuration object properties
+
+module
+ > takes an object as value
+ > defines how we will deal with the files it find in the  project
+ > the object will have properties like
+	1. rules
+
+module.rules
+ > takes an array of objects which defines specific rule
+ > defines the rules to be applied to all (or specific) types files
+	- ex: rules for .ts, .js, .css, .html, etc.
+ > the objects inside this array will have TWO properties
+	1. test
+		- takes a regex value
+		- "test" if a specific file matches, and if it does, this rule will be applied to that file
+	2. use
+		- takes a string
+		- the string will refer to the "loader" installed that will be used to the files that this rule will be applied
+	3. exclude
+		- takes a regex value
+		- defines the folder/files that will be excluded in this rule
+
+EX:
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+
+
+resolve
+ > takes object as value
+ > one of the property of the Webpack configuration object
+ > Configure how modules are resolved
+ > contains properties like
+	1. extensions
+
+resolve.extensions
+ > takes an array of strings as value 
+ > defines the extensions that will be included when resolving the files like the imports/dependencies
+
+EX:
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+
+
+devtool
+ > takes a string value
+ > This option controls if and how source maps are generated.
+ > The string value will the style of source mapping to enhance the debugging process. 
+	- These values can affect build and rebuild speed dramatically.
+ > we can pass several values to this, 
+	- but since we are using sourcemaps which maps bundled compiled file into the original file, we will just pass 'inline-source-map'
+ > make sure we have configured the tsconfig.js file to support sourceMap
+	- done by setting "sourceMap" root property of tsconfig.json file to true
+	
+EX:
+devtool: 'inline-source-map'
+
+
+// webpack.config.js
+const path = require("path");
+
+module.exports = {
+  entry: "./src/app.ts",
+  output: {
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist"),
+  },
+  devtool: "inline-source-map",
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+};
+
+
+
+
+Running the Node.js project using Webpack with TypeScript loader
+1. Add a script in the package.json
+	> "build": "webpack"
+2. Delete everything in the output directory 
+	> in our case, its the dist folder
+3. Use the npm command
+	> npm run build
+	> there should be a new file in the dist folder
+4. Use that .js file in dist folder in the index.html file as script
+5. Run the lite-server using npm run start
+6. Check if the application is working
+	> if it is, check the Network tab in Inspect section, you should see the "bundle.js" being fetched there
+	> in Source tab as well, we should see the .ts file original file that is mapped to the bundled compiled js file
+		- debugging by adding breakpoint should also work as well
+
+
+
+
+
+
+
+
+
+
+
+
+07 Finishing the Setup & Adding webpack-dev-server
+
+Adding webpack-dev-server
+ > we will add the webpack-dev-server as a REPLACEMENT to the lite-server we are currently using
+ > also, we will need to change the Webpack configuration object in webpack.config.js
+ > when we use webpack-dev-server
+	1. the bundled js file will not be created in project workspace
+		- instead it will be stored in the memory, but can still be access in the output file using the syntax 
+			-> serverAddress + publicPath + outputFile
+				- publicPath is "/" by default
+			-> ex: localhost:8080/bundle.js
+
+Changes in package.json
+ > change the "start" script from "lite-server" to "webpack serve"
+
+Changes in webpack.config.js
+1. Define output.publicPath
+	> default is "/"
+	> pass the directory where you want the output file to be located
+	> then, when we are fetching a file from the server, it will look to the 
+		- serverAddress + publicPath + file
+		- ex: localhost:8080/dist/bundle.js if we have publicPath = "/dist/"
+2. Define the mode value
+	> this will define the mode at which the Webpack will run
+	> we can pass either "development" or "production" (default)
+
+Changing location of static files of Project for Webpack dev server
+ > by default, Webpack dev server serves the static files in the "public" directory of the Project
+	- we can change this by assigning value to "devServer.static.directory"
+ > this means that all static files (html and css) should be included inside the "public" folder (ex: index.html, app.css)
+ > if we access the server address while the webpack dev server is running, it will open the index.html inside the public folder
+
+Accessing the Webpack dev server
+ > by default, it runs in the localhost:8080
+ 	- we can change this by assigning port to "devServer.port" of the Webpack config object 
+
+EX:
+// package.json
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve",
+    "build": "webpack"
+  },
+
+
+// webpack.config.js
+const path = require("path");
+
+module.exports = {
+  mode: "development",
+  entry: "./src/app.ts",
+  output: {
+    filename: "bundle.js",
+    path: path.join(__dirname, "dist"),
+    publicPath: "/dist/",
+  },
+  devtool: "inline-source-map",
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "public"),
+    },
+    compress: true,
+    port: 9000,
+  },
+};
+
+
+// Project Structure
+root
+ > dist
+ > public
+   - app.css
+   - index.html
+ - tsconfig.json
+ - webpack.config.js
+ - package.json
+
+
+
+
+
+
+
+
+
+
+
+
+
+08 Adding a Production Workflow
+
+Adding a Production Workflow
+ > to add a production workflow in the Webpack, we will need to do two things
+	1. Add a plugin that we will use in production webpack config file
+		- this is for cleaning up the folder where output will be created whenever we build
+	2. Create new webpack config file and modify it for production environment
+		- add the plugin that we installed
+	3. Change the "build" script to change the configuration file to use
+
+
+Add a plugin that we will use in production webpack config file
+1. Install "clean-webpack-plugin" npm module 
+ 	> this plugin will be the "clean-webpack-plugin"
+ 	> we will install this using npm and only as a devDependency
+ 	> this will expose a class "CleanPlugin", which we will use in the webpack config prod file
+
+
+Create new webpack config file and modify it for production environment
+1. Create a "webpack.config.prod.js"
+	> default name for production webpack config file, cant assign new one
+2. Copy the contents of "webpack.config.js" to the new file
+3. Change several properties of webpack config object in the webpack.config.prod.js like
+	> set "mode" to "production"
+ 	> set "plugins" and pass new CleanWebpackPlugin() to it
+	> remove "output.publicPath"
+	> set "devtool" to "none"
+	> remove "devServer"
+
+
+Change the "build" script to change the configuration file to use
+1. Add a new option flag "--config" to the webpack command inside "build" script
+	> pass the name of the new webpack config file next to it
+
+
+EX:
+// webpack.config.prod.js
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const path = require("path");
+
+module.exports = {
+  mode: "production",
+  entry: "./src/app.ts",
+  output: {
+    filename: "bundle.js",
+    path: path.join(__dirname, "dist"),
+  },
+  devtool: "none",
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  plugins: [new CleanWebpackPlugin()],
+};
+
+
+// package.json
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve",
+    "build": "webpack --config webpack.config.prod.js"
+  },
+
+
+
+
+
+
+
+09 Wrap Up
+
+
+
+
+
+
+

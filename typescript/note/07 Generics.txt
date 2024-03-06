@@ -1,0 +1,372 @@
+07 Generics
+
+Contents:
+01 Module Introduction
+02 Built-in Generic & What are Generics
+03 Creating a Generic Function
+04 Working with Constraints
+05 Another Generic Function
+06 The keyof Constraint
+07 Generic Classes
+08 A First Summary
+09 Generic Utility TYPES
+10 Generic Types vs Union Types
+
+
+
+
+
+
+
+
+
+
+01 Module Introduction
+
+Module Content
+1. What is Generics?
+2. Generic Functions & Classes
+3. COnstraints
+4. Special TypeScript Types
+
+
+
+
+
+
+
+
+
+
+
+02 Built-in Generic & What are Generics
+
+Generics
+ > useful for creating reusable components
+ > creates a component that can work with a variety of data types rather than a single data type
+ > Generic Types (or interfaces) helps us to get additional type information about the data the Generic Type stores/uses
+ > helps us to get better TypeScript supports whenever we work with Generic Types
+	- ex: if we use generic type Array and define the "type" to string (Array<string>), any element we access in the said Array will support/show string-related functions (i.e. Array.split())
+
+
+Advantages of Generics
+1. Type-safety: 
+	> We can hold only a single type of objects in generics. It doesn't allow to store other objects.
+2. Typecasting is not required: 
+	> There is no need to typecast the object.
+3. Compile-Time Checking: 
+	> It is checked at compile time so the problem will not occur at runtime.
+4. Flexibility
+	> we are flexible to which type the generic function works on
+
+
+
+Built-in Generics in TypeScript
+1. Array<T>
+ 	> the type T refers to the types of the stored elements
+	> ex: Array<string> will be the same as string[]
+2. Promise<T>
+	> the type T refers to the type of the value returned when Promise is resolved
+
+EX:
+const names: Array<string> = []; // same as string[]
+names[0].split(" "); // split() suggested since TS knows element type of array is string
+
+const promise: Promise<string> = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("Retuned string value");
+  }, 1000);
+});
+
+promise.then((data) => {
+  data.split(" "); // split is suggested function since TS knows the Promise resolves to a string
+});
+
+
+
+
+
+
+
+
+
+
+03 Creating a Generic Function
+
+Generic Function
+ > with Generic Functions, we can pass Type parameters
+	- we can do this by using the open and close brackets
+	- then inside the Generic Function, we can use this type parameters to either
+		1. assign the type(s) of the parameters
+		2. assign the type of the return value
+		2. let TypeScript infer the return by checking the logic inside the generic function
+	- inside the brackets, we will just pass IDENTIFIERS to the said type parameters
+		-> by convention, we just use single Characters (typically T)
+	- we can have one or more type parameters
+ > with generic Functions, TypeScript can infer the return type based on the types of parameters we set
+	- this is regardless of 
+
+EX:
+Below, we created a generic function whose return type is the combination of two Object input (using Object.assign())
+In this generic function, we added type parameters with identifiers "T" and "U", and used this to specify the types of the two inputs
+In our case, we pass {name: string} and {age: number} to type parameter which is then used to specify the objA and objB parameter type
+	> this means that we must pass parameters to merge() function that matches the T and U type parameters that we passed inside <> brackets
+
+function merge<T, U>(objA: T, objB: U): T & U {
+  return Object.assign(objA, objB);
+}
+
+const mergedObj = merge<{name: string}, {age: number}> ({name: 'Max'}, {age: 30});
+// age is accessible since TypeScript knows that merge() return type is intersection of T & U (with Object.assign())
+console.log(mergedObj.age); 
+
+
+NOTE:
+1. Since TypeScript can infer the types of arguments we passed, we typically can omit the brackets when we call the generic function
+	> this only works if all of type parameters in generic function is used in assigning types of function parameters
+2. We can also omit the return type definition in generic functions since TypeScript can easily infer them
+
+EX:
+Using the same function, we omitted the <> since TypeScript can easily infer what the T and U types are since they are all used in the function parameter.
+In this case, TypeScript will just look at objA type to get "T" and the same with objB and "U"
+Same as for return type since TypeScript can infer it as well
+
+function merge<T, U>(objA: T, objB: U) {
+  return Object.assign(objA, objB);
+}
+
+const mergedObj = merge ({name: 'Max'}, {age: 30});
+
+
+
+
+
+
+
+04 Working with Constraints
+
+Working with Constraints
+ > we can also add Constraints to the Type Parameters we set in the Generic Functions
+ > with this, we can define the specific Type(s) allowed in the type parameters
+
+EX:
+In this example. we added a constraint to type parameter where it can only accept Types that extends to an object (or an object itself)
+
+function merge<T extends object, U extends object>(objA: T, objB: U) {
+  return Object.assign(objA, objB);
+}
+
+const mergedObj = merge({ name: "Max" }, { age: 30 });
+
+
+
+
+
+
+
+
+
+
+
+05 Another Generic Function
+
+NOTE:
+1. We can add Interface/Class as constraints to type parameters of generic functions
+	> with this, we can limit the types that we can pass in <> (or types of element that we can pass in arguments if we omitted the <>)
+	> this means that as long as the object input satisfies the Interface/Class constraint (having the properties needed with correct types), it will be accepted
+
+EX:
+interface Lengthy {
+  length: number;
+}
+
+function countAndDescribe<T extends Lengthy>(element: T): [T, string] {
+  let descriptionText = "Got no value";
+
+  if (element.length === 1) {
+    descriptionText = "Got 1 element";
+  } else if (element.length > 1) {
+    descriptionText = "Got " + element.length + " elements";
+  }
+  return [element, descriptionText];
+}
+
+console.log(countAndDescribe("Hello world"));
+console.log(countAndDescribe([1, 2, 3]));
+// console.log(countAndDescribe(3)); throws error since number dont have length property
+
+
+
+
+
+
+
+
+
+06 The keyof Constraint
+
+keyof
+ > keyword in TypeScript
+ > used to fetch the literal type(s) whose values is the keys of an Object
+
+EX:
+type Person = { name: "Age", address: "Caloocan"};
+// type A will be a union of literal type whose values is the key of Person 
+// type A = ("name" | "address")
+type A = keyof Person; 
+
+type PersonDetails = { name: "Age", address: "Caloocan", age: 10 };
+// type B will be a union of literal type whose values is the key of PersonDetails
+// type B = ("name" | "address" | "age")
+type B = keyof PersonDetails;
+
+
+keyof as Constraint to Generic Functions
+ > we can use keyof to make sure that strings that we pass to a generic function is a key of a certain Object
+
+EX:
+function extractAndConvert<T extends object, U extends keyof T>(
+  obj: T,
+  key: U
+) {
+  return "value: " + obj[key];
+}
+
+type person = { name: string; address: string };
+type A = keyof person;
+
+console.log(extractAndConvert({ name: "Glenn", age: 10 }, "age"));
+console.log(extractAndConvert({ name: "Glenn", age: 10 }, "name"));
+// console.log(extractAndConvert({ name: "Glenn", age: 10 }, "address")); // throws error
+
+
+
+
+
+
+
+07 Generic Classes
+
+Generic Classes
+ > classes that have type parameter in their definition
+ > we can then use this type parameter to either
+	1. specify the type of its properties
+	2. specify the parameter and return type of its methods (including constructor)
+
+EX:
+class DataStorage<T extends string | number | boolean> {
+  private data: T[] = [];
+
+  addItem(item: T) {
+    this.data.push(item);
+  }
+
+  removeItem(item: T) {
+    if (this.data.indexOf(item) === -1) {
+      return;
+    }
+    this.data.splice(this.data.indexOf(item), 1);
+  }
+
+  getItems() {
+    return [...this.data];
+  }
+}
+
+const textStorage = new DataStorage<string>();
+textStorage.addItem("John");
+textStorage.addItem("Glenn");
+textStorage.removeItem("John");
+console.log(textStorage.getItems()); // ["Glenn"]
+
+
+
+
+
+
+
+
+
+
+08 A First Summary
+09 Generic Utility TYPES
+
+Other Generic Utility Types
+https://www.typescriptlang.org/docs/handbook/utility-types.html
+
+Partial<T>
+ > a built-in generic type available exclusively in TypeScript
+ > used to create a "partial" object of a specific type passed as type parameter
+	- this makes the type sort of "optional"
+	- meaning, we can create an incomplete Object and define its properties later
+		-> not possible in normal TypeScript since it will throw errors when we create Object from an interface/custom type with incomplete properties
+	- with Partial, TypeScript can also infer what properties it must have
+		-> we can see this with IDE autocompletion
+ > we can then cast it back to its original type using TypeCasting with "as" keyword
+ 
+Ex:
+interface CourseGoal {
+    title: string;
+    description: string,
+    date: Date
+}
+
+function createCoursegGoal (
+    title: string,
+    description: string,
+    date: Date
+) : CourseGoal {
+    let courseGoal: Partial<CourseGoal> = {};
+    courseGoal.title = title;
+    courseGoal.description = description;
+    courseGoal.date = date;
+    return courseGoal as CourseGoal;
+}
+
+Behind the scene with Partial<CourseGoal>
+type Partial<CourseGoal> {
+    title?: string;
+    description?: string,
+    date?: Date
+}
+
+
+
+Readonly<T>
+ > used to make a properties of specific type "readonly"
+ > anything that we do that will change the properties with type Readonly<T> will throw an error, either by calling functions to reassigning value to properties
+
+EX:
+let names: Readonly<string[]> = ["Max", "Anna"];
+// names.push("Glenn"); // throws error
+// names.poop("John"); // throws error as well
+names = ["Glenn"] // will not throw error
+
+
+
+
+
+
+
+
+
+
+10 Generic Types vs Union Types
+
+Generic Types vs Union Types in uses
+
+Generic Types
+ > used to gives an option as to what Type will be used inside a Function or a Class
+ > but it LOCKS the Type that we use inside Class or Function and we are not allowed to use any Type other than the one passed in type argument
+
+Union Types
+ > used when we are flexible to have different type to Function or Class' Functions parameter
+
+
+
+
+
+
+
+
+

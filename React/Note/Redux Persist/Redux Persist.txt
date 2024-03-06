@@ -1,0 +1,169 @@
+Redux Persist
+
+Redux Persist
+	> library that allows saving a Redux store in the local storage of an application
+
+Installing Redux Persist
+	> use the command
+		npm i redux-persist
+
+Configuring Redux Persist in React JS
+
+INSIDE store.js
+1. Add persistStore and persistReducer functions in store.js (or the JS file where Redux store is created)
+	> import persistStore, and persistReducer from 'redux-persist' library
+	> persistReducer helps us persist the Reducers
+	> with persistReducer, we can persist the Store
+2. Import storage function in store.js
+	> storage from 'redux-persist/lib/storage'
+	> used to store the Redux Store in LocalStorage
+
+import {persistStore, persistReducer} from 'redux-persist';
+import storage from "redux-persist/lib/storage";
+
+
+3. Create an Object literal to contain persistConfig
+	> persistConfig will have two values
+		a. key-value pair that will be used to uniquely identify Store in LocalStorage
+		b. storage function that we imported
+
+const persistConfig = {
+  key: 'persist-key',
+  storage
+}
+
+
+4. Create a variable that will store result of persistReducer()
+	> in persistReducer(), pass two input
+		a. persistConfig
+		b. rootReducer
+			-> combination of all sub Reducers
+
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+
+
+5. Replace the rootReducer input in createStore with the persistedReducer
+
+
+const store = createStore(
+  persistedReducer,
+  initialState,
+  compose(
+    applyMiddleware(...middleware),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
+);
+
+
+
+6. Create variable to hold result of persistStore() and export it
+	> in persistStore(), pass the result of the createStore() function
+
+export const persistor = persistStore(store);
+
+
+
+store.js
+import { createStore, applyMiddleware, compose } from "redux";
+import rootReducer from "./reducers";
+import thunk from "redux-thunk";
+import {persistStore, persistReducer} from 'redux-persist';
+import storage from "redux-persist/lib/storage";
+
+const initialState = {};
+
+const persistConfig = {
+  key: 'persist-key',
+  storage
+}
+
+const middleware = [thunk];
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+const store = createStore(
+  persistedReducer,
+  initialState,
+  compose(
+    applyMiddleware(...middleware),
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
+);
+
+export const persistor = persistStore(store);
+export default store;
+
+
+
+
+INSIDE index.js
+1. Import persistor variable that we created in store.js
+
+import store, {persistor} from "./store.js";
+
+
+
+2. Import PersistGate component
+	> from 'redux-persist/integration/react'
+	> import in the index.js
+
+import {PersistGate} from 'redux-persist/integration/react'
+
+
+3. Wrap the <App> component in the <PersistGate>
+	> put <PersistGate> inside the <Provider>
+		-> Provider will also need to provide the Redux Store to the PersistGate
+
+ReactDOM.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+
+
+4. Define the "persistor" property of the <PersistGate> and pass the persistor we imported earlier from store.js
+
+ReactDOM.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+
+
+
+The whole index.js
+
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { Provider } from "react-redux";
+import store, { persistor } from "./store.js";
+import { PersistGate } from "redux-persist/integration/react";
+
+ReactDOM.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();

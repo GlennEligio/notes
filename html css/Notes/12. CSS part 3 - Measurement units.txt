@@ -1,0 +1,508 @@
+CSS part 3
+
+includes:
+absolute, relative
+pixels
+em, rem
+vw, vh
+font-size, height, width
+
+
+ABSOLUTE 
+	> if a size measurement is absolute, the size will NOT CHANGE whatever the device it is showing or what hierarchy it is in the HTML
+	> example of absolute measurement includes:
+		- Pixels
+
+Ex: 
+	An image with measurement of 500x500 pixels will be displayed the same whether its on mobile or device
+
+
+
+
+RELATIVE
+	> relative size measurement will CHANGE based on one of the followig
+		- parent element
+		- root element
+		- browser view size
+	> example of relative measurement includes:
+		a. em
+		b. rem
+		c. %
+
+Ex: 
+	If a div with width and height of both 50% is a CHILD of a div with size of 500x500 pixels, the child div will have measurement of 250x250 pixels
+
+
+
+
+%
+	> RELATIVE depends on Parent
+	> the final size will be n% of the parent's size
+	
+EX:
+	If parent have 500x500 pixel and child element have 50%x50% size, the final size of child element will be 250x250 pixel
+
+
+em
+	> RELATIVE depends on PARENT	
+	> in default browser style (also if parent is body), 1em have a measure of 16px
+	> 1em is the base value
+
+EX:
+	If an h3 have font-size of 2em and its parent is the body, the final h3 font-size will be 32px (2em x 16px)
+	If the h3 is instead nested inside a div and the div have font-size of 10px, the h3 will then have a final font-size of 20em.
+
+
+
+
+rem
+	> RELATIVE depends on the ROOT
+	> the ROOT here means the <html>
+	> 1rem is equal to 16px
+
+EX:
+	If an h3 have font-size of 3rem and the <html> have font-size of 32px, the final font-size of h3 will be 96px.
+	If an h3 have font-size of 2rem and it is nested in a div with font-size of 10px, assuming we have the default font-size in <html> which is 16px, the final h3 font-size will be 32px instead of 20px.
+
+
+
+
+
+vh and vw
+	> stands of view-height and view-width
+	> the vh and vw size will be RELATIVE to the SCREEN HEIGHT and WIDTH	
+	> useful for displaying BANNERS
+
+EX:
+	If a div have a height and width of 
+
+
+
+
+Default browser styles
+	> this is the default styles setting in a browser
+	> this style settings can be modified by the user
+
+
+
+Browser Developer Tools
+	> to access the DevTools, do the following
+		Right-click -> Inspect
+	> inside the DevTools, we can see some of the aspect of webpage like
+		- Elements
+		- Console
+		- Sources 
+		- Network
+	> Elements is for inspecting the following
+		- HTML page
+		- HTML elements and its property
+		- inside Elements tab, we can see the following sections
+			a. HTML source code
+			b. Elements styles, which are composed of two types
+				- User agent stylesheet, stylesheet that is pre-defined and added by default in a browser
+				- External stylesheet, stylesheet that is sourced externally
+			c. Element composition which includes
+				- Margin	
+				- Border
+				- Padding
+				- Element itself
+	> Console is for check the console logs made by back end of webpage
+	> Sources is for inspecting all the files inside the webpage project folder
+
+
+
+calc()
+	> used to do basic math operation in css	
+	> can mix and match different measure (vh to px, em to px, etc)
+	> the syntax will go as follows
+
+		calc(unit1 - unit2)
+
+	> proper spacing is important as it will not work if its not properly spaced
+
+		calc(unit1- unit2) or calc(unit1-unit2) will not work
+
+
+
+		
+
+
+
+I. ABSOLUTE UNIT (pixel)
+
+1. Clean the index.html body and styles.css
+
+
+2. Add an h1 element inside index.html
+
+INSIDE index.html body
+
+  <body>
+    <h1>units in the css</h1>
+  </body>
+
+
+
+3. Modify the font-size of the h1 element
+	> font-size to 30px then later to 60px
+
+INSIDE styles.css
+
+h1{
+  font-size: 30px;
+}
+
+	> if we take a look at the h1 with 30px and with 60px, we can see that the size of h1 has increased
+	> also, if we change the browser size (ex: full screen), the size of the h1 will remain THE SAME.
+
+
+
+4. Modify the h1 again
+	> add background color to blue
+	> add width to 200px
+	> add height to 300px
+
+INSIDE styles.css
+
+h1 {
+  font-size: 30px;
+  background-color: blue;
+  width: 200px;
+  height: 300px;
+}
+
+	> if we check the Live Server, we can see the changes that properties have made.
+	> these measurement DOES NOT depend on anything (whether its parent or root measurement)
+	> when we change the browser size, the measurement of h1 will NOT CHANGE.
+
+
+
+II. RELATIVE VALUES (percent values)
+
+5. Clean the index.html body and styles.css body
+
+
+6. Inside the index.html body, add the following
+	a. div with class "outer"
+	b. inside the outer div, add another div with class "inner"
+
+INSIDE index.html body
+
+  <body>
+    <div class="outer">
+      <div class="inner"></div>
+    </div>
+  </body>
+
+
+
+
+7. Inside the styles.css, modify the inner class
+	> width to 50%
+	> height to 50%
+	> background to red
+
+INSIDE styles.css
+
+.inner{
+  width: 50%;
+  height: 50%;
+  background: red;
+}
+
+	> if we observe the Live Server, we can see nothing. the css file didnt take effect in the webpage
+
+
+
+
+8. Modify the outer class in the styles.css
+	> width to 500px
+	> height to 500px
+	> background to blue
+
+INSIDE styles.css
+
+.outer{
+  width: 500px;
+  height: 500px;
+  background: blue;
+}
+
+	> now in Live Server, we can see the div with outer class with blue color
+	> inside the outer div, we can see the inner div whose width and height is 50% of the outer div
+	
+
+
+
+III. em unit
+
+9. Clean the index.html body and styles.css 
+
+
+10. Add the following inside index.html body
+	> two h3 elements
+		- one with class "absolute"
+		- one with class "relative"
+
+INSIDE index.html body
+
+  <body>
+    <h3 class="relative">relative</h3>
+    <h3 class="absolute">absolute</h3>
+  </body>
+
+
+
+11. Inside the styles.css, add class selectors
+	> relative
+		- font-size to 2em
+	> absolute
+		- font-size to 32px
+
+INSIDE styles.css
+
+.relative{
+  font-size: 2em;
+}
+.absolute{
+  font-size: 32px;
+}
+
+	> in Live Server, we can see the two h3 element having the same size
+	> this is because the base size of the <body> tag (which is h3's parent) is 16px
+		- with this, the final size of h3 with "relative" class is 32px (2em x 16px/em)
+
+
+
+12. Change font-size setting in the browser
+	> go to Settings -> Appearance -> Font size
+	> change it from the default one to Very Large
+	> now, if we check the Live Server, we can see that the relative h3 got Bigger than the absolute h3
+	> now change it back to default font-size
+
+
+
+
+13. Add div element inside the body
+	> nest the relative h3 element inside it
+
+INSIDE index.html
+
+    <div>
+      <h3 class="relative">relative</h3>
+    </div>
+    <h3 class="absolute">absolute</h3>
+
+
+
+14. Create CSS rule in styles. css
+	> div where font-size is 10px
+
+INSIDE styles.css
+
+div {
+  font-size: 10px;
+}
+.relative {
+  font-size: 2em;
+}
+.absolute {
+  font-size: 32px;
+}
+
+	> in Live Server, we can see that the relative h3 element has became smaller
+	> this is because the em element based it final size to its parent, which in this case is the div
+
+
+
+
+
+IV. rem unit
+
+15. Change the font-size of the relative h3
+	> from 2em to 2rem
+
+INSIDE styles.css
+div {
+  font-size: 10px;
+}
+.relative {
+  font-size: 2rem;
+}
+.absolute {
+  font-size: 32px;
+}
+
+	> if we take a look at the Live Server, we can see that the relative h3 font size changed
+	> this is because it doesnt depend on its parent but to root element now (which is <html>)
+	> the <html> properties, if not defined in any css file, will be based on the BROWSER SETTING.
+
+
+
+
+16. Change the font-size settings in the browser
+	> to go there, 
+		SETTINGS -> APPEARANCE -> FONT SIZE
+	> make it bigger from the current settings now
+	> observer the Live Server
+	> we can see that the font-size of Relative h3 have changed, it became bigger
+
+
+
+
+
+V. vh and vw units
+
+17. Clean up the index.html body and styles.css
+
+
+
+18. Inside the index.html body, create the following
+	> div with class of banner
+	> div with class of header
+
+INSIDE index.html
+
+  <body>
+    <div class="banner"></div>
+    <div class="header"></div>
+  </body>
+
+
+
+19. Inside the styles.css, add the following
+	> * (universal selector)
+		margin 0
+		padding 0
+		box-sizing border-box
+	> banner class
+		width 50vw
+		height 50vh
+		background red
+	> header class
+		width 100vw
+		height 100vh
+		background blue
+
+INSIDE styles.css
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.banner{
+    width: 50vw;
+    height: 50vh;
+    background: red;
+}
+.header{
+    width: 100vw;
+    height: 100vh;
+    background: blue;
+}
+
+
+	> using the universal selector css rule, we removed the margin and padding space AND made the element size the same dimensions as its border
+	> now if we observe the Live Server, we can see the the banner div (red) size is EXACTLY 50% of Browser viewing screen while the header div size is exactly 100% of browser viewing screen
+	> changing the browser viewing screen will change the div sizes but it still will be 50% or 100% of viewing size
+
+
+
+
+
+VI. Browser Dev Tools
+
+20. Access the Browser's Dev Tools
+	> to do this, do the following
+		1. Right click in any part of browser screen
+		2. Choose Inspect or Inspect element
+	> with this, we can see the following details
+		a. entire HTML source code
+		b. properties and styles of each element inside browser
+		c. CSS box model of each elements
+		d. Console to see what browser logs
+		e. Network to see what connections the html page makes
+		f. Sources to see all the source files and link connected to the html page
+
+
+
+
+
+VII. calc()
+
+21. Clean the index.html body and styles.css
+
+
+
+22. Inside the index.html body, add the following
+	> two div elements
+		- one is class "navbar", other is class "banner"
+
+INSIDE index.html
+
+  <body>
+    <div class="navbar">this is navbar</div>
+    <div class="banner"></div>
+  </body>
+
+
+
+
+23. Reset the default margin of the element
+	> use universal selector *
+		- margin to 0
+
+INSIDE styles.css
+
+*{
+    margin: 0;
+}
+
+
+
+
+24. Modify navbar and banner class
+	> navbar
+		background to blue
+		height to 100px
+		color white
+		font-size to 3rem
+	> banner
+		background to red
+		min-height to 100vh
+
+INSIDE styles.css
+
+*{
+    margin: 0;
+}
+.navbar{
+    background: red;
+    height: 100px;
+    color: white;
+    font-size: 3rem;
+}
+.banner{
+    background: blue;
+    min-height: 100vh;
+}
+
+	> now if we observe the Live Server, we can see that we would need to scroll down just to see the entirety of banner
+	> our goal is to show the entire banner with the navbar div
+	> to do this, we will use calc()
+
+
+
+25. Use calc() to determine the height of banner needed to fit both navbar and banner in one screen
+	> change min-height of banner class to be difference of 100vh and the height of navbar (100px)
+
+INSIDE styles.css
+
+.banner{
+    background: blue;
+    min-height: calc(100vh - 100px);
+}
+
+	> now, both the banner and navbar fit in the screen and we dont need to scroll down to see the entire banner
+	

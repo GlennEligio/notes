@@ -1,0 +1,117 @@
+5 CORE CONCEPTS IN SPRING SECURITY
+
+1. Authentication
+2. Authorization
+3. Principal
+4. Granted Authority
+5. Roles
+
+
+
+1. Authentication
+	> answers the question "Who are you?"
+	> typically uses some user credentials to uniquely identify users
+	> types of Authentication
+		1. Knowledge Based Authentication	
+		2. Possession based authentication
+	> these types of authentication can be combined, creating whats known as MFA or Multi Factor Authentication
+
+Knowledge Based Authentication
+	> authentication based on knowledge that the user have
+	> examples includes:
+		1. Password
+		2. Pin code
+		3. Answer to a secret / personal question
+	> Advantages includes:
+		1. Easy to implement and use
+	> Disvantages includes:
+		1. Not fully safe
+			- can be stolen and used to impersonate as you
+
+Possession based authentication
+	> tries to identify if you possess something that the REAL User should have
+	> examples includes
+		- Phone / Text messages
+		- Key cards and badges
+		- Access token device
+
+MultiFactor Authentication
+	> combination of two or more Authentications
+
+
+2. Authorization
+	> answers the question "Can this user do this?" 
+	> need to Authenticate the User to determine what can it do
+
+EX:
+In a retail store, there are multiple roles:
+	- Clerk
+	- Manager
+	- Store Manager
+Each of these roles can access different parts of the system:
+	> Clerk can access
+		- inventory of the store
+		- price of the store
+	> Manager can access	
+		- Department reports
+	> Store Manager can access
+		- Store reports
+
+
+
+3. Principal
+	> Currently logged in user
+	> Person your identified through the process of Authentication
+	
+Ex: 
+In Google, we can have multiple emails under a single person
+But there's usually just one logged-in user (per request)
+This logged in user is the principal.
+
+
+
+
+4. Granted Authority
+	> permissions defined and given to a specific authorities
+
+EX:
+In the retail store example earlier, the following roles have the permission to do the following
+	> Store Clerk
+		- do checkout
+		- make store announcements
+	> Department Manager
+		- do checkout
+		- make store announcements	
+		- view department financials	
+		- view department inventory
+	> Store Manager
+		- do checkout
+		- make store announcements	
+		- view department financials	
+		- view department inventory
+		- view store financials 
+
+
+
+
+5. Role
+	> group of authorities
+		- authorities defines the actions that one can do
+	> roles are   coarse-grained 
+
+Ex:
+In the retail store example we have earlier
+	> role_store_clerk
+		- do_checkout 
+		- make_store_announcements
+	> role_dept_mgr
+		- do_checkout 
+		- make_store_announcements
+		- view_department_financials
+		- view_department_inventory
+	> role_store_mgr	
+		- do_checkout 
+		- make_store_announcements
+		- view_department_financials
+		- view_department_inventory
+		- view_store_financials	

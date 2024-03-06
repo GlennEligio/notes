@@ -1,0 +1,37 @@
+Task Trying different Promotions
+
+Buy catalog entry X, get additional X at a percentage off
+ > exclusive within same group
+ > applied to the following catentry
+	Widescreen LCD monitor - CAC024_240101
+ > needs 2 items to qualify
+ > additional catalog entries is 3
+ > this means, we need to order 5 (2+3) to get the discount
+ > max redemption limit is 2 for the promo
+ > max redemption for single order is 1
+ > max redemption for single customer is 1
+
+
+Buy and get a fixed amount of discount
+ > exclusive within same group
+ > applied on every item
+ > 4 codes to be generated
+ > min purchase is 100 for 20$ discount
+
+Buy X and get Y free
+ > exclusive within same group
+ > applied on the following item
+	X CAC024_240101
+	Y CAC024_240401
+ > min purchase of X 1
+ > free Y amount 1
+
+Amount off shipping on an order
+ > exclusive within the same group
+ > min purchase is 100
+ > shipping discount is 10
+
+Free gift with an order
+ > exclusive within the same group
+ > min purchase is 100
+ > free item is HME037_370101

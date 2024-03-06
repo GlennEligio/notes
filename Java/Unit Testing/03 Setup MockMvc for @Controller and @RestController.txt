@@ -1,0 +1,120 @@
+Setup MockMvc to Test Spring MVC @Controller and @RestController
+
+Disadvantage of using only UnitTest and Mockito for Unit Testing Controllers
+1. @PathVariable mapping check is not available
+2. Validation for corrent request path url endpoint is non-existent
+3. Serialization / Deserialization of Message payload check cant be tested
+4. Validation of @RequestBody JSON property using @Valid cant be done
+
+
+MockMvc 
+	> provides a way to Mock Mvc Classes @Controller and @RestController
+
+
+Bootstrapping MockMvc into a Test Class
+1. @WebMvcTest
+	> included in Spring Boot Starter Test
+	> annotation that can be used for a Spring MVC Test that focuses only on Spring MVC Components
+	> auto configure a Spring Context containing just enough components that we need to write MVC test
+		- @Controller
+		- @ControllerAdvice
+		- @JsonComponent
+		- GenericConverter
+		- @Filter
+		- WebMvcConfigurer
+		- HandlerMethodArgumentResolver
+	> the following beans will NOT be included
+		- @Component
+		- @Service
+		- @Repository
+	> by default, this annotation will auto-configure Spring Security and MockMvc
+
+
+Annotations used
+@WebMvcTest
+	> included in Spring Boot Starter Test
+	> annotation that can be used for a Spring MVC Test that focuses only on Spring MVC Components
+	> auto configure a Spring Context containing just enough components that we need to write MVC test
+		- @Controller
+		- @ControllerAdvice
+		- @JsonComponent
+		- GenericConverter
+		- @Filter
+		- WebMvcConfigurer
+		- HandlerMethodArgumentResolver
+	> the following beans will NOT be included
+		- @Component
+		- @Service
+		- @Repository
+	> by default, this annotation will auto-configure Spring Security and MockMvc
+
+
+@AutoConfigureMockMvc
+	> added in the same Test Class where we use MockMvc
+	> with this, we can tweak the MockMvc by defining several parameters like
+		- webClientEnabled
+		- addFilters
+		- print
+		- printOnlyOnFailuire
+	> all of these takes boolean as input
+
+
+
+Classes used
+MockMvc
+	> Main entry point for server-side Spring MVC test support
+
+MockMvcBuilders
+	> used to build or manually configure the MockMvc
+	> have the following methods
+		1. webAppContextSetup()
+		2. standaloneSetup()
+		3. apply()
+		4. build()
+
+webAppContextSetup(WebApplicationContext context)
+	> Build a MockMvc instance using the given, fully initialized (i.e., refreshed) WebApplicationContext.
+	> The DispatcherServlet will use the context to discover Spring MVC infrastructure and application controllers in it. 
+	> The context must have been configured with a ServletContext
+	> RETURNS a DefaultMockMvcBuilder object
+
+
+standaloneSetup(Object... controllers)
+	> Build a MockMvc instance by registering one or more @Controller instances and configuring Spring MVC infrastructure programmatically.
+
+
+apply(MockMvcConfigurer configurer)
+	> takes a MockMvcConfigurer
+	> the configurer will then be applied to the MockMvc created by either webAppContextSetup() or standaloneSetup() method
+	> we can pass SecurityMockMvcConfigurers.springSecurity() from Spring Security Test into this to apply Spring Security
+
+
+build()
+	> used to finalize the MockMvcBuilder
+	> returns MockMvc
+
+
+
+
+Steps
+1. Define a Test Class
+2. Annotate with @WebMvcTest()
+	-> pass the @Controller class that you want to Unit Test
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+}
+
+3. Add MockMvc into the Test Class
+	> either
+		- @Autowire the MockMvc
+
+4. Tweak the MockMvc
+	> either
+		- @AutoConfigureMockMvc in the Test Class
+		- use MockMvcBuilders class
+			-> only applicable if we DID NOT @Autowired the MockMvc
+			-> can be done on two ways
+				a. using webAppContextSetup()
+				b. using standaloneSetup()
+		

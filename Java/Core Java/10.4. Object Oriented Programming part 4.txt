@@ -1,0 +1,43 @@
+Object Oriented Programming part 4
+includes
+1. Null keyword
+2. Final keyword
+
+package com.glenneligio.oop3;
+
+public class Main {
+    public static void main(String[] args) {
+
+        /*
+        null value, value of nothing, and will give NullPointerException error if the
+        variable with null value is used.
+        variable with null values cant be used
+         */
+
+        
+//        Car mercedes = null;
+//        if (mercedes != null){
+//            mercedes.getName();
+//        }else{
+//            System.out.println("The car was null.");
+//        }
+        
+        /*
+            final keyword, will make the value of the variable unchangeable
+            Syntax:
+                final dataType dataName = value;
+         */
+
+        final int a = 5;
+        a = a +1;
+        
+        final Engine engine = new Engine ("Renault", 8000);
+        /*
+         if final is used in an object, you cannot change the whole instance of
+         the object
+         but you can change the values of the properties (instance fields and methods)
+         */
+        engine = new Engine
+        
+    }
+}

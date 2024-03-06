@@ -1,0 +1,80 @@
+08 Query Rules - User Query Interpretation
+
+Query Rules - User Query Interpretation
+ > with Query Rules, we can interpret the user search query into another action to the search result
+ > here are some of the example
+	1. Showing cellphone instead of old phones when user searches for "phones"
+	2. Showing headphones with price below $100 when user add "cheap" on top of "headphone" search query
+	3. Showing headphones with ratings of 5 star when user add "best" on top of "headphone"
+	
+	
+	
+Showing cellphone instead of old phones when user searches for "phones"
+1. Go to Indices panel
+2. Go to Query rules
+3. Add a new Query rules
+4. In the Condition
+	> set condition to "Contains"
+	> pass "phone"
+	> leave Context as is
+5. In the Consequences
+	> add new Consequence
+	> select Add Query Parameter
+	> pass the following json for query parameter
+		- {"optionalFilters":"categories:Cell Phones"}
+		- this will put the Algolia index record with attribute of "categories" equals to "Cell Phones" to the top of search result
+6. Save the Query rule
+7. With this, whenever we search in Algolia API with query keyword of "phone", we will see the Cell phones on top first
+
+
+
+Showing headphones with price below $100 when user add "cheap" on top of "headphone" search query
+1. Go to Indices panel
+2. Go to Query rules
+3. Add a new Query rules
+4. In the Condition
+	> set condition to "Contains"
+	> pass "cheap"
+	> leave Context as is
+5. In the Consequences
+	> add two Consequence
+		1. One to use the query keyword cheap to create filter
+		2. One to remove the "cheap" since there will be no matches if its present
+	> select Add Query Parameter
+	> pass the following json for query parameter
+		- {"filters":"price < 100"}
+		- this will put the Algolia index record with attribute of "price" less than 100 to the top of search result
+	> add ANOTHER Consequence
+	> select Remove word
+	> pass "cheap" as the word to remove
+6. Save the Query rule
+7. With this, whenever we search in Algolia API with query keyword of "cheap" (ex: cheap headphone), we will see headphones whose price is less than 100
+
+
+
+Showing headphones with ratings of 5 star when user add "best" on top of "headphone"
+1. Go to Indices panel
+2. Go to Query rules
+3. Add a new Query rules
+4. In the Condition
+	> set condition to "Contains"
+	> pass "best"
+	> leave Context as is
+5. In the Consequences
+	> add two Consequences
+		1. One to use the query keyword "best" to create filter
+		2. One to remove the "cheap" since there will be no matches if its present
+	> select Add Query Parameter
+	> pass the following json for query parameter
+		- {"filters":"rating = 5"}
+		- this will put the Algolia index record with attribute of "rating" equal to 5 to the top of search result
+	> add ANOTHER Consequence
+	> select Remove word
+	> pass "best" to the word to remove
+6. Save the Query rule
+7. With this, whenever we search in Algolia API with query keyword of "best" (ex: cheap headphone), we will see headphones whose rating is equal to 5
+
+
+NOTE:
+1. If there are two more Query rules in the Algolia index, they will get applied on top of each other, assumming that a Condition triggers both of the Query rules
+	> ex: "best cheap headphone" will trigger the 2nd and 3rd query rule we created

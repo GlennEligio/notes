@@ -1,0 +1,32 @@
+@After advice
+	> similar function to finally block
+	> will run the advice REGARDLESS of method's outcome/exceptions
+	> will be executed AFTER the @AfterThrowing and @AfterReturning
+	> like @Before, we can only pass the pointcut expression to the annotation
+
+
+USE CASES
+1. Log the exception and/or perform auditing
+2. To put codes to run regardless of method outcome
+3. Encapsulate this functionality in AOP aspect for easy reuse
+
+
+@After Advice Tips
+
+1. The @After advice does not have access to the exception
+	> if you need exception, the use @AfterThrowing advice
+2. The @After advice should be able to run in the case of success or error
+	> Your code should not depend on happy path or an exception
+		- Happy path is a default scenario featuring no exceptional or error conditonal
+	> Logging / auditing is the easiest case here
+
+
+
+EX:
+
+	@After("execution(* com.dao.AccountDAO.findAccounts(..))")
+	public void afterFinallyFindAccountAdvice(JoinPoint theJoinPoint) {
+		// print out which method we are advising on
+		String method = theJoinPoint.getSignature().toShortString();
+		System.out.println("\n=====>>> Executing @After (finally) on method: " + method);
+	}

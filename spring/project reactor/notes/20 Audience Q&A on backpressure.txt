@@ -1,0 +1,8 @@
+20 Audience Q&A on backpressure
+
+NOTES:
+1. request() is not a PULL signal, instead its more like a OK signal to the Reactive source to send an item
+2. When we block a Mono or Flux to fetch the resulting Item/Array of Item, theres a chance that we might get a NULL
+3. No concept of backpressure control in Mono
+4. We have an option to control whether we will process the item or not
+	> we will do this by defining conditional to hookOnNext() or the Consumer<T> itemConsumer of the Subscriber

@@ -1,0 +1,81 @@
+Queue
+	> follows a FIFO approach
+		- means that it orders the elements in First In First Out manner
+	> the first element is removed first and last element is removed in the end
+	> to create a Queue object, you will need to create an instance of one of its IMPLEMENTATIONS	
+		
+		Queue<Integer> q = new LinkedList<>();
+
+	> some of the methods include:
+
+		boolean 	add(object)
+		Object 		remove()
+		Object 		element()
+		Object 		peek()
+		boolean 	offer(object)
+		Object 		poll()
+
+STRUCTURE OF QUEUE
+
+	(Front) 0th 1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th (Rear)
+
+
+Peeking
+	> Obtaining the head of Queue
+
+Polling
+	> remove the head of Queue
+
+
+PriorityQueue
+	> one of the implementation of Queue Interface
+	> SORTS the element in ASCENDING order
+	> ex: if elements added are , the elements in Priority will be in the order of 
+
+Queue 		(FRONT) 10 1 3 2 5 4 6 7 9 8 (REAR)
+PriorityQueue 	(FRONT) 1 2 3 4 5 6 7 8 9 10 (rear)
+
+
+
+1. Create another class
+	> QueueDemo name
+
+
+2. Inside the main(), do the following
+	> create an Instance of PriorityQueue of type Integer
+	> using for loop with 10 as starting, populate the Priority Queue using add() and passing iterator
+	> print the current size of the Queue using size()
+	> print the head of the PriorityQueue using peek()
+	> call a poll() in the PriorityQueue to remove the head value one time
+	> print the new size of PriorityQueue
+	> do a peek() again to see the new head
+
+INSIDE main()
+
+	public static void main(String[] args) {
+		
+		PriorityQueue<Integer> queue = new PriorityQueue<Integer>();
+		
+		for(int i=10; i>0; i--){
+			queue.add(i);
+		}
+		
+		System.out.println("Queue size: " + queue.size());
+		System.out.println("Head: " + queue.peek());
+		
+		queue.poll();
+		System.out.println("Queue size after polling: " + queue.size());
+		System.out.println("New Head: " + queue.peek());
+	}
+
+
+3. Run main()
+	> as we can see, the queue size starts at 10 and the current head is 1
+	> but after the polling, the size is reduced by 1 and the new head is 2
+
+Queue size: 10
+Head: 1
+Queue size after polling: 9
+New Head: 2
+
+

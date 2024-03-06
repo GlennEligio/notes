@@ -1,0 +1,70 @@
+start
+objective
+part 1 intro
+get name and age
+show user organ options
+
+prompt1
+Name: name
+Age: age
+Choose an option:
+	1. Left eye
+	2. Right eye
+	3. Heart
+	4. Stomach
+	5. Skin
+	6. Quit
+
+choosing a number option outside 1-6 will be the same as choosing 6
+
+if left eye is choosen, this prompt will show
+prompt2
+Name: Left eye
+Medical Condition: Short sighted
+Color: Blue
+	1. Close the Eye
+
+if 1 is chosen, a message "Left eye closed" will show
+choosing a number beside 1 will bring the user to prompt1
+
+if right eye is chosen, this prompt will show
+prompt3
+Name: Right
+Medical Condition: Normal
+Color: Blue
+	1. Close the Eye
+
+if 1 is chosen, a message "Right eye closed" will show
+again, choosing a number outside 1 will bring the user to prompt1
+
+if heart is chosen
+prompt4
+Name: Heart
+Medical Condition: Normal
+Heart rate: 65
+	1. Change the heart rate
+
+if 1 is chosen, a message will show "Enter the new heart rate: ", then the program will scan for input new heart rate
+after inputting new heart rate value, message "Heart rate changed to: heartRateValue"  will show, then user will be put back in prompt1
+again, choosing a number outside 1 will bring the user to prompt1
+
+if stomach is chose
+prompt5
+Name: Stomach
+Medical Condition: PUD
+Need to be fed
+	1. Digest
+
+choosing 1, message "Digesting being...." will show
+again, choosing a number outside 1 will bring the user to prompt1
+
+if skin is chosen
+prompt6
+Name: Skin
+Medical Condition: Burned
+
+after the prompt is shown, user will be brougth back to prompt1
+
+cho
+
+

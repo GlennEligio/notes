@@ -1,0 +1,27 @@
+Section 31: Terraform Introduction
+
+169. Course Introduction
+
+Objectives
+1. Introduction to IaC
+2. Types of IaC Tools
+3. Why Terraform?
+	- Role of Terraform in IT infrastructure
+4. HCL (HashiCorp Configuration Language) Basics
+	- includes Labs for practicing HCL language
+5. Provision, Update and Destroy
+6. Providers
+7. Input Variables
+8. Output Variables
+9. Resources Attributes
+10. Resource Dependencies
+
+11. Terraform State
+12. Terraform Commands
+13. Mutable vs Immutable infrastructure
+14. LifeCycle Rules in Terraform
+15. Datasources
+16. Meta-Arguments
+17. count
+18. for-each
+19. Version Constraints in Terraform

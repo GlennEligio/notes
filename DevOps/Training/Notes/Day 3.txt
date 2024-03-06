@@ -1,0 +1,273 @@
+Day 3
+
+Connecting to VM labs (3 Ubuntu and 1 CentOS)
+
+1. Fetch the Ubuntu Server public IP
+	> Note: public IP changes daily
+2. Fetch the Ubuntu Server login username and password in Lab Control Panel
+2. Pass the following in MobaXterm
+	a. public IP to Remote Host
+	b. Ubuntu Login username to username
+	c. 22 to Port
+4. When prompted with entering password, use the Login Password in Lab Control Panel
+
+
+
+
+Configuration Management
+Types
+1. Push based Model
+	> example is Ansible, Terraform
+	> Master Server pushes configuration scripts to the Client Server
+2. Pull based Model
+	> Client pulls configscripts from the Master Server
+	> exmaple is Puppet
+
+
+
+Idempotency
+	> scenario where desired state is equal to current state
+
+Understanding idempotency
+	> the ability to repeatedly apply a manifest to guarantee a desired resource state on a system, with the same results every time.
+	> If the given resource is already in the desired state, 
+
+
+
+Puppet's architecture overview
+	> you can configure systems with Puppet either in a client-server architecture, using the Puppet agent and Puppet master applications, or in a stand-alone architecture, using the Puppet apply application
+	> for Pupper agent and master application
+		- Puppet master application are install in Master Server
+		- Puppet agent application are installed in Client Server
+	> for Puppet apply application
+		- Puppet apply application is installed in a Central Server
+
+
+Puppet Master-Agent Architecture
+	> composed of two parts
+		1. Master
+		2. Managed Nodes / Clients
+	> these two communicates with each other using SSL certificates
+
+Master
+	> composed of the following
+		1. Puppet Server
+			- accepts the ConfigScript request
+		2. Certificate Authority
+			- determines if the Client that sent request are AUTHORIZE to request and receive the ConfigScript
+		3. PuppetDB
+			- contains information about the cluster
+			- cluster means collection of server or machine information
+
+Managed Nodes 
+	> composed of the following
+		1. Puppet Agent
+			> a software needs to be installed in Node
+			> connected to the Master Server
+			> responsible for executing the catalog or configscript
+		2. Factor
+			- describe the current state of the Managed Node
+			- indicates the OS, Ram, CPU, (configuration info for short)
+
+
+Communication Process
+I. MANAGED NODES -> MASTER
+1. Node sends factors to the Master
+	> the request composed of script called Manifest Script
+2. Master will create a Catalog
+	> Catalog is a document
+		- contains complete information to be executed in the ManageNodes
+		- akin to a Config Script i guess?
+
+II. MASTER -> MANAGE NODES
+3. The master compiles and returns the node's using the sources of information the master has access to.
+4. The agent applies the catalog to the node by checking each resource the catalog describes
+
+III. MANAGED NODES -> MASTER
+5. The agent sends a report back to the master
+
+
+
+
+PUPPET DEMONSTRATION
+1. Open two Ubuntu Server
+2. Go to Root User to both server
+	sudo su
+IN UBUNTU SERVER 1 PUPPET MASTER
+3. Install wget
+	apt install wget
+4. Download puppet using wget
+	wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+5. Depackage puppet we downloaded
+	sudo dpkg -i puppet-release-bionic.deb
+6. Update the machine
+	sudo apt-get update
+7. Install the puppet master inside it
+	sudo apt-get install puppet-master
+8. Check status of installation
+	sudo systemctl status puppet-master.service
+9. Edit puppet-master using nano and add the following line
+	sudo nano /etc/default/puppet-master
+10. Restart puppet master
+	sudo systemctl restart puppet-master
+11. Allow port 8140 tcp
+	sudo ufw allow 8140/tcp
+12. Add private ip address in hosts and add " puppet" after the ip address
+	vi /etc/hosts
+
+
+Installing Puppet Agent
+1. 
+
+
+
+Puppet Policy file (.pp)
+	> extension for creating puppet policy file
+	> inside a Puppet Policy file, we can define the changes we can make inside {}
+	> ex: we can 
+	> uses DSL language (doman specific language)
+
+node default {}
+	> stands for the node that can access the script
+	> inside the {} contains the script to run
+
+
+Resource type
+	> Resources refers to the configuration states that we want to modify with .pp file
+	> there are many types of resource types like:
+		1. file
+		2. package
+
+EX:
+package {'nginx':
+ensure => installed,
+}
+
+
+
+package
+	> used for managaking packages in the Node / Puppet Agent
+	> have the following attributes
+		a. ensure
+			= check the status of package in Client / Node
+
+file
+	> Manages files, including their content, ownership, and permissions.
+	> have the following attributes
+		a. ensure
+			= check the status of file
+			= can have following value
+				1. present, the file must be present
+		b. content
+			= defines the content of the file resource
+			= NOTE: if content is defined, ensure => 'present' can be omitted
+
+ex:
+node default {
+        file { '/tmp/1.txt':
+        ensure => present,
+        }
+ }
+
+
+
+
+/etc/puppet/puppet.conf
+	> contains configuration settings for the Puppet Agent
+	> we can change the values of configure settings like
+		
+
+runinterval
+	> defines the time interval for each "puppet agent -t"
+
+			
+
+EX:
+inside puppet.conf
+
+[main]
+ssldir = /var/lib/puppet/ssl
+
+[master]
+vardir = /var/lib/puppet
+cadir  = /var/lib/puppet/ssl/ca
+dns_alt_names = puppet
+
+[agent]
+runinterval = 1m
+
+
+
+PUPPET COOKBOOK
+	> a cheatsheet for the Puppet node command script
+
+	https://www.puppetcookbook.com/posts/creating-a-directory.html
+
+
+
+
+PUPPET CLASSES
+	> used to group up scripts to execute in node / puppet agents
+	> inside the class contains the scripts to execute to modify resources
+	> it can also take parameters
+
+Creating a class
+class className ($param1, $param2){
+	resource { 'resourceName':
+		attribute => $param1
+		attribute2 => $param2
+	}
+}
+
+
+Including a class inside node script with NO PARAMETERS
+
+node nodeName {
+	include 'className'
+}
+
+
+Including a class inside node script WITH PARAMETERS
+
+node nodeName {
+	class { 'className':
+		param1 => 'value'
+	}
+}
+
+
+PUPPET FORGE
+	> website for ready made solutions 
+	> contains puppet modules for easy installation
+
+	https://forge.puppet.com/
+
+EX: CLI command for puppet module of apache
+
+puppet module install puppetlabs-apache --version 7.0.0
+
+
+
+
+Puppet Module
+	> used to group up several .pp files
+	> when using a Puppet module, it will first call the init.pp file inside the <module-name>/manifest folder
+
+
+Including a puppet module in a node {}
+
+
+
+Creating Node module
+
+puppet module generate <module-name>
+	> this will create a module with specified name
+	> the CLI will then ask for further informations for module to generate like
+		- author
+		- 
+
+
+
+
+
+

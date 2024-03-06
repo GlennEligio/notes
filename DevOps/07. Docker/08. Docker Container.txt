@@ -1,0 +1,125 @@
+08. Docker Container
+
+
+Docker Container
+	> Docker Containers are used to deploy Applications (like Microservices, WebApp, DbApp, etc)
+	> A container is a standard unit of software that packages up code and all its dependencies so that application runs QUICKLY and reliably from one computing environment to another
+
+
+
+Docker Container related commands
+
+docker container --help
+	> shows informations related to the "docker container" commands
+
+docker container run <REPOSITORY>
+	> runs a Docker container with the Repository/Name specified
+
+docker container run -it <REPOSITORY>
+	> "-it" run the docker with interactive terminal
+		- Keep STDIN open even if not attached
+	> runs a Container in Attached mode
+	> by default, container runs in the foreground
+		- with this, we cant return to our shell prompt until the process
+
+docker container run -it -d <REPOSITORY>
+	> "-d" runs the Docker Container in DETACHED mode	
+		- DETACHED MODE means Container is running in background
+		- normally used with -it flag to keep the STDIN open even if not attached
+
+docker container run -p {HostPort}:{ContainerPort} <REPOSITORY>
+	> "-p" maps the Container's Port to a specific Host's Port
+		- with this, we can send request from outside docker0 bridge network to the Container inside it
+
+docker container run -it --name <NAME> -d <REPOSITORY>
+	> "--name" is used to assign a name to the Docker container
+	> runs a Container with a NAME
+		- we can then use this name in place of Docker Container ID to do stuff like stop, pause, unpause, restart, kill, etc
+	> if we dont assign a name to the Docker Container, Docker will assign some random name to the container
+
+docker container run -m <MEMORY> -d -t --name <NAME> <REPOSITORY>
+	> "-m" is used to define the Memory resources to be allocated
+		- ex: "-m 8m" will allocate 8mb worth of memory to the container
+
+docker container run -c <CPU> -d -it --name <NAME> <REPOSITORY>
+	> "-c" is used to define the CPU resources to be allocated to the container
+		- ex: "-c 615" will provide 615Mhz cpu resource
+
+docker container update <PROP1> <VALUE1> <container name>
+	> used to update a specification of a Docker Container
+	  	- ex: docker container update -m 16m web1		
+			= this will update memory allocation of web1 Docker Container
+
+docker stats <NAME or ID>
+	> "stats" is used to show statistics of a Docker Container
+
+docker inspect <NAME OR ID>
+	> "inspect" is used to inspect the resources of a Docker Container
+
+docker logs <NAME or ID>
+	> "logs" is used to see the console logs written inside Docker Container
+
+docker ps
+	> used to show running Docker Containers
+
+docker ps -all
+	> used to all Docker Containers (running or not)
+
+docker container ls --all
+	> same as "docker ps", but uses Docker Management Command
+
+docker exec -it <NAME or ID> bash
+	> used the enter the Docker Container's terminal
+	> when inside Docker Container, we can type "exit" to exit the Docker Container and go back to Host machine container
+
+docker stop <NAME or ID>
+	> used to stop a Container
+	> will give Exited(0) on Status
+
+docker start <NAME or ID>
+	> used to start a Docker Container
+
+docker restart <NAME or ID>
+	> used to restart the Docker Container
+	> will reset the Started time
+
+docker pause <NAME or ID>
+	> used to pause the Docker Container
+
+docker unpause <NAME or ID>
+	> use to unpause the Docker Container
+	> will NOT RESET the Started time of Container
+
+docker kill <NAME or ID>
+	> used to KILL a Container
+	> this will forcefully stop the Container and give a Exited(137) in Status
+
+docker rm <NAME>
+	> used to remove a STOPPED container
+
+docker rm -f <NAME>
+	> used to forcefully remove a Container
+	> will also give a Exited(137)
+
+docker rm -f $(docker ps -a -q)
+	> used to remove all containers forcefully
+	> we can inject Docker command output inside another Docker command
+	> NOTE: if no Containers is running, injected command will have no value and will give error to the parent command
+
+docker containers prune -f
+	> used to remove all containers
+	> better than command above
+
+docker container run -it --name <NAME> -p <HOST PORT>:<CONTAINER PORT> -d <REPOSITORY>
+	> "-p" is used to specify the Port Mapping/Forwarding of the Host machine and Container
+	> sending request in the specified Host Port will FORWARD the said request to the Container port
+
+docker cp <SOURCE IN HOST> <DESTINATION IN CONTAINER>
+	> "cp" command is used to copy a specific file in local machine to container's directory
+	> EX: docker cp myapp.html webserver:/var/www/html/
+		- in example above, myapp.html in local machine is copied in webserver Container's /var/www/html
+
+
+
+SOURCE:
+http://www.devopsworld.co.in/p/docker-containers.html

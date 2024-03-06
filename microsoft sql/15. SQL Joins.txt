@@ -1,0 +1,119 @@
+JOINS
+	> JOINS in SQL are commands which are used to combine rows from two or more tables, based on a related column between those tables
+	> They are predominantly used when a user is trying to extract data from tables which have one-to-many or many-to-many relationship between them
+
+TYPES OF JOINS
+1. Inner Join
+	> returns a record that have matching values in both table
+2. Left Join
+	> returns a record from left table and also record from right table that satisfies the condition
+3. Right Join
+	> returns a record from right table and also record from left table that satisfies the condition
+4. Full Outer Join
+	> returns records that have a match from both left and right table
+
+
+To demonstrate these JOIN queries, lets CREATE a TABLE.
+
+CREATE TABLE Subjects
+(
+SubjectsID int,
+StudentID int,
+SubjectName varchar(8000)
+);
+
+And INSERT it with data
+
+INSERT INTO Subjects VALUES ('11', '1', 'Maths');
+INSERT INTO Subjects VALUES ('2', '3', 'Physics');
+INSERT INTO Subjects VALUES ('3', '6', 'Chemistry');
+INSERT INTO Subjects VALUES ('5', '4', 'Religion');
+INSERT INTO Subjects VALUES ('4', '8', 'Science');
+INSERT INTO Subjects VALUES ('8', '9', 'PhysEd');
+
+Now lets do the following types of JOINS
+
+INNER JOIN
+
+SELECT Subjects.SubjectID, StudentsInfo.StudentName
+FROM Subjects	<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< LEFT TABLE
+INNER JOIN
+StudentsInfo	<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< RIGHT TABLE
+ON Subjects.StudentsID = StudentsInfo.StudentID;
+
+Here, we first fetch the Subjects table, then we INNER JOIN it to the StudentsInfo, wherein we JOINED the rows the both Subjects and StudentsInfo that have matching values ON their StudentID columns. Only those rows that have matching values ON rows specified in ON query will be shown in the final result. And lastly from the result table, we only SELECTED the SubjectID from SubjectsTable, and StudentName from StudentsInfo.
+
+SubjectsID	StudentName
+11		John Glenn
+2		Roberth
+5		Jomar
+3		Eric
+
+
+LEFT JOIN
+
+SELECT Subjects.SubjectsID, StudentsInfo.StudentName
+FROM StudentsInfo
+LEFT JOIN
+Subjects
+ON StudentsInfo.StudentID = Subjects.StudentID;
+
+Here, we interchanged what if left table and right table. In this case, the StudentsInfo is the left table and the Subjects in right. Since we used LEFT JOIN, not only we will get the rows from StudentsInfo and Subjects table whose rows have matching values ON StudentID column, we will also include the rows from LEFT TABLE (which is the StudentsInfo) from the list that doesn't have matching rows in Subjects table.
+
+SubjectsID	StudentName
+11		John Glenn
+2		Roberth
+5		Jomar
+NULL		Ade			<< Rows in StudentInfo that doesn't have match in Subjects table
+3		Eric
+NULL		Jerome			<< Same with Ade
+
+
+RIGHT JOIN
+
+SELECT Subjects.SubjectsID, StudentsInfo.StudentName
+FROM StudentsInfo
+RIGHT JOIN
+Subjects
+ON StudentsInfo.StudentID = Subjects.StudentID;
+
+Here, that resulting table will include rows from LEFT and RIGHT table, but also that rows in RIGHT TABLE (which is the Subjects table) that doesn't have matching StudentID value in StudentsInfo rows. 
+
+SubjectsID	StudentName
+11		John Glenn
+2		Roberth
+3		Eric
+5		Jomar
+4		NULL		<< rows from Subjects that doesnt have matching StudentID
+8		NULL		<< same as above
+
+
+FULL OUTER JOIN
+
+SELECT Subjects.SubjectsID, StudentsInfo.StudentName
+FROM StudentsInfo
+FULL OUTER JOIN
+Subjects
+ON StudentsInfo.StudentID = Subjects.StudentID;
+
+With FULL OUTER JOIN, we will included all the rows from both LEFT and RIGHT table. Which includes:
+> ROWS from LEFT and RIGHT table whose column values in ON query matches
+> ROWS from LEFT that doesnt have matching column values from RIGHT
+> ROWS from RIGHT that doesnt have matching column values from LEFT
+
+11	John Glenn
+2	Roberth
+5	Jomar
+NULL	Ade
+3	Eric
+NULL	Jerome
+4	NULL
+8	NULL
+
+
+
+
+
+
+
+

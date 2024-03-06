@@ -1,0 +1,94 @@
+05. FilterStreams
+
+
+FilterStream
+	> subclass of  
+	> add Filter mechanism to its "underlying" Stream
+	> in other words, it will do some processing to the bytes in the stream
+		-> process input data BEFORE going to InputStream
+		-> process output data BEFORE going to OutputStream
+	> composed of two parts
+		1. FilterInputStream
+		2. FilterOutputStream	
+	> NOTE: FilterStream is the same as any other Streams
+	> NOTE: We typically dont create an instance of either FilterInputStream or FilterOutputStream, instead we create instance of one of its subclasses
+
+
+
+FilterInputStream
+	> Filter input streams
+	> Alter data FROM the underlying stream before it reaches the program
+	> Constructor is FilterInputStream(InputStream in)
+		- InputStream in represents the "underlying" stream to be filtered from a source before it reaches the program
+
+FilterOutputStream
+	> Filter output streams
+	> Alter the data before it goes to the underlying stream
+	> Constructor is FilterOutputStream(OutputStream out)
+		- OutputStream out represents the "underlying" stream to be filtered before it writes the data in some destination
+
+
+FilterStream Data Flow
+
+For FilterInputStream
+	> hard disk may be read using FileInputStream, which will then be passed in FilterInputStream's constructor
+
+Hard Disk (source)  ----- data -----> Filter ----- altered data ----> Program
+
+
+
+For FilterOutputStream
+	> hard disk may be written using FileOutputStream, which will then be passed in FilterOutputStream's constructor
+
+Program	---- data ----> Filter ---- altered data ----> Hard Disk
+	
+
+
+
+Usage
+I. Creating FilterStream using one of default implementations
+	> the parameters of both FilterInputStream and FilterOutputStream are the "underlying" stream, AKA the stream the filter is connected to
+	> we can pass any subclass of both InputStream and OutputStream
+
+EX: 
+FilterInputStream(InputStream in)
+FilterOutputStream(OutputStream out)
+
+
+
+II. Creating FilterStream custom implementation
+1. Create a Class
+2. Extend to FilterInputStream or FilterOutputStream
+3. Create a constructor matching super
+4. Override the methods of FilterStream classes
+5. Inside the methods, do the filtering process
+	
+EX:
+NumberFilterOutputStream functionality
+	> "filter" the bytes that is not a number
+		-> only accepts bytes whose number is between 48 and 57
+		-> in ASCII, these range represent the Arabic Numerals (0-9)
+		-> we can see this in the overriden write(int b) method
+
+public class NumberFilterOutputStream extends FilterOutputStream {
+    
+    public CustomFilterOutputStream(OutputStream out) {
+        super(out);
+    }
+
+    @Override
+    public void write(int b) throws IOException {
+        if(b>=48 && b<=57){
+            super.write(b); // super.write() refers to the underlying stream's write()
+        } else {
+            super.write(63);
+        }
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        for (int i = off; i < off+len; i++){
+            this.write(i);  // this.write() refers to this CustomFilterOutputStream's write()
+        }
+    }
+}

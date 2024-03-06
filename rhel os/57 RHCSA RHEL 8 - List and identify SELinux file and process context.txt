@@ -1,0 +1,81 @@
+57 RHCSA RHEL 8 - List and identify SELinux file and process context
+
+
+SELinux file and process context
+ > SELinux had a large number of the contexts already defined, for example the type context is defined for already for processes such as ssh.
+
+Context syntax:
+user:role:contexttype:level
+
+ex:
+$ ls -Z file1
+-rw-rw-r--  user1 group1 unconfined_u:object_r:user_home_t:s0 file1
+
+
+Viewing the file/process context
+ > for file context, use "ls -Z"
+ > for process context, use "ps -Zaux" or "ps -Z"
+ > for own user context, use "id -Z"
+
+
+
+/etc/selinux/targeted/contexts
+ > directory that contains all the context
+ > inside, we can see the "files/" and "users/" directory, which corresponds to file and users context
+
+
+
+Commands
+ls -Z
+ > list all the files and folder, alongside their context
+ > ex: 
+	$ ls -Z
+
+Output:
+ unconfined_u:object_r:user_home_t:s0  Desktop
+ unconfined_u:object_r:user_home_t:s0  Documents
+ unconfined_u:object_r:user_home_t:s0  Downloads
+unconfined_u:object_r:audio_home_t:s0  Music
+ unconfined_u:object_r:user_home_t:s0  Pictures
+ unconfined_u:object_r:user_home_t:s0  Public
+ unconfined_u:object_r:user_home_t:s0 'systemctl start tuned'
+ unconfined_u:object_r:user_home_t:s0  Templates
+ unconfined_u:object_r:user_home_t:s0  test2.txt
+ unconfined_u:object_r:user_home_t:s0  Videos
+ unconfined_u:object_r:user_home_t:s0  vi-file
+
+
+ps [-Zaux | -Z]
+ > list all processes alongside their context
+ > options:
+	-Z		list all current process just for this shell with their context
+	-Zaux		list all processes running on the system with their context
+ > ex:
+	ps -Zaux
+	ps -Z
+
+ex:
+$ ps -Z
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 3761 pts/0 00:00:00 bash
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 29097 pts/0 00:00:00 ps
+
+
+$ ps -Zaux; portion of the output since its ways too long
+system_u:system_r:fsdaemon_t:s0 root         968  0.0  0.1  50696  5996 ?        Ss   15:03   0:00 /usr/sbin/smartd -n -q never
+system_u:system_r:chronyd_t:s0  chrony       986  0.0  0.1 151160  4568 ?        S    15:03   0:00 /usr/sbin/chronyd
+system_u:system_r:avahi_t:s0    avahi       1000  0.0  0.0  85228   436 ?        S    15:03   0:00 avahi-daemon: chroot helper
+system_u:system_r:ksmtuned_t:s0 root        1002  0.0  0.0 236040  2632 ?        S    15:03   0:00 /bin/bash /usr/sbin/ksmtuned
+system_u:system_r:abrt_dump_oops_t:s0 root  1009  0.0  0.6 669720 24600 ?        Ss   15:03   0:00 /usr/bin/abrt-dump-journal-xorg -fxtD
+system_u:system_r:abrt_dump_oops_t:s0 root  1010  0.0  0.6 653432 26624 ?        Ss   15:03   0:00 /usr/bin/abrt-dump-journal-oops -fxtD
+system_u:system_r:abrt_dump_oops_t:s0 root  1011  0.0  0.4 636952 18160 ?        Ss   15:03   0:00 /usr/bin/abrt-dump-journal-core -D -T -f -e
+system_u:system_r:sssd_t:s0     root        1012  0.0  0.3 411252 12972 ?        S    15:03   0:00 /usr/libexec/sssd/sssd_be --domain implicit_files --uid 0 --gid
+system_u:system_r:sssd_t:s0     root        1017  0.0  0.9 412388 38532 ?        S    15:03   0:00 /usr/libexec/sssd/sssd_nss --uid 0 --gid 0 --logger=files
+system_u:system_r:firewalld_t:s0 root       1024  0.0  1.0 508352 42704 ?        Ssl  15:03   0:00 /usr/libexec/platform-python -s /usr/sbin/firewalld --nofork --
+system_u:system_r:modemmanager_t:s0 root    1025  0.0  0.3 495716 13596 ?        Ssl  15:03   0:00 /usr/sbin/ModemManager
+system_u:system_r:systemd_logind_t:s0 root  1089  0.0  0.2  92384  9612 ?        Ss   15:03   0:00 /usr/lib/systemd/systemd-logind
+system_u:system_r:accountsd_t:s0 root       1090  0.0  0.2 539204 10352 ?        Ssl  15:03   0:00 /usr/libexec/accounts-daemon
+system_u:system_r:NetworkManager_t:s0 root  1178  0.0  0.5 617960 20996 ?        Ssl  15:03   0:00 /usr/sbin/NetworkManager --no-daemon
+system_u:system_r:tuned_t:s0    root        1186  0.8  0.8 706008 32472 ?        Ssl  15:03   0:18 /usr/libexec/platform-python -Es /usr/sbin/tuned -l -P
+system_u:system_r:cupsd_t:s0-s0:c0.c1023 root 1187 0.0  0.2 351476 10956 ?       Ss   15:03   0:00 /usr/sbin/cupsd -l
+system_u:system_r:sshd_t:s0-s0:c0.c1023 root 1189 0.0  0.1  92408  7112 ?        Ss   15:03   0:00 /usr/sbin/sshd -D -oCiphers=aes256-gcm@openssh.com,chacha20-pol
+system_u:system_r:rhsmcertd_t:s0 root       1197  0.0  0.0 251556   524 ?        Ss   15:03   0:00 /usr/bin/rhsmcertd

@@ -1,0 +1,117 @@
+07.01 Content - Table
+
+~~~~~ CONTENT - TABLE ~~~~~~~~~
+1. Table
+2. Variant / colors
+3. Accented tables
+	- Striped rows
+	- Hoverable rows
+	- Active tables/row/cell
+4. Table borders
+	- Bordered tables
+	- Tables without borders
+5. Small table
+6. Vertical alignment
+7. Nesting
+8. Anatomy
+	- Table head
+	- Table foot
+	- Captions
+9. Responsive tables
+	- Always responsive
+	- Breakpoint specific
+
+
+1. Table
+	> to create a Bootstrap Table, use "table" class
+	> only applicable in <table> elements
+
+NOTATION
+table
+
+
+2. Variant / colors
+	> we can also define the colors/theme of the table/row/column
+	> applicable in any element inside table (table, thead, tbody, tr, th, td)
+
+NOTATION
+table-{color}
+
+Colors
+primary
+secondary
+success
+danger
+warning
+info
+light
+dark
+
+
+
+3. Accented tables
+	> Striped rows
+		- "table-striped"
+		- will apply alternating alpha of color to table rows
+		- applicable with table variants
+			-> ex: <table class="table-primary table table-striped">
+	> Hoverable rows
+		- "table-hover"
+		- makes the table so that when we hover in a row, it will change color
+	> Active tables/row/cell
+		- "table-active"
+		- applied in table rows and table cell
+		- makes it look like it is active (darker)
+
+
+4. Table borders
+	> Bordered tables
+		- "table-bordered"
+		- applicable in table
+		- can be used together with border color utilities
+			-> ex: <table class="table table-bordered border-primary">
+	> Tables without borders
+		- "table-borderless"
+		- removes the borders of the table, rows, and cells
+
+
+5. Small table
+	> "table-sm"
+	> applied in table
+	> makes table more COMPACT by cutting all cell padding in HALF
+
+
+6. Vertical alignment
+	> here, we will use the vertical alignment utility classes of Bootstrap (ex: .align-center, .align-top, .align-bottom)
+		-> applied in table, tr, or td elements
+	> table cells in thead element is always vertically aligned in BOTTOM
+	> table cells in tbody element INHERITS their alignment from table element and aligned to the TOP by default
+
+
+7. Nesting
+	> KEY NOTE: Border styles, active styles, and table variants are NOT inherited by nested tables.
+
+
+8. Anatomy
+	> Table head
+		- we can use .table-light, .table-dark, or any variant to emphasis the thead
+	> Table foot
+	> Captions
+		- we can use caption element to serve as "heading" for a table
+		- help users with screen readers to find a table and understand what it is about and decide if they want to to read it
+
+
+9. Responsive tables
+	> Always responsive
+		- by making the tables responsive, it allows the tables to be scrolled HORIZONTALLY with ease
+		- we can also apply breakpoints to define when it will be responsive
+	> Breakpoint specific
+
+NOTATION
+.table-responsive
+	> will be responsive in ANY screen
+.table-responsive-{breakpoint}
+	> will be responsive when above the specified breakpoint
+	> ex: .table-responsive-xl will be responsive over xl breakpoint
+
+

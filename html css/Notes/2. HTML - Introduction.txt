@@ -1,0 +1,209 @@
+HTML - Hyper Text Markup Language
+	> responsible for webpage structure
+
+<element>content</element>
+	> this will be the structure of the lines in HTML 
+
+EX:
+	<h1>Heading</h1> for Heading Element
+	<p>Paragraph</p> for Paragraph Element
+	<img src="..."> for Image Element
+	<bt/> for Line Break
+
+Includes:
+
+Live Server
+	> extension for having a live server to see the changes we make in code in real time
+	> this creates a local development server to run our program.
+	> it then checks for changes and updates the program running in local server
+
+
+Basic HTML Page Structure
+	1. HTML Version
+		> tells what version of HTML it uses
+	2. Root Element
+		> wraps all the contents of the html page
+		> contains ATLEAST ONE <head> and <body> tag
+	3. Head
+		> contains information about the page (meta, links, title)
+		> wraps the <title> tag which is the Page title
+	4. Body
+		> contains the page content or contents that will be shown in the browser
+
+
+Preference in using Auto Save in Webpage making
+	> only use Auto Save alongside Live Server when customizing the Webpage content
+	> if we are working in Back-end function like writing Javascript, it is PREFERRED to not use Auto Save
+
+
+Emmet
+	> Emmet is a plugin for many popular text editors which greatly improves HTML & CSS workflow:
+	> with Emmet, we can omit typing the angle bracket whenever we create an HTML element
+
+
+White space collapsing
+	> characteristic where whitespaces are ignored
+	> in HTML, whitespaces in code and the value of the elements itself
+	> ex: <h1>Hello     world</h1> 	-> Hello world
+
+
+I. Create first HTML
+
+1. Create new folder to contain our project
+	> name: html
+
+
+2. Create new html file inside html project folder
+	> index.html
+
+
+3. Inside the index.html, add the following
+	> Header element with "hello world" as content
+	> Paragraph element with "this is my first webpage" as content
+
+
+4. Save the index.html file, and open it using a browser
+	> we can see the header and paragraph that we added in index.html file
+
+
+
+
+II. Live Server demonstration
+
+5. Install Live Server extension in Visual Studio code
+	> also, enable it
+
+
+6. Go back to the Visual Studio Code
+	> open the index.html file
+	> at the bottom of VS Code, press Go Live option
+	> or right-click in index.html, then choose Open with Live Server
+
+	As we can see, we get an error message from the Live Server extension. It says that
+
+		"Live Reload is not possible without body or head tag."
+
+	So in next step, we will learn how to make a proper html structure.
+
+
+
+III. Making a proper HTML structure 
+
+7. Remove our previous line of codes
+
+
+8. Add a DOCTYPE tag
+
+	<!DOCTYPE html>
+
+
+9. Add an html element
+
+<!DOCTYPE html>
+<html>
+    
+</html>
+
+
+
+10. Add head element inside the html element
+	> also, add title tags inside head tags and give it a value
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>first webpage</title>
+    </head>
+</html>
+
+
+
+11. Add a body tags inside the html tags (same level as head tags)
+	> inside body element, add the following
+		a. header element
+		b. paragraph element
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>first webpage</title>
+    </head>
+    <body>
+        <h1>Hello, i am glenn</h1>
+        <p>and this is my first webpage</p>
+    </body>
+</html>
+
+
+
+12. Restart the Live Server
+	> close the Live Server
+	> open it again
+	> we should see our new webpage, with following changes
+		- name of webpage in browser tab is not the serverip/html file anymore, instead its the <title>
+
+
+13. Demonstrate the Live Server function
+	> change the paragraph element value of the index.html file
+	> save the file
+	> see the changes happen in the Live Server 
+
+
+
+14. Enable autosave in VS Code
+	> to enable it, go to file, the click Auto Save option
+	> this way, we dont need to repeatedly save the index.html file in order for us to see the changes in Live Server
+
+
+15. Add another header element inside the body
+	> this time, as you type the value of the header, we can see the changes in the Live Server
+
+ 
+
+
+IV. Emmet Demonstration
+	
+16. Add a new paragraph element inside the body
+	> but instead of typing angle bracket, directly type the "p"
+	> in the IntelliSense options, we can see the Emmet Abbreviation option
+	> when we choose this, it will automatically create the HTML element corresponding to what we choose and we will only need to define its value
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>first webpage</title>
+    </head>
+    <body>
+        <h1>Hello, i am glenn</h1>
+        <h1>Hello</h1>
+        <p>and this is my first webpage and its very gooodd!!!</p>
+        <p>emmet paragraph</p>
+    </body>
+</html>
+
+
+17. Use the Emmet to create a simple HTML structure
+	> remove all the lines of code we have
+	> type the ! symbol and choose it as an option
+	> we can see that it automatically creates an HTML structure for us
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>proper structure</h1>
+    
+</body>
+</html>
+
+
+
+
+
+
+

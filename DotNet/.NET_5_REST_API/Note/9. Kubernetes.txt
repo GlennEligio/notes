@@ -1,0 +1,864 @@
+Kubernetes - Orchestrator
+
+Topics to discuss
+1. Why a container orchestrator is needed
+2. What is Kubernetes and which are its basic components
+3. How Kubernetes enables resilient distributes systems
+4. How to stand up a basic Kubernetes cluster in your box
+5. How to deploy your REST API (and MongoDB) to Kubernetes
+6. How to scale a Kubernetes deployment
+
+
+
+Why Orchestration?
+
+Orchestration answers these following questions
+
+1. Who takes care of pulling and running the containers?
+2. How to run the containers?
+3. Do we have enough container instances?
+4. Which is the best node to place the containers?
+5. Are the containers healthy? What if one crashes?
+6. Where to store the secrets?
+7. Where to store the database files?
+8. How to enables containers to talk to each other?
+9. How to reach the containers from the outside?
+10. Which of all instances should serve a request?
+
+
+
+
+
+Benefits of using Kubernetes
+
+1. Turns desired state into actual state
+2. Select nodes to run pods
+3. Selfs-heals by creating and killing pods
+4. Stores configuration and secrets
+5. Provides service discovery and load balancing
+6. Ensures no downtime
+7. Can auto scale
+8. Auto mounts storage
+9. Provides gradual rollout and rollback
+
+
+TERMS:
+
+Deployment: 	declares the desired state of the pods
+Pod:		a group of one or more containers that share storage/network resources
+Service:	an abstract way to expose an application running on a set of Pods as a network service
+StatefulSet:	manages stateful applications providing guarantees about the ordering and uniqueness of pods
+
+
+NOTES/WARNING:
+1. A Tcp port in Kubernetes cluster CAN NOT be occupied by two or more Service
+	> only a SINGLE service can be mapped into the Kubernetes' tcp port for external consumption/communication
+2. Two nodes CAN NOT share the same namespace
+	> these means that if we apply two yaml files with the same name BUT different contents, they will conflict each other
+
+I. Installing/Enabling Kubernetes
+
+1. Enable Kubernetes in Docker Desktop
+	> right click Docker icon in taskbar
+	> select Settings
+	> go to Kubernetes section
+	> enable Kubernetes
+		= once Kubernetes download is finish, you should see the Kubernetes icon in green box at bottom left corner
+		= this mean that Kubernetes is RUNNING
+
+
+2. Check the current Configuration of the Kubernetes Cluster we have
+	> to do this, we will use the Kubernetes command-line tool or kubectl
+	> to check the current config of the Kubernetes Cluster running, type this command in Terminal
+
+		kubectl config current-context
+
+	> the result should show the docker-desktop
+
+
+
+3. Add Kubernetes VS Code Extension to project
+
+
+
+
+
+II. Adding Kubernetes in Project (Defining the Deployment Pod for .NET REST API)
+
+
+4. Create kubernetes folder in root directory
+
+
+5. Create catalog.yaml file inside kubernetes folder
+
+
+6. Inside catalog.yaml file, add the default deployment template for the Kubernetes
+	> to do this, type "deploy" in the catalog.yaml file
+	> the IntelliSense should suggest the Kubernetes Deploy option
+	> this will create the default Kubernetes Deployment template
+
+INSIDE catalog.yaml file
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-deployment
+spec:
+  selector:
+    matchLabels:
+      app: catalog
+  template:
+    metadata:
+      labels:
+        app: catalog
+    spec:
+      containers:
+      - name: catalog
+        image: shuntjg/catalog:v1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+
+
+EXPLANATION
+
+apiVersion: apps/v1
+
+	> defines the api or phase or version
+	> depends on the version, you may have access to more or less feature
+
+
+kind: Deployment
+
+	> type of the Kubernetes cluster
+
+
+metadata:
+  name: catalog-deployment
+
+	> defines the name for this deployment
+
+
+spec:
+  selector:
+    matchLabels:
+      app: catalog
+
+	> SELECTS all the pods to MANAGE whose APP matches the matchLabels:app 
+	> in our case, we will set it to "catalog"
+	> this means that all pods whose app is "catalog" will be manage by this control panel
+
+
+  template:
+    metadata:
+      labels:
+        app: catalog
+
+		> template defines all the properties of the pods under it
+		> it encompasses all the pods under it
+		> here, we will define the labels of all the pods, in which we will assign it as "catalog"
+		> this is the same as the one we set in selector:matchLabels
+
+
+    spec:
+      containers:
+      - name: catalog
+        image: shuntjg/catalog:v1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+
+		> here, this spec section defines a single pod
+		> inside this pod, we define a container which have the following properties
+			name: catalog
+			image: shuntjg/catalog:v1
+			memory: 128Milibytes, 1 kibibytes = 1024kilobyes
+			cpu: 500m, equals to half a cpu
+				> memory and cpu defines the resource this container will be using
+			containerPort: 80
+				> this is the tcp port that we will expose in container
+
+
+
+
+
+7. Add Environment variables in the containers: section (MongoDb Host name)
+	> earlier, we added environment variables when we made Docker Image of our REST API
+	> this env vars corresponds to the DB name and password which is the MongoDb docker container
+		= the env var overriden the MongoDbSetting host and password in .NET REST API Configuration (appsetting and user-secrets)
+	> in this case, we will also add Environment variables in order to specify the MongoDb hostname and password
+	> to add Environment variables in Docker containers in Kubernetes node, add the following in containers: section
+
+		env:
+	       	   - name: <EnvVarName>
+		     value: <EnvVarValue>
+
+	> in our case it will be
+
+        	env:
+          	   - name: MongoDbSettings__Host
+            	     value: mongodb-service
+
+	> the reason why its MongoDbSettings__Host and not MongoDbSettings:Host is because yaml file have specific use for colon symbol (:), and to replicate the hierarchy of MongoDbSettings and Host, we will use double underscore (__) to do it
+
+
+INSIDE catalog.yaml file, as one of containers: property
+
+        env:
+          - name: MongoDbSettings__Host
+            value: mongodb-service
+
+
+
+
+
+8. Add Environment Varible in containers: (MongoDb password)
+	> since the MongoDb password is a sensitive information, we will use the secrets feature of the Kubernetes
+	> we will create a secret in our Kubernetes cluster by using this command in terminal
+
+		kubectl create secret generic catalog-secrets --from-literal=<SecretName>=<'SecretValue'>
+
+	> --from-literal flag means that we can directly refer to the Secret Name when referencing it
+	> so in our case, it will be
+
+		kubectl create secret generic catalog-secrets --from-literal=mongodb-password='Pass#word1'
+	
+	> this will create a secret named mongodb-password whose value is Pass#word1
+	> then to "refer" to this secret, we will add these following line in env: section
+
+          - name: MongoDbSettings__Password
+            valueFrom:
+              secretKeyRef:
+                name: catalog-secrets
+                key: mongodb-password
+
+	> instead of giving it a value, we fetch the valueFrom from the Secret (catalog-secrets) using the key (mongodb-password)
+
+
+INSIDE catalog.yaml file, as one of properties of env: section
+
+          - name: MongoDbSettings__Password
+            valueFrom:
+              secretKeyRef:
+                name: catalog-secrets
+                key: mongodb-password
+
+
+
+
+
+9. Add Liveliness and Readiness Probe into our Catalog Deployment cluster
+	> for these Probe, we will use the HealthChecks that we defined earlier that use HttpGet
+	> to add these Probe in our container, we will add livelinessProbe and readinessProbe as properties of containers: section
+
+        livenessProbe:
+        readinessProbe:
+
+	> these Probes needs to have their method of probing defined, and since we use Http Get request, we will add HttpGet: property to these Probes
+
+        livenessProbe:
+          httpGet:
+        readinessProbe:
+          httpGet:
+
+	> on httpGet properties, we will need to define the path (the url extension) and the port at which we will send the request
+
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+
+	> with these, the Control panel will know how to Probe the liveliness and readiness of the container
+
+			
+
+
+III. Adding Service in order to use/call/address the Deployment Pod
+
+10. Add a default Service template into the catalog.yaml file
+	> first create a separate section for our resources in catalog.yaml file
+		= to do this, we need to add three dashes (---)
+	> then type "service"
+		= IntelliSense should suggest a Kubernetes Service template for us to add
+
+INSIDE the catalog.yaml file, after the Catalog deployment pod
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  selector:
+    app: myapp
+  ports:
+  - port: <Port>
+    targetPort: <Target Port>
+
+
+
+
+
+11. Edit the scaffoldded Kubernetes Service template
+	> change the metadata:name value
+		
+		metadata:
+  		   name: catalog-service
+
+	> add another property in spec: called type
+		= set value of the type: to LoadBalancer
+		= this will make it so multiple pods of the same Docker Image will do the work equally
+			- EX: 3 REST API will process the request calls equally
+
+		spec:
+  		   type: LoadBalancer
+
+	> change spec:selector:app value to the labels of pods that we would want to call/address
+		= in this case, we use the "catalog" in template:metadata:labels:app earlier
+
+
+		spec:
+  		  type: LoadBalancer
+  		  selector:
+    		    app: catalog
+
+	> define the port that we will expose in the Kubernetes Cluster to the Client and its targeted port from the pods/containers that it will mapped it
+
+		spec:
+  			type: LoadBalancer
+  			selector:
+    				app: catalog
+  			ports:
+  				- port: 80
+    				targetPort: 80
+
+
+INSIDE catalog.yaml file, after the Deployment pods creation
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: catalog
+  ports:
+  - port: 80
+    targetPort: 80
+
+
+
+
+
+
+IV. Adding the catalog.yaml contents into the Kubernetes Cluster
+
+12. Apply the catalog.yaml into the Kubernetes Cluster
+	> before we apply the 
+	> to apply a yaml file content into the Kubernetes, use the following command
+
+		kubectl apply -f <yaml file directory>
+
+	> in our case it will be
+
+		kubectl apply -f .\kubernetes\catalog.yaml
+
+
+
+
+13. Check the deployments status
+	> to check the deployments, use the following command
+
+		kubectl get deployments
+
+	> we should see the catalog-deployments status
+		= the READY column is 0/1 because of the readinessProbe getting an error (due to no MongoDb existing)
+
+
+
+
+14. Check the specific pods in the Kubernetes
+	> for now, only deployments pods is showing since its the only one with pods in it
+	> to check for the pods status, use the following command
+
+		kubectl get pods
+
+	> the single pod we have in catalog-deployment should show here 
+		- same as the deployment, the READY is 0/1
+		- STATUS is getting its data from the livelinessProbe
+
+
+
+
+15. Check the logs in the single pod of catalog-deployment
+	> this is to check why its READY is 0/1
+	> to check the log of a specific pod, use the following command
+
+		kubectl logs <PodName>
+
+	> in our case it will be
+
+		kubectl logs catalog-deployment-7b488d85db-qjxdm
+
+	> and in the logs, it shows the following error which corresponds to missing mongodb component
+
+fail: Microsoft.Extensions.Diagnostics.HealthChecks.DefaultHealthCheckService[103]
+      Health check mongodb completed after 1378.2338ms with status Unhealthy and description '(null)'
+      System.OperationCanceledException: The operation was canceled.
+
+
+
+
+
+V. Creating mongodb.yaml file for mongodb pod
+
+16. Create a Deployment template once again
+	> type deploy
+	> choose the Kubernetes Deployment option the IntelliSense is showing
+
+
+
+
+17. Change type to StatefulSet
+	> we will use StatefulSet type for our MongoDb Pod due to following reason
+		- we want to have pods that have guaranteed ordering and uniqueness
+		- this means that the state of the pod (ex: data inside the database pod) will be the remembered, unique and retained even if the pod is destroyed
+		- StatefulSet node also have their names in orderly manner unlike the Deployment node
+			EX: mongodb-0, mongodb-1
+		- this also means that we can attach a persistent volume into a specific db pod in order to retain its data even if its shutdown
+
+
+INSIDE mongodb.yaml file
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: myapp
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: <Image>
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: <Port>
+
+
+
+		
+18. Modify the mongodb.yaml file (for Adding/Modifying the StatefulSet NODE)
+	> change metadata:name value to mongodb-statefulset
+	> add a new property in spec: section called serviceName:
+		- used to identify to itself (statefulset) and to the deployments
+		- deployments dont need serviceName but statefulSet do need one in order to not confuse one statefulset to another
+	> set the matchLabels:app value of spec:selector to "mongodb"
+		- this will make it so it will choose all pods with "mongodb" assigned it it
+	> set value of template:metadata:labels:app to "mongodb"
+		- this will make all the pods under the nodes be assign with label "mongodb"
+	> modify the container we have in the spec:template:spec section
+		- set value of container:name to "mongodb"
+		- set the container:image to be used to "mongo"
+			= mongo is the default MongoDb image in the Docker.io library
+		- set the container:port to be exposed to 27017
+			= tcp port 27017 is the default port the mongodb listens to
+	> add Environment variables for the MongoDb login user and password
+		- env var 1: MONGO_INITDB_ROOT_USERNAME = "mongoadmin"
+			= can use the value: to give value directly
+		- env var 2: MONGO_INITDB_ROOT_PASSWORD = "Pass#word1"
+			= we will use the valueFrom: in order to fetch the mongodb password from Kubernetes secrets
+			= we can use the same secrets as the one we assigned in env var of .NET REST API docker container earlier
+	> add volumeClaimTemplates as one of the mongodb-statefulset spec: property
+		- used to tell Kubernetes to allocate some space in order to store data from 	
+		- in volumeClaimTemplates, add these following properties
+			a. metadata:name = data
+			b. spec:accessModes = ["ReadWriteOnce"]
+				- this defines how the volume will be mounted and be accessed
+				- in this case, it will be a Read/Write volume and can only be access by one pod at a time
+			c. spec:resources:requests:storage = 1Gi
+				- 1Gi = 1Gigabyte of storage
+	> add volumeMounts property in the containers: section
+		- this will define how we will mount the volumes (location and volumeClaimTemplate)
+		- add these following properties in volumeMounts:
+			a. mountPath = /data/db
+				> defines the file location of the volumes
+			b. name = data
+				> defines what volumeClaimTemplate we will use, 
+				> must match the volumeClaimTemplate we defined earlier in MongoStatefulSet spec
+
+
+INSIDE mongodb.yaml file
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-statefulset
+spec:
+  serviceName: "mongodb-service"
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo
+        resources:
+          limits:
+            memory: "128Mi" 
+            cpu: "500m"
+        ports:
+        - containerPort: 27017
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: "mongoadmin"
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: catalog-secrets
+                key: mongodb-password
+        volumeMounts:
+          - mountPath: /data/db
+            name: data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+
+---
+
+
+			
+
+19. Create the Kubernetes Service that enables pods to talk to MongoDb StatefulSet Node / Pod
+	> add a default Kubernetes Service template after the MongoDb StatefulSet Node
+
+INSIDE mongodb.yaml file after the MongoDb StatefulSet node
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp
+spec:
+  selector:
+    app: myapp
+  ports:
+  - port: <Port>
+    targetPort: <Target Port>
+
+
+
+
+
+20. Modify the MongoDb service
+	> change metadata:name to be the same value as the serviceName we defined in MongoDb Node
+		- in this case, its mongodb-service
+	> add clusterIP on Service's spec and assign a value of None
+		- clusterIP is for specifying the IP Address in Kubernetes Cluster needed to call the said service
+		- by default, each service will be assigned the local ip address as their clusterIP
+		- but for our case, we will not assign a clusterIP in our mongodb-service
+		- with this, we will assign a value of None to the clusterIP
+		- this will make the mongodb-service a HEADLESS SERVICE
+	> set the selector:app to the assign label of the mongodb pod
+		- in this case, it will be mongodb
+	> set the ports of the service
+		- for port to be exposed, it will be 27017
+		- for the target port from container of mongodb statefulset node to be mapped, it will be also 27017
+
+
+INSIDE mongodb.yaml file, after the MongoDb StatefulSet definition
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - port: 27017
+    targetPort: 27017
+
+
+
+
+
+21. Apply the mongodb.yaml file into our Kubernetes Cluster
+	> to apply a yaml file config to Kubernetes Cluster, use the following command template
+
+		kubectl apply -f <YamlFileDirectory>
+
+	> in our case, it will be 
+
+		kubectl apply -f .\kubernetes\mongodb.yaml
+
+	> an output that states that a statefulset and a service is created should show in terminal
+
+		statefulset.apps/mongodb-statefulset created
+		service/mongodb-service created
+
+
+
+
+22. Check the StatefulSet in the Kubernetes Cluster
+	> to check StatefulSet, use the following command
+
+		kubectl get statefulsets
+
+	> this should be the output of the command
+
+		NAME                  READY   AGE
+		mongodb-statefulset   1/1     2m8s
+
+	
+
+
+
+23. Check the pods in Kubernetes cluster
+	> NOTE: the connection between the catalog pods and mongodb pods might take a while, so wait for a few minute so the connection get establish
+	> to check the pods, use the following command
+
+		kubectl get pods
+
+	> output should be like this
+
+		NAME                                  READY   STATUS    RESTARTS   AGE
+		catalog-deployment-7b488d85db-kbpn8   1/1     Running   0          9m37s
+		mongodb-statefulset-0                 1/1     Running   0          8m17s
+
+
+
+
+
+VI. Testing the Kubernetes Cluster
+	> Testing of Catalog pod and Mongodb pod and their services
+	> Testing the act of Kubernetes to keep the desired state of the Cluster (SELF - HEALING)
+	> Testing the scalability of the Kubernetes
+
+24. Using Postman, send an http request to the Kubernetes cluster
+	> use the following url to send request
+
+		http://localhost/items
+
+	> reason for no port specified is because we set the port to 80, which is the default port of an http request
+	> do the following
+		a. send a GET request to check the current content of mongodb pod
+			- it should be empty the first time
+		b. send a POST request to add a new item
+		c. send a GET request again to check the content of the catalog database
+			- the item we sent using POST request should be there
+
+
+
+
+
+25. Test the self-healing capability of the Kubernetes on its pods
+	> with the Kubernetes, when a pods is destroyed for some reason, it is able to restore it back to the state before it is destroy
+	> we can test it by checking the status of the pods live while we destroy one of it
+	> to do this, split the terminal into two by clicking the split icon (the one that looks like a book)
+	> to watch the pods' status live, use the following command
+
+		kubectl get pods -w
+
+	> to delete a pod, use the following command
+
+		kubectl delete pod <PodName>
+
+	> in our case, it will be
+
+		kubectl delete pod catalog-deployment-7b488d85db-kbpn8
+
+	> in the output side, we should see these new lines
+
+		catalog-deployment-7b488d85db-kbpn8   1/1     Terminating   0          21m
+		catalog-deployment-7b488d85db-6tj7w   0/1     Pending       0          0s
+		catalog-deployment-7b488d85db-6tj7w   0/1     Pending       0          0s
+		catalog-deployment-7b488d85db-6tj7w   0/1     ContainerCreating   0 	0s
+		catalog-deployment-7b488d85db-kbpn8   0/1     Terminating         0          21m 
+		catalog-deployment-7b488d85db-kbpn8   0/1     Terminating         0          21m 
+		catalog-deployment-7b488d85db-kbpn8   0/1     Terminating         0          21m 
+		catalog-deployment-7b488d85db-6tj7w   0/1     Running             0          3s  
+
+	> as we can see, the old catalog pod gets terminated, but is replaced immediately by a new catalog pod
+	> if we look at the pods in Kubernetes once again, we can see that it still two pods, catalog and mongodb, but the id of the catalog is different
+	> now lets check what will happen if we delete the mongodb pod
+
+		mongodb-statefulset-0                 1/1     Terminating   0          23m
+		mongodb-statefulset-0                 0/1     Terminating   0          23m
+		mongodb-statefulset-0                 0/1     Terminating   0          23m
+		mongodb-statefulset-0                 0/1     Terminating   0          23m       
+		mongodb-statefulset-0                 0/1     Pending       0          0s
+		mongodb-statefulset-0                 0/1     Pending       0          0s
+		mongodb-statefulset-0                 0/1     ContainerCreating   0          0s  
+		mongodb-statefulset-0                 1/1     Running             0          8s
+
+	> as we can see, it also self-healed, but the id of the mongodb pod is the same
+	> this is because the pod is in a statefulset node where in it needs to retain the state of the pods inside it (in this case, the id of the pods)
+
+
+
+
+
+
+26. Testing the scalability of the Kubernetes Cluster
+	> we can also scale the pods inside the Kubernetes, to do this, use the following command
+
+		kubectl scale <NodeType>/<NoteName> --replicas=<NumberOfReplicas>
+
+	> in our case, we want to scale the catalog pod which is a Deployment type by 3, so it will be
+
+		kubectl scale deployments/catalog-deployment --replicas=3
+
+	> the new pods list should be like this
+
+		NAME                                  READY   STATUS    RESTARTS   AGE
+		catalog-deployment-7b488d85db-6tj7w   1/1     Running   0          14m
+		catalog-deployment-7b488d85db-9grld   1/1     Running   0          38s
+		catalog-deployment-7b488d85db-pqlxz   1/1     Running   0          38s
+		mongodb-statefulset-0                 1/1     Running   0          10m
+
+	> as we can see, the number of catalog pods is increased by 3 times (two addditional pods is created)
+
+
+
+
+
+27. Testing the load balancing feature of the Kubernetes Cluster with multiple identical pods
+	> for us to check the load balancing of Kubernetes Cluster, we would need to add a feature in .NET REST API
+	> this feature would be a Logger, where whenever we call a specific route endpoint (in this case, the GetAllItems endpoint)
+	> Logger (or ILogger) will show logs in the terminal whenever we call one of its methods
+
+
+
+
+28. Add a Logging feature to the .NET Rest api
+	> add ILogger<> object as property in Controller class
+		- set type of ILogger to the Controller class
+	> add ILogger<> data as one of parameters in Controller class constructor
+	> set the value of ILogger property to the ILogger parameter
+	> inside the GetItemsAsync(), do the following
+		a. call the LogInformation() of ILogger property
+		b. pass a string inside LogInformation() that contains the following information
+			- Date at which this GetItemAsync() is called
+			- Number of Item object inside the items List that we retrieved
+
+
+INSIDE ItemsController class
+
+        private readonly IItemRepository repository;
+
+        private readonly ILogger<ItemsController> logger;
+
+        public ItemsController(IItemRepository repository, ILogger<ItemsController> logger)
+        {
+            this.repository = repository;
+            this.logger = logger;
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<ItemDto>> GetItemsAsync()
+        {
+            var items = (await repository.GetItemsAsync()).Select(item => item.AsDto());
+            
+            logger.LogInformation($"{DateTime.UtcNow.ToString("hh:mm:ss")}: Retrived {items.Count()} items");
+
+            return items;
+        }
+
+
+
+
+30. Create a new version of Catalog .NET REST API Docker image
+	> build the Docker image, but change the version name into new one
+		- from shuntjg/catalog:v1 to shuntjg/catalog:v2	
+		- this is necessary as to not have problem when overriding a Docker Image
+		- we will also change the Docker Image each Catalog pod is using (change to the new version)
+
+IN THE TERMINAL
+
+
+	docker build -t shuntjg/catalog:v2 .
+
+
+
+
+31. Push the new Docker image into the Docker Hub repo
+	> login ur docker account 
+
+		docker login
+
+	> push the docker image into ur docker hub repo
+		
+		docker push shuntjg/catalog:v2 .
+
+
+
+
+32. Change the Docker image being pull in Catalog pods in catalog.yaml
+
+INSIDE catalog.yaml file
+
+    spec:
+      containers:
+      - name: catalog
+        image: shuntjg/catalog:v3
+
+
+
+
+
+33. Apply the changes in the catalog.yaml file to the Kubernetes cluster
+	> applying a yaml file into an existing one will configure the old one
+
+IN THE TERMINAL
+
+	kubectl apply -f .\kubernetes\catalog.yaml  
+
+
+
+
+34. Split the terminal window into 3
+
+
+
+
+35. Check each of the logs of the individual catalog pods
+	> to check the logs of the pods live, use the following template
+
+		kubectl logs <pod-id> -f
+
+
+
+36. Send a GET request (GetAllItems) to the Kubernetes cluster to see the logs
+	> configure the Connection Header of the Request
+		- turn it off so it will not keep the connection to one of Catalog pod alive
+	> after sending the request check the terminal to see which pods accepts the request
+	> we should see that each of the catalog pods can receive the GET request
+		- though which pods will receive the request is randoming

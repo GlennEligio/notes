@@ -1,0 +1,12 @@
+SQL Command Categories
+1. Data Definition Language Commands (DDL)
+	> consists of the commands used to define the schema
+
+2. Data Manipulation Language Commands (DML)
+	> deals with the manipulation of data present in database
+
+3. Data Control Language Commands (DCL)
+	> deals with the rights, permissions, and controls of the database system
+
+4. Transaction Control Language Commands (TCL)
+	> consists of commands which deal with the transactions of database

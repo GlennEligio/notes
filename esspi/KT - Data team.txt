@@ -1,0 +1,111 @@
+KT - Data team
+
+Scope and Responsibilities
+1. Handle the feed provided by PIM and SAP team
+	PIM - Product information like Product UPCs, Attributes, Categories, SEO URLs, Merchandising Associations (e.g., Frames and their lenses, Suggested products), Published state (i.e., if the product is present on specific stores)
+	SAP - Inventory and Prices
+2. Investigate issue that might be related to incorrect or missing data
+3. Assist developers and testers with data related task (e.g., provide testing data)
+4. Fix issues within the process flow of loading the data
+	> modifying preprocessor app, or changing bash scripts
+5. Export data from the database for other use (e.g., PIM team asking for data assortments, price info, etc)
+
+
+Tools that we mostly use
+1. Jenkins
+	> most of the dataload process in N1 is automated via Jenkins jobs
+2. Lens
+	> used for accessing Kubernetes cluster
+	> typically, we would connect to ts-utils pods to debug issues in dataload process
+	> also used for checking ElasticSearch IP to be used for validating data in ElasticSearch side
+3. DBeaver or any SQL client
+	> used to check data in database
+4. Mobaxterm, or any SFTP client
+	> mostly used for checking the feed in SFTP and saving it, before loading in the database
+	
+	
+Services involved
+1. Jenkins
+2. ts-utils pod inside Kubernetes cluster
+3. SFTP servers where feed files are stored
+4. Database
+5. ElasticSearch
+6. Algolia
+
+
+Skillsets needed
+1. SQL - used for navigating HCL databases
+2. Java - mainly for navigating preprocessor
+3. Bash scripts - for reading bash scripts used by Jenkins job
+4. HCL commerce - familiarized with different data model present in the database (catalog entries, attributes, categories, offers)
+
+
+Demo:
+1. Jenkins jobs sample builds/runs
+2. Navigate ts-utils via Lens
+	> check for archived feeds in /SETUP/Dataload/Archive to test feeds
+	> check ElasticSearch ip address for validating data in ElasticSearch side
+3. Check different sets of data in database with SQL client
+4. Check contents of SFTP server for feeds
+
+
+
+High level process flow of loading data and propagating the changes
+1. Confirm that the SFTP feed files are present in the SFTP server
+2. Run the Jenkins job responsible for loading specific data to AUTH database
+3. Run the 'buildIndex' Jenkins job to create/update ElasticSearch and Algolia AUTH indices
+4. Run the 'cleanCache' job to clean wcs and bff caches
+	> after this point, all data sources are updated in AUTH and testing can be done for the changes
+4. Run the 'indexPropagation' Jenkins job to propagate the ElasticSearch and Algolia AUTH indices to LIVE indices
+5. Run the 'stageProp' Jenkins to propagate changes in AUTH database to LIVE database
+	
+	
+
+High level process flow of dataload pipelines
+1. Initialize global variables and functions that will be used in the dataload pipeline scripts
+	> some of the global variables are fetched from Vault (this can be checked in ops-config-brand, like ops-code-n1, ops-config-cle)
+2. Fetching SFTP feed files
+	> some dataload pipelines have their feed file stored in remote SFTP server (e.g., inventory dataload, catalog load, contact lens)
+	> there are also some dataload pipeline that do not need feed files to create the files to be used for dataloading
+3. Run the preprocessing to create the csv file output to be used for dataload
+	> Preprocessor is a Java application used for preprocessing the feed files into the CSV output that can be used for dataload. For each dataload pipeline, different set of high level functions are being executed in the preprocessor
+	> Some of the feed files can not be directly loaded in the HCL system, so we need to either:
+		- transform
+		- validate
+		- enrich
+		- filter
+	> For some dataload pipeline, the preprocessor does not use feed files for input. Instead, they read in database, external api, etc. to create their output. Examples of this includes:
+		dam_dataload - uses external API to get image information
+		stock_behavior_attributes - uses database (inventory quantity and attributes) to determine the stock behaviors attributes like LX_SOLDOUT
+		cl_inventory - uses database to check all present contact lenses and cl accessories, then assign inventory quantity of -1
+	> There are also times when preprocessor will modify current data in database. 
+		- Example of this is the price dataloads where it will update existing offers of the products by reducing precendence by 1 before loading new offers
+4. Archiving feed files
+	> stored in both /SETUP/Dataload/Archive of SFTP ts-utils, and the SFTP server
+	> only present for some dataload pipelines
+4. Dataload CSV files
+5. Archive dataload logs
+6. SFTP directory cleanup
+7. Determine dataload pipeline status
+	> in dataload pipeline, a global variable 'errorCount' is used to determining if dataload pipeline is a success or not
+	> for each dataload run that have exit code of not 0, the 'errorCount' will be incremented
+	> if the 'errorCount' is 0, the dataload pipeline is a success. Else, its a failed run
+	> this will reflect in Jenkins as well
+	
+POC
+CLE
+PIM 
+ - Frames and assortment, Yin Yu Tseng
+ - Contact Lenses and CL Accessories, Virga and Stefania
+ - ROX lenses and RX prices, Alessandro Romeo
+
+VDE
+PIM
+ - Contact Lenses and CL Accessories, Virga and Stefania
+ 
+GVI
+ - 
+ - Contact Lenses and CL Accessories, Virga and Stefania
+		
+
+

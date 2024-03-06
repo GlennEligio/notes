@@ -1,0 +1,9 @@
+08.07. Layout
+
+~~~~~ FORMS - LAYOUT ~~~~~~
+Forms in Bootstrap
+1. Since most .form-control is display: block and width:100%, they stack VERTICALLY
+2. For Horizontal inputs (label and input are in same horizontal place)
+	-> use .col-form-label class to align the label to its input vertically
+
+

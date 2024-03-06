@@ -1,0 +1,15 @@
+ADDING A COLUMN IN A TABLE
+	> in order to add a column in a table, we need to call the ALTER and ADD COLUMN commands
+
+ALTER TABLE
+	> used in order to allow alteration of table
+
+ADD COLUMN	
+	> used to add column in a table
+
+EXAMPLE:
+	
+ ALTER TABLE celebs
+ ADD COLUMN twitter_handle TEXT;
+
+In this statements, first we allow permission to alter the table "celebs". Then we add columns in the table by passing the columnName and its dataType.

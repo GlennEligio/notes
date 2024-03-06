@@ -1,0 +1,13 @@
+CHANGING SPECIFIC DATACELL / UPDATING DATAROW in a TABLE
+	> in order to change a specific row in a table you need three thing
+		a. call UPDATE command in a table
+		b. SET the value(s) of the columns of that row(s)
+		c. create a condition WHERE that will determine what specific row(s) it will apply the change
+
+EXAMPLE:
+
+ UPDATE celebs
+ SET twitter_handle = '@taylorswift13'
+ WHERE id = 4;
+
+Here, we first called the UPDATE command in the "celebs" table, then we SET the data in each row(s) we want to update, then we will create a conditional WHERE in if a row met the conditional, it will apply the update in the SET command.

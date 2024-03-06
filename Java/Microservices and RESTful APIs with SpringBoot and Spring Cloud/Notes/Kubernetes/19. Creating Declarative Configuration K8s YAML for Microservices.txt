@@ -1,0 +1,177 @@
+19. Creating Declarative Configuration K8s YAML for Microservices
+
+
+Creating K8s resource through YAML
+	> in K8s, we can create resources using YAML files
+	> inside the yaml/yml files, we can declare the resources and their properties
+
+Looking at a K8s resource's YAML config
+	> to do this, we can use the command "kubectl get"
+	> adding -o yaml will write the output into a YAML format
+
+Applying changes in K8s cluster using YAML files
+	> to do this, we can use the command "kubectl apply"
+	> in doing this, we can add (or modify, in case of existing resource of same name) the DESIRED STATE of the current K8s cluster
+
+
+Commands
+kubectl get <resource-type> <resource-name>
+	> used to see the description/informations of a specific K8s resource
+	> to write the output in yaml format (for copying purpose), we can add "-o yaml" option
+	> by adding ">> <file-name>", we can copy the output into a file
+		- ex: kubectl get deployment currency-exchange -o yaml >> deployment.yaml
+		- this will copy the output and paste it to a deployment.yaml file
+		- if deployment.yaml file does not exist initially, the system will automatically create one
+
+kubectl diff -f <file-name>
+	> used to compare the current desired state of the Cluster to the state that we will add/modify using the yaml or json file
+	> for Windows, you must install the executable necessary for "diff" command
+		- execute the command "choco install diffutils"
+
+kubectl apply -f <yaml-file-name>
+	> used to apply changes in the desired state configuration of Cluster using yaml file
+
+
+Example of yaml file for creating a deployment and service to expose it
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2022-04-05T13:04:07Z"
+  generation: 1
+  labels:
+    app: currency-exchange
+  name: currency-exchange
+  namespace: default
+  resourceVersion: "868282"
+  uid: 4480c637-c9f2-4ecd-8489-a6e2e6176b90
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: currency-exchange
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: currency-exchange
+    spec:
+      containers:
+      - image: shuntjg/mmv2-currency-exchange-service:0.0.11-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        name: mmv2-currency-exchange-service
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2022-04-05T13:04:09Z"
+    lastUpdateTime: "2022-04-05T13:04:09Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2022-04-05T13:04:07Z"
+    lastUpdateTime: "2022-04-05T13:04:09Z"
+    message: ReplicaSet "currency-exchange-559577f746" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2022-04-05T13:04:30Z"
+  labels:
+    app: currency-exchange
+  name: currency-exchange
+  namespace: default
+  resourceVersion: "868315"
+  uid: 079df3dd-b461-4ab4-badc-2087f9b63fec
+spec:
+  clusterIP: 10.110.223.240
+  clusterIPs:
+  - 10.110.223.240
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - nodePort: 30731
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: currency-exchange
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - hostname: localhost
+
+
+Example output of kubectl diff -f deployment.yaml
+--- C:\Users\glenn\AppData\Local\Temp\LIVE-946295137/apps.v1.Deployment.default.currency-exchange       2022-04-05 23:00:28.241923900 +0800
++++ C:\Users\glenn\AppData\Local\Temp\MERGED-289685324/apps.v1.Deployment.default.currency-exchange     2022-04-05 23:00:28.246924000 +0800
+@@ -4,7 +4,7 @@
+   annotations:
+     deployment.kubernetes.io/revision: "1"
+   creationTimestamp: "2022-04-05T13:04:07Z"
+-  generation: 1
++  generation: 2
+   labels:
+     app: currency-exchange
+   managedFields:
+@@ -17,7 +17,6 @@
+           f:app: {}
+       f:spec:
+         f:progressDeadlineSeconds: {}
+-        f:replicas: {}
+         f:revisionHistoryLimit: {}
+         f:selector: {}
+         f:strategy:
+@@ -83,13 +82,21 @@
+     manager: kube-controller-manager
+     operation: Update
+     time: "2022-04-05T13:04:09Z"
++  - apiVersion: apps/v1
++    fieldsType: FieldsV1
++    fieldsV1:
++      f:spec:
++        f:replicas: {}
++    manager: kubectl-client-side-apply
++    operation: Update
++    time: "2022-04-05T15:00:28Z"
+   name: currency-exchange
+   namespace: default
+   resourceVersion: "868282"
+   uid: 4480c637-c9f2-4ecd-8489-a6e2e6176b90
+ spec:
+   progressDeadlineSeconds: 600
+-  replicas: 1
++  replicas: 2
+   revisionHistoryLimit: 10
+   selector:
+     matchLabels:

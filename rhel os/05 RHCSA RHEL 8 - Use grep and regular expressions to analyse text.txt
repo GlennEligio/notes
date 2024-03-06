@@ -1,0 +1,39 @@
+05 RHCSA RHEL 8 - Use grep and regular expressions to analyse text
+
+
+Commands
+grep "regexp" FILE
+ > command used to find lines in a file that matches the regexp provided
+ > ex: grep "[CcFa]a[RrTt]" kafka.txt
+	- will match to the lines with words like CaR, FaR, FaT, fat, car, cat
+
+vi FILE
+ > opens a VIM editor and display the contents of the FILE
+ > if FILE doesnt exist, when VIM editor is saved, it will automatically create the said file
+ > ex: vi kafka.txt
+
+
+Regexp Notes:
+1. "^" is added to denote the start of the line to match
+	> ex: "^d" will only match to the lines that starts with "d"
+2. "$" denotes the end of the line
+	> ex: "ed$" will only match to the lines that ends with "ed"
+3. "[]" denotes a range of characters, or set of characters that a single character can match
+	> ex: "[0-9]" will match to a character from 0 to 9, "[CsDt]" will match to the string with characters C, s, D, t
+4. "." will match to ANY character
+	> ex: "st..id" will match to the word "stupid"
+5. "\" is used for escaping special characters
+	> ex: "\." will match to any lines with character "." and not to any lines with characters "\" + any char
+6. "*" is used to match all the previous character before the said symbol
+	> ex: "hap*[e-z]n[a-i]d" will match to "happened" "happpppppened" "happppppppppened"
+7. ".*" can be used to match any characters of any length
+	> ex: "hap.*d" will match to "happied" "haphazard", it will match as long as it has "hap" and "d", any characters in between is ok
+
+Example Uses of "grep"
+1. Finding strings in a text file
+	> $ grep "regexp" file.txt
+2. Finding directories and files in a specific directory
+	> $ ls -l | grep "^d"
+		- for displaying directories/folders only
+	> $ ls -l | grep "^-" 
+		- for displaying files only

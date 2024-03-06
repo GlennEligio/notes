@@ -1,0 +1,186 @@
+Section 5 - Apache NiFi Advanced Concepts
+
+23. FlowFile Prioritization in NiFi
+24. FlowFile Expiration in NiFi
+25. Data Provenance in NiFi
+
+
+23. FlowFile Prioritization in NiFi
+
+What is FlowFile Prioritization
+ > Prioritizers comes handy when you have data coming from multiple sources, and you would like to process some data immediately after it arrives compared to other data
+
+
+Types of FlowFile Prioritization
+1. FirstInFirstOutPrioritizer
+	> Gives two FlowFiles, the one that reached the connection first will be processed first
+	> First FlowFile is the first one to enter the list queue of Connection
+2. NewestFlowFileFirstPrioritizer
+	> Given two FlowFiles, the one that is newest in the dataflow will be processed first
+	> Newest FlowFile will be the one with newer CREATED AT information
+3. OldestFlowFileFirstPrioritizer
+	> Given two FlowFiles, the one that is oldest in the dataflow will be processed first. 
+	> This is the DEFAULT scheme that is used if no prioritizers are selected
+4. PriorityAttributePrioritizer
+	> Given two FlowFile that both have a "priority" attribute, the one that has highest priority value will be processed first.
+	> Note that an UpdateAttribute processor should be used to add "priority" attribute to the FlowFiles before they reach a connection that has this prioritizers set.
+	> Values for the "priority" attribute may be alphanumeric, where "a" has higher priority than "z", and "1" has higher priority than "9", for example
+	
+	
+	
+Demo: PriorityAttributePrioritizer
+Processors to be used
+1. GenerateFlowFile
+	> to generate FlowFile
+2. UpdateAttribute
+	> to add "priority" attribute to FlowFiles
+3. LogAttribute at the end
+Components
+1. Funnel
+
+
+Steps
+1. Add two sets of the following processor
+	> GenerateFlowFile and UpdateAttribute
+2. For each set, connect GenerateFlowFile to Update Attribute
+3. Add a funnel
+4. Connect the two UpdateAttribute to the funnel
+5. Add LogAttribute at the end
+6. Connect funnel to the LogAttribute
+7. At this point, we should have a data flow that resembles a "Y" letter or something
+
+Configuring Processors
+1. Set 1 of GenerateFlowFile and UpdateAttribute	
+	> GenerateFlowFile 
+		- run schedule to 1 sec
+		- Custom text: "normal data"
+	> UpdateAttribute
+		- add "priority" to Properties
+		- set value to 9
+2. Set 2 of GenerateFlowFile and UpdateAttribute
+	> GenerateFlowFile
+		- run schedule to 5 sec
+		- Custom text: "very critical data"
+	> UpdateAttribute
+		- add "priority" to Properties
+		- set value to 1
+		
+Testing W/O PriorityAttributePrioritizer
+1. Run the data flow for 1 min
+2. Stop the flow
+3. Check the list queue between funnel and LogAttribute
+3. We should see FlowFile are arranged in seemingly random fashion, but as of now they are arranged in CREATION DATE DESC
+
+
+Testing W/ PriorityAttributePrioritizer
+1. Configure the connection between funnel and LogAttribute
+	> in Settings, set the Selected Prioritizers to "PriorityAttributePrioritizer"
+2. Check the list queue again
+	> we should see the changes, just by looking at the FlowFile size
+	> though we can also look at the FlowFile attributes just in case
+	
+	
+	
+	
+	
+24. FlowFile Expiration in NiFi
+
+FlowFile Expiration
+ > FlowFile expiration is a concept by which data that cannot be processed within a particular timeframe can be automatically removed from the flow
+ > This will come in handy when the volume of data is expected to exceed that amount that can be processed by NiFi
+ > FlowFile Expiration can be set in the connections, and the values can be 
+	a. 0 sec - no expiration
+	b. > 0 - with expiration
+
+How FlowFile Expiration works
+ > The expiration period is based on the time that the data entered the NiFi instance
+ > We can use the expiration in conjunction with Prioritizers to ensure that the highest priority data is processed first and then anything that cannot be processed within a specified period can be dropped
+ 
+ 
+Demo: FlowFile Expiration
+Processors to use
+1. GenerateFlowFile
+2. LogAttribute
+
+Steps:
+1. Add GenerateFlowFile and LogAttribute
+2. Create connections between them
+3. Set GenerateFlowFile run schedule to 1 sec
+4. Run for 30sec, then stop
+5. Configure the connection
+	> set the FlowFile Expiration to 1 min
+6. Wait for 1 min, then refresh the dashboard
+	> we should see that the list queue has been emptied
+	> also, there will be a "Clock" icon in connection to indicate the FlowFile expiration setting
+
+
+
+
+
+25. Data Provenance in NiFi
+
+
+Data Provenance
+ > NiFi keeps a comprehensive track of the data by recording all the events applied on a flowfile starting from its ingestion point till it's removed from the data flow
+ > As the data is processed through the system, NiFi captures all the details like when the data got transformed, split, routed, aggregated, or dispersed to other endpoints
+ > All these informations are stored and indexed in a separate repository called Provenance Repository
+ 
+ 
+Why use Data Provenance?
+1. To Debug your Data Flow at Production level
+2. To Identify the Origin, Destination & Transformation happened to your data
+
+
+Two types of Data Provenance
+1. Processor level data provenance
+	> provides all the Data provenance of ALL FlowFile that entered and exited the said Processor
+	> we can check this by right clicking a Processor, then selecting "View data provenance"
+2. Global data provenance
+	> provides al the Data provenance of the ALL FlowFile that is created in the entire NiFi data flow
+	> we can see this by clicking the global menu icon at top right, then selecting Data Provenance
+
+
+Searching Events in Data Provenance table
+ > in the list, we can search any data provenance that we want by using the "magnifying glass" icon at the top right
+ > in the Search Events window, we can use the following fields for searching
+	1. Event type
+	2. FlowFile UUID
+	3. Filename
+	4. Component ID
+	5. Relationship
+	6. Start/End date
+	7. Start/End time
+	8. Minimum/Maximum file size
+ > we can also tick each fields to specify if we will exclude search results that matches the search fields
+ 
+ 
+Checking Lineage of the Event
+ > In each table entry, we can see the following data
+	- Date/Time
+	- Type
+	- FlowFile UUID
+	- Size
+	- Component Name
+	- Component Type
+ > on the right, we can see two icons
+	1. Lineage (three circle)
+	2. Processor which the event happened (arrow)
+ > click on the Lineage icon
+ > here, we will be able to see the event timeline of the said FlowFile
+ > when we click an Event node, we should be able to see details with regards to Provenance Event, like
+	- FlowFile details tab
+	- FlowFile attribute tab
+	- FlowFile content
+		a. Input claim (state when entering the event)
+		b. Output claim (state when exiting the event)
+ > we can also interact with the event timeline by using the slider at the bottom left
+ 
+ 
+Configuring Data Provenance data
+ > in the nifi.properties, we can check the following sections to change Data provenance configurations:
+	1. Provenance Repository Properties
+	2. Persistent Provenance Repository Properties
+ > example configurations include:
+	1. max storage time
+	2. max storage size
+	3. directory

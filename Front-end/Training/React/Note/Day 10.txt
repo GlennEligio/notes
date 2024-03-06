@@ -1,0 +1,183 @@
+DAY 10
+
+Redux
+
+
+Adding Debugger in Redux
+1. Add debugger; 
+	1. in reducers.js and 
+	2. in mapStateToProps() function
+
+
+With debugger;, we can see the flow of the Redux
+1. It first goes to the reducers.js to determine the State to send to mapStateToProps()
+	- the state return will be the new State in the Centralized Data in Redux
+2. The mapStateToProps then receives the State returned by reducers.js and maps it to a certain Property
+
+
+
+
+HTML5 new features
+1. <canvas>
+	> used to show stuff/graphics on the fly in the HTML document with Javascript
+	> ex: Graphs, Charts, etc
+	> used in conjunction with script
+
+EX:
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML canvas tag.</canvas>
+
+<script>
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.beginPath();
+ctx.arc(95,50,40,0,2*Math.PI);
+ctx.stroke();
+</script> 
+
+</body>
+</html>
+
+
+
+2. <svg>
+	> stands for Scalable Vector Graphics
+	> same purpose as <canvas>
+		- svg preferred
+	> used in conjunction with shape elements (e.g. <circle>)
+		- these shape html element are nested inside <svg>
+
+HTML MEDIA ELEMENT
+
+3. <video>
+	> to pass the video, we can nest a <source> element to define the source of video in local project files
+4. <audio>
+	> same as video, we will need to nest a <source> elemt to define the source of audio in local file
+5. <iframe>
+	> we can use iframe to display or embed internet videos in the html website
+
+
+
+D3.js
+	> used to create dynamic charts based on data we use
+	> uses javascript to create the display
+	> uses <svg> to display the result
+
+
+
+HTML APIs
+1. Geolocation
+	> we can get the geolocation of user using the navigator variable
+
+navigator.geolocation
+	> variable will NOT BE NULL if geolocation is support by browser
+	> have function to call like
+		a. getCurrentPosition()
+			- takes a function
+			- this function have one parameter (position parameter)
+			- in this parameter, we can access its properties like
+				1. coords
+					= defines the coordinate of position
+					= have properties (latitude, longitude)
+
+
+2. LocalStorage
+3. SessionStorage
+
+
+
+New Input types
+1. date
+	> with type="date", we can input dates
+2. time
+	> with type="time", we can input time
+3. datetime
+	> with type="datetime-local", we can input date and time
+4. email
+5. month
+6. number
+7. range
+8. search
+9. tel
+10. url
+11. week
+12. color
+
+
+
+New HTML elements
+1. <section>
+	> used to create sections in the HTML document
+	
+2. <article>
+	> specifies independent, self-contained content.
+	> An article should make sense on its own and it should be possible to distribute it independently from the rest of the site.
+3. <aside>
+	> defines some content aside from the content it is placed in.
+	> The aside content should be indirectly related to the surrounding content.
+4. <nav>
+	> mainly used to navigation menus
+	> nested inside are several link tags <a>
+	> these link tags will be places next to each other
+5. <header>
+	> used to display header contents
+6. <footer>
+	> used to display footer contents
+
+
+
+
+CSS media queries
+	> used to create media queries
+	> media queries contains 
+
+CSS Flexbox layout module
+	> before Flexbox layout module, there were four layout modes
+		a. block, for sections in webpage
+		b. inline, for text
+		c. table, for two dimensional table data	
+		d. positionaed, for explicit position of an element
+	> with FlexBox, this makes it easier to design flexible responsive layout structure without using float or positioning
+	> for an interactive guide, install CSS Flexbox Cheatsheet in the VSCode
+
+
+
+
+JavaScript Browser Object Model
+	> similar to JSP's predefined variables
+	> allows JavaScript to "talk to" the browser.
+	> examples are 
+		1. window
+		2. screen
+		3. location
+		4. history
+		5. navigator
+		6. cookies
+		7. alert
+		8. timing
+
+window
+	> supported by all browsers
+	> represents the browser's window
+	> Global variables are properties of the window object.
+	> Global functions are methods of the window object.
+	> properties includes
+		1. document
+			> represents the document object of HTML DOM
+			> methods include
+				a. getElementById(String elementId)
+					= returns the HTML element
+		2. 
+			
+
+
+
+MERN stack developer
+M - Mongodb
+E - Express
+R - ReactJs
+N - NodeJs

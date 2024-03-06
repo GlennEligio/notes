@@ -1,0 +1,22 @@
+AOP Read Method's Metadata in Advice
+
+
+JoinPoint
+	> interface in spring boot starter aop dependency
+	> added in the Advice method parameter
+	> contains the metadata of the methods where Advice will be performed
+	
+Methods of JoinPoint
+
+getSignature()
+	> returns a Signature object
+	> we can cast this into a MethodSignature object where in we can access the following
+		- name
+		- parameter names
+		- parameter types
+		- return type
+		- exception type
+
+getArgs()
+	> returns an Object array
+	> represents the arguments passed into the method that the Advice is taking action to

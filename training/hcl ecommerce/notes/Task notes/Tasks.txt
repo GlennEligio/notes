@@ -1,0 +1,128 @@
+Account info
+username: user0
+password: password0
+
+Task 1
+1. logout from website. add items to cart. check the usertype and register type for that customer
+2. check the roles for your registered customer
+3. check the member replationship for your registered customer
+4. How will you find address for your registered customer
+5. Details of order for your order placed on last thursday/friday
+6. Details of order for your order placed today
+
+
+Task 2
+Step 1. Login, add some itens to cart. logout
+take its order ID and status, and order items ID from orderitems table
+
+Step 2. Now after logout add 2 different items to cart.
+check the order id, usertype and register type for that customer, and status, also order items ID from orderitems table
+
+Step 3.  Now login again in same browser window
+a. check status of old Order, order items details
+b. check new order that was created and its order items that you noted in step2
+
+
+
+SQL Commands
+select * from MEMBER;
+SELECT * from ORGENTITY;
+select * from users;
+select * from userreg;
+select * from mbrrel;
+select count() from MBRREL where Ancestor_id = -2001 and descendant_id != -2001;
+select * from MBRREL where Ancestor_id = -2001;
+select * from address;
+select * from orders;
+select * from MBRROLE;
+select * from storeent;
+select * from store;
+select * from storecat;
+select * from catalog;
+select * from catalogdsc;
+select * from catentry;
+select count() from catentry;
+select * from cattogrp where CATALOG_id = 10502;
+select * from catentdesc;
+select * from catgroup where catgroup_id = 1;
+select * from catgrpdesc where catgroup_id between 1 and 10 and language_id = -1;
+select * from catgrpdesc where catgroup_id = 10015 and language_id = -1;
+select * from CATGRPREL where catgroup_id_parent = 1 and CATALOG_id = 10502;
+select * from catentry where partnumber = 'GVE034_340301';
+select * from catentrel where catentry_id_child = 12751;
+select * from catentry where catentry_id in (12750,12751) ;
+select * from catentry where partnumber like  'GSH020_2001%';
+select * from catgpenrel where catgroup_id = 6;
+select * from catgpenrel where catentry_id = 12750;
+select * from catgpenrel where catentry_id = 12242;
+select * from catgpenrel where catgroup_id = 10015 and  CATALOG_id = 10502;
+select * from orders; -- 2101133873
+select * from orderitems where orders_id = 2101133873;
+select * from ordadjust where orders_id = 2101133873;
+
+select * from tradeposcn;
+select * from offer where catentry_id = 12751;
+select * from offerprice where offer_id in (12751,14811);
+
+select * from attribute;
+select * from attr;
+select * from attrval;
+select * from attrvaldesc;
+select * from catentryattr where catentry_id= 12751;
+select * from catentryattr where catentry_id= 12750;
+
+
+select * from ordiadjust where ordersitems_id in (select orderitems_id from orderitems where orders_id = 2101133873)
+
+
+ANSWER:
+-- Task 1 --
+-- 1. Use last updated column to see your order and take note of member id --
+-- member id 1003 registered, 2002 unregistered --
+-- note: 2002 got registered since i logged in later while cart is present --
+select * from orders; -- 1052278487 order id for last week registered --
+-- 2. Search the member using the member id --
+select * from member where member_id=1003; -- registered --
+select * from member where member_id=2002; -- unregistered --
+-- 4. Use the member id of the registered user to search for the address --
+select * from address where member_id=1003;
+select * from address where member_id=2002;
+-- 3. Use the member id and role id to see the role name of the user --
+select * from mbrrole where member_id=1003;
+select * from mbrrole where member_id=2002;
+select * from role where role_id=-29
+
+-- 5. Use the orders_id of the order of the registered and unregistered user in orders table --
+select * from orderitems where orders_id=1052278487;
+select * from orderitems where orders_id=2100181482;
+
+
+
+-- Task 2 --
+-- Step 1 --
+-- 1. Find the order that you have added --
+-- order id: 2101392755, status: P
+select * from orders;
+-- 2. Find the order items using orders id -- 
+-- orderitems_id: 20007 and 20006
+select * from orderitems where orders_id=2101392755;
+
+
+-- Step 2 --
+-- 1. Find the member id --
+-- orders_id: 2102777046, member_id: 2004, status: P
+select * from orders;
+-- orders_id: 20008 and 20009
+select * from orderitems where orders_id=2102777046;
+-- type: u, state: null
+select * from member where member_id=2004;
+-- registertype: g
+select * from users where users_id=2004;
+
+-- Step 3 --
+-- 1. Find the old order --
+-- orders 2101392755 became status X ---
+select * from orders;
+-- 2. Check order items of old order when registered and new order when unregistered --
+select * from orderitems where orders_id = 2102777046; -- newer order when unregistered, contains all item --
+select * from orderitems where orders_id = 2101392755; -- older order when registered, no items anymore --

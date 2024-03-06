@@ -1,0 +1,41 @@
+01. Introduction to Microservices
+
+
+Micro Services
+
+	"Small autonomous services that work together" - Sam Newman
+
+	"In short, the microservice architectural style is an approach to developing a single application as a suite of small services, each running in its own process and communication with lightweight mechanism, often an HTTP resource API. These services are built around business capabilities and independenctly deployable by fully automated deployment machinery. There is a bare minimum of centralized management of these services, which may be written in different programming languages and use different data storage technologies"
+		- James Lewis and Martin Fowler
+
+
+Microservices Key characteristics
+1. REST
+	- must be stateless
+	- no care about that technology is behind each microservices as long as they have common communication method
+2. Small well chosen Deployable Units
+	- these units can be instantiated more than once in order to balance the load
+3. Cloud Enabled
+	- they need to be able to communicate with each other
+
+
+
+Challenges with Microservices
+1. Bounded Context	
+	> we need to know the boundary of a microservice
+		- functionality
+		- usage
+	> deciding the boundaries of microservices an evolutionary process
+		- we can not get it right the first time	
+2. Configuration Management
+	> there may be hundreds of microservices running in different environments
+	> each of these have tons of configuraiton that needs to be managed
+3. Scalability
+	> dynamically scale up and scale down on demand to be able to distribute load
+		- create new instances of microservices to balance load
+4. Visiblity
+	> we need to see whats happening behind the scene with each of these microservices
+	> we need to see if all my microservices are UP and RUNNING
+5. Fault Tolerance
+	> preventing a microservice to affect others when it fails
+	

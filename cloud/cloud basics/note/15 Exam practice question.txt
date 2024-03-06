@@ -1,0 +1,23 @@
+15 Exam practice question
+
+What best describes the concept of scalability?
+a. The ability for a system to withstand a certain amount of failure and still remain functional
+b. The ability for a system to grow in size, capacity, and/or scope.
+c. The ability for a system to grow and shrink based on demand
+d. The ability for a system to be accessible when you attempt to access it
+
+
+My Answer: B
+This is the correct answer because it deals with the concept of application scalability which is to be able to increase/grow the application size, capacity, and/or scope
+
+
+Actual Answer
+a. The ability for a system to withstand a certain amount of failure and still remain functional
+	> this refers to Resilience
+b. The ability for a system to grow in size, capacity, and/or scope.
+	> correct answer
+	> refers to Scalability
+c. The ability for a system to grow and shrink based on demand
+	> refers to Elasticity
+d. The ability for a system to be accessible when you attempt to access it
+	> refers to Availability

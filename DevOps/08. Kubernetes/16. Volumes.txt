@@ -1,0 +1,257 @@
+16. Volumes
+
+
+Volumes
+	> storage solution for persisting data
+	> similar to Docker Volumes
+	> solves the issues of Pod's Container starting in clean state
+
+
+Type of Volumes
+1. emptyDir
+	> similar to tmpfs of Docker
+		- NON-PERSISTENT
+	> temporary storage folder
+	> initially empty
+	> will exist as long as the Pod is running
+	> will disappear if Pod is removed
+2. hostPath
+	> similar to Bind Mount of Docker
+		- PERSISTENT
+		- Data is stored in Host Machine file system running the Pod
+3. Persistent Volume (PV)
+	> similar to Bind Mount where data is Persistent even if Pod is destroyed
+	> But PV have its own lifecycle outside the Pod
+	> This Persistent Volume will RESERVE some space on the Cluster
+	> used in conjunction with Persistent Volume Claim (PVC)
+
+Persistent Volume Claim	
+	> create request for storage by a user, it then fetches a Storage space from Persistent Volume
+	> Claims can request specific size and access modes (e.g., they can be mounted ReadWriteOnce, ReadOnlyMany or ReadWriteMany
+
+
+
+Creating Volumes
+1. emptyDir
+	> emptyDir Volumes are created alongside the Pod's spec in Manifest file
+	> to create an emptyDir, we will have to define a volume inside volumes: field of the Pod's spec:
+		- the volume for emptyDir needs to have the following fields
+			a. name:		used to refer to the Volume
+			b. emptyDir: {}	used to define the properties of emptyDir
+	> consuming emptyDir Volume in Pod includes adding a volumeMount inside volumeMounts: field of the container of Pod
+		- the volumeMount will have the following fields
+			a. name: 		refers to the name of Volume to use
+			b. mountPath:		refers to the directory of Container where Volumes data will be mounted
+
+EX:
+# nginx-emptydir.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-emptydir
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    volumeMounts:
+    - name: test-vol
+      mountPath: /test-mnt
+  volumes:
+  - name: test-vol
+    emptyDir: {}
+
+	> In this Manifest file, we created a Pod with 
+		- name "nginx-emptydir"
+	> In this Pod, we have the following
+		1. Volume with 
+			- name "test-vol"
+			- emptyDir Volume
+		2. Container with 
+			- name "nginx-container"
+			- image "nginx"
+			- volume mounted 
+				-> volume name is "test-vol"
+				-> volume's data is mounted in /test-mnt of the Container
+
+
+2. hostPath
+	> similar to creating emptyDir volume
+	> but in hostPath, instead of emptyDir, we will use hostPath
+	> to create an hostPath Volume, we will have to define a volume inside volumes: field of the Pod's spec:
+		- the volume for hostPath needs to have the following fields
+			a. name:		used to refer to the Volume
+			b. hostPath: 		used to define the properties of emptyDir
+		- inside hostPath: we will define the path:
+			a. path:		used to define the path in Node/Host filesystem that we will use for 
+
+EX:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-hostpath
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+      volumeMounts:
+      - mountPath: /test-mnt
+        name: test-vol
+  volumes:
+  - name: test-vol
+    hostPath:
+      path: /test-vol
+
+	> Here, we have a Manifest file for Pod
+	> this Pod have name "nginx-hostpath"
+	> Pod's spec includes
+		1. volumes where ONE volume is defined
+			> this volume have the following properties
+				a. name is "test-vol"
+				b. volume type is hostPath, where the volume source in Node/Host filesystem is in "/test-vol" directory
+		2. Container with 
+			- name "nginx-container"
+			- image "nginx"
+			- volume mounted 
+				-> volume name is "test-vol"
+				-> volume's data is mounted in /test-mnt of the Container
+
+
+
+
+3. PersistentVolume (PV) and PersistentVolumeClaim (PVC)
+	> to create a PersistentVolume and PersistenceVolumeClaim, we will need to use a Manifest file
+	> we can treat the PersistentVolume as the Volume
+	> we can treat the PersistentVolumeClaim as some sort of request to get a storage space in PV
+
+
+PersistentVolume Manifest Guide
+	> to create a PersistentVolume, we must have the following inside Manifest file
+		1. kind is PersistentVolume
+		2. metadata
+			- must have a name to refer to this PV
+		3. spec:
+			a. storageClassName
+				- with this, only PVC with same storageClassName can bind to this PV
+			b. capacity
+				- defines capacity of the Volume
+				- inside, we can define storage
+					= storage: 
+						- defines storage size
+			c. accessModes:
+				- defines the accessModes for this Volume
+				- can either be
+					i. ReadWriteOnce
+					ii. ReadOnlyMany	
+					iii. ReadWriteMany
+					iv. ReadWriteOncePod
+			d. hostPath:	
+				- defines the Node/Host filesystem directory to be used for storage data of Volume
+
+
+#pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-hostpath
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/kube"
+
+
+	> in this Manifest File, we created a PersistentVolume
+	> this PersistentVolume have the following property
+		1. name is "pv-hostpath"
+		2. labels include "type=local"
+		3. spec include
+			a. storageClassName is "manual"
+			b. capacity storage size is 1GiB
+			c. accessModes is only ReadWriteOnce
+				- means only one Node can read/write this Volume
+			d. hostPath where volumes data will be stored is "/kube"
+
+
+
+PersistentVolumeClaim Manifest Guide
+	> to create PVC, we will need to have the following inside\
+		1. kind must be  "PersistentVolumeClaim"
+		2. metadata
+			- name must be defined to refer to this PVC
+		3. spec
+			a. storageClassName 
+				- must match the PV
+			b. accessModes 
+				- value must be in one of the accessModes of the Volume
+			c. resources
+				- refers to the resources to claim in the PV
+				- we can define .request.storage for storage space to ask
+
+
+EX: PVC Manifest
+#pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-hostpath
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+
+	> Here, the Manifest file creates a PVC	
+	> PVC have the following properties
+		1. name is "pvc-hostpath"
+		2. storageClassName is "manual"		
+		3. accessMode is "ReadWriteOnce"
+		4. resources to ask/claim is a storage size of 100Mi
+
+
+
+Consuming PV with PVC
+	> to consume a PV with PVC, we must do the following in the Pod
+		1. define a volume inside .spec.volumes
+			- name of volume must refer to PV name
+			- we must also define persistentVolumeClaim
+				= we will pass PVC name in the claimName
+		2. define volumeMounts in the container		
+			- name of volumeMount must refer to volume defined inside .spec.volumes
+			- mountPath can be anything
+					
+
+EX:
+#pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  volumes:
+  - name: pv-hostpath
+    persistentVolumeClaim:
+      claimName: pvc-hostpath
+  containers:
+  - image: busybox
+    name: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "sleep 600"]
+    volumeMounts:
+    - name: pv-hostpath
+      mountPath: /mydata
+
+	> In this Manifest, we created Pod named "busybox"
+	> In this Pod, we have the following inside the spec
+		1. Create a Volume that refers to the PersistentVolume "pv-hostpath"
+		2. Used a PersistentVolumeClaim "pvc-hostpath" to define the resources to get in PV
+		3. Created a Container named "busybox" that uses image "busybox"
+		4. Mounted a Volume in the Container
+			- volume name is the name of volume we created in PodSpec
+			- mountPath is "/mydata"

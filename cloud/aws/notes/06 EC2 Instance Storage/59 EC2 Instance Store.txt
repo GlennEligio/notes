@@ -1,0 +1,22 @@
+59 EC2 Instance Store
+
+
+EC2 instance store
+ > replacement for EBS Volumes. EBS volumes are network drives with good but 'limited' performance
+ > EC2 Instance store are the harddrives that are directly attached to the servers where EC2 instances are hosted
+ > Better than EBS Volumes when you need a high-performance hardware disk for your EC2 instances
+ > Characteristics:
+	- Better I/O performance than EBS volumes
+	- Ephemeral, EC2 Instance store lose their storage if they are stopped
+	- Good for buffer / cache / scratch data / temporary content
+ > Disadvantages
+	- risk of data loss if hardware fails
+	- backups and replication are your responsibility
+
+
+EC2 Instance Store vs EBS Volume (IOPS)
+EBS Volume - 300/3000
+ > Baseline of 3 IOPS per GiB with a minimum of 100 IOPS, burstable to 3000 IOPS.
+EC2 Instance Store (i3.large*)
+ > 100% Random Read IOPS = 100,125
+ > Write IOPS = 35000

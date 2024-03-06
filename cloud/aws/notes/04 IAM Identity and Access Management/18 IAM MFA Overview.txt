@@ -1,0 +1,36 @@
+18 IAM MFA Overview
+
+IAM - Password Policy
+ > Strong password means higher security for your account
+ > in AWS, you can setup a password policy, which includes:
+	1. Set a minimum password length
+	2. Require specific character types like including uppercase letters, lowercase letters, numbers or non-alphanumeric characters
+ 	3. Allow all IAM users to change their own passwords
+	4. Require users to change their password after some time (password expiration)
+	5. Prevent password re-use
+
+
+
+Multi Factor Authentication - MFA
+ > Users have access to your account and can possibly change configuration or delete resources in your AWS account
+ > You want to protect BOTH your Root Accounts and IAM users. This is where MFA comes in
+ > MFA refers to authentication that uses one or more factors like
+	- things that you KNOW (password)
+	- things that you OWN (security keys, authenticator devices)
+	- things that are INHERIT TO YOU (fingerprint)
+
+
+MFA devices options in AWS
+1. Virtual MFA device
+ > support for multiple tokens on a single device
+ > example includes:
+	- Google Authenticator (phone only)
+	- Authy (multi)
+2. Universal 2nd Factor (U2F) Security Key
+ > support for multiple root and IAM users using a single security key
+ > examples include:
+	- YubiKey by Yubico (3rd party)
+3. Hardware Key Fob MFA device
+ > provided by Gemalto (3rd party)
+4. Hardware Key Fob MFA Device for AWS GovCloud (US)
+ > provided by SurePassID (3rd party)

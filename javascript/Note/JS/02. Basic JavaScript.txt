@@ -1,0 +1,22 @@
+02. Basic JavaScript
+
+I. Adding Javascript in HTML
+
+Two ways of adding Javascript in HTML document
+1. Using <script> tags inside <body> and insert the Javascript code
+2. Use external Javascript file and insert <script> tag with src attribute pointing to external JS file
+
+
+
+II. Debugging in Javascript
+
+console
+	> variable used to access Console window
+	> with this, we can send messages
+	> have following methods
+		- log(String s)
+		- warn(String s)
+		- error(String s)
+
+console.log(Object o)
+	> sends a log message in the Console window

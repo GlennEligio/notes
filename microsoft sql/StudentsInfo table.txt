@@ -1,0 +1,7 @@
+StudentID	StudentName	ParentName	PhoneNumber	AddressofStudent	City		Country
+1		John Glenn	Jaydee		639062560574	Niugan			Malabon		Philippines
+3		Roberth		Roberto		639393939	Sta. Mesa		Manila		Philippines
+4		Jomar		Jomario		639393939	Bulacan			Bulacan		Philippines
+5		Ade		Ado		639393939	Iloilo			Iloilo		Philippines
+6		Eric		Enrico		639393939	Cebu			Cebu		Philippines
+2		Jerome		Gregorio	639393939	Davao			Davao		Philippines

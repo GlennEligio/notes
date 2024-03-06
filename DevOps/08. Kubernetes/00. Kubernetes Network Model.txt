@@ -1,0 +1,223 @@
+Kubernetes Network Models: Why is this so dang hard?
+
+
+Refresher of Kubernetes
+1. Kubernetes clusters are made up of nodes
+	- Node are machines, can be either virtual or physical
+2. These Nodes must exist on some network
+3. Pods runs on those Nodes
+4. Pods get IP address
+5. "Network model" describes how thsoe Pod IPs integrate with the larger network
+
+
+Kubernetes Networking Rules
+1. Pods on node can communicate with all pods on all nodes WITHOUT NAT
+2. Agents on a node (e.g. system daemons, kubelet) can communicate with all pods on that node
+	- health check
+	- system management agents
+
+Normal Cluster
+1. Private Network of an Enterprise
+	Private Network IP range	- 10.0.0.0/8
+2. Within that Network, we will slice a chunk of IP for Cluster Network
+	> NOTE: Cluster is NOT REQUIRED to be a single IP range. But its very command and makes the pictures easier
+	Cluster Network	IP range	- 10.0.0.0/16
+3. Within the Cluster, we will have some node
+	> these Nodes's IP come from the Private Network
+	Node 1 IP		- 10.240.0.1
+	Node 2 IP		- 10.240.0.2
+4. Each Node have a Pod IP range that is sliced from the Cluster Network space
+	> NOTE: Pods are NOT REQUIRED to have predefined IP range, but its very common and makes the pictures easier
+	Node 1 Pod range	- 10.0.1.0/24
+	Node 2 Pod range 	- 10.0.2.0/24
+5. Each Pod running in a Node will have its own IP address
+	> These IP address came from the Node's Pod IP range
+	Node 1 Pod 1		- 10.0.1.1
+	Node 1 Pod 2		- 10.0.1.2
+	Node 2 Pod 1		- 10.0.2.1
+	Node 2 Pod 2		- 10.0.2.2
+	
+
+Things Kubernetes does not take account
+1. Kubernetes DOES NOT say anything about things outside of the cluster
+	> things outside the cluster is NOT PART of the fundamental networking model
+2. Multicluster Networking
+	> can Pod from Cluster 1 can reach/communicate to Pod from Cluster 2
+
+
+
+
+Network models used for creating Clusters
+1. Fully-integrated mode (flat mode)
+	> everything (Pod/Node/Cluster/Clients outside the Cluster but inside Private Network) SHARED SAME IP SPACE
+	> everything is in SAME NETWORK
+	> Kubernetes intended design
+	> no NAT, OVERLLAPING IP ADDRESS, OVERLAY NETWORK
+	> Flat mode is good when
+		a. IP space is readily available
+			- kubernetes love having many IPs to use
+		b. Network is programmable / dynamic
+		c. Need high integration / performance
+		d. Kubernetes is a large part of your footprint
+	> Bad when
+		a. IP fragmentation / scarcity
+		b. Hard-to-configure network infrastructure
+		c. Kubernetes is a small part of your footprint
+
+
+2. Fully isolated (aka air-gapped mode)
+	> in this model, the network is completely DISCONNECTED
+		- no connectivity from inside to outside
+		- no client outside the cluster reaching into the cluster
+	> Cluster to Cluster communication does not exist as well
+		- they are in "different network"
+	> With this model, you can re-use all of the IPs
+		- this is due to the Cluster being isolated from each other
+		- ex: Two cluster may have same IP addresses allocated to them
+	> Good when
+		a. Dont need integration
+		b. IP space is scarce / fragmented
+		c. Network is not programmable / dynamic
+		d. May be easier to reason about security boundaries
+	> Bad when
+		a. Need communication across a cluster-edge
+
+
+3. Bridge (aka island mode)
+	> each Cluster have Private Network
+	> Pods from that Cluster get their ip address from Cluster's Private Network
+	> Theres Bridge Gateways into and out of the cluster that is setup by the environment
+	> Very common model (some may say its the only way haha)
+	> Ingress and egress traffic will go through one or more "gateways"
+		- ingress is incoming traffic to the pod
+		- egress is outgoing traffic from the pod	
+	> Gateways can be implemented using 
+		- Overlays encapsulation
+		- private routing rules
+		- private vgp advertisement
+	> Nodes exist with two interfaces
+		- one leg in the Main network
+		- one leg on a Private network
+		- these Nodes know how to route which traffic from which side
+	> You can RE-USE the Pod IPs in each Cluster
+		- a MAJOR movitivation for this model
+		- reason is that Pod never communicate directly to other Pod, they go through some sort of Gateway 
+	> Good when:
+		a. Need some integration
+			- not air gapped but its not complete
+		b. IP space is scarce / fragmented
+		c. Network is not programmable / dynamic
+	> Bad when
+		a. Need to debug connectivity
+			- when bringing traffic through a gateway, traffic get necessarily more complicated
+			- with translation of network present, its much hard to reason about what exactly is happening
+		b. Need direct-to-endpoint communications
+			- most client assume direct-to-endpoint communication
+			- this means gateway model, which typically use loadbalancers, is not good
+		c. Need a lot of services exposed (especially non-HTTP)
+		d. Reply on client IPs for firewall
+		e. Large number of nodes
+
+
+Various forms of "gateway"
+1. Nodes as gateway
+	> all traffic in the Cluster comes through the Node
+	> no extra load balanacers, or routers
+	> they can act as gateway since they have two network interface
+		- one is to the Main Network (10.240.0.1)
+		- one is on the Pod Network (10.0.0.0/24)
+	> does an ingress and egress process
+
+1.1. Ingress: Service's NodePorts (DNAT)
+	> ingress is incoming traffic to the pod
+	> here, client have no idea which Pod ip address it arrived/chosen
+	> process includes:
+		1. Client sends a packet to a Node IP address
+			- client only know NodeIP address not Pod ip address
+		2. It will be then sent to a specific Port on the Node (nodePort of Service)
+			- doesnt matter which Node we will be sending to due to nodePort existing in all Node
+			- these Ports are managed by Kubernetes and ranges from 30000-32767
+		3. Node will use IP dst_port (destination port) to route the request/packet to correct Service 
+			- will do a Destination Network Address Translation (DNAT)
+			- ex: if youre talking to port 30002, youre going to Service Foo
+				if youre talking to port 31000, youre going to Service MyService
+		4. It will then choose a backend Pod that it understands as being part of the Service it intended to go and REWRITE the ip packet
+			- common implementations for this REWRITE process include
+				a. ip tables
+				b. ipvs	
+				c. nf tables
+				d. evpf
+		5. It will then forward the said packet to the destination Pod chosen
+	> most common thing people do is to ingress L4 into an L7 proxy and forward from there
+		- this means that theyll run something like envoy or nginx, or aj proxy inside their cluster
+		- they will route all the traffic through a nodePort
+		- using the routing, we can do further forwarding
+			-> with this, we can use http where it have headers that we can use to further forwarding function
+		- example is the in-cluster ingress-controllers
+	> in Reverse (Pod to Client)
+		1. Host will do the opposite of the dnat translation
+		2. Convert the packet back
+			- with this, it will look like the Client got the response back from the Node's nodePort
+1.2. Egress: IP Masquerade (aka SNAT)
+	> egress is outgoing traffic from Pod
+	> used when sending traffic FROM the Cluster to somewhere else
+	> here, we use Source Network Address Translation (SNAT)
+	> SNAT obscures client IP
+		- Traffic from pods on a node appears to come from that node's IP
+	> process includes:
+		1. Pod sends a packet outside the Cluster
+		2. When packet reach the edge of the Node, its going to translate the request IP from Pod to Node's IP
+			- if we tcp dumping the request, we would see the source address being the Node IP of the Pod that send the request
+		3. After reaching the nodePort destination, it will do a DNAT to determine the Pod destination
+	> here, Pods are not aware of the Translations that happen
+		- Network fabric handled these translation and routing process of the user
+2. Gateway: VIP (ingress)
+	> VIP stands for Virtual IP address
+	> instead of knowing about a node, which node, and which nodePort to use, Users will be given a virtual ip address	
+	> This Virtual IP address represents a Service in the Kubernetes Cluster
+	> Similar to NodePort, but instead of dst_port, Node uses IP dst_ip to make those same routing decisions
+		- instead of Client having addressed a port (30000-32767), it can address a VIP address
+	> More compatible with things like typical DNS and open source software which isnt always easily configured for random arbitrary ports
+	> For Egress, we still need somethings like SNAT 
+3. Gateway: Proxy (ingress)
+	> slight variant of VIP gateway
+	> more proxiful way of doing things
+	> instead of having a virtual ip address, you have an actual proxy
+	> unlike VIP, Proxy terminates TCP session and opens a new one for new request 	
+	> with Proxy, request can either 
+		1. route to NodePort	
+			- e.g. Amazon's Elastic Load Balancing uses Proxy that routes to NodePort
+		2. route directly to Pod's IPs
+			- e.g. Proxy knows how to "get onto the island"
+	> Proxy obscures client IP
+		- this means the backend Pod sees the request as if it comes from Proxy
+		- not good if Server needs to understand the Client's IP address
+		- though, we can still use HTTP or TCP headers as way to circumvent this problem
+	> same as VIP, still need something like SNAT for egress
+
+
+Continuation of: Network models used for creating Clusters
+4. Archipelago mode (aka bigger islands)
+	> model is effectively the flat model
+	> multiple cluster can talk to each other without translation
+	> when integrated with the rest of the network, it becomes island mode
+		- Clusters can be grouped up to form an Archipelago
+		- Other island in network talks to this Archipelago
+	> needs gateways to come in and out of the Cluster's Archipelago
+	> cant reuse Pod Ips between Cluster
+	> but can reuse Pod Ips between Archipelago
+	> Good when:
+		a. Need high integration across clusters
+		b. Need some integration with non-kubernetes 
+		c. IP space is scarce / fragmented
+		d. Network is not programmable /dynamic
+	> Bad when:
+		a. Need to debug connectivity due to Gateways and Translations
+		b. Need direct-to-endpoint communications
+		c. Need a lot of services exposed to non-k8s
+		d. Rely on client IPs for firewalls
+			- you will not know client IP due to gateway's translations
+			- with this, it will be harder to setup firewall restrictions
+		e. Large number of nodes across all clusters
+			- when scaling, we will need to scale Nodes per Archipelago instead of per Cluster
+	> Gateway options are similar to plain island mode

@@ -1,0 +1,187 @@
+68 RHCSA RHEL 8 - Practice Exam - Questions 14-19
+
+Questions
+14. Write a script named awesome.sh in the root directory on system1
+	a. If "me" is given as an argument, then the script should output "Yes, I'm awesome"
+	b. If "them" is given as an argument, then the script should output "Okay, they are awesome"
+	c. If the argument is empty or anything else is given, the script should output "Usage ./awesome.sh me|them"
+15. Create users phil, laura, steward, and kevin
+	a. All new users should have a file named "Welcome" in their home folder after account creation
+	b. All user passwords should expire after 60 days and be at least 8 characters in length
+	c. phil and laura should be a part of the "accounting" group. If the group doesn't already exist, create it
+	d. steward and kevin should be part of the "marketing" group. If the group doesn't already exist, create it
+16. Only members of accounting group should have access to the "/accounting"
+17. Only members of the marketing group should have access to the "/marketing" directory. Make steward the owner of this directory. Make the marketing group the group owner of the "/marketing" directory
+18. New files should be owned by the group owner and only the file creator should have permissions to delete their own files
+19. Create a cron job that writes "This practice exam was easy and I'm ready to ace my RHCSA" to /var/log/messages at 12pm only on weekdays
+
+
+
+
+
+
+
+
+Write a script named awesome.sh in the root directory on system1
+ a. If "me" is given as an argument, then the script should output "Yes, I'm awesome"
+ b. If "them" is given as an argument, then the script should output "Okay, they are awesome"
+ c. If the argument is empty or anything else is given, the script should output "Usage ./awesome.sh me|them"
+
+$ cat awesome.sh
+
+#!/bin/bash
+
+input=$1
+
+case $input in
+        me)
+                echo "Yes, I'm awesome"
+                ;;
+        them)
+                echo "Okay, they are awesome"
+                ;;
+        *)
+                echo "Usage ./awesome.sh me|them"
+                ;;
+esac
+exit
+
+
+
+
+
+
+
+
+Create users phil, laura, steward, and kevin
+a. All new users should have a file named "Welcome" in their home folder after account creation
+	1. Add a "Welcome" file inside "/etc/skel" (/etc/skel serves as skeleton for new users)
+		$ touch /etc/skel/Welcome
+
+b. All user passwords should expire after 60 days and be at least 8 characters in length
+	1. Edit the /etc/login.defs (contains all default properties of all users)
+		$ vi /etc/login.defs
+		> change "PASS_MAX_DAYS" to 60 and "PASS_MIN_LEN" to 8
+		> you can also change "PASS_WARN_AGE" to 45 so that after 45 days, a warning for password expiration will be sent
+	2. Create users for phil, laura, steward, and kevin
+		$ useradd phil
+		$ useradd laura
+		$ useradd steward
+		$ useradd kevin
+	3. Check if the default password config is applied earlier
+		$ chage phil -l		you can use any users
+	4. Check if the Welcome file is present in the home directory of the new users
+		$ ls -lhtra /home/phil
+
+c. phil and laura should be a part of the "accounting" group. If the group doesn't already exist, create it
+	1. Create accounting group
+		$ groupadd accounting	
+		$ cat /etc/group | grep accounting	check if created successfully
+	2. Add phil and laura to accounting group as secondary group
+		$ usermod -aG accounting phil
+		$ usermod -aG accounting laura
+		$ cat /etc/group | grep acocunting	check if phil and laura is added
+
+d. steward and kevin should be part of the "marketing" group. If the group doesn't already exist, create it
+	1. Create marketing group
+		$ groupadd marketing
+		$ cat /etc/group | grep marketing	check if created successfully
+	2. Add steward and kevin in marketing group as secondary group
+		$ usermod -aG marketing phil
+		$ usermod -aG marketing laura
+		$ cat /etc/group | grep marketing	check if steward and kevin is added
+
+
+
+
+
+
+
+
+
+
+
+Only members of accounting group should have access to the "/accounting". Make laura the owner of this directory. Make the accounting group the group owner of the "/accounting" directory
+
+1. Create /accounting directory
+	$ mkdir /accounting
+2. Change user and group ownership of the directory
+	$ chown laura:accounting /accounting
+	$ chmod 770 /accounting
+	$ ls -lhtra | grep marketing		check permissions
+
+
+
+
+
+
+
+Only members of the marketing group should have access to the "/marketing" directory. Make steward the owner of this directory. Make the marketing group the group owner of the "/marketing" directory
+
+1. Creat /marketing directory
+	$ mkdir /marketing
+2. Change user and group ownership of the directory
+	$ chown steward:marketing /marketing
+	$ chmod 770 /marketing
+	$ ls -lhtra | grep marketing		check permissions
+	
+
+
+
+
+
+
+
+New files should be owned by the group owner and only the file creator should have permissions to delete their own files
+
+1. Add setguid and a sticky bit to the /accounting and /marketing
+	$ chmod g+s /accounting
+	$ chmod +t /accounting
+	$ chmod g+s /marketing
+	$ chmod +t /accounting
+2. Test the permissions, /accounting
+	$ su - laura
+	$ cd /marketing		should be permission denied
+	$ cd /accounting
+	$ touch laurasfile
+	$ ls -lhtra		"laurasfile" user and group owners should be laura and accounting
+	$ su - phil
+	$ cd /marketing		should be permission denied
+	$ cd /accounting
+	$ vi laurasfile		should be able to write
+	$ rm laurasfiles		should be permission denied since laura have file ownership
+	$ touch philsfile	
+	$ ls -lhtra		philesfile user owner must be set to phil
+3. Test the permission
+	$ su - steward
+	$ cd /accounting		should be permission denied
+	$ cd /marketing
+	$ touch stewardsfile
+	$ ls -lhtra		"stewardsfile" user and group owners should be steward and marketing
+	$ su - kevin
+	$ cd /accounting		should be permission denied
+	$ cd /marketing
+	$ vi stewardsfile		should be able to write
+	$ rm stewardsfile		should be permission denied since laura have file ownership
+	$ touch kevinsfile	
+	$ ls -lhtra		kevinsfile user owner must be set to kevin
+
+
+
+
+
+
+
+
+Create a cron job that writes "This practice exam was easy and I'm ready to ace my RHCSA" to /var/log/messages at 12pm only on weekdays
+
+1. Open the crontab to add the commands for scheduled execution
+	$ crontab -e
+2. Add the following line inside the editor
+	0 12 * * 1,2,3,4,5 echo "This practice exam was easy and I'm ready to ace my RHCSA" >> /var/log/messages
+3. Save the changes
+4. Check if the changes is applied
+	$ crontab -l
+5. OPTIONAL: Change the time so that it will execute in next FIVE minutes
+6. Check the messages file
+	$ tail /var/log/messages		the string that we echoed should be present

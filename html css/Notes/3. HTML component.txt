@@ -1,0 +1,506 @@
+HTML Components
+
+includes:
+	> Heading
+	> Paragraph
+	> img
+	> Comments
+	> Linebreak
+	> Linktag
+
+Heading
+	> represent a "title" inside the webpage document
+	> there are 6 types of heading
+		- h1, h2, h3, h4, h5, h6
+	> the higher the number, the larger the size. h1 being the largest and h6 the smallest
+
+Paragraph component/element
+	> represented by <p>
+	> represent a body of text
+	> typically where we put the content text 
+
+Whitespace collapsing
+	> feature of HTML where whitespaces in code and element value is ignored or collapse
+
+lorem
+	> a default dummy text available in the HTML	
+	> to use it, type "lorem" and it will show in IntelliSense
+	> we can specify how many we want in the lorem by adding number after it
+		ex: lorem10 will print out 10 words from it
+
+img
+	> element used to show an image
+	> have two attributes
+		src 	- defines the source location of the image file to be rendered
+			- can be from local project folder by providing image file path or from web using image url
+		alt 	- defines the text that will be shown if the image file is not rendered properly
+	> img element have two appearance
+		1. the Image being rendered properly
+		2. the Image not rendered and is replaced by an broken image icon with the alt text beside 
+	> attributes of img element includes
+		1. width and height
+			= defines the width or height of an image
+			= takes int value which represents the pixel size
+			= if only one is defined, the other is adjusted in order to retain the width:height ratio
+				EX: if only width is 
+	> NOTES:
+		1. Even if we lower the pixel size of img in html page, it will still render the full image size
+			= to remedy this, we can just crop it to a certain size in a 3rd party application
+
+
+Pexels or Gratisography
+	> sources for free image to use copyright-free
+
+
+Comments
+	> pieces of code that the compiler and runtime ignores
+	> in order to comment in the HTML, type the following characters
+		<!--
+	> as soon as you type these, it will automatically create a comment line
+	> you can also use the shortcut CTRL + / in order to make a certain line to be commented
+
+
+Linebreak
+	> represents a "enter" or an empty space between lines
+	> to create a linebreak either
+		1. type br and use Emmet abbreviation
+		2. <br>
+
+
+Linktag
+	> represented by the <a> tag
+	> used to show an interactable link to the web page
+	> this Linktag element have the following attributes
+		1. href - attribute that represent the link that where the user will be navigated when click
+			- we can navigate to either external link (webpages that is not included in project folder)
+			- or internal link (webpages that is included in project folder)
+			- for external link, pass the url. 
+					EX: href="https://google.com"
+			- for internal link, there are two cases
+				a. same html webpage but different webpage location (must have id attribute to the element)
+					EX: <h2 id="exampleId">ExampleText</h2>
+						href="#exampleId"
+				b. different html webpage in same project folder
+					EX: href="anotherHtmlFileInTheProjectFolder.html"
+			- passing "" will refresh the page
+			- passing "#" go to itself
+		2. target - defines that target browser tab where the link will be opened
+			  - if attribute is not called, link will be opened on tab where we clicked it
+			  - if attribute is set to "_blank", browser will open a new tab where the link will be opened
+	> ex: <a href="https://google.com">Go to google</a> 
+		<a href="about.html">About</a>
+	> we can also EMBED a Linktag in an image
+		- to do this, NEST an img element inside a linktag
+
+
+
+I. Heading component
+
+1. Create 6 headings inside the body
+	> have them be of different headers with descending sizes
+
+INSIDE index.html file
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>I'm heading 1</h1>
+    <h2>I'm heading 2</h2>
+    <h3>I'm heading 3</h3>
+    <h4>I'm heading 4</h4>
+    <h5>I'm heading 5</h5>
+    <h6>I'm heading 6</h6>    
+</body>
+</html>
+
+
+	> as we can see, the text size of headings get smaller and smaller as we increase the heading number
+
+
+
+
+II. Paragraph
+
+2. Add a paragraph tag in the body section
+
+INSIDE index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>This is a paragraph</p>
+</body>
+</html>
+
+
+
+III. Demonstrating Whitespace collapsing feature of HTML
+	
+3. Create a heading element	
+	> assign it a value of "Hello                world"
+	> check the output in Live Server
+
+INSIDE index.html
+
+<body>
+    <h1>Hello            world</h1>
+    <p>This is a paragraph</p>
+</body>
+
+	> as we can see, the additional spaces are ignored or collapsed by the html
+
+
+IV. lorem dummy text
+
+4. Give the paragraph element we made earlier a value of lorem
+
+INSIDE index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Molestiae eveniet labore illum ex iure distinctio dolore suscipit tenetur architecto delectus! In necessitatibus ullam minus distinctio magnam dicta, blanditiis error perferendis!</p>
+</body>
+</html>
+
+
+
+V. img element
+
+5. Add an image file inside the project folder
+	> we will use this image file in the webpage
+
+
+6. Add an img element inside the <body>
+	> when we add an img element, it will also add two attributes to the img element
+		a. src - defines the location of the image in our project folder 
+			- we will give a path of the image
+		b. alt 	- defines the text that will be shown if the image from src attribute cant be shown
+
+INSIDE index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Image from local resource</h3>
+    <img src="/Box.jpeg" alt="Image of a box">
+</body>
+</html>
+
+	> right now, we are seeing the image that we define in the src attribute
+	> now, lets enter a wrong image. Lets change the file type of the image in src attr.
+
+<body>
+    <img src="/Box.jpeg" alt="Image of a box">
+</body>
+
+	> now, we are seeing the default appearance of img element if the image src cant be rendered property
+
+
+
+
+7. Add another img element inside the body
+	> this time, we will fetch the image file in the web using the image url link
+
+<body>
+    <h3>Image from local resource</h3>
+    <img src="/Box.jpg" alt="Image of a box">
+    <h3>Image from the web</h3>
+    <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.vets4pets.com%2Fsiteassets%2Fspecies%2Fcat%2Fcat-close-up-of-side-profile.jpg%3Fw%3D585%26scale%3Ddown&f=1&nofb" alt="Image of a cat">
+</body>
+
+	> same as before, if we modify the image url link where it cant fetch the image anymore, it will show the alt text
+
+
+
+8. Download the image you got from the web
+	> add it in the project folder
+
+
+
+9. Change src attribute of the img element
+	> instead of the web image url link, we will change it to the location of the image we have downloaded
+
+
+
+10. Set the width to be the same as the previous image
+
+INSIDE index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Image from local resource</h3>
+    <img src="/Box.jpg" alt="Image of a box">
+
+    <h3>Image from local resource</h3>
+    <img src="/cat-close-up-of-side-profile.webp" 
+            alt="Image of a box"
+            width="768">
+</html>
+
+	> as we can see, the 2nd image has been adjusted to have the same width as the 1st image
+
+
+
+
+VII. Project folder management
+
+
+11. Create a folder for images
+	> name it images
+
+
+12. Move the images we have in the root project folder to the images
+	> now if we look at live server, the images is showing the alt appearance
+	
+
+13. Change the src value of the img elements in index.html
+	> from "./file.jpg" to "./images/file.jpg"
+
+INSIDE index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Image from local resource</h3>
+    <img src="/images/Box.jpg" alt="Image of a box">
+
+    <h3>Image from local resource</h3>
+    <img src="/images/cat-picture.jpg" 
+            alt="Image of a box">
+</html>
+
+	> now if we take a look at the live server, the images are up once again
+
+
+
+VIII. Linebreak
+
+14. Add linebreak between two images
+	> add <br> elements between declaration of img elements in body
+
+INSIDE index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h3>Image from local resource</h3>
+    <img src="/images/Box.jpg" alt="Image of a box">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    <h3>Image from local resource</h3>
+    <img src="/images/cat-picture.jpg" 
+            alt="Image of a box">
+</html>
+
+	> now, the gap between two images have become wider
+
+
+
+IX. Linktag (external, internal)
+
+15. Create a Link tag
+	> to create one, type a and choose the a Emmet abbreviation
+
+INSIDE the body of index.html after the img element
+
+    <a href=""></a>
+
+
+16. Assign it with any external link and assign text value to the Link tag
+
+INSIDE the body of index.html after the img element
+
+	<a href="https://google.com">Go to google</a>
+
+
+17. Add a target attribute to it
+	> this will define where we will open the external link
+	> since we typically want to open external links in an empty browser tab, assign _blank to it
+
+INSIDE the body of index.html after the img element
+
+    <a href="https://google.com"
+        target="_blank">Go to google</a>
+
+	> now whenever we click, we will open a new tab
+
+
+
+
+18. Create a new html page
+	> this will be an About page
+	> this time, we will navigate from html pages inside our project
+	> change title element inside head to About
+	> same with index, change it to Index
+
+INSIDE about.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+</head>
+<body>
+</body>
+</html>
+
+
+
+19. Inside about.html, add the following
+	> a paragraph for text placeholder
+	> a linktag to navigate us back to index.html
+
+INSIDE body of about.html
+
+    <a href="index.html">Back to index page</a>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse, consequuntur itaque. Sapiente, laboriosam. Deleniti, quia.</p>
+
+
+
+
+20. In the index.html, add the following
+	> a linktag to navigate us to about.html
+
+INSIDE body of index.html
+
+    <a href="about.html">About</a>
+
+
+
+
+21. Test the webpage
+	> we should be about to navigate from the index.html to about.html and back
+
+
+
+22. Add a heading at the top of the index.html
+	> in the text, indicate that it is the top of the page
+
+INSIDE body of the index.html
+
+    <h2>This is the top of page</h2>
+    <a href="about.html">About</a>
+    <h3>Image from local resource</h3>
+    <img src="/images/Box.jpg" alt="Image of a box">
+    <a href="https://google.com"
+        target="_blank">Go to google</a>
+
+
+
+23. Add a linktag at the bottom of the index.html
+	> the purpose of this linktag is to navigate us back to the top of the index.html webpage
+	> for us to do this, we will give the href the location in webpage where we want to navigate the user
+	> in this case, it is the top of the webpage
+
+INSIDE the body of index.html, at the last line
+
+	<a href="#top">Back to top</a>
+
+	> this will navigate user back to the top of the webpage he is currently in
+
+
+
+
+24. Add many linebreaks at the top of the Back to top linktag
+	> make it so that we will not see the image when we are at the bottom
+
+
+
+
+25. Add an id attribute to the heading we added earlier
+	> have it the same name as the one we assign in the href of "Back to top" linktag
+
+INSIDE index.html body
+
+	<h2 id="top">This is the top of page</h2>
+
+
+26. Test the linktag functionality in Live Server
+	> we should be navigated back to the location in Webpage where the heading with "top" id is located
+
+
+
+27. Create a new Linktag at the top of the index.html with an external url
+	
+INSIDE body of index.html
+
+    <a href="https://google.com"></a>
+
+
+
+28. Nest an img element inside the created Linktag
+
+INSIDE body of index.html at the top
+
+    <a href="https://google.com">
+        <img src="./images/cat-picture.jpg" 
+            width="200"    
+            alt="cat image with google url">
+    </a>
+
+
+
+29. Test the image with embedded url in Live Server
+	> if we hover cursor in image, the cursor should change icon
+	> if we click it, we should be navigated to the url specified in the Linktag
+
+
+
+30. Change the value of href in Linktag we created
+	> from an external url to "#"
+
+
+31. Test the clickable image again
+	> this time, it should not navigate us to anywhere

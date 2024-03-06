@@ -1,0 +1,99 @@
+Hibernate One-to-One
+
+
+One-to-One mapping
+	> An instructor can have an "instructor detail" entity
+	> similar to an "instructor profile"
+
+
+Development Process: One-to-One relationship
+1. Prep Work - Define database tables
+2. Create InstructorDetail class
+3. Create Instructor class
+4. Create Main App
+
+
+FOREIGN KEY
+	> link tables together
+	> a field in one table that refers to primary key in another table
+
+PURPOSE OF FOREIGN KEY	
+	> to preserve relationship between tables
+		- referential integrity
+	> prevents operations that would destroy relationship
+	> ensures only valid data is inserted into the foreign key column
+		- can only contain valid reference to primary key in other table
+
+
+CREATING RELATIONSHIP TO ENTITIES IN HIBERNATE (UNI-DIRECTIONAL)
+1. Create parent Entity
+2. Create child Entity
+3. Add the child Entity as field of parent Entity
+	> if One-to-One, just add the child Entity as field member of parent
+	> if One-to-Many, add a Collection of child Entity as field member of parent
+4. Annotate the said field member with annotation
+	> @OneToOne
+	> @OneToMany
+5. Pass the Appropriate CascadeType to the @OneToOne or @OneToMany annotation
+	> based on the scenario, you may want to include specific cascade to the entities
+	> BY DEFAULT, NO OPERATIONS ARE CASCADED
+6. Annotate the field member with @JoinColumn
+	> pass a name="" parameter to @JoinColumn
+	> this will be the name of the joined column when we fetch the parent Entity
+	> if we fetch the parent Entity, the resulting query will be the JOIN query result of the parent and child entity
+
+
+
+ENTITY LIFECYCLE
+
+Operations	Description
+1. Detach	If entity is detached, it is not associated with a Hibernate session
+2. Merge	If instance is detached from session, then merge will reattach to session
+3. Persist	Transistions new instance to managed state.
+		Next flush / commit will save in db
+4. Remove	Transistions managed entity to be removed
+		Next flush / commit will delete from db
+5. Refresh	Reload / synch object with 
+
+
+
+CASCADE TYPE	Description
+PERSIST		If entity is persisted / saved, related entity will also be persisted
+REMOVE		If entity is removed / deleted, related entity will also be deleted
+REFRESH		If entity is refreshed, related entity will also be refreshed
+DETACH		If entity is detach (not associated w/ session), then related entity will also be detached
+MERGE		If entity is merged. then related entity will also be merged
+ALL		All of above cascade types
+
+
+
+
+MAKING A ONE-TO-ONE BIDIRECTIONAL (ASSUMING THEY ARE ALREADY UNI-DIRECTIONAL)
+1. Inside Child Entity, add a new field to reference the Parent Entity
+2. Inside Chile Entity, add getter/setter methods for the Parent Entity field member 
+3. Add @OneToOne annotation to the Parent Entity field member
+	> define the mappedBy="" of the @OneToOne annotation
+		- pass the name of the Child Entity field member inside the Parent Entity
+	> define the cascade="" of the @OneToOne annotation
+		- pass the cascadeType that you want to include
+
+
+mappedBy="" of @OneToOne
+	> tells Hibernate
+		1. Look at the Child entity property of Parent Entity class
+		2. Use information from the Parent Entity class @JoinColumn
+		3. To help find associated instructor
+
+
+
+BREAKING BI-DIRECTIONAL LINKING (specifically, how to remove the Child entity without affecting the Parent entity)
+1. Change the cascade type of the @OneToOne mapping inside Child entity
+	> DO NOT INCLUDE the CascadeType.REMOVE
+2. Set Parent Entity's Child Entity field member to NULL
+	> we can achieve this by either
+		- fetch the said Parent Entity > set their Child Entity field member to NULL
+		- fetch the Child entity > get its Parent Entity field member > set the Parent Entity field member's Child field member to NULL
+
+
+
+

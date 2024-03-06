@@ -1,0 +1,35 @@
+01. Introduction
+
+MicroServices
+	> enterprises are heading towards microservices architectures
+	> consist of building SMALL focused microservices
+
+Advantage
+1. Flexibility to innovate and build applications in different programming languages
+	- Go, Java, Python, JavaScript, etc
+
+
+Problem:
+Creating Deployment Strategy for each microservices built with different programming languages
+
+Solution:
+Containers
+
+
+
+Docker
+	> one of the examples of Container Solution
+	> with this, we can create Docker Images for each microservice
+	> Docker images contains everything a microservice needs to run:
+		- Application Runtime (JDK or Python or NodeJS)
+		- Application code
+			=> .jar file for Spring Boot / Java apps
+		- Dependencies
+	> You can run these docker containers in THE SAME WAY on any infrastructure
+		- in local machine
+		- in Corporate data center
+		- in Cloud
+
+
+
+

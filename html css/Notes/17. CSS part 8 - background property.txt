@@ -1,0 +1,169 @@
+17. CSS part 8 - background property
+
+includes
+
+background:url('image.jpeg');
+background-repeat
+background-size
+background-position
+background-attachment
+background:linear-gradient()
+shorthand syntax
+CSS Gradient Generator 
+	> https://www.colorzilla.com/gradient-editor/
+
+
+
+
+background:url (image-path)
+	> for background CSS property, we can also pass IMAGES in it
+	> to do this, we will set the value of the property to url()
+	> inside the url(), we will pass the path of image in project (for local file) or web url of the image (for online)
+		- ex: background:url("./big-image.jpeg"); 
+			background:url("./img/folder-image.jpeg");
+			background:url("imagewebsite.com/image.jpeg");
+			background:url("big-image");
+				= NOT PREFERRED, since we mostly want to give RELATIVE path (path that starts with dot)
+
+
+LAST RULE ORDER	
+	> applies to css properties as well
+		- if two same css property is defines inside a selector, the latest one will take effect
+
+EX:
+div {
+ height:400px;
+ color:red;
+ height:200px;
+}
+	> in this case, the height:200px; will take effect
+
+
+
+background-repeat
+	> CSS property that defines how the background image behaves
+	> can have values like
+		1. repeat
+			> default value
+			> The background image is repeated both vertically and horizontally.  
+			> The last image will be clipped if it does not fit. 
+		2. repeat-x
+			> The background image is repeated only horizontally
+		3. repeat-y
+			> The background image is repeated only vertically
+		4. no-repeat
+			> The background-image is not repeated. 
+			> The image will only be shown once
+		5. space
+			> The background-image is repeated as much as possible without clipping. 
+			> The first and last image is pinned to either side of the element, and whitespace is distributed evenly between the images
+		6. round
+			> The background-image is repeated and squished or stretched to fill the space (no gaps)
+
+
+
+
+background-size
+	> specifies the size of the background images
+	> have four syntax of values to use
+		a. keyword syntax
+			- "auto", "cover", "contain"
+		b. one-value syntax
+			- sets the width of the image (heights becomes "auto")
+			- can be measurement value (em, rem, vw) or percentage values (% of parent element dimension)
+		c. two-value syntax
+			- sets width and height of image
+	> for keywords, the values represents
+		a. cover
+			- Resize the background image to cover the entire container, even if it has to stretch the image or cut a little bit off one of the edges
+		b. contain
+			- Resize the background image to make sure the image is fully visible
+
+
+
+
+background-position
+	> CSS property that defines where to put background image inside element
+	> have two syntax for values
+		1. keyword values
+			- center, top, right, bottom, left
+			- can combine some of these values (e.g. center top will place img to center top)
+		2. percentage values
+			- takes two values (x%, y%)
+			- starts at top-left
+			- 0% 0% will place background img to top left
+			- 100% 100% will place background img to bottom right
+			- 50% 50% will place background img to center
+		3. absolute values
+			- takes two values (xpos, ypos)
+			- starts at top-left
+			- takes measurements like em, rem, px, etc
+				= ex: 100px, 100px will place background image 100px away vertically and 100px away horizontally
+
+
+
+background-attachment
+	> CSS property that defines whether a background image scrolls with the rest of the page, or is fixed
+	> default value is scroll
+	> can have values like
+		a. scroll
+			- background image will scroll with the page
+			- default value
+		b. fixed
+			- background image will NOT scroll with the page
+		c. local 
+			- The background image will scroll with the element's contents
+
+
+
+
+background: linear-gradient()
+	> creates a background based on the result of linear-gradient function
+	> linear-gradient() have the following syntax:
+		background-image: linear-gradient(direction, color-stop1, color-stop2, ...);
+	> where
+		1. direction
+			- defines a starting point and a direction
+			- to bottom is the DEFAULT VALUE
+			- can have values like
+				a. directions like to top, to top right, to bottom, etc
+				b. angle like 0deg, 50deg, 120deg
+					= NOTE: 0deg is at right and moves COUNTERCLOCKWISE
+		2. color-stops
+			- Color stops are the colors you want to render smooth transitions among
+			- can take different color values
+				a. hex values
+				b. rgb
+				c. rgba
+				d. pre-defined colors (red, blue, green, yellow, etc)
+
+
+
+SHORTHAND METHOD FOR BACKGROUND
+	> includes
+		1. color overlay
+		2. image background to use
+		3. background position
+		4. background size
+		5. background attachment
+		6. background repeat
+
+SYNTAX:
+	
+background: color-or-image position/size attachment repeat
+
+WHERE
+color-or-image
+	> represents either a background-color or background-image
+	> can take either a color (hex, rgb, rgba) or an image (file-path or external web url)
+	
+NOTE:
+1. attachment and repeat order can be interchanged
+	EX: either attachment repeat or repeat attachment
+2. position/size order CANT BE CHANGED
+	> changing their order will make the CSS property not work
+		- ex: cover/center instead of center/cover will make the CSS property unfunctional
+3. you can have as many values in background shorthand property as possible
+
+EX: 
+background: url("./image1.jpg") center|cover fixed no repeat, url("./image2.jpg") center|cover fixed repeat;

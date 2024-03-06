@@ -1,0 +1,109 @@
+Java Object Oriented Programming Concepts
+
+Class
+	> A class is a blueprint from which individual objects are created. 
+	> A class can contain any of the following variable types.
+		1. Local variables, defined inside methods
+		2. Instance variables, defined inside class but outside methods	
+		3. Class variables, defined inside Class, outisde methods, and have static keyword
+
+
+Interface
+	> An interface is a reference type in Java. 
+	> It is similar to class. 
+	> It is a collection of abstract methods. 
+	> A class implements an interface, thereby inheriting the abstract methods of the interface.
+	> Writing an interface is similar to writing a class. 
+		-> But a class describes the attributes and behaviors of an object. 
+		-> And an interface contains behaviors that a class implements.
+
+
+
+Inheritance
+	> can be defined as the process where one class acquires the properties (methods and fields) of another
+	> with the use of inheritance, the information is made manageable in a HIERARCHICAL order
+	> The class which inherits the properties of other is known as SUBCLASS (derived class, child class)
+	> The class whose properties are inherited is knwon as SUPERCLASS (base class, parent class)
+	> forms the foundation of the OOP
+
+Keywords used
+extends
+	> used to have a Class inherit the properties of another Class
+	> By default, all Class extends to Object class
+	> Also, Classes can only extends to ONE Class
+
+super
+	> used to refer to the Superclass of which the Class extends
+
+implements
+	> used to implement an Interface
+
+
+When to use Class or Interface when defining a Class' behavior
+1. Extend to Class when they share the same PROPERTIES (behavior and data)
+2. Implement an Interface when they share the same ACTIONS (behavior)
+
+
+EX:
+1. For Implement usage
+	> in example below, Bird and Airplane shared the same ACTION which is being able to fly
+
+public class InterfaceExample {
+    public static void main(String[] args) {
+        Airplane plane = new Airplane();
+        plane.fly();    // used the overriden fly method from Flyable interface
+    }
+}
+
+interface Flyable {
+    void fly();
+}
+
+class Airplane implements Flyable {
+    @Override
+    public void fly() {
+
+    }
+}
+
+class Bird implements Flyable {
+    @Override
+    public void fly() {
+
+    }
+}
+
+
+
+
+2. Extends to a Class
+	> in example below, Cat and Dog share the same PROPERTY, which is having a name
+
+public class InheritanceExample {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.name="Puppy";   // Dog Class inherited the "name" prop of inheritance.Animal
+    }
+}
+
+class Animal {
+    String name;
+}
+
+class Dog extends Animal{
+}
+
+class Cat extends Animal{
+}
+
+
+
+
+Polymorphism
+	> Polymorphism is the concept with the help of which single action in different ways can be performed. 
+	> It is derived from two Greek words: poly and morphs. 
+		- “poly” means many, and 
+		- “morphs” means forms. 
+		- Henceforth, polymorphism implies many forms.
+
+

@@ -1,0 +1,273 @@
+1000 useFul Functional Hooks
+
+1. useHttp v1
+	-> for multipurpose http hook for multiple ways of modifying response data
+	-> uses useState to handle status, error, and data State
+2. useHttp v2
+	-> http hook with predetermined function to modify data
+	-> uses useReducer to handle status, error, and data State
+
+useHttp v1
+ > for managing Http request States like
+	- loading
+	- error
+	- modifying response
+ > contains functions like	
+	- sendRequest
+		-> takes requestConfiguration and function to modify response
+ > returns 
+	- isLoading
+	- error state
+	- sendRequest function
+
+EX:
+// useHttp hook
+import { useState, useCallback } from "react";
+
+const useHttp = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const sendRequest = useCallback(async (requestConfig, applyData) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(requestConfig.url, {
+        method: requestConfig.method ? requestConfig.method : "GET",
+        body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
+        headers: requestConfig.headers ? requestConfig.headers : {},
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed!");
+      }
+
+      const data = await response.json();
+
+      applyData(data);
+    } catch (err) {
+      setError(err.message || "Something went wrong!");
+    }
+    setIsLoading(false);
+  }, []);
+
+  return {
+    isLoading,
+    error,
+    sendRequest,
+  };
+};
+
+export default useHttp;
+
+
+// example usage, NewTask component
+const NewTask = (props) => {
+  const { isLoading, error, sendRequest: sendTaskRequest } = useHttp();
+
+  const createTask = (taskText, taskData) => {
+    const generatedId = taskData.name; // firebase-specific => "name" contains generated id
+    const createdTask = { id: generatedId, text: taskText };
+
+    props.onAddTask(createdTask);
+  };
+
+  const enterTaskHandler = async (taskText) => {
+    sendTaskRequest(
+      {
+        url: "https://react-http-83f5f-default-rtdb.firebaseio.com/tasks.json",
+        method: "POST",
+        body: JSON.stringify(taskText),
+        headers: { "Content-Type": "application/json" },
+      },
+      createTask.bind(null, taskText)
+    );
+  };
+
+  return (
+    <Section>
+      <TaskForm onEnterTask={enterTaskHandler} loading={isLoading} />
+      {error && <p>{error}</p>}
+    </Section>
+  );
+};
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+useHttp v2
+ > fairly similar to useHttp v1 but uses useReducer to handle http request States
+ > takes two inputs
+	1. function that contains the async fetch() call and return a response data
+	2. boolean which defines if status is set to "pending" at the start
+ > returns two inputs
+	1. sendRequest function, which used to execute the async fetch call
+	2. properties of httpState reducer states
+		- status	
+		- data
+		- error
+
+import { useReducer, useCallback } from 'react';
+
+function httpReducer(state, action) {
+  if (action.type === 'SEND') {
+    return {
+      data: null,
+      error: null,
+      status: 'pending',
+    };
+  }
+
+  if (action.type === 'SUCCESS') {
+    return {
+      data: action.responseData,
+      error: null,
+      status: 'completed',
+    };
+  }
+
+  if (action.type === 'ERROR') {
+    return {
+      data: null,
+      error: action.errorMessage,
+      status: 'completed',
+    };
+  }
+
+  return state;
+}
+
+function useHttp(requestFunction, startWithPending = false) {
+  const [httpState, dispatch] = useReducer(httpReducer, {
+    status: startWithPending ? 'pending' : null,
+    data: null,
+    error: null,
+  });
+
+  const sendRequest = useCallback(
+    async function (requestData) {
+      dispatch({ type: 'SEND' });
+      try {
+        const responseData = await requestFunction(requestData);
+        dispatch({ type: 'SUCCESS', responseData });
+      } catch (error) {
+        dispatch({
+          type: 'ERROR',
+          errorMessage: error.message || 'Something went wrong!',
+        });
+      }
+    },
+    [requestFunction]
+  );
+
+  return {
+    sendRequest,
+    ...httpState,
+  };
+}
+
+export default useHttp;
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+useInput
+ > for managing Input validation States
+	- Input Value
+	- Input isTouched
+ > from these State, we can derived variables like
+	- valueIsValid
+		-> using validateFn function on input value
+	- errorMessage
+		-> using validateFn function on input value
+	- hasError
+		-> using valueIsValid and isTouched
+ > contains functions like
+	- input onChange
+		-> modifies Input Value
+	- input onBlur
+		-> modifies Input isTouched
+	- reset for resetting Input Value and Input isTouched
+ > takes a function which is used to determine if value is valid and the corresponding errorMessage
+	- this function returns an object with contains:
+		-> valueIsValid
+		-> errorMessage
+ > may return the following data/function
+	- Input Value
+	- valueIsValid
+	- hasError
+	- onChange, onBlur, and reset
+
+EX:
+// useInput hook
+import { useState } from "react";
+
+const useInput = (validateFn) => {
+  const [enteredValue, setEnteredValue] = useState("");
+  const [isTouched, setIsTouched] = useState(false);
+
+  const { valueIsValid, errorMessage } = validateFn(enteredValue);
+  const hasError = !valueIsValid && isTouched;
+
+  const valueChangeHandler = (event) => {
+    setEnteredValue(event.target.value);
+  };
+
+  const inputBlurHandler = () => {
+    setIsTouched(true);
+  };
+
+  const reset = () => {
+    setEnteredValue("");
+    setIsTouched(false);
+  };
+
+  return {
+    value: enteredValue,
+    hasError,
+    isValid: valueIsValid,
+    errorMessage,
+    reset,
+    inputBlurHandler,
+    valueChangeHandler,
+  };
+};
+
+export default useInput;
+
+
+// example validateFn input
+  const validateEmail = (email) => {
+    let errorMessage = "";
+    let valueIsValid = true;
+
+    if (email.trim() === "") {
+      errorMessage = "Please enter an email";
+      valueIsValid = false;
+    } else if (!email.includes("@")) {
+      errorMessage = "Please enter a valid email";
+      valueIsValid = false;
+    }
+
+    return {
+      valueIsValid,
+      errorMessage,
+    };
+  };
+
+
+// example usage of useInput() hook
+  const {
+    value: enteredFirstName,
+    hasError: firstNameInvalid,
+    isValid: enteredFirstNameIsValid,
+    errorMessage: enteredFirstNameError,
+    reset: resetFirstNameInput,
+    inputBlurHandler: firstNameInputBlurHandler,
+    valueChangeHandler: firstNameChangeHandler,
+  } = useInput(validateName);

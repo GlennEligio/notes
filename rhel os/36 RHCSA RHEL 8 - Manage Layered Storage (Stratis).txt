@@ -1,0 +1,134 @@
+36 RHCSA RHEL 8 - Manage Layered Storage (Stratis)
+
+Stratis 
+ > Stratis is a local management storage solution added into RHEL8. 
+ > Stratis supports the following features:
+	1. Thin provisioning (allocating space but not reserving it).	
+	2. Pool-based storage (multiple block devices to a single pool).
+	3. Filesystem snapshots
+ > to use Stratis, we will need both its daemon and cli component
+ > in Stratis, we have something called "Stratis Pool"
+	- similar to the Volume Group, where we use block devices such as Physical Volume to "pool" their storage spaces
+	- we can then create filesystems and assign storage space to it from the Stratis Pool
+
+
+Installing Stratis
+1. Use dnf to install stratis daemon and stratis cli
+	$ dnf install stratisd stratis-cli
+
+Starting, Checking status, and Enabling at boot of Stratis
+1. To start, check status, or enable at boot, use the systemctl command to the stratis daemon
+	$ systemctl status stratisd
+	$ systemctl start stratisd
+	$ systemctl enable stratisd
+
+
+Using Stratis
+1. Prerequisite: Make sure the block devices to use DOES NOT have filesystems inside
+	$ blkid -p /dev/sdb		to check if /dev/sdb have fs inside
+	$ wipefs -a /dev/sdb		to wipe all filesystem inside
+2. Create a Stratis pool from the block devices
+	$ stratis pool create strat1 /dev/sdb /dev/sdc
+		- creates a stratis pool named "strat1" from block devices "/dev/sdb" and "/dev/sdc"
+3. Check if pool is successfully created by checking the pool list
+	$ stratis pool list
+4. Create a filesystem on the newly created pool
+	$ stratis fs create strat1 fs1
+5. Check if filesystem is successfully created by checking the pool's filesystem list
+	$ stratis fs list strat1
+6. Check the block devices in system as well
+	$ lsblk
+7. Mount the newly created filesystem
+	$ stratis fs list strat1			-> check the device name of the filesystem to mount
+	$ mount /dev/stratis/strat1/fs1 /mnt
+8. OPTIONAL: Add the filesystem to fstab to mount permanently
+	$ lsblk		get the UUID of the filesystem, the use it to define the filesystem to mount inside /etc/fstab
+9. Add another block device to a stratis pool
+	$ stratis pool add-data strat1 /dev/sdd
+	$ stratis pool list					-> check the change in size
+10. Create a stratis filesystem SNAPSHOT
+	$ stratis fs snapshot strat1 fs1 snapshot1
+11. Confirm the snapshot has been created
+	$ stratis fs list strat1
+12. Test the snapshot by mounting and unmounting it
+	$ mount /dev/stratis/strat1/fs1
+	$ ls /mnt
+	$ touch /mnt/newfile
+	$ ls /mnt
+	$ umount /dev/stratis/strat1/fs1
+	$ ls /mnt
+13. Snapshot the current filesystem state
+	$ stratis fs snapshot strat1 fs1 snapshot2
+14. Remove a snapshot
+	$ stratis fs destroy strat1 snapshot1
+	$ stratis fs destroy strat1 snapshot2
+15. List all stratis filesystem inside the stratis pool
+	$ stratis fs list strat1
+16. Remove a stratis pool by removing all the remaining filesystem inside
+	$ stratis fs destroy strat1 fs1		-> remaining fs
+	$ stratis pool destroy strat1
+17. Check the stratis pool list
+	$ stratis pool list
+	$ lsblk			-> sdb must be clean again
+
+
+
+Commands
+blkid
+ > locate/print block device
+ > options:
+	-p	switch to low-level superblock probing mode, where we can see the partitions and filesystem in block device
+ > ex:
+	$ blkid -p /dev/sdb
+		- checks the block device "/dev/sdb" and its partitions/filesystem
+
+wipefs
+ > wipe a signature from a device
+ > used to erase filesystem, raid, or partition-table signature from the specified device
+ > sypnosis
+	$ wipefs [options] device...
+ > options
+	-a	erase all available signatures
+ > ex:
+	$ wipefs -a /dev/sdb
+
+
+STRATIS COMMANDS
+stratis
+ > configure stratis local storage pool
+ > can use specific commands to target resources like pool, filesystem, blockdev, key, report, or daemon
+
+stratis pool create POOLNAME DEVICE...
+ > used to create a Stratis Pool from the list of devices
+ > ex:
+	$ stratis pool create strat1 /dev/sdb /dev/sdc
+		- creates a Stratis pool "strat1" using block devices "/dev/sdb" and "/dev/sdc"
+
+stratis pool list
+ > list all stratis pool available
+
+stratis pool destroy POOLNAME
+ > destroy the specified Stratis pool
+
+stratis pool add-data POOL DEVICE...
+ > used to add more block devices to the Stratis pool
+
+
+stratis fs create POOL FILESYSTEM
+ > used to create a filesystem from the specific pool
+ > ex:
+	$ stratis fs create strat1 fs1
+		- creates a filesystem "fs1" under the "strat1" stratis pool
+
+stratis fs list POOL
+ > list all stratis filesystem from specified pool
+ > if no pool is passed, will list all fs of all pools
+
+stratis fs snapshot POOL SOURCE_FS SNAPSHOT_FS
+ > used to create a snapshot of the specified filesystem in the same pool
+ > ex:
+	$ stratis fs snapshot strat1 fs1 snapshot1
+		- creates a new snapshot of "fs1" named "snapshot1" inside the "strat1" pool
+
+stratis fs destroy POOL FS
+  > used to delete a specific filesystem under a specific stratis pool

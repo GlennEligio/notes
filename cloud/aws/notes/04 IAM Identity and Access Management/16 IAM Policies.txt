@@ -1,0 +1,48 @@
+16 IAM Policies
+
+
+IAM Policies inheritance
+ > all Users under a Group will inherit all the Policies attached to that Group
+ > ex: if Alice and Bob is under "Developer" group, and Developer group have AdministratorAccess policy, both Alice and Bob will have that policy to
+
+
+In-line policy
+ > given to a specific user only
+ > typically given to a user which does not belong to a group
+
+
+
+IAM Policies Structure
+Consist of:
+1. Version: policy language version, always include "2012-10-17"
+2. Id: an identifier for the policy (optional)
+3. Statement: one or more individual statements (required)
+
+Statements consist of:
+1. Sid: an identifier for the statement (optional)
+2. Effect: whether the statement allows or denied access (Allow, Deny)
+3. Principal: account/user/role to which this policy applied to
+4. Action: list of actions this policy allows or denies
+5. Resource: list of resources to which the actions applied to
+6. Condition: conditions for when this policy is in effect (optional)
+
+
+EX:
+{
+  "Version": "2012-10-17",
+  "Id": "S3-Account-Permissions",
+  "Statement": [
+    {
+      "Sid": "1",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": ["arn:aws:iam::123456789012:root"]
+      },
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": ["arn:aws:s3:::mybucket/*"]
+    }
+  ]
+}

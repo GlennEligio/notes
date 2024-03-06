@@ -1,0 +1,96 @@
+Day 7
+
+Eureka Server
+	> used for spring cloud discovery
+	> to make a spring boot applicate a Eureka server, we will do the following
+
+@EnableEurekaServer
+	> added to the @SpringBootApplication to signify that its a Eureka Server
+
+Eureka Discovery Client
+	> used for the Eureka Clients to be discovered by Eureka Server
+
+@EnableClientServer
+	> added to the @SpringBootApplication to signify that its a Eureka Client
+
+DiscoveryService
+	> Eureka Services will register to this DiscoveryServer
+
+
+
+NOTE: When adding Spring Cloud related dependencies, add its a Spring Cloud Dependency Management to take care of its version
+
+
+STEPS TO MAKE EUREKA CLIENT-SERVER
+1. Add necessary dependencies to use Eureka Server API
+
+For Spring Cloud Dependency Management (Client/Server)
+
+SAME LEVEL AS <dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+INSIDE <properties>
+
+	<spring-cloud.version>2020.0.4</spring-cloud.version>
+
+
+For Client
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+
+For Server
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+		</dependency>
+
+
+
+2. Add these annotations in the @SpringBootApplication Class
+
+For Client
+
+	@EnableEurekaClient
+
+For Server
+
+	@EnableEurekaClient
+
+
+
+3. Add these following configurations in application.properties in src/main/resources
+
+For Server
+
+server.port=7777
+eureka.instance.hostname=localhost
+eureka.client.registerWithEureka=false
+eureka.client.fetchRegistry=false
+
+
+For Client
+	> most important part here is the eureka.client.serviceUrl.defaultZone
+		= defines the defaultZone where we will connect to
+		= in this case, its the url of the Eureka Server
+
+server.port=8090
+spring.application.name=emp-service
+eureka.client.serviceUrl.defaultZone=http://localhost:7777/eureka
+
+
+

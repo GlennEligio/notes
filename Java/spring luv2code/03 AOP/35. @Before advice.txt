@@ -1,0 +1,33 @@
+@Before
+	> added in a method
+	> runs the method inside before executing the target object/method
+
+@Before Advice uses cases
+Most common
+	- logging, security, transactions
+Audit logging
+	- who, what, when, where
+API Management
+	- how many times has a method been called user
+	- analytics: what are peak times? what is average load? who is top user?
+
+INSTALLING AOP files
+	> assuming you started created project from start.spring.io
+	> add the spring boot starter aop dependency
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-AOP</artifactId>
+			<version>2.5.6</version>
+		</dependency>
+
+	> or download aspectjweaver jar
+
+	
+
+
+BEST PRACTICES: Aspect and Advices
+1. Keep the code small
+2. Keep the code fast
+3. Do not perform any expensive / slow operations
+4. Get in and out as QUICKLY as possible

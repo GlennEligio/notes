@@ -1,0 +1,50 @@
+04. Static Code Analysis & Technical Debt
+
+
+Static Code Analysis
+	> There are many tools which help ins tatic testing and providing us with an analysis for better comprehension
+	> Some IDEs can do basic Static Code Analysis, but having a tool dedicated for it will give us better information
+	> These Static Code Analysis examines the code while we are writing it
+	> Process includes:
+		1. Developer writes the code
+		2. Static testing tool examines the code while it is being written
+		3. Static testing tool creates an analysis of the code, represents it visually, and show it to the Developer
+		4. Developer uses the information to better the code
+
+
+
+Reasons To Use Static Code Analysis
+1. Find erros earlier in development
+	> It helps us find error way earlier in development before it goes into production
+	> They are cheap and easy to fix
+2. Detects OVERCOMPLEXITY in code (refractoring/simplification)
+	> It helps detect if the code is written in a very complicated matter even though it can be written very easily
+3. Find Security Errors
+	> It helps pick up security errors, which basically means it helps the source code be more secure when it is deployed
+4. Enforces Best Coding Practices
+	> Devs may forget to follow best practices specific to a coding language	
+	> Static Code Analysis can help us in solving this issue
+5. Automated & Integrates in Jenkins
+	> It can be a waste of time to regularly ask the testing software to test the code
+	> Therefore, to solve such problem, we can integrate the static testing tool with Jenkins (or any DevOps tool)
+		- i.e. SonarQube + Jenkins
+6. Can create project specific rules
+	> They allow us to write project specific rules
+	> We can customize these rules for each specific project too
+
+
+Example of Static Testing Tools
+1. SonarQube
+2. Coverity
+3. Pycharm
+
+
+
+Technical Debt
+	> It directly translates as the implied costs for ADDITIONAL REWORK that can occur if at an early stage, an easy but not efficient solution is chosen
+	> In the future, the easy code may restrict scalability
+	> In some Static Code Analysis Tool, it can calculate how much Technical Debt a source code have
+
+EX:
+Developer A, in order to deploy the solution faster, opted to not doing inspection of the code. Later down the line when scaling the solution, Dev A needs to do the inspection of the code which will incur additional work. This additional work is referred to as Technical Debt
+

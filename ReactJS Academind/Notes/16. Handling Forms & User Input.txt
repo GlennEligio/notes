@@ -1,0 +1,710 @@
+16. Handling Forms & User Input
+
+Handling Forms & User Input
+ > Working with Values, Validation & State
+
+001 Module Introduction
+
+Module Content
+1. What's Complex About Forms?
+2. Handling Inputs & Forms with React
+3. Simplifications
+
+
+
+
+
+
+003 Whats So Complex About Forms
+
+Whats Complex About Forms?
+ > Forms can have different States
+   
+Form State
+ > Form State can be either of the two
+ 	A. One or more inputs are invalid
+	B. All inputs are valid
+ > When One or more inputs are invalid, the App must:
+	1. Output input-specific error messages & highlight problematic inputs
+	2. Ensure form can't be submitted / saved
+ > When ALL Inputs are valid, the App must:
+	1. Allow form to be submitted / saved
+
+
+When To Validate an Input?
+1. When form is submitted
+2. When an input is losing focus
+3. On every keystroke in input
+
+1. When form is submitted
+	> this allows the user to enter a valid value before warning him/her
+	> help user avoid unnecessary warning but maybe present feedback "too late"
+2. When an input is losing focus
+	> this allows the user to enter a valid value before warning him/her
+		- will not bombard user with invalid input prompts
+	> very useful for untouched forms
+	> downside is that user will only know if Input is invalid when Input loses focus
+		- bad user experience
+3. On every keystroke
+	> here, the App warns user before he/she had a change of entering
+	> can overload user with validation prompt
+	> also, minor performance issue since validation happens on every keystroke
+	> but, if applied only on invalid inputs, has the potential of providing more DIRECT feedback
+
+
+
+
+
+
+004 Dealing with Form Submission & Getting User Input Values
+
+
+Form Submission in React
+ > when dealing with form submission, we typically do not use the default behavior of form
+	- this is where the user will be navigated to the url link defined in "action" property of form element
+ > instead, we want to write the logic of form submission on our own
+
+Dealing with Form Submission
+1. Add form element
+2. Create a function
+	> this function must take one parameter, which is the React's SyntheticEvent object
+	> this Object contains several variables and function that we can use
+3. Assign the function to the form's onSubmit eventListener
+4. Inside the function, call the preventDefault() function of SyntheticEvent parameter
+	> this will PREVENT the default behavior of the form
+5. We will then write the logic inside, which may involve
+	- fetch values in form's input elements
+	- create an Object to represent data to be sent
+	- send an http request
+
+
+Getting User Input Values
+ > to get user input values, we can do it in several methods
+	1. Through State whose value changes based on Input value
+	2. Through useRef of the Input element
+	3. Through the React SyntheticEvent object of eventListener function parameter
+
+1. Through State whose value changes based on Input value
+	> here, we must define the onChange eventListener of the Input
+	> then, inside the onChange, we will call the State update function and pass the input value through SyntheticEvent param
+
+EX:
+const [enteredName, setEnteredName] = useState("");
+
+  const nameInputChangeHandler = (event) => {
+    setEnteredName(event.target.value);
+  };
+
+        <input
+          type="text"
+          id="name"
+          onChange={nameInputChangeHandler}
+        />
+
+2. Through useRef of the Input element
+	> here, we will use the useRef to get the Input element
+	> then, from the Input element, we can access its current value
+
+EX:
+const nameInputRef = useRef();
+const enteredValue = nameInputRef.current.value;
+
+        <input
+          ref={nameInputRef}
+          type="text"
+          id="name"
+        />
+
+3. Through SyntheticEvent object of onSubmit eventListener
+	> only accessible in onSubmit function
+	> for this to work, the Input element must have "name" property
+		- <input type="text" id="name" name="name">
+	> we can access the Input element value through
+		SyntheticEvent.target.<input's name>.value
+	> ex: const name = event.target.name.value
+	
+EX:
+  const formSubmissionHandler = (event) => {
+    const name = event.target.name.value;
+    console.log(name)
+  };
+        <input
+          type="text"
+          id="name"
+          name="name"
+        />
+
+
+Modifying the Input value dynamically
+ > to modify the Input value, we can do the following
+	1. Modify the Input element value itself using useRef()
+		- not recommended since we will interact with the Real DOM ourself
+		- as much as possible, we only want the React and ReactDOM to interact with RealDOM
+	2. Modify the State that has TWO-WAY BINDING with the Input value
+		- to do this, we will want to add "value" to the Input
+		- then, we will pass the value of the State snapshot
+
+1. Modify the Input element value itself using useRef()
+
+Ex:
+  const formSubmissionHandler = (event) => {
+    event.preventDefault();
+    console.log(enteredName);
+    nameInputRef.current.value = "";
+  };
+        <input
+          ref={nameInputRef}
+          type="text"
+          id="name"
+          onChange={nameInputChangeHandler}
+        />
+
+2. Modify the State that has TWO-WAY BINDING with the Input value
+
+EX:
+  const formSubmissionHandler = (event) => {
+    event.preventDefault();
+    console.log(enteredName);
+    setEnteredName("");
+  };
+
+        <input
+          type="text"
+          value={enteredName}
+          id="name"
+          onChange={nameInputChangeHandler}
+        />
+
+
+
+
+
+
+005 Adding Basic Validation
+
+Validation
+ > we can do Input value Validation through different ways
+ > one of them is check the value of the Input when submitting forms
+
+Ex:
+In this example, if the enteredName State (which is binded to the Input) length is 0 or blank, then we will cancel the function that does the form submission.
+
+  const formSubmissionHandler = (event) => {
+    event.preventDefault();
+
+    if (enteredName.trim() === "") {
+      return;
+    }
+
+    console.log(enteredName);
+
+    const enteredValue = nameInputRef.current.value;
+    console.log(enteredValue);
+
+    // nameInputRef.current.value = ''; // NOT IDEAL, DONT MANIPULATE THE DOM
+
+    setEnteredName("");
+  };
+
+
+
+
+
+
+006 Providing Validation Feedback
+
+Providing Validation Feedback
+ > there are many ways to setup how we can provide Validation feedback in our Input
+ > one of them is by showing an HTML element or modifying HTML style based on a specific value (ex: State)
+
+Ex:
+// State to hold whether Input is valid
+  const [enteredNameIsValid, setEnteredNameIsValid] = useState(true);
+
+// onSubmit function
+  const formSubmissionHandler = (event) => {
+    event.preventDefault();
+
+    if (enteredName.trim() === "") {
+      setEnteredNameIsValid(false);
+      return;
+    }
+
+    setEnteredNameIsValid(true);
+
+    console.log(enteredName);
+
+    const enteredValue = nameInputRef.current.value;
+    console.log(enteredValue);
+
+    setEnteredName("");
+  };
+
+// dynamic styling of form and input element based on State
+  const nameInputClasses = enteredNameIsValid
+    ? "form-control"
+    : "form-control invalid";
+
+  return (
+    <form onSubmit={formSubmissionHandler}>
+      <div className={nameInputClasses}>
+        <label htmlFor="name">Your Name</label>
+        <input
+          ref={nameInputRef}
+          type="text"
+          value={enteredName}
+          id="name"
+          onChange={nameInputChangeHandler}
+        />
+        {!enteredNameIsValid && (
+          <p className="error-text">Name must not be empty</p>
+        )}
+      </div>
+      <div className="form-actions">
+        <button>Submit</button>
+      </div>
+    </form>
+  );
+
+
+
+
+
+
+007 Handling the "was touched" State
+
+Handling the "was touched" State
+ > in validating form and input, we want to set the Input Validation to false
+	- reason is that, in most cases, form inputs will be empty at start
+ > but since at first, user havent passed any inputs, we SHOULD NOT show any Validation prompts
+ > instead, we will only show those AFTER the user "touched" or "entered" value in the input
+ > this means that Input is invalid ONLY IF:
+	1. Input value is invalid
+	2. Input is "touched"
+ > also, when submitting form, we want to treat all input as "touched" in this case
+ > now, we handle THREE States just for input validation
+	1. Input Value
+	2. Input Valid
+	3. Input Touched
+
+EX:
+// New State for Input Touched
+const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+
+// Logic in Form Submission to modify Input Touched State
+  const formSubmissionHandler = (event) => {
+    event.preventDefault();
+
+    setEnteredNameTouched(true);
+
+    if (enteredName.trim() === "") {
+      setEnteredNameIsValid(false);
+      return;
+    }
+
+    setEnteredNameIsValid(true);
+
+    console.log(enteredName);
+
+    const enteredValue = nameInputRef.current.value;
+    console.log(enteredValue);
+
+    setEnteredName("");
+  };
+
+// New validation value (input valid + touched)
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
+// Dynamic CSS Class based on Input Valid and Touched State
+  const nameInputClasses = nameInputIsInvalid
+    ? "form-control invalid"
+    : "form-control";
+
+// JSX that uses new validation value (input value valid + input touched)
+  return (
+    <form onSubmit={formSubmissionHandler}>
+      <div className={nameInputClasses}>
+        <label htmlFor="name">Your Name</label>
+        <input
+          ref={nameInputRef}
+          type="text"
+          value={enteredName}
+          id="name"
+          onChange={nameInputChangeHandler}
+        />
+        {nameInputIsInvalid && (
+          <p className="error-text">Name must not be empty</p>
+        )}
+      </div>
+      <div className="form-actions">
+        <button>Submit</button>
+      </div>
+    </form>
+  );
+
+
+
+
+
+
+008 React to Lost Focus
+
+React to Lost Focus
+ > in addition to validating Input when submitting and Input being touched, we would also want to validate Input when it loses focus
+ > when a User focuses or clicked other element beside the Input, it means that the Input loses the focus
+ > with this, we can send UI prompts to use in case of invalid input BEFORE form submission
+ > to do this, we will need to define the "onBlur" eventListener function
+	- then, inside onBlur function, we will do the following
+		1. set the Input touched to true	
+		2. validate the Input value and set the Input Valid value
+
+onBlur
+ > event where the user loses focus in the HTML Element
+
+
+EX:
+// onBlur function
+  const nameInputBlurHandler = (event) => {
+    setEnteredNameTouched(true);
+    if (enteredName.trim() === "") {
+      setEnteredNameIsValid(false);
+      return;
+    }
+  };
+
+        <input
+          ref={nameInputRef}
+          type="text"
+          value={enteredName}
+          id="name"
+          onChange={nameInputChangeHandler}
+          onBlur={nameInputBlurHandler}
+        />
+
+
+
+
+
+
+009 Refactoring & Deriving States
+
+Refactoring
+1. Adding Validation in every Keystroke
+2. Deriving Input value validity and Input validity through Input value and touched States
+3. Resetting Form and Input States 
+
+
+1. Adding Validation in every Keystroke
+	> add Validation function inside onChange handler of Input
+
+EX:
+// name input onChange handler
+  const nameInputChangeHandler = (event) => {
+    setEnteredName(event.target.value);
+    if (enteredName.trim() === "") {
+      setEnteredNameIsValid(false);
+      return;
+    }
+  };
+
+
+2. Deriving Input value validity and Input validity through Input value and touched States
+	> since enteredNameIsValid State is derived from the enteredName State, we can either
+		a. Put them together into one big State object
+		b. Create a const for enteredNameIsValid whose value is based on enteredName
+	> in this case, we will choose the 2nd option because the const variable will be updated when enteredName State changes due to Component re-evaluation
+
+EX:
+1. In code below, we can see that we removed the "enteredNameIsValid" State and replaced it with local const variable inside SimpleInput component with same name.
+2. We also removed the logic related to checking "enteredName" value validity inside the eventHandlers and instead replaced them with the local const var check
+
+// Old SimpleInput component
+const SimpleInput = (props) => {
+  const nameInputRef = useRef();
+  const [enteredName, setEnteredName] = useState("");
+  const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
+  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+  
+  const nameInputChangeHandler = (event) => {
+    setEnteredName(event.target.value);
+    if (enteredName.trim() === "") {
+      setEnteredNameIsValid(false);
+      return;
+    }
+  };
+
+  const nameInputBlurHandler = (event) => {
+    setEnteredNameTouched(true);
+    if (enteredName.trim() === "") {
+      setEnteredNameIsValid(false);
+      return;
+    }
+  };
+
+  const formSubmissionHandler = (event) => {
+    event.preventDefault();
+
+    setEnteredNameTouched(true);
+
+    if (enteredName.trim() === "") {
+      setEnteredNameIsValid(false);
+      return;
+    }
+
+    setEnteredName("");
+  };
+
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
+  const nameInputClasses = nameInputIsInvalid
+    ? "form-control invalid"
+    : "form-control";
+
+  return (
+    <form onSubmit={formSubmissionHandler}>
+      <div className={nameInputClasses}>
+        <label htmlFor="name">Your Name</label>
+        <input
+          ref={nameInputRef}
+          type="text"
+          value={enteredName}
+          id="name"
+          onChange={nameInputChangeHandler}
+          onBlur={nameInputBlurHandler}
+        />
+        {nameInputIsInvalid && (
+          <p className="error-text">Name must not be empty</p>
+        )}
+      </div>
+      <div className="form-actions">
+        <button>Submit</button>
+      </div>
+    </form>
+  );
+};
+
+// Refactored SimpleInput component
+const SimpleInput = (props) => {
+  const nameInputRef = useRef();
+  const [enteredName, setEnteredName] = useState("");
+  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+
+  const enteredNameIsValid = enteredName.trim() !== "";
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
+  const nameInputChangeHandler = (event) => {
+    setEnteredName(event.target.value);
+  };
+
+  const nameInputBlurHandler = (event) => {
+    setEnteredNameTouched(true);
+  };
+
+  const formSubmissionHandler = (event) => {
+    event.preventDefault();
+
+    setEnteredNameTouched(true);
+
+    if (!enteredNameIsValid) {
+      return;
+    }
+
+    setEnteredName("");
+    setEnteredNameTouched(false);
+  };
+
+  const nameInputClasses = nameInputIsInvalid
+    ? "form-control invalid"
+    : "form-control";
+
+  return (
+    <form onSubmit={formSubmissionHandler}>
+      <div className={nameInputClasses}>
+        <label htmlFor="name">Your Name</label>
+        <input
+          ref={nameInputRef}
+          type="text"
+          value={enteredName}
+          id="name"
+          onChange={nameInputChangeHandler}
+          onBlur={nameInputBlurHandler}
+        />
+        {nameInputIsInvalid && (
+          <p className="error-text">Name must not be empty</p>
+        )}
+      </div>
+      <div className="form-actions">
+        <button>Submit</button>
+      </div>
+    </form>
+  );
+};
+
+3. Resetting Form and Input State
+	> after form submission, we should resetting the form and input States with includes
+		a. Input Value State
+		b. Input touched State
+
+Form submission eventHandler
+  const formSubmissionHandler = (event) => {
+    event.preventDefault();
+
+    setEnteredNameTouched(true);
+
+    if (!enteredNameIsValid) {
+      return;
+    }
+
+    setEnteredName("");
+    setEnteredNameTouched(false);
+  };
+
+
+
+
+
+
+010 Managing The Overall Form Validity
+
+Overall Form Validity
+ > the overall Form Validity is DERIVED from the sum of all Input Validity values
+ > in order to create and update the Form Validity, we can either do the following
+	1. Create State to contain form validity. 
+		- Then create a useEffect where inside, we will modify the form validity based on input validity values
+		- Also, add the Input Validity States inside the useEffect dependency array
+	2. Create a local variable inside Functional Component to contain form validity 
+		- Then create a conditional check based on the Input Validity State
+		- Based on the Input Validity State, we will modify the local variable.
+ > in our case, we will use the 2nd option because
+	- 1st option will cause additional re-render, which is not good
+ > with the form validity State/Variable, we will need to disable form submission
+	- we can use the form validity to disable the submit button by defining its "disabled" property
+
+
+1. Create State to contain form validity. 
+
+// States and useEffect()
+  const [enteredName, setEnteredName] = useState("");
+  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false);
+
+  const enteredNameIsValid = enteredName.trim() !== "";
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
+  useEffect(() => {
+    if (enteredNameIsValid) {
+      setFormIsValid(true);
+    } else {
+      setFormIsValid(false);
+    }
+  }, [enteredNameIsValid]);
+
+// submit button where we use the formValidity
+<button disabled={!formIsValid}>Submit</button>
+
+
+2. Create a local variable inside Functional Component to contain form validity 
+
+// State and local variable
+const SimpleInput = (props) => {
+  const [enteredName, setEnteredName] = useState("");
+  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+
+  const enteredNameIsValid = enteredName.trim() !== "";
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
+  let formIsValid = false;
+
+  if (enteredNameIsValid) {
+    formIsValid = true;
+  }
+
+
+ADDITIONAL:
+// additional CSS styling for disabled button
+button:disabled,
+button:disabled:hover,
+button:disabled:active {
+  background-color: #ccc;
+  color: #292929;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+
+
+
+
+
+
+
+011 Adding a Custom Input Hook
+
+Custom Input Hook
+ > this hook will do the following:
+	- will take a function used to validate the Value State as parameter
+	- manage State related to Input (value, isTouched)
+	- create values derived from the States (valueIsValid, hasError)
+		-> for valueIsValid, we will apply the validateFn parameter to the Input Value
+		-> for hasError variable, we will use valueIsValid and isTouchedx
+	- will contain function to pass on onChange and onBlur of Input element
+		-> onChange will change the value of Input Value State
+		-> onBlur will change the value of onTouch
+	- will also contain function for resetting Input Value and isTouched State
+	- will expose/return the following variables/functions
+		-> Input Value
+		-> valueIsValid
+		-> hasError
+		-> onChange, onBlur, and reset
+
+EX:
+import { useState } from "react";
+
+const useInput = (validateValue) => {
+  const [enteredValue, setEnteredValue] = useState("");
+  const [isTouched, setIsTouched] = useState(false);
+
+  const valueIsValid = validateValue(enteredValue);
+  const hasError = !valueIsValid && isTouched;
+
+  const valueChangeHandler = (event) => {
+    setEnteredValue(event.target.value);
+  };
+
+  const inputBlurHandler = (event) => {
+    setIsTouched(true);
+  };
+
+  const reset = () => {
+    setEnteredValue("");
+    setIsTouched(false);
+  };
+
+  return {
+    value: enteredValue,
+    hasError,
+    isValid: valueIsValid,
+    valueChangeHandler,
+    inputBlurHandler,
+    reset,
+  };
+};
+
+export default useInput;
+
+
+
+
+
+
+
+
+015 Summary
+
+Formik
+ > third party used to handle Form and Input Validation
+
+
+
+
+

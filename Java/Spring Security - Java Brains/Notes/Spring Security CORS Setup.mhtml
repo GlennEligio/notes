@@ -1,0 +1,3076 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://mehmetozanguven.github.io/spring/2021/05/21/spring-security-9-cors-setup.html#what_cors_is
+Subject: Spring Security -- 9) Spring Security CORS Setup
+Date: Tue, 8 Feb 2022 12:13:44 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--7NArcxjXWV7Jiz1qfGTnP6j8iNRYYruN2p1eB4O1zs----"
+
+
+------MultipartBoundary--7NArcxjXWV7Jiz1qfGTnP6j8iNRYYruN2p1eB4O1zs----
+Content-Type: text/html
+Content-ID: <frame-5BE51E2A8DF86281C443EDCDD43869D4@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://mehmetozanguven.github.io/spring/2021/05/21/spring-security-9-cors-setup.html#what_cors_is
+
+<!DOCTYPE html><html lang=3D"en"><head><meta http-equiv=3D"Content-Type" co=
+ntent=3D"text/html; charset=3DUTF-8">
+ =20
+  <meta http-equiv=3D"X-UA-Compatible" content=3D"IE=3Dedge">
+  <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=
+1">
+
+  <title>Spring Security -- 9) Spring Security CORS Setup</title>
+  <meta name=3D"description" content=3D"In this post, let=E2=80=99s find ou=
+t what is the CORS policy, how to implement in the Spring Boot and Spring S=
+ecurity, finally how to resolve most common error Acces...">
+  <link href=3D"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font=
+-awesome.min.css" rel=3D"stylesheet">
+  <link rel=3D"stylesheet" href=3D"https://mehmetozanguven.github.io/css/go=
+ogle_pt_sans.css">
+
+  <link rel=3D"stylesheet" href=3D"https://mehmetozanguven.github.io/css/st=
+yle.css">
+  <link rel=3D"canonical" href=3D"https://mehmetozanguven.github.io/spring/=
+2021/05/21/spring-security-9-cors-setup.html">
+  <link rel=3D"alternate" type=3D"application/rss+xml" title=3D"mehmetozang=
+uven" href=3D"https://mehmetozanguven.github.io/feed.xml">
+ =20
+ =20
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+ =20
+
+</head>
+
+
+  <body class=3D" light  ">
+
+   =20
+<div class=3D"wrapper">
+  <center> <a href=3D"https://mehmetozanguven.github.io/index.html"><div cl=
+ass=3D"site-title">   mehmetozanguven </div></a></center>
+</div>
+<div class=3D"wrapper site-description">
+<center>  Includes my notes about Java, Spring, Apache Flink and more ... <=
+/center>
+</div>
+<div class=3D"wrapper">
+  <div class=3D"trigger site-navigation">
+    <a class=3D"page-link" href=3D"https://mehmetozanguven.github.io/index.=
+html">HOME</a>
+
+   =20
+   =20
+   =20
+   =20
+
+    <span class=3D"exclamationMark">/</span><a class=3D"page-link" href=3D"=
+https://mehmetozanguven.github.io/about/">About Me</a>
+   =20
+   =20
+   =20
+
+    <span class=3D"exclamationMark">/</span><a class=3D"page-link" href=3D"=
+https://mehmetozanguven.github.io/apache-flink/">Apache Flink</a>
+   =20
+   =20
+   =20
+
+    <span class=3D"exclamationMark">/</span><a class=3D"page-link" href=3D"=
+https://mehmetozanguven.github.io/container-docker-podman/">Containerizatio=
+n | Podman</a>
+   =20
+   =20
+   =20
+   =20
+   =20
+
+    <span class=3D"exclamationMark">/</span><a class=3D"page-link" href=3D"=
+https://mehmetozanguven.github.io/how-to/">How To Series</a>
+   =20
+   =20
+   =20
+   =20
+   =20
+
+    <span class=3D"exclamationMark">/</span><a class=3D"page-link" href=3D"=
+https://mehmetozanguven.github.io/java/">Java</a>
+   =20
+   =20
+   =20
+
+    <span class=3D"exclamationMark">/</span><a class=3D"page-link" href=3D"=
+https://mehmetozanguven.github.io/jpa/">JPA</a>
+   =20
+   =20
+   =20
+
+    <span class=3D"exclamationMark">/</span><a class=3D"page-link" href=3D"=
+https://mehmetozanguven.github.io/others/">Others</a>
+   =20
+   =20
+   =20
+
+    <span class=3D"exclamationMark">/</span><a class=3D"page-link" href=3D"=
+https://mehmetozanguven.github.io/spring-framework/">Spring Framework</a>
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+   =20
+  </div>
+</div>
+
+
+    <div class=3D"page-content">
+      <div class=3D"wrapper">
+        <article class=3D"post" itemscope=3D"" itemtype=3D"http://schema.or=
+g/BlogPosting">
+
+  <header class=3D"post-header">
+    <h1 class=3D"post-title" itemprop=3D"name headline"><a class=3D"post-ti=
+tle-link" href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/sprin=
+g-security-9-cors-setup.html">Spring Security -- 9) Spring Security CORS Se=
+tup</a></h1>
+  <center>  <p class=3D"post-meta"><time datetime=3D"2021-05-21T17:15:31+00=
+:00" itemprop=3D"datePublished">May 21, 2021</time></p>
+   =20
+     <div class=3D"">
+       <center><p><strong><span class=3D"authorKeyword">Author</span><span =
+class=3D"small-site-title"> </span></strong></p><h2 style=3D"letter-spacing=
+: 3px !important;
+       text-transform: uppercase !important;"><strong>mehmetozanguven</stro=
+ng></h2><p></p></center>
+
+     </div>
+    =20
+   </center>
+  </header>
+
+  <div class=3D"post-content" itemprop=3D"articleBody">
+    <p>In this post, let=E2=80=99s find out <strong>what is the CORS policy=
+, how to implement in the Spring Boot and Spring Security, finally how to r=
+esolve most common error Access-Control-Allow-Origin =3D&gt; Missing</stron=
+g></p>
+
+<p>Topics are:</p>
+
+<ul>
+  <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/spring=
+-security-9-cors-setup.html#github_link"><strong>Github Link</strong></a></=
+li>
+  <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/spring=
+-security-9-cors-setup.html#what_cors_is"><strong>What is the CORS?</strong=
+></a>
+    <ul>
+      <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/sp=
+ring-security-9-cors-setup.html#what_different_origin_means"><strong>What d=
+o we mean by different origin ?</strong></a></li>
+      <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/sp=
+ring-security-9-cors-setup.html#why_we_need_cors_policy"><strong>Why do we =
+need a Cors policy ?</strong></a></li>
+      <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/sp=
+ring-security-9-cors-setup.html#how_cors_works"><strong>How CORS works ?</s=
+trong></a></li>
+      <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/sp=
+ring-security-9-cors-setup.html#what_simple_request_is"><strong>What do we =
+mean by Simple Requests ?</strong></a></li>
+    </ul>
+  </li>
+  <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/spring=
+-security-9-cors-setup.html#project_setup"><strong>Project Setup</strong></=
+a></li>
+  <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/spring=
+-security-9-cors-setup.html#response_from_same_origin"><strong>Getting Resp=
+onse From the Same Origin</strong></a></li>
+  <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/spring=
+-security-9-cors-setup.html#access_control_allow_origin_missing"><strong>Er=
+ror: Access-Control-Allow-Origin =3D&gt; Missing</strong></a></li>
+  <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/spring=
+-security-9-cors-setup.html#cors_and_endpoint"><strong>CORS doesn=E2=80=99t=
+ do anything about the call of the endpoint</strong></a></li>
+  <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/spring=
+-security-9-cors-setup.html#resolve_missing_error"><strong>How to resolve A=
+ccess-Control-Allow-Origin =3D&gt; Missing Error</strong></a>
+    <ul>
+      <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/sp=
+ring-security-9-cors-setup.html#cors_for_spring_security"><strong>CORS supp=
+ort through Spring Security</strong></a></li>
+      <li><a href=3D"https://mehmetozanguven.github.io/spring/2021/05/21/sp=
+ring-security-9-cors-setup.html#cors_for_mvc"><strong>CORS Setup through MV=
+C Application</strong></a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id=3D"github-link-">Github Link <a name=3D"github_link"></a></h2>
+
+<p>If you only need to see the code, here is the <a href=3D"https://github.=
+com/mehmetozanguven/spring-security-examples/tree/master/spring-security-co=
+rs-setup">github link</a></p>
+
+<h2 id=3D"what-is-the-cors-">What is the CORS? <a name=3D"what_cors_is"></a=
+></h2>
+
+<p><strong>Cross-Origin Resource Sharing (CORS) is a protocol that enables =
+scripts running on a browser client to interact with resources from a diffe=
+rent origin.</strong></p>
+
+<blockquote>
+  <p>We need this policy, because <code class=3D"language-plaintext highlig=
+hter-rouge">XMLHttpRequest</code> and <code class=3D"language-plaintext hig=
+hlighter-rouge">fetch</code> follows the <strong>same-origin-policy</strong=
+> and that leads JavaScript can only make calls to URLs that lives on the s=
+ame origin where the script is running.</p>
+</blockquote>
+
+<p>First let=E2=80=99s define what do we mean by different origin?</p>
+
+<h3 id=3D"what-do-we-mean-by-different-origin-">What do we mean by differen=
+t origin? <a name=3D"what_different_origin_means"></a></h3>
+
+<p>Two origins are different if they have:</p>
+
+<ul>
+  <li>a different scheme (<code class=3D"language-plaintext highlighter-rou=
+ge">HTTP</code> OR <code class=3D"language-plaintext highlighter-rouge">HTT=
+PS</code>)</li>
+  <li>a different domain (<code class=3D"language-plaintext highlighter-rou=
+ge">sample.com</code> VS <code class=3D"language-plaintext highlighter-roug=
+e">api.sample.com</code> VS <code class=3D"language-plaintext highlighter-r=
+ouge">another.com</code>)</li>
+  <li>a different port (<code class=3D"language-plaintext highlighter-rouge=
+">sample.com:8081</code> VS <code class=3D"language-plaintext highlighter-r=
+ouge">sample.com:8080</code>)</li>
+</ul>
+
+<h3 id=3D"why-do-we-need-a-cors-policy--">Why do we need a Cors policy ? <a=
+ name=3D"why_we_need_cors_policy"></a></h3>
+
+<p>In generally speaking, your web application should never interact with r=
+esources from a different origin. However today web application structure, =
+you will mostly have an backend and frontend which are running on different=
+ ports. Therefore you somehow guarantee the communication between two sides=
+.</p>
+
+<blockquote>
+  <p>Web browsers can use headers related to CORS to determine whether or n=
+ot an <code class=3D"language-plaintext highlighter-rouge">fetch</code> cal=
+l should continue or fail</p>
+</blockquote>
+
+<p>There are a few headers, but most important one is the <code class=3D"la=
+nguage-plaintext highlighter-rouge">Access-Control-Allow-Origin</code> <str=
+ong>which tells browsers to allow that origin to access the resource</stron=
+g></p>
+
+<ul>
+  <li>Example:
+    <ul>
+      <li><code class=3D"language-plaintext highlighter-rouge">Access-Contr=
+ol-Allow-Origin: *</code> =3D&gt; if your back-end application runs on the =
+domain called <code class=3D"language-plaintext highlighter-rouge">api.samp=
+le.com</code> than this header says that every other origin can access the =
+<code class=3D"language-plaintext highlighter-rouge">api.sample.com</code> =
+resources. For instances, web browsers that run scripts on the domains <cod=
+e class=3D"language-plaintext highlighter-rouge">sample.com</code> or <code=
+ class=3D"language-plaintext highlighter-rouge">another.com</code> can acce=
+ss(make request) to your domain: <code class=3D"language-plaintext highligh=
+ter-rouge">api.sample.com</code></li>
+      <li><code class=3D"language-plaintext highlighter-rouge">Access-Contr=
+ol-Allow-Origin: http://sample.com</code> =3D&gt; only the web browsers tha=
+t run scripts on the domain <code class=3D"language-plaintext highlighter-r=
+ouge">http://sample.com</code> can make request to your domain.</li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>Be carefully as a developer you are not responsible to make request, <=
+strong>web browser</strong> will decide it.</p>
+</blockquote>
+
+<h3 id=3D"how-cors-works--">How CORS works ? <a name=3D"how_cors_works"></a=
+></h3>
+
+<ul>
+  <li>Cors works by adding new <strong>Http Headers</strong> that let serve=
+rs describe which origins are permitted to read that information from a web=
+ browser.</li>
+</ul>
+
+<blockquote>
+  <p>Be careful, it says <strong>=E2=80=A6 from a web browser</strong> . Th=
+at=E2=80=99s means you can send a curl request to the server ? Right !!</p>
+</blockquote>
+
+<ul>
+  <li>
+    <p>CORS specification says that any mutating request (requests that cha=
+nge something in the server such as <code class=3D"language-plaintext highl=
+ighter-rouge">POST,PUT,DELETE</code> ) must be done in the following way:</=
+p>
+
+    <ul>
+      <li>First, browser must do a <strong>preflight request</strong> and a=
+sk the supported methods to the server with the <strong>HTTP OPTIONS</stron=
+g>. (Requests that do not need any preflight request are called <strong>sim=
+ple requests</strong>)</li>
+      <li>After getting the approval from the server, then web browser can =
+send the actual request.</li>
+    </ul>
+
+    <blockquote>
+      <p>Server can also inform the clients whether the credentials should =
+be send with requests.</p>
+    </blockquote>
+  </li>
+</ul>
+
+<h3 id=3D"what-do-we-mean-by-simple-requests--">What do we mean by Simple R=
+equests ? <a name=3D"what_simple_request_is"></a></h3>
+
+<blockquote>
+  <p>For more detail explanation, please refer to the https://developer.moz=
+illa.org/en-US/docs/Web/HTTP/CORS#simple_requests</p>
+</blockquote>
+
+<p>A =E2=80=9Csimple request=E2=80=9D is one that <strong>meets all the fol=
+lowing conditions</strong>:</p>
+
+<ul>
+  <li>
+    <p>One of the allowed methods:</p>
+
+    <ul>
+      <li><strong>GET</strong></li>
+      <li><strong>HEAD</strong></li>
+      <li><strong>POST</strong> (with limited content-types)</li>
+    </ul>
+  </li>
+  <li>
+    <p>Except for the headers automatically set by the user agent (such as =
+Connection, User-Agent), the only headers, which are allowed to be manually=
+ set, are considered as simple request:</p>
+
+    <ul>
+      <li><strong>Accept</strong></li>
+      <li><strong>Accept-Language</strong></li>
+      <li><strong>Content-Language</strong></li>
+      <li><strong>Content-Type</strong> (but only allowed ones)</li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>In other words, even if you match with allowed methods, content-type, =
+and other conditions, if there is an header except the ones above (and also=
+ except the ones that are automatically set by the user agent), then it wil=
+l be not be considered as <strong>simple request</strong></p>
+</blockquote>
+
+<ul>
+  <li>
+    <p>The allowed values for Content-Type</p>
+
+    <ul>
+      <li><code class=3D"language-plaintext highlighter-rouge">application/=
+x-www-form-urlencoded</code></li>
+      <li><code class=3D"language-plaintext highlighter-rouge">multipart/fo=
+rm-data</code></li>
+      <li><code class=3D"language-plaintext highlighter-rouge">text/plain</=
+code></li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>Basically that=E2=80=99s means if you send POST request with content-t=
+ype <code class=3D"language-plaintext highlighter-rouge">application/json</=
+code>, web browsers will think that your request is not a simple request</p=
+>
+</blockquote>
+
+<ul>
+  <li>
+    <p>No <code class=3D"language-plaintext highlighter-rouge">ReadableStre=
+am</code> object is used in the request</p>
+  </li>
+  <li>
+    <p>If you send request with <code class=3D"language-plaintext highlight=
+er-rouge">XMLHttpRequest</code> and if you do any of the following one, the=
+n your request will not be considered as simple request:</p>
+    <ul>
+      <li>If you register an event listener for the object returned by <cod=
+e class=3D"language-plaintext highlighter-rouge">XMLHttpRequest.upload</cod=
+e></li>
+    </ul>
+  </li>
+</ul>
+
+<p>You will understand better when we are working on spring boot applicatio=
+n.</p>
+
+<h2 id=3D"project-setup-">Project Setup <a name=3D"project_setup"></a></h2>
+
+<p>To simulate CORS, first create a simple spring boot project. This projec=
+t will contain the following dependencies:</p>
+
+<ul>
+  <li>Spring Web</li>
+  <li>Spring Security</li>
+  <li>Thymeleaf</li>
+</ul>
+
+<p>Create home page controller and corresponding html pages inside <code cl=
+ass=3D"language-plaintext highlighter-rouge">resources/templates</code></p>
+
+<div class=3D"language-java highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"nd">@Controller</span>
+<span class=3D"kd">public</span> <span class=3D"kd">class</span> <span clas=
+s=3D"nc">HomePageController</span> <span class=3D"o">{</span>
+
+    <span class=3D"nd">@GetMapping</span>
+    <span class=3D"kd">public</span> <span class=3D"nc">String</span> <span=
+ class=3D"nf">homePage</span><span class=3D"o">()</span> <span class=3D"o">=
+{</span>
+        <span class=3D"k">return</span> <span class=3D"s">"homePage"</span>=
+<span class=3D"o">;</span>
+    <span class=3D"o">}</span>
+
+    <span class=3D"nd">@PostMapping</span><span class=3D"o">(</span><span c=
+lass=3D"s">"/post"</span><span class=3D"o">)</span>
+    <span class=3D"nd">@ResponseBody</span>
+    <span class=3D"kd">public</span> <span class=3D"nc">String</span> <span=
+ class=3D"nf">ajaxRequest</span><span class=3D"o">()</span> <span class=3D"=
+o">{</span>
+        <span class=3D"k">return</span> <span class=3D"s">"AJAX_RESPONSE_FR=
+OM_SPRING"</span><span class=3D"o">;</span>
+    <span class=3D"o">}</span>
+<span class=3D"o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class=3D"language-plaintext highlighter-rouge">homePage.html</c=
+ode></li>
+</ul>
+
+<div class=3D"language-html highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"cp">&lt;!DOCTYPE html&gt;</span>
+<span class=3D"nt">&lt;html</span> <span class=3D"na">lang=3D</span><span c=
+lass=3D"s">"en"</span><span class=3D"nt">&gt;</span>
+  <span class=3D"nt">&lt;head&gt;</span>
+    <span class=3D"nt">&lt;meta</span> <span class=3D"na">charset=3D</span>=
+<span class=3D"s">"UTF-8"</span> <span class=3D"nt">/&gt;</span>
+    <span class=3D"nt">&lt;title&gt;</span>HomePage<span class=3D"nt">&lt;/=
+title&gt;</span>
+  <span class=3D"nt">&lt;/head&gt;</span>
+  <span class=3D"nt">&lt;body&gt;</span>
+    <span class=3D"nt">&lt;h1&gt;</span>Home Page<span class=3D"nt">&lt;/h1=
+&gt;</span>
+    <span class=3D"nt">&lt;p</span> <span class=3D"na">id=3D</span><span cl=
+ass=3D"s">"ajaxResponse"</span><span class=3D"nt">&gt;&lt;/p&gt;</span>
+
+    <span class=3D"nt">&lt;script&gt;</span>
+      <span class=3D"k">async</span> <span class=3D"kd">function</span> <sp=
+an class=3D"nx">getData</span><span class=3D"p">(</span><span class=3D"nx">=
+url</span><span class=3D"p">)</span> <span class=3D"p">{</span>
+        <span class=3D"kd">var</span> <span class=3D"nx">response</span> <s=
+pan class=3D"o">=3D</span> <span class=3D"k">await</span> <span class=3D"nx=
+">fetch</span><span class=3D"p">(</span><span class=3D"nx">url</span><span =
+class=3D"p">,</span> <span class=3D"p">{</span> <span class=3D"na">method</=
+span><span class=3D"p">:</span> <span class=3D"dl">"</span><span class=3D"s=
+2">POST</span><span class=3D"dl">"</span> <span class=3D"p">});</span>
+        <span class=3D"kd">var</span> <span class=3D"nx">result</span> <spa=
+n class=3D"o">=3D</span> <span class=3D"k">await</span> <span class=3D"nx">=
+response</span><span class=3D"p">.</span><span class=3D"nx">text</span><spa=
+n class=3D"p">();</span>
+        <span class=3D"kd">var</span> <span class=3D"nx">ajaxResponse</span=
+> <span class=3D"o">=3D</span> <span class=3D"nb">document</span><span clas=
+s=3D"p">.</span><span class=3D"nx">getElementById</span><span class=3D"p">(=
+</span><span class=3D"dl">"</span><span class=3D"s2">ajaxResponse</span><sp=
+an class=3D"dl">"</span><span class=3D"p">);</span>
+        <span class=3D"nx">ajaxResponse</span><span class=3D"p">.</span><sp=
+an class=3D"nx">innerHTML</span> <span class=3D"o">=3D</span> <span class=
+=3D"nx">result</span><span class=3D"p">;</span>
+      <span class=3D"p">}</span>
+      <span class=3D"kd">const</span> <span class=3D"nx">url</span> <span c=
+lass=3D"o">=3D</span> <span class=3D"dl">"</span><span class=3D"s2">http://=
+localhost:8080/post</span><span class=3D"dl">"</span><span class=3D"p">;</s=
+pan>
+      <span class=3D"nx">getData</span><span class=3D"p">(</span><span clas=
+s=3D"nx">url</span><span class=3D"p">);</span>
+    <span class=3D"nt">&lt;/script&gt;</span>
+  <span class=3D"nt">&lt;/body&gt;</span>
+<span class=3D"nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>For this sample project, I will disable the CSRF protection (don=E2=
+=80=99t do this in production)</li>
+  <li>And also I will allow all request to be accessed without login.</li>
+</ul>
+
+<div class=3D"language-java highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"nd">@Component</span>
+<span class=3D"nd">@EnableWebSecurity</span>
+<span class=3D"kd">public</span> <span class=3D"kd">class</span> <span clas=
+s=3D"nc">SecurityConfiguration</span> <span class=3D"kd">extends</span> <sp=
+an class=3D"nc">WebSecurityConfigurerAdapter</span> <span class=3D"o">{</sp=
+an>
+
+    <span class=3D"nd">@Override</span>
+    <span class=3D"kd">protected</span> <span class=3D"kt">void</span> <spa=
+n class=3D"nf">configure</span><span class=3D"o">(</span><span class=3D"nc"=
+>HttpSecurity</span> <span class=3D"n">http</span><span class=3D"o">)</span=
+> <span class=3D"kd">throws</span> <span class=3D"nc">Exception</span> <spa=
+n class=3D"o">{</span>
+        <span class=3D"n">http</span><span class=3D"o">.</span><span class=
+=3D"na">csrf</span><span class=3D"o">().</span><span class=3D"na">disable</=
+span><span class=3D"o">();</span>
+        <span class=3D"n">http</span><span class=3D"o">.</span><span class=
+=3D"na">authorizeRequests</span><span class=3D"o">().</span><span class=3D"=
+na">anyRequest</span><span class=3D"o">().</span><span class=3D"na">permitA=
+ll</span><span class=3D"o">();</span>
+    <span class=3D"o">}</span>
+<span class=3D"o">}</span>
+</code></pre></div></div>
+
+<h2 id=3D"getting-response-from-the-same-origin-">Getting Response From the=
+ Same Origin <a name=3D"response_from_same_origin"></a></h2>
+
+<p>After run the project, you will see the <strong>AJAX_RESPONSE_FROM_SPRIN=
+G</strong> in the page. Because you are in the same origin as the web appli=
+cation</p>
+
+<h2 id=3D"error-access-control-allow-origin--missing-">Error: Access-Contro=
+l-Allow-Origin =3D&gt; Missing <a name=3D"access_control_allow_origin_missi=
+ng"></a></h2>
+
+<p>Instead of opening the <code class=3D"language-plaintext highlighter-rou=
+ge">http://localhost:8080/</code>, open the <code class=3D"language-plainte=
+xt highlighter-rouge">http://127.0.0.1:8080/</code>. In the web console you=
+ will encounter the error like this one:</p>
+
+<pre><code class=3D"language-wiki">Cross-Origin Request Blocked: The Same O=
+rigin Policy disallows reading the remote resource at http://localhost:8080=
+/post. (Reason: CORS header =E2=80=98Access-Control-Allow-Origin=E2=80=99 m=
+issing).
+</code></pre>
+
+<p>You will see this response, because you are sending request in different=
+ origin and <code class=3D"language-plaintext highlighter-rouge">fetch API<=
+/code> blocks the response</p>
+
+<p>Open the network tab when you are sending request from 127.0.0.1, and fi=
+nd your post request. Here is the my request=E2=80=99s header:</p>
+
+<pre><code class=3D"language-wiki">POST /post HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:88.0) Gecko/20100101=
+ Firefox/88.0
+Accept: */*
+Accept-Language: en-US,tr;q=3D0.7,en;q=3D0.3
+Accept-Encoding: gzip, deflate
+Referer: http://127.0.0.1:8080/
+Origin: http://127.0.0.1:8080
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+Content-Length: 0
+</code></pre>
+
+<p>Please look at the origin field. This field says that request was genera=
+ted from the origin <code class=3D"language-plaintext highlighter-rouge">ht=
+tp://127.0.0.1:8080</code>
+Now look at the response=E2=80=99s headers:</p>
+
+<pre><code class=3D"language-wiki">HTTP/1.1 200
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=3Dblock
+Cache-Control: no-cache, no-store, max-age=3D0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Type: text/plain;charset=3DUTF-8
+Content-Length: 25
+Date: Thu, 13 May 2021 10:37:44 GMT
+Keep-Alive: timeout=3D60
+Connection: keep-alive
+</code></pre>
+
+<p>As you can see, Spring did not return any header(s) related to the CORS =
+(such <code class=3D"language-plaintext highlighter-rouge">Access-Control-A=
+llow-Origin</code>), which Spring basically tells the browsers:</p>
+
+<ul>
+  <li>Hey browsers when a script makes a request, then show the response, i=
+f and only if that request was made from the origin <code class=3D"language=
+-plaintext highlighter-rouge">http://localhost:8080</code>, otherwise block=
+s the response.</li>
+</ul>
+
+<blockquote>
+  <p><strong>Be careful it blocks the response, that doesn=E2=80=99t mean b=
+rowser also blocks the request(s)</strong>.</p>
+
+  <p>In other words, <strong>cors doesn=E2=80=99t do anything about the cal=
+l of the endpoint</strong></p>
+</blockquote>
+
+<h2 id=3D"cors-doesnt-do-anything-about-the-call-of-the-endpoint-">CORS doe=
+sn=E2=80=99t do anything about the call of the endpoint <a name=3D"cors_and=
+_endpoint"></a></h2>
+
+<p>Update the post method and send the ajax request from the origin <code c=
+lass=3D"language-plaintext highlighter-rouge">http:127.0.0.1</code> :</p>
+
+<div class=3D"language-java highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"kn">package</span> <span class=
+=3D"nn">com.mehmetozanguven.springsecuritycorssetup.controller</span><span =
+class=3D"o">;</span>
+
+<span class=3D"kn">import</span> <span class=3D"nn">org.springframework.ste=
+reotype.Controller</span><span class=3D"o">;</span>
+<span class=3D"kn">import</span> <span class=3D"nn">org.springframework.web=
+.bind.annotation.GetMapping</span><span class=3D"o">;</span>
+<span class=3D"kn">import</span> <span class=3D"nn">org.springframework.web=
+.bind.annotation.PostMapping</span><span class=3D"o">;</span>
+<span class=3D"kn">import</span> <span class=3D"nn">org.springframework.web=
+.bind.annotation.ResponseBody</span><span class=3D"o">;</span>
+
+<span class=3D"nd">@Controller</span>
+<span class=3D"kd">public</span> <span class=3D"kd">class</span> <span clas=
+s=3D"nc">HomePageController</span> <span class=3D"o">{</span>
+	<span class=3D"c1">// ..</span>
+
+    <span class=3D"nd">@PostMapping</span><span class=3D"o">(</span><span c=
+lass=3D"s">"/post"</span><span class=3D"o">)</span>
+    <span class=3D"nd">@ResponseBody</span>
+    <span class=3D"kd">public</span> <span class=3D"nc">String</span> <span=
+ class=3D"nf">ajaxRequest</span><span class=3D"o">()</span> <span class=3D"=
+o">{</span>
+        <span class=3D"nc">System</span><span class=3D"o">.</span><span cla=
+ss=3D"na">out</span><span class=3D"o">.</span><span class=3D"na">println</s=
+pan><span class=3D"o">(</span><span class=3D"s">"Method called"</span><span=
+ class=3D"o">);</span>
+        <span class=3D"k">return</span> <span class=3D"s">"AJAX_RESPONSE_FR=
+OM_SPRING"</span><span class=3D"o">;</span>
+    <span class=3D"o">}</span>
+<span class=3D"o">}</span>
+</code></pre></div></div>
+
+<p>Even browser says <strong>..Cross-Origin Request Blocked: The Same Origi=
+n Policy..</strong> , look at the console of the spring application:</p>
+
+<pre><code class=3D"language-wiki">2021-05-13 13:57:04.718  INFO 67306 --- =
+[nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing S=
+ervlet 'dispatcherServlet'
+2021-05-13 13:57:04.725  INFO 67306 --- [nio-8080-exec-1] o.s.web.servlet.D=
+ispatcherServlet        : Completed initialization in 7 ms
+Method called
+</code></pre>
+
+<p>That=E2=80=99s means endpoint was actually called. Therefore CORS:</p>
+
+<blockquote>
+  <p><strong>Does not do anything related to call of the endpoint. It just =
+blocks the response to be accessed</strong></p>
+
+  <p><strong>Does not protect the mutation operation.</strong> In our case =
+POST endpoint (mutation operation) was actually called, therefore something=
+ in the web application will be updated (database, cache etc ..)</p>
+</blockquote>
+
+<h2 id=3D"how-to-resolve-access-control-allow-origin--missing-error-">How t=
+o resolve Access-Control-Allow-Origin =3D&gt; Missing Error <a name=3D"reso=
+lve_missing_error"></a></h2>
+
+<p>There are many ways to resolve this error. I will just show two of them.=
+</p>
+
+<p><strong>NOTE: Please use one of the method, do not implement the both.</=
+strong></p>
+
+<h3 id=3D"cors-support-through-spring-security-">CORS support through Sprin=
+g Security <a name=3D"cors_for_spring_security"></a></h3>
+
+<div class=3D"language-java highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"nd">@Component</span>
+<span class=3D"nd">@EnableWebSecurity</span>
+<span class=3D"kd">public</span> <span class=3D"kd">class</span> <span clas=
+s=3D"nc">SecurityConfiguration</span> <span class=3D"kd">extends</span> <sp=
+an class=3D"nc">WebSecurityConfigurerAdapter</span> <span class=3D"o">{</sp=
+an>
+    <span class=3D"nd">@Bean</span>
+    <span class=3D"kd">public</span> <span class=3D"nc">CorsFilter</span> <=
+span class=3D"nf">corsFilter</span><span class=3D"o">()</span> <span class=
+=3D"o">{</span>
+        <span class=3D"nc">UrlBasedCorsConfigurationSource</span> <span cla=
+ss=3D"n">source</span> <span class=3D"o">=3D</span> <span class=3D"k">new</=
+span> <span class=3D"nc">UrlBasedCorsConfigurationSource</span><span class=
+=3D"o">();</span>
+        <span class=3D"nc">CorsConfiguration</span> <span class=3D"n">corsC=
+onfiguration</span> <span class=3D"o">=3D</span> <span class=3D"k">new</spa=
+n> <span class=3D"nc">CorsConfiguration</span><span class=3D"o">();</span>
+        <span class=3D"n">corsConfiguration</span><span class=3D"o">.</span=
+><span class=3D"na">setAllowedOrigins</span><span class=3D"o">(</span><span=
+ class=3D"nc">Arrays</span><span class=3D"o">.</span><span class=3D"na">asL=
+ist</span><span class=3D"o">(</span><span class=3D"s">"*"</span><span class=
+=3D"o">));</span>
+        <span class=3D"n">corsConfiguration</span><span class=3D"o">.</span=
+><span class=3D"na">setAllowedMethods</span><span class=3D"o">(</span><span=
+ class=3D"nc">Arrays</span><span class=3D"o">.</span><span class=3D"na">asL=
+ist</span><span class=3D"o">(</span><span class=3D"s">"*"</span><span class=
+=3D"o">));</span>
+        <span class=3D"n">corsConfiguration</span><span class=3D"o">.</span=
+><span class=3D"na">setMaxAge</span><span class=3D"o">(</span><span class=
+=3D"nc">Duration</span><span class=3D"o">.</span><span class=3D"na">ofMinut=
+es</span><span class=3D"o">(</span><span class=3D"mi">10</span><span class=
+=3D"o">));</span>
+        <span class=3D"n">source</span><span class=3D"o">.</span><span clas=
+s=3D"na">registerCorsConfiguration</span><span class=3D"o">(</span><span cl=
+ass=3D"s">"/**"</span><span class=3D"o">,</span> <span class=3D"n">corsConf=
+iguration</span><span class=3D"o">);</span>
+        <span class=3D"k">return</span> <span class=3D"k">new</span> <span =
+class=3D"nf">CorsFilter</span><span class=3D"o">(</span><span class=3D"n">s=
+ource</span><span class=3D"o">);</span>
+    <span class=3D"o">}</span>
+
+    <span class=3D"nd">@Override</span>
+    <span class=3D"kd">protected</span> <span class=3D"kt">void</span> <spa=
+n class=3D"nf">configure</span><span class=3D"o">(</span><span class=3D"nc"=
+>HttpSecurity</span> <span class=3D"n">http</span><span class=3D"o">)</span=
+> <span class=3D"kd">throws</span> <span class=3D"nc">Exception</span> <spa=
+n class=3D"o">{</span>
+        <span class=3D"n">http</span><span class=3D"o">.</span><span class=
+=3D"na">csrf</span><span class=3D"o">().</span><span class=3D"na">disable</=
+span><span class=3D"o">();</span>
+        <span class=3D"n">http</span><span class=3D"o">.</span><span class=
+=3D"na">authorizeRequests</span><span class=3D"o">().</span><span class=3D"=
+na">anyRequest</span><span class=3D"o">().</span><span class=3D"na">permitA=
+ll</span><span class=3D"o">();</span>
+        <span class=3D"n">http</span><span class=3D"o">.</span><span class=
+=3D"na">cors</span><span class=3D"o">();</span> <span class=3D"c1">// add t=
+his line;</span>
+    <span class=3D"o">}</span>
+<span class=3D"o">}</span>
+</code></pre></div></div>
+
+<h3 id=3D"cors-setup-through-mvc-application-">CORS Setup through MVC Appli=
+cation <a name=3D"cors_for_mvc"></a></h3>
+
+<p>Create a <code class=3D"language-plaintext highlighter-rouge">WebMvcConf=
+igurer</code> bean</p>
+
+<div class=3D"language-java highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"nd">@Component</span>
+<span class=3D"nd">@EnableWebSecurity</span>
+<span class=3D"kd">public</span> <span class=3D"kd">class</span> <span clas=
+s=3D"nc">SecurityConfiguration</span> <span class=3D"kd">extends</span> <sp=
+an class=3D"nc">WebSecurityConfigurerAdapter</span> <span class=3D"o">{</sp=
+an>
+
+    <span class=3D"nd">@Bean</span>
+    <span class=3D"kd">public</span> <span class=3D"nc">WebMvcConfigurer</s=
+pan> <span class=3D"nf">corsConfigurer</span><span class=3D"o">()</span> <s=
+pan class=3D"o">{</span>
+        <span class=3D"k">return</span> <span class=3D"k">new</span> <span =
+class=3D"nf">WebMvcConfigurer</span><span class=3D"o">()</span> <span class=
+=3D"o">{</span>
+            <span class=3D"nd">@Override</span>
+            <span class=3D"kd">public</span> <span class=3D"kt">void</span>=
+ <span class=3D"nf">addCorsMappings</span><span class=3D"o">(</span><span c=
+lass=3D"nc">CorsRegistry</span> <span class=3D"n">registry</span><span clas=
+s=3D"o">)</span> <span class=3D"o">{</span>
+                <span class=3D"n">registry</span><span class=3D"o">.</span>=
+<span class=3D"na">addMapping</span><span class=3D"o">(</span><span class=
+=3D"s">"/**"</span><span class=3D"o">).</span><span class=3D"na">allowedOri=
+gins</span><span class=3D"o">(</span><span class=3D"s">"*"</span><span clas=
+s=3D"o">);</span>
+            <span class=3D"o">}</span>
+        <span class=3D"o">};</span>
+    <span class=3D"o">}</span>
+
+    <span class=3D"nd">@Override</span>
+    <span class=3D"kd">protected</span> <span class=3D"kt">void</span> <spa=
+n class=3D"nf">configure</span><span class=3D"o">(</span><span class=3D"nc"=
+>HttpSecurity</span> <span class=3D"n">http</span><span class=3D"o">)</span=
+> <span class=3D"kd">throws</span> <span class=3D"nc">Exception</span> <spa=
+n class=3D"o">{</span>
+        <span class=3D"n">http</span><span class=3D"o">.</span><span class=
+=3D"na">csrf</span><span class=3D"o">().</span><span class=3D"na">disable</=
+span><span class=3D"o">();</span>
+        <span class=3D"n">http</span><span class=3D"o">.</span><span class=
+=3D"na">authorizeRequests</span><span class=3D"o">().</span><span class=3D"=
+na">anyRequest</span><span class=3D"o">().</span><span class=3D"na">permitA=
+ll</span><span class=3D"o">();</span>
+    <span class=3D"o">}</span>
+<span class=3D"o">}</span>
+</code></pre></div></div>
+
+<p>=E2=80=A6</p>
+
+  </div>
+
+  <footer class=3D"postNavigation">
+ =20
+    <a class=3D"postPrev" href=3D"https://mehmetozanguven.github.io/spring/=
+2021/05/16/spring-security-8-csrf-setup.html">
+        =C2=AB Spring Security -- 8) Spring Security CSRF Attack Simulation=
+ &amp; CSRF Setup and Customization (Cross-Site Request Forgery)
+    </a>
+ =20
+ =20
+    <a class=3D"postNext" href=3D"https://mehmetozanguven.github.io/how-to/=
+2021/05/23/how-to-resolve-pr-connect-reset-error.html">
+        How to resolve -- PR_CONNECT_RESET_ERROR =C2=BB
+    </a>
+ =20
+  </footer>
+
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class=3D"site-footer">
+
+  <div class=3D"wrapper">
+
+    <h2 class=3D"footer-heading small-site-title">mehmetozanguven</h2>
+
+    <div class=3D"footer-col-wrapper">
+      <div class=3D"footer-col footer-col-1">
+        <ul class=3D"contact-list footer-content">
+          <li>Powered By <a href=3D"http://github.com/hemangsk/Gravity">Gra=
+vity</a></li>
+          <li>Made with <i class=3D"fa fa-heart"></i> on <a href=3D"http://=
+jekyllrb.com/"><span>{ { Jekyll } }</span></a></li>
+
+
+        </ul>
+      </div>
+
+      <div class=3D"footer-col footer-col-2 footer-content">
+        <ul class=3D"social-media-list">
+         =20
+          <li>
+            <a href=3D"https://github.com/mehmetozanguven"><span class=3D"i=
+con icon--github"><svg viewBox=3D"0 0 16 16"><path fill=3D"#828282" d=3D"M7=
+.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c=
+0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.4=
+69-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,=
+0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,=
+0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10=
+.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.92=
+4,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.=
+003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.06=
+8,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.81=
+4,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0=
+.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.3=
+62C15.76,3.906,12.285,0.431,7.999,0.431z"></path></svg>
+</span><span class=3D"username">mehmetozanguven</span></a>
+
+          </li>
+         =20
+
+         =20
+          <li>
+            <a href=3D"https://twitter.com/mehmetozanguven"><span class=3D"=
+icon icon--twitter"><svg viewBox=3D"0 0 16 16"><path fill=3D"#828282" d=3D"=
+M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1=
+.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.=
+387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.=
+163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.1=
+34,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.0=
+27,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.=
+442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-=
+1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928=
+,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.2=
+83-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"></path></svg>
+</span><span class=3D"username">mehmetozanguven</span></a>
+
+          </li>
+         =20
+        </ul>
+      </div>
+
+      <div class=3D"footer-col footer-col-3 site-description">
+        <p>Includes my notes about Java, Spring, Apache Flink and more ...<=
+/p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+ =20
+
+
+</body></html>
+------MultipartBoundary--7NArcxjXWV7Jiz1qfGTnP6j8iNRYYruN2p1eB4O1zs----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css
+
+@charset "utf-8";
+
+@font-face { font-family: FontAwesome; src: url("../fonts/fontawesome-webfo=
+nt.eot?#iefix&v=3D4.5.0") format("embedded-opentype"), url("../fonts/fontaw=
+esome-webfont.woff2?v=3D4.5.0") format("woff2"), url("../fonts/fontawesome-=
+webfont.woff?v=3D4.5.0") format("woff"), url("../fonts/fontawesome-webfont.=
+ttf?v=3D4.5.0") format("truetype"), url("../fonts/fontawesome-webfont.svg?v=
+=3D4.5.0#fontawesomeregular") format("svg"); font-weight: normal; font-styl=
+e: normal; }
+
+.fa { display: inline-block; font-style: normal; font-variant: normal; font=
+-weight: normal; font-stretch: normal; line-height: 1; font-family: FontAwe=
+some; font-size: inherit; text-rendering: auto; -webkit-font-smoothing: ant=
+ialiased; }
+
+.fa-lg { font-size: 1.33333em; line-height: 0.75em; vertical-align: -15%; }
+
+.fa-2x { font-size: 2em; }
+
+.fa-3x { font-size: 3em; }
+
+.fa-4x { font-size: 4em; }
+
+.fa-5x { font-size: 5em; }
+
+.fa-fw { width: 1.28571em; text-align: center; }
+
+.fa-ul { padding-left: 0px; margin-left: 2.14286em; list-style-type: none; =
+}
+
+.fa-ul > li { position: relative; }
+
+.fa-li { position: absolute; left: -2.14286em; width: 2.14286em; top: 0.142=
+857em; text-align: center; }
+
+.fa-li.fa-lg { left: -1.85714em; }
+
+.fa-border { padding: 0.2em 0.25em 0.15em; border: 0.08em solid rgb(238, 23=
+8, 238); border-radius: 0.1em; }
+
+.fa-pull-left { float: left; }
+
+.fa-pull-right { float: right; }
+
+.fa.fa-pull-left { margin-right: 0.3em; }
+
+.fa.fa-pull-right { margin-left: 0.3em; }
+
+.pull-right { float: right; }
+
+.pull-left { float: left; }
+
+.fa.pull-left { margin-right: 0.3em; }
+
+.fa.pull-right { margin-left: 0.3em; }
+
+.fa-spin { animation: 2s linear 0s infinite normal none running fa-spin; }
+
+.fa-pulse { animation: 1s steps(8) 0s infinite normal none running fa-spin;=
+ }
+
+@-webkit-keyframes fa-spin {=20
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(359deg); }
+}
+
+@keyframes fa-spin {=20
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(359deg); }
+}
+
+.fa-rotate-90 { transform: rotate(90deg); }
+
+.fa-rotate-180 { transform: rotate(180deg); }
+
+.fa-rotate-270 { transform: rotate(270deg); }
+
+.fa-flip-horizontal { transform: scale(-1, 1); }
+
+.fa-flip-vertical { transform: scale(1, -1); }
+
+:root .fa-rotate-90, :root .fa-rotate-180, :root .fa-rotate-270, :root .fa-=
+flip-horizontal, :root .fa-flip-vertical { filter: none; }
+
+.fa-stack { position: relative; display: inline-block; width: 2em; height: =
+2em; line-height: 2em; vertical-align: middle; }
+
+.fa-stack-1x, .fa-stack-2x { position: absolute; left: 0px; width: 100%; te=
+xt-align: center; }
+
+.fa-stack-1x { line-height: inherit; }
+
+.fa-stack-2x { font-size: 2em; }
+
+.fa-inverse { color: rgb(255, 255, 255); }
+
+.fa-glass::before { content: "=EF=80=80"; }
+
+.fa-music::before { content: "=EF=80=81"; }
+
+.fa-search::before { content: "=EF=80=82"; }
+
+.fa-envelope-o::before { content: "=EF=80=83"; }
+
+.fa-heart::before { content: "=EF=80=84"; }
+
+.fa-star::before { content: "=EF=80=85"; }
+
+.fa-star-o::before { content: "=EF=80=86"; }
+
+.fa-user::before { content: "=EF=80=87"; }
+
+.fa-film::before { content: "=EF=80=88"; }
+
+.fa-th-large::before { content: "=EF=80=89"; }
+
+.fa-th::before { content: "=EF=80=8A"; }
+
+.fa-th-list::before { content: "=EF=80=8B"; }
+
+.fa-check::before { content: "=EF=80=8C"; }
+
+.fa-remove::before, .fa-close::before, .fa-times::before { content: "=EF=80=
+=8D"; }
+
+.fa-search-plus::before { content: "=EF=80=8E"; }
+
+.fa-search-minus::before { content: "=EF=80=90"; }
+
+.fa-power-off::before { content: "=EF=80=91"; }
+
+.fa-signal::before { content: "=EF=80=92"; }
+
+.fa-gear::before, .fa-cog::before { content: "=EF=80=93"; }
+
+.fa-trash-o::before { content: "=EF=80=94"; }
+
+.fa-home::before { content: "=EF=80=95"; }
+
+.fa-file-o::before { content: "=EF=80=96"; }
+
+.fa-clock-o::before { content: "=EF=80=97"; }
+
+.fa-road::before { content: "=EF=80=98"; }
+
+.fa-download::before { content: "=EF=80=99"; }
+
+.fa-arrow-circle-o-down::before { content: "=EF=80=9A"; }
+
+.fa-arrow-circle-o-up::before { content: "=EF=80=9B"; }
+
+.fa-inbox::before { content: "=EF=80=9C"; }
+
+.fa-play-circle-o::before { content: "=EF=80=9D"; }
+
+.fa-rotate-right::before, .fa-repeat::before { content: "=EF=80=9E"; }
+
+.fa-refresh::before { content: "=EF=80=A1"; }
+
+.fa-list-alt::before { content: "=EF=80=A2"; }
+
+.fa-lock::before { content: "=EF=80=A3"; }
+
+.fa-flag::before { content: "=EF=80=A4"; }
+
+.fa-headphones::before { content: "=EF=80=A5"; }
+
+.fa-volume-off::before { content: "=EF=80=A6"; }
+
+.fa-volume-down::before { content: "=EF=80=A7"; }
+
+.fa-volume-up::before { content: "=EF=80=A8"; }
+
+.fa-qrcode::before { content: "=EF=80=A9"; }
+
+.fa-barcode::before { content: "=EF=80=AA"; }
+
+.fa-tag::before { content: "=EF=80=AB"; }
+
+.fa-tags::before { content: "=EF=80=AC"; }
+
+.fa-book::before { content: "=EF=80=AD"; }
+
+.fa-bookmark::before { content: "=EF=80=AE"; }
+
+.fa-print::before { content: "=EF=80=AF"; }
+
+.fa-camera::before { content: "=EF=80=B0"; }
+
+.fa-font::before { content: "=EF=80=B1"; }
+
+.fa-bold::before { content: "=EF=80=B2"; }
+
+.fa-italic::before { content: "=EF=80=B3"; }
+
+.fa-text-height::before { content: "=EF=80=B4"; }
+
+.fa-text-width::before { content: "=EF=80=B5"; }
+
+.fa-align-left::before { content: "=EF=80=B6"; }
+
+.fa-align-center::before { content: "=EF=80=B7"; }
+
+.fa-align-right::before { content: "=EF=80=B8"; }
+
+.fa-align-justify::before { content: "=EF=80=B9"; }
+
+.fa-list::before { content: "=EF=80=BA"; }
+
+.fa-dedent::before, .fa-outdent::before { content: "=EF=80=BB"; }
+
+.fa-indent::before { content: "=EF=80=BC"; }
+
+.fa-video-camera::before { content: "=EF=80=BD"; }
+
+.fa-photo::before, .fa-image::before, .fa-picture-o::before { content: "=EF=
+=80=BE"; }
+
+.fa-pencil::before { content: "=EF=81=80"; }
+
+.fa-map-marker::before { content: "=EF=81=81"; }
+
+.fa-adjust::before { content: "=EF=81=82"; }
+
+.fa-tint::before { content: "=EF=81=83"; }
+
+.fa-edit::before, .fa-pencil-square-o::before { content: "=EF=81=84"; }
+
+.fa-share-square-o::before { content: "=EF=81=85"; }
+
+.fa-check-square-o::before { content: "=EF=81=86"; }
+
+.fa-arrows::before { content: "=EF=81=87"; }
+
+.fa-step-backward::before { content: "=EF=81=88"; }
+
+.fa-fast-backward::before { content: "=EF=81=89"; }
+
+.fa-backward::before { content: "=EF=81=8A"; }
+
+.fa-play::before { content: "=EF=81=8B"; }
+
+.fa-pause::before { content: "=EF=81=8C"; }
+
+.fa-stop::before { content: "=EF=81=8D"; }
+
+.fa-forward::before { content: "=EF=81=8E"; }
+
+.fa-fast-forward::before { content: "=EF=81=90"; }
+
+.fa-step-forward::before { content: "=EF=81=91"; }
+
+.fa-eject::before { content: "=EF=81=92"; }
+
+.fa-chevron-left::before { content: "=EF=81=93"; }
+
+.fa-chevron-right::before { content: "=EF=81=94"; }
+
+.fa-plus-circle::before { content: "=EF=81=95"; }
+
+.fa-minus-circle::before { content: "=EF=81=96"; }
+
+.fa-times-circle::before { content: "=EF=81=97"; }
+
+.fa-check-circle::before { content: "=EF=81=98"; }
+
+.fa-question-circle::before { content: "=EF=81=99"; }
+
+.fa-info-circle::before { content: "=EF=81=9A"; }
+
+.fa-crosshairs::before { content: "=EF=81=9B"; }
+
+.fa-times-circle-o::before { content: "=EF=81=9C"; }
+
+.fa-check-circle-o::before { content: "=EF=81=9D"; }
+
+.fa-ban::before { content: "=EF=81=9E"; }
+
+.fa-arrow-left::before { content: "=EF=81=A0"; }
+
+.fa-arrow-right::before { content: "=EF=81=A1"; }
+
+.fa-arrow-up::before { content: "=EF=81=A2"; }
+
+.fa-arrow-down::before { content: "=EF=81=A3"; }
+
+.fa-mail-forward::before, .fa-share::before { content: "=EF=81=A4"; }
+
+.fa-expand::before { content: "=EF=81=A5"; }
+
+.fa-compress::before { content: "=EF=81=A6"; }
+
+.fa-plus::before { content: "=EF=81=A7"; }
+
+.fa-minus::before { content: "=EF=81=A8"; }
+
+.fa-asterisk::before { content: "=EF=81=A9"; }
+
+.fa-exclamation-circle::before { content: "=EF=81=AA"; }
+
+.fa-gift::before { content: "=EF=81=AB"; }
+
+.fa-leaf::before { content: "=EF=81=AC"; }
+
+.fa-fire::before { content: "=EF=81=AD"; }
+
+.fa-eye::before { content: "=EF=81=AE"; }
+
+.fa-eye-slash::before { content: "=EF=81=B0"; }
+
+.fa-warning::before, .fa-exclamation-triangle::before { content: "=EF=81=B1=
+"; }
+
+.fa-plane::before { content: "=EF=81=B2"; }
+
+.fa-calendar::before { content: "=EF=81=B3"; }
+
+.fa-random::before { content: "=EF=81=B4"; }
+
+.fa-comment::before { content: "=EF=81=B5"; }
+
+.fa-magnet::before { content: "=EF=81=B6"; }
+
+.fa-chevron-up::before { content: "=EF=81=B7"; }
+
+.fa-chevron-down::before { content: "=EF=81=B8"; }
+
+.fa-retweet::before { content: "=EF=81=B9"; }
+
+.fa-shopping-cart::before { content: "=EF=81=BA"; }
+
+.fa-folder::before { content: "=EF=81=BB"; }
+
+.fa-folder-open::before { content: "=EF=81=BC"; }
+
+.fa-arrows-v::before { content: "=EF=81=BD"; }
+
+.fa-arrows-h::before { content: "=EF=81=BE"; }
+
+.fa-bar-chart-o::before, .fa-bar-chart::before { content: "=EF=82=80"; }
+
+.fa-twitter-square::before { content: "=EF=82=81"; }
+
+.fa-facebook-square::before { content: "=EF=82=82"; }
+
+.fa-camera-retro::before { content: "=EF=82=83"; }
+
+.fa-key::before { content: "=EF=82=84"; }
+
+.fa-gears::before, .fa-cogs::before { content: "=EF=82=85"; }
+
+.fa-comments::before { content: "=EF=82=86"; }
+
+.fa-thumbs-o-up::before { content: "=EF=82=87"; }
+
+.fa-thumbs-o-down::before { content: "=EF=82=88"; }
+
+.fa-star-half::before { content: "=EF=82=89"; }
+
+.fa-heart-o::before { content: "=EF=82=8A"; }
+
+.fa-sign-out::before { content: "=EF=82=8B"; }
+
+.fa-linkedin-square::before { content: "=EF=82=8C"; }
+
+.fa-thumb-tack::before { content: "=EF=82=8D"; }
+
+.fa-external-link::before { content: "=EF=82=8E"; }
+
+.fa-sign-in::before { content: "=EF=82=90"; }
+
+.fa-trophy::before { content: "=EF=82=91"; }
+
+.fa-github-square::before { content: "=EF=82=92"; }
+
+.fa-upload::before { content: "=EF=82=93"; }
+
+.fa-lemon-o::before { content: "=EF=82=94"; }
+
+.fa-phone::before { content: "=EF=82=95"; }
+
+.fa-square-o::before { content: "=EF=82=96"; }
+
+.fa-bookmark-o::before { content: "=EF=82=97"; }
+
+.fa-phone-square::before { content: "=EF=82=98"; }
+
+.fa-twitter::before { content: "=EF=82=99"; }
+
+.fa-facebook-f::before, .fa-facebook::before { content: "=EF=82=9A"; }
+
+.fa-github::before { content: "=EF=82=9B"; }
+
+.fa-unlock::before { content: "=EF=82=9C"; }
+
+.fa-credit-card::before { content: "=EF=82=9D"; }
+
+.fa-feed::before, .fa-rss::before { content: "=EF=82=9E"; }
+
+.fa-hdd-o::before { content: "=EF=82=A0"; }
+
+.fa-bullhorn::before { content: "=EF=82=A1"; }
+
+.fa-bell::before { content: "=EF=83=B3"; }
+
+.fa-certificate::before { content: "=EF=82=A3"; }
+
+.fa-hand-o-right::before { content: "=EF=82=A4"; }
+
+.fa-hand-o-left::before { content: "=EF=82=A5"; }
+
+.fa-hand-o-up::before { content: "=EF=82=A6"; }
+
+.fa-hand-o-down::before { content: "=EF=82=A7"; }
+
+.fa-arrow-circle-left::before { content: "=EF=82=A8"; }
+
+.fa-arrow-circle-right::before { content: "=EF=82=A9"; }
+
+.fa-arrow-circle-up::before { content: "=EF=82=AA"; }
+
+.fa-arrow-circle-down::before { content: "=EF=82=AB"; }
+
+.fa-globe::before { content: "=EF=82=AC"; }
+
+.fa-wrench::before { content: "=EF=82=AD"; }
+
+.fa-tasks::before { content: "=EF=82=AE"; }
+
+.fa-filter::before { content: "=EF=82=B0"; }
+
+.fa-briefcase::before { content: "=EF=82=B1"; }
+
+.fa-arrows-alt::before { content: "=EF=82=B2"; }
+
+.fa-group::before, .fa-users::before { content: "=EF=83=80"; }
+
+.fa-chain::before, .fa-link::before { content: "=EF=83=81"; }
+
+.fa-cloud::before { content: "=EF=83=82"; }
+
+.fa-flask::before { content: "=EF=83=83"; }
+
+.fa-cut::before, .fa-scissors::before { content: "=EF=83=84"; }
+
+.fa-copy::before, .fa-files-o::before { content: "=EF=83=85"; }
+
+.fa-paperclip::before { content: "=EF=83=86"; }
+
+.fa-save::before, .fa-floppy-o::before { content: "=EF=83=87"; }
+
+.fa-square::before { content: "=EF=83=88"; }
+
+.fa-navicon::before, .fa-reorder::before, .fa-bars::before { content: "=EF=
+=83=89"; }
+
+.fa-list-ul::before { content: "=EF=83=8A"; }
+
+.fa-list-ol::before { content: "=EF=83=8B"; }
+
+.fa-strikethrough::before { content: "=EF=83=8C"; }
+
+.fa-underline::before { content: "=EF=83=8D"; }
+
+.fa-table::before { content: "=EF=83=8E"; }
+
+.fa-magic::before { content: "=EF=83=90"; }
+
+.fa-truck::before { content: "=EF=83=91"; }
+
+.fa-pinterest::before { content: "=EF=83=92"; }
+
+.fa-pinterest-square::before { content: "=EF=83=93"; }
+
+.fa-google-plus-square::before { content: "=EF=83=94"; }
+
+.fa-google-plus::before { content: "=EF=83=95"; }
+
+.fa-money::before { content: "=EF=83=96"; }
+
+.fa-caret-down::before { content: "=EF=83=97"; }
+
+.fa-caret-up::before { content: "=EF=83=98"; }
+
+.fa-caret-left::before { content: "=EF=83=99"; }
+
+.fa-caret-right::before { content: "=EF=83=9A"; }
+
+.fa-columns::before { content: "=EF=83=9B"; }
+
+.fa-unsorted::before, .fa-sort::before { content: "=EF=83=9C"; }
+
+.fa-sort-down::before, .fa-sort-desc::before { content: "=EF=83=9D"; }
+
+.fa-sort-up::before, .fa-sort-asc::before { content: "=EF=83=9E"; }
+
+.fa-envelope::before { content: "=EF=83=A0"; }
+
+.fa-linkedin::before { content: "=EF=83=A1"; }
+
+.fa-rotate-left::before, .fa-undo::before { content: "=EF=83=A2"; }
+
+.fa-legal::before, .fa-gavel::before { content: "=EF=83=A3"; }
+
+.fa-dashboard::before, .fa-tachometer::before { content: "=EF=83=A4"; }
+
+.fa-comment-o::before { content: "=EF=83=A5"; }
+
+.fa-comments-o::before { content: "=EF=83=A6"; }
+
+.fa-flash::before, .fa-bolt::before { content: "=EF=83=A7"; }
+
+.fa-sitemap::before { content: "=EF=83=A8"; }
+
+.fa-umbrella::before { content: "=EF=83=A9"; }
+
+.fa-paste::before, .fa-clipboard::before { content: "=EF=83=AA"; }
+
+.fa-lightbulb-o::before { content: "=EF=83=AB"; }
+
+.fa-exchange::before { content: "=EF=83=AC"; }
+
+.fa-cloud-download::before { content: "=EF=83=AD"; }
+
+.fa-cloud-upload::before { content: "=EF=83=AE"; }
+
+.fa-user-md::before { content: "=EF=83=B0"; }
+
+.fa-stethoscope::before { content: "=EF=83=B1"; }
+
+.fa-suitcase::before { content: "=EF=83=B2"; }
+
+.fa-bell-o::before { content: "=EF=82=A2"; }
+
+.fa-coffee::before { content: "=EF=83=B4"; }
+
+.fa-cutlery::before { content: "=EF=83=B5"; }
+
+.fa-file-text-o::before { content: "=EF=83=B6"; }
+
+.fa-building-o::before { content: "=EF=83=B7"; }
+
+.fa-hospital-o::before { content: "=EF=83=B8"; }
+
+.fa-ambulance::before { content: "=EF=83=B9"; }
+
+.fa-medkit::before { content: "=EF=83=BA"; }
+
+.fa-fighter-jet::before { content: "=EF=83=BB"; }
+
+.fa-beer::before { content: "=EF=83=BC"; }
+
+.fa-h-square::before { content: "=EF=83=BD"; }
+
+.fa-plus-square::before { content: "=EF=83=BE"; }
+
+.fa-angle-double-left::before { content: "=EF=84=80"; }
+
+.fa-angle-double-right::before { content: "=EF=84=81"; }
+
+.fa-angle-double-up::before { content: "=EF=84=82"; }
+
+.fa-angle-double-down::before { content: "=EF=84=83"; }
+
+.fa-angle-left::before { content: "=EF=84=84"; }
+
+.fa-angle-right::before { content: "=EF=84=85"; }
+
+.fa-angle-up::before { content: "=EF=84=86"; }
+
+.fa-angle-down::before { content: "=EF=84=87"; }
+
+.fa-desktop::before { content: "=EF=84=88"; }
+
+.fa-laptop::before { content: "=EF=84=89"; }
+
+.fa-tablet::before { content: "=EF=84=8A"; }
+
+.fa-mobile-phone::before, .fa-mobile::before { content: "=EF=84=8B"; }
+
+.fa-circle-o::before { content: "=EF=84=8C"; }
+
+.fa-quote-left::before { content: "=EF=84=8D"; }
+
+.fa-quote-right::before { content: "=EF=84=8E"; }
+
+.fa-spinner::before { content: "=EF=84=90"; }
+
+.fa-circle::before { content: "=EF=84=91"; }
+
+.fa-mail-reply::before, .fa-reply::before { content: "=EF=84=92"; }
+
+.fa-github-alt::before { content: "=EF=84=93"; }
+
+.fa-folder-o::before { content: "=EF=84=94"; }
+
+.fa-folder-open-o::before { content: "=EF=84=95"; }
+
+.fa-smile-o::before { content: "=EF=84=98"; }
+
+.fa-frown-o::before { content: "=EF=84=99"; }
+
+.fa-meh-o::before { content: "=EF=84=9A"; }
+
+.fa-gamepad::before { content: "=EF=84=9B"; }
+
+.fa-keyboard-o::before { content: "=EF=84=9C"; }
+
+.fa-flag-o::before { content: "=EF=84=9D"; }
+
+.fa-flag-checkered::before { content: "=EF=84=9E"; }
+
+.fa-terminal::before { content: "=EF=84=A0"; }
+
+.fa-code::before { content: "=EF=84=A1"; }
+
+.fa-mail-reply-all::before, .fa-reply-all::before { content: "=EF=84=A2"; }
+
+.fa-star-half-empty::before, .fa-star-half-full::before, .fa-star-half-o::b=
+efore { content: "=EF=84=A3"; }
+
+.fa-location-arrow::before { content: "=EF=84=A4"; }
+
+.fa-crop::before { content: "=EF=84=A5"; }
+
+.fa-code-fork::before { content: "=EF=84=A6"; }
+
+.fa-unlink::before, .fa-chain-broken::before { content: "=EF=84=A7"; }
+
+.fa-question::before { content: "=EF=84=A8"; }
+
+.fa-info::before { content: "=EF=84=A9"; }
+
+.fa-exclamation::before { content: "=EF=84=AA"; }
+
+.fa-superscript::before { content: "=EF=84=AB"; }
+
+.fa-subscript::before { content: "=EF=84=AC"; }
+
+.fa-eraser::before { content: "=EF=84=AD"; }
+
+.fa-puzzle-piece::before { content: "=EF=84=AE"; }
+
+.fa-microphone::before { content: "=EF=84=B0"; }
+
+.fa-microphone-slash::before { content: "=EF=84=B1"; }
+
+.fa-shield::before { content: "=EF=84=B2"; }
+
+.fa-calendar-o::before { content: "=EF=84=B3"; }
+
+.fa-fire-extinguisher::before { content: "=EF=84=B4"; }
+
+.fa-rocket::before { content: "=EF=84=B5"; }
+
+.fa-maxcdn::before { content: "=EF=84=B6"; }
+
+.fa-chevron-circle-left::before { content: "=EF=84=B7"; }
+
+.fa-chevron-circle-right::before { content: "=EF=84=B8"; }
+
+.fa-chevron-circle-up::before { content: "=EF=84=B9"; }
+
+.fa-chevron-circle-down::before { content: "=EF=84=BA"; }
+
+.fa-html5::before { content: "=EF=84=BB"; }
+
+.fa-css3::before { content: "=EF=84=BC"; }
+
+.fa-anchor::before { content: "=EF=84=BD"; }
+
+.fa-unlock-alt::before { content: "=EF=84=BE"; }
+
+.fa-bullseye::before { content: "=EF=85=80"; }
+
+.fa-ellipsis-h::before { content: "=EF=85=81"; }
+
+.fa-ellipsis-v::before { content: "=EF=85=82"; }
+
+.fa-rss-square::before { content: "=EF=85=83"; }
+
+.fa-play-circle::before { content: "=EF=85=84"; }
+
+.fa-ticket::before { content: "=EF=85=85"; }
+
+.fa-minus-square::before { content: "=EF=85=86"; }
+
+.fa-minus-square-o::before { content: "=EF=85=87"; }
+
+.fa-level-up::before { content: "=EF=85=88"; }
+
+.fa-level-down::before { content: "=EF=85=89"; }
+
+.fa-check-square::before { content: "=EF=85=8A"; }
+
+.fa-pencil-square::before { content: "=EF=85=8B"; }
+
+.fa-external-link-square::before { content: "=EF=85=8C"; }
+
+.fa-share-square::before { content: "=EF=85=8D"; }
+
+.fa-compass::before { content: "=EF=85=8E"; }
+
+.fa-toggle-down::before, .fa-caret-square-o-down::before { content: "=EF=85=
+=90"; }
+
+.fa-toggle-up::before, .fa-caret-square-o-up::before { content: "=EF=85=91"=
+; }
+
+.fa-toggle-right::before, .fa-caret-square-o-right::before { content: "=EF=
+=85=92"; }
+
+.fa-euro::before, .fa-eur::before { content: "=EF=85=93"; }
+
+.fa-gbp::before { content: "=EF=85=94"; }
+
+.fa-dollar::before, .fa-usd::before { content: "=EF=85=95"; }
+
+.fa-rupee::before, .fa-inr::before { content: "=EF=85=96"; }
+
+.fa-cny::before, .fa-rmb::before, .fa-yen::before, .fa-jpy::before { conten=
+t: "=EF=85=97"; }
+
+.fa-ruble::before, .fa-rouble::before, .fa-rub::before { content: "=EF=85=
+=98"; }
+
+.fa-won::before, .fa-krw::before { content: "=EF=85=99"; }
+
+.fa-bitcoin::before, .fa-btc::before { content: "=EF=85=9A"; }
+
+.fa-file::before { content: "=EF=85=9B"; }
+
+.fa-file-text::before { content: "=EF=85=9C"; }
+
+.fa-sort-alpha-asc::before { content: "=EF=85=9D"; }
+
+.fa-sort-alpha-desc::before { content: "=EF=85=9E"; }
+
+.fa-sort-amount-asc::before { content: "=EF=85=A0"; }
+
+.fa-sort-amount-desc::before { content: "=EF=85=A1"; }
+
+.fa-sort-numeric-asc::before { content: "=EF=85=A2"; }
+
+.fa-sort-numeric-desc::before { content: "=EF=85=A3"; }
+
+.fa-thumbs-up::before { content: "=EF=85=A4"; }
+
+.fa-thumbs-down::before { content: "=EF=85=A5"; }
+
+.fa-youtube-square::before { content: "=EF=85=A6"; }
+
+.fa-youtube::before { content: "=EF=85=A7"; }
+
+.fa-xing::before { content: "=EF=85=A8"; }
+
+.fa-xing-square::before { content: "=EF=85=A9"; }
+
+.fa-youtube-play::before { content: "=EF=85=AA"; }
+
+.fa-dropbox::before { content: "=EF=85=AB"; }
+
+.fa-stack-overflow::before { content: "=EF=85=AC"; }
+
+.fa-instagram::before { content: "=EF=85=AD"; }
+
+.fa-flickr::before { content: "=EF=85=AE"; }
+
+.fa-adn::before { content: "=EF=85=B0"; }
+
+.fa-bitbucket::before { content: "=EF=85=B1"; }
+
+.fa-bitbucket-square::before { content: "=EF=85=B2"; }
+
+.fa-tumblr::before { content: "=EF=85=B3"; }
+
+.fa-tumblr-square::before { content: "=EF=85=B4"; }
+
+.fa-long-arrow-down::before { content: "=EF=85=B5"; }
+
+.fa-long-arrow-up::before { content: "=EF=85=B6"; }
+
+.fa-long-arrow-left::before { content: "=EF=85=B7"; }
+
+.fa-long-arrow-right::before { content: "=EF=85=B8"; }
+
+.fa-apple::before { content: "=EF=85=B9"; }
+
+.fa-windows::before { content: "=EF=85=BA"; }
+
+.fa-android::before { content: "=EF=85=BB"; }
+
+.fa-linux::before { content: "=EF=85=BC"; }
+
+.fa-dribbble::before { content: "=EF=85=BD"; }
+
+.fa-skype::before { content: "=EF=85=BE"; }
+
+.fa-foursquare::before { content: "=EF=86=80"; }
+
+.fa-trello::before { content: "=EF=86=81"; }
+
+.fa-female::before { content: "=EF=86=82"; }
+
+.fa-male::before { content: "=EF=86=83"; }
+
+.fa-gittip::before, .fa-gratipay::before { content: "=EF=86=84"; }
+
+.fa-sun-o::before { content: "=EF=86=85"; }
+
+.fa-moon-o::before { content: "=EF=86=86"; }
+
+.fa-archive::before { content: "=EF=86=87"; }
+
+.fa-bug::before { content: "=EF=86=88"; }
+
+.fa-vk::before { content: "=EF=86=89"; }
+
+.fa-weibo::before { content: "=EF=86=8A"; }
+
+.fa-renren::before { content: "=EF=86=8B"; }
+
+.fa-pagelines::before { content: "=EF=86=8C"; }
+
+.fa-stack-exchange::before { content: "=EF=86=8D"; }
+
+.fa-arrow-circle-o-right::before { content: "=EF=86=8E"; }
+
+.fa-arrow-circle-o-left::before { content: "=EF=86=90"; }
+
+.fa-toggle-left::before, .fa-caret-square-o-left::before { content: "=EF=86=
+=91"; }
+
+.fa-dot-circle-o::before { content: "=EF=86=92"; }
+
+.fa-wheelchair::before { content: "=EF=86=93"; }
+
+.fa-vimeo-square::before { content: "=EF=86=94"; }
+
+.fa-turkish-lira::before, .fa-try::before { content: "=EF=86=95"; }
+
+.fa-plus-square-o::before { content: "=EF=86=96"; }
+
+.fa-space-shuttle::before { content: "=EF=86=97"; }
+
+.fa-slack::before { content: "=EF=86=98"; }
+
+.fa-envelope-square::before { content: "=EF=86=99"; }
+
+.fa-wordpress::before { content: "=EF=86=9A"; }
+
+.fa-openid::before { content: "=EF=86=9B"; }
+
+.fa-institution::before, .fa-bank::before, .fa-university::before { content=
+: "=EF=86=9C"; }
+
+.fa-mortar-board::before, .fa-graduation-cap::before { content: "=EF=86=9D"=
+; }
+
+.fa-yahoo::before { content: "=EF=86=9E"; }
+
+.fa-google::before { content: "=EF=86=A0"; }
+
+.fa-reddit::before { content: "=EF=86=A1"; }
+
+.fa-reddit-square::before { content: "=EF=86=A2"; }
+
+.fa-stumbleupon-circle::before { content: "=EF=86=A3"; }
+
+.fa-stumbleupon::before { content: "=EF=86=A4"; }
+
+.fa-delicious::before { content: "=EF=86=A5"; }
+
+.fa-digg::before { content: "=EF=86=A6"; }
+
+.fa-pied-piper::before { content: "=EF=86=A7"; }
+
+.fa-pied-piper-alt::before { content: "=EF=86=A8"; }
+
+.fa-drupal::before { content: "=EF=86=A9"; }
+
+.fa-joomla::before { content: "=EF=86=AA"; }
+
+.fa-language::before { content: "=EF=86=AB"; }
+
+.fa-fax::before { content: "=EF=86=AC"; }
+
+.fa-building::before { content: "=EF=86=AD"; }
+
+.fa-child::before { content: "=EF=86=AE"; }
+
+.fa-paw::before { content: "=EF=86=B0"; }
+
+.fa-spoon::before { content: "=EF=86=B1"; }
+
+.fa-cube::before { content: "=EF=86=B2"; }
+
+.fa-cubes::before { content: "=EF=86=B3"; }
+
+.fa-behance::before { content: "=EF=86=B4"; }
+
+.fa-behance-square::before { content: "=EF=86=B5"; }
+
+.fa-steam::before { content: "=EF=86=B6"; }
+
+.fa-steam-square::before { content: "=EF=86=B7"; }
+
+.fa-recycle::before { content: "=EF=86=B8"; }
+
+.fa-automobile::before, .fa-car::before { content: "=EF=86=B9"; }
+
+.fa-cab::before, .fa-taxi::before { content: "=EF=86=BA"; }
+
+.fa-tree::before { content: "=EF=86=BB"; }
+
+.fa-spotify::before { content: "=EF=86=BC"; }
+
+.fa-deviantart::before { content: "=EF=86=BD"; }
+
+.fa-soundcloud::before { content: "=EF=86=BE"; }
+
+.fa-database::before { content: "=EF=87=80"; }
+
+.fa-file-pdf-o::before { content: "=EF=87=81"; }
+
+.fa-file-word-o::before { content: "=EF=87=82"; }
+
+.fa-file-excel-o::before { content: "=EF=87=83"; }
+
+.fa-file-powerpoint-o::before { content: "=EF=87=84"; }
+
+.fa-file-photo-o::before, .fa-file-picture-o::before, .fa-file-image-o::bef=
+ore { content: "=EF=87=85"; }
+
+.fa-file-zip-o::before, .fa-file-archive-o::before { content: "=EF=87=86"; =
+}
+
+.fa-file-sound-o::before, .fa-file-audio-o::before { content: "=EF=87=87"; =
+}
+
+.fa-file-movie-o::before, .fa-file-video-o::before { content: "=EF=87=88"; =
+}
+
+.fa-file-code-o::before { content: "=EF=87=89"; }
+
+.fa-vine::before { content: "=EF=87=8A"; }
+
+.fa-codepen::before { content: "=EF=87=8B"; }
+
+.fa-jsfiddle::before { content: "=EF=87=8C"; }
+
+.fa-life-bouy::before, .fa-life-buoy::before, .fa-life-saver::before, .fa-s=
+upport::before, .fa-life-ring::before { content: "=EF=87=8D"; }
+
+.fa-circle-o-notch::before { content: "=EF=87=8E"; }
+
+.fa-ra::before, .fa-rebel::before { content: "=EF=87=90"; }
+
+.fa-ge::before, .fa-empire::before { content: "=EF=87=91"; }
+
+.fa-git-square::before { content: "=EF=87=92"; }
+
+.fa-git::before { content: "=EF=87=93"; }
+
+.fa-y-combinator-square::before, .fa-yc-square::before, .fa-hacker-news::be=
+fore { content: "=EF=87=94"; }
+
+.fa-tencent-weibo::before { content: "=EF=87=95"; }
+
+.fa-qq::before { content: "=EF=87=96"; }
+
+.fa-wechat::before, .fa-weixin::before { content: "=EF=87=97"; }
+
+.fa-send::before, .fa-paper-plane::before { content: "=EF=87=98"; }
+
+.fa-send-o::before, .fa-paper-plane-o::before { content: "=EF=87=99"; }
+
+.fa-history::before { content: "=EF=87=9A"; }
+
+.fa-circle-thin::before { content: "=EF=87=9B"; }
+
+.fa-header::before { content: "=EF=87=9C"; }
+
+.fa-paragraph::before { content: "=EF=87=9D"; }
+
+.fa-sliders::before { content: "=EF=87=9E"; }
+
+.fa-share-alt::before { content: "=EF=87=A0"; }
+
+.fa-share-alt-square::before { content: "=EF=87=A1"; }
+
+.fa-bomb::before { content: "=EF=87=A2"; }
+
+.fa-soccer-ball-o::before, .fa-futbol-o::before { content: "=EF=87=A3"; }
+
+.fa-tty::before { content: "=EF=87=A4"; }
+
+.fa-binoculars::before { content: "=EF=87=A5"; }
+
+.fa-plug::before { content: "=EF=87=A6"; }
+
+.fa-slideshare::before { content: "=EF=87=A7"; }
+
+.fa-twitch::before { content: "=EF=87=A8"; }
+
+.fa-yelp::before { content: "=EF=87=A9"; }
+
+.fa-newspaper-o::before { content: "=EF=87=AA"; }
+
+.fa-wifi::before { content: "=EF=87=AB"; }
+
+.fa-calculator::before { content: "=EF=87=AC"; }
+
+.fa-paypal::before { content: "=EF=87=AD"; }
+
+.fa-google-wallet::before { content: "=EF=87=AE"; }
+
+.fa-cc-visa::before { content: "=EF=87=B0"; }
+
+.fa-cc-mastercard::before { content: "=EF=87=B1"; }
+
+.fa-cc-discover::before { content: "=EF=87=B2"; }
+
+.fa-cc-amex::before { content: "=EF=87=B3"; }
+
+.fa-cc-paypal::before { content: "=EF=87=B4"; }
+
+.fa-cc-stripe::before { content: "=EF=87=B5"; }
+
+.fa-bell-slash::before { content: "=EF=87=B6"; }
+
+.fa-bell-slash-o::before { content: "=EF=87=B7"; }
+
+.fa-trash::before { content: "=EF=87=B8"; }
+
+.fa-copyright::before { content: "=EF=87=B9"; }
+
+.fa-at::before { content: "=EF=87=BA"; }
+
+.fa-eyedropper::before { content: "=EF=87=BB"; }
+
+.fa-paint-brush::before { content: "=EF=87=BC"; }
+
+.fa-birthday-cake::before { content: "=EF=87=BD"; }
+
+.fa-area-chart::before { content: "=EF=87=BE"; }
+
+.fa-pie-chart::before { content: "=EF=88=80"; }
+
+.fa-line-chart::before { content: "=EF=88=81"; }
+
+.fa-lastfm::before { content: "=EF=88=82"; }
+
+.fa-lastfm-square::before { content: "=EF=88=83"; }
+
+.fa-toggle-off::before { content: "=EF=88=84"; }
+
+.fa-toggle-on::before { content: "=EF=88=85"; }
+
+.fa-bicycle::before { content: "=EF=88=86"; }
+
+.fa-bus::before { content: "=EF=88=87"; }
+
+.fa-ioxhost::before { content: "=EF=88=88"; }
+
+.fa-angellist::before { content: "=EF=88=89"; }
+
+.fa-cc::before { content: "=EF=88=8A"; }
+
+.fa-shekel::before, .fa-sheqel::before, .fa-ils::before { content: "=EF=88=
+=8B"; }
+
+.fa-meanpath::before { content: "=EF=88=8C"; }
+
+.fa-buysellads::before { content: "=EF=88=8D"; }
+
+.fa-connectdevelop::before { content: "=EF=88=8E"; }
+
+.fa-dashcube::before { content: "=EF=88=90"; }
+
+.fa-forumbee::before { content: "=EF=88=91"; }
+
+.fa-leanpub::before { content: "=EF=88=92"; }
+
+.fa-sellsy::before { content: "=EF=88=93"; }
+
+.fa-shirtsinbulk::before { content: "=EF=88=94"; }
+
+.fa-simplybuilt::before { content: "=EF=88=95"; }
+
+.fa-skyatlas::before { content: "=EF=88=96"; }
+
+.fa-cart-plus::before { content: "=EF=88=97"; }
+
+.fa-cart-arrow-down::before { content: "=EF=88=98"; }
+
+.fa-diamond::before { content: "=EF=88=99"; }
+
+.fa-ship::before { content: "=EF=88=9A"; }
+
+.fa-user-secret::before { content: "=EF=88=9B"; }
+
+.fa-motorcycle::before { content: "=EF=88=9C"; }
+
+.fa-street-view::before { content: "=EF=88=9D"; }
+
+.fa-heartbeat::before { content: "=EF=88=9E"; }
+
+.fa-venus::before { content: "=EF=88=A1"; }
+
+.fa-mars::before { content: "=EF=88=A2"; }
+
+.fa-mercury::before { content: "=EF=88=A3"; }
+
+.fa-intersex::before, .fa-transgender::before { content: "=EF=88=A4"; }
+
+.fa-transgender-alt::before { content: "=EF=88=A5"; }
+
+.fa-venus-double::before { content: "=EF=88=A6"; }
+
+.fa-mars-double::before { content: "=EF=88=A7"; }
+
+.fa-venus-mars::before { content: "=EF=88=A8"; }
+
+.fa-mars-stroke::before { content: "=EF=88=A9"; }
+
+.fa-mars-stroke-v::before { content: "=EF=88=AA"; }
+
+.fa-mars-stroke-h::before { content: "=EF=88=AB"; }
+
+.fa-neuter::before { content: "=EF=88=AC"; }
+
+.fa-genderless::before { content: "=EF=88=AD"; }
+
+.fa-facebook-official::before { content: "=EF=88=B0"; }
+
+.fa-pinterest-p::before { content: "=EF=88=B1"; }
+
+.fa-whatsapp::before { content: "=EF=88=B2"; }
+
+.fa-server::before { content: "=EF=88=B3"; }
+
+.fa-user-plus::before { content: "=EF=88=B4"; }
+
+.fa-user-times::before { content: "=EF=88=B5"; }
+
+.fa-hotel::before, .fa-bed::before { content: "=EF=88=B6"; }
+
+.fa-viacoin::before { content: "=EF=88=B7"; }
+
+.fa-train::before { content: "=EF=88=B8"; }
+
+.fa-subway::before { content: "=EF=88=B9"; }
+
+.fa-medium::before { content: "=EF=88=BA"; }
+
+.fa-yc::before, .fa-y-combinator::before { content: "=EF=88=BB"; }
+
+.fa-optin-monster::before { content: "=EF=88=BC"; }
+
+.fa-opencart::before { content: "=EF=88=BD"; }
+
+.fa-expeditedssl::before { content: "=EF=88=BE"; }
+
+.fa-battery-4::before, .fa-battery-full::before { content: "=EF=89=80"; }
+
+.fa-battery-3::before, .fa-battery-three-quarters::before { content: "=EF=
+=89=81"; }
+
+.fa-battery-2::before, .fa-battery-half::before { content: "=EF=89=82"; }
+
+.fa-battery-1::before, .fa-battery-quarter::before { content: "=EF=89=83"; =
+}
+
+.fa-battery-0::before, .fa-battery-empty::before { content: "=EF=89=84"; }
+
+.fa-mouse-pointer::before { content: "=EF=89=85"; }
+
+.fa-i-cursor::before { content: "=EF=89=86"; }
+
+.fa-object-group::before { content: "=EF=89=87"; }
+
+.fa-object-ungroup::before { content: "=EF=89=88"; }
+
+.fa-sticky-note::before { content: "=EF=89=89"; }
+
+.fa-sticky-note-o::before { content: "=EF=89=8A"; }
+
+.fa-cc-jcb::before { content: "=EF=89=8B"; }
+
+.fa-cc-diners-club::before { content: "=EF=89=8C"; }
+
+.fa-clone::before { content: "=EF=89=8D"; }
+
+.fa-balance-scale::before { content: "=EF=89=8E"; }
+
+.fa-hourglass-o::before { content: "=EF=89=90"; }
+
+.fa-hourglass-1::before, .fa-hourglass-start::before { content: "=EF=89=91"=
+; }
+
+.fa-hourglass-2::before, .fa-hourglass-half::before { content: "=EF=89=92";=
+ }
+
+.fa-hourglass-3::before, .fa-hourglass-end::before { content: "=EF=89=93"; =
+}
+
+.fa-hourglass::before { content: "=EF=89=94"; }
+
+.fa-hand-grab-o::before, .fa-hand-rock-o::before { content: "=EF=89=95"; }
+
+.fa-hand-stop-o::before, .fa-hand-paper-o::before { content: "=EF=89=96"; }
+
+.fa-hand-scissors-o::before { content: "=EF=89=97"; }
+
+.fa-hand-lizard-o::before { content: "=EF=89=98"; }
+
+.fa-hand-spock-o::before { content: "=EF=89=99"; }
+
+.fa-hand-pointer-o::before { content: "=EF=89=9A"; }
+
+.fa-hand-peace-o::before { content: "=EF=89=9B"; }
+
+.fa-trademark::before { content: "=EF=89=9C"; }
+
+.fa-registered::before { content: "=EF=89=9D"; }
+
+.fa-creative-commons::before { content: "=EF=89=9E"; }
+
+.fa-gg::before { content: "=EF=89=A0"; }
+
+.fa-gg-circle::before { content: "=EF=89=A1"; }
+
+.fa-tripadvisor::before { content: "=EF=89=A2"; }
+
+.fa-odnoklassniki::before { content: "=EF=89=A3"; }
+
+.fa-odnoklassniki-square::before { content: "=EF=89=A4"; }
+
+.fa-get-pocket::before { content: "=EF=89=A5"; }
+
+.fa-wikipedia-w::before { content: "=EF=89=A6"; }
+
+.fa-safari::before { content: "=EF=89=A7"; }
+
+.fa-chrome::before { content: "=EF=89=A8"; }
+
+.fa-firefox::before { content: "=EF=89=A9"; }
+
+.fa-opera::before { content: "=EF=89=AA"; }
+
+.fa-internet-explorer::before { content: "=EF=89=AB"; }
+
+.fa-tv::before, .fa-television::before { content: "=EF=89=AC"; }
+
+.fa-contao::before { content: "=EF=89=AD"; }
+
+.fa-500px::before { content: "=EF=89=AE"; }
+
+.fa-amazon::before { content: "=EF=89=B0"; }
+
+.fa-calendar-plus-o::before { content: "=EF=89=B1"; }
+
+.fa-calendar-minus-o::before { content: "=EF=89=B2"; }
+
+.fa-calendar-times-o::before { content: "=EF=89=B3"; }
+
+.fa-calendar-check-o::before { content: "=EF=89=B4"; }
+
+.fa-industry::before { content: "=EF=89=B5"; }
+
+.fa-map-pin::before { content: "=EF=89=B6"; }
+
+.fa-map-signs::before { content: "=EF=89=B7"; }
+
+.fa-map-o::before { content: "=EF=89=B8"; }
+
+.fa-map::before { content: "=EF=89=B9"; }
+
+.fa-commenting::before { content: "=EF=89=BA"; }
+
+.fa-commenting-o::before { content: "=EF=89=BB"; }
+
+.fa-houzz::before { content: "=EF=89=BC"; }
+
+.fa-vimeo::before { content: "=EF=89=BD"; }
+
+.fa-black-tie::before { content: "=EF=89=BE"; }
+
+.fa-fonticons::before { content: "=EF=8A=80"; }
+
+.fa-reddit-alien::before { content: "=EF=8A=81"; }
+
+.fa-edge::before { content: "=EF=8A=82"; }
+
+.fa-credit-card-alt::before { content: "=EF=8A=83"; }
+
+.fa-codiepie::before { content: "=EF=8A=84"; }
+
+.fa-modx::before { content: "=EF=8A=85"; }
+
+.fa-fort-awesome::before { content: "=EF=8A=86"; }
+
+.fa-usb::before { content: "=EF=8A=87"; }
+
+.fa-product-hunt::before { content: "=EF=8A=88"; }
+
+.fa-mixcloud::before { content: "=EF=8A=89"; }
+
+.fa-scribd::before { content: "=EF=8A=8A"; }
+
+.fa-pause-circle::before { content: "=EF=8A=8B"; }
+
+.fa-pause-circle-o::before { content: "=EF=8A=8C"; }
+
+.fa-stop-circle::before { content: "=EF=8A=8D"; }
+
+.fa-stop-circle-o::before { content: "=EF=8A=8E"; }
+
+.fa-shopping-bag::before { content: "=EF=8A=90"; }
+
+.fa-shopping-basket::before { content: "=EF=8A=91"; }
+
+.fa-hashtag::before { content: "=EF=8A=92"; }
+
+.fa-bluetooth::before { content: "=EF=8A=93"; }
+
+.fa-bluetooth-b::before { content: "=EF=8A=94"; }
+
+.fa-percent::before { content: "=EF=8A=95"; }
+------MultipartBoundary--7NArcxjXWV7Jiz1qfGTnP6j8iNRYYruN2p1eB4O1zs----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://mehmetozanguven.github.io/css/google_pt_sans.css
+
+@charset "utf-8";
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+300; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_GbQbMlhLzTs.woff2") format("woff2"); unicode-range: U+=
+102-103, U+110-111, U+128-129, U+168-169, U+1A0-1A1, U+1AF-1B0, U+1EA0-1EF9=
+, U+20AB; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+300; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_GbQbMhhLzTs.woff2") format("woff2"); unicode-range: U+=
+100-24F, U+259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C=
+60-2C7F, U+A720-A7FF; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+300; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_GbQbMZhLw.woff2") format("woff2"); unicode-range: U+0-=
+FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, =
+U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+400; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_DjQbMlhLzTs.woff2") format("woff2"); unicode-range: U+=
+102-103, U+110-111, U+128-129, U+168-169, U+1A0-1A1, U+1AF-1B0, U+1EA0-1EF9=
+, U+20AB; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+400; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_DjQbMhhLzTs.woff2") format("woff2"); unicode-range: U+=
+100-24F, U+259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C=
+60-2C7F, U+A720-A7FF; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+400; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_DjQbMZhLw.woff2") format("woff2"); unicode-range: U+0-=
+FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, =
+U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+600; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_ObXbMlhLzTs.woff2") format("woff2"); unicode-range: U+=
+102-103, U+110-111, U+128-129, U+168-169, U+1A0-1A1, U+1AF-1B0, U+1EA0-1EF9=
+, U+20AB; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+600; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_ObXbMhhLzTs.woff2") format("woff2"); unicode-range: U+=
+100-24F, U+259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C=
+60-2C7F, U+A720-A7FF; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+600; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_ObXbMZhLw.woff2") format("woff2"); unicode-range: U+0-=
+FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, =
+U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+700; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_N_XbMlhLzTs.woff2") format("woff2"); unicode-range: U+=
+102-103, U+110-111, U+128-129, U+168-169, U+1A0-1A1, U+1AF-1B0, U+1EA0-1EF9=
+, U+20AB; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+700; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_N_XbMhhLzTs.woff2") format("woff2"); unicode-range: U+=
+100-24F, U+259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C=
+60-2C7F, U+A720-A7FF; }
+
+@font-face { font-family: "Josefin Sans"; font-style: normal; font-weight: =
+700; src: url("https://fonts.gstatic.com/s/josefinsans/v17/Qw3PZQNVED7rKGKx=
+tqIqX5E-AVSJrOCfjY46_N_XbMZhLw.woff2") format("woff2"); unicode-range: U+0-=
+FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, =
+U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "PT Sans"; font-style: italic; font-weight: 400; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizYRExUiTo99u79D0e0ysmIED=
+Q.woff2") format("woff2"); unicode-range: U+460-52F, U+1C80-1C88, U+20B4, U=
++2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+
+@font-face { font-family: "PT Sans"; font-style: italic; font-weight: 400; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizYRExUiTo99u79D0e0w8mIED=
+Q.woff2") format("woff2"); unicode-range: U+400-45F, U+490-491, U+4B0-4B1, =
+U+2116; }
+
+@font-face { font-family: "PT Sans"; font-style: italic; font-weight: 400; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizYRExUiTo99u79D0e0ycmIED=
+Q.woff2") format("woff2"); unicode-range: U+100-24F, U+259, U+1E00-1EFF, U+=
+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+@font-face { font-family: "PT Sans"; font-style: italic; font-weight: 400; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizYRExUiTo99u79D0e0x8mI.w=
+off2") format("woff2"); unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC,=
+ U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, =
+U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "PT Sans"; font-style: italic; font-weight: 700; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizdRExUiTo99u79D0e8fOydIh=
+UdwzM.woff2") format("woff2"); unicode-range: U+460-52F, U+1C80-1C88, U+20B=
+4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+
+@font-face { font-family: "PT Sans"; font-style: italic; font-weight: 700; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizdRExUiTo99u79D0e8fOydKx=
+UdwzM.woff2") format("woff2"); unicode-range: U+400-45F, U+490-491, U+4B0-4=
+B1, U+2116; }
+
+@font-face { font-family: "PT Sans"; font-style: italic; font-weight: 700; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizdRExUiTo99u79D0e8fOydIR=
+UdwzM.woff2") format("woff2"); unicode-range: U+100-24F, U+259, U+1E00-1EFF=
+, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+@font-face { font-family: "PT Sans"; font-style: italic; font-weight: 700; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizdRExUiTo99u79D0e8fOydLx=
+Ud.woff2") format("woff2"); unicode-range: U+0-FF, U+131, U+152-153, U+2BB-=
+2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+21=
+93, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "PT Sans"; font-style: normal; font-weight: 400; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizaRExUiTo99u79D0-ExdGM.w=
+off2") format("woff2"); unicode-range: U+460-52F, U+1C80-1C88, U+20B4, U+2D=
+E0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+
+@font-face { font-family: "PT Sans"; font-style: normal; font-weight: 400; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizaRExUiTo99u79D0aExdGM.w=
+off2") format("woff2"); unicode-range: U+400-45F, U+490-491, U+4B0-4B1, U+2=
+116; }
+
+@font-face { font-family: "PT Sans"; font-style: normal; font-weight: 400; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizaRExUiTo99u79D0yExdGM.w=
+off2") format("woff2"); unicode-range: U+100-24F, U+259, U+1E00-1EFF, U+202=
+0, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+@font-face { font-family: "PT Sans"; font-style: normal; font-weight: 400; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizaRExUiTo99u79D0KExQ.wof=
+f2") format("woff2"); unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U=
++2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+=
+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "PT Sans"; font-style: normal; font-weight: 700; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizfRExUiTo99u79B_mh0OOtLQ=
+0Z.woff2") format("woff2"); unicode-range: U+460-52F, U+1C80-1C88, U+20B4, =
+U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+
+@font-face { font-family: "PT Sans"; font-style: normal; font-weight: 700; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizfRExUiTo99u79B_mh0OqtLQ=
+0Z.woff2") format("woff2"); unicode-range: U+400-45F, U+490-491, U+4B0-4B1,=
+ U+2116; }
+
+@font-face { font-family: "PT Sans"; font-style: normal; font-weight: 700; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizfRExUiTo99u79B_mh0OCtLQ=
+0Z.woff2") format("woff2"); unicode-range: U+100-24F, U+259, U+1E00-1EFF, U=
++2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+@font-face { font-family: "PT Sans"; font-style: normal; font-weight: 700; =
+src: url("https://fonts.gstatic.com/s/ptsans/v12/jizfRExUiTo99u79B_mh0O6tLQ=
+.woff2") format("woff2"); unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2B=
+C, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193=
+, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 200; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3i94_wmhduz8A.woff2") format("woff2"); unicode-range: U+460-=
+52F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 200; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3i94_wkxduz8A.woff2") format("woff2"); unicode-range: U+400-=
+45F, U+490-491, U+4B0-4B1, U+2116; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 200; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3i94_wmxduz8A.woff2") format("woff2"); unicode-range: U+1F00=
+-1FFF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 200; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3i94_wlBduz8A.woff2") format("woff2"); unicode-range: U+370-=
+3FF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 200; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3i94_wmBduz8A.woff2") format("woff2"); unicode-range: U+102-=
+103, U+110-111, U+128-129, U+168-169, U+1A0-1A1, U+1AF-1B0, U+1EA0-1EF9, U+=
+20AB; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 200; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3i94_wmRduz8A.woff2") format("woff2"); unicode-range: U+100-=
+24F, U+259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2=
+C7F, U+A720-A7FF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 200; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3i94_wlxdu.woff2") format("woff2"); unicode-range: U+0-FF, U=
++131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20A=
+C, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 300; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ik4zwmhduz8A.woff2") format("woff2"); unicode-range: U+460-=
+52F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 300; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ik4zwkxduz8A.woff2") format("woff2"); unicode-range: U+400-=
+45F, U+490-491, U+4B0-4B1, U+2116; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 300; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ik4zwmxduz8A.woff2") format("woff2"); unicode-range: U+1F00=
+-1FFF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 300; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ik4zwlBduz8A.woff2") format("woff2"); unicode-range: U+370-=
+3FF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 300; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ik4zwmBduz8A.woff2") format("woff2"); unicode-range: U+102-=
+103, U+110-111, U+128-129, U+168-169, U+1A0-1A1, U+1AF-1B0, U+1EA0-1EF9, U+=
+20AB; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 300; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ik4zwmRduz8A.woff2") format("woff2"); unicode-range: U+100-=
+24F, U+259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2=
+C7F, U+A720-A7FF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 300; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ik4zwlxdu.woff2") format("woff2"); unicode-range: U+0-FF, U=
++131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20A=
+C, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 400; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xK3dSBYKcS=
+V-LCoeQqfX1RYOo3qNa7lqDY.woff2") format("woff2"); unicode-range: U+460-52F,=
+ U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 400; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xK3dSBYKcS=
+V-LCoeQqfX1RYOo3qPK7lqDY.woff2") format("woff2"); unicode-range: U+400-45F,=
+ U+490-491, U+4B0-4B1, U+2116; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 400; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xK3dSBYKcS=
+V-LCoeQqfX1RYOo3qNK7lqDY.woff2") format("woff2"); unicode-range: U+1F00-1FF=
+F; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 400; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xK3dSBYKcS=
+V-LCoeQqfX1RYOo3qO67lqDY.woff2") format("woff2"); unicode-range: U+370-3FF;=
+ }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 400; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xK3dSBYKcS=
+V-LCoeQqfX1RYOo3qN67lqDY.woff2") format("woff2"); unicode-range: U+102-103,=
+ U+110-111, U+128-129, U+168-169, U+1A0-1A1, U+1AF-1B0, U+1EA0-1EF9, U+20AB=
+; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 400; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xK3dSBYKcS=
+V-LCoeQqfX1RYOo3qNq7lqDY.woff2") format("woff2"); unicode-range: U+100-24F,=
+ U+259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F,=
+ U+A720-A7FF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 400; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xK3dSBYKcS=
+V-LCoeQqfX1RYOo3qOK7l.woff2") format("woff2"); unicode-range: U+0-FF, U+131=
+, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20AC, U=
++2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 700; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ig4vwmhduz8A.woff2") format("woff2"); unicode-range: U+460-=
+52F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 700; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ig4vwkxduz8A.woff2") format("woff2"); unicode-range: U+400-=
+45F, U+490-491, U+4B0-4B1, U+2116; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 700; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ig4vwmxduz8A.woff2") format("woff2"); unicode-range: U+1F00=
+-1FFF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 700; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ig4vwlBduz8A.woff2") format("woff2"); unicode-range: U+370-=
+3FF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 700; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ig4vwmBduz8A.woff2") format("woff2"); unicode-range: U+102-=
+103, U+110-111, U+128-129, U+168-169, U+1A0-1A1, U+1AF-1B0, U+1EA0-1EF9, U+=
+20AB; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 700; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ig4vwmRduz8A.woff2") format("woff2"); unicode-range: U+100-=
+24F, U+259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2=
+C7F, U+A720-A7FF; }
+
+@font-face { font-family: "Source Sans Pro"; font-style: normal; font-weigh=
+t: 700; src: url("https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcS=
+V-LCoeQqfX1RYOo3ig4vwlxdu.woff2") format("woff2"); unicode-range: U+0-FF, U=
++131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+2000-206F, U+2074, U+20A=
+C, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+------MultipartBoundary--7NArcxjXWV7Jiz1qfGTnP6j8iNRYYruN2p1eB4O1zs----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://mehmetozanguven.github.io/css/style.css
+
+@charset "utf-8";
+
+.custom-table-of-contents { font-weight: bold; padding: 1em; margin-top: 60=
+px; margin-bottom: 60px; }
+
+.table-of-contents-title { color: rgb(153, 0, 115); text-align: center; fon=
+t-size: 40px !important; }
+
+.horizontal-line { width: 100%; text-align: left; margin-left: 0px; }
+
+table { border-collapse: collapse; border-spacing: 0px; border: 2px solid r=
+gb(255, 0, 0); }
+
+th { border: 2px solid rgb(0, 0, 0); }
+
+td { border: 1px solid rgb(0, 0, 0); }
+
+body.light { color: rgb(17, 17, 17); background-color: rgb(253, 253, 253); =
+}
+
+body.light a { color: rgb(170, 170, 170) !important; }
+
+body.light a:visited { color: rgb(2, 6, 11); }
+
+body.light a:hover { border-color: rgb(132, 132, 132); color: rgb(43, 43, 4=
+3) !important; }
+
+body.light a.page-link:hover { color: rgb(17, 17, 17); border-color: rgb(43=
+, 43, 43); }
+
+body.light a.postLink { color: rgb(43, 43, 43) !important; }
+
+body.light a.postLink:visited { border-color: rgb(220, 20, 60); color: rgb(=
+220, 20, 60) !important; }
+
+body.light a.post-title-link { color: rgb(43, 43, 43) !important; }
+
+body.light a.post-title-link:visited { border-color: rgb(220, 20, 60); colo=
+r: rgb(220, 20, 60) !important; }
+
+body.light blockquote { color: rgb(130, 130, 130); border-left-color: rgb(2=
+32, 232, 232); }
+
+body.light pre, body.light code { border-color: rgb(232, 232, 232); backgro=
+und-color: rgb(238, 238, 255); }
+
+body.light .icon > svg path { fill: rgb(130, 130, 130); }
+
+body.light .site-header { border-top-color: rgb(66, 66, 66); border-bottom-=
+color: rgb(232, 232, 232); }
+
+body.light .site-title, body.light .site-title:visited { color: rgb(66, 66,=
+ 66); }
+
+body.light .site-navigation { color: rgb(170, 170, 170); }
+
+body.light .page-tagline { color: rgb(170, 170, 170); }
+
+body.light .page-link { color: rgb(170, 170, 170); }
+
+body.light .site-nav .page-link { color: rgb(17, 17, 17); }
+
+@media screen and (max-width: 600px) {
+  body.light { background-color: rgb(253, 253, 253); border: 1px solid rgb(=
+232, 232, 232); }
+  body.light .menu-icon > svg path { fill: rgb(66, 66, 66); }
+}
+
+body.light .site-footer { border-top-color: rgb(232, 232, 232); }
+
+body.light .footer-col-wrapper { color: rgb(130, 130, 130); }
+
+body.dark { color: rgb(231, 231, 231); background-color: rgb(25, 25, 25); }
+
+body.dark a { color: rgb(204, 204, 204) !important; }
+
+body.dark a:visited { color: rgb(2, 6, 11); }
+
+body.dark a:hover { border-color: rgb(166, 166, 166); color: rgb(77, 77, 77=
+) !important; }
+
+body.dark a.page-link:hover { color: rgb(231, 231, 231); border-color: rgb(=
+77, 77, 77); }
+
+body.dark a.postLink { color: rgb(77, 77, 77) !important; }
+
+body.dark a.postLink:visited { border-color: rgb(220, 20, 60); color: rgb(2=
+20, 20, 60) !important; }
+
+body.dark a.post-title-link { color: rgb(77, 77, 77) !important; }
+
+body.dark a.post-title-link:visited { border-color: rgb(220, 20, 60); color=
+: rgb(220, 20, 60) !important; }
+
+body.dark blockquote { color: rgb(167, 167, 167); border-left-color: rgb(23=
+2, 232, 232); }
+
+body.dark pre, body.dark code { border-color: rgb(167, 167, 167); backgroun=
+d-color: rgb(47, 47, 51); }
+
+body.dark .icon > svg path { fill: rgb(167, 167, 167); }
+
+body.dark .site-header { border-top-color: rgb(66, 66, 66); border-bottom-c=
+olor: rgb(232, 232, 232); }
+
+body.dark .site-title, body.dark .site-title:visited { color: rgb(232, 232,=
+ 232); }
+
+body.dark .site-navigation { color: rgb(204, 204, 204); }
+
+body.dark .page-tagline { color: rgb(204, 204, 204); }
+
+body.dark .page-link { color: rgb(204, 204, 204); }
+
+body.dark .site-nav .page-link { color: rgb(231, 231, 231); }
+
+@media screen and (max-width: 600px) {
+  body.dark { background-color: rgb(25, 25, 25); border: 1px solid rgb(232,=
+ 232, 232); }
+  body.dark .menu-icon > svg path { fill: rgb(66, 66, 66); }
+}
+
+body.dark .post-meta { color: rgb(167, 167, 167); }
+
+body.dark .site-footer { border-top-color: rgb(232, 232, 232); }
+
+body.dark .footer-col-wrapper { color: rgb(167, 167, 167); }
+
+body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figur=
+e { margin: 0px; padding: 0px; }
+
+body { font: 400 16px / 1.5 "PT Sans", Helvetica, Arial, sans-serif; text-s=
+ize-adjust: 100%; font-feature-settings: "kern"; font-kerning: normal; }
+
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, ul, ol, dl, figure, .highlight =
+{ margin-bottom: 15px; }
+
+img { max-width: 100%; vertical-align: middle; }
+
+figure > img { display: block; }
+
+figcaption { font-size: 14px; }
+
+ul, ol { margin-left: 30px; }
+
+li > ul, li > ol { margin-bottom: 0px; }
+
+h1, h2, h3, h4, h5, h6 { font-weight: 400; }
+
+a { text-decoration: none; }
+
+a:hover { border-bottom: 1px dotted; }
+
+a.page-link:hover { border-bottom: 1px dotted; }
+
+a.postLink:hover { border-bottom: 1px dotted; }
+
+a.post-title-link:hover { border-bottom: 1px dotted !important; }
+
+blockquote { border-left: 4px solid; padding-left: 15px; font-size: 18px; l=
+etter-spacing: -1px; font-style: italic; }
+
+blockquote > :last-child { margin-bottom: 0px; }
+
+pre, code { font-size: 15px; border: 1px solid; border-radius: 3px; }
+
+code { padding: 1px 5px; }
+
+pre { padding: 8px 12px; overflow-x: auto; }
+
+pre > code { border: 0px; padding-right: 0px; padding-left: 0px; }
+
+.wrapper { max-width: calc(940px); margin-right: auto; margin-left: auto; p=
+adding-right: 30px; padding-left: 30px; }
+
+@media screen and (max-width: 800px) {
+  .wrapper { max-width: calc(970px); padding-right: 15px; padding-left: 15p=
+x; }
+}
+
+.wrapper::after, .footer-col-wrapper::after { content: ""; display: table; =
+clear: both; }
+
+.icon > svg { display: inline-block; width: 16px; height: 16px; vertical-al=
+ign: middle; }
+
+.post { font-family: "Source Sans Pro"; font-size: 18px; font-weight: 300; =
+padding-top: 0px; }
+
+.home { padding-bottom: 5em; }
+
+.download { padding: 10px; }
+
+.authorKeyword { text-transform: uppercase; font-size: 16px; letter-spacing=
+: 2px; text-indent: 2px; padding-top: 0.5em; }
+
+.writtenBy { letter-spacing: 0px; text-indent: 0px; text-transform: upperca=
+se; }
+
+.archive-intro { font-size: 14px; text-transform: uppercase; letter-spacing=
+: 2px; text-indent: 2px; }
+
+.archiveIntro { text-align: center; }
+
+.hint { text-transform: uppercase; font-size: 11px; letter-spacing: 2px; te=
+xt-indent: 2px; }
+
+.example { font-family: Menlo; padding: 10px; }
+
+.manual { text-transform: uppercase; font-size: 16px; letter-spacing: 2px; =
+text-indent: 2px; }
+
+.postContent { padding-top: 3.5em; text-align: center; }
+
+.postDate { float: left; text-transform: uppercase; font-family: "Source Sa=
+ns Pro"; font-size: 16px; font-weight: 300; letter-spacing: 2px; text-inden=
+t: 2px; }
+
+.postTag { float: right; }
+
+.postTitle { font-weight: 400; text-align: center; text-transform: uppercas=
+e; letter-spacing: 3px; text-indent: 3px; }
+
+.site-header { border-top: 5px solid; border-bottom: 1px solid; min-height:=
+ 56px; position: relative; }
+
+.site-title { font-size: 64px; font-family: "PT Sans"; font-weight: 500; ma=
+rgin-top: 1em; }
+
+.site-description { font-size: 14px; letter-spacing: 2px; text-indent: 6px;=
+ font-family: "Josefin Sans"; }
+
+.exclamationMark { padding-left: 2em; padding-right: 2em; }
+
+.site-navigation { text-transform: uppercase; font-size: 14px; letter-spaci=
+ng: 2px; text-indent: 6px; font-family: "Josefin Sans"; font-weight: 300; p=
+adding-top: 5em; }
+
+.page-title { text-transform: uppercase; letter-spacing: 2px; text-indent: =
+2px; font-family: "PT Sans"; font-size: 12px; text-align: center; }
+
+.page-tagline { font-size: 18px; font-family: "PT Sans"; text-align: center=
+; text-transform: lowercase; }
+
+.site-nav .page-link { line-height: 1.5; }
+
+.site-nav .page-link:not(:last-child) { margin-right: 20px; }
+
+@media screen and (max-width: 600px) {
+  .site-nav { position: absolute; top: 9px; right: 15px; border-radius: 5px=
+; text-align: right; }
+  .site-nav .menu-icon { display: block; float: right; width: 36px; height:=
+ 26px; line-height: 0; padding-top: 10px; text-align: center; }
+  .site-nav .menu-icon > svg { width: 18px; height: 15px; }
+  .site-nav .trigger { clear: both; display: none; }
+  .site-nav:hover .trigger { display: block; padding-bottom: 5px; }
+  .site-nav .page-link { display: block; padding: 5px 10px; margin-left: 20=
+px; }
+  .site-nav .page-link:not(:last-child) { margin-right: 0px; }
+}
+
+.site-footer { border-top: 1px solid; padding: 30px 0px; }
+
+.footer-heading { font-size: 18px; margin-bottom: 15px; }
+
+.contact-list, .social-media-list { list-style: none; margin-left: 0px; }
+
+.small-site-title { font-family: "PT Sans"; }
+
+.footer-col-wrapper { font-size: 15px; margin-left: -15px; }
+
+.footer-content { font-family: "Josefin Sans"; font-weight: 300; letter-spa=
+cing: 1px; }
+
+.footer-col { float: left; margin-bottom: 15px; padding-left: 15px; }
+
+.footer-col-1 { width: calc(35% - 15px); }
+
+.footer-col-2 { width: calc(20% - 15px); }
+
+.footer-col-3 { width: calc(45% - 15px); }
+
+@media screen and (max-width: 800px) {
+  .footer-col-1, .footer-col-2 { width: calc(50% - 15px); }
+  .footer-col-3 { width: calc(100% - 15px); }
+}
+
+@media screen and (max-width: 600px) {
+  .site-title { font-size: 40px; }
+  pre, code { font-size: 12px; }
+  .footer-col { float: none; width: calc(100% - 15px); }
+}
+
+.page-content { padding: 0px; }
+
+.page-heading { font-size: 20px; }
+
+.post-list { margin-left: 0px; list-style: none; }
+
+.post-list > li { margin-bottom: 30px; }
+
+.post-meta { text-transform: uppercase; font-size: 16px; }
+
+.post-link { display: block; font-size: 24px; }
+
+.post-header { margin-bottom: 30px; }
+
+.post-title { font-size: 62px; text-align: center; font-family: "PT Sans"; =
+font-weight: 100; }
+
+@media screen and (max-width: 800px) {
+  .post-title { font-size: 36px; }
+}
+
+.post-content { margin-bottom: 30px; padding-bottom: 3em !important; }
+
+.post-content p { font-size: 20px; }
+
+.post-content h2 { font-size: 32px; }
+
+@media screen and (max-width: 800px) {
+  .post-content h2 { font-size: 28px; }
+}
+
+.post-content h3 { font-size: 26px; }
+
+@media screen and (max-width: 800px) {
+  .post-content h3 { font-size: 22px; }
+}
+
+.post-content h4 { font-size: 20px; }
+
+@media screen and (max-width: 800px) {
+  .post-content h4 { font-size: 18px; }
+}
+
+.post-content li { font-size: 20px; }
+
+@media screen and (max-width: 800px) {
+  .post-content li { font-size: 18px; }
+}
+
+.pagination { padding-top: 3.5em; text-align: center; }
+
+.paginationLink { border: 0px; display: inline-block; padding: 5px; text-de=
+coration: none; transition: color 200ms ease-out 0s; }
+
+.paginationLink:hover, .paginationLink:active, .paginationLink:focus { bord=
+er: 0px; }
+
+.paginationLinkCurrent { font-style: normal; }
+
+.postNavigation { align-items: center; display: flex; justify-content: spac=
+e-between; padding-bottom: 3em; }
+
+.postNavigation a:only-child { width: 100%; }
+
+.postPrev, .postNext { display: inline-block; width: 49%; }
+
+.postPrev:hover, .postPrev:active, .postPrev:focus, .postNext:hover, .postN=
+ext:active, .postNext:focus { border: 0px; }
+
+.postNext { text-align: right; }
+
+.highlight .c { color: rgb(153, 153, 136); font-style: italic; }
+
+.highlight .err { color: rgb(166, 23, 23); background-color: rgb(227, 210, =
+210); }
+
+.highlight .k { font-weight: bold; }
+
+.highlight .o { font-weight: bold; }
+
+.highlight .cm { color: rgb(153, 153, 136); font-style: italic; }
+
+.highlight .cp { color: rgb(153, 153, 153); font-weight: bold; }
+
+.highlight .c1 { color: rgb(153, 153, 136); font-style: italic; }
+
+.highlight .cs { color: rgb(153, 153, 153); font-weight: bold; font-style: =
+italic; }
+
+.highlight .gd { color: rgb(0, 0, 0); background-color: rgb(255, 221, 221);=
+ }
+
+.highlight .gd .x { color: rgb(0, 0, 0); background-color: rgb(255, 170, 17=
+0); }
+
+.highlight .ge { font-style: italic; }
+
+.highlight .gr { color: rgb(170, 0, 0); }
+
+.highlight .gh { color: rgb(153, 153, 153); }
+
+.highlight .gi { color: rgb(0, 0, 0); background-color: rgb(221, 255, 221);=
+ }
+
+.highlight .gi .x { color: rgb(0, 0, 0); background-color: rgb(170, 255, 17=
+0); }
+
+.highlight .go { color: rgb(136, 136, 136); }
+
+.highlight .gp { color: rgb(85, 85, 85); }
+
+.highlight .gs { font-weight: bold; }
+
+.highlight .gu { color: rgb(170, 170, 170); }
+
+.highlight .gt { color: rgb(170, 0, 0); }
+
+.highlight .kc { font-weight: bold; }
+
+.highlight .kd { font-weight: bold; }
+
+.highlight .kp { font-weight: bold; }
+
+.highlight .kr { font-weight: bold; }
+
+.highlight .kt { color: rgb(68, 85, 136); font-weight: bold; }
+
+.highlight .m { color: rgb(0, 153, 153); }
+
+.highlight .s { color: rgb(221, 17, 68); }
+
+.highlight .na { color: rgb(0, 128, 128); }
+
+.highlight .nb { color: rgb(0, 134, 179); }
+
+.highlight .nc { color: rgb(68, 85, 136); font-weight: bold; }
+
+.highlight .no { color: rgb(0, 128, 128); }
+
+.highlight .ni { color: rgb(128, 0, 128); }
+
+.highlight .ne { color: rgb(153, 0, 0); font-weight: bold; }
+
+.highlight .nf { color: rgb(153, 0, 0); font-weight: bold; }
+
+.highlight .nn { color: rgb(85, 85, 85); }
+
+.highlight .nt { color: rgb(0, 0, 128); }
+
+.highlight .nv { color: rgb(0, 128, 128); }
+
+.highlight .ow { font-weight: bold; }
+
+.highlight .w { color: rgb(187, 187, 187); }
+
+.highlight .mf { color: rgb(0, 153, 153); }
+
+.highlight .mh { color: rgb(0, 153, 153); }
+
+.highlight .mi { color: rgb(0, 153, 153); }
+
+.highlight .mo { color: rgb(0, 153, 153); }
+
+.highlight .sb { color: rgb(221, 17, 68); }
+
+.highlight .sc { color: rgb(221, 17, 68); }
+
+.highlight .sd { color: rgb(221, 17, 68); }
+
+.highlight .s2 { color: rgb(221, 17, 68); }
+
+.highlight .se { color: rgb(221, 17, 68); }
+
+.highlight .sh { color: rgb(221, 17, 68); }
+
+.highlight .si { color: rgb(221, 17, 68); }
+
+.highlight .sx { color: rgb(221, 17, 68); }
+
+.highlight .sr { color: rgb(0, 153, 38); }
+
+.highlight .s1 { color: rgb(221, 17, 68); }
+
+.highlight .ss { color: rgb(153, 0, 115); }
+
+.highlight .bp { color: rgb(153, 153, 153); }
+
+.highlight .vc { color: rgb(0, 128, 128); }
+
+.highlight .vg { color: rgb(0, 128, 128); }
+
+.highlight .vi { color: rgb(0, 128, 128); }
+
+.highlight .il { color: rgb(0, 153, 153); }
+------MultipartBoundary--7NArcxjXWV7Jiz1qfGTnP6j8iNRYYruN2p1eB4O1zs------

@@ -1,0 +1,412 @@
+Day 2
+
+What is HCL Commerce?
+ > capabilities to host a similar environment which we help customize to create an e-commerce website for users to use
+ > features include
+	- product browsing
+	- delivery
+	- payment methods
+	- favorites
+	- carts
+	- order and history
+	- account management
+
+HCL Commerce
+ > HCL Commerce (formerly known as WebSphere Commerce and WCS (WebSphere)) is a software platform e-commerce, including marketing, sales, customer and order processing functionality in a tailorable, integrated package. It is a single, unified platform which offers the ability to do business directly with consumers (B2C), with businesses (B2B), indirectly through channel partners (indirect business models), or all of these simultaneously. WebSphere Commerce is a customizable, scalable and high availability solution built on the Java - Java EE platform using open standards, such as XML, and Web services. Formerly a product of IBM, the product was sold to HCL technologies in July 2019
+ > WebSphere Commerce is sometimes referred to as WCS, however this abbreviation was originally used as reference to the platform when it was named WebSphere Commerce Suite. Use of the abbreviation continued with users and solution implementers after the platform was remaned to WebSphere Commerce with announcement of WebSphere Commerce V5.4
+ > B2B - Business to business
+	- helps seller's user to buy item in bulk and sell it to the customers
+ > B2C - Business to customer
+	- shows products to customers/users
+
+
+NOTES:
+1. HCL Commerce V8 uses Struts frameworks as reference, while HCL Commerce V9 uses Spring framework as reference
+
+
+History
+ > The first version of the platform was introduced in 1996, during the emergence of e-commerce with a product called Net.Commerce (V1.0 and subsequently V2.0, V3.1 and V3.2) that was first delpoyed to sell event ticket and merchandise for the 1996 Olympic Games. In 2001 Net.Commerce was renamed to WebSphere Commerce Suite, releasing versions V4.1 and V5.1. In 2002 WebSphere Commerce 
+
+
+NOTES:
+1. Express is like simplified version of Professional
+
+
+
+
+About:
+NOTES:
+1. Storefront refers to how the website is presented to the user
+2. IBM Rational Application Developer for WebSphere Software (RAD) is used as the HCL Commerce IDE, and is extended from Eclipse
+
+
+
+WebSphere Commerce features: Cross-channel
+NOTES:
+1. Web and Mobile component of WebSphere Commerce is separate from each other
+2. HCL Commerce
+
+
+
+
+Key benefits of WebSphere Commerce
+NOTES:
+1. Example of B2B is 
+2. Most important part of e-commerce is product/catalog management
+3. Upselling and cross selling is an important part of e-commerce that is done through product suggestion and merchandising
+
+
+New features in WebSphere Commerce V8
+NOTES:
+1. Data Load utility refers to the utility to load data like users, products, reviews, ratings, prices, inventory, etc. Also responsibility for updating data in the database like prices of items when theres a sale
+
+
+Deprecated and Discontinued features (Summary)
+Deprecated
+ > 3-DES encryption 
+ > Massload
+ > Support for the Configuration noun
+ > PriceTCMasterCatalogWithOptionalAdjustment
+
+Discontinued
+ > WebSphere Commerce Patterns
+ > The Madisons, Elite, Brazil or MayUJoy(China) stores
+ > Coshopping
+ > sMash-based Social Commerce
+ > BazaarVoiceLegacy intergration ("PRR")
+	- manages rating and reviews
+ > KickAppIntegration
+ > iOS hybrid and Android native sample application
+
+
+
+Development process: The development cycle
+Stage 1: Model
+ > Gather requirements, design, simulate, and optimize business models
+ > Teams: Architects, Business Analysts
+
+Stage 2: Assemble
+ > Discover, assemble, test
+ > Assembling components that  consist of functional and deliverables
+ > Involved in DEV env
+ > Team: Architects, Project Managers, Development teams
+
+Stage 3: Deploy
+ > Integrated deployment of processes
+ > involved in STAGING and PROD env
+ > Team: Project Managers, Administrators
+
+Stage 4: Manage
+ > Business monitoring for coordinated interaction, analytics, and optimization
+ > Team: Architects, Administrators
+
+
+
+Architecture Layer
+ > consist of four major area, Presentation, Control, Business Logic layer, Persistence layer
+
+Presentation layer
+ > layer that is shown to the user
+ > typically called View layer
+ > can be presented in browser, mobile, or even in kiosk
+
+Control layer
+ > controls/process the data that comes from the Presentation layer
+
+Business logic layer
+ > layer where we persist data sent by the Business logic layer
+
+
+NOTES:
+1. There are two channel that is used in Presentation layer
+	> Web channel - JSP
+2. By decoupling Presentation layer and Business logic layer, we can make the HCL Commerce perform much faster
+
+
+
+Common Architecture
+Web Server <----> WebSphere Application Server <-> Database
+			A
+			|
+			|
+		WebSphere Commerce Developer
+		(used by Developers)
+
+NOTES:
+1. Web server runs in the WebSphere Application Server
+2. Database server holds the data like products, users, reviews, rating, etc
+3. RAD is used to creating customizing Store UI's
+4. Theres one to one mapping between WebSphere Application Server and Database server in PROD
+5. There should have one single database in each Cluster
+
+
+Common Server Architecture
+1. Storefront and REST
+	> request from users
+2. LoadBalancer (WebSphere commerce)
+	> Failover
+	> Active
+3. WebSphere Commerce
+	> WebSphere Commerce server (WebSphere Commorce)
+4. LoadBalancer (WebSphere Commerce search)
+5. WebSphere Commerce search
+6. Master Index
+7. Production database (single database)
+
+NOTE:
+1. Search functionality is hosted in separate service
+	> when a search request is sent in the initial LB, it will redirect it to the 2nd LB for search service
+2. To optimize searching, the Slave search server (search index) uses a single Master index. And this Master index will do "Index replication" into several Slave search servers
+3. Loadbalancer consist of an Active and Failover one for high availability
+
+
+
+Runtime Framework
+NOTES:
+1. WebSphere Commerce consist of the following components
+	> Catalog
+	> Member
+	> Marketing
+	> Selling
+	> Order	
+	> Trading
+2. The Runtime framework can support MULTICHANNEL transactions processing
+
+
+
+REST Architecture
+NOTES:
+1. REST Clients includes support for Mobile, Web, Social, and Kiosk desktop
+2. WebSphere Commerce server consist of the following
+	> REST services abstraction, which abstracts the following: OAGIS BOD DSL/DB, Security OAuth, Integration services
+3. SDO stands for Service Data object
+
+
+
+Management Centre Framework
+NOTES:
+1. used to business admin to manage catalog, prices, systems, etc
+2. Composed of the following
+	> Browser
+	> Management Center Wb application
+3. Definitions are written in XML
+4. CMC are used to definede
+5. Model is a representation 
+6
+
+
+Backend Integration
+ > key features of the E-Commerce
+ > composed of the following
+	1. WebSphere Commerce
+	2. Integration Services
+	3. Existing Applications
+ 
+EX:
+
+Customer
+Partners <-> WebSphere <- Integration -> Existing
+Channel	     Commerce	  Services	Applications
+
+
+Websphere Commerce
+ > composed of Adapters and Interfaces
+ > these includes tools like
+	- Configurable Business Processes
+	- Business Context Engine
+	- WebSphere Platform
+
+NOTES:
+1. We can add inbound and outbound messages in our WebSphere Commerce
+
+
+Environments
+|----->	Development <-------- Testing Server
+|		^ 
+|		|
+|  		|
+Production --->	Staging Server
+Server
+|
+|
+|
+|
+V
+Search		Authoring Server
+|
+|
+V
+Development
+
+NOTES:
+1. Testing server is used to check if the features are functioning properly or not
+2. Authoring Server have two level or security, where we have two authentication to authorize action
+	> also prevents unrestricted access to WebSphere Commerce components
+	> ex: users may be be able to edit product info
+3. Search is recommended to be implemented in different servers
+4. If we want to implement Staging server, we will need to replicate the Master index in the Staging server as well
+5. If we dont have staging server, we will just replicate the Master Index in the Production server
+
+
+
+Common topologies - two tier architecture
+Process steps:
+1. 
+
+NOTES:
+1. Two tier is composed on the two parts
+	> the WebSphere Commerce node
+	> Administrator and Database server node
+
+
+Common topologies - three tier architecture
+NOTES:
+1. Three their is composed of the folllowing
+	> Web server node
+	> WebSphere Commerce node
+	> Database server node
+2. Decouple the presentation to the business logic layer
+
+
+Common topologies - search
+NOTES:
+1. Index contains all the details of our product, which includes name, price, rating, description, inventory, etc
+2. Uses Apache Lucene for searching
+
+
+Design Patterns
+1. Model-View-Controller (MVC)
+2. Factory Pattern
+3. Command Pattern
+	> here, the command will be a black box
+	> users will not know that exact processes on how the command is executed
+4. Display Design Pattern
+
+
+
+
+Struts
+Presentation Layer Components
+ > WebSphere Commerce Web 1.0 storefront uses JSP pages throughout the entire store and administrative flows
+
+NOTES:
+1. All the WebSphere Commerce browser-based tools are based on Struts framework
+2. WebSphere Commerce V9 uses Spring framework
+
+
+WebSphere Commerce and the Struts Framework
+ > composed of the following
+	- Action servlet
+	- Request processor
+	- Action mapping
+	- BaseAction
+	- JSP page
+
+Action Servlet
+ > ECActionServlet implemented for WebSphere Commerce
+ > This servlet must be used
+Request processor
+ > Basic Struts processors
+ > Can be replaced to add Tiles support
+Action mapping
+ > Map request pattern to action and parameters
+ > Three files, base definitions, extensions, and migration
+BaseAction
+ > Single action, BaseAction, calls to facade with an argument that defines the controller command interface
+ > Controller command returns view name
+ > Return ActionForwards, which determine the JSP to display
+JSP page
+ > Dynamic pages
+
+Process steps:
+1. Request is sent in Action Servlet
+2. Action Servlet forwards the Request in Request processor
+	> Request Processor uses Struts-config.xml 
+3. Request Processor forwards the action in the Base Action
+4. Base Action communicates with Services interfaces
+	> Services interfaces works with business logic layer and persistence layer
+5. Base Action returns the result in Request processor
+6. Request procesor sends the response back to JSP pages
+
+
+Struts Configuration
+1. struts-config.xml
+ 	> core product configuration
+	> used for the mappings in the WebSphere Commerce base
+	> it must not be modified
+2. struts-config-ext.xml
+	> used to store customized configurations ("extensions")
+
+
+
+NOTES:
+1. Tiles from Struts is composed of several components in order to make UI
+2. Do not change the "out of the box" extension folders
+
+
+
+
+WebSphere Commerce Action Mapping
+ > uses URL as AddressAdd
+ > Interface refers to the interface used to process the request
+ > https refers to whether the request needs to use https or not
+ > authenticated refers to whether the request needs to be authenticated
+ > storeent_id refers to the Store id
+	- if storeend_id is 0, it means that the Action is application to all Stores
+	- if storeend_id is not a value of 0, it specifies the Store id that will be applied the Action to
+
+EX: struts-config.xml (Action mappings)
+Action mapping #1
+url: AddressAdd
+storeent_id: 0
+interface: com.ibm.commerce.usermanagement.commands.AddressAddCmd
+https: 0
+authenticated: 0
+
+Action mapping #2
+url: AddressAdd
+storeent_id: 201
+interface: com.ibm.commerce.usermanagement.commands.AddressAddCmd
+https: 1
+authenticated: 1
+
+Action mapping #2
+url: StoreCatalog
+storeent_id: 0
+interface: com.ibm.commerce.catalog.commands.StoreCatalogDisplayCmd
+https: 0
+authenticated: 0
+
+
+
+WebSphere Commerce Global Forwards
+ > refers to the forwards that is used to define which View the Action will forward to 
+
+
+Development of Struts Components
+ > Customization in WebSphere Commerce do not often involve customization of Struts components
+ 
+NOTES:
+1. ECActionServlet should not be modified
+2. Request processors may be available out of the box
+
+
+
+Adding Pages to the WebSphere Commerce
+1. JSPs are called as the result of an action
+	> Actions return actions forwards: those forwards map to JSP names
+	> To add new view, create a new JSP and make an entry in the Struts configuration files that map to that JSP
+	> To access that new view, map the return for an action to the new forward
+		- it can be done on a store-by-store basis
+	> Alternatively, a new command or new implementation of an existing command could be developed to return a new forward, mapped
+
+NOTES:
+1. 
+
+
+Diagram
+Action -> Request Processor -> JSP
+
+
+
+WC

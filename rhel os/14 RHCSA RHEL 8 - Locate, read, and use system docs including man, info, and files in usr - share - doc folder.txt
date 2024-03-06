@@ -1,0 +1,76 @@
+14 RHCSA RHEL 8 - Locate, read, and use system docs including man, info, and files in /usr/share/doc
+
+/usr/share/info/
+ > directory where all the content of the "info" command is stored
+
+PATH
+ > environment variable
+ > contains a list of all the directories where the system will find the applications to run
+ 	- ex: if we run "ls", it will look to all directories in PATH for the "ls" script to run
+ > to see the value of path, we can either
+	1. print the "env" and use grep to filter with "PATH"
+		- env | grep PATH
+	2. print the PATH env directly
+		- echo $PATH
+ > EX: PATH=/home/jglenn/.local/bin:/home/jglenn/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+
+
+Commands
+man COMMAND
+ > used to see the MANUAL of a specific user command
+ > Manual contain synopsis of the command, like syntax, options flags, etc
+ > ex: man ls
+
+whatis COMMAND
+ > gives BRIEF description of a specific command
+ > ex: whatis ls
+
+apropos QUERY
+ > gives a list of commands that matches the query string provided
+ > ex: apropos ls
+
+mandb
+ > used to update the list of manuals for the commands
+
+info COMMAND
+ > used to see a more informations about the command
+ > more verbose than the man command
+ > ex: info ls
+
+updatedb
+ > updatedb creates or updates a database used by locate. 
+ > If the database already exists, its data is reused to avoid rereading directories that have not changed.
+
+locate FILENAME
+ > used to located directories/files that matches the FILENAME provided
+ > the mlocate.db must not be empty when we use this,
+	- if its empty, execute the "updatedb" command
+
+find SOURCEDIR -name FILENAME
+ > used to find files that matches the FILENAME provided starting from the SOURCEDIR
+ > ex: find / -name sysctl.conf
+	- searches sysctl.conf file from the root directory
+
+yum whatprovides FILENAME
+ > needs root access, use sudo
+ > query its own database to list all the packages managed by yum that provides the said FILENAME
+ > FILENAME can have wildcards to refine the searches
+ > ex: sudo yum whatprovides /*mandb
+
+rpm -ql PACKAGE | grep QUERY
+ > needs root access, use sudo
+ > query in the rpm database and list all package matching the provided packagename, which then be filtered by grep
+ > "-q" flag stands for query, "-l" flag for list
+ > ex: sudo rpm -ql systemd | grep sysctl.conf
+
+rpm -qd PACKAGE
+ > needs root access, use sudo
+ > query the DOCUMENTATION of the package provided
+ > "-d" flag is for documentation
+
+env
+ > prints all the environment variables present in the system for current user
+
+whereis QUERY
+ > used to print all the directories of all the files that have QUERY with their filename
+ > typically used for searching command and their docuumentation

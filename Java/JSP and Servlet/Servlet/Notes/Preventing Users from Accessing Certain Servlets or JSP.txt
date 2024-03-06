@@ -1,0 +1,17 @@
+Preventing Users from Accessing Certain Servlets/JSP URL directly in browser
+
+I. Adding Identifier in HttpSession of Client in Login
+1. In Login, get the HttpSession of the Client request
+	> use getSession of HttpServletRequest to create an HttpSession
+2. In Login, after a SUCCESSFUL validation of client, add an attribute in HttpSession to uniquely identify the client
+	> validate user if user exist in database	
+	> preferrably, the attribute to be passed on session is a primary key in the database for Users
+
+II. Checking for Identifier in HttpSession inside Servlet is that NOT ACCESSIBLE directly in url
+3. Check for an HttpSession
+	> for Servlet, we can create HttpSession by calling getSession() of HttpServletRequest
+	> for JSP, we can use the "session" implicit object
+4. Check if a specific attribute in the HttpSession is NOT NULL or PRESENT
+	> use getAttribute("attribute-name") to HttpSession object
+5. If NULL, redirect them to the home page
+	> typically, the login page

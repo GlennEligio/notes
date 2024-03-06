@@ -1,0 +1,49 @@
+07. K8s generic commands
+
+kubectl get <resource-type> <resource-name>
+	> used to show all resource of a specific type inside K8s cluster
+	> if no resource-name passed, will get all resource of specific type
+	> resource types include
+		- pod
+		- node
+		- deployment
+		- replicaset
+		- volume
+		- secret
+		- service
+		- namespace
+		- all (used to include ALL RESOURCE TYPE)
+			-> no need to define resource name
+			-> typically used alongside -l option and passing the label to target
+			-> ex: kubectl delete all -l app=currency-exchange
+
+	
+kubectl explain <resource-type>
+	> used to get a definition of a specific resource type inside K8s
+
+kubectl create <resource-type> <resource-name>
+
+
+kubectl describe <resource-type> <resource-name>
+	> used to get a close-up description/information of a specific resource inside K8s
+
+kubectl delete <resource-type> <resource-name>
+	> used to delete a resource of specific type with specific name
+
+kubectl edit <resource-type> <resource-name>
+	> used to edit the configuration of a resource
+	> you will be presented with a text-editor where the configuration is present
+	> you can edit from here, and when you save the changes, it will apply it to the Cluster
+
+kubectl logs <pod-name>
+	> used to see the logs inside a pod
+
+
+K8s resource shortcut names
+	> used to replace the full name of resource type
+	> ex: kubectl get po, kubectl get svc
+
+pod		po
+replicaset	rs
+service		svc
+deployment	deploy

@@ -1,0 +1,32 @@
+150 AWS Local Zones
+
+AWS Local Zones
+ > Places AWS compute, storage, database, and other selected AWS services closer to end users to run latency-sensitive applications
+ > Extend your VPC to more locations - "Extension of an AWS Region"
+ > Compatible with EC2, RDS, ECS, EBS, ElastiCache, Direct Connect,...
+ > Example:
+	- AWS Region: N. Virginia (us-east-1)
+	- AWS Local Zones: Boston, Chicago, Dallas, Houston, Miami,...
+ 
+
+
+Enabling Local Zone
+1. Go to EC2 Dashboard
+2. On the right side, look for Zones
+3. You should see the Settings page, with Zones tab opened
+4. In Zones tab, you can see all the Local Zone, WaveLength Zones, and Availability zones
+5. In Local Zone, 'click' Manage and enable it
+	> wait for a few minutes to reflect the changes
+
+
+Testing Local Zone
+1. Launch an EC2 instance
+2. In the Network settings
+	> create a new subnet
+	> for the Subnet settings, select the Local Zone earlier as the Availability zone and finish creating subnet
+	> now, if we refresh the subnet dropdown list, the new Subnet that uses Local Zone is available
+
+
+
+NOTE:
+1. Not all region contains AWS Local Zones (ex: Ireland)

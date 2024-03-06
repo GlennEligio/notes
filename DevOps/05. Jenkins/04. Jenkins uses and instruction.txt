@@ -1,0 +1,293 @@
+04. Jenkins uses and instruction
+
+includes
+I. 	Creating a new Job/Item
+II. 	Setting up Roles and Authorization in Jenkins
+III. 	Using Maven Plugin for Maven Projects
+IV. 	Implementing CI using Github Webhooks
+V.	Creating Pipeline
+VI.	Assigning Remote Ubuntu Server as Jenkin Node
+
+
+
+I. 	Creating a new Job/Item
+
+Create Job to execute Maven compile
+1. Create new Job for Maven Compilation
+	- GithubJob
+	- freestyle project
+2. Go to Build Section
+3. Select Execute Shell as Build step
+4. Enter the following as command
+
+cd /var/lib/jenkins/workspace/GithubJob
+sudo mvn clean package
+
+
+
+
+
+II. 	Setting up Roles and Authorization in Jenkins
+
+AUTHORIZATION
+	> you may want to have specific group of people have defined permissions and access in Jenkins
+	> in Jenkins, we can do Role-based AUTHORIZATION using 
+
+Add Jenkin Users
+1. Go to Manage Jenkins
+2. Go to Manage Users
+3. Create a Users
+	> two Users
+4. Logout with our current User
+5. Login using the first User we created
+
+
+
+Defining User Authorization
+1. Dashboard > Manage Jenkins > Configure Global Security
+
+
+
+Adding Plugin for Role based Authorization
+1. Dashboard > Manage Jenkins > Manage Plugin
+2. Go to Available tab
+3. Search for "Role-based Authorization Strategy"
+4. Select the item
+5. Select install without restart
+
+
+Set Authorization Setting to Role based
+1. Dashboard > Manage Jenkins > Configure Global Security
+2. Go to Authorization Section
+	- select Role based strategy
+
+
+Create new Global Role
+1. Dashboard > Mange Jenkins > Manage and Assign Roles
+
+Create new Item roles
+1. developer
+	- ant matcher for Item name pattern = "Dev.*"
+2. tester
+	- ant matcher for Item name pattern = "Test.*"
+
+
+Assign Item and Global Roles to two new users earlier
+
+
+
+
+
+III. 	Using Maven Plugin for Maven Projects
+
+Connecting GitHub repo in the Jenkins Job
+0. Fork the Github repo given
+1. Create new Jenkins Job
+	- Freestyle
+2. Set the Github repo and SCM of the Job to the Github repo link forked
+
+
+/var/lib/jenkins/workspace/JenkinsJobName
+	> location of the files the Job created and fetch
+
+
+Create Job to execute Maven compile
+1. Create new Job for Maven Compilation
+	- GithubJob
+	- freestyle project
+2. Go to Build Section
+3. Select Execute Shell as Build step
+4. Enter the following as command
+
+cd /var/lib/jenkins/workspace/GithubJob
+sudo mvn clean package
+
+
+
+Execute MavenJob after GithubJob
+1. Go to GithubJob Item
+2. Configure
+3. Go to Post Build Actions
+4. Add post build action
+	- Select Build other project
+	- Choose MavenJob
+5. Build the GithubJob
+6. Check if MavenJob is built as well
+	- we should see MavenJob in the Build Queue section at left of Dashboard as well
+
+
+
+Maven Integration Plugin
+	> used to go the GitHub repo pulling and Maven commands into one Jenkins Job
+	> gives Maven Integration Project 
+
+
+
+Add Maven Integration Plugin
+1. Dashboard > Manage Jenkins > Manage Plugins
+2. Go to Available tab
+3. Search for Maven Integration plugin
+4. Install without restart
+
+
+
+Use the Maven Integration Plugin
+1. Manage Jenkins > Global Configaration Tool
+2. Go to Maven section, add Maven
+3. Give it any name
+4. Create new Item
+
+
+
+Create Maven Project
+1. Use Maven Project as configuration
+2. Set Github repo in
+	- GitHub project
+	- Source Code Management > Git > Repositories
+3. In Build Section
+	- define the Goals and options
+		clean package 
+
+
+
+
+IV. 	Implementing CI using Github Webhooks
+
+
+Add Email Notification after Build Item
+1. Create TestJob
+2. Post Build Action
+	- Email Notification
+3. Add TestJob in the Maven-Project's post build action
+
+
+
+
+Adding Webhooks in Github repo
+	> with WebHooks, we can send notification to external service in case certain event happens (e.g. Source code modification with git push commands)
+1. Go to Github repo
+2. Go to Settings
+3. Go to Webhooks section
+4. Add Webhook
+	> pass the jenkins url + "/github-webhook/" to url
+	> ex: http://65.1.149.68:8080/github-webhook/
+	> set content type to application/json
+	> set event to push
+	> save
+5. Back to Jenkins, go to Jenkin Project (Maven-Project)
+6. Configure > Build Trigger
+	- check the Github option
+
+
+
+Adding CI feature in Jenkins
+1. Dashboard > Manage Jenkins > Manage Plugins
+2. Search for Build Pipeline
+	> install with restart
+3. Back to Dashboard, click the plus icon (+) at the Project Table
+4. Choose the Build Pipeline View
+5. Select Maven-Project as Initial Job
+6. Save
+	> you should see TestJob as second Job after Maven-Project
+
+
+Triggering CI 
+1. Commit a change in the App.java in the forked repo
+2. Check the CICD pipeline
+	
+
+
+
+
+V.	Creating Pipeline
+
+Using Groovy Sandbox to create/edit CI/CD Pipeline script
+1. Create Project
+	> pipeline-example
+	> select Pipeline as template
+2. In the Pipeline section, select "Hello world" as example script
+
+
+
+SYNTAX:
+With Declarative Pipeline
+1. start with pipeline {}
+2. inside pipeline, we can define attributes like
+	> agent	
+		- which device will run the pipeline
+	> tools
+	> stages
+		> stage
+			> step
+
+
+
+APPROVAL METHODS for CI/CD
+1. Continuous Delivery - Manual
+	- Add input action inside one of the steps
+2. Continuous Deployment - Automatic
+	- No input actions inside the steps of pipeline script
+
+
+
+
+VI.	Assigning Remote Ubuntu Server as Jenkin Node
+
+1. Dashboard > Manage Jenkins > Manage Credentials
+2. Select Jenkins
+3. Slect Global Credentails
+4. Slect Add Credentials
+	- for using cognixialab, use username and password from CognixiaLab Control Panel
+	- for those using aws, use username with ssh-keygen (open pem file downloaded from aws)
+5. After this, connect Node1 and Node2 using SSH tunnel
+	- ssh-keygen in Node1
+	- copy the public key of ssh generated
+	- go to /root/.ssh/authorized_keys of Node2
+	- paste the SSH key
+	- in Node1, type
+		ssh <node2 private ip>
+
+
+Setting Up Node and Adding the UbuntuServer1
+1. Dashboard > Manage Jenkins > Manage Nodes and Clouds
+2. Click New Node
+	> specify the Node name 
+		- slave
+	> check the Permanent Agent
+	> press Ok
+3. Configure the slave Node	
+	> remote root directory
+		- /home/ubuntu/jenkins
+	> labels
+		- slave
+	> Usage	
+		- Only build jobs with label expressions matching this node
+	> Launch method
+		- select "Launch agents via SSH"
+			> Host
+				- pass the UbuntuServer1's private Ip
+			> Credentials
+				- select the credentials we made earlier
+				- ubuntu/**** if you use the username/password option
+				- ubuntu if you use the username+ssh key option
+			> Host Key Verification Strategy
+				- select "Manually trusted key Verification Strategy"
+4. Save
+5. Go to Node Dashboard
+6. Press the slave
+7. Relaunch the slave Node
+8. Check the Logs of slave Node for more information
+
+
+
+Executing a Jenkin Job in the "slave" Node
+1. Create a Jenkin Item
+	- select Maven Project template
+2. Set the Github repo in 
+	- Github repo
+	- SCM
+3. Check "Restrict where this project can be run"
+	- select the slave node
+4. Define the Goals and Options in Maven section
+	- clean package
+5. Save and build

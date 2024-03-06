@@ -1,0 +1,55 @@
+Day 9
+
+Redux Introduction
+
+Why Redux
+1. Centralized Data inside State
+	> very easy to pass data in between components
+2. Easy Action dispatch function to do CRUD operations to the Centralized Data
+	> we can dispatch Actions to take by 
+		a. calling dispatch() on props
+		b. passing the Action function inside dispatch()
+
+Redux devtools
+
+
+Redux components
+1. Actions
+2. Reducers
+3. Store
+4. View
+
+
+Actions
+	> refers to the actions we can do in React Apps
+	> contains functions that will be exported
+	> ex: REMOVE_PRODUCT, ADD_PRODUCT. LOAD_PRODUCT
+
+Reducers
+	> refers to the updates done to the state based on the Action sent
+	> ex: 
+		REMOVE_PRODUCT -> remove the product and update state
+		ADD_PRODUCT -> add the product and update state
+		LOAD_PRODUCT -> load the products and update state
+
+
+Store
+	> refers to the location where we STORE the states
+
+View
+	> refers to the UI elements to display in browser
+
+
+
+Steps
+1. Create action.js file
+	> create functions to be exported in this file
+2. Create store.js file
+	> contains all the data to do CRUD operations
+	> we will also use this to populate Views
+3. Create reducers.js file
+	> uses action's functions and store's data to create a function 
+	> export the function
+4. Create App.js file
+	> contains the redux and routing functions
+5. 

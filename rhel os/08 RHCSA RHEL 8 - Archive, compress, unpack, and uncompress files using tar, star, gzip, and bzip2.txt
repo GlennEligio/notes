@@ -1,0 +1,90 @@
+08 RHCSA RHEL 8 - Archive, compress, unpack, and uncompress files using tar, star, gzip, and bzip2
+
+gzip, bzip2
+ > used for compressing and decompressing file(s) and folder(s), reducing its file size by a lot
+ > gzip can only be used in one file, while bzip can compress one or more files
+
+tar
+ > used for archiving huge list of files and folder
+ > in tar, we have an option to compress the resulting archive file into either gzip and bzip
+
+star
+ > similar to tar, but with addition of support for SE Linux (Security Enhanced Linux)
+ > with star, we can add access controls, extended file attributes
+ > by default, its not installed in RHEL 0S, and to install it, use whatever package manager you have in your RHEL 0S VM
+	- yum install star
+	- dnf install star
+	- apt install star
+ > in addition to tar features, we have a new options for creating a star archive, the "-xattr" and "-H=exustar"
+	- Exustar records Access Control Lists (ACLs)
+	- xattr compares extended file attributes
+ > File and directories have permission sets for the pwner of the file, the group associated with the file, and all other users for the system. However, these permission sets have limitations
+	- For example, different permissions cannot be configured for different users
+	- Thus, Access Control Lists (ACLs) were implemented
+ > Extended attribute or xattrs, are an extensible mechanism to store metadata on a filesystem
+	- Metadata is a collection of information or data points about a particular object
+
+
+NOTES:
+1. Tilde (~) can be used to denote the home directory user (ex: /home/username)
+
+
+
+Commands
+gzip [option] FILE
+ > used to either 
+	- compress a file into a .gz file
+	- decompress a .gz file into its normal format
+ > to compress use the syntax
+	$ gzip FILE
+ > to decompress use the syntax
+	$ gzip -d FILE
+ > EX: gzip file1.txt will create a file1.gz, and delete the file1.txt
+
+
+bzip2 [option] FILE
+ > same as gzip, for compressing a file into a smaller file size
+ > to compress, use the syntax
+	$ bzip2 FILE
+ > to decompress, use the syntax
+	$ bzip2 -d FILE
+ > ex: bzip2 file2.txt will create a file2.bz2, replacing the file2.txt
+
+
+tar [option] DEST FILES... 
+ > used to archive one or more files into the destination archive file
+ > we can also use the "tar" command to compress a .tar file into other format using gzip, bzip2, etc
+ > to archive one or more file, use the syntax
+	$ tar -cvf archiveName.tar file1 file2 file3
+		- you can add as many files/folder as you can
+ > to archive AND compress file(s) and folder(s) into gzip or bzip2, use the syntax below
+	$ tar -cvzf archiveName.tar.gz file1 file2 folder1 folder2
+	$ tar -cvjf archiveName.tar.bzip2 file1 file2 folder1 folder2
+		- use "-z" flag to compress the files into gzip format
+		- use "-j" flag to compress the files into bzip format
+ > to read the content of an archive file (.tar, .gzip, .bzip2), we can use the syntax
+	$ tar -tf archiveName.tar
+ > to extract content of a tar/gzip/bzip2 archive, use the syntax below
+	$ tar -xvf archiveName.tar
+	$ tar -xvfz archiveName.tar.gz
+	$ tar -xvfj archiveName.tar.bz2
+		- add "-z" or "-j" option flag if archive is a gzip or bzip2 format respectively
+ > options
+	-c	create
+	-v 	verbose
+	-f	file
+	-t	display list of files inside archive
+	-z	for gzip compression/uncompression
+	-j 	for bzip2 compress/uncompress
+
+
+star [option] FILES...
+ > used to compress multiple file(s) or directories into a single tar file
+ > to compress use the syntax
+	star -c -f=ARCHIVE.star file1 file2 folder1 folder2
+ > to read the content of the .star archive use the syntax
+	star -t -f=ARCHIVE.star file1 file2 folder1 folder2
+ > to extract content of the .star archive use -x flag
+	star -x -f=ARCHIVE.star file1 file2 folder1 folder2
+ > to add the Exustar record and metadata of the files when archiving, use the -H=exustar and -xattr respectively
+	star -xattr -H=exustar -c -f=ARCHIVE.star file1 file2 folder1 folder2

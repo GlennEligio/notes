@@ -1,0 +1,103 @@
+32 RHCSA RHEL 8 - Mount and unmount network file systems using NFS
+
+
+PREREQUISITE:
+1. nfs-utils in the remote host
+
+/etc/exports file
+ > The /etc/exports file controls which file systems are exported to remote hosts and specifies options. 
+ > Blank lines are ignored, comments can be made by starting a line with the hash mark (#), and long lines can be wrapped with a backslash (\). 
+ > Each exported file system should be on its own individual line, and any lists of authorized hosts placed after an exported file system must be separated by space characters.
+ > SYNTAX:
+	<export> <host1>(<options>) <hostN>(<options>)...
+ > OPTIONS:
+	ro 			mounts of the exported file system are read-only
+	rw			allows remote hosts to be able to make changes to the data shared on the file system
+	root_squash	prevents root users connected remotely from having root privileges and assigns them the user ID for the user "nfsnobody"
+				this effectively "squashes" the power of the remote root user to the lowest local user
+	no_root_squash	opposite of the root_squash
+	
+
+
+EX: /etc/exports
+/home/nfs-share 10.0.2.4(rw,no_root_squash)
+ > this shares the directory "/home/nfs-share" to ip address 10.0.2.4 with RW permission and No root squash options
+
+
+Setting up the NFS Server Build
+NOTE: Not required knowledge for the RHCSA
+1. Install NFS server
+	$ dnf groupinstall -y file-server
+2. Add firewall rule
+	$ firewall-cmd --permanent --add-service=nfs
+	$ firewall-cmd --reload
+3. Start NFS at boot
+	$ systemctl enable rpcbind nfs-server
+	$ systemctl start rpcbind nfs-server
+4. Create directories to export and update permissions
+	$ mkdir /home/nfs-share
+	$ chmod 777 /home/nfs-share
+5. Update the SELinux Contexts
+	$ dnf install -y setroubleshoot-server
+6. Enable SELinux boolean
+	$ setsebool -P nfs_export_all_rw on
+	$ setsebool -P nfs_export_all_ro on
+	$ setsebool -P use_nfs_home_dirs on
+7. Edit the /etc/exports file and create a new line with the following:
+	/home/nfs-share 10.0.2.4(rw,no_root_squash)
+		> changes based on the NFS Client's assigned IP address in NAT Network
+8. Restart nfs-server
+	$ systemctl restart nfs-server
+9. Check the share is working
+	$ showmount -e  localhost
+
+
+NFS Client Setup
+1. Install NFS Utils
+	$ dnf install -y nfs-utils
+2. Mount the NFS temporarily
+	$ mount -t nfs 10.0.2.15:/home/nfs-shared /mnt
+3. Check if the mount is working
+	$ ls /mnt
+	$ vi /mnt/somefile	-> save
+4. Unmount the NFS and check if the /mnt directory changes
+	$ umount /mnt
+	$ ls /mnt		-> somefile should NOT exist
+5. OPTIONAL: To mount permanently, edit /etc/fstab with the following line:
+	10.0.2.15:/home/nfs-share /mnt nfs4 defaults 1 2
+6. Test the fstab mount configuration by forcing the mount all command
+	$ mount -a
+	$ ls /mnt		-> somefile should be present
+7. Check the NFS Server, somefile should be present in the NFS directory
+	$ ls /home/nfs-server		-> somefile should appear
+
+
+
+Commands
+firewall-cmd
+ > firewalld command line client
+ > synopsis
+	$ firewall-cmd [OPTIONS...]
+ > EX:
+	$ firewall-cmd --permanent --add-service=nfs
+		- adds the nfs service permanently in the firewall
+	$ firewall-cmd --reload
+		- reloads the firewall to apply the changes done
+
+
+setsebool
+ > set SELinux boolean value
+ > synopsis:
+	$ setsebool [-PNV] boolean value | bool1=val1 bool2=val2 ...
+ 
+
+
+showmount
+ > show mount information for an NFS server
+ > sypnosis
+	$ showmount [-adehv] [--all] [--directories] [--exports] [--help] [--version] [host]
+ > options:
+	-e	show the NFS server's export list
+ > ex:
+	$ showmount -e localhost
+		-

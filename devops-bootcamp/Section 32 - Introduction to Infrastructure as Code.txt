@@ -1,0 +1,334 @@
+Section 32 - Introduction to Infrastructure as Code
+
+Contents:
+170. Challenges with Traditional IT Infrastructure
+171. Types of IAC Tools
+172. Why Terraform?
+
+
+
+170. Challenges with Traditional IT Infrastructure
+
+Traditional IT & Challenges
+ > previously, this is how the infrastructure is being provisioned in the traditional IT model
+	1. An organization wants to roll out a new application
+	2. The BUSINESS layout comes up with the requirements for the application
+	3. The BUSINESS ANALYST then gathers the need from the business, analyzes it, and converts it into a set of high level technical requirements
+	4. The SOLUTION ARCHITECT or technical lead receives the set of high level technical requirements.
+	5. The solution architect then designs the architecture to be followed for the deployment of this application.
+		> this would typically include the infrastructure considerations, such as the type, spec, and amount of servers that are needed, such as those for
+			a. front end web servers
+			b. back end servers
+			c. databases
+			d. load balancers
+	6. Following the traditional infrastructure model, these would have to be deployed in the organization's ON-PREMISE environment
+		> this would mean making use of the assets in the data center
+	7. If additional hardware is needed, they would have to be ordered via the PROCUREMENT TEAM
+		> this team will put in a new hardware request with the vendos
+	8. The PURCHASE AND DELIVERY of the hardware to the data center can take anywhere between a few days or weeks
+	9. Once received at the data center, the FIELD ENGINEERS would be in charge of rack and stack of the equipment
+	10. The SYSTEM ADMINISTRATORS perform initial configurations and the NETWORK ADMINISTRATORS make the systems available on the network
+	11. The STORAGE ADMINS assigned storage to these servers and the BACKUP ADMINS configure backups
+	12. Once the systems have been set up, as per the standards, they can then be handed over to the APPLICATION TEAMS to deploy their applications
+ > this traditional deployment models, which is still quite commonly used today, has quite a few disadvantages
+	1. SLOW DEPLOYMENT
+		- with the deployment model having so many steps, each is done sequentially, there will be times when the turnover time can range between weeks to months, and that's just to get the systems in a ready state to begin the application deployment
+		- this includes the time it takes for the system to be initially procured and then handed over between different teams
+		- also the SCALING UP and DOWN is done very slowly
+	2. EXPENSIVE
+		- the overall cost to deploy and maintain this model is generally quite high
+	3. LIMITED AUTOMATION
+		- while some aspects of the infrastructure provisioning process can be automated, several steps, such as the rack and stack cabling and other deployment procedures are manual and slow
+	4. HUMAN ERROR & INCONSISTENCY
+		- with so many teams working on so many different tasks, changes of human error are high and this reuslts in inconsistent environments
+	5. WASTED RESOURCES
+		- one major disadvantage of using this model is the underutilization of the compute resources
+		- the infrastructure sizing activity is generally carried out well in advance and the servers are sized considering the peak utilization
+		- the inability to scale up or down easily means that most of these resources would not be used during off peak hours
+		
+		
+NOWADAYS: Migration from ON-PREMISE to CLOUD
+ > In the past decade or so, organisations have been moving to virtualization and cloud platforms to take advantages of services provided by major cloud providers such as
+	- Amazon AWS
+	- Microsoft Azure
+	- Google GCP
+ > by moving to cloud, the time to SPIN UP the infrastructure and the time to MARKET for applications are significantly reduces
+ > this is because with cloud, you do NOT have to invest in or manage the actual hardware assets that you normally would in case of a traditional infrastructure model
+ > the following is now handled and managed by the cloud providers
+	- data center
+	- hardware assets
+	- services
+ > advantages includes:
+	1. Easier and faster infrastructure setup
+		- a virtual machine be can be spun up in a cloud environment in a matter of MINUTES, and the time to market is REDUCED from several months, as in the case of a traditional infrastructure, to TWO WEEKS in cloud environment
+		- with virtualization and cloud, you could now provision infrastructure with a few clicks
+	2. Lower upfront cost in setting up infrastructure
+		- infrastructure costs are reduced when compared with the additional data center management and human resources cost
+	3. Additional Support for APIs
+		- Cloud infrastructure comes with support for APIs, and that opens up a whole new world of opportunity for automation
+	4. Rapid Elasticity for scaling up and down services
+		- The built in auto scaling and elastic functionality of cloud infrastructure reduces resource wastage
+		
+
+Provisioning and Managing Infrastructure in Cloud
+ > one method is to use the Management console provided by Cloud provider for resource provisioning, but this approach is not feasible when dealing with infrastructure for LARGE ORGANIZATION with elastic and high scalable cloud environment with immutable infrastructure
+ > once provisioned, the systems still have to go through different teams with a lot of process overhead that increases the delivery time. And the chances of human error are still at large, resulting in inconsistent environment
+ > due to this, different organizations started solving these challenges wtihin themselves by developing their OWN SCRIPTS and TOOLS
+	- while some use simple shell scripts, others use programming languages such as Python, Ruby, Perl, or PowerShell
+	- EVERYONE was solving their same problems, trying to AUTOMATE infrastructure, provisioning, to deploy environment faster, and in a consistent fashion by leveraging the API functionalities of the various Cloud environments
+ > these evolved into a set of tools that came to be known as INFRASTRUCTURE AS CODE
+ 
+		
+
+
+171. Types of IAC Tools
+
+Infrastructure as Code (IaC)
+ > Infrastructure as Code (IaC for short) is an IT paradigm which defines software and the infrastructure required to run it (e.g. storage space, computing power and network resources) in a programming language.
+	- instead of manual configuration via physical hardware or interactive method (e.g. management consoles), we can use a declarative definition file to CODIFY and define everything regarding infrastructure resources like
+		- define provisioning steps
+		- configure
+		- update
+		- destroy
+	- this eliminates the 'environment drift' issue, since we can achieve consistency due to the same file being used for provisioning
+ > With IaC, we can manage nearly any infrastructure component as code such as
+	- databases
+	- networks
+	- storage
+	- application configuration
+ > while we can use programming language such as Shell script to apply the IaC paradigm, this requires skills to build and maintain
+ > for IaC, we can use dedicated tools and programming languages to apply it, such as Terraform and Ansible
+ > in example below, we can see the Shell script and the equivalent Terraform file used for provisioning an ec2 instance
+
+EX: ec2.sh
+#!bin/bash
+
+IP_ADDRESS="10.2.2.1"
+
+EC2_INSTANCE=$(ec2-run-instances --instance-type t2.micro ami-0edab43b6fa892279)
+
+INSTANCE=$(echo ${EC2_INSTANCE} | sed 's/*INSTANCE //' | set 's/ .*//')
+
+# Wait for the instance to be ready
+while ! ec2-describe-instances $INSTANCE | grep -q "running"
+do
+	echo Waiting for $INSTANCE is to be ready...
+done
+
+# Check if instance is not provisioned and exit
+if [ ! $(ec2-describe-instances $INSTANCE | grep -q "running")]; then
+	echo Instance $INSTANCE is stopped.
+	exit
+file
+
+ec2-associate-address $IP_ADDRESS -i $INSTANCE
+
+echo Instance $INSTANCE was created successfully!!!
+
+
+EX: main.tf for Terraform
+resource "aws_instance" "webserver" {
+	ami				= "ami-0edab43b6fa892279"
+	instance_type	= "t2.micro"
+}
+
+
+EX: ec2.yaml for Ansible, using module amazon.aws.ec2
+	> here, we are provisioning three AWS EC2 instances
+	
+- amazon.aws.ec2:
+	key_name: mykey
+	instance_type: t2.micro
+	image: ami-123456
+	wait: yes
+	group: webserver
+	count: 3
+	vpc_subnet_id: subnet-29e63245
+	assign_public_ip: yes
+	
+	
+	
+Ansible and Terraform as Iac Tools
+ > Although Ansible and Terraform are IaC tools, they have some key differences in what they are trying to achieve, and as a result, they have some very different use cases
+ 
+Types of IAC Tools
+ > below are the sample IaC tools that can be used
+	1. Docker
+	2. Ansible
+	3. HashiCorp Terraform
+	4. CloudFormation
+	5. HashiCorp Vagrant
+	6. HashiCorp Packer
+	7. SALTSTACK
+	8. puppet
+ > while we can create solutions for a specific problems using any of these tools, each of them are created to solve specific problems	
+ > with that in mind, these can be broadly calssified into three types
+	1. Configuration Management
+		- Ansible, Puppet, SaltStack, Chef
+	2. Server Templating
+		- Docker, Packer, Vagrant
+	3. Provisioning Tools
+		- Terraform, CloudFormation
+
+CONFIGURATION MANAGEMENT TOOLS
+ > Configuration Management tools are commonly used to install and manage software on existing infrastructure resources such servers, databases, networking devices, etc
+ > unlike the ad hoc shell scripts we saw earlier, configuration management tools maintain a consistent and standard structure of code, which makes it easier to manage and update it as needed
+ > these tools are:
+	1. Designed to Install and Manage Software
+	2. Maintains Standard Structure
+		- this makes it easier to write/change/managed
+	3. Version Control
+		- since they are written as some declaractive definition files (e.g. Ansible playbooks), we can easily version control the said configurations
+		- these also allows us to reused and distribute it as needed
+	4. Idempotent
+		- these means that no matter how many times we execute or run the code for configurations, it will maintain the environment into a defined state
+		- if the environment does not match this state, it will make some changes in order to do so
+	
+SERVER TEMPLATING TOOLS
+ > Server templating tools are used to create a custom image of a virtual machine or a container
+ > properties of server templating tools includes:
+	1. Pre Installed Software and Dependencies
+		- the images used already contains all the required software and dependencies installed on them
+		- these eliminates the need of installing software after a VM or a container is deployed
+	2. Virtual Machine or Docker images
+		- common examples for server templated images are VM and Docker iamges
+		- VM images are typically offered in osboxes.org
+		- custom Amazon Machine Image (AMI) in Amazon AWS, and Docker images in DockerHub and other container registries can be used
+	3. Immutable Infrastructure
+		- server templating tools also promote immutable infrastructure unlike configuration management tools
+		- this means that once the VM or container is deployed, it is designed to remain unchanged
+		- if there are changes to be made to the image, instead of updating the running instance like in the case of configuration management tools such as Ansible, we update the IMAGE and then redeploy a new instance using the updated image
+		
+PROVISIONING TOOLS
+ > Provisioning tools are used to provision infrastructure component susing a simple declaractive code
+ > these tools ARE:
+	1. Use for Deploying Immutable Infrastructure resources
+	2. Can deploy different Infrastructure resources
+		- these infrastructure components can range from those mentioned below, to just about any service based on the provider we choose
+			- servers, such as virtual machine, databases
+			- virtual private cloud (vpc)
+			- subnets
+			- security groups
+			- storage
+	3. Vendor agnostic
+		- this means that it can be used for different cloud providers, and supports provider plugins for almost all major cloud providers such as AWS, Azure, GCP
+		- Terraform is an example, but the CloudFormation is only for AWS
+
+
+
+
+172. Why Terraform?
+
+Terraform
+ > populate IaC tool, which is specifically useful as an infrastructure provisioning tool
+ > Terraform is a free and open source tool which is developed by HashiCorp
+ > It is installed as a single binary, which can be set up very quickly, allowing us to build, manage, and destroy infrastructure in a matter of minutes
+ > one of the biggest advantages of Terraform is its ability to deploy infrastructure ACROSS MULTIPLE PLATFORM
+	- since Terraform is vendor agnostic, it can deploy infrastructure in different places, including
+		1. Private Cloud
+			- on-premise vSphere cluster
+		2. Public Cloud
+			- AWS, GCP, Azure
+			
+			
+How Terraform manage infrastructure on different kinds of platform? Provider's API
+ > Providers helps enable Terraform to work on their third-party platform through their API
+ > Terraform supports hundreds of such providers and as a result, can work with almost every infrastructure platform
+ > Example of these providers are:
+	1. On premise
+		- Physical machines
+		- VMWare
+	2. Cloud Platforms
+		- AWS
+		- GCP
+		- Azure
+	3. Network Infrastructures
+		- Big IP
+		- CloudFlare
+		- DNS
+		- Palo Alto networks
+		- InfoBlox
+	4. Monitoring and Data management tools
+		- Datadog
+		- Grafana
+		- Auth0
+		- Wavefront
+		- Sumo Logic
+	5. Databases such as
+		- InfluxDB
+		- MongoDB
+		- MySQL
+		- PostgreSQL
+	6. Version Control System
+		- GitHub
+		- Bitbucket
+		- GitLab
+		
+		
+HashiCorp Configuration Language (HCL)
+ > Terraform uses HCL, which is a simple declarative language to define the infrastructure resources to be provisioned as blocks of code
+ > all infrastructure resource can be defined within configuration files that has a .tf file extension
+ > the configuration syntax is easy to read and write, and pick up for a beginner
+ 
+EX: main.tf
+ > used to provision a new EC2 instance, as well as S3 Bucket, and a new IAM user
+
+resource "aws_instance" "webserver" {
+	ami				= "ami-0edab43b6fa892279"
+	instance_type	= "t2.micro"
+}
+
+resource "aws_s3_bucket" "finance" {
+	bucket = "finance-21092020"
+	tags	= {
+		Description = "Finance and Payroll"
+	}
+}
+
+resource "aws_iam_user" "admin-user" {
+	name = "lucy"
+	tags = {
+		Description = "Team Leader"
+	}
+}
+
+
+
+Declaractive file and how Terraform uses it and works behind the scene?
+ > First, we declare the desired state using the declaractive file written in HCL
+ > After declaring the desired state, Terraform will take care of what is required to go from the current state to the desired state, without us having to worry about how to get there
+ > For Terraform to do this, it works in THREE PHASES
+	1. init
+		- Terraform initializes the project and identifies the providers to be used for the target environment
+	2. plan
+		- Terraform drafts a plan to get to the target state
+	3. apply
+		- Terraform makes the necessary changes required on the target environment to bring it to the desired state
+ > If, for some reason, the environment was to shift from the desired state, then a SUBSEQUENT TerraForm apply will bring it back to the desired state by only fixing the missing component
+ 
+ 
+Resource
+ > every object data Terraform manages is called a Resource
+ > A resource can be a compuate instance, a database server in the cloud or on a physical server on-premise that Terraform manages
+ > Terraform manages the lifecycle of resources, from its provisioning, to configuration, to decommissioning
+ 
+ 
+Terraform State
+ > TerraForm records the 'state' of the infrastructure as it is seen in the real world
+ > Based on this, it can determine what actions to take when updating resources for a particular platform
+ > TerraForm can ensure that the entire infrastructure is always in the defined state at all times
+ > State is basically the BLUEPRINT of the infrastructure deployed by the TerraForm
+ 
+ 
+TerraForm Import
+ > TerraForm can read attributes of existing infrastructure components by configuring data sources
+ > This can later be used  for configuring other resources within TerraForm
+ > TerraForm can also import other resources OUTSIDE of TerraForm that were either created manually, or by the means of other IaC tools, and bring it under its control so that it can manage those resources going forward
+ 
+ 
+TerraForm Cloud and TerraForm Enterprise
+ > TerraForm Cloud and TerraForm Enterprise provide additional features that 
+	- allow simplified collaboration between teams
+	- managing infrastructure
+	- improved security
+	- provides centralized UI to manage TerraForm deployments

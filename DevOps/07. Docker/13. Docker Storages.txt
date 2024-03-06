@@ -1,0 +1,82 @@
+13. Docker Storages
+
+
+Docker Storage
+	> By default all files created inside a container are stored on a writable container layer
+		1. The data doesn’t persist when that container no longer exists, and it can be difficult to get the data out of the container if another process needs it.
+		2. A container’s writable layer is tightly coupled to the host machine where the container is running. You can’t easily move the data somewhere else.
+
+
+
+Types of Docker Storage
+1. Non persistent	
+	-> data is deleted WITH container
+	-> uses temporary file storage (tmpfs)
+2. Persistent		
+	-> Docker volume (data is under docker daemon)
+	-> Bind mount
+
+
+Type of Storage mounting in Docker Container
+1. Tmpfs mount
+	> stands for temporary file storage
+	> non-persistent, data is stored in memory
+	> will be gone when container is stopped
+	> DEFAULT mounting type
+2. Volumes
+	> data is stored in a part of host filesystem which is managed by Docker (/var/lib/docker/volumes/ on Linux)
+	> Non-Docker processes should NOT MODIFY this part of the filesystem. 
+	> Volumes are the BEST way to persist data in Docker.
+3. Bind mounts
+	> data is stored ANYWHERE on the host system
+	> they maye even by important system files or directories
+	> Non-docker processes on Docker host or Docker container may modify them at any time by accident, cause a specific Container that uses them to behave abnormally
+
+
+
+Specifying type of mounting to use in Docker Container
+
+
+FOR tmpfs mounting
+docker run --mount type=tmpfs, destination=<DIRECTORY IN CONTAINER> <IMAGE>
+	> destination denotes the location of temporary files/data
+
+ex: docker container run -it --name c1 --mount type=tmpfs,destination=/app -d ubuntu
+	- here we used tmpfs mounting and specified that the mount data/files will be in /app of Container
+
+
+FOR Volume mounting
+docker run --mount source=<VOLUME NAME>, destination=<DIRECTORY IN CONTAINER> <IMAGE>
+	> here, we specified in "source" the name of the Docker Volume to be used to store data
+	> any changes in the destination (e.g. adding files), WILL REFLECT on the volume's content
+		- we can see the data of volume inside /var/lib/docker/volumes/<VOLUME NAME>/_data
+
+
+
+For Bind mounting
+docker run -v <DIRECTORY IN HOST>:<DIRECTORY IN CONTAINER> <IMAGE>
+	> "-v" specifies which directory of Host will be used as Storage mount of the specified Container Directory
+	> and changes in the specified Directory of Container will REFLECT on the directory of the Host
+
+
+
+Docker Volumes
+	> Docker solution for persisting data
+
+Commands 
+docker volume create <NAME>
+	> used to craete a volume with specified name
+
+docker volume inspect <NAME>
+	> used to inspect volume's informations
+
+docker volume ls
+	> used to show list of volumes
+
+docker volume prune
+	> used to remove all UNUSED volumes
+	> adding "-f" will force the action, no prompt will be given
+
+docker volume rm <NAME>
+	> used to remove a volume with specified name
+	> adding "-f" will do a force action

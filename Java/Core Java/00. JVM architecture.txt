@@ -1,0 +1,101 @@
+00 JVM architecture
+
+JVM Architecture
+ > consist of three components
+	1. Class loader
+	2. Runtime Data area
+	3. Execution engine
+
+Class loader
+ > contains 3 phases
+	1. Loading
+	2. Linking 
+	3. Initialization
+
+Loading
+ > here, the Class Loaders compiles the .java files into .class files, and then loads all .class files into the memory
+ > we have three types of Class Loaders
+	1. Bootstrap Class loaders
+		- responsible for loading .class files from RT.jar 
+		- classes from RT.jar are available by default without importing their libraries/package
+		- ex: classes from java.lang.* libraries
+	2. Extension Class loaders
+		- responsible for loading .class files from third party .jar files
+		- ex: loading .class file from MySQL JDBC driver like Connection, ResultSet, Statement, etc
+	3. Application Class loaders
+		- responsible for loading .class file from application specific .jar
+		- ex: classes from App.java which is compiled into App.class
+
+Linking
+ > consist of three steps
+	1. Verify
+	2. Prepare
+	3. Resolve
+ > Verify 
+	- once the class files are loaded to the memory, there is a VERIFY phase where the bytecode class files are verified if they conform to standards
+ > Prepare
+	- in prepare phase, memory is allocated for static variables and default values are assigned
+ > Resolve
+	- in resolve phase, all the symbolic references are replaced with actual references
+
+
+Initialization
+ > in this phase of class loader component
+	1. all static variables are ASSIGNED with the actual values
+	2. it also executes the static initializers at this point of time
+
+
+
+
+RUMTIME DATA AREA
+ > place where .class files are STORED and EXECUTED
+ > there are FIVE types of memory data area
+	1. Method Area
+	2. Heap Area
+	3. Stack Memory
+	4. PC Register
+	5. Native Method Stack
+ > Method Area
+	- all the class level data are stored in this memory area
+	- ex: class level static variables
+ > Heap Area
+	- all the objects and instance variables are stored in this area
+	- ex: new Employee()
+ > Stack memory
+	- contains three sections of memory area
+	    1. Local variables
+		- contains all the local variable used in the module
+	    2. Operand stacks
+		- contains all the operand that is used within a method
+	    3. Frame data
+		- contains all the catch block in case any exception occurs within method
+ > PC Register
+	- this hollds the current executing instructions
+ > Native Method Stacks
+	- This holds the native method information
+
+
+
+JVM EXECUTION ENGINE
+ > this is the actual engine that converts the BYTECODE to MACHINE CODE and executes the instructions
+ > contains the following components
+	1. Interpreter
+	2. JIT compiler
+	3. Garbage Collector
+	4. Java Native Method Interface
+ > Interpreter
+	- the one that reads the class files or bytecode and executes it one by one
+	- the problem with the interpreter is that, when a method is called MULTIPLE TIMES, it interprets those lines of bytecode AGAIN and AGAIN
+ > JIT compiler
+	- helps in overcoming the problem of the interpreter	
+	- when repeated method calls occur, JIT compiler compiles the bytecode to native code
+	- this native code will be USED DIRECTLY for repeated method calls
+	- JIT compiler contains few components to achieve this feature
+		1. Intermediate code generator 	- generates intermediate code
+		2. Code optimizer		- Optimizes the intermediate code for better performance
+		3. Target code generator 	- Converts intermediate code to native machine code
+		4. Profiler			- it is responsible for finding the hotspots, method which are called repeatedly
+ > Garbage collector
+	- Garbage collector is responsible for destroying the objects that are no longer used
+ > Java Native Method Interface
+	- responsible for interactive with native libraries and makes it available for the JVM execution engine

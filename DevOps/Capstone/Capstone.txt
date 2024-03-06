@@ -1,0 +1,35 @@
+Capstone 
+
+
+1. Create Github repo
+	> BankingMicroservice
+
+2. Create a Quickstart Maven Archetype project
+	mvn archetype:generate
+
+3. Pass the following for GAV
+	groupId: com.yourname
+	artifactId: capstone
+	versionId: (press enter)
+
+4. Enter the folder of generated Maven project
+	cd capstone
+
+5. Initialize local Git repo
+	git init
+
+6. Setup git configuration
+	git config --global user.email "glenneligio@gmail.com"
+	git config --global user.name "Glenn Eligio"
+	git remote add origin <github repo url>
+
+7. Add everything and commit 
+	> committing will automatically create branch called "master"
+
+	git add .
+	git commit -m "Initial commit"
+
+8. Push the commits in the github repo
+	git push origin master
+
+9. In the Github, add a file named "Readme.md" and add text inside

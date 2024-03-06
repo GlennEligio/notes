@@ -1,0 +1,191 @@
+Sybase Administration ASE
+
+SOURCE:
+https://www.youtube.com/watch?v=eId48_BVBoQ&t=1297s&ab_channel=SumitTandon
+
+Sybase ASE Overivew
+
+COURSE AGENDA
+1. Architecture
+2. Installation / Upgradation / Patching
+3. Performance Tuning
+4. Database User Management & Access
+5. Backup and Recovery
+6. Database Monitoring
+7. Database Maintanenance
+8. Troubleshooting
+9. Database Consistency Checks
+
+
+
+
+
+
+
+1. Architecture
+
+Architecture
+ > Sybase Server consist of:
+	1. Two Processes: Data Server and Backup Server
+		- Data Server is where data is stored and where user connects to
+		- Backup Server is for taking backups of the data
+	2. Devices which house the databases; one database (master) contains system and Configuration data
+	3. A configuration file which contains the server attributes
+
+
+
+Memory Model
+ > Sybase memory model consist of :
+	a. Program area, which is where the data server executable is stored
+	b. Data cache, stores recently fetched pages from the database device
+	c. Stored procedure cache, which contains optmized sql calls
+ > The Sybase dataserver runs as a SINGLE PROCESS within the operating system
+	- when multiple users are connected to the database, only one process is managed by the OS.
+	- Each Sybase database connection requires 40-60k of memory
+ > The "total memory" configuration parameter determines the amount of memory allocated to the server
+	- "Total memory" can also be referred to as the Physical memory
+	- This memory is taken immediately upon startup, and does NOT increase
+
+
+Transaction Processing
+ > Transactions are written to the data cache, where they advance to the transaction log, and database device.
+ 	- When a rollback occurs, pages are DISCARDED from the data cache
+	- The transaction logs are used to resotre data in event of a hardware failure
+ > A checkpoint operation FLUSHES all updated (committed) memory pages to their respective tables
+	- Transaction logging is required for all databases;
+	- This checkpoint operation is an internal process by Sybase
+ > During an UPDATE transaction, the data page(s) containing the row(s) are LOCKED.
+	- This will cause contention if the transaction is not efficiently written
+
+
+Backup Procedure
+ > A "dump database" operation can be performed when the database is on-line or offline
+	- This operation can have schedules execution (daily, weekly, etc)
+ > Subsequent "dump transaction" commands need to be issued during the data, to ensure acceptable recovery windows
+
+
+Security and Account Setup
+ > The initial login shipped with Sybase is "sa" (System Administrator).
+	- This login has the role "sa_role" which is the super-user, in Sybase terms
+	- This login have a "null" password initially and can be given a password later on 
+ > User logins are added at the server level, and then granted access to each database, as needed
+ > Within each database, access to tables can be granted per application requirements.
+	- A user cna also be aliased as "dbo", which automatically grants them all rights within a database
+
+
+Database Creation
+ > Databases are initialized with the "CREATE DATABASE" command.
+	- It is not unusual for a Sybase server to contain many different databases
+ > Tables are created within each database; users refer to tables by using ownername.tablename nomenclature (ex: sa.TSTUDENT)
+
+
+Storage Concepts
+ > Tables are stored in segments
+ > A Segment is an area within a device, with a name and a size, that is allocated for a database
+ > The transaction log is stored in its own segment, usually on a separate device
+
+
+
+Architecture: System Databases
+ > A default installation of Adaptive Server includes these system databases:
+	- "master" database
+	- "model" database
+	- System procedure database, "sybsystemprocs"
+	- The two-pahse commit transaction database, "sybsystemdb"
+	- The temporary database, "tempdb"
+ > Optionally, you can install:
+	- The auditing database, "sybsecurity"
+	- The dbcc database, "dbccdb"
+	- The Job Scheduler database, "sybmgmtdb"
+
+"master" database
+ > The "master" database controls the operation of Adaptive Server and stores information about all user databases and their associated database devices
+ > Because the master database stores information about the user databases and devices, you MUST be in the master database to issue the following commands
+	- create database
+	- alter database	
+	- disk init
+	- disk refit
+	- disk reinit
+	- disk mirroring
+ > The minimum size of your master database depends on your server's logical page size.
+	- The master database must contain AT LEAST 6656 logical pages, so its minimum physical size for each logical page size is:
+	- 2K page = 13MB
+	- 4K page = 26MB
+	- 8K page = 54MB
+	- 16K page = 104MB
+ > NOTE: You CAN NOT change the page size of a Sybase server once created/configured
+	- changing page size will need rebuilding of Sybase server
+
+
+"model " database
+ > Adaptive Server includes the model database, which provides a template, or prototype, for new user databases
+ 	- Each time user enters the "create database" command, Adaptive Server makes a copy of the "model" database and extends the new database to the size specified by the "create database" command 
+ > New databases must be AT LEAST as large as the model database
+
+
+"sybsystemprocs" database
+ > Sybase system procedures are stored in the database "sybsystemprocs"
+	- When a user in any database executes a system stored procedure (that is, a procedure whose name begins with sp_), Adaptive Server first looks for that procedure in the user's current database
+	- If there is no procedure there with that name, Adaptive Server looks for it in "syssystemprocs"
+	- If there is no procedure in sybsystemprocs, Adative Server looks for the procedure in "master"
+ > if the procedure modifies system tables (for example, sp_adduser modifies the "sysusers" table), the changes are made in the database from which the procedure was executed
+ > To change the default permissions on system procedures, modify those permissions in "sybsystemprocs"
+
+
+"tempdb" database
+ > Adaptive Server has a temporary database, "tempdb", that provides a storage area for temporary tables and other temporary working storage needs
+	- The space in tempdb is SHARED among all users of all databases on the server
+ > The default size of tempdb depends on the logical page size of your server, 2,4,8, or 16K. Certain activities may make it necessary for you to increase the size of tempdb:
+	1. Large temporary tables
+	2. A lot of activity on temporary tables, which fills up the tempdb logs
+	3. Large or many simultaneuos sorts. Subqueries and aggregates with "group by" also cause some tempdb activity
+ > Use "alter database" to increase the size of tempdb. tempdb is initially created on the master device. You can add space to tempdb from the master device or from any other database device
+ > If you run "update index statistics" against large tables, the command fails with error number 1105
+ > You can create and manage multiple temporary databases in addition to the system temporary database tempdb
+	- Multiple temporary database reduce contention on system catalogs and logs in tempdb
+ 	- Contention happens when multiple process are trying to access the same data at the same time (database in this context)
+
+
+"sybsecurity" database
+ > The sybsecurity database, which contains the auditing system for Adaptive Server, which includes:
+	1. The system tables, "sysaudits_01", "sysaudits_02", ... , "sysaudits_08", which contain the audit trail
+	2. The "sysauditoptions" table, which contains rows describing the global audit options
+	3. All other default system tables that are derived from "model"
+
+
+"sybsystemdb" database
+ > The sybsystemdb database stores information about distributed transactions.
+	- Adaptive Server versions 12.0 and later can provide transaction coordination services for transactions that are propagated to remote servers using remote procedure calls (RPCs) or Component Integration System (CIS)
+	- Information about remote servers participating in distributed transactions is stored in the "syscoodinations" table
+ > The sybsystemdb database also stores information about SYB2PC transactions that use the Sybase two-phase commit protocol
+	- The "spt_committab" table, which stores information about and tracks the completion status of each two-phase commit transaction, is stored in the sybsystemdb database
+
+
+"sybmgmtdb" database
+ > The sybmgmtdb database stores jobs, schedules, scheduled jobs information, and data the internal Job Scheduler needs for processing
+ > sybmgmtdb also maintains the output and results from these executed tasks
+
+
+"dbccdb" database
+ > optional 
+ > dbcc checkstorage records configuration information for the target database, operation activity, and the results of the operation in the dbccdb database
+ > Stored in the database are dbcc stored procedures for creating and maintaining dbccdb and for generating reports on the result of dbcc checkstorage operations
+
+
+"sybdiag" database
+ > Sybase Technical Support may create the sybdiag database on your system for debugging purposes
+ > This database holds diagnostic configuration data, and should not be used by customers
+
+
+
+
+ARCHITECTURE: LOGICAL PAGE SIZE
+
+Logical Page Size
+ > Database objects are built with logical pages
+ 	- A databases and nay of its related objects must use the same logical page size
+	- That is, you cannot create a server that uses more than one logical page size
+ > Adaptive Server allows you to create master devices and databases with logical page size of 2K, 4K, 8K, 16K, but a given server installation can use only one of these four logical page sizes.
+ > All database in a server - and all objects in every database - use the same logical page size
+ > For example, all pages on a server with a logical page size of 4K must be 4K, even though you may not use some pages beyond the initial 2K
+ > You can select the apge size when you create the master device with "dataserver -z"

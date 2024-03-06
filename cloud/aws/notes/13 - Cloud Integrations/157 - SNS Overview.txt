@@ -1,0 +1,39 @@
+157 - SNS Overview
+
+Amazon SNS
+
+What if you want to send one message to many receivers?
+ > We can either do 
+	1. Direct Integration
+	2. Publisher/Subscriber
+ > Ex: Buying Service sending messages to the following:
+	- Email notification
+	- Fraud service
+	- Shipping service
+	- SQS Queue
+ > If we do the Direct Integration, this would mean that we will need to do FOUR DIFFERENT Direct integration for each of them
+ > If we do the Pub/Sub, the Buying Service "publishes" the messages in an SNS Topic
+	- the topic, automatically, will be smart enough to send a notification via email
+	- request to fraud service
+	- request to shipping service
+	- message to SQS queue
+	
+
+Amazon SNS
+ > SNS stands for Simple Notification Service
+ > The premise of the SNS is to provide a "pub/sub" service
+ > The "event publishers" only sends message to one SNS topic
+ > We can have as many "event subscribers" as we want to listen to the SNS topic notifications
+ > Each subscriber to the topic WILL GET ALL THE MESSAGES
+ > For Amazon SNS, theres a limit of 
+	- 12,500,000 subscriptions per topic
+	- 100,000 topics limit
+ > Example subscribers includes:
+	- AWS Services like
+		a. SQS
+		b. Lambda
+		c. Kinesis Data Firehose
+	- Other services like
+		a. Emails
+		b. SMS & Mobile Notifications
+		c. HTTP(S) Endpoints

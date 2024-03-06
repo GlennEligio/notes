@@ -1,0 +1,862 @@
+10 MongoDB and Promises (Task App)
+
+Content:
+71 MongoDB and NoSQL Databases
+72 Installing MongoDB on macOS and Linux
+73 Installing MongoDB on Windows
+74 Installing Database GUI Viewer
+75 Connecting and Inserting Documents
+76 Inserting Documents
+77 The ObjectID
+78 Querying Documents
+79 Promises
+80 Updating Documents
+81 Deleting Documents
+
+
+
+
+
+
+
+
+
+
+71 MongoDB and NoSQL Databases
+
+MongoDB
+ > open source database
+ > available to all operating system
+ > not only exclusive to Node.js application
+
+NoSQL
+ > stands for Not only Structured Query Language
+ > same as SQL where it contains databases to store information
+ > but they differ on how they store the information itself
+
+NoSQL vs SQL
+ > NoSQL: Collection as to SQL: Table
+	- in NoSQL, the list of entries is stored in an array format which is typically referred to as COLLECTION
+ > NoSQL: Document as to SQL: Row/Record
+	- in NoSQL, an entry of data inside a Collection is stored in JSON format which is typically referred to as a DOCUMENT
+ > NoSQL: Field as to SQL: Column
+	- in NoSQL, an individual information about the Document is referred to as a FIELD
+
+NoSQL structure
+Database
+ > Collection1 (Task)
+	> Document1 (Task1)
+		> Field1 (Id)
+		> Field2 (Name)
+	> Document2 (Task2)
+ > Collection2 (Weather)
+
+
+
+
+
+
+
+72 Installing MongoDB on macOS and Linux
+73 Installing MongoDB on Windows
+
+Installing MongoDB on Windows
+1. Go to MongoDB website
+2. Hover to Products tab
+3. Click the "Community Server" in Community Edition
+4. In the page, choose the "On-premises" where you can install MongoDB locally
+5. In the Available Downloads section, 
+	> choose the latest version
+	> choose Windows as Platform
+	> choose zip as package
+6. Extract content of zip folder
+7. Rename it as mongodb
+	> the folder should contain a bin folder
+8. Move the folder inside a User folder
+	> ex: C:/User/username
+9. Create new folder named mongodb-data
+	> this is where we will store the mongodb data
+9. Open Windows PowerShell
+10. Use the mongod.exe inside the mongodb/bin of User folder and pass this additional options
+	> --dbpath
+		- pass the directory location of the mongodb-data folder
+	> ex: C:/Users/glenn/mongodb/bin/mongod.exe --dbpath=/Users/glenn/mongodb-data
+		- this is assuming that you are inside the C: drive
+11. If we are successful,
+	> logs will be outputted and in one of the json output, we should see that one of them have "ctx": "listener" and "msg": "Waiting for connections" property
+		- this means that mongodb is currently listening at port 27017, which is the default port mongodb listens to
+		- {"t":{"$date":"2022-06-14T14:33:14.663+08:00"},"s":"I",  "c":"NETWORK",  "id":23016,   "ctx":"listener","msg":"Waiting for connections","attr":{"port":27017,"ssl":"off"}}
+	> mongodb-data will have contents inside
+
+
+
+
+
+
+
+
+
+
+74 Installing Database GUI Viewer
+
+Database GUI Viewer
+ > a GUI Viewer that helps us interact with any Database better by giving us a visual interface
+ > not meant to replace an actual database
+
+Robo 3T
+ > formerly Robomongo
+ > Mongo DB Admin tool that we will use
+ > Site: https://robomongo.org/
+ > right now, it is currently "Studio 3T Free"
+ 
+Installing Robo 3T (or Studio 3T Free)
+ > https://robomongo.org/
+ > after download the zip, extract the exe and open it
+ > after opening, it will show a setup wizard where we will install it
+
+Using Studio 3T
+ > in the Dashboard of Studio 3T, we want to connect to the MongoDB we have
+ > to do this, 
+	- Click Connect
+	- Click New Connection
+	- Choose Manually Configure my connection settings
+ > in the Connection Window
+	- Set the name of connection
+	- On Server tab, set Server to "localhost" and Port to "27017"
+	- before we save the connection, we can test it out by pressing Test at the bottom left
+	- save the Connection
+ > in the Dasboard, on the left tab, we should see the MongoDB we have in local machine, with database for
+	- admin, config, and local
+
+Checking the MongoDB Connection  
+ > to test the connection, we will execute several queries into the MongoDB
+ > to open the shell where we will execute queries, 
+	- right click the new Connection
+	- select Open Shell or Open IntelliShell
+ 	- type "db.version()" and execute the query
+ > as you can see, we've written the query as if its a JavaScript query
+	- this is because if we are working with MongoDB and interacting with it via the MongoDB shell, we are just using JavaScript to manipulate the database
+
+EX:
+// db.version() output
+MongoDB shell version v4.2.14
+admin
+5.0.9
+
+
+
+
+
+
+
+
+
+
+
+
+75 Connecting and Inserting Documents
+
+Functions/Objects used
+mongodb
+ > top level object exported by the "mongodb" module
+
+MongoClient
+ > property of the mongodb
+ > we will use this object to give us access to perform four basic CRUD operation
+ > methods include
+	1. connect(connectionURL: string, options: object, callbackFn: (error, client) => {})
+		- used to connect to a database
+		- callback function is executed after the connection attempt
+		- callback takes two argument
+			a. mongodb.AnyError	
+			b. mongodb.MongoClient
+ > for the MongoClient parameter inside the callback, it contains one function
+	1. db(database: string)
+		- takes database name as input
+		- returns a reference to the database
+
+Db
+ > object returned by MongoClient.db() inside the connect() callback function
+ > reference to the database
+ > contains functions like
+	1. collection(name: string)
+		- takes collection name as argument
+		- this either access or creates a collection if one doesnt exist
+		- returns Collection<mongodb.Document> which is a reference to a collection
+
+Collection<mongodb.Document>
+ > object return by collection() of mongodb.Db
+ > reference to a collection
+ > contains several function regarding the CRUD operation which includes
+	1. insertOne(document: object, callbackFn: (error, result) => {})
+		- takes an object as input
+		- creates a Document inside the Collection
+		- callback is executed once the operation is complete
+		- the result parameter is an InsertOneResult object
+			-> this object contains two properties, "acknowledged" and "insertedId"
+
+
+Connecting to MongoDB using Node.js
+ > like connecting to any database, we will need to use a Driver 
+ > in our case with MongoDB, we will use MongoDB Native Driver
+	- this is a npm module that we will install in a node project
+ > to see the Driver Documentation for Node.js go to the mongodb homepage and
+	1. Hover to Resources
+	2. In Documentation section, select Drivers
+	3. On the left tab, choose Node.js Driver
+ > to see the npm module for MongoDB Node.js
+	1. Go to npm website
+	2. Search for MongoDB driver
+	3. Or just go to this website: https://www.npmjs.com/package/mongodb
+ 
+Installing MongoDB driver to the Node.js project
+ > to install mongodb driver, use the command
+	npm i mongodb
+
+Using MongoDB driver module
+ > to use the MongoDB driver, we first need to import the said module
+	- const mongodb = require('mongodb')
+ > after importing the module, create another variable that will hold the MongoClient property of imported object
+	- const MongoClient = mongodb.MongoClient
+ > we will create two constants to hold the following data, the connection url and database name
+	1. connection url
+	2. database's name
+ > use the connect() of the MongoClient
+	- this method takes two input:
+		1. connection url
+		2. option, an object which contains properties to configure MongoDB
+		3. callback, will be executed when connection is successfully established
+			- receives two arguments, error and client
+ > if we successfully connect to MongoDB, the CLI where we executed the "node" will remain active
+	- this is because we have an active connection to database
+
+EX:
+// mongodb.js
+const mongodb = require("mongodb");
+
+const MongoClient = mongodb.MongoClient;
+
+const connectionURL = "mongodb://127.0.0.1:27017";
+const database = "task-manager";
+
+MongoClient.connect(
+  connectionURL,
+  { useNewUrlParser: true },
+  (error, client) => {
+    if (error) {
+      return console.log("Unable to connect to database");
+    }
+
+    console.log("Connected correctly");
+  }
+);
+
+// Log in the powershell that created instance of MongoDB
+{"t":{"$date":"2022-06-14T15:36:17.780+08:00"},"s":"I",  "c":"NETWORK",  "id":51800,   "ctx":"conn7","msg":"client metadata","attr":{"remote":"127.0.0.1:50261","client":"conn7","doc":{"driver":{"name":"nodejs","version":"4.7.0"},"os":{"type":"Windows_NT","name":"win32","architecture":"x64","version":"10.0.19044"},"platform":"Node.js v16.13.2, LE (unified)|Node.js v16.13.2, LE (unified)"}}}
+
+
+
+
+Inserting Document
+ > to insert a Document, we will first need to create a database
+ > to access/create a database, we will use the .db() function of the client parameter of callback
+	- client.db() takes one input, the database name string
+	- this returns an object which is a reference to the said database
+ > to access/create a collection from database, we will call the collection() of the database reference
+	- db.collection() takes one input, the collection name
+	- returns an object which is a reference to the said collection
+ > to add one Document to the Collection, we will call the insertOne() of the Collection reference
+	- collection.insertOne() takes one input, an object that will be stored
+
+// inside callback function of MongoClient.connect()
+    const db = client.db(database);
+    const collection = db.collection("users");
+    collection.insertOne({
+      name: "Andrew",
+      age: 27,
+    });
+
+ 
+Checking newly created Document in Studio 3T
+ > to check the document, go to 
+	- MongoDB -> databaseName -> Collections -> collectionName
+	- right click the collectionName and choose "Open Collection Tab"
+ > we can see that we have additional property in the Document
+	- this is the ObjectID automatically generated by the MongoDB
+
+
+
+NOTE:
+1. For now, the powershell instance/window that executes the command "C:/Users/glenn/mongodb/bin/mongod.exe --dbpath=/Users/glenn/mongodb-data" MUST NOT BE CLOSED
+	- if we close this, it will close the MongoDB instance running
+	- with this, we will need to execute the command again
+
+
+
+
+
+
+
+
+
+
+
+
+76 Inserting Documents
+
+Functions/Object used
+Collection.insertOne(document: object, callback: (error, result) => {})
+ > used to insert an object as Document to the Collection
+ > callback is executed when operation succeeds or not
+ > callback's result parameter contains property which points to the ObjectID for inserted Document
+
+Collection.insertMany(documents: object[], callback: (error, result) => {})
+ > used to insert multiple object as Document to the Collection
+ > callback is executed when operation succeeds or not
+ > callback's result parameter contains property which points to a Map of number and ObjectID of inserted Documents
+	- number refers to the order which the Document is inserted
+
+
+Inserting Documents
+ > to insert a Document in a Collection, we will use the insertOne() function of the Collection
+ > insertOne() takes two inputs, the object to insert and a callback
+	- callback is called after the operation succeed or fails
+	- takes two argument
+		1. error
+		2. result which is an InsertOneResult type
+	- result contains property that points to the ObjectID of the inserted Document
+
+// Inside mongodb.js
+    const db = client.db(database);
+    const collection = db.collection("users");
+    collection.insertOne(
+      {
+        name: "Glenn",
+        age: 27,
+      },
+      (error, result) => {
+        if (error) {
+          return console.log("Unable to insert the user");
+        }
+        console.log(result);
+      }
+    );
+
+// logs
+{
+  acknowledged: true,
+  insertedId: new ObjectId("62a84a1a09ae9812d03d4530")
+}
+
+
+Inserting Multiple Documents
+ > for multiple Documents, we will use the the insertMany() of the Collection
+ > insertMany() takes two inputs
+	1. array of objects
+	2. callback, which takes two arguments
+		- error
+		- result
+
+// inside connect() callback
+    collection.insertMany(
+      [
+        {
+          name: "Glenn",
+          age: 40,
+        },
+        {
+          name: "John",
+          age: 30,
+        },
+        {
+          name: "Eligio",
+          age: 30,
+        },
+      ],
+      (error, result) => {
+        if (error) {
+          return console.log("Unable to insert the documents");
+        }
+
+        console.log(result);
+      }
+    );
+
+// logs
+{
+  acknowledged: true,
+  insertedCount: 3,
+  insertedIds: {
+    '0': new ObjectId("62a84a4dc589d6f6822b83de"),
+    '1': new ObjectId("62a84a4dc589d6f6822b83df"),
+    '2': new ObjectId("62a84a4dc589d6f6822b83e0")
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+77 The ObjectID
+
+ObjectID
+ > show up in Collection Table as "_id" column
+ > this is AUTOMATICALLY CREATED by the MongoDB
+ > works us GUID
+	- Global Unique IDentifiers
+	- these are designed to be unique with an algorithm without needed the server to determine what the next value is
+	- with these, MongoDB can easily scale well in a distributed system
+	 	-> ex: there maybe conflicting ID for the entries in different database server with incrementing style, but since we use GUID, chances of id collision is small
+	- we can also generate this GUID by ourselves and not rely on the server itself (using MongoDB library)
+
+
+Using ObjectID from mongodb library
+ > in the object exported by mongodb driver module, we can access the ObjectID object
+ 	- we do this by accessing a property of the exported top level object with the same name
+	- ex: const ObjectID = mongodb.ObjectID
+ > this mongodb.ObjectID is a constructor to generate an ObjectID string
+	- ex: const id = new ObjectID()
+
+EX:
+// code
+const { MongoClient, ObjectID } = require("mongodb");
+
+const id = new ObjectID();
+console.log(id);
+
+// logs
+new ObjectId("62a85c488e70fcdb0fa6edfa")
+
+
+
+ObjectID composition
+ > ObjectID is not just some random hash string
+ > it is composed of several parts, three to be exact
+ > the 12-byte ObjectID consist of
+	- A 4-byte timestamp, representing the ObjectId's creation, measured in seconds since the Unix epoch.
+	- A 5-byte random value generated once per process. This random value is unique to the machine and process.
+	- A 3-byte incrementing counter, initialized to a random value
+ > for timestamp, we can extract it from the ObjectID using getTimestamp() function
+	- ex: id.getTimestamp()
+ > the string we are seeing in the Collection table is the Hex String equivalent of this 12 byte
+	- to see this, we can call the toHexString() function which returns the string
+	
+EX:
+// CODE
+const id = new ObjectID();
+console.log(id);
+console.log(id.getTimestamp());
+console.log(id.id);
+console.log(id.id.length);
+console.log(id.toHexString());
+console.log(id.toHexString().length);
+
+// LOGS
+new ObjectId("62a87d3b63c2cf8ac13ba92c")
+2022-06-14T12:21:15.000Z
+<Buffer 62 a8 7d 3b 63 c2 cf 8a c1 3b a9 2c>
+12
+62a87d3b63c2cf8ac13ba92c
+24
+
+
+
+Supplying our own ObjectID
+ > with this, we can insert Document whose ObjectID is generated by us and not by the MongoDB
+
+EX:
+// Code
+const id = new ObjectID();
+console.log(id);
+console.log(id.getTimestamp());
+
+// code inside connect() callback
+    const collection = db.collection("tasks");
+    collection.insertOne(
+      {
+        _id: id,
+        name: "Glenn",
+        age: 27,
+      },
+      (error, result) => {
+        if (error) {
+          return console.log("Unable to insert the user");
+        }
+        console.log(result);
+      }
+    );
+
+// LOGS
+new ObjectId("62a85f985346ed740d6cfbdc")
+2022-06-14T10:14:48.000Z
+{
+  acknowledged: true,
+  insertedId: new ObjectId("62a85f985346ed740d6cfbdc")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+78 Querying Documents
+
+Function/Objects used
+Collection.findOne(filter: object, callback: (error, result) => {})
+ > used to find the first Document that matches the filter object
+ > takes two input
+	1. filter: object
+		-> contains the properties with values used to match the Document we are finding
+	2. callback: (error, result) => {}
+		-> callback receives two argument, the error and the result
+		-> the result will be the Document that FIRST MATCHES the filter given
+ > finding no match will not throw an error, instead it will return NULL
+ > adding property to the filter that doesnt exist to any Document's properties will NOT THROW AN ERROR
+	- instead, it will just throw a NULL
+
+Collection.find(filter: obj) 
+ > returns a Cursor
+ > Cursor works like a pointer to the said data (or list of data if more than one matches the filter)
+ > we typically method chain the Cursor methods after the find()
+
+Cursor.toArray(callback: (error, results) => {})
+ > takes a callback function
+ > convert the Documents Cursor is pointing and combined them into an array
+ > this array is passed in the "results" argument of the callback
+
+Cursor.count(callback: (error, count) => {})
+ > takes a callback function
+ > counts the Documents Cursor is pointing and returns the total amount
+ > this total is passed in the "count" argument of callback
+
+Cursor.limit(value: number)
+ > takes a number input
+ > defines the limit for the cursor
+ > similar to the TOP or LIMIT keyword in SQL
+
+
+Querying Documents
+ > to query a specific document in a Collection, we will need to use either the find() or findOne() of Collection object
+ > when querying/finding for a SINGLE Document, we typically use a property unique to the said Document
+	- one candidate is the ObjectID hexstring through the "_id" prop
+	- for "_id" prop, we will need to pass an instance of ObjectID, which we will do by creating a new ObjectID and passing the hexstring in constructor
+
+EX:
+// inside connect() callback function
+    collection.findOne({ name: "Andrew" }, (error, result) => {
+      if (error) {
+        return console.log("Unable to find a matching Document");
+      }
+      console.log(result);
+    });
+
+// using "_id" prop in filter
+    collection.findOne(
+      { _id: new ObjectID("62a84489798555198c948dd2") },
+      (error, result) => {
+        if (error) {
+          return console.log("Unable to find a matching Document");
+        }
+        console.log(result);
+      }
+    );
+
+// log
+{
+  _id: new ObjectId("62a84489798555198c948dd2"),
+  name: 'Andrew',
+  age: 27
+}
+
+
+Querying Multiple Document
+ > for querying multiple document, we can use the Collection.find() alongside the Cursor.toArray() or Cursor.count()
+ > after calling Collection.find(), we can method chain the Cursor's toArray() to fetch the Array of Documents
+
+EX:
+// code
+    collection.find({ completed: false }).toArray((error, tasks) => {
+      if (error) {
+        return console.log("Unable to find the Tasks");
+      }
+      console.log(tasks);
+    });
+
+// logs
+[
+  {
+    _id: new ObjectId("62a84c49a3a64f1723dce548"),
+    description: 'Reading',
+    completed: false
+  }
+]
+
+
+
+
+
+
+
+
+
+
+
+
+79 Promises
+
+Promises
+ > enhances to the Callbacks
+ > we can create a Promise using its constructor
+
+Creating a Promise
+ > to create a Promise, we can use the constructor
+ > constructor takes a callback function
+	- this callback receives two function arguments, resolve and reject
+	- resolve() and reject() takes a single argument, which will be the result (or error) of the Promise
+	- we will call resolve() if the Promise logic is successful
+	- we will call reject() if the Promise logic has failed
+ > note that we can only either call reject() or resolve() ONCE
+	- if either one is called, the other function calls is IGNORED
+
+Diagram
+			    resolved
+			   /
+Promise     -- pending -->
+			   \
+			    rejected
+
+EX:
+const doWorkPromise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    // resolve("Success", [1247]);
+    reject("Failed", [1247]);
+  }, 2000);
+});
+
+
+Accessing the Result or Error of a Promise
+ > to access the result or error value of a Promise, we will use the function available to a Promise object
+	- the then() and catch()
+ > then() and catch() takes a callback function
+	- then()'s callback function receives ONE argument, the RESULT value
+	- catch()'s callback function receives ONE argument, the ERROR value
+ > then() is executed when the Promise is resolved successful, through calling the resolve() function
+	- in this case, the callback inside then() will be executed and will receive the RESULT value
+ > catch() is executed when the Promise is rejected, through calling the reject() function
+	- the callback inside catch() will be executed and will receive the ERROR value
+ > note that we can METHOD CHAIN the then() and catch()
+	- ex: Promise.then().catch()
+ > only ONE of either then() and catch()'s callback will be executed
+
+EX:
+doWorkPromise
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+
+Promise vs Callback in Asynchronous
+ > with Promise, we have access to TWO function parameter, which we can use to either denote a successful or failed asynchronous process
+	- this refers to the "resolve" and "reject" parameters
+	- before, we only have ONE callback, and to denote a success or failed process, we will need to pass different type of parameter to the callback
+ > with Promise, we have access to TWO function, to define the logic that we will execute in case the process is finished successful or not
+	- this refers to the then() and catch() functions
+	- before, we will need to check for the callback parameter values to check if the process is a success or not
+
+EX:
+// Promise
+const doWorkPromise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    // resolve("Success", [1247]);
+    reject("Failed", [1247]);
+  }, 2000);
+});
+
+doWorkPromise
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+
+// Callback
+const doWorkCallback = (callback) => {
+  setTimeout(() => {
+    // callback("This is my error", undefined);
+    callback(undefined, [1, 4, 7]);
+  }, 2000);
+};
+
+doWorkCallback((error, result) => {
+  if (error) {
+    return console.log(error);
+  }
+  console.log(result);
+});
+
+
+
+
+
+
+
+
+
+
+80 Updating Documents
+
+Function/Object used
+Collection.updateOne(filter: object, update: object): Promise<UpdateResult>
+ > used to update a SINGLE Document, which is the first Object that matches the filter object
+ > the update object requires atomic operators as properties, which includes
+	1. $set
+		- takes an object value
+		- the properties of this object and its value will be SET to the matching Document to either UPDATE or ADD Fields to it
+	2. $unset
+		- takes an object value
+		- the properties of this object will define which FIELD will be removed or UNSET in the matching Documents
+		- properties' value places no role in this operation
+	3. $inc
+		- takes object value
+		- the properties of this object will determine the Document's Field to be incremented by the properties' value
+		- value can be negative for decrementing
+ > this function returns a Promise, where we can access the UpdateResult object using the then(), assuming the update process is successful
+ > this UpdateResult object contains several properties
+	1. acknowledge: boolean
+		- indicates whether the update is acknowledge or not
+	2. matchedCount: number
+		- the number of documents that matched the filter
+	3. modifiedCount: number
+		- the number of documents that were modified
+	4. upsertedCount
+	5. upsertedId
+
+Collection.updateMany(filter: object, update: object): Promise<UpdateResult>
+ > same structure as updateOne in terms of parameters and return value
+ > but instead of just updating the first Document that matches the filter, it update ALL the matching documents
+
+
+Updating a Document
+ > using the updateOne() or updateMany() of Collection, we can update one or more Documents 
+ > we need to set the filter, the update object, and callback which receives error and result as argument
+	- if we only pass filter and update, the updateOne() or updateMany() will return a Promise
+	- with Promise, we can use the then() to access result, and catch() to access error
+
+EX:
+// Code for using $set operator to set age Field to 69
+    collection
+      .updateOne({ name: "Eligio" }, { $set: { age: 69 } })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+// Code for using $inc operator to increment age Field by 1
+    collection
+      .updateOne({ name: "Eligio" }, { $inc: { age: 1 } })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+// logs
+{
+  acknowledged: true,
+  modifiedCount: 1,
+  upsertedId: null,
+  upsertedCount: 0,
+  matchedCount: 1
+}
+
+
+
+
+
+
+
+
+
+
+81 Deleting Documents
+
+Function/Object used
+Collection.deleteOne(filter: object): Promise<DeleteResult>
+ > takes a filter object as input and returns a Promise with resolve value of DeleteResult 
+ > filter object contains properties with values that will be used to match the FIRST Document based on its Fields
+ > the resolve value of the Promise (which is DeleteResult) contains two properties
+	1. acknowledge: boolean
+		- Indicates whether this write result was acknowledged. If not, then all other members of this result will be undefined.
+	2. deletedCount: number
+		- The number of documents that were deleted
+
+Collection.deleteMany(filter: object): Promise<DeleteResult>
+ > same structure as Collection.deleteOne() in terms of parameter and return type
+ > but instead of deleting the FIRST matching Document, it will delete ALL matching Documents
+
+
+Deleting Document in MongoDB with Node.js
+ > to delete a Document in a Collection, we will need to use either Collection.deleteOne() or Collection.deleteMany(), whether we want to delete only one or many Documents
+
+EX:
+// code for deleting all Document with age Field set to 27
+    collection
+      .deleteMany({ age: 27 })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+// logs
+{
+  acknowledged: true,
+  modifiedCount: 1,
+  upsertedId: null,
+  upsertedCount: 0,
+  matchedCount: 1
+}
+
+// code for deleting one DOcument
+    collection
+      .deleteOne({ _id: new ObjectID("62a848e631067657602d19b6") })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+// log
+{ acknowledged: true, deletedCount: 1 }
+
+
+
+
+
+
+
+
+
+

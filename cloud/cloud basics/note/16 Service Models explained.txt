@@ -1,0 +1,41 @@
+16 Service Models explained
+
+
+Service Models
+1. SaaS
+2. IaaS
+3. PaaS 	
+
+
+Software as a Service (SaaS)
+ > a way to "rent" a software that is provided by the cloud provider
+ > the hardware or infrastructure that runs the said software is handled by the cloud provider themselves
+ > ex: Google Docs, Office 365, SAP, ServiceDesk, Oracle ERP
+
+
+Infrastructure as a Service (IaaS)
+ > also known as "Hardware as a Service or Haas"
+ > it is a computing infrastructure managed over the internet
+ > typically involves "Virtual Machines"
+ > Hardware (rent) provisioning
+ 	- you get the basic unit of hardware, barebone
+ > you will be the one to setup the hardware provisioned to you to do what you want
+ > ex: AWS EC2
+
+
+
+Platform as a Service
+ > provides the platform
+ > Platform is managed by the provider
+	- ex: hardware that runs the platform, the versioning of the runtime used
+ > You write the code that runs on the platform
+ > Vendor manages the underlying infrastructure
+ > ex: JsFiddle, JDoodle
+
+
+
+NOTES:
+1. Control brings responsibility
+	> theres a thing called "Shared Responsibility Model" where in each have their own responsibility based on the things that they control
+	> ex: in SaaS, its Cloud's responsibility to maintain hardware that is running the Software. 
+	> ex: in IaaS, its Cloud's responsibility to maintain the software that is responsible for creating and starting the hardware/vm, but anything done with it will be the user's responsibility

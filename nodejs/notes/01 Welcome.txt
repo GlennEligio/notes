@@ -1,0 +1,28 @@
+Section 1 - Welcome
+
+Part 1
+Projects to do in course
+1. Note taking application
+2. Weather app
+3. Task manager app
+4. Real time chat app
+
+Note taking application
+ > create first node app
+ > run app for the first time
+ > ability to read/write on the file system
+ > third party libraries
+
+Weather app
+ > web servers with node js
+ > node api
+ > launch app in production servers
+ > communicate apps to the third party services
+
+Task manager app
+ > setup authentication
+ > setup database with mongodb and mongoose library
+ > file upload, email sending and more
+ 
+Real time chat app
+ > socket.io and websockets

@@ -1,0 +1,4 @@
+07 Collection Steram exercise
+
+NOTE:
+1. flatMap() is use to collect all the element of the Stream returned by the Consumer input and group them into a SINGLE Stream of the said element type

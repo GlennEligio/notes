@@ -1,0 +1,33 @@
+Day 19
+
+
+General flow of calculation methods
+1. InitializeCalculationUsage
+2. ApplyCalculationUsage
+	> responsible for applying and calculating the final price
+	> calls the following
+		a. CalculationCodeCombine calls	
+			a. CalculationCodeQualify
+				- checks if 
+3. SummarizeCalculationUsage
+4. FinalizeCalculation
+
+
+INSERT INTO CALMETHOD (CALMETHOD_ID, STOREENT_ID, )
+
+
+INSERT INTO CALMETHOD  (CALMETHOD_ID, STOREENT_ID,CALUSAGE_ID,TASKNAME,DESCRIPTION,SUBCLASS,NAME)
+values (101,-1,-3,'com.mycompany.commerce.order.calculation.MyCompanyApplyCalculationUsageCmd','my company cutsmore tax',12,'MyCompanyTax' );
+
+
+UPDATE STENCALUSG SET CALMETHOD_ID_APP = 101 WHERE STOREENT_ID = -1 AND CALUSAGE_ID  = -3
+
+
+
+WCS Build and Deploy scripts
+	> WCS provide out of the box 
+	
+	
+	
+	
+	

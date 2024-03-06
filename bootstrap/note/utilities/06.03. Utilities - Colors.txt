@@ -1,0 +1,25 @@
+06.03. Utilities - Colors
+
+III. Colors
+1. Colors
+	> defines the text color
+
+NOTATION
+text-{color}-{font-weight}
+
+Colors
+.text-primary
+.text-secondary
+.text-success
+.text-danger
+.text-warning
+.text-info
+.text-light
+.text-dark
+.text-body
+.text-muted
+.text-white
+.text-black
+
+Sizes
+0-1000	0 being the lightest (more transparent) and 0 being the heaviest

@@ -1,0 +1,95 @@
+Spring Dependency Injection
+
+Dependency Inversion Principle
+	> the client delegates to calls to another object the responsibility of providing its dependencies
+
+Dependency Injection
+	> in dependency injection, we OUTSOURCE the construction and injection of the Object to an EXTERNAL entity
+	> instead of creating a new Instance of Dependency object by ourselves, we will have an Object FACTORY do it for us
+	> all we need to do is to specify the configuration of the Dependency that we will "outsource" and the Object factory (based on the config weve sent) will "inject" it for us
+
+
+
+Injection Types
+1. Constructor Injection
+	> inject dependencies by using the Constructor and passing the dependencies in it
+2. Setter Injection
+	> inject dependencies by calling setter method(s) on your class
+3. Auto-wiring with @Autowired annotation
+
+
+
+Development Process - Constructor Injection
+1. Define the dependency interface and class
+	> creating Interfaces and its implementation Classes
+2. Create a constructor in your class for injection
+	> add dependencies as field member in Class that we want to inject to
+	> add Interface parameter in Constructor
+	> assign value of Interface parameter to field member
+3. Configure the dependency injection in Spring config file
+	> define dependency / helper
+		- create the Bean for the Interface and its implementation
+	> inject the dependency / helper using "constructor injection"
+		- create the Bean for the Class that will be inject
+			= inside the <bean>, create a <constructor-arg>
+			= add a ref parameter and pass the bean-id of the Interface Bean
+
+ 
+
+Development Process - Setter Injection
+1. Create setter method(s) in your class for injections
+	> add all the dependencies we needed as field members
+	> create setter methods for each one of them
+2. Configure the dependency injection in Spring config file
+	> define dependency / helper
+		- create the Bean for the Interface and its implementation
+	> inject the dependency / helper using "constructor injection"
+		- create the Bean for the Class that will be inject
+			= inside the <bean>, create a <property> for EACH of the dependencies we want to inject
+			= add a name parameter in <property>
+				-> should be the same value as the setter method name
+				-> for naming syntax
+					i. remove "set"
+					ii. make first char lowercase
+				-> ex: setBestAthlete() should have name="bestAthlete"
+			= add a ref parameter in <property>
+				-> this will be the reference of an external <bean> that we want to inject in this <bean>
+
+
+
+Injecting Literal Values into Beans - 
+	> Literal values are simple dataTypes like String, Integer, Double, etc
+
+Development Process
+1. Create setter method(s) in your class for injection
+	> private field members and setter methods for each
+2. Configure the injection in Spring config file
+	> add <property> tags inside <bean> that we want to inject
+	> add name parameter and use same syntax as before
+		- ex: setEmailAddress() to name="emailAddress"
+	> add value parameter and pass the value that you want
+		- ex: value="gl@gmail.com"
+
+
+
+
+Injecting Values from Properties File 
+	> in this case, we will read from Properties file for values
+	> Properties file can be seen in 
+
+Development Process
+1. Create Properties file
+	> to createa a Properties file
+		= type the file name and end it with ".properties"
+	> inside properties file, we will define variables in this format
+		name=value;
+	> ex: foo.email=qwerty@gmail.com
+2. Load Properties File in Spring config file
+	> inside the xml file <beans>, add this element
+		<context:property-placeholder>
+	> add location parameter to the element and pass
+		"classpath:text.properties"
+		- classpath means it is inside the any of the package inside src folder
+3. Reference values from Properties File	
+	> to fetch a variable inside Properties file use the syntax
+		- ${variableName}

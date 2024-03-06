@@ -1,0 +1,26 @@
+25 AWS CloudShell
+
+AWS CloudShell
+ > Using AWS CloudShell, a browser-based shell, you can quickly run scripts with the AWS Command Line Interface (CLI), experiment with service APIs using the AWS CLI, and use other tools to increase your productivity. 
+ > The CloudShell icon appears in AWS Regions where CloudShell is available as a CLI icon
+
+
+Using AWS CloudShell
+ > here, we can issue "aws" command just like we did in the CMD with AWS CLI installed
+ > the credentials used in this AWS CloudShell (that one we configured using "aws configure") is the credential of the Account or IAM User that opened this
+
+
+AWS CloudShell characteristic
+1. the region target of your command is based on where you opened this CloudShell
+2. the machine that is running the CloudShell will NOT be reset
+	> this means any file you create inside will persist after you turn off CloudShell
+3. Through the Action dropdown, you can:
+	> Download and Upload file
+	> Edit the style of CLI
+
+
+
+NOTE:
+1. Since not all Region have access to AWS CloudShell, we can specify the region target of an aws command using the flag '--region'
+ > ex: aws iam list-users --region ap-southeast-1
+ > note that IAM is a Global service, so theres no need for this

@@ -1,0 +1,5 @@
+72 Section Clean up
+
+Clean up
+1. Delete ASG
+2. Delete ELB

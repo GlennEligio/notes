@@ -1,0 +1,363 @@
+13 Class Based Components
+
+001 Module Introduction
+
+Module Content
+1. What and why Class based Components
+2. Working with Class-based Componetns
+3. Error Boundaries
+
+
+
+
+
+002 What & Why
+
+Class-based Components
+ > Components that are created using Classes instead of Functions
+ > These Classes extends to the React.Component class from 'react' library
+ > these Components contains render() function
+	- this render() function MUST RETURN the JSX code
+
+
+EX:
+class Product extends Component {
+  render() {
+    return <h2>A Product!</h2>
+  }
+}
+
+
+Why Class-based Components?
+ > was required in the past
+ > traditionally (React <16.8), you had to use Class-based Components to manage "State"
+ > React 16.8 introduced "React Hooks" for Functional Components
+
+
+NOTE:
+1. Functional Component are now the DEFAULT & MOST MODERN way of creating Components
+2. Class-based Components CANT USE React Hooks!
+
+
+
+
+
+003 Adding a First Class-based Component
+
+Creating a Class-based Component 
+1. Create a named import "Component" from 'react'
+	> you can also do a default import, then access the Component from there
+	> ex: import React from 'react'
+	> class User extends React.Component
+2. Create a class inside the JS file
+3. Extend the Class to the Component
+4. Define the render() method inside the Class
+5. Inside the render() method, return the JSX code that you want to render
+6. Export the Class-based Component
+
+EX:
+import { Component } from 'react';
+import classes from './User.module.css';
+
+class User extends Component {
+  render() {
+    return <li className={classes.user}>{this.props.name}</li>;
+  }
+}
+
+export default User;
+
+
+Accessing Props and States
+ > we can access props and States through the "this" keyword
+ > "this" refers to the Class Component
+
+EX:
+class User extends Component {
+  render() {
+    return <li className={classes.user}>{this.props.name}</li>;
+  }
+}
+
+
+
+
+
+
+004 Working with State & Events
+
+States in Class-based Components
+ > initializing States and handling State updates are different in Class-based Components
+ > unlike Functional Component, in Class Component, we can only create ONE State object
+ > for initializing Class Component State, we will need to assign the value of "this.state" inside its constructor
+ > for updating the State, we will need to call "this.setState" and pass the new State object
+	- "this.setState" also supports function input where we can access the previous State snapshot
+ > for accessing State, we can use the "this.state" and access its properties
+	- ex: this.state.name, this.state.password
+
+EX:
+// Initializing State
+  constructor() {
+    super();
+    this.state = {
+      showUser: true,
+      more: "Test",
+    };
+  }
+
+// Modifying State
+  toggleUsersHandler() {
+    this.setState((curState) => {
+      return { showUser: !curState.showUser };
+    });
+  }
+
+// Accessing State
+        <button onClick={this.toggleUsersHandler.bind(this)}>
+          {this.state.showUsers ? "Hide" : "Show"} Users
+        </button>
+
+
+Handling Events in Class-based Components
+ > on handling HTML elements in JSX, we do it in the same way as Functional Components, by passing Functions to it
+ > in Class Component, we define this functions as properties of the Class
+ > to use/access/invoke the Class Components functions, we will access it through "this" keyword
+	- ex: this.toggleUsersHandler
+ > but, when we invoke it inside the Class itself, we should "bind" its "this" value using bind()
+	- this will make sure that the "this" that is used inside the function refers to the Class, and not the global "this"
+	- ex: this.toggleUsersHandler.bind(this)
+
+EX:
+1. Below, we can see that we defined the "toggleUserHandler" function
+2. Then, inside the JSX, we used the "toggleUsersHandler" of Class through "this"
+3. We also binded the toggleUsersHandler's "this" value to the Class using bind()
+
+// Inside User Class
+  toggleUsersHandler() {
+    this.setState((curState) => {
+      return { showUser: !curState.showUser };
+    });
+  }
+
+// Inside User class render() return value
+    return (
+      <div className={classes.users}>
+        <button onClick={this.toggleUsersHandler.bind(this)}>
+          {this.state.showUsers ? "Hide" : "Show"} Users
+        </button>
+        {this.state.showUsers && usersList}
+      </div>
+    );
+
+
+
+
+
+
+
+005 The Component Lifecycle (Class-based Component Only)
+006 Lifecycle in action
+
+Class-based Components Lifecycle methods
+ > Components lifecycle are composed of many stages
+ > Each of these States trigger/executes lifecycle method
+ > We can define these lifecycle method's behavior by adding the methods and its body
+	- ex: Update UI values using States when the Component mounted
+
+Some Class-based Components lifecycle methods
+1. componentDidMount()
+	> Call ONCE component mounted (was evaluated & rendered)
+ 	> similar to the useEffect() but with EMPTY dependency array
+		- useEffect(..., [])
+	> typically used to INITIALIZE the Component's State
+2. componentDidUpdate(prevProps, prevState)
+	> Call ONCE component updated (was evaluated & rendered)
+	> similar to useEffect() with variables in dependency array 
+		- useEffect(..., [someValue])
+	> takes two parameters, the previous Props and State snapshots
+	> inside the componentDidUpdate() function, we typically create if checks to ensure if the State/Props really does changed
+		- if not, we will not run/update the State
+		- therefore, we will avoid doing an INFINITE LOOP where we update the State even if its value is still the same
+3. componentWillUnmount()
+	> Called right before component is unmounted (removed from DOM)
+	> similar to the cleanup function of the useEffect
+		- useEffect{() => { return () => {...}}, []}
+
+EX:
+// componentDidMount to initialize the State
+
+  componentDidMount() {
+    this.setState({ filteredUsers: [...DUMMY_USERS], searchTerm: "" });
+  }
+
+
+// componentDidUpdate to update filteredUser when searchTerm changes
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.searchTerm !== this.state.searchTerm) {
+      this.setState((curState) => {
+        return {
+          filteredUsers: DUMMY_USERS.filter((user) =>
+            user.name.includes(curState.searchTerm)
+          ),
+          searchTerm: curState.searchTerm,
+        };
+      });
+    }
+  }
+
+// componentDidUnmount to write something in console when Component is removed from DOM
+  componentWillUnmount() {
+    console.log("Component will unmount");
+  }
+
+
+
+
+
+
+007 Class-based Components & Context
+
+Using Context to Class-based Components
+ > for providing a Context, it will be the same as Functional Component using Context.Provider
+ > for consuming a Context in a Component, we can use either of the two methods
+	1. Using Context.Consumer, and defining a function inside with context as the parameter
+		- with this, we can access the Context values and return a JSX that uses it
+		- but with this, context value is only accessible in JSX
+	2. Use static contextType and pass the Context import
+		- much more leaner and easier to read
+		- we can then access context values through "this.context" throughout the Component
+		- similar to useContext() of Functional hooks
+
+Consuming Context with Class-based Component
+1. Using Context.Consumer, and defining a function inside with context as the parameter
+
+return (
+  <div>
+    <UsersContext.Consumer>
+      {(ctx) => ctx.users.map(userItem => <User user=userItem/>)}
+    </UsersContext.Consumer>
+  </div>
+)
+
+
+2. Using "static contextType" to access Context values
+
+class UserFinder extends Component {
+  static contextType = UsersContext;
+
+  constructor() {
+    super();
+    this.state = {
+      filteredUsers: [],
+      searchTerm: "",
+    };
+  }
+
+  componentDidMount() {
+    this.setState({ filteredUsers: this.context.users, searchTerm: "" });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.searchTerm !== this.state.searchTerm) {
+      this.setState((curState) => {
+        return {
+          filteredUsers: this.context.users.filter((user) =>
+            user.name.includes(curState.searchTerm)
+          ),
+          searchTerm: curState.searchTerm,
+        };
+      });
+    }
+  }
+
+  searchChangeHandler(event) {
+    this.setState({ ...this.state, searchTerm: event.target.value });
+  }
+
+  render() {
+    return (
+      <Fragment>
+        <div className={classes.finder}>
+          <input type="search" onChange={this.searchChangeHandler.bind(this)} />
+        </div>
+        <Users users={this.state.filteredUsers} />
+      </Fragment>
+    );
+  }
+}
+
+
+
+
+
+
+008 Class-based vs Functional Components
+
+NOTES:
+1. Prefer functional components
+	> must leaner and flexible
+	> have access to Functional Hooks
+2. Use class-based if
+	> you prefer them
+	> you're working on an existing project or in a team where they're getting used
+	> you build an "ErrorBoundary" Component
+
+
+
+
+
+
+009 Error Boundaries
+
+Error Boundaries Components
+ > Class-based Components used to serve as error boundaries.
+	- Functional Components dont have access to this
+ > All Components nested inside the Error Boundaries that throws an error will be handled by this Component.
+ > Key feature of this Component is its implementation of "componentDidCatch"
+	- this lifecycle method catches all thrown error of Components nested inside Error Boundary Component
+
+Creating Error Boundaries
+1. Create a Class-based Component
+2. Add a State to indicate if error is thrown or not
+3. Implement componentDidCatch() lifecycle method
+4. Inside componentDidCatch(), change the value of the State 
+5. In the JSX, use the State to show either the nested Components or entirely new JSX code
+
+EX:
+import { Component } from "react";
+
+class ErrorBoundary extends Component {
+  constructor() {
+    this.state = {
+      hasError: false,
+    };
+  }
+
+  componentDidCatch(error) {
+    this.setState({ hasError: true });
+  }
+
+  render() {
+    if (hasError) {
+      return <p>Something went wrong</p>;
+    } else {
+      return this.props.children;
+    }
+  }
+}
+
+export default ErrorBoundary;
+
+
+Using ErrorBoundary in a Component
+// Inside UserFinder JSX
+        <ErrorBoundary>
+          <Users users={this.state.filteredUsers} />
+        </ErrorBoundary>
+
+// Inside Users JSX
+  componentDidUpdate() {
+    if (this.props.users.length === 0) {
+      throw new Error("No users provided");
+    }
+  }

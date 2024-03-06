@@ -1,0 +1,519 @@
+Docker Compose for connecting .NET Core Api and SQL Server Docker Containers
+
+
+Docker Compose
+	> reduces reliance on, and simplifies use of, Docker Command Line
+	> allows us to start up multiple containers quickly
+	> allows us to set up connections between containers
+
+
+Tools needed:
+
+	VS Code text editor
+	Docker Desktop
+	.NET Core SDK
+
+
+Prerequisites:
+
+	.NET Core MVC REST API
+	.Deploy a .NET Core API with Docker
+	Connect to SQL Server running in Docker
+
+
+inludes:
+
+DbContext
+	> Representation of the Database in the EntityFramework
+DbSet
+	> Representation of the Table inside Database
+
+Methods of Networking Containers
+	1. Software Defined Networks
+	2. Use of Docker Compose
+
+
+
+I. Create the .NET Core Web Api 
+	> in the video, we pull the project from a GitHub repository but since the .NET version used in that project is too old. we would just create a new one using webapi template in vs code
+
+
+1. Clone a Git file to get our .NET Core Web app
+	> this needs to have the Git Bash installed in System
+	> to pull a Git file from github, first get the github link
+
+		https://github.com/binarythistle/ColourAPI.git
+
+	> then type in the terminal the following line (assuming we are in our desired file directory)
+
+		git clone <GitHub link>
+
+	> so in our case, it will be 
+
+		git clone https://github.com/binarythistle/ColourAPI.git
+
+
+
+2. Open the ColourAPI project folder
+	> either by File -> Open Folder or code -r <Project Name> in terminal
+
+
+
+3. Change the Controller class
+
+INSIDE ValuesController.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+namespace ColourAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ValuesController : ControllerBase
+    {
+        [HttpGet]
+        public ActionResult <IEnumerable<string>> Get()
+        {
+            return new string[]{"value1, value2"}; 
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult <string> Get(int id)
+        {
+            return "value";
+        }
+    }
+}
+
+
+
+4. Test the application
+	> call one of its endpoints in a browser or Postman
+
+		http://localhost:5000/api/values
+
+
+
+5. Create the Docker Image of the .NET
+	> must have Docker application instance running in background
+	> check the Dockerfile in the root project folder
+		= if you dont have Dockerfile, create a new one
+	> create a .dockerignore too and add bin\ and obj\ folder inside it
+	> build the Docker image
+		= to build a Docker image, type the following in the Terminal
+
+			docker build -t <DockerHubId>/<DockerImageName> .
+
+		= in our case, its
+		
+			docker build -t shuntjg/colourapi .
+
+Dockerfile
+
+# Get Base Image (Full .NET Core SDK)
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+WORKDIR /app
+
+# Copy csproj and restore
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+# Generate runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
+WORKDIR /app
+EXPOSE 80
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "ColourAPI.dll"]
+
+
+
+.dockerignore
+
+bin\
+obj\
+
+
+
+
+6. Run the Docker Image in a Docker container
+	> to run a Docker image in a Docker Container, type the following line in Terminal
+		
+		docker run -p <LocalMachineTcpPort>:<DockerContainerPort> <DockerHubId>/<DockerImageName>
+
+	> in our case, since we expose Port 80 in ColourAPI, we will use 80 as DockerContainerPort
+	> as for the LocalMachineTcpPort, you can choose anything that is free
+	> with this, we will type in CLI the following
+
+		docker run -p 8080:80 shuntjg/colourapi
+
+
+
+7. Test the Docker Container
+	> send an http request (not https since we only exposed the 80 with is the tcp port for http use), with the specified LocalMachineTcpPort in docker run command
+
+		http://localhost:8080/api/values
+
+
+
+
+8. Stop our Docker Container for ColourApi for now
+
+
+
+9. Create Model class for our MVC Rest api
+	> we will now scaffold our default webapi template given on newly created webapi by vscode
+	> create a folder in root location named Models
+	> inside the Models folder, add a C# file
+	> inside the C# file, add a class with following properties
+		- namespace that corresponds to file location
+		- public class Colour
+		- int Id and string colourName properties
+
+INSIDE Colour.cs
+
+namespace ColourAPI.Models
+{
+    public class Colour
+    {
+        public int Id { get; set; }
+        public string colourName { get; set; }
+    }
+}
+
+
+
+10. Create the DbContext of our ColourApi
+	> create a C# file in Models folder
+	> inside the C# file, add the following
+		- Microsoft.EntityFrameworkCore and ColourAPI.Models in using directives
+			> if you cant add the EntityFrameworkCore in using directive, install the nuget package in the project
+		- namespace that corresponds to the file location
+		- ColourContext class that inherits the DbContext class
+		- Constructor of ColourContext class
+			> DbContextOptions<ColourContext> options as parameter
+			> inherits base constructor with options pass into it
+		- DbSet property with Colour class as type
+
+INSIDE ColourContext.cs
+
+using Microsoft.EntityFrameworkCore;
+using ColourAPI.Models;
+
+namespace ColourAPI.Models
+{
+    public class ColourContext : DbContext
+    {
+        public ColourContext(DbContextOptions<ColourContext> options) : base(options)
+        {
+            
+        }
+
+        public DbSet<Colour> Colours { get; set; }
+    }
+}
+
+
+
+
+
+11. Add the ConnectionString to the Project
+	> we will use this to connect to the SQL server
+	> we will do this in
+	> we will first construct the Connection string inside the ConfigureServices() of StartUp class by making variables for each part of it
+		- server
+		- port
+		- user
+		- password
+		- database
+	> we will then add our ColourContext into the ConfigureServices by using AddDbContext()
+		- we will set the type of AddDbContext to the ColourContext
+		- we will construct the parameter of AddDbContext using lambda expression
+		- pass an options parameter then with lambda, call its UseSqlServer()
+		- we will then create the ConnectionString using the variables we created 
+
+
+INSIDE ConfigureServices()
+
+            var server = Configuration["DBServer"] ?? "localhost";
+            var port = Configuration["DBPort"] ?? "1433";
+            var user = Configuration["DBUser"] ?? "SA";
+            var password = Configuration["DBPassword"] ?? "ShuntJG01?";
+            var database = Configuration["Database"] ?? "Colours";
+
+            services.AddDbContext<ColourContext>(options =>
+                options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User Id ={user};Password={password}"));
+
+
+
+
+12. Create a Migration to initialize our Database
+	> if you dont have Microsoft.EntityFrameworkCore.Design in package resources, add them first since we will need it to do Migrations
+	> to create the Database and its Tables that corresponse to our DbContext class and its DbSet properties, we will create a Migration
+	> to create a Migrations, type this in the Terminal
+		
+		dotnet ef migrations add <MigrationName>
+
+	> Migration name typically refers to the changes we made in the Codes that will affect the Database
+	> in our case, we added a ColourModel model class (or table in Database equivalent), so we will name the Migration ColourModel
+	> type in the Terminal
+
+		dotnet ef migrations add ColourModel
+
+
+
+13. Create a Class that will Migrate our DbContext and Populate the said DbContext
+	> create a C# file inside the Models folder
+	> inside the C# file, add the following
+		- namespace that corresponds to file location
+		- PrepDB static class
+		- SeedData method
+			-> static, void return type
+			-> ColourContext parameter
+			-> inside the method body, add the following
+				a. Write in Console "Applying Migrations"
+				b. Call Migrate() of the Database of ColourContext parameter
+				c. Check if ColourItems DbSet is empty
+					= if empty, add Colour objects inside it. Then call SaveChanges() of ColourContext to save the changes we made
+					= if not, notify in Console that we already have data inside
+		- PrepPopulation method
+			-> static, void return type
+			-> IApplicationBuilder app parameter
+			-> inside the method body, add the following
+				a. call the using() method
+				b. pass a variable inside the using() parameter and set its value to the result of app.ApplicationServices.CreateScope()
+					= this will fetch all the Services we added in ConfigureService()
+				c. inside the using(), call SeedData() and pass serviceScope.ServiceProvider.GetService<ColourContext>())
+					= this will get the ColourContext DbContext service we added from the CreateScope() result
+
+INSIDE PrepDB.cs
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
+
+namespace ColourAPI.Models
+{
+    public static class PrepDB
+    {
+        public static void PrepPopulation(IApplicationBuilder app)
+        {
+            using(var serviceScope = app.ApplicationServices.CreateScope())
+            {
+
+            }
+        }
+
+        public static void SeedData(ColourContext context)
+        {
+            Console.WriteLine("Applying Migrations");
+            context.Database.Migrate();
+
+            if(!context.ColourItems.Any())
+            {
+                context.ColourItems.AddRange(
+                    new Colour(){colourName="Red"}, 
+                    new Colour(){colourName="Blue"}, 
+                    new Colour(){colourName="Green"},
+                    new Colour(){colourName="Yellow"}
+                );
+		context.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("Already has data - not seeding");
+            }
+        }
+    }
+}
+
+
+
+
+
+14. Call the PrepPopulation() method of PrepDB class inside the Configure() of StartUp class
+	> pass the IApplicationBuilder parameter of Configure() inside the PrepPopulation()
+
+INSIDE Configure() 
+
+	PrepDB.PrepPopulation(app);
+
+
+
+15. Modify our Controller class
+	> inject the ColourContext inside the Controller class using Dependency Injection
+	> change the HttpGet endpoint
+		- change type of ActionResult from IEnumerable<string> to IEnumerable<Colour>  
+		- return the ColourItems property of the ColourContext field member                        
+
+INSIDE ValuesController.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using ColourAPI.Models;
+
+namespace ColourAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ValuesController : ControllerBase
+    {
+        private readonly ColourContext _context;
+
+        public ValuesController(ColourContext context)
+        {
+            _context = context;    
+        }
+
+        [HttpGet]
+        public ActionResult <IEnumerable<Colour>> Get()
+        {
+            return _context.ColourItems;
+        }
+    }
+}
+
+
+
+II. Creating SQL Server instance in Docker Container
+
+16. Create a SQL Server instance inside a Docker Container
+	> in creating the SQL servir instance, we will use the string variables we created when we made our ConnectionString
+	> type the following command in the CLI
+
+		docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=TEST_PASS' -e 'MSSQL_PID=Express' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+
+
+
+
+17. Test the SQL server instance inside the Docker Container
+	> use MSSMS to connect to it
+	> use the login credential we set when we created the sql server instance
+		login: sa
+		password: TEST_PASS
+
+
+
+
+18. Connect our WebAPI to the SQL Server that is inside a Docker Container
+	> at this point, the WebAPI will be running at the Local machine and not at a Docker container
+	> while the Docker Container with SQL server is running, run our WebAPI
+	> check the Console for the Prompts
+	> check the SQL Server Database for any changes
+
+	As we can see, we have applied changes to the SQL Server inside the Docker Container using the Migrations. 
+	Inside the SQL server instance, we have Colours Database which is based on the Initial Catalog item we set in ConnectionString, 
+	Then inside the Tables folder of Colours Database, we have the ColoursItem table which is based on the DbSet property of ColourContext class
+	Inside the ColoursItem table, we have Colour items which came from the SeedData() of PrepDB we made.
+
+
+		
+
+19. Test the current setup (WebAPI in Local machine + SQL server in Docker container)
+	> call the endpoint that returns all Colour item in Database
+	> check the result
+	
+
+
+
+
+20. Rebuild our WebAPI Docker Image
+	> delete the previous colourapi docker images we had earlier
+	> again to create our Docker Image, enter in Terminal
+	
+		docker build -t shuntjg/colourapi .
+
+
+
+21. Build a Docker Container using the WebAPI Docker Image
+	> type the following in Terminal
+
+		docker run -p 8080:80 shuntjg/colourapi
+
+
+
+	As we can see, we get a host of errors when applying migrations. This is because the Containers for the WebAPI and the SQL Server are in separate Network. This is due to the Docker Container being self isolated to each other.
+
+
+
+III. Use Docker Compose to Connect WebAPI and SQL Server Containers
+
+22. Remove the Containers of SQL server and Web api
+
+
+
+23. Create our DockerCompose file
+	> in the root folder, create the docker compose file
+
+		docker-compose.yml
+
+
+24. Inside the docker-compose.yml, add the following
+	> define version you are using
+		- for now, we will use 3
+	> services
+		- defines how to run a Docker Images into a Container
+		- can be seen as Image + Config, where in the config defines how the Image will be formed into a Container
+		- we will create two services
+			a. Service for SQL Server
+				name/tag: ms-sql-server
+				image: mcr.microsoft.com/mssql/server:2019-latest
+				environment:
+					ACCEPT_EULA: "Y"
+					SA_PASSWORD: "TEST_PASS"
+					MSSQL_PID: Express
+				ports:
+					- "1433:1433"
+			b. Service for Web API	
+				name/tag: colour-api
+				build: .
+				ports:
+					- "8080:80"
+	> we can see that we didnt define any images in the service for the web api. this is because we already did it in the Dockerfile inside the WebAPI project. And with the build property have (.) value, it will see the Dockerfile and base the images that we will use in that file. 
+	> also, we can notice that the content of the docker-compose.yml is just what we type in the Docker Command Line
+	> with this DockerCompose, we are putting this two services or container in THE SAME NETWORK
+				
+
+
+25. Run the docker-compose.yml file
+	> to run a docker compose file, we will need to type the line in Docker CLI
+		
+		docker-compose up
+
+
+	As we see, we encountered an error while running the docker compose. This is because in the ConnectionString of WebAPI, we specified that the Server name is localhost. The Migration cannot discern this because while they are connected, they still are not in the same Container. 
+	For us to fix this, we will need to change the Server name from localhost to the name of the Container, which is the name/tag that we provided when making the service item for SQL server in docker-compose.yml
+	We can either:
+		a. change the value we provide in the ConfigureServices() in DBServer Configuration item
+		b. create an environment item in colour-api service in docker-compose, and define the DBServer Config item there
+
+
+
+
+26. Change server name in the ConnectionString making.
+	a. changing in ConfigureServices()
+		from: var server = Configuration["DBServer"] ?? "localhost";
+		to: var server = Configuration["DBServer"] ?? "ms-sql-server";
+	b. adding environment item in colour-api service inside docker-compose.yml
+
+
+
+
+27. Reset the setup
+	> remove all container
+	> remove the docker image for web api
+	> run the docker compose again

@@ -1,0 +1,50 @@
+31 Flux to Mono (and vice versa)
+
+
+Flux methods that are used
+Mono<Long> count()
+ > Counts the number of values in this Flux. 
+ > The count will be emitted when onComplete is observed. 
+ > returns a Mono that will emit the item count of Flux when the Flux emitted a terminal event (onComplete/onError)
+
+
+Mono<List<T>> collectList()
+ > Collect all elements emitted by this Flux into a List that is emitted by the resulting Mono when this sequence completes, emitting the empty List if the sequence was empty.
+ > returns a Mono that emits the Flux items as List when the Flux emitted a terminal event
+
+
+Flux<List<T>> buffer(int maxSize)
+ > Collect incoming values into multiple List buffers that will be emitted by the returned Flux each time the given max size is reached or once this Flux completes
+ > basically chops the elements of Flux into groups of element, in which this group of element (List) will become an element of another Flux
+
+
+EX:
+// Exercise 9
+public class Exercise9 {
+
+
+    public static void main(String[] args) throws IOException {
+
+        // Use ReactiveSources.intNumbersFlux()
+
+        // Print size of intNumbersFlux after the last item returns
+        ReactiveSources.intNumbersFlux()
+                .count()
+                .subscribe(System.out::println);
+
+        // Collect all items of intNumbersFlux into a single list and print it
+        ReactiveSources.intNumbersFlux()
+                .collectList()
+                .subscribe(System.out::println);
+
+        // Transform to a sequence of sums of adjacent two numbers
+        ReactiveSources.intNumbersFlux()
+                .buffer(2)
+                .map(list -> list.stream().reduce((sum, item) -> sum + item).get())
+                .subscribe(System.out::println);
+
+        System.out.println("Press a key to end");
+        System.in.read();
+    }
+
+}

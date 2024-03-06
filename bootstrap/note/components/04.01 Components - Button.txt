@@ -1,0 +1,94 @@
+04.01 Components - Button
+
+Buttons 
+	> Bootstrap includes several predefined button styles, each serving its own semantic purpose, with a few extras thrown in for more control.
+
+
+Classes for Button
+"btn"
+	> changes the following properties of button
+		- increase size
+		- adds border radius and removes border color
+		- set background color to white and color to black
+	> can be used in elements other than <button> like
+		<a>
+		<input>
+
+
+Class to add background color to Buttons
+	> reduces alpha values when hovers as well
+
+btn-primary	
+	> blue background color
+	> white color
+btn-secondary
+	> gray background
+	> white color
+btn-success
+	> green background
+	> white color
+btn-danger
+	> red background
+	> white color
+btn-warning
+	> yellow background
+	> white color
+btn-info
+	> skyblue background
+	> black color
+btn-light
+	> white background
+	> black color
+btn-dark
+	> black background
+	> white color
+btn-link
+	> white background
+	> blue color
+	> text decoration is underline
+
+
+Outline variation
+	> similar to the normal colored variation, but with few differences
+		1. When not in hover event
+			- White background color
+			- Border color is similar to the typical background color of their Opaque colored equivalent
+		3. When cursor hover
+			- becomes their Opaque colored variant
+	> ex: "btn-outline-primary" becomes essentially "btn-primary" is apperance when hovered
+
+btn-outline-primary
+btn-outline-secondary
+btn-outline-success
+btn-outline-danger
+btn-outline-warning
+btn-outline-info
+btn-outline-light
+btn-outline-dark
+
+
+Button sizes
+	> Bootstrap also have some classes to customize the size of the buttons
+	> these classes adjust both height and width of button
+	> not adding any of the two will result in a button whose size is in MIDDLE of the large and small
+
+"btn-lg"	large button
+"btn-sm"	small button
+
+
+Disabling Buttons
+	> adding "disabled" property in element will disable it
+	> we can also add disabled property in a Button (or Link/Input) to disable it
+	> this add "pointer-events: none", which prevents hover and active states from triggering
+
+EX:
+<button type="button" class="btn btn-lg btn-primary" disabled>Primary button</button>
+
+
+
+Button Plugin functionality
+Toggle State
+	> to add toggle functionality to Button, add "data-bs-toggle="button"" property
+	> to have the button pre-toggled, add "active" class and "aria-pressed="true"" property
+
+

@@ -1,0 +1,130 @@
+63 RHCSA RHEL 8 - Containers Continued
+
+Inspecting Image information
+ > to do this, we can do either of the following
+	1. use podman inspect
+	2. use the "skopeo" package
+ > skopeo is typically used for inspecting REMOTE images
+	- remote images are images that are not locally available, isnt pulled
+
+
+skopeo
+ > package used to inspect Docker images
+ > not only it can inspect local images, but also remote ones
+
+
+Creating Service that runs Container
+ > we can also make a Server that runs a Container when started 
+ > with this setup, we can have an option to 
+	- RESTART the Service when the Container stop, hence making the Container highly available
+	- ENABLE the Service on boot, hence making the Container start on boot as well
+
+
+Creating Image with Dockerfile
+ > Dockerfile is the file used to create Images
+ > inside, we can define "steps", which will define how the Image creates the Container
+ > in creating Dockerfile, use the "touch" command, or the "vi" command
+	$ touch Dockerfile
+	$ vi Dockerfile
+
+
+
+Configuring a Container to start automatically as systemd service
+1. Setup SELinux by changing "container_manage_cgroup" boolean to ON
+	$ setsebool -P container_manage_cgroup on
+2. Create the container that we will start/stop using the service to be created
+	$ podman run -d --name httpd-server -p 8080:80 httpd
+3. Create a service file inside /etc/systemd/system for running/stopping the Container
+	$ vim /etc/systemd/system/httpd-container.service
+
+# INSIDE httpd-container.service
+[Unit]
+Description=httpd Container Service
+Wants=syslog.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/podman start -a httpd-server
+ExecStop=/usr/bin/podman stop -t 2 httpd-server
+
+[Install]
+WantedBy=multi-user.target
+
+4. Test the service by starting/stopping, and enable it on boot
+	$ systemctl start httpd-container.service
+	$ systemctl status httpd-container.service
+	$ systemctl enable httpd-container.service
+
+
+
+Running a Service inside a Container using Dockerfile
+1. Create, and write a file named Dockerfile using "vim"
+	$ vim Dockerfile
+
+# INSIDE Dockerfile
+FROM registry.access.redhat.com/ubi8/ubi-init
+RUN yum -y install httpd; yum clean all; systemctl enable httpd;
+RUN echo "Successful Web Server Test" redirect-to /var/www/html/index.html
+RUN mkdir /etc/systemd/system/httpd.service.d/; echo -e '[Service]\nRestart=always' redirect-to /etc/systemd/system/httpd.service.d/httpd.conf
+EXPOSE 80
+
+
+2. Build the Image using the Dockerfile
+	$ podman build -t mysysd .
+3. Run the Container using the Image built
+	$ podman run -d -name=mysysd_run -p 80:80 mysysd
+4. Check status of Container
+	$ podman ps
+
+
+
+Attach persistent storage to a container
+1. Create the directory to attach on container
+	$ mkdir /home/user1/containers/disk1
+2. Run the container with privileged command and -v option to mount
+	$ podman run --privileged -it -v /home/cengland/containers/disk1:/mnt httpd-server /bin/bash
+	> this should put the current shell to the one inside Container due to the "-i" option
+3. Confirm the mount by using the container shell
+	$ df -h
+4. Check if changes inside container's mount point reflects to the directory in host
+	$ touch /mnt/fromcontainer		inside Container
+	$ exit					to go back to Host
+	$ ls /home/cengland/containers/disk1
+
+
+
+Commands
+podman inspect [options] {CONTAINER|IMAGE|POD|NETWORK|VOLUME}
+ > displays the low-level information of an image identified by name or ID
+ > some information includes
+	- ID
+	- Digest
+	- RepoTags
+	- DateCreated
+	- Configurations like Environment Variables, Exposed Ports, Commands, WorkingDir, etc
+ 	- Version
+	- Commands executed to build the Container from the said Image
+ > options:
+	-f	format the output to a Go tempalte or json (default "json")
+ > ex:
+	podman image inspect 
+
+
+skopeo
+ > command line utility used to interact with local and remote container images and container image registries
+ > synopsis:
+	$ skopeo [global options] command [command options]
+ > ex:
+	$ skopeo inspect docker://registry.fedoraproject.org/fedora:latest
+		- inspects the docker image registry for Docker image of Fedora
+
+
+podman build
+ > build a container image using Containerfile or Dockerfile
+ > synopsis:
+	$ podman build [options] [context]
+ 	$ podman image build [options] [context]
+ > ex:
+	$ podman build -t mysysd .
+	
+	

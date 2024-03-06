@@ -1,0 +1,43 @@
+09. Spring Boot Application Properties file
+
+
+Application Properties file
+	> File that contains all the application properties data
+	> by default, Spring Boot reads information from a standard properties file
+		- located at: src/main/resources/application.properties
+	> you can define ANY custome properties in this file
+	> your Spring Boot app can access properties using @Value
+
+@Value
+	> annotation used to fetch data from application.properties
+	> have one property
+		a. value = ""
+			- takes a String parameter
+			- here we will pass the data name inside the application.properties file with following syntax
+			- "${data.name}"
+			- ex: @Value(value = "${coach.name}")
+
+EX:
+INSIDE application.properties
+# Define custome properties
+coach.name=Mickey Mouse
+team.name=The Mouse Club
+	
+
+INSIDE @RestController class
+
+	// inject properties for: coach.name and team.name
+	@Value(value = "${coach.name}")	
+	private String coachName;
+	
+	@Value(value = "${team.name}")
+	private String teamName;
+	
+	
+	// expose endpoint for team info
+	@GetMapping("/teaminfo")
+	public String getTeamInfo() {
+		return "Coach: " + coachName + ", Team name: " + teamName;
+	}
+
+

@@ -1,0 +1,353 @@
+13 Select & Share a Place App (incl Google Maps)
+
+Content:
+01 Module Introduction
+02 Project Setup
+03 Getting User Input
+04 Setting Up a Google API Key
+05 Using Axios to Fetch Coordinates for an Entered Address
+06 Rendering a Map with Google Maps (incl. Types)
+07 Working with Maps without a Credit Card
+08 Useful Resources & Links
+
+
+
+
+
+
+
+
+
+
+
+01 Module Introduction
+
+GOAL:
+1. Use third party libraries to create an app
+2. Create a map using Google map
+
+
+
+
+
+
+
+
+
+
+
+02 Project Setup
+
+Setting up the Project
+ > In the index.html, create two things
+	1. div for containing the "map"
+	2. form for letting user input the address they want to see
+
+EX:
+// index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Understanding TypeScript</title>
+    <script src="dist/bundle.js" defer></script>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div id="map">
+      <p>Please enter an address</p>
+    </div>
+    <form>
+      <input type="text" id="address" />
+      <button type="submit">SEARCH ADDRESS</button>
+    </form>
+  </body>
+</html>
+
+
+// app.css
+html {
+  font-family: sans-serif;
+}
+
+#map {
+  width: 90%;
+  height: 20rem;
+  border: 1px solid #ccc;
+  margin: 2rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+form {
+  text-align: center;
+  margin: 2rem auto;
+}
+
+
+
+
+
+
+
+
+03 Getting User Input
+
+GOAL:
+1. Add a submitEventHandler to the form to fetch the address input value
+	> we will then send this address to Google API using Axios
+
+EX:
+// app.ts
+const form = document.querySelector("form")!;
+const addressInput = document.querySelector("#address")! as HTMLInputElement;
+
+function searchAddressHandler(event: Event) {
+  event.preventDefault();
+  const enteredAddress = addressInput.value;
+}
+
+form.addEventListener("submit", searchAddressHandler);
+
+
+
+
+
+
+
+
+
+
+04 Setting Up a Google API Key
+
+Setting Up Google API key
+1. Go to Google Geolocation site to get started
+	> https://developers.google.com/maps/documentation/geocoding/overview
+2. Sign up and fetch your api key
+	> SAMPLE_GOOGLE_API_KEYS
+3. Make sure the following API is enabled in Google Geolocation API
+	> Maps SDK for Android
+	> Geolocation API
+
+
+Using Google API key in the TypeScript app
+ > for now, we will just copy and paste the Google Geolocation API key in the code and store it in a variable
+ > we will later use it for sending http request for fetching location/coordinates based on the user address inputs
+
+EX:
+// app.ts
+const form = document.querySelector("form")!;
+const addressInput = document.querySelector("#address")! as HTMLInputElement;
+
+const GOOGLE_API_KEY = "SAMPLE_GOOGLE_API_KEYS";
+
+function searchAddressHandler(event: Event) {
+  event.preventDefault();
+  const enteredAddress = addressInput.value;
+}
+
+form.addEventListener("submit", searchAddressHandler);
+
+
+
+
+
+
+
+
+
+05 Using Axios to Fetch Coordinates for an Entered Address
+
+Axios
+ > third party Promise based HTTP client for the browser and node.js
+ 	- this means we can use the "then" and "catch" call to the output of the Axios calls
+ > provides built-in methods for different HTTP methods
+	- ex: axios.get() axios.post() axios.put() axios.delete()
+
+Features of Axios
+1. Make XMLHttpRequests from the browser
+2. Make http requests from node.js
+3. Supports the Promise API
+4. Intercept request and response
+5. Transform request and response data
+6. Cancel requests
+7. Automatic transforms for JSON data
+8. Automatic data object serialization to multipart/form-data and x-www-form-urlencoded body encodings
+9. Client side support for protecting against XSRF
+
+
+Functions/Object available
+axios
+ > top level object/function "axios" module exposes
+
+axios(config);
+ > used to send http request
+
+Request method aliases of axios
+axios.request(config)
+axios.get(url[, config])
+axios.delete(url[, config])
+axios.head(url[, config])
+axios.options(url[, config])
+axios.post(url[, data[, config]])
+axios.put(url[, data[, config]])
+axios.patch(url[, data[, config]])
+ > used to send http request of specific http method
+
+
+axios<ResponseType>(config);
+axios.get<ResponseType>(url[, data[, config]])
+ > Generic version of the axios calls
+ > used to define the Type of the Response body for type checking features
+
+
+config object properties
+1. url: string
+ 	> relative url
+2. method: string
+	> http method of request
+3. transformRequest: [function (data, headers) { return data }]
+	> contains function to allow changes to request data before it is end to the sever
+	> applicable only to PUT, POST, PATCH, DELETE
+4. transformResponse: [function (data) { return data }]
+	> contains function to allow changes to the response data to be made before
+5. headers: {[headerKey: string]: string}
+	> add custom headers to request
+	> takes an object whose key:value pairs represent the header key and value
+6. params: object
+	> URL parameters to be sent with the request
+	> takes an object whose key value pairs represents the key:value of params
+7. data: object
+	> data to be sent as the request body
+	> application only for request methods PUT, POST, DELETE, and PATCH
+8. responseType: 'json' | 'arraybuffer' | 'document' | 'text' | 'stream'
+	> indicates the type of data that the server will response with
+	> default is 'json '
+
+
+
+GOAL:
+1. Use Axios library to send request to Google Geolocation API
+	> inject the enteredAddress from form input and the Google API Key to the url of the request
+ 	> log the latitude and longitude
+
+EX:
+import axios from "axios";
+
+const form = document.querySelector("form")!;
+const addressInput = document.querySelector("#address")! as HTMLInputElement;
+
+const GOOGLE_API_KEY = "SAMPLE_GOOGLE_API_KEYS";
+
+function searchAddressHandler(event: Event) {
+  event.preventDefault();
+  const enteredAddress = addressInput.value;
+
+  if (enteredAddress.trim() === "") {
+    return;
+  }
+
+  axios
+    .get<{
+      results: { geometry: { location: { lat: number; lng: number } } }[];
+    }>(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURI(
+        enteredAddress
+      )}&key=${GOOGLE_API_KEY}`
+    )
+    .then((response) => {
+      console.log(response.data.results[0].geometry.location);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+form.addEventListener("submit", searchAddressHandler);
+
+
+
+
+
+
+
+
+
+
+06 Rendering a Map with Google Maps (incl. Types)
+
+Google Maps JavaScript API
+ > https://developers.google.com/maps/documentation/javascript?hl=en_US
+
+
+GOAL:
+1. Render a map to the div with id "map" using Google Maps API
+
+Steps
+1. Add the Maps JavaScript API in the project
+	> we add the script through inline loading inside the HTML page
+2. Add Type feature for the Google Maps JavaScript API
+	> install "@types/googlemaps" module
+3. Populate the "map" div in index.html inside the ./src/app.ts
+	> create new instance of google.maps.Map and pass the following in the constructor
+		- element to contain the Map
+		- MapOptions whose properties are
+			a. position: {lat: number, lng: number}
+				-which is the coordinates received from Google Geolocation API
+			b. "zoom": number
+				- higher the number, the closer the zoom
+4. Add a Marker to the map
+	> create new instance of the google.maps.Marker and pass the following in the constructor
+		a. position: {lat: number, lng: number}
+			- from coordinates
+		b. map: Map<element>
+			- the google.maps.Map instance we created earlier
+
+
+// Google Maps JavaScript API cdn
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY">
+</script>
+
+
+// Axios call which includes Google Maps JavaScript api on response processing
+  axios
+    .get<{
+      results: { geometry: { location: { lat: number; lng: number } } }[];
+      status: string;
+    }>(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURI(
+        enteredAddress
+      )}&key=${GOOGLE_API_KEY}`
+    )
+    .then((response) => {
+      if (response.data.status !== "OK") {
+        throw new Error("Request unsuccessful");
+      }
+      const coordinates = response.data.results[0].geometry.location;
+      const map = new google.maps.Map(document.querySelector("#map")!, {
+        center: coordinates,
+        zoom: 16,
+      });
+      new google.maps.Marker({
+        position: coordinates,
+        map: map,
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+
+
+
+
+
+
+
+07 Working with Maps without a Credit Card
+08 Useful Resources & Links

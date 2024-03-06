@@ -1,0 +1,58 @@
+10 RHCSA RHEL 8 - Create and edit text files - Part 2 - VI
+
+VIM editor
+ > can be found built into the Linux OS
+ > a text editor, similar to Nano
+ > UI contains informations like
+	- the File content
+	- the File name
+	- position of cursor in lines and character (1L, 1C means 1st line, 1st character)
+ > contains two mode
+	1. Command mode
+		- here you can send predefined commands to do operations such as exit, save, etc
+	2. Insert mode
+		- here you can insert content or text to the file being viewed or modified	
+		- to enter this mode, we will need to press "i" while in Command mode
+		- to get out of Insert mode and back to Command mode, press ESC
+
+
+Commands
+vi FILE
+ > used to view and/or edit a FILE
+ > if FILE doesnt exist, when the VI text editor is saved, it will create the said file
+
+
+VIM Editor commands
+:w	Save
+:q	Quit
+:q	Force quit
+:wq	Save and Quit
+:wq! Save and Force Quit
+x	Delete one character in cursor
+u	Undo
+Nx	delete N characters after the cursor (cart with 4x command and cursor at "c" will delete the whole word)
+X	Delete one character before the cursor
+Nx 	delete N characters before the cursor
+dd	Delete the line
+rC	Replaces the character the cursor is pointing to with the C character (ex: rS) will replace the character to "S"
+cw	Change word, deletes the word the cursor is pointing (must be at first char of word), then enter INSERT MODE to replace it
+o	Insert a new line below the  line where the cursor is
+J	Combines the line where the cursor is and the line below into ONE LINE
+NJ	Combines the line where the cursor is and the N lines below it into one line (ex: 6J will combine 1-7 lines into 1)
+U	Undo all edit in a particular line
+$ 	Put cursor at the end of line
+0 	Move to start of line
+h	Move to top line of the file
+m	Move to middle line of the current screen
+g 	Move to last line of the file
+l	Move to last line of the current screen
+/query	Search the lines or words that matches the "query" string after the forward slash
+		Pressing enter will take you to the first result
+		Pressing n will take you to next match
+		Pressing N will take you to previous match
+ZZ	Save and quit
+
+
+TIPS:
+1. You can use the h,j,k,l keys as replacement to arrow keys when moving the cursor
+ 

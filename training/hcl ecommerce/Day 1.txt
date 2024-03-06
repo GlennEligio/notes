@@ -1,0 +1,38 @@
+Introduction
+
+HCL E-commerce
+Instructor: Murtaza, 
+SME for HCL E-commerce: Gaurav
+
+HCL E-commerce
+ > entirely based on Java
+
+Introduction self:
+Name: John Glenn Eligio
+Java Experience:
+1. Web apps
+	> Core Java, JDBC, Spring, J2EE
+	> mostly use Spring for creating webapps
+	> uses Spring Boot to make web development faster
+
+
+Java Recap
+
+Java
+ > OS independent (WORA)
+ > 
+
+Setting up Java
+1. Download Java for specific version (17+)
+2. Put it anywhere
+3. Set up the environment variable for the machine
+	a. JAVA_HOME, location of files for JDK
+	b. PATH, add the bin directory of JDK file
+
+EX:
+JAVA_HOME = C://Program Files/Java/jdk 17
+PATH = $PATH;/$JAVA_HOME/bin
+
+
+String builder
+ > used when we are modifying a String value very often

@@ -1,0 +1,73 @@
+56 RHCSA RHEL 8 - Set enforcing and permissive modes for SELinux
+
+
+SELinux
+ > created by National Security Agency (NSA) of USA
+ > built-in by default into Linux
+ > SELinux defines access controls for the applications, processes, and files on a system. 
+	- It uses security policies, which are a set of rules that tell SELinux what can or can’t be accessed, to enforce the access allowed by a policy. 
+ > When an application or process, known as a subject, makes a request to access an object, like a file, SELinux checks with an access vector cache (AVC), where permissions are cached for subjects and objects.
+ > If SELinux is unable to make a decision about access based on the cached permissions, it sends the request to the security server. 
+	- The security server checks for the security context of the app or process and the file. 
+	- Security context is applied from the SELinux policy database. 
+	- Permission is then granted or denied. 
+
+
+Relevant files
+/var/log/messages
+ > contains all the log messages made by the application
+ > for the SELinux, when a permission is denied, a message with "avc: denied" will be added in this file
+
+
+/etc/selinux/config
+ > contains the configuration of SELinux
+ > two properties are inside
+	1. SELINUX - refers to SELinux mode (permissive, enforcing, disabled)
+	2. SELINUXTYPE - refers to the processes that will be protected under SELinux (targeted, minimum, mls)
+
+
+
+Changing SELinux mode
+ > we can do it in two ways, either execute "setenforce" command or change "/etc/selinux/config" values
+ > after changing the SELinux mode, reboot the system to apply changes made
+
+
+Checking AVC denied logs messages
+ > to view the messages, open the "/var/log/messages" and search "avc: denied"
+
+
+
+Commands
+getenforce
+ > prints the current mode of SELinux
+
+
+setenforce
+ > modify the mode SELinux is running in
+ > sypnosis:
+	$ setenforce [Enforcing|Permissive|1|0]
+ > ex:
+	$ setenforce 1
+		- puts SELinux in Enforcing mode
+	$ setenforce 0
+		- puts SELinux in Permissive mode
+
+
+sestatus
+ > SELinux status tool
+ > prints the SELinux status information 
+
+ex:
+              SELinux status:              enabled
+              SELinuxfs mount:             /selinux
+              SELinux root directory:      /etc/selinux
+              Loaded policy name:          targeted
+              Current mode:                permissive
+              Mode from config file:       enforcing
+              Policy MLS status:           enabled
+              Policy deny_unknown status:  allow
+              Memory protection checking:  actual (secure)
+              Max kernel policy version:   26
+
+
+

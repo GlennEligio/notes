@@ -1,0 +1,596 @@
+Section 13 - Pipelines
+
+83. What is a Jenkinsfile
+
+Jenkinsfile
+ > in layman's term, Jenkinsfile is a template contains instruction to execute
+ > Jenkinsfile is a text file that contains definitions, template, or instructions
+	- it tells a pipeline what it should be doing and what services and plugins it should be interacting with
+	- ex: Deploy code thru Cloud or Onprem using specific plugins. 
+		= Jenkinsfile would contain those plugins, or at least pointers to those plugins, so that Jenkinsfile know how to use that plugin, service, or credentials
+
+
+Sample Jenkinsfile
+
+1	pipeline {
+2		agent any
+		
+3		stages {
+4			stage('Build') {
+5				steps {
+6					echo 'Building..'
+				}
+			}
+			stage('Test') {
+				steps {
+					echo 'Testing..'
+				}
+			}
+			stage('Deploy') {
+				steps {
+					echo 'Deploying....'
+				}
+			}
+		}
+	}
+
+
+Jenkinsfile parts:
+1. pipeline
+ > specify that task that we are trying to accomplish
+ > it can be a CI pipeline or CD pipeline, CI/CD pipeline
+ > ex: build, test, and deploy code
+ 
+2. agent
+ > Build agent
+ > this is the place that runs the pipeline
+ > sometimes the agent one of the nodes available to Jenkins
+ 
+3. stages
+ > inside this, we can specify one or more stage
+ > these defines the work that will be executed in the whole pipeline
+ 
+4. stage
+ > contains a stage
+ > a stage can refer to anything, like:
+	- env: DEV, UAT, PROD
+	- pipeline stage: BUILD, TEST, DEPLOY
+
+5-6. steps
+ > steps are the work that's being done in the pipeline
+ > examples can be:
+	- deploy code to Azure or AWS, or run linter in the source code
+
+
+Multi-stage pipelines
+ > in summary, this is a pipeline whose Jenkinsfile contains multiple stages 
+ > we can setup these stages to be dependent on the previous stage or not
+	- this means that if a stage fails, subsequent stages will not run
+ > alternatively, we could also specify a single Jenkinsfile for each stages
+ > ex: 
+	Multi-stage pipeline
+	Jenkinsfile	
+		> DEV
+		> UAT
+		> PROD
+	
+	Single stage pipelines
+	Jenkinsfile > DEV
+	Jenkinsfile > UAT
+	Jenkinsfile > PROD
+
+
+
+
+
+84. Build a Jenkins file
+
+Sample Jenkinsfile
+1. jenkinsfile-test
+	> pipeline will run on ANY agents
+		- in case no agents or jenkins node setup, it will run on the server where Jenkins is hosted
+	> contains one stage named 'Hello', whose step is that it will echo 'Hello World' string
+
+pipeline {
+	agent any 
+	
+	stages {
+		stage('Hello') {
+			steps {
+				echo 'Hello World'
+			}
+		}
+	}
+}
+
+
+2. go-app-onestage
+	> pipeline will run on ANY agents it can find
+	> contains one stage called 'Build'
+	> inside 'Build' it will pull or clone the code from the GitHub
+
+pipeline {
+	agent any 
+	
+	stages {
+		stage('Build') {
+			steps {
+				// Get some code from a GitHub repository
+				git clone 'https://github.com/AdminTurnedDevOs/go-webapp-sample.git'
+			}
+		}
+	}
+}
+
+
+3. go-app-multistage
+	> will run on ANY agents
+	> contains two stages, 'Dev' and 'UAT'
+	> inside each, we will clone the source code from GitHub repo
+
+
+pipeline {
+	agent any 
+	
+	stages {
+		stage('Dev') {
+			steps {
+				// Get some code from a GitHub repository
+				git clone 'https://github.com/AdminTurnedDevOs/go-webapp-sample.git'
+			}
+		}
+		stage('UAT') {
+			steps {
+				// Get some code from a GitHub repository
+				git clone 'https://github.com/AdminTurnedDevOs/go-webapp-sample.git'
+			}
+		}
+	}
+}
+
+
+
+NOTES:
+1. Specifying 'any' in the 'agent' section means that the pipeline will be executed in any Jenkins node available that have Java installed	
+	> if no Jenkins node setup, it will run on the server where Jenkins is hosted
+
+
+
+
+
+85. Run a sample pipeline
+
+Creating and running a sample pipeline
+1. Go to Jenkins homepage
+2. Click 'New Item' at the left hand side
+3. Select 'Pipeline'
+4. In General section
+	> Description: Deploy our sample pipeline
+	> Pipeline: select 'Hello World' sample pipeline
+5. Run the pipeline
+6. Configure the pipeline by clicking 'Configure' at left side
+7. Change display name in Advanced Project Options
+8. Run the pipeline again
+
+Creating New Items in Jenkins - Options:
+1. Freestyle project
+	> central feature of Jenkins
+	> Jenkins will build your project, combining any SCM with any build system, and this can be even used for something other than software build (does not have to be an application)
+2. Pipeline
+	> Orchestrates long-running activities that can span multiple build agents.
+	> Suitable for building pipelines (formerly known as workflows) and/or organizing complex activities that do not easily fit in free-style job type
+	> basically for creating pipelines
+3. Multi-configuration project
+	> Suitable for projects that need a large number of different configurations, such as testing on multiple environments (ex: DEV, UAT, PROD), platform-specific builds, etc
+4. Folder
+	> Creates a container that stores nested items in it.
+	> Useful for grouping things together.
+	> Unlike view, which is just a filter, a folder creates a separate namespace, so you can have multiple things of the same name as long as they are in different folders
+	> for organizing pipelines
+5. Multibrand Pipeline
+	> Creates a set of Pipeline projects according to detected branches in one SCM repository
+6. Organization Folder
+	> Creates a set of multibranch project subfolders by scanning for repositories
+
+
+Pipeline configurations
+General
+1. Description - string
+	> description of pipeline
+2. Discard old build - bool
+	> not recommended
+	> we prefer to hold on builds for a few weeks at most
+3. Do not allow concurrent builds - bool
+	> depending on how large the organization is
+	> with multiple teams, we may want to build a pipeline multiple times or at the same time
+	> ultimately depends on the pipeline itself
+4. Do not allow the pipeline to resume if the controller restarts - bool
+	> specifies that if Jenkins restarted, it will not allow the pipeline to resume
+5. GitHub project
+	> clicking this option will open a window to specify the project URL
+6. Pipeline speed/durability override - bool
+7. Preserve stashes from completed builds - bool
+8. This project is parameterized - bool
+	> when checked, allow us to prompt users for one or more inputs
+9. Throttle builds - bool
+	> enforces a minimum time between builds based on the desired maximum rate
+	> allows concurrent build, but slows it down
+
+
+Build Triggers
+1. Build after other projects are built - bool
+	> provides a dependency option to another project
+2. Build periodically
+	> provides a cron-like feature to periodically execute this project
+	> similar to a cron-job
+3. GitHub hook trigger for GITScm polling
+	> basically a GitHub push hook, if a specific action is done in a GitHub repo, it will trigger a build (ex: push)
+4. Poll SCM
+5. Disable this project - bool
+	> if we dont want this pipeline to run at all
+6. Quiet period
+	> this means that the builds will be triggered, but it will be added to a queue and then trigger
+7. Trigger builds remotely (e.g., from scripts)
+
+
+Advanced Project Options
+1. Display name
+	> display name in the Jenkins pipeline window
+	
+	
+Pipeline
+ > the actual pipeline that will be executed
+ > several sample template is available for running
+
+
+NOTE:
+1. Groovy is a programming language which offers the ability to do practically anthing Java can do including: Create sub-processes and execute arbitrary commands on jenkins controller and agents. It can even read files in which the Jenkins controller has access to on the host (like /etc/passwd)
+	> we can think of Groovy as an extension of Java
+
+
+
+
+
+86. Build a multistage pipeline
+
+Build a multistage pipeline
+1. Creating a Jenkinsfile pipeline with more than one stage
+2. Build/Execute the multistage pipeline
+
+
+Creating a Jenkinsfile pipeline with more than one stage
+1. Go to the pipeline we've created earlier
+2. Configure the pipeline
+3. Change the pipeline script with the one below
+
+pipeline {
+    agent any
+
+    stages {
+        stage('DEV') {
+            steps {
+                echo 'Building code in DEV env'
+            }
+        }
+        stage('UAT') {
+            steps {
+                echo 'Building code in UAT env'
+            }
+        }
+    }
+}
+
+
+Build/Execute the multistage pipeline
+1. Run the modified Jenkins job
+2. Observe if there will be new stage to appear
+
+
+
+
+
+87. Build a CI pipeline
+
+Prerequisite:
+1. Go plugin installed and configured
+
+Installing Go plugin
+1. Search Go plugin and install
+
+Configuring Go plugin
+1. Go to Manage Jenkins -> System Configuration -> Tools
+2. Go to Go section, and 'Add Go'
+3. For name, use the same name as the version name (ex: 1.21.4 for Go 1.21.4)
+4. Check install automatically
+
+
+Steps - Build a CI pipeline
+1. Create a new Jenkins pipeline
+2. Name the Jenkins pipeline 'go-ci-test'
+3. For the Jenkinsfile script, use the one below
+	> uses any agent available
+		- since no node setup, it will use server hosting the Jenkins
+	> in tools, use 'go' and specify the name we've specify in the Go plugin configuration
+	> for environment, specify GO111MODULE to be 'on'
+		- this value enables the Go module system and uses modules to manage dependencies
+		- in this mode, the go commands looks for the go.mod file in the project directory to determine the required dependencies and their version
+		- if the file exists, the command downloads the required dependencies and stores them in a local cache, which can be shared between projects
+	> for stages, create one stage named 'Test'
+		- here, we will first get the source code
+		- then, using go, we will run the test in the current directory, and its subdirectories (denoted by ./...)
+
+pipeline {
+	agent any
+	
+	// Ensure the desired Go version is installed for all stages,
+    // using the name defined in the Global Tool Configuration
+	tools {
+		go '1.21.4'
+	}
+	
+	environment {
+		GO111MODULE='on'
+		CGO_ENABLED=1
+	}
+	
+	stages {
+		stage('Test') {
+			steps {
+				git 'https://github.com/AdminTurnedDevops/go-webapp-sample.git'
+				sh 'go test ./...'
+			}
+		}
+	}
+}
+
+
+4. Save the pipeline
+5. Build the pipeline
+
+
+Troubleshooting:
+1. 2023-11-28T14:58:13.962Z	ERROR	logger/gormlogger.go:41	[gorm] failed to initialize database, got error %v, /var/lib/jenkins/workspace/go-ci-test/repository/repository.go:80%!(EXTRA *errors.errorString=Binary was compiled with 'CGO_ENABLED=0', go-sqlite3 requires cgo to work. This is a stub)
+	> add CGO_ENABLED=1 as one of the environments
+
+2. cgo: C compiler "gcc" not found: exec: "gcc": executable file not found in $PATH
+	> install gcc in the machine
+		$ sudo apt install gcc
+	> or add new stage or step for that
+		- NOPE, can't install package in Jenkins pipeline, need to configure the machine itself
+
+
+NOTES:
+1. With regards to needed dependencies/packages/libraries needed to execute each pipeline, we need to configure the machine first with those. We can't install them in them in the pipeline itself
+
+
+
+
+
+88. Building a CD pipeline
+
+Prerequisite:
+1. Docker Jenkins plugins installed
+	> Docker API Plugin
+	> Docker Commons Plugin
+	> Docker Pipeline
+	> Docker plugin
+2. Docker engine installed in build agent machines
+	> https://docs.docker.com/engine/install/ubuntu/
+	
+	
+Steps - Build a CD pipeline
+1. Create a new Jenkins pipeline
+2. Name the Jenkins pipeline 'go-cd-docker'
+3. For the Jenkinsfile script, use the one below
+	> uses any agent available
+		- since no node setup, it will use server hosting the Jenkins
+	> in tools, use 'go' and specify the name we've specify in the Go plugin configuration
+	> for environment, specify GO111MODULE to be 'on'
+		- this value enables the Go module system and uses modules to manage dependencies
+		- in this mode, the go commands looks for the go.mod file in the project directory to determine the required dependencies and their version
+		- if the file exists, the command downloads the required dependencies and stores them in a local cache, which can be shared between projects
+	> for stages, create two stage, Development and 'Building our image'
+		- here, we will first get the source code
+		- then in other stage, we will build a docker image using the source code
+
+pipeline {
+	agent any
+	
+	tools {
+		go '1.21.4'
+	}
+	
+	environment {
+		GO111MODULE='on'
+		CGO_ENABLED=1
+	}
+	
+	stages {
+		stage('Development') {
+			steps {
+				git 'https://github.com/AdminTurnedDevops/go-webapp-sample.git'
+			}
+		}
+		stage ('Building our image') {
+			steps {
+				script {
+					app = docker.build("adminturneddevops/go-webapp-sample")
+				}
+			}
+		}
+	}
+}
+
+4. Run the pipeline and check the result
+
+
+ERRORS:
+1. ERROR: permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/_ping": dial unix /var/run/docker.sock: connect: permission denied
+	> add 'jenkins' user in the 'docker' group in ubuntu, then reboot the machine
+		$  sudo usermod -aG docker jenkins
+	> 'docker' group is automatically created when Docker is installed
+
+
+
+
+
+89. Full pipeline deployment
+
+Prerequisite:
+1. Go plugin
+2. gcc library installed in Linux
+3. Go plugin tool configured
+
+Steps: Full pipeline deployment
+1. Create new item - Pipeline
+2. Name it anything
+	> take note of this name since we will be referencing it later
+3. For the pipeline script use the one below
+	> in the 'Run' stage, we will reference the pipeline name as folder name under /var/lib/jenkins/workspace dir
+4. Run the pipeline
+
+pipeline {
+	agent any
+	
+	tools {
+		go '1.21.4'
+	}
+	
+	environment {
+		GO111MODULE='on'
+		CGO_ENABLED=1
+	}
+	
+	stages {
+		stage('Test') {
+			steps {
+				git 'https://github.com/AdminTurnedDevOps/go-webapp-sample.git'
+				sh 'go test ./...'
+			}
+		}
+		stage ('Build') {
+			steps {
+				git 'https://github.com/AdminTurnedDevOps/go-webapp-sample.git'
+				sh 'go build .'
+			}
+		}
+		stage ('Run') {
+			steps {
+				sh 'cd /var/lib/jenkins/workspace/go-full-pipeline && go-webapp-sample &'
+			}
+		}
+	}
+}
+
+
+Troubleshooting
+1. Go webapp sample not accessible
+	> change the sh command executed in Run stage
+		- from: sh 'cd /var/lib/jenkins/workspace/go-full-pipeline && go-webapp-sample &'
+		- to: sh 'cd /var/lib/jenkins/workspace/go-full-pipeline && ./go-webapp-sample'
+
+
+
+
+
+
+90. Building a CD pipeline
+
+
+Q1: Let us now explore monitoring with Jenkins. To do this we have installed Prometheus and Grafana on the same machine called jenkins-server
+As before, you can use the standard admin credentials to login to the Jenkins UI:
+	Username: admin
+	Password: Adm!n321
+You can also access the Prometheus UI by clicking on the Prometheus button located above the terminal.
+
+Q2: To setup monitoring with prometheus in Jenkins, please install the plugins mentioned below.
+You need to install Prometheus metrics plugin, you can refer to the plugin documentation by clicking on the Prometheus Docs button located above the terminal.
+Once the plugins have been downloaded, restart Jenkins.
+S: Install Prometheus metrics plugin. Docs is in https://plugins.jenkins.io/prometheus/
+
+Q3: Which endpoint is the prometheus plugin exposed on by default?
+A: Jenkins Prometheus Plugin expose an endpoint (default /prometheus) with metrics where a Prometheus Server can scrape.
+N: This is different from Prometheus server. The /prometheus endpoint is just for exposing Jenkins metrics for Prometheus to scrape
+
+Q4: Navigate to the endpoint /prometheus/ and you should be able to see the output generated by the Prometheus plugin.
+As an example, if your Jenkins URL is https://8085-port-acc228e844d64736.labs.kodekloud.com then you can view the metrics at the URL: https://8085-port-acc228e844d64736.labs.kodekloud.com/prometheus/
+
+Q5: Navigate to the Prometheus UI and answer the below questions.
+Which target(s) have been configured within the Prometheus configuration?
+S: Click the Prometheus link above the terminal
+1. In the Prometheus homepage, click Status -> Target
+2. List the targets entries
+
+Q6: Let us now add a scrape config for Jenkins. Update the prometheus configuration file located at /etc/prometheus/prometheus.yml and add the following config under the scrape_configs section:
+
+- job_name: 'Jenkins'
+    metrics_path: /prometheus/
+    static_configs:
+      - targets: ['localhost:8085']
+
+Once the file is updated, restart prometheus using the below command:
+service prometheus restart 
+
+Wait for few seconds before submitting your question.
+
+Note: Here localhost:8085 refers to our Jenkins Controller and the /prometheus/ metrics path is exposed by the prometheus-metrics plugin that we installed previously`
+S: Edit the /etc/prometheus/prometheus.yml file and add Jenkins as another target for Prometheus to scrape
+
+
+Q7: To see the status of the configuration we used within /etc/prometheus/prometheus.yml file, refresh the Prometheus UI and then navigate to the drop down button called Status and click on Configuration.
+Here, you should be able to see the global configuration and configuration for specific targets such as Prometheus and Jenkins.
+S: In Prometheus website, check the Target's list on Prometheus homepage -> Status -> Target
+
+
+Q8: Now lets test out some queries in Prometheus. Go back to the Prometheus home page (by clicking on the Prometheus button within the UI) and execute the following query:
+
+jenkins_job_count_value
+
+What value you got in the output?
+S: Go to homepage and search 'jenkins_job_count_value'
+A: 0
+
+
+Q9: How about now? We just added new jobs.
+Execute the same query again and check if the value changes.
+	jenkins_job_count_value
+Note: Close and open the Prometheus again if no changes are reflecting and wait a little as sometimes changes can take few seconds to reflect.
+A: 2
+
+
+Q10: Let us see now, how we can use Grafana to visualise Jenkins metrics. Grafana is already installed and can be accessed using Grafana button on the top of the terminal.
+
+Grafana credentials are:
+UserName: admin
+Password: admin
+
+Note:Set a new password admin123 for the admin user.
+
+First of all, let us add Prometheus datasource in Grafana. Follow below given steps for that:
+-> Login into Grafana and click on Add your first datasource.
+-> Then select Prometheus and enter http://localhost:9090 in the URL box.
+-> Finally click on Save and test button at the bottom.
+-> Click on Grafana logo to move back to the dashboard.
+
+
+Q11: Let us create a dashboard in Grafana now to visualise the total number of Jenkins jobs.
+
+Use same Grafana credentials to login:
+UserName: admin
+Password: admin123
+
+Follow below given steps to create a dashboard in Grafana:
+-> Login into Grafana and click on Create your first dashboard.
+-> Then click on Add visualization and at the bottom enter jenkins_job_count_value in the Metrics browser box.
+	= run a query to see the current metrics values
+-> Make sure Prometheus is selected as the Data source.
+-> On the right side under Panel options, enter Jenkins Jobs Count in Title.
+-> Click on Apply button on the top right corner.
+-> Finally click on the Save dashboard button (second button on the top right).
+-> Enter dashboard name as Jenkins and save it.
+
+
+Q12: As per the Grafana dashboard, how many Jenkins jobs are there?
+Make sure to look for the latest metrics in the dashboard. For that click on the time navigator option on the top right and then select Last 5 minutes.
+Note: Close and open the Grafana again if no changes are reflecting and wait a little as sometimes changes can take few seconds to reflect.
+A: 3

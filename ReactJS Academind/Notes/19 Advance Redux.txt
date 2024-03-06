@@ -1,0 +1,694 @@
+19 Advance Redux
+
+Contents:
+001 Module Introduction
+002 Redux & Side Effect (and Asynchronous Code)
+003 Refresher Practice Part 1
+004 Refresher Practice Part 2
+005 Redux & Async Code
+006 Frontend Code vs Backend Code
+007 Where To Put Our Logic
+008 Using useEffect with Redux
+009 A Problem with useEffect()
+010 Handling Http States & Feedback with Redux
+011 Using an Action Creator Thunk
+012 Getting Started with Fetching Data
+013 Finalizing the Fetching Logic
+014 Exploring The Redux DevTools
+015 Summary
+
+
+
+001 Module Introduction
+
+Module Content
+1. Handling Async Tasks With Redux
+2. Where to put our Code
+3. The Redux DevTools
+
+
+
+
+
+
+
+
+002 Redux & Side Effect (and Asynchronous Code)
+
+Side Effects, Async Tasks & Redux
+
+Reducer Function
+ > Reducer must be pure, side-effect free, and synchronous functions
+ > These functions must produce the SAME OUTPUT if we pass the SAME INPUT with SAME VALUES
+
+Where to execute side-effects and async tasks?
+1. Inside the components (e.g. useEffect())
+2. Inside the action creators function
+	> Redux toolkit gives us the ability to create our own action creators
+	> Redux has the solution to allows us to perform side effects and run async tasks as part of this action creators
+
+
+
+
+
+
+
+
+
+003 Refresher Practice Part 1
+004 Refresher Practice Part 2
+
+NOTES:
+1. Different State Slice for different uses
+    	> UI Slice for UI related uses (showing, toggling UI components)
+2. Array.prototype.find() can be used to find an Object in an array
+	> takes a function, and 
+	> this function takes the current item as parameter, 
+	> and inside the function, we will write a condition which the item we find must meet
+
+
+
+
+
+
+
+
+
+
+
+005 Redux & Async Code
+
+NOTES:
+1. DO NOT PUT Side effects or Asynchronous tasks in Reducer functions
+	> these async tasks includes fetching data in some remote backend
+
+
+
+
+
+
+
+
+006 Frontend Code vs Backend Code
+
+TWO Approaches with Backend API and Frontend React App
+1. Backend API DOES a lot of work
+	> in this case, we will do more work with Backend API
+		- this means that we are not only storing data, but we are also TRANSFORMING IT
+	> with this approach, the Frontend will only send data & receive it, and it will directly use the response as is
+		- this would result in fewer code on the Frondend, ahead of the reducer
+2. Backend API DOES NOT a lot of work
+	> in this case, we will do less work with Backend API
+		- this means that we are only STORING data in the backend api
+ 	> with this approach, the Frontend will not only send the data, but also transform it by itself
+		- this would result in more code on the fronend, ahead of the reducer
+
+
+
+
+
+
+
+
+007 Where To Put Our Logic
+
+Where to Put the Side-effects and Async task codes?
+ > to determine where to put our code, we must check if the code is
+	1. Synchronous, side-effect free code (i.e. data transformations)
+		- for this, PREFER Reducers
+		- avoid Action Creators or Components
+	2. Asynchronous code or code with side effects
+		- for this, PREFER Action Creators or Components
+		- NEVER use Reducers
+
+
+
+
+
+
+
+
+
+008 Using useEffect with Redux
+
+Using useEffect with Redux
+ > for adding side-effect whenever Redux State changes, we can use the useEffect hook
+ > for this to work, we can add the Redux State (or its State slices) in the dependency array of the useEffect
+
+EX:
+In this example, we want to put and update the Cart State Slice in backend API whenever it changes in Redux Store.
+We can see the useEffect() being used, and the cart (which is the Cart State slice) is added as the useEffect's dependency array
+
+function App() {
+  const showCart = useSelector((state) => state.ui.cartIsVisible);
+  const cart = useSelector((state) => state.cart);
+
+  useEffect(() => {
+    fetch("https://react-http-83f5f-default-rtdb.firebaseio.com/cart.json", {
+      method: "PUT",
+      body: JSON.stringify(cart),
+    });
+  }, [cart]);
+
+  return (
+    <Layout>
+      {showCart && <Cart />}
+      <Products />
+    </Layout>
+  );
+}
+
+
+
+
+
+
+
+009 A Problem with useEffect()
+
+We face one problem when using useEffect the way we currently do it: 
+ > It will execute when our app starts.
+Why is this an issue?
+ > It's a problem because this will send the initial (i.e. empty) cart to our backend and overwrite any data stored there.
+We'll fix this over the next lectures, I just wanted to point it out here!
+
+
+
+
+
+
+
+010 Handling Http States & Feedback with Redux
+
+Handling Http States & Feedback with Redux
+ > earlier in the course, we used Functional Hooks to manage httpStates and Feedback
+ > but now, same with handling Cart UI via toggling it, we can also use Redux to manage Http States & Feedback
+ > in our case, we can add a property in UI State Slice to hold data with regards to Notification that we will use to provide feedback in Http request like:
+	- Status
+	- Message
+	- Title
+
+
+EX:
+// ui.js
+/*
+  Here, we can see the uiState slice having a property of "notification" which is initially set to null.
+  Then after a "showNotification" Action is set, we will set its value to an Object with properties of status, title, and message
+*/
+
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialUiState = {
+  cartIsVisible: false,
+  notification: null,
+};
+
+const uiSlice = createSlice({
+  name: "ui",
+  initialState: initialUiState,
+  reducers: {
+    toggle(state) {
+      state.cartIsVisible = !state.cartIsVisible;
+    },
+    showNotification(state, action) {
+      state.notification = {
+        status: action.payload.status,
+        message: action.payload.message,
+        title: action.payload.title,
+      };
+    },
+  },
+});
+
+export default uiSlice.reducer;
+export const uiActions = uiSlice.actions;
+
+
+// App.js
+/*
+  Here in App.js, we can see the "notification" property in UI State slice in action
+  First, when we imported the uiActions to access "showNotification" ActionCreator function
+  Then, we access the "notification" property in the UI State slice using useSelector hook
+  Inside the useEffect, we created a logic to send the Cart Data in the Firebase backend. And in the process, we dispatch showNotification Action with different payloads.
+  Using the "notification" property from UI State Slice, we then display the Notification component with different props values-
+*/
+
+let isInitial = true;
+
+function App() {
+  const showCart = useSelector((state) => state.ui.cartIsVisible);
+  const cart = useSelector((state) => state.cart);
+  const notification = useSelector((state) => state.ui.notification);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const sendCartData = async () => {
+      dispatch(
+        uiActions.showNotification({
+          status: "pending",
+          title: "Sending...",
+          message: "Sending cart data",
+        })
+      );
+
+      const response = await fetch(
+        "https://react-http-83f5f-default-rtdb.firebaseio.com/cart.json",
+        {
+          method: "PUT",
+          body: JSON.stringify(cart),
+        }
+      );
+
+      if (!response.ok) {
+        dispatch(
+          uiActions.showNotification({
+            status: "error",
+            title: "Error!",
+            message: "Sending cart data failed",
+          })
+        );
+      }
+
+      dispatch(
+        uiActions.showNotification({
+          status: "success",
+          title: "Success!",
+          message: "Send cart data successfully!",
+        })
+      );
+    };
+
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+
+    sendCartData().catch((error) => {
+      dispatch(
+        uiActions.showNotification({
+          status: "error",
+          title: "Error!",
+          message: error.message,
+        })
+      );
+    });
+  }, [cart, dispatch]);
+
+  return (
+    <Fragment>
+      {notification && (
+        <Notification
+          status={notification.status}
+          message={notification.message}
+          title={notification.title}
+        />
+      )}
+      <Layout>
+        {showCart && <Cart />}
+        <Products />
+      </Layout>
+    </Fragment>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+
+
+
+011 Using an Action Creator Thunk
+
+What is a "Thunk"?
+ > a function that delays an action until later
+ > in our case, an Action creator function does NOT return the action itself but another function which eventually returns the Action
+ > AND, this returned function CAN ACCESS the dispatch() function in order to dispatch Actions inside the Action Creator
+	- this means that inside the function, we can do WHATEVER WE WANT (i.e. side effects and async tasks like fetching data from remote backend api), and then call a dispatch() action
+	- this returned function can also be configured to be an asynchronous function 
+
+How Action Creator Thunk works?
+ > typically, the Action Creator function returns an Action Object
+ > but with Redux, the dispatch() function can also accept Action Creator function that returns another function
+ > the Redux then executes this returned function automatically
+	- this function also receives the dispatch function as one of its parameters
+
+EX:
+// Normal Action Creator function
+const actionName = (payload) => {
+  return { type: SOME_UNIQUE_IDENTIFIER, payload: payload}
+}
+
+// Action Creator that returns another function
+const actionName = (payload) => {
+  return async (dispatch) => {
+    // some side effect and async task logic
+    // ex: await fetch( url, config )
+    dispatch (actionCreator());
+  }
+} 
+
+Using an Action Creator Thunk
+ > earlier, we added a side effect and performed async tasks using the useEffect hook
+ > now, we can create an Action Creator Thunk, where inside of the function that it return, we will do the side effects and async task before dispatching an Action
+
+EX:
+// Action Creator Thunk
+// This function contains the async task where we update Cart in the Firebase database
+export const sendCartData = (cart) => {
+  return async (dispatch) => {
+    dispatch(
+      uiActions.showNotification({
+        status: "pending",
+        title: "Sending...",
+        message: "Sending cart data",
+      })
+    );
+
+    const sendRequest = async () => {
+      dispatch(
+        uiActions.showNotification({
+          status: "pending",
+          title: "Sending...",
+          message: "Sending cart data",
+        })
+      );
+
+      const response = await fetch(
+        "https://react-http-83f5f-default-rtdb.firebaseio.com/cart.json",
+        {
+          method: "PUT",
+          body: JSON.stringify(cart),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
+    };
+
+    try {
+      await sendRequest();
+
+      dispatch(
+        uiActions.showNotification({
+          status: "success",
+          title: "Success!",
+          message: "Send cart data successfully!",
+        })
+      );
+    } catch (error) {
+      dispatch(
+        uiActions.showNotification({
+          status: "error",
+          title: "Error!",
+          message: error.message,
+        })
+      );
+    }
+  };
+};
+
+
+// Dispatching an Action Creator Thunk
+// Here, we can see in useEffect hook that we dispatched in Action Creator thunk
+import Cart from "./components/Cart/Cart";
+import Layout from "./components/Layout/Layout";
+import Products from "./components/Shop/Products";
+import Notification from "./components/UI/Notification";
+import { Fragment, useEffect } from "react";
+import { sendCartData } from "./store/cart";
+import { useSelector, useDispatch } from "react-redux";
+
+let isInitial = true;
+
+function App() {
+  const showCart = useSelector((state) => state.ui.cartIsVisible);
+  const cart = useSelector((state) => state.cart);
+  const notification = useSelector((state) => state.ui.notification);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+
+    dispatch(sendCartData(cart));
+  }, [cart, dispatch]);
+
+  return (
+    <Fragment>
+      {notification && (
+        <Notification
+          status={notification.status}
+          message={notification.message}
+          title={notification.title}
+        />
+      )}
+      <Layout>
+        {showCart && <Cart />}
+        <Products />
+      </Layout>
+    </Fragment>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+
+
+
+
+012 Getting Started with Fetching Data
+
+Fetching Data
+ > fetching data from a remote backend api is an asynchronous task
+ > we have two options as to where we can write this code
+	1. Component
+	2. Action Creator Thunk
+ > for now, we will write it inside the Action Creator thunk
+	- we will first send a GET request to fetch the Cart data in Firebase
+	- then if request is successful, dispatch a "replaceCart" Action to populate Cart in React app
+	- if not, dispatch a "showNotification" to notify the user of error
+ > then inside the Component where we will display the Cart, we will do the following
+	1. Create another useEffect
+		- this time, no dependency array
+	2. Dispatch an Action using the Action Creator Thunk that we created for fetching Cart
+
+EX:
+// new Action Creator Thunk for fetching Cart data in Firebase
+export const fetchCartData = () => {
+  return async (dispatch) => {
+    const fetchData = async () => {
+      const response = await fetch(
+        "https://react-http-83f5f-default-rtdb.firebaseio.com/cart.json"
+      );
+
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
+
+      const data = await response.json();
+      return data;
+    };
+
+    try {
+      const cartData = await fetchData();
+      dispatch(cartActions.replaceCart(cartData));
+    } catch (error) {
+      dispatch(
+        uiActions.showNotification({
+          status: "error",
+          title: "Error!",
+          message: error.message,
+        })
+      );
+    }
+  };
+};
+
+
+// using the fetchCartData Action Creator Thunk inside useEffect in App.js 
+  useEffect(() => {
+    dispatch(fetchCartData());
+  }, [dispatch]);
+
+
+
+
+
+
+
+
+
+013 Finalizing the Fetching Logic
+
+Finalizing the Fetching Logic
+ > right now, whenever we fetch the Cart data from Firebase through App Component's useEffect, it updates the Cart State in React app
+ > but, this Cart State change also affects the other useEffect of App Component for sending Cart data to Firebase
+	- this is because the Cart State from Redux is included in its dependency array
+
+Fixing the issue
+1. Add a "changed" property in Cart State
+ 	> signifies if User CHANGED the Cart State in React
+	> this will be false by default
+ 	> will only change to true when the User changes the Cart State through Actions like
+		- addItemToCart
+		- removeItemToCart
+
+EX:
+// Cart slice
+const cartSlice = createSlice({
+  name: "cart",
+  initialState: {
+    items: [],
+    totalQuantity: 0,
+    changed: false, 	// new property
+  },
+  reducers: {
+    replaceCart(state, action) {
+      state.items = action.payload.items;
+      state.totalQuantity = action.payload.totalQuantity;
+    },
+    addItemFromCart(state, action) {
+      const newItem = action.payload;
+      const existingItem = state.items.find((item) => item.id === newItem.id);
+      state.totalQuantity++;
+      state.changed = true;	// change value of changed to true
+      if (!existingItem) {
+        state.items.push({
+          id: newItem.id,
+          price: newItem.price,
+          quantity: 1,
+          totalPrice: newItem.price,
+          name: newItem.title,
+        });
+      } else {
+        existingItem.quantity++;
+        existingItem.totalPrice = existingItem.totalPrice + newItem.price;
+      }
+    },
+    removeItemFromCart(state, action) {
+      const itemId = action.payload;
+      const existingItem = state.items.find((item) => item.id === itemId);
+      state.totalQuantity--;
+      state.changed = true;	// change value of changed to true
+      if (existingItem.quantity === 1) {
+        state.items = state.items.filter((item) => item.id !== itemId);
+      } else {
+        existingItem.quantity--;
+        existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
+      }
+    },
+    toggleCart(state) {
+      state.showCart = !state.showCart;
+    },
+  },
+});
+
+2. Inside useEffect in App Component used to send Cart Data in Firebase, only dispatch the sendCartData Action IF "changed" property in Cart State slice is TRUE
+	> exclude the "changed" property to the Cart Data that we will send to Firebase
+
+// App.js
+  useEffect(() => {
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+
+    // checking "changed" property in Cart State
+    if (cart.changed) {
+      dispatch(
+        sendCartData({
+          items: cart.items,
+          totalQuantity: cart.totalQuantity,
+        })
+      );
+    }
+  }, [cart, dispatch]);
+
+
+4. Also, when we fetch Cart Data from Firebase, check if the "items" key is undefined
+	> reason is that when we remove all items in the Cart in React app (no items), then the "items" becomes undefined
+	> this will cause issues especially when we use it to display UI elements
+
+EX:
+// cart-actions.js
+export const fetchCartData = () => {
+  return async (dispatch) => {
+    const fetchData = async () => {
+      const response = await fetch(
+        "https://react-http-83f5f-default-rtdb.firebaseio.com/cart.json"
+      );
+
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
+
+      const data = await response.json();
+      return data;
+    };
+
+    try {
+      const cartData = await fetchData();
+      dispatch(
+        cartActions.replaceCart({
+          items: cartData.items || [],	// checking if cartData.items is undefined, if it is, then assign empty array as value
+          totalQuantity: cartData.totalQuantity,
+        })
+      );
+    } catch (error) {
+      dispatch(
+        uiActions.showNotification({
+          status: "error",
+          title: "Error!",
+          message: error.message,
+        })
+      );
+    }
+  };
+};
+
+
+
+
+
+
+
+014 Exploring The Redux DevTools
+
+Redux DevTools
+ > a developer tools to power-up Redux development workflow or any other architecture which handles the state change
+ > can be used as 
+	- a browser extension,
+	- a standalone app
+	- a React component integrated in the client app
+ 
+Redux DevTools usage
+1. Inspect Redux Actions dispatched
+	> we can also jump to the State of React App in the specific time where Action is dispatch
+2. Check Action information
+	> these includes
+		- information about the Action (type and payload)
+		- the current State after sending that Action
+		- changes to the State		
+		
+
+
+
+
+
+
+
+
+
+015 Summary

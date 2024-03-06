@@ -1,0 +1,40 @@
+105 Athena Overview
+
+Amazon Athena
+ > Serverless query service to perform analytics against S3 objects
+ > Uses standard SQL language to query the files
+ > Supports CSV, JSON, ORC, Avro, and Parquest
+ > Athena is build on Presto
+ > Pricing: $5.00 per TB of data scanned
+ > Use compressed or columnar data for cost-savings (less scan)
+ > Use cases:
+	- Business intelligence
+	- Analytics
+	- Reporting, analyze & query VPC Flows Logs, ELB logs, CloudTrail trails, etc
+
+
+
+Diagram
+
+Users
+ |
+ | Load data
+ |
+ v
+S3 Bucket
+ | 
+ | Query and Analyze
+ |
+ v
+Amazon Athena
+ |
+ | Reporting & Dashboard
+ |
+ v
+Amazon QuickSight
+
+
+
+NOTE:
+1. Exam tip: Analyze data in S3 using serverless SQL, use Athena
+

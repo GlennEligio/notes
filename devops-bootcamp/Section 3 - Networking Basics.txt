@@ -1,0 +1,521 @@
+Section 3: Networking Basics
+
+17. Networking Basics
+
+ADDITIONAL RESOURCE:
+https://access.redhat.com/sites/default/files/attachments/rh_ip_command_cheatsheet_1214_jcs_print.pdf
+
+Networking Pre-Requisites
+1. Switching
+2. Routing
+3. Default Gateway
+4. DNS Configurations on Linux
+
+Problem 1: How can two computers/systems communicate with each other?
+
+Solution: Switch
+
+Switching
+ > Switching is a process to forward packets coming in from one port to a port leading towards the destination
+
+Switch
+ > Switch is a component used to connect one system to another, created a Network that contains the said systems in the process
+ > after connecting the systems to a switch, we can check the interfaces for the host using the "ip link" command
+	- $ ip link
+ > to assign the each system with an IP address on the same network, we can use the command "ip addr add" command
+	- $ ip addr add 192.168.1.10/24 dev eth0
+ > once the links are up, and the IP addresses are assigned to each system, they can now communicate with each other (ex: via ping command)
+ > NOTE: The switch can only enable communication within a network, which means it can receive packets from a host on the network and deliver it to other systems within the same network
+ 
+Current diagram
+
+System A	
+192.168.1.0
+	|
+	--------> Switch
+	--------> 192.168.1.0
+	|
+System B
+192.168.1.11
+
+
+
+
+
+Problem 2: How can computers/systems from two different networks communicate with each other?
+
+Solution: Router / Routing
+
+Router
+ > Router help connects two network together
+ > It is an intelligent device. You can think of it as another server with many network ports
+ > Since it connects to the two separate networks, it gets two IPS assigned, one on each network
+	- ex: 192.168.1.1 assigned for Network 1, and 192.168.2.1 assigned for Network 2
+	
+	
+Current diagram
+
+System A															System C
+192.168.1.10														192.168.2.10
+	|						192.168.1.1			192.168.2.1					|
+	--------> Switch		-----------> Router <---------- Switch	<-------
+	--------> 192.168.1.0								  192.168.2.0		|
+	|																		|	
+System B															System D
+192.168.1.11														192.168.2.11
+
+
+
+
+Problem 3: If a system needs to send package to another system of different network, and their networks are connected to a common router, how can the system know where the router is on the network?
+
+Solution: Gateways
+
+Gateways
+ > To have a system be able to send packet to another system in different network, we need to configure the system/s with a gateway or a route. 
+ > using an analogy, you can think of a Network as a room, and the gateway being the door to the ourside world, to the other networks, or to the internet
+	- the systems need to know here that door is, to go through that
+ > to see the existing routing configuration on a system, run the route command
+	- $ route
+ > to configure a gateway on a system to reach the systems in another network, run the "ip route add" command
+	- $ ip route add 192.168.2.0/24 via 192.168.1.1
+ > NOTE:
+	- This gateway configuration MUST BE configured in ALL systems within the networks connected in a common router. For example, system C must configure a gateway to connect to system ADDITIONAL
+		- $ ip route add 192.168.1.0/24 via 192.168.2.1
+
+
+
+
+Problem 4: If we we're to route all traffic for the ip address on INTERNET, how can we configure the route where we don't need to specify each ip addresses of INTERNET in the routing table.
+
+Solution: Default Gateways
+
+Default Gateways
+ > Default gateways is the router used to route any request to the network you don't know to (ex: INTERNET)
+ > to add a route in the IP routing table to the default gateway, use the same command "ip route add", but instead of a specific network address, use "default"
+	- you can also use "0.0.0.0", which is used to denote 'any networks'
+ > '0.0.0.0' as the GATEWAY_ADDRESS in the 'ip route add' command means that it does not need a gateway
+	- ex: for System C, to access any device in network 192.168.2.0 like System D, it does not need a gateway since they share the same network
+	
+	
+Example output: route
+Kernel IP routing table
+Destination 	Gateway			Genmark			Flags	Metrics	Ref	Use	Iface
+default			192.168.2.1		255.255.255.0	UG		0		0	0	eth0		
+192.168.1.0		192.168.2.2		255.255.255.0	UG		0		0	0	eth0
+
+
+
+System A															System C
+192.168.1.10														192.168.2.10
+	|						192.168.1.1			192.168.2.2					|
+	--------> Switch		-----------> Router <---------- Switch	<-------
+	--------> 192.168.1.0								  192.168.2.0		|
+	|														|				|	
+System B													|		System D
+192.168.1.11												|	192.168.2.11
+															|
+												192.168.2.1	|
+										Router	<------------
+											|
+											|
+											V
+										Internet 
+										172.217.194.0
+										216.134.45.0
+										16.44.53.0
+
+
+
+Problem 5: How can we use setup a Linux host as a router?
+
+Solution: Setup Linux host so that it can send packets from one network interface to another
+
+Current setup:
+System A															System C
+192.168.1.5														192.168.2.5
+	|					192.168.1.6		192.168.2.6						|
+	--------> Switch <---------- System B ----------> Switch <-----------
+
+
+Setting up Linux host as a router
+ > Example configuration
+	- three systems, system A, B, and C
+	- systems A and B are connected in a common switch with network address 192.168.1.0
+		= system A ip address in this network - 192.168.1.5
+		= system B ip address in thsi network - 192.168.1.6
+	- systems B and C are connected in a common switch with network address 192.168.2.0
+		= system B ip address in this network - 192.168.2.6
+		= system C ip address in this network - 192.168.2.5
+ > our goal is to be able to have system A and system C communicate with each other
+ > to do this, we first need to configure the system A and C, where we will add a route in their IP routing table, where the network address is the network of the other system, and the gateway being the ip address of system B in their respective network
+	- In system A, we will add this route
+		$ ip route 192.168.2.0/24 via 192.168.1.6
+		- we will route all request to network 192.168.2.0 where system C belongs through the ip address assigned to system B on network 192.168.1.0 where system A belongs
+	- In system C, we will add this route
+		$ ip route 192.168.1.0/24 via 192.168.2.6
+		- we will route all request to network 192.168.1.0 where system A belongs through the ip address assigned to system B on network 192.168.2.0 where system C belongs
+ > but if we test this via ping command, we will see that it cannot see the other system
+ > This is due to the fact that by default, Linux packets are NOT FORWARDED from one interface to the next due to security reasons
+	- for example, packets received in eth0 on system B are not forwarded elsewhere through eth1
+	- if this is not the case, any request from one interface can access the network in another interface
+		- ex: if one network interface is connected through private network, and another through public network (ex: INTERNET), without the default setting, anyone request from public network can go through the private network
+ > We can change this default settings, by either
+	1. changing value of the file "/proc/sys/net/ipv4/ip_forward"
+		- default value is 0, meaning no ip forwarding
+		- changing it to 1 will allow it
+		- this change DOES NOT PERSIST ON MACHINE RESTART
+	2. change value of the entry "net.ipv4.ip_forward" on file "/etc/sysctl.conf" to 1
+		- 1 means allow ip forwarding
+		- 0 means no ip fowarding
+		- PERSIST ON MACHINE RESTART
+	
+
+
+
+Commands used: 
+ip link
+ > show information for all interfaces
+ 
+ip addr add IP_ADDRESS/NETMASK dev DEVICE_NAME
+ > used to assign an IP address to the system in the device specified
+ > ex: ip addr add 192.168.1.1/24 dev eth0
+	- adds address 192.168.1.1 with netmark 24 to device eth0
+
+ip route add NETWORK_IP/NETMASK via GATEWAY_ADDRESS
+ > used to configure a route for a specific network to the IP address of the system assigned on a router
+ > ex: ip route add 192.168.1.0/24 via 192.168.2.1
+	- this will route the ip addresses under the network with address 192.168.1.0 to the ip address 192.168.2.1, which is the ip address assigned by router to the system C
+ 
+cat /proc/sys/net/ipv4/ip_forward
+ > command to check if IP forwarding is enabled on host
+ 
+ 
+
+
+
+
+
+18. Labs - Switching and Routing
+
+Q1: Which of the following is a very first requirement to assign an IP address to a system?
+A: System must have a physical or virtual network interface attached to it
+
+Q2: On a Linux based system which of the following command can be used to display the kernel ip routing table.
+A: route
+
+Q3: Can we assign multiple IPs to a system?
+A: Yes
+
+Q4: Which of the following is preferred device to connect two system which are on different networks?
+G: For example, if System A is on 192.168.1.0/24 network and System B is on 192.168.2.0/24 network.
+A: router
+S: System A and B are on different networks
+
+Q5: Can a gateway connect a system to the internet?
+A: Yes
+S: Assuming a route in the routing table for the internet ip address is configured in the system, and the router is connected to the internet, then yes.
+
+
+Q6: We have four app server from app01 to app04. You can access each app from jump host using command ssh app01 and similarly for other apps. Assign new IPs to each host as per details given below:
+
+a. Assign 172.16.238.15/24 ip address to app01
+b. Assign 172.16.238.16/24 ip address to app02
+c. Assign 172.16.239.15/24 ip address to app03
+d. Assign 172.16.239.16/24 ip address to app04
+e. We also need to remove existing IPs from these apps after assigning them new IPs but do not remove them right now as it can break your connection, if you are sure you are done with required changes just click on Check button below, it will do the rest.
+
+Warning: If changes aren't made correctly it can break your connection to the environment and you may need to reload the lab.
+
+S:
+1. Connect to the app servers via ssh command
+	$ ssh app01
+2. Assign new IPs to each host as per details on eth0
+	$ sudo ip addr add 172.16.238.15/24 dev eth0
+		- for app01
+3. Disconnect to the app server
+	$ exit
+4. Repeat step 1 to 3 on other app servers
+
+
+
+Q7: Now if you try to SSH into each app one by one from jump host you will find that you are able to SSH into app01 and app02 but not into app03 and app04. Why so ?
+A: app03 and app04 are on different network range now
+S: Checking the network address of the "jump host", "app03", "app04" using the "ip addr" command, we can see that they are in different network range
+	- jump_host = 172.16.238.10
+	- app03 and app04 = 172.16.239.*
+
+
+a. Assign a new IP address 172.16.239.10/24 to jump host with same network range which app03 and app04 are using.
+b. Now you will be able to SSH into all apps from jump host.
+
+NOTE: - After the change, you may experience a delay when trying to SSH from the jump server to the app servers.
+
+S:
+1. Assign new IP Address
+
+
+
+
+Q8: Since now app03 and app04 are on different network range than jump host so you are not able to SSH into those hosts from jump host. To make SSH work make required changes on jump host.
+
+a. Assign a new IP address 172.16.239.10/24 to jump host with same network range which app03 and app04 are using.
+b. Now you will be able to SSH into all apps from jump host.
+
+NOTE: - After the change, you may experience a delay when trying to SSH from the jump server to the app servers.
+
+S:
+1. Use ip addr add to assign IP address to jump host on same network as the app03 and app04
+	$ sudo ip addr add 172.16.239.10/24 dev eth0
+	
+	
+	
+Q9: Now jump host is able to access all four apps. But if you try to ping app03 or app04 from app01 or app02 or vice versa you will see ping is not working. So now we want to use jump host as a router so that app01 and app02 can access app03 and app04 and vice versa, lets add some routing table entries on these hosts to make it work.
+
+a. Add a routing table entry in app01 and app02 hosts so that these hosts can reach app03 and app04 hosts via jump host.
+b. Add a routing table entry in app03 and app04 hosts so that these hosts can reach app01 and app02 hosts via jump host.
+c. Now try to ping app03 and app04 from app01 and app02 and vice versa, every app should be able to ping each other.
+
+S:
+1. Check the IP assigned for jump_host server for networks of app01/app02 and app03/app04
+	> $ ip addr
+	> app01/app02 = 172.16.238.10/24
+	> app03/app04 = 172.16.239.10/24
+2. Check the network address of the networks of app01/app02 and app03/app04. It should be the entry with gateway 0.0.0.0 and interface eth0
+	> $ route
+	> app01/app02 = 172.16.238.0
+	> app03/app04 = 172.16.239.0
+3. In app01 and app02, define a route, where it will route the request to network of app03 and app04 via the IP address of jump_host on their common network
+	> $ sudo ip route add 172.16.239.0/24 via 172.16.238.10
+4. In app03 and app04, define a route, where it will route the request to network of app01 and app02 via the IP address of jump_host on their common network
+	> $ sudo ip route add 172.16.238.0/24 via 172.16.239.10
+5. Configure jump_host to allow ip forwarding
+	> $ echo 1 > /proc/sys/net/ipv4/ip_forward
+
+
+
+
+
+
+19. DNS
+
+Problem 1: How to create an alias to a specific ip address in a system so that it can use that alias instead of the exact ip address everytime it uses it.
+
+Solution: /etc/hosts file, and Name resolution
+
+/etc/hosts
+ > file used to resolve hostnames into their ip address, if the said hostname is specified
+ > ex: if the entry "192.168.1.11 db" is present in hosts file, and you ping the url db via "ping db" command, it will resolve the "db" into the 192.168.1.11, which means that the "ping db" command is turned into 'ping 192.168.1.11'
+ > NOTE:
+	1. The system does not care about the true hostname of the ip address used on creating an alias
+		- for example, the server with ip address 192.168.1.11 may have different hostname configured (can be seen using 'hostname' command) than the hostname given to the said address in /etc/hosts in other servers
+		
+Name resolution
+ > the act of translating hostname to IP address using /etc/hosts file
+
+
+
+
+Problem 2: How to centralize the management of the hostname resolution so that we don't have to configure /etc/hosts file in EVERY servers?
+
+Solution: DNS Servers
+
+DNS Servers
+ > DNS Servers are using to store all the hostname and their ip address centrally
+ > Then after configuring the DNS Server, we can have all the servers be connected to it
+ > in case any IP of the host was to change, we can now simple update the DNS server and all hosts should resolve the new IP address going forward
+ 
+ 
+Current setup
+			eth0			eth0
+System A	-----> Network <------- DNS
+192.168.1.10	192.168.1.0		192.168.1.100
+ 
+ 
+ 
+ 
+Problem 3: How do we point our host to a DNS Server?
+Solution: /etc/resolv.conf
+
+/etc/resolv.conf
+ > this file contains the information with regards to the DNS Server
+ > in order to point a system to a DNS server, we will need to add/modify the entry 'nameserver', and specify the network address of the DNS Server
+	- ex: inside /etc/resolv.conf
+		= nameserver 192.168.1.100
+ > the system can still use the /etc/hosts file for name resolution
+	
+
+
+Problem 4: What if there's same host entries in DNS server and /etc/hosts file?
+
+Answer: Use /etc/nsswitch.conf to determine the priority
+
+/etc/nsswitch.conf
+ > contains the prioritization of the method used to resolve a hostname
+ > by default, it prioritize files (/etc/hosts) before DNS Server
+ > to change the prioritization, simple change the order of the values in the "hosts" entry
+ > default value:
+	...
+	hosts: files dns
+	...
+ > modified where it will use DNS Server first
+	...
+	hosts: dns file
+	...
+
+
+
+Problem 5: What if the hostname we are using is not present in BOTH /etc/hosts file and DNS Server
+
+Solution: Add additional entry in the /etc/resolv.conf file. For example, Google's nameserver with ip address 8.8.8.8
+
+EX: Inside /etc/resolv.conf
+nameserver 192.168.1.100
+nameserver 8.8.8.8
+
+
+
+
+Domain Names
+ > these are the hostname that we often see in the Internet
+ > examples of these includes www.google.com, www.facebook.com, www.mit.edu, www.behance.net
+ > the reason why there are in this format is to group things together
+	- the last portion of the domain names (ex: .com, .net, .edu) are the TOP LEVEL DOMAINS that represent the intent of the website
+		= .com for commercial or general purpose
+		= .net for network
+		= .edu for educational organization
+		= .org for non-profit organization
+
+Parts of the Domain names (ex: www.google.com)
+1. Root (.)
+2. Top level domain name (.com)
+3. Domain name assigned (google)
+4. Subdomain (www, mail, drive, maps, apps)
+	> Subdomains help in further grouping things together under google
+	> ex: Google's map service is available at maps.google.com, while Google's storage service is available at drive.google.com
+
+
+Domain Name resolution levels
+1. Organization's Internal DNS
+	> if the domain name is unknown to the organization's internal DNS, it will forward the request to the Internet
+	> this DNS may choose to CACHE the ip addresses of the resolved domain name to speed up the subsequent request for the same domain names
+2. ROOT DNS
+	> first DNS in the internet to look at the request
+	> it will look at the top level domain name, then forwards the request to the DNS server that host that top level domain
+3. Top level DNS
+	> example is a .com DNS
+	> forwards all the request that uses .com at the end
+4. Domain DNS
+	> ex: google's dns server
+	> may resolve the request
+5. Subdomain DNS
+	> ex: within google, there may be multiple DNS servers for resolving domain name with subdomain www, mail, drive, pay, etc
+	
+	
+Example: Organization Internal DNS
+
+Org DNS: mycompany.com
+Subdomain DNS: 	www
+				drive
+				mail
+				nfs
+				web
+				pay
+				hr
+				sql
+				
+Host entries
+192.168.1.10 web.mycompany.com
+192.168.1.11 db.mycompany.com
+192.168.1.12 nfs.mycompany.com
+192.168.1.13 web-1.mycompany.com
+192.168.1.14 sql.mycompany.com
+
+
+
+Search Domain
+ > A search domain is a domain used as part of a domain search list. 
+ > The search list, as well as the local domain name, is used by a resolver to create a fully qualified domain name (FQDN) from a relative name. 
+ > For this purpose, the local domain name functions as a single-item search list
+ > EX: 
+	1. if the domain search list contains "wikipedia.org", typing "en" in the browser will direct the user to "en.wikipedia.org"
+	2. If the domain search list contains 'mycompany.com', typing 'web' in the ping command will resolve the hostname to web.mycompany.com
+		- 'ping web' will become 'ping web.mycompany.com'
+ > NOTE:
+	1. We typically do this within the organization internal network since it would be a lot simple to reach any of the machines/servers
+ 
+Configuring domain search list for Search DOMAINS
+ > to do this, edit the /etc/resolve.conf file, and add an entry with the following format
+	- search 	search.list.one search.list.two
+	
+EX: 
+cat >> /etc/resolve.conf
+nameserver 		192.168.1.100
+search			mycompany.com prod.mycompany.com
+
+
+
+Record Types
+A 		- used for mapping hostname to an ipv4 address
+		- ex: web-server to 192.168.1.1
+AAAA	- used for mapping hostname to an ipv6 address
+		- ex: web-server to 2001:0db8:85a3:0000.0000:8a2e:0370:7334
+CNAME	- used for mapping hostname to another hostnames
+		- ex: food.web-server to either eat.web-server, or hungry.web-server
+	 
+	 
+	 
+	 
+nslookup <HOSTNAME>
+ > command used to query a hostname from a DNS server
+ > this means that it will not look at the /etc/hosts entries within the system
+ > ex: nslookup www.google.com
+ 
+
+dig <HOSTNAME>
+ > another command used to test DNS name resolution
+ > returns more details in a similar form as is stored on the server
+ > ex: dig www.google.com
+
+
+
+
+
+20. Labs - DNS
+
+Q1: At basic level what is DNS used for ?
+A: To resolve the IP address of a domain name
+
+Q2: On a Linux based system, which of the following file can be used to point domains/hostnames to IPs locally?
+A: /etc/hosts
+
+Q3: On a Linux based system, which of the following file contains information about dns server i.e nameserver?
+A: /etc/resolv.conf
+
+Q4: On host01, if we have an entry for app01 in /etc/hosts file like 172.168.238.12 app01 and the DNS server which is used by host01 has 172.168.239.10 as app01's IP then which IP host01 will pick for app01 as per priority.
+A: 172.168.238.12
+S: Check /etc/nsswitch.conf for entry 'hosts'
+
+Q5: On host01, point www.google.com to 127.0.0.1 IP address locally.
+S: edit /etc/hosts file and add an entry below
+	127.0.0.1 www.google.com
+	
+Q6: On host01, add Google public DNS i.e 8.8.8.8 as a nameserver.
+S: edit /etc/resolv.conf and add another 'nameserver' entry
+EX: 
+nameserver 127.0.0.1 
+nameserver 8.8.8.8
+
+Q7: In www.google.com, which is the top level domain?
+A: .com
+
+Q8: Which of the following is a sub-domain example?
+A: maps.google.com
+
+Q9: On host01 we want to resolve name news to news.yahoo.com automatically without hard coding its entry in /etc/hosts file. Add the required changes on host01.
+A: edit /etc/resolv.conf and add another value for entry 'search'
+EX:
+search stratos.xfusioncorp.com yahoo.com
+
+Q10: Which of the following command is used to query a hostname from a DNS server?
+A: nslookup

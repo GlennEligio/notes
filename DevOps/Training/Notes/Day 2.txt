@@ -1,0 +1,252 @@
+Day 2
+
+Git Commands
+
+git branch <branch-name>
+	> create a new branch whose name is the one we specified
+git branch
+	> show all the branches in the local git repo
+	> the branch with asterisk is the current branch we are in
+git branch -d <branch-name>
+	> deletes the branch specified
+git checkout <branch-name>
+	> switches the current-branch we are in to the one specified
+git merge <branch-name>
+	> merges the changes in branch-name specified to the current branch we are in
+	> ex: if we are in master branch, and we send a  "git merge feature-branch", changes in feature-branch will be added in master
+git rebase <branch-name>
+	> alternative to merge command (same function where changes in branch-name is merged to current-branch)
+	> commits are grouped together based on the branch where they are done
+git mergetool	
+	> used to fix merge conflicts
+	> if we send this command, we will be brought to mergetool window
+	> this mergetool is composed of four window
+		- upper 3 is composed of (from left to right)	
+			a. previous change/state
+			b. blank idk what this is
+			c. incoming change/state
+		- lower window composed of
+			a. mergetool window
+				- here we can do the fixing stuff
+git stash save "<message>"
+	> "stash" all files/changes we made in a branch in STAGED area to the "Stash" area
+	> all the files/changes inside UNTRACKED and STAGED are visible to ALL branches
+	> only files/changes COMMITTED are not visible to other branches
+git tag <tag-name>
+	> create a tag of the local git repo
+	> git tags contains branches
+
+
+
+Git branching 
+	> process where we create "branch" of local git repo	
+	> these branches may have different history of file/changes done in the source code
+	> these branches are NOT AWARE of the changes made to other branches
+
+
+Merge Conflict
+	> happen when theres a conflict of source code between the branches that are being merged
+		- ex: if theres a different code in the same line inside a file (ex: .java file)
+	> to fix this conflict, we can use mergetool
+
+
+Fork
+	> copying a repository from other Github account to our Github account
+
+
+Rebase vs Merge
+	> rebase if you want to see changes and group them based on their branches where commits are done
+	> merge if you want the commits sorted by when they are done
+
+
+
+
+Build Tool
+	> A build tool is a tool that automates everything related to building the software project. Building a software project typically includes one or more of these activities: 
+		- Generating source code ( Open a Sample project)
+		- Generating documentation from the source code.
+		- Compiling source code.
+		- Packaging compiled code into JAR files or ZIP files.
+		- Installing the packaged code on a server, in a repository or somewhere else.
+
+APACHE MAVEN 
+	> used to build the application
+
+Maven Installation
+1. Install Maven
+	> note: Java will be automatically installed alongside Maven
+	apt install maven -y
+2. Check Maven version
+	mvn --version
+
+
+Create pre-defined Maven project
+1. Generate Maven Project Archetype
+	mvn archetype:generate
+2. Choose 1854 to create Maven archetype quickstart
+3. Select version of quickstart archetype
+	8
+4. Pass groupId
+	com.glenn
+5. Define artifactId
+	myproj
+6. Define version
+	1.0-SNAPSHOT
+
+7. Install tree to see folder hierarchy
+	apt install tree
+
+
+MAVEN COMMANDS
+
+mvn --version
+	> checks version of mvn
+mvn validate
+	> validates the information in the project
+mvn compile
+	> compile the maven project
+	> create a folder named "target"
+mvn clean
+	> cleans the maven project
+	> removes the target folder
+mvn clean <lifecycle-command>
+	> delete target folder if exist, then execute the command 
+	> ex: mvn clean compile
+mvn test
+	> execute the unit testing
+mvn package
+	> packages the maven project
+
+
+MAVEN BUILD LIFECYCLE
+Phase
+1. prepare-resources
+	> 
+2. validate
+	> 
+3. compile
+	> 
+4. test
+5. package
+	> creates the jar file
+	> the jar file is an executable file to run the application
+6. install
+	> creates a local repository that contains our jar file
+6. deploy
+
+NOTE:
+Executing a phase command in Maven Build lifecycle will also EXECUTE phases BEFORE it.
+Failing to run a phase will not execute the PRECEEDING phases
+
+
+
+PUPPET - Configuration Management (scripts)
+
+Configuration
+	> includes
+		a. Installation of software
+		b. Users
+		c. Files
+	> changing the default state of operating system
+
+Configuration Management (CM)
+	> CM is a systems engineering process for est
+
+
+Approach in applying Configuration Scripts
+1. Pull based
+	> on the Client machine, it calls the Master Server to pull/request the ConfigScript
+		- ex: if Client machine wants to install Java 8, Client will request the script from Master Server
+	> example of this is 
+		- Puppet
+2. Push based
+	> the Master Server will PUSH the ConfigScript to the Clients
+	> example of this are 
+		- Ansible
+		- Terraform
+
+
+LINUX COMMANDS
+1. mkdir <folder-name>
+	> used to create the folder in the current directory
+2. whoami
+	> shows what user is currently active
+3. pwd
+	> stands for Present Working Directory
+	> shows the current directory we are in
+4. cd <directory-path>
+	> stands for Change Directory
+	> changes the Current Directory to the directory we passed
+5. ls
+	> shows list of item	
+	> adding "-l" will use LONG LIST template for files	
+	> adding "-la" will use LONG LIST template and also show the hidden files
+6. touch <file-name>
+	> create an EMPTY file 
+7. rm <file-name>
+	> deletes a filename
+8. rmdir <file-directory>
+	> deletes an EMPTY directory
+9. rm -ifr <directory>
+	> removes a file directory and its contents
+	> exit
+10. cd <file-name> <file-directory-destination>
+	> copy the file and paste it to the file directory specified
+11. mv <file-name> <file-directory-destination>
+	> moves the files to the file directory specified
+12. cat <file-name>
+	> shows/read the file content
+13. cat > <file-name>
+	> writes on the file content
+	> to exit editor, CTRL + C
+
+
+
+Linux
+	-> Groups
+		-> Users
+		- root
+		- vagrant
+
+Permission
+	> Types
+		r - read
+		w - write
+		x - execute
+	> each of the users (owner, group, others) have specified permission for each file
+		- owner is the one who created the file
+		- group refers to the users that belongs to the same group as the owner
+		- others refers to the user that does not belong to the same group as owner
+
+
+Syntax of File permission
+	> <owner><group><others>
+
+Ex: rwx-wx--x
+
+This means
+Owner have read write execute permission
+Group have write and execute permission
+Others only have execute permission
+
+
+Changing permission of file
+	> we can use "chmod" command to change file permission
+
+chmod xxx <file-name>
+	> defines the permision of the file	
+	> we can input numbers from 0 to 7 to the "x" to define permission
+
+0: (000) No permission.
+1: (001) Execute permission.
+2: (010) Write permission.
+3: (011) Write and execute permissions.
+4: (100) Read permission.
+5: (101) Read and execute permissions.
+6: (110) Read and write permissions.
+7: (111) Read, write, and execute permissions.
+
+
+
+
+

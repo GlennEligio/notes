@@ -1,0 +1,71 @@
+02. Maven Key Concepts
+
+
+POM file - pom.xml
+	> POM stands for Project Object Model file
+	> Configuration file for your project
+		- Basically your "shopping list" for Maven :)
+	> located in the root of your Maven project
+
+
+POM File Structure
+1. Project Metadata
+	> Project name
+	> Version number
+	> Output file type (JAR, WAR, etc)
+2. Dependencies
+	> List of Projects we depende on
+		- Spring
+		- Hibernate
+3. Plug ins
+	> Additional custom tasks to run:
+		- Generate JUnit test reports, etc.
+
+
+
+PROJECT METADATA
+1. Project Coordinate
+	> uniquely identify a project
+	> similar to GPS coordinates for a specific location
+	> compose of the following elements
+
+NAME		DESCRIPTION
+Group ID	Name of company, group, or organication
+		Convention is to use reverse domain name: 
+			- com.luv2code, org.hibernate, org.springframework
+Artifact ID	Name for this project
+			- mycoolapp, capstone
+Version		A specific release version
+			- 1.0, 1.6, 2.0
+		If project is under active development then add "-SNAPSHOT" after the project version
+			- 1.0-SNAPSHOT
+
+EXAMPLES of Project Coordinates
+<groupId>com.luv2code</groupId>
+<artifactId>mycoolapp</artifactId>
+<version>1.0.RELEASE</version>
+
+<groupId>org.springframework</groupId>
+<artifactId>spring-context</artifactId>
+<version>5.0.0.RELEASE</version>
+
+<groupId>org.hibernate</groupId>
+<artifactId>hibernate-core</artifactId>
+<version>5.2.11.Final</version>
+
+
+
+
+DEPENDENCIES
+1. Dependency Coordinates
+	> to add given dependency project, we will need
+		a. Group ID
+		b. Artifact ID
+		c. Version
+			- optional
+			- BEST PRACTICE is to INCLUDE the version (for repeatabke builds)
+	> may see this referred to as GAV
+		- Group ID, Artifact ID, and Version
+	> to find the dependency coordinates
+		a. Visit the project page (spring.io, hibernate.org, etc)
+		b. Visit http://search.maven.org (easiest approach)

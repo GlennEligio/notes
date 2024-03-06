@@ -1,0 +1,51 @@
+03 Why do Reactive programming
+
+Contens:
+- Modern application development
+- How do you scale up?
+- Whats the problem here?
+- Web application
+
+
+
+Modern application development situation
+1. High data scale
+	> huge amount of data goes in and out nowadays
+2. High usage scale
+	> high number of users, and also high availability
+3. Cloud based costs
+	> inefficiency with regards to application performance have a huge impact when it comes to Cloud hosting costs
+
+
+
+How do you scale up?
+ > there are two types of scaling
+	1. Vertical scaling
+	2. Horizontal scaling
+ > Vertical scaling is where you improve the machine that runs the service by improving cpu, memory, storage, etc
+ > Horizontal scaling is where you create more instance of the service
+ > Companies today leans more toward Horizontal scaling since Vertical scaling has a ceiling
+
+
+
+Whats the problem here?
+
+Example code:
+@GetMapping("/users/{userId}")
+public User getUserDetails(@PathVariable String userId) {
+	User user = userService.getUser(userId);
+	UserPreferences prefs = userPreferencesService.getPreferences(userId);
+	user.setPreferences(prefs);
+	return user;	
+}
+
+Problems:
+1. UNNECESSARILY SEQUENTIALLY.
+ 	> example is the getUser() and getPreference()	
+	> both calls can be done asynchronously (no dependencies to each other)
+	> but the way this works, getPreferences() call needs to wait for getUser() before working
+	> this RESULTS in Cost performance
+2. IDLING THREADS
+	> with the current setup (blocking, synchronous), most of the time, the threads are in idle
+	> example is the code earlier, the thread needs to wait for the getUser() to finish before we can move fowards
+	> this RESULTS in Wasted Hardware

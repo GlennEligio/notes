@@ -1,0 +1,17 @@
+06.14. Vertical Alignment
+
+XIV. Vertical alignment
+1. Vertical alignment
+	> defines the vertical alignment of the elements
+		-> NOTE: ONLY AFFECTS inline, inline-block, inline-table, and table cell elements
+
+NOTATION:
+align-{position}
+
+Position
+baseline
+top
+middle
+bottom
+text-top
+text-bottom

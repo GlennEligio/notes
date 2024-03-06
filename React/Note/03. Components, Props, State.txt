@@ -1,0 +1,269 @@
+03. Components, State, Props
+
+UI Components
+	> When using React, think of your UI as a bunch of separate components
+	> Each Component can also nest one or more Components
+
+
+
+Components: Functions vs Classes
+	> Components in React can be created in two ways
+		1. Functions
+		2. Classes
+			- for class, it must extend to the React.Component class
+	> Both of the methods must render/return a JSX
+		- For function, JSX can be returned using return () keyword
+		- For classes, JSX can be returned by return it inside the render() method of React.Component
+	> Components can also take props
+		- we do this by adding "parameters" when we invoke a Component
+		- ex: <Header title="My Title"/>
+		- in this case, it invokes the Header Component and passes title variable in props with value of "My Title"
+	> Components can be used and invoked using the following syntax:
+		<Component props1=value props2=value>
+	> These props we pass can be accessed in the props parameter of the Component
+
+
+
+Component's State - Working with State
+	> Components can have "State" which is an object that determines how a component renders and behaves
+	> in the State includes:
+		1. data to display in Component
+		2. events/logic/behavior of the Component
+	> "App" or "global" state refers to the state that is available to the entire UI, not just a single Component
+		- typically, these states includes data where many Components uses
+	> Prior to React 16.8, we had to use class based components to use state.
+	> Now, we can use State in functional Components with "hooks" 
+
+
+
+~~~~~~ REACT COMPONENT ~~~~~~~~
+
+React Component
+	> can be created by using either
+		a. Functional Component
+		b. Class Component
+
+Functional Component
+	> function used to render a Component
+	> inside the function, we must return a JSX expression
+		- this JSX expression must have ONE PARENT ELEMENT
+	> JS files that contains Components typically starts with Capital letter
+		- ex: Header.js, Menu.js
+	> to create Functional Component, we can either do it manually or using the snippets/shortcut
+	> for manual, the function must:
+		1. Return a JSX to render
+		2. Be able to be exported and in default
+			-> we can do this by either:	
+				a. create Function and export default the said Function
+				b. add "export default" keyword when creating the Function
+	> for snippet/shortcut using ES7+ React/Redux/React-Native, type
+		rafce
+
+EX:
+const Header = () => {
+  return (
+    <header>
+      <h1>Task Tracker</h1>
+    </header>
+  );
+};
+
+export default Header;
+
+
+
+Class Component
+	> class that is used to render a Component
+	> to make a class a Component, we can either do it manually or with snippets
+	> to make it manually, the Class must have:
+		1. React imported in the JS file
+		2. Class must be extended to React.Component
+		3. Class must define the render() of the React.Component
+		4. render() function must return a JSX to render
+		5. Class must be able to be exported, either by:
+			a. adding "export default"
+			b. adding "export default ClassName" after defining the Class
+	> to make it using snippet/shortcut, type
+		rce
+
+
+EX:
+import React from "react";
+
+class App extends React.Component {
+  render() {
+    return <h1>Hello from a class</h1>;
+  }
+}
+
+export default App;
+
+
+
+
+
+Importing a React Component
+	> to import a React Component to another JS file, we can use the following syntax:
+
+		import FunctionName/ClassName from 'directory path'
+
+	> for example, if we will import a Functional Component Header from src/components into the App.js (that is in src folder), we will write
+
+		import Header from './components/Header'
+
+
+
+
+Props
+	> refers to the properties we passed into a Component
+	> IMMUTABLE data that we can pass to the Component that we invoke
+	> to pass a prop, we will add "parameters" to the Component that we invoke
+		- syntax is:
+			<ComponentName props1=value props2=value2>
+		- example:
+			<Header title='Hello'>
+	> the Component can then access the data we passed through the "props" parameter
+		- from the props parameter, we can then call the props that we added
+		- example:
+			props.title
+
+
+EX:
+// App.js (where we invoke the Header and pass "title" props)
+import React from "react";
+import Header from "./components/Header";
+
+function App() {
+  const name = "Brad";
+
+  return (
+    <div className="container">
+      <Header title="Hello" />
+    </div>
+  );
+}
+
+export default App;
+
+
+// Header.js (where we will use the props pass through the "props" parameter)
+const Header = (props) => {
+  return (
+    <header>
+      <h1>{props.title}</h1>
+    </header>
+  );
+};
+
+export default Header;
+
+
+
+Component.defaultProps
+	> with this, we can add Default Props values to a Component
+	> we can add the values to the Props on a Component by defining its defaultProps property
+	> defaultProps property is an Object Literal
+		- this property contains several key:value pairs to define the props of the said Component
+	> the key:value pairs properties in defaultProps will be OVERRIDEN if we pass the same key when we invoke the Component
+
+EX:
+const Header = (props) => {
+  return (
+    <header>
+      <h1>{props.title}</h1>
+    </header>
+  );
+};
+
+Header.defaultProps = {
+  title: "Hello",
+};
+
+export default Header;
+
+
+
+
+Props destructuring
+	> we can also destructure the props parameter and instead pass the keys expected
+	> ex: if we are expecting a title and a content properties to be passed, instead of
+		const Header = (props) => { return <h1>{props.title + props.content}</h1>}
+	> we can do
+		const Header = ({title, content}) => { return <h1>{title + content}</h1>}
+	> with destructuring, we dont have to access the properties through the "props" parameter
+
+EX:
+const Header = ({ title }) => {
+  return (
+    <header>
+      <h1>{title}</h1>
+    </header>
+  );
+};
+
+Header.defaultProps = {
+  title: "Hello",
+};
+
+export default Header;
+
+
+
+Component.propTypes
+	> we can also define some of the characteristics of the props we pass like:
+		- props' datatype
+		- if certain props is required
+	> to add this functionality, we can either
+		1. Import the PropTypes from 'prop-types'
+			import PropTypes from 'prop-types'
+		2. Use snippet/shortcut
+			"impt"
+	> we will then define propTypes property of the Component
+	> propTypes is an Object literal
+		- meaning it is composed of several key:value pairs	
+		- in propTypes
+			a. keys refers to the prop name
+			b. value refers to the PropTypes objects
+				-> these PropTypes object defines the constraints/characteristics of the props
+				-> ex: title: PropTypes.string
+				-> this will make it so the Component can only accept "title" prop with datatype of string
+	> we can define several characteristics to apply to props like
+		1. dataType
+			-> we can define a specific datatype for a prop
+			-> to do this, we will define the assign the key to a specific PropType property
+			-> syntax: propName: PropType.<datatype>
+			-> example: title: PropType.string
+		2. isRequired
+			-> we can define if the prop is required or not
+			-> to do this, we will call .isRequired after the dataType
+			-> syntax: propName: PropType.<datatype>.isRequired
+			-> example: title: PropType.string.isRequired
+
+EX:
+import PropTypes from "prop-types";
+
+const Header = ({ title }) => {
+  return (
+    <header>
+      <h1>{title}</h1>
+    </header>
+  );
+};
+
+Header.defaultProps = {
+  title: "Hello",
+};
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+};
+
+export default Header;
+
+
+	> Here, we first imported the PropTypes from 'prop-types'
+	> Then we defined the propTypes of the Header Component
+	> Inside the propTypes, we defined that
+		1. "title" prop 
+			- must be of type string
+			- must be supplied when invoking the Header Component

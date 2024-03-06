@@ -1,0 +1,125 @@
+Sample Access Control Policy for different Resources
+
+Sample: Access Control Policy for new Views
+	> if you create a new view, you can use the following access control policy so that you will be able to test the new view in your development environment (modify the policy for your environment and load it using the acpload utility)
+	> change the following in the XML given below
+		- YourNewView
+			-> is the name of the newly created view
+	> The proceeding access control policy adds the new view to the existing AllSiteUsersView action group. This policy allows any user to access the new view
+	
+<2xml encoding="150-3859-1" standalone="no" 2>
+<IDOCTYPE Policies SYSTEM
+<Policies>
+	<Action Name="YourNewView"
+			CommandName="YourNewView"
+	</Action>
+	<ActionGroup Name="AllSiteUsersViews" OwnerId="RootOrganization">
+		<ActionGroupAction Name="YourNewView"/>
+	</ActionGroup>
+</Policies>
+
+
+
+Sample: Command-level Access Control Policy for new Controller commands
+	> Controller commands require access control policies in order to meet the requirements of the access control framework.
+	> If you create a new controller command, the name of the command's interface is specified as a resource. The following XML snip can be modified for your new command and loaded using the acpload command:
+	> The xml below represents a new Access Control Policy that we will add using acpload command. The following parts of xml refers to the following
+		- com.yourcompany.yourpackage.commands
+			-> represents your packaging structure
+		- YourControllerCmd
+			-> represents the name of your new controller command
+			
+EX:
+<?xml version="1.0" encoding="150-8859-1" standalone="no" ?>
+<IDOCTYPE Policies SYSTEM
+<Policies>
+	<Action Name="ExecuteConmand"
+		ComnandName="Execute™>
+	</Action>
+	<ResourceCategory Name="com.yourcompany.yourpackage.commands.YourControllerCmdResourceCategory" ResourceBeanClass="com.yourcompany.yourpackage.commands.YourControllerCmd"
+		<ResourceAction Nane="ExecuteConmand"/>
+	</ResourceCategory>
+	<ResourceGroup Name="AllSiteUserCmdResourceGroup" OwnerId="RootOrganization"
+		<ResourceGroupResource Name="com.yourcompany.yourpackage.commands.YourControllerCmdResourceCategory"/>
+	</ResourceGroup>
+</policies>
+
+EX: 2
+<?xml version="1.0" encoding="150-8859-1" standalone="no" ?>
+<IDOCTYPE Policies SYSTEM
+<Policies>
+	<Action Name="ExecuteConmand"
+		ComnandName="Execute™>
+	</Action>
+	<ResourceCategory Name="com.yourcompany.yourpackage.commands.MyNewControllerCmdResourceCategory" ResourceBeanClass="com.yourcompany.yourpackage.commands.MyNewControllerCmd"
+		<ResourceAction Nane="ExecuteConmand"/>
+	</ResourceCategory>
+	<ResourceGroup Name="AllSiteUserCmdResourceGroup" OwnerId="RootOrganization"
+		<ResourceGroupResource Name="com.yourcompany.yourpackage.commands.MyNewControllerCmdResourceCategory"/>
+	</ResourceGroup>
+</policies>
+
+
+
+
+
+Sample: Resource-level access control policy for a new Entity bean
+	> The following XML file can act as a template for access control requirements when you create new entity beans. 
+	> In the case of the following file, the new entity bean is called the Bonus bean, it corresponds to the XBONUS database table, and it gets used by the MyNewControllerCmd controller command. 
+	> In this access control policy, only the creator of a bonus bean object can perform the MyNewControllerCmd action upon that object
+	> this the example xml below, the following represents:
+		- FashionFlowMemberId
+			-> the memberId of the store in which the new resource is being used
+	> the EX 1 xml access control policy, the interface name of the controller command is specified as the Action, wihtout fully-qualifying it with its package name. 
+	> If you application has multiple interfaces with the SAME NAME, you must fully-qualify them with their package names when specifying them as actions in the access control policies.
+	> As an example, if there are ambiguity with the interface names, the preceding access control policy would require changes, as following (note, only changes lines are displayed in EX 2)
+	
+	
+EX 1:
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
+<!DOCTYPE Policies SYSTEM "../dtd/accesscontrolpolicies.dtd">
+<Policies>
+
+	<Action Name="MyNewControllerCmd" CommandName="com.ibm.commerce.sample.commands.MyNewControllerCmd"></Action>
+	
+	<ResourceCategory Name="com.ibm.commerce.extension.objects.BonusResourceCategory" ResourceBeanClass="com.ibm.commerce.extension.objects.Bonus">
+		<ResourceAction Name="MyNewControllerCmd"/>
+	</ResourceCategory>
+	
+	<ActionGroup Name="MyNewControllerCmdActionGroup" OwnerId="RootOrganization">
+		<ActionGroupAction Name="MyNewControllerCmd"/>
+	</ActionGroup>
+	
+	<ResourceGroup Name="BonusResourceGroup" OwnerId="RootOrganization">
+		<ResourceGroupResource Name="com.ibm.commerce.extension.objects.BonusResourceCategory"/>
+	</ResourceGroup>
+	
+	<Policy Name="AllUsersUpdateBonusResourceGroup"
+			OwnerId="FashionFlowMemberId"
+			UserGroup="AllUsers"
+			UserGroupOwner="RootOrganization"
+			ActionGroupOwner="MyNewControllerCmdActionGroup"
+			ResourceGroupName="BonusResourceGroup"
+			RelationName="creator"
+			PolicyType="groupableStandard">
+	</Policy>
+	
+	<PolicyGroup Name="ManagementAndAdministrationPolicyGroup" OwnerId="RootOrganization">
+		<!-- Define policies in the this policy group -->
+		<PolicyGroupPolicy Name="AllUsersUpdateBonusResourceGroup" PolicyOwnerId="FashionFlowMemberId"/>
+	</PolicyGroup>
+</Policies>
+
+
+EX 2:
+
+	<Action Name="com.ibm.commerce.sample.commands.MyNewControllerCmd" CommandName="com.ibm.commerce.sample.commands.MyNewControllerCmd"></Action>
+	
+
+		<ResourceAction Name="com.ibm.commerce.sample.commands.MyNewControllerCmd"/>
+
+
+		<ActionGroupAction Name="com.ibm.commerce.sample.commands.MyNewControllerCmd"/>
+
+	
+

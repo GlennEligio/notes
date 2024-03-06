@@ -1,0 +1,24 @@
+18 The subscribe method
+
+
+subscribe() method overloads
+
+subscribe()
+subscribe(Consumer<? super T> consumer);
+subscribe(Consumer<? super T> consumer, 
+	Consumer<? super Throwable> errorConsumer);
+subscribe(Consumer<? super T> consumer, 
+	Consumer<? super Throwable> errorConsumer, 
+	Runnable completeConsumer);
+subscribe(Consumer<? super T> consumer, 
+	Consumer<? super Throwable> errorConsumer, 
+	Runnable completeConsumer, 
+	Consumer<? super Subscription> subscriptionConsumer);
+
+
+NOTES:
+1. Consumer inputs can access the item emitted, Throwable that was thrown while emitting the items, or the Subscription returned by the subscribe() method itself
+2. The Runnable input will be executed when the onComplete event is thrown by either Mono or Flux
+3. The fourth method signature is DEPRACATED, do not use
+4. The Subscription returned by subscribe() can be use to dispose/cancel the subscription dynamically
+	> this is also what you can access in the "subscriptionConsumer"

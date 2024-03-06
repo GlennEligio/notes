@@ -1,0 +1,46 @@
+53 EBS Snapshots
+
+
+EBS Snapshots
+ > a "backup" (snapshot) of an EBS volume at a point in time
+ > recommended to detach volume first before snapshot, but not necessary	
+ > can copy snapshot across AZ or Region
+	- this means that after snapshotting, we can use the Snapshot to populate EBS Volumes from different regions or AZ
+
+
+EX:
+US-EAST-1A
+EC2 A
+ > EBS #1 -> snapshotted, resulted in Snapshot #1
+
+US-EAST-1B
+EC2 B
+ > EBS #2 <- populated with data using Snapshot #1 
+
+
+
+EBS Snapshot Features
+1. EBS Snapshot Archive
+2. Recycle Bin for EBS Snapshots
+
+EBS Snapshot Archive
+ > Move a Snapshot to an 'archive tier' that is 75% cheaper
+ > Takes within 24 to 72 hours for restoring the archive
+ > Useful for:
+	- Snapshot that is not important or urgent to restore
+
+ex:	
+		archive
+EBS Snapshot ----------------->	EBS Snapshot Archive
+
+
+
+Recycle Bin for EBS Snapshots
+ > Setup rules to retain deleted snapshots so you can recover them after an accidental deletion
+ > Needs to specify the retention period (from 1 day to 1 year)
+ > Useful for:
+	- preventing accidental deletion
+
+ex:
+		delete
+EBS Snapshot	---------->	Recycle Bin

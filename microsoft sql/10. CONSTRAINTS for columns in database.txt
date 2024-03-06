@@ -1,0 +1,229 @@
+CONSTRAINTS IN DATABASE
+	> used in order to limit what values you can enter in a column
+	> to see the constraints of a specific table and open the Columns folder, you can see the dataType alongside the constraint of the column.
+
+
+SYNTAX:
+Adding CONSTRAINT in a COLUMN
+columnName dataType CONSTRAINT1 CONSTRAINT2
+
+For CREATE TABLE
+CREATE TABLE tableName(
+columnName1 dataType CONSTRAINT,
+columnName2 dataType CONSTRAINT,
+);
+
+For ALTER TABLE
+ALTER TABLE tableName ALTER COLUMN columnName dataType CONSTRAINT;
+
+
+Adding a CONSTRAINT that can be applied to many COLUMNS
+FOR CREATE TABLE
+CREATE TABLE tableName(
+columnName1 dataType,
+columnName2 dataType,
+CONSTRAINT constraintName CONTRAINTQUERYEXAMPLE;
+);
+
+NOTE: For CONSTRAINTQUERYEXAMPLE, different types of CONSTRAINT have different format. For example, UNIQUE and NOT NULL constraint only needs COLUMN parameter, while CHECK constraint needs a conditional statement.
+
+
+FOR ALTERing existing TABLE
+ADDING CONSTRAINT:
+
+	ALTER TABLE tableName
+	ADD CONSTRAINT constraintName CONSTRAINTQUERYEXAMPLE;
+
+DROPPING A CONSTRAINT:
+	ALTER TABLE tableName
+	DROP CONSTRAINT constraintName;
+
+	OR
+
+	Go to SQLServerName > Databases > DatabaseName > Tables > TableName > Constraint > and DELETE the said CONSTRAINT
+
+
+
+
+
+
+
+
+TYPES OF CONSTRAINTS
+1. NOT NULL
+	> ensures that a NULL value cannot be stored in a column (this means no empty values)
+
+SYNTAX:
+columnName dataType NOT NULL
+
+EXAMPLE:
+ > This will make the StudentName and PhoneNumber column not have a NULL value. So when we enter a row whose column value of either of the two is NULL, we will get an error.
+
+	CREATE TABLE StudentsInfo
+	(
+	StudentID int,
+	StudentName varchar(8000) NOT NULL,
+	ParentName varchar(8000),
+	PhoneNumber bigint NOT NULL,
+	AddressofStudent varchar(8000),
+	City varchar(8000),
+	Country varchar(8000)
+	);
+
+
+
+
+
+
+
+
+
+
+2. UNIQUE
+	> ensures that all the values in a column are different
+	> used in conjunction with PRIMARY KEY
+	> for adding the unique constraint to multiple columns, we will call the following statement. 
+		- Note that this should be done in conjunction with CREATE TABLE
+
+SYNTAX:
+FOR ASSIGNING CONSTRAINT TO A COLUMN
+columnName dataType UNIQUE
+
+EXAMPLE:
+	CREATE TABLE StudentsInfo
+	(
+	StudentID int UNIQUE NOT NULL,
+	StudentName varchar(8000),
+	ParentName varchar(8000),
+	PhoneNumber bigint,
+	AddressofStudent varchar(8000),
+	City varchar(8000),
+	Country varchar(8000)
+	PRIMARY KEY (StudentsID)	
+	);
+
+
+
+FOR CREATING CONSTRAINT OBJECT
+	CONSTRAINT UC_tableName UNIQUE(columnName1, columnName2);
+
+EXAMPLE:
+	CREATE TABLE StudentsInfo
+	(
+	StudentID int UNIQUE NOT NULL,
+	StudentName varchar(8000),
+	ParentName varchar(8000),
+	PhoneNumber bigint,
+	AddressofStudent varchar(8000),
+	City varchar(8000),
+	Country varchar(8000)
+	CONSTRAINT UC_StudentsInfo UNIQUE(StudentID, PhoneNumber)
+	);
+
+In this case, we will create a table whose column StudentId and PhoneNumber have UNIQUE Constraint. We can also DROP this define CONSTRAINT in the CREATE TABLE by using ALTER TABLE
+
+
+
+
+
+
+
+
+
+
+
+
+3. CHECK
+	> ensures that all the values in a column satisfy a specific condition.
+	> need to pass a condition, only those that pass will be included
+		- if the value we assign to the column doesnt satisfy the CHECK condition, the operation will be cancelled and error will be thrown
+
+SYNTAX:
+columnName dataType CHECK (condition);
+
+EXAMPLE:
+	CREATE TABLE StudentsInfo
+	(
+	StudentID int UNIQUE NOT NULL,
+	StudentName varchar(8000),
+	ParentName varchar(8000),
+	PhoneNumber bigint,
+	AddressofStudent varchar(8000),
+	City varchar(8000),
+	Country varchar(8000) CHECK (Country = 'India')
+	);
+
+In this case, the condition in CHECK query is that the Country value of a row that will be inserted must be equal to 'India' in order to be accepted. If we, for example, inserted a row whose country value is not 'India',
+
+	INSERT INTO StudentsInfo VALUES ('01','John Glenn','Jaydee','639062560574','Niugan','Malabon','Philippines');
+
+this row will not be included in the table since the Country value is not equal to 'India'.
+
+	> similar to UNIQUE constraint, we can also ADD CHECK constraint or ADD a CONSTRAINT whose content is a CHECK CONSTRAINT
+
+
+
+
+
+
+
+
+
+
+
+4. DEFAULT
+	> consist of a set of default values for a column when no value is specified
+	> this means that if no value is present in a column of specific row, then it will be replaced by the default value specified.
+
+SYNTAX:
+ADDING DEFAULT CONSTRAINT IN A COLUMN
+columnName dataType DEFAULT 'defaultValue'
+
+EXAMPLE:
+	CREATE TABLE StudentsInfo
+	(
+	StudentID int UNIQUE NOT NULL,
+	StudentName varchar(8000),
+	ParentName varchar(8000),
+	PhoneNumber bigint,
+	AddressofStudent varchar(8000),
+	City varchar(8000),
+	Country varchar(8000) DEFAULT 'India'
+	);
+	
+
+
+
+
+
+
+
+5. INDEX
+	> used to create and retrive data from the database very quickly
+	> used for fast creation and retrieval of database
+
+FORMAT:
+CREATE INDEX:
+	CREATE INDEX indexName
+	ON tableName (columnName);
+
+DROPPING INDEX
+	DROP INDEX tableName.indexName;
+
+EXAMPLES:
+	CREATE INDEX idx_studentname
+	ON StudentsInfo (studentName);
+
+This will create an index named 'idx_studentname', and will fetch the data from studentName column of StudentsInfo table.
+
+	DROP INDEX StudentsInfo.indexName;
+
+This will drop the index that we created earlier.
+
+
+
+
+
+
+
+

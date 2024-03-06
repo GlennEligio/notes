@@ -1,0 +1,36 @@
+Day 20
+
+
+DataBean
+	> contains activate() to do internal logic like populating data
+	
+	
+https://help.hcltechsw.com/commerce/9.0.0/webservices/concepts/cwvwc55webservicesguide10.html
+
+https://help.hcltechsw.com/commerce/9.0.0/restapi/code/user_and_organization_management.html
+
+https://help.hcltechsw.com/commerce/9.1.0/restapi/concepts/cwvswagger.html
+
+
+Part 2 Solution
+	> either a new page or new form, outside the personal information form
+	
+1. New table
+	> Fields are
+		USER ID
+		FAVOURITE FOOD
+		FAVOURITE COLOUR
+2. Create a JPA to save, update, and read data in the table above
+3. Create a new JSP page or JSP fragment to take the data from to user using a form
+4. Add logic to send a request from the form and save it
+
+
+
+No change in User Registration form
+1. Create a new custom table - UserId, Favorite food, favourite colour
+2. Create a JPA to save, update and read from this table
+3. Create a new JSP page to take this data from user, as a new JSP in - 
+Option 1 - add a new link in Settings below QUick Checkout Profile
+Option 2 - add a new form in Personal Information page by calling this new JSP. This new JSP has no effect/impact on existing form.
+4. Create a new controller command to save this information
+5. Save this form data in WCS DB using JPA and Controller command

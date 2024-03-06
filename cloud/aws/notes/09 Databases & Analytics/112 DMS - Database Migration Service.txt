@@ -1,0 +1,18 @@
+112 DMS - Database Migration Service
+
+
+DMS - Database Migration Service
+ > Quickly and securely migrate databases to AWS, resilient, self healing
+ > The source database remains available during the migration
+ > DMS is smart enough to know how to transfer data from different database vendors (ex: Microsoft SQL server to MySql)
+
+Supports:
+1. Homogeneous migrations (ex: Oracle to Oracle)
+2. Heterogenous migrations (ex: Microsoft SQL server to Aurora)
+
+
+Diagram:
+
+Source DB -----> EC2 instance -------> Target DB
+		(Running DMS)
+

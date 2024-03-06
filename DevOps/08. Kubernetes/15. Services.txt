@@ -1,0 +1,214 @@
+15. Services
+
+
+Services
+	> an abstract way to expose an application running on a set of Pods as a network Service
+	> With K8s, you dont need to modify your application to use an unfamiliar service discovery mechanism
+	> Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them.
+	> similar to Spring Cloud's LoadBalancer and Eureka Server-Client
+	
+
+Service Use case
+1. Expose set of Pods for consumption
+	> let say theres two application running in cluster
+		a. front-end (1 Pod)
+		b. back-end (3 Pod)
+	> for the front-end to call back-end, it must know the IP-address of the back-end Pods
+		- but the things is, Pods are non-permanent resources, meaning they are created and destroyed frequently
+		- and for new Pods created, they will be assigned a new Ip address
+	> Service fixes this problem by "exposes" the said group of Pods
+		- instead of front-end calling the back-end, it will instead call the Service
+		- Service will then take care which one of the back-end Pods will receive the front-ends' request (can also Loadbalance)
+		- Service have a list of Pods that it exposes (using selectors based on Pod's label)
+
+
+
+Types of Services
+1. Cluster IP
+	> ClusterIP is the default K8s service
+	> This service is created inside a cluster and can only be access by other pods in that Cluster
+	> Used when we want to expose a Service to other Pods within the same cluster
+	> For INTERNAL exposure inside Cluster
+
+2. NodePort
+	> NodePort opens a specific port on your Node/Host Machine and when that port gets traffic, that traffic is FORWARDED directly to the service
+	> limitations include:
+		- only ONE SERVICE PER PORT	
+		- port range is 30000-32767
+	> For EXTERNAL exposure outside Cluster
+
+3. LoadBalancer
+	> LoadBalancer is the standard way to expose Service to the Internet
+	> All the traffic on the port is forwarded to the Service
+	> It is designed to assign an external IP to act as a Loadbalancer for the Service
+	> Theres no filtering, no routing in LoadBalancer
+	> LoadBalancer uses cloud service
+	> limitations include
+		- every Service exposed will have its own IP address
+		- it gets very expensive
+	> This service type creates load balancers in various Cloud providers like AWS, GCP, Azure, etc., to expose our application to the Internet. 
+	> The Cloud provider will provide a mechanism for routing the traffic to the services. T
+		- The most common example usage of this type is for a website or a web app.
+
+
+
+Creating Service
+	> by default, if we create a Pod, a Service of type ClusterIP is created alongside to expose it
+	> to create a Service, we can do it by either
+		1. CLI command using "kubectl expose"
+		2. Using Manifest file
+
+1. Using "kubectl expose"
+	> can be used for pods, service, replicationController, deployment, replicaSet
+
+kubectl expose (-f FILENAME | TYPE NAME) [OPTIONS]
+	> used to expose a either 
+		1. Resource with specific TYPE and NAME 
+		2. Resource created using a Manifest file
+	> OPTIONS includes but not limited to
+		"--port"		defines the port the Service will listen
+		"--target-port"		defines the number of port on the Pods that service should direct traffic to
+		"--type"		defines the type of Service to use (default is ClusterIP)
+		"--name"		defines the name of the Service
+
+2. Using Manifest file
+kubectl create -f <FILENAME>
+	> used to create a Service using a Manifest yaml file
+			
+		
+
+
+Service Manifest Guide
+	> to create a Service using Manifest Guide, we must have the following inside the 
+		1. .kind must Service
+		2. spec: of Service includes
+			selector:	
+				- contains criteria of Pods must pass to be included in Pods managed by Service
+			type:
+				- defines the type of the Service
+			ports:
+				- defines the Port Mapping of Service to Container, which include
+					a. port:		port of Service
+					b. targetPort:		port of Container
+				- for NodePort/LoadBalancer Services, must also include a nodePort: field (NOTE: ClusterIP cant have nodePort)
+					a. nodePort: 		port of Node/Host machine that is mapped to the Service
+
+EX: ClusterIP service
+# Service Service
+# nginx-svc-ci.yaml
+apiVersion: v1
+kind: Service	
+metadata:
+  name: my-service
+  labels:
+    app: nginx-app
+spec:
+  selector:
+    app: nginx-app
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+
+	> in this Manifest file, we create a Service
+	> this Service will have the following properties
+		- name is "my-service"
+		- labels include "app=nginx-app"
+		- spec: includes:
+			- selects Pods to manage whose label includes "app=nginx"
+			- type of Service is "ClusterIP"
+			- port configuration is:	
+				= maps port 80 of Service to port 80 of Pods (Port Forwarding)
+
+
+
+EX: NodePort Service
+# NodePort Service
+# nginx-svc-np.yaml
+apiVersion: v1
+kind: Service	
+metadata:
+  name: my-service
+  labels:
+    app: nginx-app
+spec:
+  selector:
+    app: nginx-app
+  type: NodePort
+  ports:
+  - nodePort: 31111
+    port: 80
+    targetPort: 80
+
+	> in this Manifest file, we create a Service
+	> this Service will have the following properties
+		- name is "my-service"
+		- labels include "app=nginx-app"
+		- spec: includes:
+			- selects Pods to manage whose label includes "app=nginx"
+			- type of Service is "NodePort"
+			- port configuration is:	
+				= maps port 80 of Service to port 80 of Pods (Port Forwarding)
+				= maps port 31111 of Node/Machine to this Service
+
+
+EX: LoadBalancer Service
+# Service - LoadBalancer
+#lb.yaml
+apiVersion: v1
+kind: Service	
+metadata:
+  name: my-service
+  labels:
+    app: nginx-app
+spec:
+  selector:
+    app: nginx-app
+  type: LoadBalancer
+  ports:
+  - nodePort: 31000
+    port: 80
+    targetPort: 80
+
+	> in this Manifest file, we create a Service
+	> this Service will have the following properties
+		- name is "my-service"
+		- labels include "app=nginx-app"
+		- spec: includes:
+			- selects Pods to manage whose label includes "app=nginx"
+			- type of Service is "LoadBalancer"
+			- port configuration is:	
+				= maps port 80 of Service to port 80 of Pods (Port Forwarding)
+				= maps port 31000 of Node/Machine to this Service
+
+
+COMMANDS:
+Creating Service
+kubectl expose (-f FILENAME | TYPE NAME) [OPTIONS]
+	> used to expose a either 
+		1. Resource with specific TYPE and NAME 
+		2. Resource created using a Manifest file
+	> OPTIONS includes but not limited to
+		"--port"		defines the port the Service will listen
+		"--target-port"		defines the number of port on the Pods that service should direct traffic to
+		"--type"		defines the type of Service to use (default is ClusterIP)
+		"--name"		defines the name of the Service
+
+kubectl create -f <FILENAME>
+	> used to create a Service using Manifest file
+
+
+Display Service
+kubectl get svc	<NAME...>
+	> used to display one or more Service specified
+	> if no name is passed, will display ALL Service
+
+kubectl describe svc <NAME>
+	> used to display all information a Service
+
+
+
+Delete Service
+kubectl delete svc <NAME...>
+	> used to delete one or more Service
+

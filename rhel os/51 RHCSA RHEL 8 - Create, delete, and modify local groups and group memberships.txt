@@ -1,0 +1,65 @@
+51 RHCSA RHEL 8 - Create, delete, and modify local groups and group memberships
+
+
+Relevant files/directory
+/etc/group
+ > contains all the groups alongside their group ids and the users currently included
+
+
+Groups for managing permissions
+ > we can use the groups to assign specified permission to a set of users
+ > for this, we can use the "usermod -aG GROUP USER" command to add the user as member of group
+ > then that user will have all permissions assign to the said group
+
+
+Commands
+groupadd
+ > creates a new group with name passed
+ > synopsis:
+	 $ groupadd [OPTIONS] GROUP
+ > options
+	-g GID	specifies the group id to be assigned
+ > ex:
+	$ groupadd IT
+	$ groupadd -g 2040 IT
+
+
+groupdel GROUP 
+ > deletes a group
+ > can take either the id or the name of group
+ > ex:
+	$ groupdel IT
+
+
+groupmod
+ > modifies the property of the group
+ > takes an option that corresponds to the property alongside the new value
+ > synopsis:
+	$ groupmod [OPTIONS] GROUP
+ > options:
+	-n NAME	assign a new name to the group
+	-g GID	assign a new group id to the group
+ > ex:
+	$ groupmod -n IT-Support IT
+	$ groupmod -g 3033 IT-Support
+
+
+usermod -aG GROUP USERNAME
+ > "-aG" option adds a group to the username as its secondary group
+ > user can below up to 15 secondary group
+ > when user is added, it can be seen in the /etc/group line for the specified secondary group
+ > ex:
+	$ usermod -aG IT-Support user1	
+
+
+groupmems -l -g GROUP 
+ > list all the users that are membered to the specified GROUP as its secondary group
+ > ex:
+	$ groupmems -l -g IT-Support
+
+
+groupmems -d USER -g GROUP
+ > removes a user as member of a group 
+ > ex:
+	$ groupmems -d user1 -g IT-Support
+	

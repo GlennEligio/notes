@@ -1,0 +1,122 @@
+16. Versioning APIs
+
+NOTE: NO PERFECT SOLUTION to Versioning API
+	> each of the versioning methods have trade offs to each other
+
+TIP: Have the API versioning strategy ready before finalizing API
+
+Types of Versioning
+1. Media type versioning 
+	> a.k.a "content negotiation" or "accept header"
+	> GitHub uses this for versioning
+2. (Custom) Header versioning
+	> uses Custom header for providing services for different versions
+	> Microsoft uses  this for versioning
+3. URI Versioning
+	> uses different URI path for each versions
+	> ex: Twitter
+4. Request Parameter versioning
+	> uses query/request parameter for each versions
+	> ex: Amazon
+
+
+Factors involved for Versioning APIs
+1. URI Pollution
+	> having many Request URL mappings can pollute the API
+	> URI Versioning and Request Parameter versioning is mostly affected by this
+2. Misuse of HTTP Headers
+	> HTTP headers are NOT intended to use for Versioning
+	> MIME versioning and Custom Headers versioning is using this
+3. Caching	
+	> Browsers caches pages for different URL
+	> because of this nature, those that dont use URL manipulation for versioning (MIME and Custom Header versioning) wont be able to take advantage of browser's caching
+4. Accessibility
+	> Versioning that uses URL manipulation can be easily accessed via Browser URL tab 
+		- URL versioning and Request Parameter versioning
+	> Versioning that required configuring Request to send (ex: adding new Header) cant be accessed easily
+		- MIME and Custom Header versioning are example of this
+		- needs to have a dedicated API Client or Browser plugins to access API in browser only
+4. API Documentation
+	> same case as Accessibility
+	> in HAL explorer and Swagger UI, we can only differentiate each Resources using their URI mappings
+		- we cant add request headers on them
+	> URI versioning and Request Parameter versioning have it easy when it comes to API Documentation
+
+
+
+EXAMPLES OF VERSIONING
+
+PersonV1 class
+public class PersonV1 {
+	private String name;
+
+PersonV2 Class
+public class PersonV2 {
+	private Name name;
+
+Name class
+public class Name {
+	private String firstName;
+	private String lastName;
+
+
+1. URL versioning
+	{GET [/v1/person]}: personV1()
+	{GET [/v2/person]}: personV2()
+
+	@GetMapping("v1/person")
+	public PersonV1 personV1() {
+		return new PersonV1("Bob Charlie");
+	}
+	
+	@GetMapping("v2/person")
+	public PersonV2 personV2() {
+		return new PersonV2(new Name("Bob", "Charlie"));
+	}
+
+
+2. Request Parameter versioning
+	{GET [/person/param], params [version=1]}: paramV1()
+	{GET [/person/param], params [version=2]}: paramV2()
+
+	@GetMapping(path = "v1/person", params = "version=1")
+	public PersonV1 paramV1() {
+		return new PersonV1("Bob Charlie");
+	}
+
+	@GetMapping(path = "v2/person", params = "version=2")
+	public PersonV2 paramV2() {
+		return new PersonV2(new Name("Bob", "Charlie"));
+	}
+
+
+3. Custom Header versioning
+	{GET [/person/header], headers [X-API-VERSION=1]}: headerV1()
+	{GET [/person/header], headers [X-API-VERSION=2]}: headerV2()
+
+	@GetMapping(path = "person/header", headers = "X-API-VERSION=1")
+	public PersonV1 headerV1() {
+		return new PersonV1("Bob Charlie");
+	}
+
+4. 
+	
+	@GetMapping(path = "person/header", headers = "X-API-VERSION=2")
+	public PersonV2 headerV2() {
+		return new PersonV2(new Name("Bob", "Charlie"));
+	}
+
+
+4. Media Type Versioning / MIME / Content Negotiation / "Accept" header
+	{GET [/person/produces], produces [application/example-api-v1+json]}: producesV1()
+	{GET [/person/produces], produces [application/example-api-v2+json]}: producesV2()
+
+	@GetMapping(path = "person/produces", produces = "application/example-api-v1+json")
+	public PersonV1 producesV1() {
+		return new PersonV1("Bob Charlie");
+	}
+
+	@GetMapping(path = "person/produces", produces = "application/example-api-v2+json")
+	public PersonV2 producesV2() {
+		return new PersonV2(new Name("Bob", "Charlie"));
+	}

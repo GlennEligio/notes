@@ -1,0 +1,67 @@
+04. Array and array methods
+
+V. Arrays
+
+
+Arrays
+	> variables that holds multiple values
+	> we can create arrays in two ways
+		a. using Array constructor
+		b. using square brackets []
+	> Javascript arrays are ZERO BASED
+		- starts at zero index 
+		- means that accessing first element, we will use 0th index
+
+EX:
+// Using Array constructor
+const numbers = new Array(1, 2, 3, 4, 5);
+// Using square brackets
+const fruits = ["apples", "pears", "oranges"];
+
+
+Adding element in array
+	> to add new element into the array, we acn do the following
+		a. define the value for the next element
+			- with this, we can add element in any indeces
+			- but if we add element who's index in greater than the array size, all index space between the new element will be empty
+				= ex: array has size of 2, and we add element at index 5
+				= now, elements are index 2,3,4 will be empty
+		b. use push() and unshift() method and pass the new element value
+
+
+
+METHODS OF ARRAY
+
+push(Object elementValue)
+	> method of array 
+	> used to add element at the end of the array
+
+unshift(Object value)
+	> method of array
+	> used to add element at the start of the array
+
+pop()
+	> removes the last value of array
+	> returns the last value of array
+
+isArray(Object o)	
+	> STATIC method of Array class
+	> checks if the Object passed 
+	> return boolean value
+
+indexOf(Object o)
+	> returns the index of the Object in an Array, if the Object is inside array
+	> if object is not in the Array, indexOf() returns -1
+
+includes(Object o)
+	> returns a boolean value based on whether the Object in included in the Array or not
+
+concat(Array array)
+	> concats the array input at the end of the Array
+
+filter(predicate function())
+	> filter the Array based on the condition set inside the predicate function
+
+map(callbackFn function())
+	> maps the array items by either modifying them or transforming them into a new Object
+

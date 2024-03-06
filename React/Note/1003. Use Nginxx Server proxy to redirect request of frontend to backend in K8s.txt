@@ -1,0 +1,80 @@
+1003. Use Nginx Server proxy to redirect request of frontend to backend in K8s
+
+SOURCE:
+https://serverfault.com/questions/379675/nginx-reverse-proxy-url-rewrite
+http://nginx.org/en/docs/http/ngx_http_core_module.html#location
+http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
+https://kubernetes.io/docs/tasks/access-application-cluster/connecting-frontend-backend/
+	> "Creating the frontend" Section
+
+
+
+PROBLEM
+1. Browser client DOES NOT have access to backend services in K8s
+	> typically in K8s, backend are exposed through ClusterIP services
+		- ClusterIP services can only be access inside the K8s cluster
+	> these means that all API calls in frontend (only service) to access backend resources will FAIL
+
+
+
+SOLUTION
+1. Use reverse proxy of backend in the nginx configuration of Frontend
+	> by doing so, all request (at least upstream traffic since we sending request out of frontend) with specific request path pattern (e.g. "/api") will be proxied and redirected by nginx server to the backend K8s service
+
+
+
+EX:
+default.conf inside /etc/nginx/conf.d/default.conf of Container directory
+
+upstream backend {
+  server api-gateway:8080;
+}
+
+server {
+  listen 80;
+
+  root   /usr/share/nginx/html;
+  index  index.html index.htm;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  location /api {
+    proxy_pass http://backend;
+  }
+
+  error_page   500 502 503 504  /50x.html;
+
+  location = /50x.html {
+    root   /usr/share/nginx/html;
+  }
+}
+
+
+
+	In this configuration file above, the most important portion for redirecting API calls of frontend to backend services are 
+
+1)
+
+upstream backend {
+  server api-gateway:8080;
+} 
+
+	> Here, we defined an upstream named backend
+		- An upsteam defines a cluster that we can proxy request to
+		- In this example, it points to the services that run API Gateway of backend
+
+
+2) 
+
+  location /api {
+    proxy_pass http://backend;
+  }
+
+	> Here we define that we will do to request whose relative url path starts with "/api" (e.g. http://localhost:8080/api/v1/users)
+	> In this case, we will proxy the request and redirect to the "http://backend"
+		- the backend refers to the upstream that we defined earlier
+		- in essence, we are essentially redirecting the request to api-gateway:8080, which is one of service of k8s cluster
+   		- ex: "http://localhost:80/api/v1/users" request will be redirected to "http://api-gateway:8080/api/v1/users"
+

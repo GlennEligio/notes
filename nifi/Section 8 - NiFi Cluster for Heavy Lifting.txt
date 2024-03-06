@@ -1,0 +1,1035 @@
+Section 8 - NiFi Cluster for Heavy Lifting
+
+34. Overview on NiFi Clustering
+35. Limitation in NiFi Clustering
+36. NiFi Cluster Configuration using Embedded Zookeeper
+37. NiFi Cluster Configuration Steps (Reference)
+38. NiFi Cluster Configuration using External Zookeeper
+39. NiFi Cluster Configuration Steps in Single Machine (Reference)
+
+
+
+34. Overview on NiFi Clustering
+
+Why NiFi Cluster?
+ > Sometimes you may find it difficult to use one NiFi instance to process huge amount of data
+ > Instead you can use multiple NiFi servers to process large data sets
+ > This can be done by segregating the large data set into multiple smaller data sets and sending these small data sets to different servers to process them separately
+
+
+Common Problems in Clustering
+1. Each time when you want to change or update the dataflow, you must make those changes on each server and then monitor each server separately
+2. Segregating big data set into multiple smaller datasets and processing it separately using different servers will have its own complexity
+
+
+Features of NiFi Cluster
+1. In NiFi, we can cluster multiple NiFi servers and each server in the cluster can perform the same set of tasks on the data, but each can operate on a different set of data
+2. In NiFi cluster, if you make changes in one node, it automatically get REPLICATED to all the nodes of the cluster
+3. Using a single interface, the Data Flow Manager can monitor the health and status of all the nodes
+
+
+How NiFi Cluster works?
+1. NiFi follows a Zero-Master Clustering paradigm
+2. In NiFi, we can use Apache Zookeeper for Cluster Management, and any failover is handled by Zookeeper
+
+
+What is Zookeeper?
+ > ZooKeeper is an OPEN-SOURCE server which enables highly reliable distributed coordination
+ > Many open source software like SOLR uses ZooKeeper for its Cluster Management
+ 
+ 
+
+How NiFi Cluster Works with ZooKeeper? (cont.)
+3. ZooKeeper elects one of the NiFi nodes as the Cluster Coordinator and all nodes in the cluster will send status information (ex: heartbeat) to this node
+	> Heartbeat is a signal emitted by nodes in the cluster to denote that the node is working properly
+4. The Cluster Coordinatior is responsible to disconnect nodes that do not emit any heartbeat status for some amount of time
+5. When a new node opts to join the cluster, that node must first connect to the currently elected Cluster Coordinator in order to obtain the latest flow
+6. If the Cluster Coordinator decides to allow the node to join the cluster, the current flow is provided to that node, and that node will then be able to join the cluster
+7. If the version of the flow configuration available in the new node differs from the version available in the Cluster Coordinator, the node will not be able to join the cluster.
+
+
+
+
+
+35. Limitation in NiFi Clustering
+
+Limitation in NiFi Clustering
+1. In a NiFi cluster, data is "Distributed" for processing, but it's not "Replicated"
+2. In a NiFi cluster, when we split large data set into multiple smaller data sets, each node will be given the smaller data set it needs to process, and the same node keeps this data in its disk storage
+3. A copy of this data is not maintained or replicated in any other nodes
+
+
+
+Side-Effect of not having Data Replication
+1. In a NiFi cluster, if one node goes down, we have a provision to offload that node and the data in that node will be distributed to other active nodes slowly, provided that the node is still connected to the network
+2. But if the node completely goes out of the network for some reason, says someone pulled the network cable of that machine, the data inside that note will NOT be processed or distributed to other active nodes until it comes back to the network
+
+
+
+
+
+
+36. NiFi Cluster Configuration using Embedded Zookeeper
+
+Embedded Zookeeper
+ > Each Nifi instance is bundled with a Zookeeper instance inside it
+ > We will be using three NiFi instances and the three embedded Zookeeper instances available within it
+ > The only key prerequisites here is that you should have MORE THAN ONE machine available to follow along and connectivity between these machines
+
+
+Digital Ocean Droplets
+ > I will not be using my local machine like I used to do previously. Instead I will be using three "Digital Ocean Droplets"
+ > If you are coming across Digital Ocean Droplets for the first time, just remember it's something similar to "AWS EC2"
+ > To put it simpler, I have loaned commodity machines according to my required specification and I will be billed based on the number of hours I have used these machines
+ 
+ 
+Digital Ocean Droplets created
+Hostnames:
+01 
+ > glenneligio-ubuntu-s-1vcpu-512mb-10gb-nyc1-01 
+ > 137.184.214.24
+02 
+ > glenneligio-ubuntu-s-1vcpu-512mb-10gb-nyc1-02
+ > 147.182.209.254
+03 
+ > glenneligio-ubuntu-s-1vcpu-512mb-10gb-nyc1-03
+ > 137.184.48.44
+
+
+Handling Prerequisite
+1. For this, we can either create three VMs in Cloud (ex: )or on your local machine (ex: VirtualBox), in order to create the nodes needed for NiFi cluster
+2. Then after setting up the VMs, connect to it using SSH
+	> in Cloud, they typically give you option setup SSH key for authentication. You will give the SSH public key, and maintain the private key on your side
+	> for connecting to the Cloud VM, you will provide the private key in the SSH client that you are using, alongside the IP address and the user (ex: default username is "root" in ubuntu)
+3. In case you dont use Cloud VM, you can configure the VM by editing the ssh_host_rsa_key.pub
+	> add the ssh public key, alongside the user in the system that you want to represent
+
+EX:
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3nD51bwkntI1bXn2bx6ZERZt+JQyYPwk8BKuhwcYN736pwzcT2W07D0A+xN/lUSFOj8QimIqNK0Q4g+CJsOMnQLundnGg+iNwHHM7d7wQv2qlQxaqISGaqhZIyhaXQECJnPTyESiIlV3RoLTfjupYuSEgUKSsCUMjGFR8VF84F9sfS3AVqwPQhSJYejgfVQuTI/iepvboBKkfRWx0nOOtl22oOzPHQsuTNuDl5miare8ho88fBD8iCw0BPwES90LdfSq96fnGO8Iv41+Us2LHc75e/+/tCiancDGe7mqKRIYQQQYi86cpbFYgpJywNe9d4vdLTGHf4ninAste3J+A7A785iDJO2YUJxTGkUcv0oFDwH6jjJoTzZGVwcW9mJl2BlMf77x/z0fF6orhxvn5Q/Vd3pjJe99br4oGqF3aX9SPpW35XkHkpU6bJl0hmOYFwo+dLuxyyU5H/D5bwdVsZil/W0j2ee6cRGLXTbdIPwe/cN/NN5kyfNRaKJDsraM= root@glenneligio-ubuntu-s-1vcpu-512mb-10gb-nyc1-03
+
+4. Setup the /etc/hosts file
+	> add the ip addresses of the VMs that you setup for NiFi cluster, and give them a readable name
+	
+EX:
+137.184.214.24 nifi-node-1
+147.182.209.254 nifi-node-2
+137.184.48.44 nifi-node-3
+
+
+5. Configure /conf/zookeeper.properties file
+	> add the nifi node ip address (using the one inside /etc/hosts file) as one of the zookeeper server instances
+	> server.1 refers to server named "1", as with the server.2 refers to server named "2"
+	> 2888:3888 is the port ranged used by zookeeper internally for electing leaders within the zookeeper cluster
+	> also, take note of the property "clientPort"
+		- this is used by zookeeper client as its port
+	
+EX:
+$ vi /opt/nifi/conf/zookeeper.properties
+
+# INSIDE
+server.1=nifi-node-1:2888:3888;2181
+server.2=nifi-node-2:2888:3888;2181
+server.3=nifi-node-3:2888:3888;2181
+
+
+6. Create the data directory to store zookeeper data
+	> inside the zookeeper.properties, theres a property called "dataDir"
+	> it assumes the present working directory to be the installation directory of NiFi (same level as the bin folder)
+	> ex: ./state/zookeeper means that we should create state/zookeeper directory in the installDir of NiFi
+
+EX:
+$ mkdir /opt/nifi/state/zookeeper
+
+
+
+7. Add a file named "myid" inside the new directory
+	> then inside the file, specific the server name for the said zookeeper instance
+	> from earlier, it can be either 1,2, or 3
+	
+EX:
+$ touch /opt/nifi/state/zookeeper/myid
+$ echo "1" >> /opt/nifi/state/zookeeper/myid
+$ cat /opt/nifi/state/zookeeper/myid
+
+
+
+8. Update the following nifi.properties entries for the Zookeeper configurations
+	> nifi.state.management.embedded.zookeeper.start
+		- specifies if NiFi will use the embedded zookeeper
+	> nifi.zookeeper.connect.string
+		- list of zookeeper server details (hostname), separated by comma
+	> nifi.cluster.is.node
+		- specify if the current nifi instance is a cluster node
+	> nifi.cluster.node.address
+		- the hostname address of the current nifi instance
+		- can be the public ipv4 or 6 address, or the alias specified in the hosts file
+	> nifi.cluster.node.protocol.port
+		- must be an unused port
+
+EX:
+nifi.state.management.embedded.zookeeper.start=true
+nifi.zookeeper.connect.string=nifi-node-1:2181,nifi-node-2:2181,nifi-node-3:2181
+nifi.cluster.is.node=true
+nifi.cluster.node.address=nifi-node-1
+nifi.cluster.node.protocol.port=8446
+
+
+
+9. Update the following nifi.properties entries for the web http properties specific for this VM
+	> in case you haven't done it
+	> nifi.web.http.host
+		- it can be the public ipv4 address, or the url that points/routes to that ipv4 address as well
+		- alternatively, if you have created an alias in the /etc/hosts file for the public ipv4 or ipv6 address of the VM, you can use that as well
+
+EX:
+nifi.web.http.host=nifi-node-1
+
+
+
+10. Update the following nifi.properties entries for the Site to Site protocol configuration
+	> Nifi nodes within the cluster uses S2S protocol to communicate with each other
+	> Below are the necessary entries to update
+	> nifi.remote.input.host
+		- the hostname of the current nifi instance
+		- same as the nifi.web.http.host value
+	> nifi.remote.input.socket
+		- any unused port by the VM hosting NiFi instance
+
+EX:
+nifi.remote.input.host=nifi-node-1
+nifi.remote.input.socket=8447
+
+
+
+
+11. Update the /conf/state-management.xml to pass the connection string for ZooKeeperStateProvider
+
+EX:
+    <cluster-provider>
+        <id>zk-provider</id>
+        <class>org.apache.nifi.controller.state.providers.zookeeper.ZooKeeperStateProvider</class>
+        <property name="Connect String">nifi-node-1:2181,nifi-node-2:2181,nifi-node-3:2181</property>
+        <property name="Root Node">/nifi</property>
+        <property name="Session Timeout">10 seconds</property>
+        <property name="Access Control">Open</property>
+    </cluster-provider>
+
+
+
+
+12. Open up ports needed for NiFI cluster
+
+2181, 2888, 3888 ZooKeeper ports
+
+6342 Load-balancing port
+
+8445 HTTPS port for NiFi UI/API
+	> nifi.web.https.port or nifi.web.http.port
+	> any unused port
+
+8447 Site to site port
+	> nifi.remote.input.socket.port
+	> any unused port
+
+8446 Cluster communications port
+	> nifi.cluster.node.protocol.port
+	> any unused port
+
+
+
+13. OPTIONAL: Update the following nifi.properties entries for NiFi cluster election configurations
+	> nifi.cluster.flow.election.max.wait.time
+		- specify the max time for electing the master node
+	> nifi.cluster.flow.election.max.candidates
+		- specify the max number of nodes/candidates to be selected for the master node
+		- we can set this to 2 to immediately select the master node as soon as theres two nodes available
+
+ex:
+nifi.cluster.flow.election.max.wait.time=5 mins
+nifi.cluster.flow.election.max.candidates=2
+
+
+
+
+
+13. Restart the NiFi instance or service
+
+$ service nifi restart
+
+
+
+NOTE TODO: Setup cluster to be unsecured just like in video
+
+
+
+NOTE:
+1. Its a good practice to use the hostname defined in the /etc/hosts when referencing the NiFi cluster nodes instead of the actual IP address in the .properties file
+	> with this, we only need to update the content of the "hosts" file whenever the IP address of the VM (especially true for Cloud VMs) changes
+
+
+
+37. NiFi Cluster Configuration Steps (Reference)
+
+Step 1: Update the Host Entry
+
+#Copy the same values to the other nodes
+xx.xx.xx.xx nifi-node-1
+xx.xx.xx.xx nifi-node-2
+xx.xx.xx.xx  nifi-node-3
+
+
+
+xx.xx.xx.xx - IP Addresses of the corresponding machines.
+
+
+
+Step 2: Update zookeeper.properties (../nifi-1.8.0/conf/zookeeper.properties)
+
+#Copy the same values to the other nodes
+server.1=nifi-node-1:2888:3888
+server.2=nifi-node-2:2888:3888
+server.3=nifi-node-3:2888:3888
+
+
+
+Step 3: Create "myid" file inside the Zookeeper Data Directory (../nifi-1.8.0/state/zookeeper/myid)
+
+#Copy the same file to the other nodes and update the corresponding server id
+
+Create myid file inside ./state/zookeeper and put the server id (1, 2, 3 respectively in each node)
+
+
+Step 4: Update nifi.properties (../nifi-1.8.0/conf/nifi.properties)
+
+#Copy the same values to the other node nodes and rename the corresponding node name
+
+#nifi-node-1 to nifi-node-2 and nifi-node-3
+
+
+
+#Enabling Embedded Zookeeper
+nifi.state.management.embedded.zookeeper.start=true
+
+#Connection String of Embedded Zookeepers
+nifi.zookeeper.connect.string=nifi-node-1:2181,nifi-node-2:2181,nifi-node-3:2181
+
+
+
+#Enabling Clustering
+nifi.cluster.is.node=true
+nifi.cluster.node.address=nifi-node-1
+nifi.cluster.node.protocol.port=8081
+
+
+
+#Setting the NiFi Node Name
+nifi.web.http.host=nifi-node-1
+
+
+
+#Site-to-Site protocol is used to distribute date between nodes in the cluster.
+
+#Enabling Site-to-Site Protocol
+nifi.remote.input.host=nifi-node-1
+nifi.remote.input.socket.port=8082
+
+
+
+#Property Used for Cluster Load Balancing (Only Available from NiFi 1.8.0+)
+
+#Cluster Load Balancer will Redistribute Data from Failed NiFi Nodes
+
+nifi.cluster.load.balance.host=nifi-node-1
+
+
+
+#Property Used to Control the Starting of Cluster Election
+
+nifi.cluster.flow.election.max.candidates=2
+
+
+
+Step 5: Restart All NiFi Nodes
+
+
+
+
+
+38. NiFi Cluster Configuration using External Zookeeper
+
+Pitfall of Using Embedded Zookeeper
+ > Using Embedded Zookeeper is perfect fine and it can be used in production
+ > Drawback in this approach is BOTH NiFi and Zookeeper are running in the same server and if the server goes down, we will LOSE the NiFi and Zooker instance at the same time
+ > Using an external Zookeeper, we can run the NiFi and the Zookeeper instanes in different machines
+
+
+Steps:
+1. Configure nifi.properties file
+	> set nifi.state.management.embedded.zookeeper.start to false
+		- tells the NiFi NOT to use the embedded ZK
+
+2. Download the latest Zookeeper version from the official Zookeeper website
+	> https://zookeeper.apache.org
+	
+3. Unzip the Zookeeper zip file
+4. Change the conf/zoo_sample.cfg to conf/zoo.cfg
+	> you will notice that the contents of the zoo.cfg is the same with zookeeper.properties
+
+5. Create the directory specified in the "dataDir" entry of the zoo.cfg file
+6. Inside the dataDir, create a file named "myid", with the correct server index for each nifi nodes
+7. Update the zoo.cfg to contain the ZK ensemble related properties
+
+server.1=nifi-node-1:2888:3888;2181
+server.2=nifi-node-2:2888:3888;2181
+server.3=nifi-node-3:2888:3888;2181
+
+8. Run the NiFi servers again and check the connected nodes status at the top left of the NiFi Dashboard
+
+
+
+
+
+39. NiFi Cluster Configuration Steps in Single Machine (Reference)
+
+
+Create Copies of NiFi Binary in the same machine and follow the below steps.
+
+
+
+Step 1: Update the Host Entry
+
+
+
+#Point to localhost IP to all the node names
+127.0.0.1 nifi-node-1
+127.0.0.1 nifi-node-2
+127.0.0.1 nifi-node-3
+
+
+
+Step 2: Update zookeeper.properties (../nifi-1.8.0/conf/zookeeper.properties)
+
+
+
+#NiFi Node 1 Properties
+
+clientPort=2181
+
+server.1=nifi-node-1:2888:3888
+
+server.2=nifi-node-2:2889:3889
+
+server.3=nifi-node-3:2890:3890
+
+
+
+#NiFi Node 2 Properties
+
+clientPort=2182
+
+server.1=nifi-node-1:2888:3888
+
+server.2=nifi-node-2:2889:3889
+
+server.3=nifi-node-3:2890:3890
+
+
+
+#NiFi Node 3 Properties
+
+clientPort=2183
+
+server.1=nifi-node-1:2888:3888
+
+server.2=nifi-node-2:2889:3889
+
+server.3=nifi-node-3:2890:3890
+
+
+
+Step 3: Create "myid" file inside the Zookeeper Data Directory (../nifi-1.8.0/state/zookeeper/myid)
+
+
+
+#Copy the same file to the other nifi nodes and update the corresponding server id
+
+Create myid file inside ./state/zookeeper and put the server id (1, 2, 3 respectively in each instances)
+
+
+
+Step 4: Update nifi.properties (../nifi-1.8.0/conf/nifi.properties)
+
+
+
+#NiFi Node 1 Properties
+
+
+
+#Enabling Embedded Zookeeper
+
+nifi.state.management.embedded.zookeeper.start=true
+
+
+
+#Connection String of Embedded Zookeepers
+
+nifi.zookeeper.connect.string=nifi-node-1:2181,nifi-node-2:2182,nifi-node-3:2183
+
+
+
+#Enabling Clustering
+
+nifi.cluster.is.node=true
+
+nifi.cluster.node.address=nifi-node-1
+
+nifi.cluster.node.protocol.port=8180
+
+
+
+#Setting the NiFi Node Name
+
+nifi.web.http.host=nifi-node-1
+
+nifi.web.http.port=8080
+
+
+
+#Site-to-Site protocol is used to distribute date between nodes in the cluster.
+
+#Enabling Site-to-Site Protocol
+
+nifi.remote.input.host=nifi-node-1
+
+nifi.remote.input.socket.port=8280
+
+
+
+#Property Used for Cluster Load Balancing (Only Available from NiFi 1.8.0+)
+
+#Cluster Load Balancer will Redistribute Data from Failed NiFi Nodes
+
+nifi.cluster.load.balance.host=nifi-node-1
+
+nifi.cluster.load.balance.port=6342
+
+
+
+#Property Used to Control the Starting of Cluster Election
+
+nifi.cluster.flow.election.max.candidates=2
+
+
+
+#NiFi Node 2 Properties
+
+
+
+#Enabling Embedded Zookeeper
+
+nifi.state.management.embedded.zookeeper.start=true
+
+
+
+#Connection String of Embedded Zookeepers
+
+nifi.zookeeper.connect.string=nifi-node-1:2181,nifi-node-2:2182,nifi-node-3:2183
+
+
+
+#Enabling Clustering
+nifi.cluster.is.node=true
+nifi.cluster.node.address=nifi-node-2
+nifi.cluster.node.protocol.port=8181
+
+
+
+#Setting the NiFi Node Name
+nifi.web.http.host=nifi-node-2
+nifi.web.http.port=8081
+
+
+
+#Site-to-Site protocol is used to distribute date between nodes in the cluster.
+
+#Enabling Site-to-Site Protocol
+nifi.remote.input.host=nifi-node-2
+nifi.remote.input.socket.port=8281
+
+
+
+#Property Used for Cluster Load Balancing (Only Available from NiFi 1.8.0+)
+
+#Cluster Load Balancer will Redistribute Data from Failed NiFi Nodes
+nifi.cluster.load.balance.host=nifi-node-2
+nifi.cluster.load.balance.port=6343
+
+
+
+#Property Used to Control the Starting of Cluster Election
+
+nifi.cluster.flow.election.max.candidates=2
+
+
+
+#NiFi Node 3 Properties
+
+
+
+#Enabling Embedded Zookeeper
+
+nifi.state.management.embedded.zookeeper.start=true
+
+
+
+#Connection String of Embedded Zookeepers
+
+nifi.zookeeper.connect.string=nifi-node-1:2181,nifi-node-2:2182,nifi-node-3:2183
+
+
+
+#Enabling Clustering
+nifi.cluster.is.node=true
+nifi.cluster.node.address=nifi-node-3
+nifi.cluster.node.protocol.port=8182
+
+
+
+#Setting the NiFi Node Name
+nifi.web.http.host=nifi-node-3
+nifi.web.http.port=8082
+
+
+
+#Site-to-Site protocol is used to distribute date between nodes in the cluster.
+
+#Enabling Site-to-Site Protocol
+nifi.remote.input.host=nifi-node-3
+nifi.remote.input.socket.port=8282
+
+
+
+#Property Used for Cluster Load Balancing (Only Available from NiFi 1.8.0+)
+
+#Cluster Load Balancer will Redistribute Data from Failed NiFi Nodes
+nifi.cluster.load.balance.host=nifi-node-3
+nifi.cluster.load.balance.port=6344
+
+
+
+#Property Used to Control the Starting of Cluster Election
+
+nifi.cluster.flow.election.max.candidates=2
+
+
+
+Step 5: Restart All NiFi Nodes
+
+
+
+
+
+40. Securing a NiFi Cluster with the TLS Toolkit
+
+SOURCE: https://nifi.apache.org/docs/nifi-docs/html/walkthroughs.html#creating-a-nifi-cluster
+
+
+TLS Toolkit
+ > separate application from the NiFi
+ > can be downloaded in the same website as the NiFi
+	- https://nifi.apache.org/download.html
+	
+
+Downloading TLS Toolkit
+ > site: https://www.apache.org/dyn/closer.lua?path=/nifi/1.23.2/nifi-toolkit-1.23.2-bin.zip
+ 
+Setting up TLS Toolkit
+1. Create directory for where we will put the downloaded TLS Toolkit
+
+$ mkdir /downloads/apache-nifi-toolkit
+$ cd /downloads/apache-nifi-toolkit
+
+2. Download TLS Toolkit
+
+$ wget https://dlcdn.apache.org/nifi/1.23.2/nifi-toolkit-1.23.2-bin.zip
+
+
+3. Unzip the zip file downloaded, move the content inside /opt/nifi-toolkit-1.23.2, then create a soft link to it in the /opt directory
+
+$ unzip nifi-toolkit-1.23.2
+$ mv nifi-toolkit-1.23.2 /opt/nifi-toolkit-1.23.2
+$ ln -s /opt/nifi-toolkit-1.23.2/ /opt/tls
+
+
+
+Creating the NiFi client certificates
+	> When using the standalone mode of the TLS Toolkit, it is important that all certificates are generated from the same instance, using the same generated NiFi CA certificate to sign each. 
+	> The certificates can be generated by a single command, or individually. By default, the Distinguished Name (DN) will be CN=<provided_hostname>, OU=NIFI. 
+	> For more information on toolkit flag options, see NiFi Toolkit Guide: TLS Toolkit Usage.
+	
+1.1. Create a directory for the cluster configuration and navigate to it
+
+$ mkdir /opt/nifi_cluster_conf && cd /opt/nifi_cluster_conf
+
+
+1.2. Generate the certificates
+	> Running these commands first generates the NiFi CA public certificate and private key if not present, then generates the server certificates, followed by the client certificate necessary for the Initial Admin Identity. 
+	> An alternative command performing all the steps sequentially is also provided.
+	
+$ /opt/tls/bin/tls-toolkit.sh standalone -n 'nifi-node-1' -c 'ca.nifi'
+	> Generates the NiFi CA (ca.nifi) certificate and key if not present and generates and signs node1 certificate, placing the keystore.jks, truststore.jks, and populated nifi.properties in a subdirectory called node1.nifi
+	> change 'nifi-node-1' to the alias used for the node 1 of Nifi Cluster
+	
+$ /opt/tls/bin/tls-toolkit.sh standalone -n 'nifi-node-2'
+	> Generates and signs node2 certificate with the same CA
+	> Note the existing CA certificate being used
+	
+$ /opt/tls/bin/tls-toolkit.sh standalone -n 'nifi-node-3'
+	> Generates and signs node3 certificate with the same CA
+	
+$ /opt/tls/bin/tls-toolkit.sh standalone -C 'CN=my_username'
+	> Generates and signs my_username client certificate with the same CA
+	> change the 'my_username' to the username that you want to use
+
+1.3. Verify the output
+	> The resulting directory will contain 7 new entries:
+		- CN=my_username.p12
+			= The client certificate in a PKCS12 keystore
+		- CN=my_username.password
+			= The corresponding file containing the randomly-generated password. Use -b or --clientCertPassword when generating to specify a password
+		- nifi-cert.pem
+			= The CA certificate in PEM format
+		- nifi-key.key
+			= The corresponding CA private key in PEM format
+		- nifi-node-1/
+			= The directory containing node1 keystore and related files
+		- nifi-node-2/
+			= The directory containing node2 keystore and related files
+		- nifi-node-3/
+			= The directory containing node3 keystore and related files
+
+$ ls -lrta /opt/nifi_cluster_conf
+
+
+2. Create a new nifi_cluster folder in an appropate location
+	> In this example, where all three nodes will run on the same machine, the /etc/nifi_cluster directory is used. 
+	> All further instructions occur from this directory.
+	
+$ mkdir /etc/nifi_cluster
+	- Creates the working directory
+$ cd /etc/nifi_cluster
+	- Change to the created directory
+
+
+3. Copy the NiFi installation folder (i.e. nifi-1.22.0) to a new folder for EACH node in the nifi_cluster folder created in the previous steps
+	> Alternatively, if you already have a Node with Nifi setup, you can use that as well
+	> change '/etc/nifi-1.22.0' and 'node1.nifi' to the Nifi application source and destination directory respectively
+	
+$ cp -R /etc/nifi-1.22.0 node1.nifi
+	> Creates the node1 directory and copies the NiFi application into it
+
+$ cp -R /etc/nifi-1.22.0 node2.nifi
+	> Creates the node2 directory and copies the NiFi application into it
+
+$ cp -R /etc/nifi-1.22.0 node3.nifi
+	> Creates the node3 directory and copies the NiFi application into it
+
+4. Copy the generated keystore.jks, truststore.jks, and nifi.properties to the conf/ directory of each node.
+	> change 'node[1-3].nifi' directory to the one that you're using
+
+$ cp -R /etc/nifi_cluster_conf/node1.nifi/* node1.nifi/conf
+	> Copies the node1 files
+$ cp -R /etc/nifi_cluster_configuration/node2.nifi/* node2.nifi/conf
+	> Copies the node2 files
+$ cp -R /etc/nifi_cluster_configuration/node3.nifi/* node3.nifi/conf
+	> Copies the node3 files
+	
+	
+	
+5. Modify the nifi.properties file for each node to set the appropriate ports and enable the embedded ZooKeeper server. 
+	> If the nodes are being deployed to separate physical or virtual machines (such that each is treated as an independent host for networking), modifying the ports is NOT REQUIRED, but ENABLING the embedded ZooKeeper servers is. 
+	> If the nodes are being deployed on the same machine such that the ports cannot conflict, all parts of this step are required. 
+		- This port selection convention follows the pattern defined at the top of this section, where the last digit corresponds to the node identifier. 
+		- For more information on ZooKeeper configuration for NiFi, see NiFi Administrator’s Guide: Embedded ZooKeeper. (https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html#embedded_zookeeper)
+		
+NOTE:
+1. The nifi.cluster.load.balance.host= entry must be manually populated here because it was added after the TLS Toolkit was last updated. The toolkit correctly populates the hostname in all other necessary properties.
+2.Starting with version 1.14.0, NiFi requires a value for nifi.sensitive.props.key. Set the same value on each node.
+	- IMPORTANT
+	
+	
+5 Update the conf/nifi.properties for each node
+	> this is only for nifi nodes running on THE SAME MACHINE, where we need to use different ports
+	> for nifi nodes hosted in different machines, the ports can remain the same
+
+# FOR NODE 1
+nifi.state.management.embedded.zookeeper.start=false → nifi.state.management.embedded.zookeeper.start=true
+
+nifi.remote.input.socket.port=10443 → nifi.remote.input.socket.port=10441
+
+nifi.web.https.port=9443 → nifi.web.https.port=9441
+
+nifi.sensitive.props.key= → nifi.sensitive.props.key=<secretKey>
+
+nifi.cluster.is.node=false → nifi.cluster.is.node=true
+
+nifi.cluster.node.protocol.port=11443 → nifi.cluster.node.protocol.port=11441
+
+nifi.cluster.load.balance.host= → nifi.cluster.load.balance.host=node1.nifi
+
+nifi.cluster.load.balance.port=6342 → nifi.cluster.load.balance.port=6341
+
+nifi.zookeeper.connect.string= → nifi.zookeeper.connect.string=node1.nifi:2181,node2.nifi:2182,node3.nifi:2183
+
+
+
+# FOR NODE 2
+nifi.state.management.embedded.zookeeper.start=false → nifi.state.management.embedded.zookeeper.start=true
+
+nifi.remote.input.socket.port=10443 → nifi.remote.input.socket.port=10442
+
+nifi.web.https.port=9443 → nifi.web.https.port=9442
+
+nifi.sensitive.props.key= → nifi.sensitive.props.key=<secretKey>
+
+nifi.cluster.is.node=false → nifi.cluster.is.node=true
+
+nifi.cluster.node.protocol.port=11443 → nifi.cluster.node.protocol.port=11442
+
+nifi.cluster.load.balance.host= → nifi.cluster.load.balance.host=node2.nifi
+
+nifi.cluster.load.balance.port=6342 → nifi.cluster.load.balance.port=6342
+
+nifi.zookeeper.connect.string= → nifi.zookeeper.connect.string=node1.nifi:2181,node2.nifi:2182,node3.nifi:2183
+
+
+# FOR NODE 3
+nifi.state.management.embedded.zookeeper.start=false → nifi.state.management.embedded.zookeeper.start=true
+
+nifi.remote.input.socket.port=10443 → nifi.remote.input.socket.port=10443
+
+nifi.web.https.port=9443 → nifi.web.https.port=9443
+
+nifi.sensitive.props.key= → nifi.sensitive.props.key=<secretKey>
+
+nifi.cluster.is.node=false → nifi.cluster.is.node=true
+
+nifi.cluster.node.protocol.port=11443 → nifi.cluster.node.protocol.port=11443
+
+nifi.cluster.load.balance.host= → nifi.cluster.load.balance.host=node3.nifi
+
+nifi.cluster.load.balance.port=6342 → nifi.cluster.load.balance.port=6343
+
+nifi.zookeeper.connect.string= → nifi.zookeeper.connect.string=node1.nifi:2181,node2.nifi:2182,node3.nifi:2183
+
+
+
+6. Update the zookeeper.properties file on each node
+	> This file contains the addresses of each embedded ZooKeeper server in the cluster. 
+	> The zookeeper.properties file can be identical on each embedded ZooKeeper server (assuming no other changes were made), so the modified file will be copied to the other nodes.
+	> also for nifi nodes hosted in different machine, if they are on different machine, we can see the ports 2881-2883, 3881-3883, 2181-2183 to be the same
+	
+# for node 1
+server.1= → server.1=node1.nifi:2881:3881;2181
+Add the line server.2=node2.nifi:2882:3882;2182
+Add the line server.3=node3.nifi:2883:3883;2183
+
+
+$ cp node1.nifi/conf/zookeeper.properties node2.nifi/conf/zookeeper.properties
+	> Copies the modified zookeeper.properties file from node1 to node2
+
+$ cp node1.nifi/conf/zookeeper.properties node3.nifi/conf/zookeeper.properties
+	> Copies the modified zookeeper.properties file from node1 to node3
+
+
+7. Create the myid file on each node to identify the embedded ZooKeeper server.
+
+$ mkdir -p node1.nifi/state/zookeeper
+ > Creates the ZooKeeper directory on node1
+
+$ echo 1 >> node1.nifi/state/zookeeper/myid
+ > Creates the myid file with the node1 identifier
+
+$ mkdir -p node2.nifi/state/zookeeper
+ > Creates the ZooKeeper directory on node2
+
+$ echo 2 >> node2.nifi/state/zookeeper/myid
+ > Creates the myid file with the node2 identifier
+
+$ mkdir -p node3.nifi/state/zookeeper
+ > Creates the ZooKeeper directory on node3
+
+$ echo 3 >> node3.nifi/state/zookeeper/myid
+ > Creates the myid file with the node3 identifier
+ 
+ 
+
+8. Update the state-managemet.xml file on each node to allow Zookeeper connections.
+	> The state-management.xml file can be identical on each node (assuming no other changes were made), so the modified file will be copied to the other nodes.
+	
+$EDITOR node1.nifi/conf/state-management.xml
+ > Opens the state-management.xml file in a text editor
+
+# Update the following line:
+
+<property name="Connect String"></property> → <property name="Connect String">node1.nifi:2181,node2.nifi:2182,node3.nifi:2183</property>
+
+
+$ cp node1.nifi/conf/state-management.xml node2.nifi/conf/state-management.xml
+	> Copies the modified state-management.xml file from node1 to node2
+
+$ cp node1.nifi/conf/state-management.xml node3.nifi/conf/state-management.xml
+	> Copies the modified state-management.xml file from node1 to node3
+	
+	
+	
+9. Update the authorizers.xml file. 
+	> This file contains the Initial Node Identities and Initial User Identities. 
+	> The users consist of all human users and all nodes in the cluster. 
+	> The authorizers.xml file can be identical on each node (assuming no other changes were made), so the modified file will be copied to the other nodes.
+	> NOTE: Each Initial User Identity must have a unique name (Initial User Identity 1, Initial User Identity 2, etc.).
+	
+$EDITOR node1.nifi/conf/authorizers.xml
+ > Opens the authorizers.xml file in a text editor
+
+Update the following lines:
+a. In the <userGroupProvider> section, <property name="Initial User Identity 1"></property> → <property name="Initial User Identity 1">CN=my_username</property>
+ > Adds an initial user with the DN generated in the client certificate
+b. In the <userGroupProvider> section, add the line <property name="Initial User Identity 2">CN=node1.nifi, OU=NIFI</property>
+ > Adds an initial user for node1
+c. In the <userGroupProvider> section, add the line <property name="Initial User Identity 3">CN=node2.nifi, OU=NIFI</property>
+ > Adds an initial user for node2
+d. In the <userGroupProvider> section, add the line <property name="Initial User Identity 4">CN=node3.nifi, OU=NIFI</property>
+ > Adds an initial user for node3
+
+EX:
+    <userGroupProvider>
+		<identifier>file-user-group-provider</identifier>
+		<class>org.apache.nifi.authorization.FileUserGroupProvider</class>
+        <property name="Users File">./conf/users.xml</property>
+        <property name="Legacy Authorized Users File"></property>
+        <property name="Initial User Identity 1">CN=my_username</property>
+        <property name="Initial User Identity 2">CN=node1.nifi, OU=NIFI</property>
+        <property name="Initial User Identity 3">CN=node2.nifi, OU=NIFI</property>
+        <property name="Initial User Identity 4">CN=node3.nifi, OU=NIFI</property>
+    </userGroupProvider>
+	
+e. In the <accessPolicyProvider> section, <property name="Initial Admin Identity"></property> → <property name="Initial Admin Identity">CN=my_username</property>
+ > Adds an initial admin with the DN generated in the client certificate
+f. In the <accessPolicyProvider> section, <property name="Node Identity 1"></property> → <property name="Node Identity 1">CN=node1.nifi, OU=NIFI</property>
+ > Adds an initial node with the DN generated in the node1 certificate
+g. In the <accessPolicyProvider> section, add the line <property name="Node Identity 2">CN=node2.nifi, OU=NIFI</property>
+h. In the <accessPolicyProvider> section, add the line <property name="Node Identity 3">CN=node3.nifi, OU=NIFI</property>
+
+EX:
+    <accessPolicyProvider>
+        <identifier>file-access-policy-provider</identifier>
+        <class>org.apache.nifi.authorization.FileAccessPolicyProvider</class>
+        <property name="User Group Provider">file-user-group-provider</property>
+        <property name="Authorizations File">./conf/authorizations.xml</property>
+        <property name="Initial Admin Identity">CN=my_username</property>
+        <property name="Legacy Authorized Users File"></property>
+        <property name="Node Identity 1">CN=node1.nifi, OU=NIFI</property>
+        <property name="Node Identity 2">CN=node2.nifi, OU=NIFI</property>
+        <property name="Node Identity 3">CN=node3.nifi, OU=NIFI</property>
+        <property name="Node Group"></property>
+    </accessPolicyProvider>
+	
+$ cp node1.nifi/conf/authorizers.xml node2.nifi/conf/authorizers.xml
+ > Copies the modified authorizers.xml file from node1 to node2
+
+$ cp node1.nifi/conf/authorizers.xml node3.nifi/conf/authorizers.xml
+ > Copies the modified authorizers.xml file from node1 to node3
+ 
+ 
+ 
+10. By default, NiFi waits for nodes to join for 5 minutes before the cluster is available. Because the number of nodes is known, this delay can be modified on each node to start up much FASTER. (Optional)
+
+$EDITOR node1.nifi/conf/nifi.properties
+ > Opens the nifi.properties file in a text editor
+
+Update the following lines:
+
+nifi.cluster.flow.election.max.wait.time=5 mins → nifi.cluster.flow.election.max.wait.time=1 min
+ > Changes the flow election wait time to 1 min, speeding up cluster availability
+
+nifi.cluster.flow.election.max.candidates= → nifi.cluster.flow.election.max.candidates=3
+ > Changes the flow election to occur when 3 nodes are present, speeding up cluster availability
+
+$EDITOR node2.nifi/conf/nifi.properties
+ > Opens the nifi.properties file in a text editor
+
+Update the following lines:
+
+nifi.cluster.flow.election.max.wait.time=5 mins → nifi.cluster.flow.election.max.wait.time=1 min
+ > Changes the flow election wait time to 1 min, speeding up cluster availability
+
+nifi.cluster.flow.election.max.candidates= → nifi.cluster.flow.election.max.candidates=3
+ > Changes the flow election to occur when 3 nodes are present, speeding up cluster availability
+
+$EDITOR node3.nifi/conf/nifi.properties
+ > Opens the nifi.properties file in a text editor
+
+Update the following lines:
+
+nifi.cluster.flow.election.max.wait.time=5 mins → nifi.cluster.flow.election.max.wait.time=1 min
+ > Changes the flow election wait time to 1 min, speeding up cluster availability
+
+nifi.cluster.flow.election.max.candidates= → nifi.cluster.flow.election.max.candidates=3
+ > Changes the flow election to occur when 3 nodes are present, speeding up cluster availability
+ 
+ 
+ 
+ 
+11. Start the NiFi cluster
+	> Once all three nodes have started and joined the cluster, the flow is agreed upon and a cluster coordinator is elected, the UI is available on any of the three nodes.
+
+$ ./node1.nifi/bin/nifi.sh start
+	> Starts node1
+$ ./node2.nifi/bin/nifi.sh start
+	> Starts node2
+$ ./node3.nifi/bin/nifi.sh start
+	> Starts node3
+	
+	
+	
+12. Wait approximately 30 seconds and open the web browser to https://node3.nifi:9443/nifi. 
+	> The cluster should be available. Note that the Initial Admin Identity has no permissions on the root process group. 
+	> This is an artifact of legacy design decisions where the root process group ID is not known at initial start time.
+	>The running cluster
+		- check the top left corner for the cluster information
+		
+		
+
+13. To update the Initial Admin Identity’s permissions for the root process group, stop each node in the cluster and remove the authorizations.xml and users.xml file from each node. 
+	> These files will be REGENERATED when the node starts again and be populated with the correct permissions.
+
+$ ./node1.nifi/bin/nifi.sh stop
+ > Stops node1
+
+$ rm node1.nifi/conf/authorizations.xml node1.nifi/conf/users.xml
+ > Removes the authorizations.xml and users.xml for node1
+
+$ ./node2.nifi/bin/nifi.sh stop
+ > Stops node2
+
+$ rm node2.nifi/conf/authorizations.xml node2.nifi/conf/users.xml
+ > Removes the authorizations.xml and users.xml for node2
+
+$ ./node3.nifi/bin/nifi.sh stop
+ > Stops node3
+
+$ rm node3.nifi/conf/authorizations.xml node3.nifi/conf/users.xml
+ > Removes the authorizations.xml and users.xml for node3
+ 
+ 
+14. Start the nodes again
+
+$ ./node1.nifi/bin/nifi.sh start
+ > Starts node1
+
+$ ./node2.nifi/bin/nifi.sh start
+ > Starts node2
+
+$ ./node3.nifi/bin/nifi.sh start
+ > Starts node3

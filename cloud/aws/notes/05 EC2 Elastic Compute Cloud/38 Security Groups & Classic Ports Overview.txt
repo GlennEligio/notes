@@ -1,0 +1,79 @@
+38 Security Groups & Classic Ports Overview
+
+
+Introduction to Security Groups
+ > Security Groups are the fundamental of network security in AWS
+ > They control how traffic is allowed into or out of our EC2 instances
+ > Security groups can only contain 'allow' rules (whitelist)
+ > Security groups rules can reference by IP or by another Security groups
+	- this means we can use other Security groups to define the rules of another Security group, which means GroupA whitelist will be added to GroupB whitelist assumming GroupB referenced GroupA
+
+
+EX:
+		Inbound traffic
+ Internet	-------------->	 |		  <-|
+		<--------------  | Security Group ->| EC2 insntace
+		Outbound Traffic |		    |
+
+
+
+
+Security Groups Deeper Dive
+ > Security groups are acting as a "firewall" on EC2 instances
+ > They regulate:
+	- Access to Ports
+	- Authorised IP ranges - IPv4 and IPv6
+	- Control of inbound network (from others to the instance)
+	- Control of outbound network (from the instance to other)
+
+Example Security Group table
+Type		Protocol	Port Rnage	Source
+HTTP		TCP		80		0.0.0.0/0
+SSH		TCP		22		122.149.196.85/32
+Custom TCP Rule TCP		4567		0.0.0.0/0
+
+
+
+
+Security Groups Notes
+1. Security Groups can be attached to multiple instances
+2. Instances can have one or more Security groups
+3. Security Groups are locked down to a region/VPC combination
+4. Security live 'outside' the EC2 - if traffic is blocked, the EC2 instance won't see it
+5. It is good to maintain one separate security group for SSH access
+6. If you application is not accessible (TIME OUT), then its a security group issue
+7. If your application gives a "CONNECTION REFUSED" error, then its an application error or its not launched
+
+
+
+
+Referencing other security groups
+ > with this, we can avoid using hardcoded IP address and Port when defining whitelist inbound and outbound rules
+ > in example below, we configured the EC2 instance A to authorize both Security Group 1 and 2 for inbound. This means that both EC2 instance B and C can send data to the instance A, but not instance D
+
+EX:
+EC2 instance A
+ > uses Security Group 1
+ > Inbound: Authorizes Security Group 1 and 2
+
+EC2 instance B
+ > uses Security Group 2
+
+EC2 instance C
+ > uses Security Group 1
+
+EC2 instance D
+ > uses Security Group 3
+
+
+
+
+
+Classic Ports to know
+22 - SSH (Secure Shell) - login into a Linux instance
+21 - FTP (File Transfer Protocol) - upload files into a file share
+22 - SFTP (Secure File Transfer Protocol) - upload files using SSH
+80 - HTTP - access unsecured websites
+443 - HTTPS - access secured websites
+3389 - RDP (Remote Desktop Protocol) - log into a Windows instance
+

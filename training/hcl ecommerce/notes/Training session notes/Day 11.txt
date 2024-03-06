@@ -1,0 +1,17 @@
+Day 11
+
+PLP
+ > product listing page
+ > ex: Electronics page
+ 
+SLP
+ > search list page
+ > ex: "Coffee" search list page
+ 
+PDP
+ > product detail page
+ > ex: "Home desktop" product page
+ 
+ 
+Notes:
+1. For the updating the description of the Catalog entry, we will need to update both the Product and Item bean. Then we will need to do indexing 

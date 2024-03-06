@@ -1,0 +1,35 @@
+06. Quick Look at the K8s Concept - Pods, ReplicaSets, and Deployment
+
+
+kubectl get events
+	> similar to getting events in Docker
+	> events includes
+		- scheduling, creating, starting, killing K8s resource like
+			-> Pods/Nodes/Deployment/ReplicaSet/Service/Volume/ etc
+		- scaling ReplicaSet/Deployment
+
+kubectl get <resource-type>
+	> general command in K8s to fetch specific resource
+	> these resources include
+		- pod
+		- deployment
+		- replicaset
+		- volume
+		- service
+		- network
+		- secret
+		- namespace
+		- node
+	> we can use either the plural or singular form of the resource type
+		- ex: kubectl get pods or kubectl get pod
+
+
+Pods
+	> smallest unit in K8s cluster
+	> each Pod can contain one or more Containers running inside
+
+
+
+Single Responsibility Principle
+	> K8s uses Single Responsibility principle
+	> In this principle, one Concept will have one Responsibility

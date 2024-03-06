@@ -1,0 +1,511 @@
+HCL Commerce Introduction and V8
+
+What is HCL Commerce?
+ > formerly known as WebSphere Comemrce and WebSphere Commerce Suite
+ > HCL Commerce is a software platform framework for e-commerce which includes features in tailorable, intergrated package like:
+	- marketing
+	- sales
+	- customer
+	- order processing functionality
+ > It is a single, unified platform which offers the ability to do business directly with consumers (B2C), with businesses (B2B), indirectly through channel partners (indirect business models), or all of these simultaneously
+ > WebSphere Commerce is a customizable, scalable, and high availability solution built on the Java - Java EE platform using open standards such as XML, and Web services
+ > Formerly a product of IBM, the product was sold to HCL Technologies in July 2019
+
+
+
+History
+1996
+The first version of the platform was introduced in 1996, during the emergency of e-commerce with a product called Net.Commerce (V1.0 and subsequently V2.0, V3.1, and V3.2) that was deployed to sell event ticket and merchandise for the 1996 Olympic Games
+
+2001 
+Net.Commerce was renamed WebSphere Commerce Suite, releasing versions V4.1 and V5.1
+
+2002
+WebSphere Commerce V5.4 was released
+
+2003 V5.5 was released
+
+2004 V5.6 was released
+
+2005 V5.6.1 was released
+
+2006 Version 6.0
+
+2009 Version 7.0
+
+2015 Version 8.0
+
+2018 Version 9.0
+
+2020 Version 9.1
+
+NOTES:
+1. There are three editions of WebSphere Commerce software. Each edition provides an increasing set of functionality in comparison
+	- Express (not available to Version 8.0 above)
+	- Professional
+	- Enterprise (previously known as Business Edition prior to V6.0)
+
+
+
+About
+ > WebSphere Commerce is designed as highly customizable solution and IBM provides an intergrated development environment that is used to build and test customizations including changing the design of storefronts, extending business logic, and creating new business logic to meet business requirements
+ > The developer platform used for customizing and implementing the solution is called 'IBM WebSphere Commerce Developer' for which there are also 3 editions that pair with their runtime environments:
+	- WebSphere Commerce Developer Express
+	- WebSphere Commerce Developer Professional
+	- WebSphere COmmerce Developer Enterprise
+ > As with other customizable IBM product, the WebSphere Commerce Developer toolkit runs within 'IBM Rational Application Developer for WebSphere Software' or RAD as the foundation Java IDE, and RAD extends the Eclipse environment with visual and other development features
+ > A specific WebSphere Commerce version uses a specific version of RAD
+	- WebSphere Commerce Developer V6 is based on RAD V6
+	- WebSphere Commerce Developer V7 is based on either
+		-> IBM Rational Software Architect (RSA) or RADV7.5
+	- WebSphere Commerce Developer V8 is based on either 
+		-> RSA
+		-> RAD v9.5
+
+
+
+WebSphere Commerce V8 Architecture
+Agenda
+1. Architecture Layer
+2. WebSphere Commerce Common Architecture
+3. Runtime Framework
+4. Rest Architecture
+5. Management Center Framework
+6. Back-end Integration
+7. Environment
+8. Common Topology
+9. Design Pattern
+
+
+
+WebSphere Commerce features: Cross-Channel
+ > Seamless customer experience across multiple channels
+ > Each channel uses different technologies like
+   1. Web (WebSphere Commerce)
+   2. Mobile (WebSphere Commerce Mobile Store)
+   3. In Store POS and Kiosks (Retail Store Solutions)
+   4. Call Center (Sterling Order Management)
+   5. Social Media/Social Commerce
+
+
+
+Key benefits of WebSphere Commerce
+1. Supports all Ecommerce business models
+	> Business-to-cusomter (B2C)
+	> Business-to-business (B2B)
+	> Supply and demand chains
+2. Provides powerful business user tools for
+	> Merchandising and search term associations
+	> Catalog Management
+	> Cross-channel precision marketing campaigns and promotions
+	> Size and store administration
+3. Drives improved customer loyalty and increased shopping cart sizes
+	> emphasizes customer centricity
+4. Delivers a seamless, branded shopping experience across all channels
+	> emphasizes cross channel focus
+5. Uses the power of the underlying IBM platform for optimal performance, scalability, reliability, and high availability
+
+
+
+What is new in WebSphere Commerce V8
+1. Supports IBM Commerce Insights
+2. Cloud-based offering
+3. New DHTML-based Management Center with modernized user interface
+4. Customer service features added to Aurora starter store
+5. Multi-channel Precision Marketing
+6. Social Commerce
+7. Better customer service and support experience
+8. Efficient Data Load utility
+9. Migration assistance utilities
+10. Developer infrastructure improvements
+
+
+
+Deprecated and Discontinued features (Summary)
+Deprecated
+ > 3-DES encryption
+ > Massload
+ > Support for the Configuration noun
+ > PriceTCMasterCatalogWithOptionalAdjustment
+
+Discounted
+ > WebSphere Commerce Patterns
+ > The Madisons, Elite, Brazil or MayUJoy (China) stores
+ > Coshopping
+ > sMash-based Social Commerce
+ > BazaarVoice legacy Integration ("PRR")
+ > KickApps integration
+ > iOS hybrid and Android native sample application
+
+
+
+Development process: The development cycle
+Stage 1: Model
+ > Gather requirements, design, simulate, and optimize business models
+ > Team involved are Architects, Business Analysts
+
+Stage 2: Assemble
+ > Discover, assemble, test
+ > Team: Architects, Project Managers, Development teams
+
+Stage 3: Deploy
+ > Integrated deployment of processes
+ > Team: Project Managers, Administrators
+
+Stage 4: Manage
+ > Business monitoring for coordinated interaction, analytics, and optimization
+ > Team: Architects, Administrators
+
+
+
+Architecture Layer
+ > consist of four layers
+	1. Presentation layer
+	2. Control layer
+	3. Business logic layer
+	4. Persistence layer
+ > Presentation layer consist of three components
+	1. WebSphere Commerce Accelerator (JSP pages, HTML, JSTL, Struts tags)
+	2. Storefront (Struts)
+	3. Management Center (Spring)
+ > Control layer consist of two components
+	1. WebSphere Commerce Accelerator and Storefront
+		- uses Struts servlet and SDO tag library
+	2. Management Center web application
+		- uses Struts servlet and SDO tag library
+ > Business logic layer consist of the the folowing components
+	1. WebSphere Commerce service
+		- talks to either the "Name-value per processing commands" or the "BOD processing commands"
+		- as of now, the "Namve-value per processing commnands" are widely used
+ 	2. Name-value per processing commands
+	3. BOD processing commands
+ > Persistence layer consit of several components
+	1. Access beans
+		- communicate with Name-value pair processing commands
+		- interacts with EJB
+	2. EJB or Enterprise Java Bean
+		- Java Beans
+		- communicates with the Database, typically using ORM
+	3. Physical object persistence service
+		- servers as a Data Service layer
+		- interacts with database, using drivers for examples	
+	4. Database
+		- stores data
+
+
+
+Common Architecture
+Example #1
+Components
+1. Web server
+	> consist of WebSphere Application Server Plug-in
+2. WebSphere Application Server
+	> consist of Rational Application Developer (RAD) and Development database
+3. WebSphere Commerce Developer
+	> consist of the Commerce Server
+4. Database server
+	
+Flow
+1. Business users connect to the Web server
+2. Web server connects to the WebSphere Application Server
+3. WebSphere Application Server interacts with the Database server for storing/accessing data
+4. WebSphere Commerce Developer interacts with WebSphere Application Server by pushing updates/fixes
+
+
+Web server <---> WebSphere Application Server <---> Database server
+			|
+			|
+			V
+		WebSphere Commerce Developer
+
+
+
+Example #1
+Components
+1. Load balancer (for WebSphere Commerce)
+  > consist of an active and failover Load balancer for high availability
+  > redirects request from Storefront/REST to WebSphere Commerce server instance
+2. WebSphere Commerce
+  > consist of WebSphere Commerce server instances
+3. Load balancer (for WebSphere Commerce search)
+  > consist of an active and failover Load balancer for high availability
+  > rediret request from WebSphere Commerce server to Slave search server instance
+4. WebSphere Commerce search
+  > consist of Slave search server instances
+5. Master index
+  > contains index in which it replicates to the Slave search server instances through "Index replication"
+6. Production database
+  > contains all the data used throughout WebSphere Commerce
+  > only one instance of Production database exist
+
+	
+
+Runtime Framework
+ > composed of the following Components
+    1. WebSphere Commerce
+    2. Interfaces that interacts with WebSphere Commerce
+      > WebService Interface
+      > J2EE Web Application Interface
+      > WebSphere Commerce Service Interface
+    3. Data Sources
+    4. Enterprice servers
+
+WebSphere Commerce
+ > holds the core components/functionalities of the system
+ > composed of the following
+    1. Catalog
+    2. Member
+    3. Marketing
+    4. Selling
+    5. Order
+    6. Trading
+ 
+Interfaces
+ > used to define the contract of interacting with WebSphere Commerce
+ > this includes:
+    1. Web Service Interface
+    2. WebSphere Commerce Service Interface
+    3. J2EE Web Application Interface
+ > Web Service Interface is used by the Web Services using JSP
+ > J2EE Web Application Interface is used by Kiosk and WebServices that uses Struts
+ > WebSphere Commerce Service Interface is used by Client libraries such as Management Center and other Clients (potentially third party clients)
+ 	- Struts, alongside SDO tags is used for Client libraries
+	
+
+
+REST ARCHITECTURE
+ > composed of REST Clients and WebSphere Commerce server
+ > REST Clients is included for 
+	- Mobile (Internet)
+	- Web (Internet, On-premise)
+	- Social (O)
+	- Kiosk Desktop (I)
+ > WebSphere Commerce server includes
+	- REST services abstraction
+	- OAGIS BOD DSL/DB
+	- Security OAuth
+	- Intregration services
+
+
+REST ARCHITECTURE CONT'D
+ > composed of the following components
+    1. Client (web app, mobile native app, etc)
+    2. WebSphere Commerce
+	- Rest Web Module
+	  -> Request Handlers and Resource Handler
+	  -> Entity Providers (JSON/XML) and JSP Templates (XHTML/ATOM)
+	  -> Data Mapper (data mapping files, transformation utility)
+	- Component Services
+	- Classic Programming Model (controller command, data bean)
+	- Security Runtime
+
+Process Flow in REST ARCHITECTURE
+Authentication services
+1. Client sends Authentication request POST (JSON) to Request Handlers
+2. Request Handler interacts with Member Service Client included in the Component Services
+3. Member Service Client sends back a response to Request Handlers
+4. Resource Handler will interact with Security Runtime if the Authentication Request is valid
+5. Request Handler interact with Entity Provider to process the response
+6. Entity Providers sends the Security Tokens
+
+Business Object Document (BOD) services
+1. Client sends HTTP Request GET/PUT/POST/DELETE in JSON format and Security token included if necessary to Request Handlers
+2-3. Request Handler interact with Security Runtime to check if Security token is valid and returns a response
+4. Request Handler, using Service Client, sends a Component Service request to Component Services
+5. Component Services sends the Service Data Object to the Data Mapper for data mapping files and transformation utility
+6. Data Mapper sends output to the Entity Providers
+7. Entity Providers sends the response either in JSON or XML back to the Client
+
+Controller command and data bean services
+1. Client sends HTTP request POST in JSON, Security token is provided if required
+2-3. RequestHandlers interacts with Security Runtime to validate the request
+4. RequestHandler interacts with Classic Programming Models like (controller command, data bean)
+5. Controller command / Data bean is send as TypedProperty (output of a Command's performExecute) to the Entity Providers
+6. Entity Provider sends a JSON response to the Client
+
+
+
+Management Center Framework
+ > composed of the following
+ 	- Browser or Client
+	- Management Center Web Applicationw
+	- WebSphere Commerce services
+
+Browser
+ > this is where the Management Center is being accessed
+
+Management Center Web Application
+ > composed of the following
+	- Predefined AMD Modules
+	- AMD Module servlet
+	- Definitions
+	- Spring Dispatcher Servlet
+	- Mediator JSP files with getData tag
+	- CMC Client libraries
+ > AMD Module servlet, together with Predefined AMD modules and Definitions is responsible for loading modules to the Management Center application in Browser
+ > Spring Dispatcher, alongside "getData" tag on Mediator JSP files, interacts with CMC Client libraries (which interacts with the WebSphere Commerce service)
+	- Spring Dispatcher Servlet takes Name-value pair HTTP request
+	- Mediator JSP files returns XML response to the Management Center application served in Browser
+
+
+
+Backend Integration
+ > with HCL Commerce, we can integrate its back-end systems to external applications
+ > HCL Commerce's business logic is enabled for integration and built-in adapters and interfaces are provided for common integration points
+ > HCL Commerce can integrate with 
+	- Customers by multiple channels
+	- Back-end systems within the enterprise
+	- Partners and suppliers
+
+EX:
+WebSphere Commerce
+ > exposed to the external consumers like Customers, Partners, and Channel
+ > contains Adapters and Interfaces as tools to integration like
+	- Configurable Business Processes
+	- Business Context Engine
+	- WebSphere platform
+
+Integration Service
+ > services that are exposed to the HCL Commerce Adapters and Interfaces
+ > this includes
+	- WebSphere Process Server
+	- Web Services
+	- WebSphere InterChange Server
+	- IBM MQ
+	- Adapter
+	- Custom
+
+Existing Applications
+ > these are the application that are available out of the box in HCL Commerce. This uses the Integration services mentioned earlier
+ > this includes
+	- OMS (Order Management System)
+	- CRM (Customer Relationship Management)
+	- ERP (Enterprise Resource Planning)
+	- SCM (Supply Chain Management)
+	- Legacy
+
+
+
+Environments
+ > Development
+ > Testing Server
+ > Production Server
+ > Staging Server
+ > Authoring Server
+ > Search
+
+
+
+Common topologies - Two Tiered
+ > these tiers are
+	1. WebSphere Commerce node, acts as both backend and frontend
+	2. Administrator and Database server node
+ 
+WebSphere Commerce Node
+ > contains the following components
+   1. WebSphere Commerce Server
+     - instance_name.ear directory
+     - store_name.war directory
+   2. WebSphere Commerce Configuration Manager
+   3. WebSphere Application Server
+     - WebSphere Application Server plug-in configuration file (plugin-cfg.xml)
+   4. Web server
+     - Web Server configuration file (ex: httpd.conf)
+   5. Database client
+
+Process flow
+1. End customer connects to the WebSphere Commerce node through the internet and the firewall that secures it
+2. The WebSphere Commerce node interacts with the Database server node for data access/storing
+3. The administrator may also connect directory to the WebSphere Comemrce node to modify its configuration
+
+	
+
+
+Common topologies - Three tiers
+ > tiers include:
+    1. Web server node
+    2. WebSphere Commerce node and Adminstrator
+    3. Database server node
+ > each tier are separated to each other with Firewall or any Network
+ 
+Web server node
+ > contains Key Web server objects like:
+    1. Web server configuration file (ex: httpd.conf)
+    2. WebSphere Application Server plug-in configuration file (plugin-cfg.xml)
+    3. WC_instance_name.ear diretory
+      - store_name.war directory
+ > Adminstrator interact with this component/tier
+
+WebSphere Commerce node
+ > contains the following components
+    1. WebSphere Commerce Server
+    2. WebSphere Commerce Configuration Manager
+    3. WebSphere Application Server
+    4. Database client
+ 
+Process flow
+1. Clients/End customer interact with the Web server node through Internet. Firewall may or may not restrict this access
+2. Web server node interact with the WebShere Commerce node
+	> this acts like the frontend-backend communication
+3. WebSphere Commerce node interacts with the Database server node for data access/storage
+4. Administrator also interacts with the Web server node for WCS administration
+
+
+
+Common topologies - search
+ > composed of the following components
+   1. Management Center
+   2. Managed data
+   3. Authoring/Staging
+   4. Production
+
+Management Center
+ > responsible for the following actions
+   1. CSV upload
+   2. Facet management
+   3. Catalog
+ > interacts with the Authoring/Staging environment by sending data/command as Unapproved content to be handled
+
+Managed data
+ > responsible for Dataloading
+ > uses the Dataload utility to load data
+ > also sends the data/command as Unapproved content in Authoring/Staging for processing
+
+Authoring/Staging
+ > composed of the following components
+   1. WebSphere Commerce instance
+   2. Unapprove content
+   3. Workspace index
+   4. Store preview
+   5. Approved content
+   6. Base/source index
+
+Production
+ > composed of the following components
+   1. WebSphere Commerce instance
+   2. Repeater (contains Index for replication)
+   3. Target index instances
+   4. Database
+
+Process flow
+Authoring/Staging
+1. Management Center and Managed data sends data/command to the Authoring/Staging environment as Unapproved content
+2. This unapproved content can either be for re-indexing or for Workflow (Approval)
+2.1. For re-indexing, it will go to Workspace index, then it will be processed so that the new index can be available in Store preview
+2.2.1. For Workflow(Approval), the Unapproved content will be processed to filter them and leave only the Approved content
+2.2.2. Then Approved content will then be used for Re-indexing to the Base/source index. The Base/source index will be used to populate the Store preview
+
+Production
+1. WebSphere Commerce instance in Production will be updated using the 'fileprop' that exist in the Authoring/Staging environment
+2.1 Repeater will be updated using the 'indexprop' from the Base/Source index in Authoring/Staging
+2.2 The Repeater in Production, containing the latest index, will do an Index Replication to the Target index instances which are referred as the Slave Index servers
+3. The Database in Production will be updated based on the 'stagingprop' from the Approved content in Authoring/Staging server
+
+
+
+Design Pattern used in WCS V8
+1. Model-View-Controller (MVC)
+2. Factory Pattern
+3. Command Pattern
+4. Display Design pattern
+

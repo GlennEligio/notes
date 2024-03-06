@@ -1,0 +1,101 @@
+09. Fetching ConfigProps from Config Server
+
+@EnableConfigServer
+	> exposes Request Mapping URI that corresponds to the configprops from its source
+		- using this mappings, others can fetch configprops from this Config Server
+	> below are the URI that is being exposed
+
+
+2021-12-22 20:10:30.559 TRACE 16196 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.c.c.s.e.EncryptionController:
+	{GET [/key]}: getPublicKey()
+	{GET [/key/{name}/{profiles}]}: getPublicKey(String,String)
+	{POST [/decrypt/{name}/{profiles}]}: decrypt(String,String,String,MediaType)
+	{POST [/decrypt]}: decrypt(String,MediaType)
+	{POST [/encrypt]}: encrypt(String,MediaType)
+	{POST [/encrypt/{name}/{profiles}]}: encrypt(String,String,String,MediaType)
+	{GET [/encrypt/status]}: status()
+2021-12-22 20:10:30.573 TRACE 16196 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.c.c.s.e.EnvironmentController:
+	{GET [/{name}/{profiles:.*[^-].*}], produces [application/json]}: defaultLabel(String,String)
+	{GET [/{name}-{profiles}.yaml || /{name}-{profiles}.yml]}: yaml(String,String,boolean)
+	{GET [/{name}/{profiles}/{label:.*}], produces [application/json]}: labelled(String,String,String)
+	{GET [/{label}/{name}-{profiles}.yaml || /{label}/{name}-{profiles}.yml]}: labelledYaml(String,String,String,boolean)
+	{GET [/{name}-{profiles}.json]}: jsonProperties(String,String,boolean)
+	{GET [/{label}/{name}-{profiles}.properties]}: labelledProperties(String,String,String,boolean)
+	{GET [/{name}/{profiles:.*[^-].*}], produces [application/vnd.spring-cloud.config-server.v2+json]}: defaultLabelIncludeOrigin(String,String)
+	{GET [/{name}/{profiles}/{label:.*}], produces [application/vnd.spring-cloud.config-server.v2+json]}: labelledIncludeOrigin(String,String,String)
+	{GET [/{label}/{name}-{profiles}.json]}: labelledJsonProperties(String,String,String,boolean)
+	{GET [/{name}-{profiles}.properties]}: properties(String,String,boolean)
+2021-12-22 20:10:30.584 TRACE 16196 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.c.c.s.r.ResourceController:
+	{GET [/{name}/{profile}/{label}/**]}: retrieve(String,String,String,ServletWebRequest,boolean)
+	{GET [/{name}/{profile}/{label}/**], produces [application/octet-stream]}: binary(String,String,String,ServletWebRequest)
+	{GET [/{name}/{profile}/{path:.*}], params [useDefaultLabel]}: retrieveDefault(String,String,String,ServletWebRequest,boolean)
+
+
+Fetching Config Prop from one of the URI exposed in Config Server
+	> using the pattern below, we can fetch config prop
+
+		{GET [/{name}/{profiles:.*[^-].*}], produces [application/json]}: defaultLabel(String,String)
+
+	> we can see that theres different PATH VARIABLES to be used to fetch configProp
+
+PATH VARIABLES
+name
+	> refers to the name of properties file
+profile
+	> refers to the profile or type of specific properties file used
+
+EX:
+Supposedly we have three property files
+limits-service.properties
+limits-service-dev.properties
+limits-service-qa.properties
+
+Here, we have a limits-server properties file, with three version (default/dev/qa).
+	> the limits-service refers to the NAME
+	> the dev/qa/"" refers to the PROFILES
+		- the blank is the default
+	> so if we try to access configprops for dev environment, we will define go to
+		http://{configServerUrl}/{name}/{profile}
+		http://localhost:8888/limits-service/dev
+
+
+
+EX:
+INSIDE ConfigProp source of Config Server (in this case, a local git repo)
+# Configuration
+limits-service.minimum=2
+limits-service.maximum=997
+
+URI to use for fetching the properties of limits-service
+	> using the URI pattern above, we can fetch limits-service properties using this URI
+
+		GET /limit-service/default
+
+	> and assuming Config Server is being hosted at localhost:8888 (in our example), we can go to 
+
+		http://localhost:8888/limits-service/default
+
+	> to get limits-service properties using default profile
+	> the result will be
+
+{
+    "name": "limits-service",
+    "profiles": [
+        "default"
+    ],
+    "label": null,
+    "version": "31cb35de258c8b055288f6dd34c8476e90c43a5b",
+    "state": null,
+    "propertySources": [
+        {
+            "name": "file:///D:/Study/programming/java-the-hutt/Workspaces/microservices-in28minutes/git-localconfig-repo/file:D:\\Study\\programming\\java-the-hutt\\Workspaces\\microservices-in28minutes\\git-localconfig-repo\\limits-service.properties",
+            "source": {
+                "limits-service.minimum": "2",
+                "limits-service.maximum": "997"
+            }
+        }
+    ]
+}

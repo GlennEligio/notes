@@ -1,0 +1,138 @@
+17. useRef hook
+
+
+React useRef Hook
+	> The useRef Hook allows you to persist values between renders.
+	> It can be used to store a mutable value that does not cause a Component re-render when updated.
+	> Works like useState hook, but will not cause re-render when value is updated
+	> It can be used to access a DOM element directly.
+
+
+useRef(Object defVal)
+	> method used for the useRef hook
+	> takes an Object which represents the default value of variable
+	> returns an Object called current
+		- It's like doing this: 
+			const refVar = {current: defVal} 
+		- We can access the current value of refVar by using refVar.current.
+
+
+Use cases
+1. Persist a variable's value in Component and be able to modify it WITHOUT causing Component re-render
+	> similar to useState() but with no Component re-render
+2. Access an element in the return() JSX value of Components
+	> with this, we will use the "ref" property of the elements
+3. Store previous values of variables before they are updated
+	> we can do this by using useEffect()
+
+
+
+I. Using useRef Hook for persisting variable value
+1. Create a variable and assign useRef() to it
+	- pass the default value in the useRef()
+2. When accessing or modified the ref variables, instead of accessing the variable directly, we will use the current property of it
+	
+
+SYNTAX:
+Initializing useRef()
+const refVar = useRef(defVal)
+
+Using/Accessing/Modifying refVar useRef() using "current" property
+refVar.current
+
+
+EX:
+import { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
+
+function App() {
+  const [inputValue, setInputValue] = useState("");
+  const count = useRef(0);
+
+  useEffect(() => {
+    count.current = count.current + 1;
+  });
+
+  return (
+    <>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <h1>Render Count: {count.current}</h1>
+    </>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+
+
+
+II. Using useRef() for accessing element in JSX value in return
+1. Initialize useRef() variable
+	> we are allowed to define default value of useRef() if its used for accessing element
+	> ex: const input = useRef()
+
+2. Add "ref" property to the element we want to access, and pass the useRef() variable
+	> ex: <input ref={input} value={name} onChange={(e) => setName(e.target.value)}>
+
+
+
+EX:
+import React, {useState, useEffect, useRef } from 'react'
+
+export default function App() {
+	const [name, setName] = useState("");
+	const input = useRef();
+
+	function focus() {
+		// input.current will have the element as the value
+		input.current.focus();
+	}
+
+	return (
+		<>
+			<input ref={input} value={name} onChange={(e) => setName(e.target.value)}/>
+			<div>My name is {name}</div>
+			<button onClick={focus}></button>
+		</>
+	)
+} 
+
+
+In this Component, if we click the button, the input element will be focused.
+
+
+
+
+III. Store previous value of variables or State before being updated
+	> in Component, before the State is updated, it will first run the useEffect
+	> with this, we can access the value of a variable/State before its value is updated
+
+1. Initialize the variable using useRef()
+	> ex: const prevName = useRef("")
+2. Create a useEffect where
+	a. Adds the variable, where its previous value will be stored, inside the dependency array
+	b. Update the value of useRef() variable with the variable's value
+
+
+EX:
+import React, {useState, useEffect, useRef } from 'react'
+
+export default function App() {
+	const [name, setName] = useState("");
+	const prevName = useRef("");
+
+	useEffect(() => {
+		prevName.current = name
+	}, [name])
+
+	return (
+		<>
+			<input ref={input} value={name} onChange={(e) => setName(e.target.value)}/>
+			<div>My name is {name} and it used to be {prevName.current}</div>
+		</>
+	)
+} 

@@ -1,0 +1,25 @@
+47 RHCSA RHEL 8 - Configure network services to start automatically at boot
+
+
+Configure network services to start automatically at boot
+ > we have three ways to make network services or connections start automatically on boot
+ > For Network Service, we can
+	1. use "systemctl enable SERVICE" to run the network services on boot
+		- example of network service is the "httpd" module
+ > For Network Connections, we can do either of the two
+	2. set the ONBOOT property to yes of the /etc/sysconfig/network-scripts/(NIC) config file
+	3. execute "nmcli connection modify CONNECTION connection.autoconnect yes" command
+	
+
+
+Commands
+systemctl {enable, disable} SERVICE
+ > used to enable or disable a service to be run on boot
+ > ex:
+	$ systemctl enable httpd
+
+
+nmcli connection modify CONNECTION connection.autoconnect [yes | no]
+ > configure the network connection so that it autoconnects on boot
+ > ex:
+	$ nmcli connection modify eht0 connection.autoconnect yes

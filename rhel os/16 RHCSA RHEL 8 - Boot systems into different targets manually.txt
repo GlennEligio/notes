@@ -1,0 +1,66 @@
+16 RHCSA RHEL 8 - Boot systems into different targets manually
+
+Targets
+ > referred to as the Runlevel from the previous versions
+
+Different Targets
+graphical.target
+ > for booting the system with multi-user + GUI
+multi-user.target
+ > boots the system with multi-user feature
+rescue.target
+ > boots the system with single-user mode
+ > used for doing maintenance or patching
+ > used alongside the systemctl isolate  command to stop all other units
+emergency.target
+ > for emergency reason
+ > boots up the system in increments
+ > general for advanced users
+
+
+Different Runlevel, their target units and their description
+0
+ > Target Units: runlevel0.target, poweroff.target
+ > Description: Shutdown and power off the system
+1
+ > Target Units: runlevel1.target, rescue.target
+ > Description: Set up a rescue shell
+2
+ > Target Units: runlevel2.target, multi-user.target
+ > Description: Set up a non-graphical multi-user system
+3
+ > Target Units: runlevel3.target, multi-user.target
+ > Description: Set up a non-graphical multi-user system
+4
+ > Target Units: runlevel4.target, multi-user.target
+ > Description: Set up a non-graphical multi-user system
+5
+ > Target Units: runlevel5.target, graphical.target
+ > Description: Set up a graphical multi-user system
+6
+ > Target Units: runlevel6.target, reboot.target
+ > Description: Shut down and reboot the system
+
+
+Commands
+systemctl get-default
+ > need root access, use sudo
+ > print the default target of the current system
+
+systemctl list-units --type target
+ > needs root access
+ > list all the ACTIVE unit of type target
+ > adding "-all" will also include the INACTIVE units
+
+systemctl set-default TARGET
+ > needs root access
+ > changes the default target of the system, will take effect on the next reboot
+ > ex: 	sudo systemctl set-default multi-user.target
+		sudo systemctl set-default graphical.target
+
+systemctl isolate TARGET
+ > needs root access
+ > runs the requested unit, and make sure that nothing else is running
+ > will send a warning to all users currently logged in
+	- adding "--no-wall" will prevent this default behavior
+ > ex: systemctl isolate rescue.target --no-wall

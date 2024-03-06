@@ -1,0 +1,28 @@
+09 RHCSA RHEL 8 - Create and edit text files | Part 1 | Nano
+
+nano
+ > Nano Text Editor
+ > built in application in RHEL OS
+ > used to create, view, and update contents of a text file
+ > inside the Nano Text Editor, we will have the following operations to use alongside its command. Some of them are:
+	CTRL + G or ^G		Get Help
+	CTRL+X or ^X		Exit
+	CTRL+O or ^O		Write Out / Save
+	CTRL+R or ^R 		Read File
+	^W				Where Is / Find
+	^\				Replace
+	^_ 				Go to Line
+	^K				Cut Line
+	^U				Uncut Line / Paste Line	
+
+
+
+Commands
+nano FILE
+ > used to view and edit contents of a file
+ > if the FILE provided is not present, when the file is saved in nano, it will generate the said file alongside the contents
+ > ex: nano errors.log
+
+info nano
+man nano
+ > contains information and manual for the nano command

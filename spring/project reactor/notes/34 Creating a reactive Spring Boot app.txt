@@ -1,0 +1,51 @@
+34 Creating a reactive Spring Boot app
+
+Dependency needed
+1. Spring Reactive Web
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+
+Creating Sample project
+1. Go to Spring Initialzr website
+2. Create a Project with Spring Reactive Web as dependency
+
+
+Spring Reactive Web
+ > contains Spring WebFlux and Netty webserver
+
+
+Creating a Web app
+ > creating a webapp using Spring WebFlux is SIMILAR to Spring MVC
+ > but, instead of endpoints containing blocking statements and returning the item itself (i.e. ResponseEntity), we will be writing in a reactive fashion using Flux and Mono methods and returning a Flux/Mono to delegate to the Netty Server to handle it
+
+
+Benefits
+1. The webserver is non-blocking
+	> all the waiting will happen in the client side, where the request is sent
+
+
+EX:
+// MyReactiveController.java
+// In this example, theres an with artificial delay of 10 in each Mono to be used
+// If we call this endpoint in a web browser, the waiting will happen in the browser itself
+@RestController
+public class MyReactiveController {
+
+    @GetMapping("/demo")
+    public Mono<String> demoEndpoint() {
+        return generateString()
+                .zipWith(displayName())
+                .map(tuple -> tuple.getT1() + " " + tuple.getT2());
+    }
+
+    public Mono<String> generateString() {
+        return Mono.just("Hello").delayElement(Duration.ofSeconds(10));
+    }
+
+    public Mono<String> displayName() {
+        return Mono.just("John Glenn").delayElement(Duration.ofSeconds(10));
+    }
+}

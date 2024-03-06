@@ -1,0 +1,116 @@
+20. Clean up Kubernetes YAML file
+
+
+Cleaning up the Kubernetes YAML file
+	> earlier, we created the YAML file from the "kubectl get deployment <deployment-name> -o yaml" output
+	> but, not everything in it is necessary to the YAML file
+		- some of these properties are AUTOMATICALLY ADDED when we create the said K8s resource
+		- these includes
+			1. Everything inside the status property
+			2. Properties related to creationDate and uid
+
+
+Minimum content of a YAML file for creating Deployment/Service
+
+DEPLOYMENT YAML
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: currency-exchange
+  name: currency-exchange
+  namespace: default
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: currency-exchange
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: currency-exchange
+    spec:
+      containers:
+      - image: shuntjg/mmv2-currency-exchange-service:0.0.11-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        name: mmv2-currency-exchange-service
+      restartPolicy: Always
+
+
+apiVersion
+	> refers to the apiVersion which the resource will be included
+kind
+	> refers to the type of resource to be created
+metadata
+	> includes the metadata of the resource like
+		- annotations
+		- labels
+		- name (name of resource)
+		- namespace (namespace the resource is under)
+spec
+	> includes the specification of the resource like
+		- replicas (only for ReplicaSet, ReplicaController, and Deployment)
+		- revisionHistoryLimit (defines the limit of revisionHistory to be saved/stored)
+		- selector (used to select the Pods that will be handled by this resource, typically by using "matchLabels")
+		- strategy (defines the strategy when migrating from one version through another, e.g. changing image)
+		  - rollingUpdate
+		    - maxSurge (defines the max Pod of new version to be created)
+		    - maxUnavailable (defines the max Pod of version to be down)
+	 	  - type (defines the type of strategy, either Recreate or RollingUpdate)
+		- template (refers to the PodTemplateSpec, or Pods that will be running)
+		  - metadata (metadata of Pod, typically contains labels associated to the Pod)
+		  - spec (specification of Pods)
+		    - containers (contains an ARRAY of Containers)
+		      - image (defines the image to run in Container)
+		      - imagePullPolicy (defines the image pull policy)
+  		      - name (defines the name of container)
+		    - restartPolicy (defines if Pod will restart after failing/stopping)
+
+
+
+SERVICE
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: currency-exchange
+  name: currency-exchange
+  namespace: default
+spec:
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: currency-exchange
+  sessionAffinity: None
+  type: LoadBalancer
+
+
+apiVersion: v1 (defines the apiVersion the Service is under)
+kind: Service (defines the type of resource)
+metadata: (contains metadata of the resource)
+  labels: (labels attach to the resource, Service)
+    app: currency-exchange (one of the labels)
+  name: currency-exchange (name of the Service)
+  namespace: default (namespace the Service is under)
+spec: (specification of the Service)
+  ports: (defines the Ports of the Service)
+  - port: 8000 (port the Service is listening to)
+    protocol: TCP 
+    targetPort: 8000 (port of Container/Pod where the Service the request it receives)
+  selector:
+    app: currency-exchange (selector used to define which Pods this Service will manage)
+  sessionAffinity: None
+  type: LoadBalancer (type of Service)

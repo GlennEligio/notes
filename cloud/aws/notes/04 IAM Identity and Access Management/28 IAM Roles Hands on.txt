@@ -1,0 +1,15 @@
+27 IAM Roles Hands on
+
+
+Creating IAM Role
+1. Go to IAM Dashboard
+2. Go to Access Management > Roles
+3. Create a Role
+4. Here, we can select the 
+  	> trusted entity type
+	> use case
+5. Select AWS service and EC2 for Entity type and Use case respectively
+6. Select Permissions policies to assign to the Role, and click Next
+7. Enter the Role name and Description
+	> we can also add Tags to the Role for managing them
+8. Create the Role

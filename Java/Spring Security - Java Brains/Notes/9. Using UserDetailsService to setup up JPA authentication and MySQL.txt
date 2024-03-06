@@ -1,0 +1,185 @@
+9. Using UserDetailsService to setup up JPA authentication and MySQL
+
+
+userDetailsService(UserDetailsService service)
+	> method of AuthenticationManagerBuilder
+	> with this, we will use the UserDetailsService we passed in order to fetch the UserDetails
+
+
+UserDetailsService
+	> interface used in order to provide UserDetails
+	> this UserDetails is then used by AuthenticationManager to authenticate Authentication objects
+	> have the methods like:
+		- loadUserByUsername(String username)
+
+
+UserDetails loadUserByUsername (String username)
+	> returns a UserDetails
+	> inside this method, we can create any logic, but it must return a UserDetails
+	> for example it can use
+		- JPA 
+		- JDBC
+		- Feign to fetch data from other Service
+
+
+UserDetails
+	> interface that contains the Principal properties
+	> in order to use this interface, we will need to implement it on a class
+	> when we implement it, we will need to add the following methods
+
+METHODS OF UserDetails
+
+Collection<? extends GrantedAuthority> getAuthorities()
+	> returns the authorities granted to the user
+	> for these, we will use the SimpleGrandedAuthority and pass a String role
+	> SimpleGrantedAuthority is one of the implementations of GrantedAuthority interface
+String getPassword()
+	> returns the password used to authenticate the user
+String getUsername()
+	> returns the username used to authenticate the user
+boolean	isAccountNonExpired()
+	> indicates whether the user's account has expired
+boolean isAccountNonLocked()
+	> indicates whether the user is locked or unlocked
+boolean isCredentialsNonExpired()
+	> indicated whether the user's credentials (password) has expired
+isEnabled()
+	> indicates whether the user is enabled or disabled
+
+
+
+GrantedAuthority
+	> interface to define the Authority
+	> we must use one of its implementations
+		- for now, we will use SimpleGrantedAuthority
+
+SimpleGrantedAuthority
+	> takes a String in its constructor
+	> this String defines the role
+
+
+
+CREATING UserDetails and UserDetailsService implementation
+
+I. Configuring SecurityConfiguration to use UserDetailsService
+
+1. Inside the @EnableWebSecurity Class	
+	> add UserDetailsService property
+		- from org.springframework.security.core.userdetails.UserDetailsService
+		- add @Autowired
+	> inside configure(AuthenticationManagerBuilder auth), 
+		- call userDetailsService() of AuthenticationManagerBuilder parameter
+		- pass the UserDetailsService property we added earlier
+
+INSIDE SecurityConfiguration Class
+
+	@Autowired
+	UserDetailsService userDetailsService;
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+		auth.userDetailsService(userDetailsService);
+
+	}
+
+
+
+
+II. Creating Implementation of UserDetailsService interface
+
+2. Create a Class
+	> name it MyUserDetailsService
+
+3. Implement the UserDetailsService class to it
+
+4. Add the methods from UserDetailsService interface inside the class
+	> override the loadUserByUsername() method
+
+5. Add @Service at MyUserDetailsService class
+
+
+
+III. Creating Implementation of UserDetails
+
+6. Create Class
+	> name it MyUserDetails
+
+7. Implement the UserDetails to it
+	> add the methods to be overriden
+
+8. Modify the MyUserDetails class
+	
+
+
+
+
+IV. Using the Class Implementation of UserDetails
+
+9. Return a new instance of MyUserDetails Class
+
+
+
+
+CREATING JpaRepository Interface to use in UserDetailsService
+
+V. Define the Entity User
+
+10. Create a class
+	> name User
+
+11. Add it with the following
+	- int id, String username, String password, boolean active, String roles property
+	- getters and setters
+	- allArgsConstructor, noArgsConstructor, constructor with all but the id
+	- annotations of Entity
+		- @Entity, @Table for class
+		- @Id, @GeneratedValue for id
+
+
+
+VI. Define the JpaRepository
+
+12. Create Interface
+	- name it UserRepository
+	
+13. Extend the interface to JpaRepository<User, Integer>
+
+14. Add an abstract method to it to serve as findUser
+	- return type Optional<User>
+	- parameter String username
+
+
+
+
+VII. Modify the MyUserDetails Class
+
+15. Add parameter to Constructor
+	> User user
+
+
+16. Add properties to the MyUserDetails
+	> String username, String password, boolean active, List<GrantedAuthority> authorities
+
+
+17. Map the values of User parameter in Constructor to the properties
+
+
+18. Use the properties in the overriden methods
+
+
+
+
+
+VII. Add UserRepository to UserDetailsService
+
+19. Inject the UserRepository to MyUserDetailsService class
+	> add @Autowired to it
+
+20. Create logic inside the loadUserByUsername()
+	> call findByUserName() of UserRepository and pass the String userName parameter
+	> check if Optional<User> is null using orElseThrow()
+		- inside, pass a Supplier
+		- inside Supplier, throw a new Exception of UsernameNotFoundException
+	> return a new MyUserDetails using the User from Optional<User>
+

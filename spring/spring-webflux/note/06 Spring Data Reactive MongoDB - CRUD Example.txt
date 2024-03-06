@@ -1,0 +1,214 @@
+06 Spring Data Reactive MongoDB - CRUD Example
+
+
+Project Setup (Spring Initialzr)
+1. Dependencies
+	- Spring Reactive Web
+	- Spring Data Reactive MongoDB
+	- Embedded MongoDB database (needed for writing test cases later)
+	- Lombok
+	- Spring DevTools
+2. Java version 9+
+
+NOTE:
+1. Embedded MongoDB is dropped in newer Spring Boot version (3.0+). Use the de.flapdoodle.embed.mongo.spring30x instead
+	> https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo.spring/tree/spring-3.0.x
+
+
+// pom.xml file dependencies
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
+			<version>4.3.2</version>
+		</dependency>
+	</dependencies>
+
+
+
+
+
+NOTES:
+1. We will still need a real MongoDB server when we want to run the application
+	> Embedded MongoDB will only be used for Integration testing
+	> for now, remove the Embedded MongoDB dependency and configuration in application.yml or properties
+2. Make sure you want all the required properties for the MongoDB
+	> i forgot to define the authenticate-databased to be used, which is the admin db
+3. You can choose to do the domain-dto conversion in the Controller layer or Service layer
+4. We can request the @RequestBody as a Mono of the real requestbody type
+	- ex: @RequestBody Mono<Product>
+
+
+
+CODE:
+// ProductDto.java in dto
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductDto {
+    private String id;
+    private String name;
+    private int qty;
+    private double price;
+}
+
+// Product.java in entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection = "products")
+public class Product {
+    @Id
+    private String id;
+    private String name;
+    private int qty;
+    private double price;
+}
+
+// ProductRepository.java in repo
+public interface ProductRepository extends ReactiveMongoRepository<Product, String> {
+    Flux<Product> findByPriceBetween(Range<Double> priceRange);
+}
+
+
+// ProductService.java in service
+@Service
+public class ProductService {
+
+    @Autowired
+    private ProductRepository repository;
+
+    public Flux<Product> getProducts() {
+        return repository.findAll();
+    }
+
+    public Mono<Product> getProductById(String id) {
+        return repository.findById(id);
+    }
+
+    public Flux<Product> getProductByPriceRange(double min, double max) {
+        return repository.findByPriceBetween(Range.closed(min, max));
+    }
+
+    public Mono<Product> saveProduct(Mono<Product> productMono) {
+        return productMono.flatMap(repository::save);
+    }
+
+    public Mono<Product> updateProduct(Mono<Product> productMono, String id) {
+        return repository.findById(id)
+                .flatMap(p -> productMono)
+                .doOnNext(p -> p.setId(id))
+                .flatMap(repository::save);
+    }
+
+    public Mono<Void> deleteProduct(String id) {
+        return repository.deleteById(id);
+    }
+}
+
+
+
+// ProductController.java in controller
+@RestController
+@RequestMapping("/products")
+public class ProductController {
+
+    @Autowired
+    private ProductService service;
+
+    @GetMapping
+    public Flux<ProductDto> getProducts() {
+       return service.getProducts().map(AppUtils::entityToDto);
+    }
+
+    @GetMapping("/{id}")
+    public Mono<ProductDto> getProductById(@PathVariable String id) {
+        return service.getProductById(id)
+                .map(AppUtils::entityToDto);
+    }
+
+    @GetMapping("/range")
+    public Flux<ProductDto> getProductByPriceRange(@RequestParam("min") double min,
+                                                   @RequestParam("max") double max){
+        return service.getProductByPriceRange(min, max)
+                .map(AppUtils::entityToDto);
+    }
+
+    @PostMapping
+    public Mono<ProductDto> saveProduct(@RequestBody Mono<ProductDto> monoDto) {
+        return service.saveProduct(monoDto.map(AppUtils::dtoToEntity))
+                .map(AppUtils::entityToDto);
+    }
+
+    @PutMapping("/{id}")
+    public Mono<ProductDto> updateProduct(@RequestBody Mono<ProductDto> monoDto,
+                                          @PathVariable String id) {
+        return service.updateProduct(monoDto.map(AppUtils::dtoToEntity), id)
+                .map(AppUtils::entityToDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<Void> deleteProduct(@PathVariable("id") String id) {
+        return service.deleteProduct(id);
+    }
+}
+
+
+
+// AppUtils.java under util
+public class AppUtils {
+
+    public static ProductDto entityToDto(Product product) {
+        ProductDto dto = new ProductDto();
+        BeanUtils.copyProperties(product, dto);
+        return dto;
+    }
+
+    public static Product dtoToEntity(ProductDto dto) {
+        Product product = new Product();
+        BeanUtils.copyProperties(dto, product);
+        return product;
+    }
+}
+
+
+// application.yml
+spring:
+  data:
+    mongodb:
+      database: productsdb
+      host: localhost
+      port: 27017
+      username: admin
+      password: pass
+      authentication-database: admin

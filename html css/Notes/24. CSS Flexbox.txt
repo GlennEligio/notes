@@ -1,0 +1,156 @@
+CSS Flexbox
+
+CSS Flexbox Layout Module
+	> before the Flexbox layout module, there were four layour modes
+		1. Block, for sections in a webpage
+		2. Inline, for text
+		3. Table, for two-dimensional table data
+		4. Positioned, for explicit position of an element
+	> the Flexible Box Layout Module, makes it easier to design flexible responsive layout structure without using float or positioning.
+	> in order to use FlexBox, we will need to first define a flex container
+		- to do this, we will add "display:flex" CSS property to the element that will nest the flex items
+
+
+Main axis
+	> axis that defines the direction of flex item arrangement
+	> changed using flex-direction and justify-content
+
+Cross axis
+	> axis perpendicular to Main axis
+	> changed using align-items
+
+
+
+CSS properties
+Parent
+
+display: flex
+	> by adding this property in an element (e.g. div), all of the elements nested inside it becomes a flex item
+	> by default, all flex item will be 
+		- arranged from left to right (in row)
+	> we can override the behavior of the flex items nested by specifying some of the Parent and Child properties
+
+
+flex-direction	
+	> specifies the direction of the flexible items.
+	> set the direction of flex items' arrangement
+	> can be either
+		a. row			-> set Main Axis to x-axis
+					-> this will arrange the flex item HORIZONTALLY from LEFT to RIGHT
+		b. row-reverse		-> same as row but items are arranged from RIGHT to LEFT
+		c. column		-> set Main Axis to y-axis
+					-> this will arrange the flex item VERTICALLY from TOP to BOTTOM
+		d. column-reverse	-> same as column but items are arranged from BOTTOM to TOP
+
+
+justify-content
+	> The justify-content property aligns the flexible container's items when the items do not use all available space on the main-axis (horizontally).
+	> typically used with align-items property to align the items vertically
+	> we can assign several values here, which includes
+		a. center		-> items occupies and groups in center
+		b. space-between	-> flex items will have EQUAL space between them
+					-> flex items are arranged so that spaced in between them are EQUAL
+		c. space-around		-> flex items are arranged in flex container where flex item's left and right margin are EQUAL
+					-> flex items will have equal space before, between, and after them
+		d. space-evenly		-> flex items will have equal space around them
+					-> space between flex item and space between flex item and end/start of container is equal
+		e. flex-start		-> default
+					-> items are position at the beginning of the container
+		f. flex-end		-> flex items are position at the end of the container
+
+
+
+align-items
+	> property specifies the default alignment for items inside the flexible container.
+	> adjust the position of the flex items inside along the cross axis
+	> values of this property includes
+		a. stretch	-> Flex items are stretch to fit the container 
+				-> ex: if flex-container is row, flex items height will be stretch to be equal to flex container height
+				-> Default value
+		b. center	-> flex items are positioned at the CENTER of the container
+		c. flex-start	-> items are positioned at the beginning of the container
+		d. flex-end	-> items are position at the end of the container
+		e. baseline	-> items are positioned at the baseline of the container
+				-> baseline refers to the position of the bottom of content (e.g. bottom of text)
+				-> this will make it so all of flex-items baseline's are in similar height
+
+
+flex-wrap	
+	> The flex-wrap property specifies whether the flexible items should wrap or not.
+	> enables us to wrap the items in the next flex line (row or column)
+	> direction of next flex line will be the same as defined in flex-direction
+	> NOTE: IE 10 and earlier version do NOT support the flex-wrap property
+	> values include:
+		a. nowrap		-> default value. Specifies that the flex items will not wrap
+		b. wrap			-> specifies that the flex items will warp if necessary
+		c. wrap-reverse		-> Specifies that the flexible items will wrap, if necessary, in reverse order
+
+
+flex-flow
+	> shorthand for the flex-direction property and the flex-wrap property
+	> syntax is 
+		flex-flow: flex-direction flex-wrap
+	> ex: flex-flow: row wrap
+
+
+align-content
+	> similar to align-items property
+		- works in cross axis
+	> except instead of flex items, it takes effect to the flex lines 
+	> same value passed as align-items
+		
+
+
+
+CSS Flexbox child properties
+align-self
+	> similar to align-items
+	> property that changes the position of an individual flex-item along the cross-axis
+	> OVERWRITES the align-items property of flex-container (Parent)
+	> can assign the same value as the align-items
+
+order
+	> property that defines the order of an individual flex-item in flex-container
+	> by default, flex items will be arranged in the source order (or what order are they defined)
+	> flex-items are arranged from LOWEST to HIGHEST
+		- ex: flex item with order:4 will be closer on start than order:10
+	> we can pass integer in this property
+		- initial value of order is 0 "ZERO"
+
+
+flex-grow
+	> defines how much space a flex items occupies in the container RELATIVE to other flex-items
+		- ex: FIVE flex items with equal flex-grow properties will occupy equal space in container (100% / 5 = 20%)
+		- ex: TWO flex items, one with flex-grow of 2 while other with flex-grow of 1 means that
+				flex item with flex-grow 2 	66% of container (100% * (2/(2+1)))
+				flex item with flex-grow 1	33% of container (100% * (1/(2+1)))
+	> we can pass value of 0 or any POSITIVE INTEGER
+	> default value is 0
+	> if ONLY ONE flex-item have flex-grow property, it will occupy ALL REMAINING SPACE in Container
+
+
+flex-basis
+	> defines how much the initial length of an individual flex-item can be
+	> can take number or measurement values (px, em, rm, vh, vw, %)
+	> the flex items space occupied can still decrease to accomodate space for other flex item in container
+	> ex: if we have flex item #1, #2, #3, and each of them occupy space of at least 100px. And you specify that #3 will have flex-basis of 600px
+		- if flex container is 1200px, #3 will immediately take 600px from it, and the remaining 600px will be shared among #1 #2 #3	
+			-> #1 and #2 will have 200px, while #3 will have 800px
+		- if flex container is 400px, #1 and #2 will still get the 100px for themselves, and #3 will take the rest of 200px for itself	
+	> setting flex-basis to ZERO will make it so that it WONT EXPAND even if the content dimension increases
+
+
+
+flex-shrink
+	> property specifies how the item will shrink relative to the rest of the flexible items inside the same container.
+	> can take values of either 1 or 0
+		1 means it will shrink according to its container size
+		0 means it will not shrink even if container size decreases
+	> typically used when a flex item should not be shrink because it have minimum size specified (via height/width or flex-basis)
+	> ex: if a flex item have flex-basis of 800px and flex-shrink set to 0, if flex container size becomes 400px, the flex item will STAY 800px and WILL NOT SHRINK
+
+
+flex
+	> shorthand property for defining flex-grow, flex-shrink, and the flex-basis propertys
+	> syntax is:
+		flex: flex-grow flex-shrink flex-basis

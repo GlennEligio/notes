@@ -1,0 +1,79 @@
+10. Connect Limits Service to Spring Cloud Config Server
+
+Properties to use/define in application.properties
+
+spring.config.import
+	> added in application.properties whose app have a Config Client dependency installed
+	> define where we will fetch the Config Props
+	> if the config import process is OPTIONAL, we will pass this
+		- optional:configserver:configServerUrl
+	> if mandatory, we will pass this
+		- configserver:configServerUrl
+	> if we dont pass something in configServerUrl, it will still work but NO CONFIG PROPS WILL BE IMPORTED
+	> NOTE: Config props that are imported using this have HIGHER PRIORITY than those inside the application.properties itself
+		- ex: if we have both limits-service.minimum in application.properties of Config Client and Config Server, the one in Config Server will be chosen	
+
+EX:
+# Config Props import
+spring.config.import=optional:configserver:http://localhost:8888
+	> here we will fetch the Config props from Config Server that is hosted in localhost:8888
+	> also, this is optional
+
+spring.cloud.config.name
+	> Config Client also uses this to fetch the Config Properties
+		- all config props inside config files (.properties, .yaml) inside the Git repo whose file name matches the value passed here 
+		- ex: spring.cloud.config.name=limits-service will fetch all config props inside properties file whose name is "limit-service" (limits-service.properties or limits-service.yaml)
+spring.application.name
+	> defines the name of the Spring Application
+	> can be used as replacement for the spring.cloud.config.name
+		- the former will have HIGHER PRIORITY
+
+EX:
+# Spring Cloud Config Name
+spring.cloud.config.name=limits-service
+# Spring App Name
+spring.application.name=limits-service
+
+
+
+Fetching Config Props from a Config Server
+	> in order for a Config Client to fetch configprops from a Config Server, we will need two things
+		1. URL of the Config Server
+		2. Name of the application or cloud config
+	> for setting the Config Server using its URL, we will have to define this property in application.properties file
+		- spring.config.import=optional:configserver:configServerURL
+		- ex: spring.config.import=optional:configserver:http://localhost:8888
+	> to know which configprops to fetch using the Spring App name, we will have to define the property below	
+		- spring.application.name=springAppName
+		- ex: spring.application.name=limits-service
+	> now, if we look at the Console when we run the LimitService application, we can see this lines
+
+2021-12-22 20:33:42.298  INFO 13428 --- [  restartedMain] o.s.b.context.config.ConfigDataLoader    : Fetching config from server at : http://localhost:8888
+2021-12-22 20:33:42.298  INFO 13428 --- [  restartedMain] o.s.b.context.config.ConfigDataLoader    : Located environment: name=limits-service, profiles=[default], label=null, version=31cb35de258c8b055288f6dd34c8476e90c43a5b, state=null
+
+	> we can see the ConfigDataLoader getting the config props from server http://localhost:8888
+	> then using the spring.application.name, it locate the files in git repo where config props is located
+		- it used default as profiles
+
+
+SUMMARY:
+In Config Client, they must have
+1. Dependency
+	> for these, we will also need to define dependency management item
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+
+2. Properties
+	> values can be changed
+
+# Config Props import
+spring.config.import=optional:configserver:http://localhost:8888
+
+# Spring Cloud Config name
+spring.cloud.config.name=limits-service
+
+# Spring Cloud Config profile
+spring.cloud.config.profile=qa

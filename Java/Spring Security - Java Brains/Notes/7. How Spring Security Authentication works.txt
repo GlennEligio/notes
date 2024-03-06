@@ -1,0 +1,112 @@
+7. How Spring Security Authentication works
+
+
+
+Filters
+	> mechanism behind the Spring Security
+	> adds a "cross-cutting" function across URL mappings
+
+DelegatingFilterProxy
+	> name of the filter Spring Security adds to system
+	> gives Authentication and Authorization cross cutting function to all URL mapping by default	
+	> "delegates" the filtering job to other specific Filters like
+		- Authentication
+		- Authorization
+		- User Session
+
+
+Authentication Process
+	> sends Authentication object to the AuthenticationProvider
+		- at this stage, Authentication contains the User Credentials
+	> receives a Authentication again from the AuthenticationProvider
+		- this time, the Authentication contains a Principal
+
+
+Authentication
+	> Spring Security Internal Interface
+	> used to hold credentials built for authentication
+	> once User is authenticated, it holds the Principal
+	> holds the following information such us
+		- Authorities
+		- Credentials
+		- Details
+		- Principal
+	> have following methods like
+
+getAuthorities()
+	> returns a Collection of Object that extends GrantedAuthority class
+	> set by an AuthenticationManager to indicate the authorities that the principal has been granted
+getCredentials()
+	> returns an Object that represents the Credentials
+	> the credentials that prove the principal is correct
+getDetails()
+	> stores additional detials about the authentication request
+getPrincipal()
+	> the identity of the principal being authenticated
+isAuthenticated()
+	> returns a boolean
+	> used to indicate to AbstractSecurityInterceptor whether it should present the authentication token to the AuthenticationManager
+setAuthenticated(boolean isAuthenticated)
+	> takes boolean as parameter
+		
+
+
+AuthenticationProvider
+	> a class that can process a specific Authentication implementation
+	> responsible for doing actual authentication
+	> interface that contains the methods called 
+		- authenticate(Authentication auth)
+		- supports(Class<?> authentication)
+
+Authentication authenticate (Authentication authentication)
+	> method from AuthenticationProvider
+	> takes an Authentication input and returns an Authentication
+	> need to have an implementation defined in order to do its job
+	> whenever Spring Security needs to do authentication, it will call this method
+
+boolean supports (Class<?> authentication)
+	> returns true if this AuthenticationProvider supports the indicated Authentication object
+	> used by the AuthenticationManager to check if it supports a specific type of Authentication like
+		- password authentication
+		- LDAP authentication
+		- OAuth authentication
+
+
+AuthenticationManager
+	> used to manager Authentications of the Spring Security app
+	> implements the ProviderManager
+		- this ProviderManager provide way to delegate which AuthenticationProvide will be used for specific Authentication
+	> have a similar interface with AuthenticationProvider
+		- also have authenticate() method inside it
+	> checks and finds the correct AuthenticationProvider for a specific Authentication
+
+
+
+UserDetailsService
+	> service used in order to create a UserDetails object given a specific credentials
+	> have a method inside called loadUserByUserName()
+
+
+UserDetails
+	> class that represents a specific User
+	> contains the following information such us:
+		- Authorities
+		- Password
+		- Username
+		- isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled
+	> contains following methods like
+
+Collection<? extends GrantedAuthority> getAuthorities()
+	> returns the authorities granted to the user
+String getPassword()
+	> returns the password used to authenticate the user
+String getUsername()
+	> returns the username used to authenticate the user
+boolean	isAccountNonExpired()
+	> indicates whether the user's account has expired
+boolean isAccountNonLocked()
+	> indicates whether the user is locked or unlocked
+boolean isCredentialsNonExpired()
+	> indicated whether the user's credentials (password) has expired
+isEnabled()
+	> indicates whether the user is enabled or disabled

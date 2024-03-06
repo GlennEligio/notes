@@ -1,0 +1,93 @@
+Java Collection Framework
+
+1. Collections are the containers that groups multiple items in a single unit
+2. It provides an architecture to store and manipulate a group of objects
+3. Using Java Collections, various operations can be performed on the data like:
+	a. searching
+	b. sorting
+	c. insertion
+	d. manipulation
+	e. deletion
+4. Java Collection framework provides many interfaces and classes
+
+
+ 
+
+Collection Framework Hierarchy
+
+INTERFACE
+Class
+-> extended by
+= implemented by
+
+NOTE: Interface CAN extend to another interface
+
+
+ITERABLE
+	-> COLLECTION
+		-> LIST
+			= ArrayList
+			= LinkedList
+			= Vector
+				-> Stack
+		-> QUEUE
+			= PriorityQueue
+			-> DEQUE
+				= ArrayDeque (also implement LinkedList)
+		-> SET
+			= HashSet
+			= LinkedHashSet
+			-> SORTEDSET
+				= TreeSet
+
+
+MAP
+	= HashMap
+	= HashTable
+	-> SORTEDMAP
+		= TreeMap
+
+
+
+Interface
+	> Interfaces are the reference types which are similar to classes but contains only abstract methods.
+		- can be compare to a rulebook, and the class who implements to DEFINE the specific details of the rules
+	> Interface have the following properties
+		- Interface CANNOT be INSTANTIATED
+		- Interface DO NOT contain CONSTRUCTOR or instance fields
+		- Contains ONLY ABSTRACT methods
+		- Interface is implemented by a class
+		- An interface can extend MULTIPLE interfaces
+
+
+
+Interfaces in Java Collection Framework
+
+Iterator
+	> the Iterator interface provides the facility of ITERATING the elements only in a FORWARD direction
+	> METHODS:
+		public boolean hasNext()
+		public Object next()
+		public void remove()
+
+Iterable
+	> The Iterable interface is the root interface for all the collection classes. 
+	> The Collection interface along with all its subclasses also implement the Iterable interface
+	> METHODS:
+		Iterator<T> iterator()
+
+Collection
+	> Collection interface is implemented by all the classes in the collection framework
+	> declares the methods that every collection will contain
+	> METHODS:
+		Boolean add(Object obj)
+		Boolean addAll(Object obj)
+		void clear()
+		etc.
+
+
+
+
+
+
+

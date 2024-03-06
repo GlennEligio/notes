@@ -1,0 +1,128 @@
+27-28 Exercise using Operators (filter, map, flatMap, take, log, distinct, distinctUntilChanged)
+
+Operators used
+Flux<T> filter(Predicate<? super T> predicate)
+ > similar to filter of Stream
+ > Evaluate each source value against the given Predicate. 
+ 	- If the predicate test succeeds, the value is emitted. 
+ 	- If the predicate test fails, the value is ignored and a request of 1 is made upstream
+ > returns a Flux whose element passes the Predicate supplied
+
+
+Flux<V> map(Function<? super T, ? super V> mapper)
+ > Transform the items emitted by this Flux by applying a synchronous function to each item
+ > takes the Flux element input T and transform it into V type
+ > returns a tranformed Flux with type element V
+
+
+Flux<T> take(long n)
+ > Take only the first N values from this Flux, if available. 
+ > If n is zero, the source is subscribed to but immediately cancelled, then the operator completes
+ > returns a Flux with N elements
+
+
+Flux<T> defaultIfEmpty(T defaultV)
+ > Provide a default unique value if this sequence is completed without any data
+ > returns a new Flux with single value defaultV
+
+
+Flux<R> flatMap(Function <? super T,? extends Publisher <? extends R>> mapper)
+ > Transform the elements emitted by this Flux asynchronously into Publishers, then flatten these inner publishers into a single Flux through merging, which allow them to interleave.
+ > There are three dimensions to this operator that can be compared with flatMapSequential and concatMap:
+	1. Generation of inners and subscription: this operator is eagerly subscribing to its inners.
+	2. Ordering of the flattened values: this operator does not necessarily preserve original ordering, as inner element are flattened as they arrive.
+	3. Interleaving: this operator lets values from different inners interleave (similar to merging the inner sequences).
+ > RETURNS:
+	a new Flux
+
+
+Flux<T> distinct()
+ > For each Subscriber, track elements from this Flux that have been seen and filter out duplicates.
+ > The values themselves are recorded into a HashSet for distinct detection. 
+ > Use distinct(Object::hashcode) if you want a more lightweight approach that doesn't retain all the objects, but is more susceptible to falsely considering two elements as distinct due to a hashcode collision.
+ > RETURNS:
+	a filtering Flux only emitting distinct values
+
+
+Flux<T> distinctUntilChanged()
+ > The last distinct value seen is retained for further comparison, which is done on the values themselves using the equals method. 
+ > Use distinctUntilChanged(Object::hashcode) if you want a more lightweight approach that doesn't retain all the objects, but is more susceptible to falsely considering two elements as distinct due to a hashcode collision.
+ > RETURNS:
+	a filtering Flux with only one occurrence in a row of each element (yet elements can repeat in the overall sequence)
+
+
+NOTES:
+1. We must end all Flux and Mono method chain by subscribe()
+2. Most of the operators in Flux is similar to the Stream counterpart
+3. Order of the operators are important since if they are in wrong order, they might be working on a different set of Flux
+
+
+EX:
+// Code
+public class Exercise7 {
+
+
+    public static void main(String[] args) throws IOException {
+
+        // Use ReactiveSources.intNumberMono() and ReactiveSources.userMono()
+        // NOTE: Uncomment all but one that you want to test, since they all run in parallel
+
+        // Print all values from intNumbersFlux that's greater than 5
+        System.out.println("Print all values from intNumbersFlux that's greater than 5");
+        ReactiveSources.intNumbersFlux()
+                .filter(n -> n > 5)
+                .log()
+                .subscribe(System.out::println);
+
+        // Print 10 times each value from intNumbersFlux that's greater than 5
+        System.out.println("Print 10 times each value from intNumbersFlux that's greater than 5");
+        ReactiveSources.intNumbersFlux()
+                .filter(n -> n > 5)
+                .map(n -> 10 * n)
+                .log()
+                .subscribe();
+
+        // Print 10 times each value from intNumbersFlux for the first 3 numbers emitted that's greater than 5
+        System.out.println("Print 10 times each value from intNumbersFlux for the first 3 numbers emitted that's greater than 5");
+        ReactiveSources.intNumbersFlux()
+                .filter(n -> n > 5)
+                .map(n -> 10 * n)
+                .take(3)
+                .log()
+                .subscribe();
+
+        // Print each value from intNumbersFlux that's greater than 20. Print -1 if no elements are found
+        System.out.println("Print each value from intNumbersFlux that's greater than 20. Print -1 if no elements are found");
+        ReactiveSources.intNumbersFlux()
+                .filter(n -> n > 20)
+                .defaultIfEmpty(-1)
+                .log()
+                .subscribe();
+
+        // Switch ints from intNumbersFlux to the right user from userFlux
+        System.out.println("Switch ints from intNumbersFlux to the right user from userFlux");
+        ReactiveSources.intNumbersFlux()
+                .flatMap(n -> ReactiveSources.userFlux().filter(u -> u.getId() == n))
+                .log()
+                .subscribe();
+
+        // Print only distinct numbers from intNumbersFluxWithRepeat
+        System.out.println("Print only distinct numbers from intNumbersFluxWithRepeat");
+        ReactiveSources.intNumbersFluxWithRepeat()
+                .distinct()
+                .log()
+                .subscribe();
+
+        // Print from intNumbersFluxWithRepeat excluding immediately repeating numbers
+        System.out.println("Print from intNumbersFluxWithRepeat excluding immediately repeating numbers");
+        ReactiveSources.intNumbersFluxWithRepeat()
+                .distinctUntilChanged()
+                .log()
+                .subscribe();
+
+
+        System.out.println("Press a key to end");
+        System.in.read();
+    }
+
+}

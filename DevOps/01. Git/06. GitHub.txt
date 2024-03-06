@@ -1,0 +1,91 @@
+06. GitHub 
+
+Case Study
+
+Decathlon	
+	> known as the world's largest sporting goods retail brand
+	> has 1600 stores in 52 countries which has nearly 100,000 employees
+
+Problem
+1. How to maintain workflow visibility and avoid redundancies?
+2. How would they hire developers?
+
+Solution
+1. Decathlon used GitHub
+	> GitHub is not only affordable but also it is a great open source community
+	> it is a cloud based tool so the code becomes more visible across the organization, and anybody could contribute to it now
+2. GitHub allows collaboration with any developer all over the world
+	> Open Source solutions enable developers to contribute and share the knowledge to benefit the Global community
+
+
+
+GitHub
+	> a Git repository hosting service
+		- provides a web based graphical interface
+	> helps every team member to work together on the project from anywhere and makes it easy for them to collaborate
+
+
+Features of GitHub
+1. Easy project management
+	> GitHub is one place where project managers and developers coordinate, track, and update their work so projects stay transparent and on schedule
+2. Increased safety with packages
+	> The packages can be published privately, or with in the team or publicly for the open source community
+	> The packages can be used or reused by downloading it from the GitHub
+3. Effective team management
+	> GitHub helps all the team members to stay on the same page and stay organized
+	> Moderation tools like issue and pull request locking helps the team to focus on the code
+4. Improved code writing
+	> Pull request helps the teams to review, improve and propose new codes on GitHub
+	> The implementations and proposals can be discussed before changing the source code
+5. Increased code safety
+	> GitHub uses tools to identify and analyze vulnerabilities to the code, that other tools tend to miss
+	> Development teams everywhere work together to secure the software supply chain, from fork to finish
+6. Easy code hosting
+	> All the codes and documentations are present in one place
+	> There are millions of repositories on GitHub and each repository has their own tools to help you host and release code
+
+
+COMPETITORS OF GITHUB
+1. Bitbucket
+2. FogBugz
+3. Surround SCM
+4. GitLab
+5. Buddy
+6. Beanstalk
+
+
+GIT vs GITHUB
+Location
+Git	> installed locally on the system
+GitHub	> hosted on the cloud
+
+Accessibility
+Git	> can be used offline and does NOT need an internet connection for use
+GitHub	> cannot be used offline and NEEDS an internet connection
+
+Independability
+Git	> can be used without GitHub
+GitHub	> cannot be used without Git
+
+Purpose
+Git	> used for version control and code sharing
+GitHub	> used for centralised source code hosting
+
+GUI availablity 
+Git	> no GUI
+GitHub	> provides an easy to use GUI
+
+Methods of Interaction
+Git	> uses CLI to send out commands
+GitHub	> everything is done through a web-based interface
+
+License to use
+Git	> released under GNU, Open source license, free to use for everyone	
+GitHub	> includes a free and pay for use tiers
+
+Competitors
+Git	> Mercurial, Supervision, IBM, Rational Team Concert, and ClearCase
+GitHub	> Atlassian, Bitbucket, and GitLab
+
+
+	

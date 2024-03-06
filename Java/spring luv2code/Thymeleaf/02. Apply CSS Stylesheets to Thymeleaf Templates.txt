@@ -1,0 +1,46 @@
+02. Apply CSS Stylesheets to Thymeleaf Templates
+
+
+TWO OPTIONS OF CSS file to use
+1. Local CSS files as part of your project
+2. Referencing remote CSS files
+
+
+Static resources location
+	> Spring Boot will look for static resources in
+		src/main/resources/static
+	> inside static folder, there can be sub directories for specific files like
+		static/css
+		static/images
+		static/js
+		etc... 
+	> Spring Boot will also search the following directories for static resources beside /src/main/resources
+		/META-INF/resources
+		/resources
+		/static
+		/public
+	> the search order will be top-down fashion
+
+
+
+3RD Party CSS libraries
+	> to use 3rd party CSS Libraries (like Bootstrap), we can either
+		1. Local Installation
+			- download Bootstrap file(s) and add to /static/css directory
+		2. Remote files
+			- create <link> element inside <head>
+			- define rel property of <link> to "stylesheet"
+			- define href property to the actual link of css file
+
+
+Reference CSS in Thymeleaf template
+	> to reference CSS file, 
+		1. add a <link> element inside <head>
+		2. define rel attribute and pass "stylesheet"
+		3. define th:href and pass "@{css-file-location-in-static-folder}"
+			- ex: "@{/css/demo.css}"
+
+@ symbol
+	> reference context path of your application (app root)
+		- the static folder of src/main/resources
+	

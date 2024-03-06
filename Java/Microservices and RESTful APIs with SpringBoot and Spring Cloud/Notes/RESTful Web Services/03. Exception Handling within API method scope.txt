@@ -1,0 +1,65 @@
+IMPLEMENTING EXCEPTION HANDLING 
+
+@ResponseStatus
+	> Marks a method or exception class with the status code and reason that should be returned.
+	> have two parameters
+		a. code
+			- defines the status code of response (preferrable 400-499 if @ResponseStatus is in exception)
+		b. reason
+			- defines the "message" parameter in response
+			- overrides the message property of Exception
+
+server.error.include-stacktrace
+	> defines if "trace" property will be included in Error response body
+	> values to give include
+		- ALWAYS
+		- NEVER
+		- ON_PARAM
+	> if you have Spring DevTools, this is set as ALWAYS by default
+
+
+1. Create a class
+	> extend to RuntimeException
+	> implement the contructor
+
+2. Add @ResponseStatus annotation to the class
+
+3. Throw the custom exception in one of the API endpoint methods
+
+4. To remove trace property in the Response, define the server.error.include-stacktrace in application.property
+
+
+Custom RuntimeException class
+
+@ResponseStatus(code = HttpStatus.NOT_FOUND)
+public class UserNotFoundException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	public UserNotFoundException(String message) {
+		super(message);
+	}
+}
+
+
+Usage
+	@GetMapping("/users/{id}")
+	public User retrieveUser(@PathVariable("id") int id) {
+		User user = service.findOne(id);
+		
+		if(user == null) {
+			throw new UserNotFoundException("id-" + id);
+		}
+		
+		return service.findOne(id);
+	}
+
+Response body
+{
+    "timestamp": "2021-12-18T12:14:48.085+00:00",
+    "status": 404,
+    "error": "Not Found",
+    "message": "id-500",
+    "path": "/users/500"
+}
+

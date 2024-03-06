@@ -1,0 +1,85 @@
+02 Ecosystem
+
+Elements of a Consumer-grade Search engine
+1. Data - Synchronization of database in the backend
+2. Relevance - Configuring relevance of each search attribute
+3. Speed - Constant and consistent response time
+4. UX - Implementing frontend experience like dashboard
+
+
+Algolia Ecosystem components
+1. Dashboard
+2. API Clients
+3. Frameworks
+4. Extensions
+5. Libraries
+
+
+Dashboard
+ > first thing that you will encounter in Algolia experience
+ > Dashboard is often used for
+	1. Manage your Algolia service subscription
+	2. Configure your team members' access rights
+	3. Manage indexes & API keys
+	4. Configure relevance
+	5. Monitor usage and performance
+	6. Find help
+ > Note:
+	1. Algolia is an API-first service, which means that anything that you can do in Dashboard, you can also do through their API
+	
+API clients
+ > core of Algolia's ecosystem
+ > enables the developers to interact with the Algolia with their programming language of choice
+ > as of now, theres 10 API clients available, created in different programming language
+	1. PHP
+	2. Ruby
+	3. Javascript
+	4. C#
+	5. Python
+	6. Go
+	7. Java
+	8. Scala
+	9. iOS
+	10. Android
+	
+	
+Framework integrations
+ > currently, Algolia offers framework integrations for:
+	1. Rails
+	2. Laravel
+	3. Django
+	4. Symfony
+ > best option to leverage this integration if you already are using the specified frameworks
+ 
+ 
+Extensions
+ > Algolia also provides extensions for the following Applications:
+	1. Magento
+	2. WordPress
+	3. zendesk
+	4. shopify
+ > this extension will handle
+	1. all of the indexing (Automatic Indexing)
+	2. UX best practices
+	
+	
+Libraries - Front End
+ > these libraries leverages the API clients to privde event higher-level concepts and interactions to developers
+ > these libraries help shorten the development time necessary for creating a search user interface
+ > these libraries includes:
+	1. algoliasearch-helper-js
+		- set of functions and patters that make it possible to customize search experiences at a deeper level
+		- working on top of API client, algoliasearch-helper-js exposes new interfaces to perform advanced faceting, managed stateful parameters, and subscribe to events
+	2. instancesearch.js
+		- provides an extensive library of widgets to power the search, and build a state-of-the-art Instant search experience
+		- all of the best practices that we have learned while implementing search on hundreds of website are packed into the widgets
+		- available in the following: Android, iOS, Javascript, React, Vue
+		
+		
+Libraries - Offline SDKs
+ > in mobile apps, Android and iOS, the API client can be enhanced with offline capabilities thanks to the option of "offline mode"
+ > this will provide Full Algolia Search Engine, embedded into your mobile app
+ > the offline SDK is minified version of our search engine, trimmed down to fit in a roughly 1 megabyte package that provides all the basic features of Algolia without the need to contact Algolia's servers
+ > the SDK will seamlessly SWITCH between OFFLINE and ONLINE mode depending on the users connectivity
+ 
+ 

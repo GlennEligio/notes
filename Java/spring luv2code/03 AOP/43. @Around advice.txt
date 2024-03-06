@@ -1,0 +1,180 @@
+@Around advice
+	> like a combination of @Before and @After
+		- but gives you more fine-grained control
+
+
+USE CASES
+
+1. Most common
+	> logging, auditing, security
+2. Pre-processing and post-processing data
+3. Instrumentation / profiling code
+	> how long does it take for a section of code to run
+4. Managing exceptions
+	> in some cases, you dont want to propagate the Exception but instead
+	> Swallow / handle / stop exceptions
+	> or simply rethrow the exception
+
+
+
+ProceedingJoinPoint
+	> added to the @Around Advice method's parameter
+		- similar to adding JoinPoint to other types of Advice
+	> with this, we will get a reference to a "proceeding join point"
+		- since @Around is combination of @Before and @After, to get the JoinPoint of the @After, we will call proceed() of ProceedingJoinPoint
+	> this is also a handle to the target method
+	> our code can use the ProceedingJoinPoint to execute target method
+		- we do this by calling proceed() of the said Class
+
+
+proceed()
+	> one of the method of ProceedingJoinPoint
+	> this is execute the method we are advicing
+	> the return value of the proceed() will represent the return value of the method we are advicing
+
+
+
+MANIPULATING / PROCESSING THE RETURN VALUE OF THE METHOD WE ARE ADVICING
+	> add an Object return type to the @Around Advice method
+	> create logic inside the @Around advice method
+
+CASE 1: Handling (or Swallowing) exception of method we are advicing
+1. Create an Object variable with value of null
+2. Create try-catch block
+3. Inside try
+	- call proceed() of ProceedingJoinPoint parameter
+	- assign the result value of proceed() to the Object variable
+4. Inside catch
+	- assign the Object variable anything, depends on the application
+5. Return the Object variable
+
+CASE 2: Rethrowing the exception of method we are advicing
+1. Copy the CASE 1
+2. Change the content of catch
+	- throw the Exception caught
+
+
+REAL WORLD EXAMPLE 1
+	> create an Advice for instrumentation / profiling code
+		1. How long does it take for a section of code to run
+			- record the current time in mili and store it in long var
+			- call proceed()
+			- record the current time in mili and store it in long var
+			- take the difference between two long variables
+
+
+EX:
+
+Method that will have a delay of finish for 5 second
+
+
+	public String getFortune() {
+		
+		//simulate a delay
+		try {
+			TimeUnit.SECONDS.sleep(5);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		// return a fortune
+		return "Expect heavy traffic this morning";
+	}
+
+
+
+@Around Advice that will measure the time taken to execute the getFortune()
+
+
+	@Around("execution(* com.service.*.getFortune(..))")
+	public Object aroundGetFortune(ProceedingJoinPoint theProceedingJoinPoint) throws Throwable {
+		
+		// print out method that we are advising on
+		String method = theProceedingJoinPoint.getSignature().toShortString();
+		System.out.println("\n=====>>> Executing @Around on method: " + method);
+		
+		// get begin timestamp
+		long begin = System.currentTimeMillis();
+		
+		// now, lets execute the method
+		Object result = theProceedingJoinPoint.proceed();
+		
+		// get end timestamp
+		long end = System.currentTimeMillis();
+		
+		// compute the duration and display it
+		long duration = end - begin;
+		System.out.println("\n====> Duration: " + duration/1000.0 + " seconds.");
+		
+		return result;
+	}
+
+
+
+OUTPUT
+
+Main Program: AroundDemoApp
+Calling getFortune()
+
+=====>>> Executing @Around on method: TrafficFortuneService.getFortune()
+
+====> Duration: 5.017 seconds.
+
+My fortune is: Expect heavy traffic this morning
+Finished.
+
+
+
+REAL WORLD EXAMPLE 2
+	> change the return value of method when exception happens inside it
+
+
+Method that will cause the exception
+
+
+	public String getFortune(boolean tripWire) {
+		
+		if(tripWire) {
+			throw new RuntimeException("Major accident! Highway is closed");
+		}
+		
+		return getFortune();
+	}
+
+
+
+Advice that will handle the exception
+
+	@Around("execution(* com.service.*.getFortune(..))")
+	public Object aroundGetFortune(ProceedingJoinPoint theProceedingJoinPoint) throws Throwable {
+		
+		// print out method that we are advising on
+		String method = theProceedingJoinPoint.getSignature().toShortString();
+		myLogger.info("\n=====>>> Executing @Around on method: " + method);
+		
+		// get begin timestamp
+		long begin = System.currentTimeMillis();
+		
+		// now, lets execute the method
+		Object result = null;
+		
+		try {
+			result = theProceedingJoinPoint.proceed();
+		} catch (Exception e) {
+			// log the exception
+			myLogger.warning(e.getMessage());
+			
+			// give use a custom message
+			result = "Major accident! But no worries, your private AOP helicopter is on the way!";
+		}
+		
+		// get end timestamp
+		long end = System.currentTimeMillis();
+		
+		// compute the duration and display it
+		long duration = end - begin;
+		myLogger.info("\n====> Duration: " + duration/1000.0 + " seconds.");
+		
+		return result;
+	}

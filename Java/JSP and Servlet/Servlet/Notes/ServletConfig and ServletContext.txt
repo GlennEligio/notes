@@ -1,0 +1,56 @@
+ServletConfig and ServletContext
+
+
+ServletContext
+	> interface used to get the data
+	> shared by all Servlets
+	> we can use this to get the <context-param> elements we added in the web.xml
+
+Creating ServletContext
+1. call getServletContext() inside methods of HttpServlet class
+2. call getServletContext() of HttpServletRequest
+
+ex:
+
+inside web.xml
+
+<context-param>
+	<param-name>name</param-name>
+	<param-value>Navin</param-value>
+</context-param>
+
+
+inside a Servlet of same project 
+
+ServletContext ctx = getServletContext();
+String str = ctx.getInitParameter("name")
+out.println(name) // will output Navin
+
+
+
+
+ServletConfig
+	> interface used to get the data
+	> only the Servlet where the <init-param> is nested can use it
+
+Creating ServletConfig
+1. call getServletConfig() inside methods of HttpServlet class
+2. call getServletConfig() of HttpServletRequest
+
+Ex:
+
+inside web.xml
+
+<servlet>
+	<init-param>
+		<param-name>name</param-name>
+		<param-value>Sukesh</param-value>
+	</init-param>
+</servlet>
+
+
+inside a Servlet of same project 
+
+ServletConfig ctx = getServletConfig();
+String str = ctx.getInitParameter("name")
+out.println(name) // will output Sukesh

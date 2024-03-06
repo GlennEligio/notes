@@ -1,0 +1,68 @@
+62 Amazon FSx Overview
+
+Amazon FSx - Overview
+ > Launch 3rd party high-performance file systems on AWS
+ > Fully managed service
+
+Types of Amazon FSx
+1. FSx for Luster
+2. FSx for Windows File Server
+3. FSx for NetApp ONTAP
+
+
+Amazon FSx for Windows File Server
+ > A fully managed, highly reliable, and scalable Windows native shared file system
+ > Built on Windows File Server
+ > Supports SMB protocol & Windows NTFS
+ > Integrated with Microsoft Active Directory
+ > Can be accessed from AWS or your on-premise infrastructure
+
+
+EX:
+1. Below, we can see an example diagram of the AWS FSx for Windows File Server. 
+2. The FSx are hosted in a specific region across different AZs. 
+3. EC2 instance in the same region can access the FSx to read/write files throught the specific shared file location exposed by the FSs. 
+4. Windows Client outside the AWS network can also connect to the FSx through SMB, assumming that they we're given access to the FSx
+
+
+AWS Region A
+ > ECS
+   - connects to the FSx through \\fs-1234123adex.example.com\share
+ > AZ 1
+   > FSx for Windows File Server
+	- accessible through \\fs-1234123adex.example.com\share
+ > AZ 2
+   > FSx for Windows File Server
+	- accessible through \\fs-1234123adex.example.com\share
+
+
+Outside AWS
+ > Corporate data center
+	- connects to the AWS FSx as well through SMB using a Windows client
+
+
+
+
+Amazon FSx for Lustre
+ > A fully managed, high-performance, scalable file storage for High Performance Computing (HPC)
+ > The name Lustre is derived from 'Linux' and 'cluster'
+ > Used typically for Machine Learning, Analytics, Video Processing, Financial Modeling,...
+ > Scales up to 100s GB/s, millions of IOPS, with sub-ms latencies
+
+EX:
+1. FSx for Lustre is hosted in a Region
+2. Amazon S3 is linked to the FSx Lustre
+3. EC2 Compute Instances can connect to the FSx for Lustre to access data
+4. Servers outside the AWS can also connect to the FSx for Lustre to access its data, assumming they have access to the AWS Network
+
+
+AWS Region A
+ > Amazon S3
+ > Amazon FSx for Lustre
+	- link to S3
+ > Compute instances (multiple EC2s)
+	- connects to FSx for Lustre to access the data
+
+Outside AWS
+ > Corporate data center
+	- Servers here can also access data in AWS' FSx for Lustre, assumming that they have access to AWS network

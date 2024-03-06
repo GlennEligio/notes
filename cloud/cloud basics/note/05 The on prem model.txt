@@ -1,0 +1,21 @@
+05 The on prem model
+
+
+On premises model
+ > typically called onprem model
+ > in this model, the data centers are located in the Company's location/premises
+ > Company typically manage these data centers by themselves
+
+
+Model structure
+ > Data Center is managed/located within Company or Organization's premises
+ > Users will connect to these Data Centers by themselves
+ > Organization typically set up network configuration like firewall to restrict access to the data centers
+
+
+
+User 1 -----|	   |----- User 4
+
+User 2 --	Data Center --	User 5
+		  |	   |
+User 3 ------	   -----	User 6

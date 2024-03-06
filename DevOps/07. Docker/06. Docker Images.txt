@@ -1,0 +1,148 @@
+06. Docker Images
+
+Docker Images
+	> read-only set of Instruction layers
+	> Docker images are without OS kernel so these are very light weight
+	> When Container runs with Docker Image, it uses HOST Machine kernel to run the apps
+	> Every Docker Image will have a Unique Image Id
+	> You can store or download the images from either
+		a. Local Registry
+		b. Remote Registry which include
+			- Private Registry running on same machine using docker-registry
+			- Global Register in dockerhub
+	> is stored locally in the directory (which includes container, image, network)
+		- /var/lib/docker/
+
+
+DockerHub (hub.docker.com)
+	> website where we can search for Docker Images of other people (or company)
+	> a GLOBAL REPOSITORY, where everyone can download it
+
+
+
+Docker Image properties
+1. Repository
+	> refers to the Docker image name
+2. Tag
+	> typically refers to the Docker image version
+3. Image ID
+	> unique identifier of the Docker image
+4. Digest
+	> available for Docker Image that uses v2 or later format
+	> a content-addressable identifier
+
+
+
+Commands
+
+I. IMAGE ACTIONS
+docker push <REPOSITORY>:<TAG>
+	> push a docker images in the specified repository name
+	> these repository can also represent the registry location
+		- for dockerhub registry, REPOSITORY will be <dockerhubid>/<REPOSITORY>
+		- ex: dockerhubid/dockerimagename:tag
+
+docker pull <REPOSITORY>:<TAG>
+	> used to pull a Docker images from a Remote Docker registry
+
+docker rmi <REPOSITORY>
+	> used to remove a Docker image in the local registry
+
+I. CHECKING DOCKER IMAGES IN LOCAL REPOSITORY
+docker images
+	> shows Docker Images in the local cache and their
+		- REPOSITORY
+		- TAG
+		- IMAGE ID
+		- DATE CREATED
+		- SIZE
+
+docker images [REPOSITORY]
+	> shows Docker Images whose REPOSITORY matches the one passed on CLI command
+
+docker images [REPOSITORY]:[TAG]
+	> shows DOcker Images in local registry whose REPOSITORY and TAG matches the one passed on CLI command
+
+docker images --no-trunc
+	> used to show full length of IMAGE ID
+	> without the "--no-trunc" flag, image id is truncated since its long
+
+docker images --digests
+	> image's digests refers to the SHA256 of the Docker Image's JSON config file
+	> show images with DIGEST column included in output
+	> we can also pull a specific Image version using its DIGEST
+
+
+
+Docker Image output filtering
+
+docker images --filter "dangling=true"
+	> shows all UNTAGGED Docker Images
+
+docker images --filter "label=label1"
+	> shows Docker Images with label of "label1", REGARDLESS of the "label1" value
+
+docker images --filter "label=label1=value1"
+	> shows Docker Images with label of "label1" that have value of "value1"
+
+docker images --filter "before=image1"
+	> shows Docker Images that is created BEFORE "image1" Docker Image
+
+docker images --filter "since=image1"
+	> shows Docker Images that is created AFTER "image1" Docker Image
+
+docker images --filter=reference='REPOSITORY:TAG'
+	> shows Docker Images whose REPOSITORY:TAG matches the one passed on CLI command
+	> the string passed in reference can take wildcard characters
+		- ex: docker images --filter=reference='ubun*:*1'
+	> we can pass more than one reference filter flags as well, they would be an OR filter
+
+
+
+FORMATTING DOCKER IMAGE TABLE OUTPUT
+
+docker images --format [string template]
+	> used to format the output of the "docker images" output with specific information
+	> we can pass the following Go template to define the table
+	> adding "table" at front of string template will output the result in TABLE FORMAT
+	
+Placeholder			Description
+.ID				Image ID
+.Repository			Image repository
+.Tag				Image tag
+.Digest				Image Digest
+.CreatedSince			Elapsed time since the image was created
+.CreatedAt			Time when the image was created
+.Size				Image disk size
+
+EX:
+docker images --format "{{.ID}}: {{.Repository}}"
+	> this will output the images' id alongside the repository
+
+77af4d6b9913: <none>
+b6fa739cedf5: committ
+78a85c484f71: <none>
+30557a29d5ab: docker
+5ed6274db6ce: <none>
+746b819f315e: postgres
+746b819f315e: postgres
+746b819f315e: postgres
+746b819f315e: postgres
+
+
+docker images --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"
+	> this will output a table with ID, Repository, and Tag in it
+
+IMAGE ID            REPOSITORY                TAG
+77af4d6b9913        <none>                    <none>
+b6fa739cedf5        committ                   latest
+78a85c484f71        <none>                    <none>
+30557a29d5ab        docker                    latest
+5ed6274db6ce        <none>                    <none>
+746b819f315e        postgres                  9
+746b819f315e        postgres                  9.3
+746b819f315e        postgres                  9.3.5
+746b819f315e        postgres                  latest
+
+
+

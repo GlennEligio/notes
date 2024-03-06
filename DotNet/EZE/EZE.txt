@@ -1,0 +1,15 @@
+EZE
+
+Repository interface
+GetRequest
+	> ID param
+	> no return
+GetRequests
+	> no param
+	> no return
+CreateRequest
+	> CreateRequestDto param
+	> no return
+UpdateRequest
+	> UpdateRequestDto param
+	> no return

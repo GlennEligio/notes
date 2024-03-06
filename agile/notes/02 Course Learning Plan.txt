@@ -1,0 +1,28 @@
+02 Course Learning Plan
+
+Course Learning Plan
+1st module
+ > focuses on reason why Agile methodologies exist
+ > also include 
+	- the Agile mindset, 
+	- where to use Agile, 
+	- benefits and challenges in using Agile	
+	- how to apply the Agile mindset to software development
+2nd module
+ > focuses on User Stories
+ > how to generate User stories like
+	- Story workshop
+	- User story mapping
+ > also includes estimating and release planning using the agile mindset
+3rd module
+ > focues on Scrum, one of the most popular agile frameworks
+ > this will include
+	- spring planning and tracking
+	- Sprint retrospective
+	- Spring review
+	- Standups
+	- what happens during Spring execution
+4th module
+ > we will learn about XP (eXtreme Programming)
+ > XP is also an agile framework
+ > we will focus specifically on its values and primary practices

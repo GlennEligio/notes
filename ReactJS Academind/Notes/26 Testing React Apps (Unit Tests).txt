@@ -1,0 +1,756 @@
+26 Testing React Apps (Unit Tests)
+
+Contents
+001 Module Introduction
+002 What is Unit Testing and Why
+003 Understanding Different Kinds Of Tests
+004 What To Test & How To Test
+005 Understanding the Technical Setup & Involved Tools
+006 Running a First Test
+007 Writing Out First Test
+008 Grouping Tests Together With Test Suites
+009 Testing User Interaction & State
+010 Testing Connected Components
+011 Testing Asynchronous Code
+012 Working with Mocks
+013 Summary & Furthur Resources
+
+
+
+
+
+001 Module Introduction
+
+Module Content:
+1. What is "Testing"? Any Why?
+2. Understanding Unit Tests
+3. Testing React Components & Building Blocks 
+
+
+
+
+
+
+
+
+
+002 What is Testing and Why
+
+Software Testing 
+	> is a process used to identify the developed compute software's
+		- correctness
+		- completeness
+		- quality
+	> includes a set of activites conducted with intent of finding ERRORS in software so that it could be corrected before the product is released to end users
+
+
+Types of Testing
+1. Manual Testing
+2. Automated Testing
+
+Manual Testing
+ > Write Code, and Preview & Test in Browser
+ > Very important since we as Developer can see what the User of Application will see
+ > Error-prone: where its hard to test all possible combinations and scenarios
+	- there might be errors that get pass the Manual Testing
+
+Automated Testing
+ > Code that tests your code
+ > We as Developer test the individual building blocks of the Application (sometimes called a Unit)
+ > Very technical: where we will write complex code but it allows us to test ALL building blocks at once
+
+
+
+
+
+
+
+
+
+003 Understanding Different Kinds Of Tests
+
+Kinds of Automated Tests
+1. Unit Tests
+2. Integration Tests
+3. End-to-End (e2e) Tests
+
+Unit Tests
+ > test the individual building blocks (function, components, etc) in isolation
+ > projects typically contain dozens or hundreds of unit tests
+ > the most common/important kind of test
+
+Integration Tests
+ > test the combination of multiple building blocks
+	- basically test the behavior/logic of multiple Units integrated together
+ > projects typically contain a couple of integration tests
+ > also important, but focus on unit tests in most cases
+
+End-to-End (e2e) Tests
+ > test complete scenarios in your app as the user would experience them
+ 	- test entire workflow of the app (ex: logging in and being redirected, logging out, etc)
+ > projects typically contain only a few e2e tests
+	- reason for having few e2e tests is that if Unit Tests and Integration Tests is passed, then most likely the Application is working
+ > important but can also be done manually (partially)
+
+
+
+
+
+
+
+
+
+004 What To Test & How To Test
+
+What To Test and How
+
+For Unit Tests
+What to Test?
+ > test the different building blocks
+ > we typically test the SMALLEST building blocks that make up your app
+	- it should be small enough that we should know what causes them to succeed and fail the test CLEARLY
+
+How?
+ > Test success and error cases, also test rare (but possible) results
+	- ex: a test where we expect an invalid input (i.e. wrong dataType) and with this, it should throw an Error
+
+
+
+
+
+
+
+
+
+005 Understanding the Technical Setup & Involved Tools
+
+Required Tools and Setup
+ > for us to do Software Testing, we will need the following
+	1. Tool for running out tests and asserting the results
+	2. Tools for "simulating" (in React's case, rendering) our application (React app / components)
+ > in our case, we can use the following
+	1. Jest
+	2. React Testing Library
+ > both of these tools are already set up for us when using "create-react-app"
+	- we can take a look inside package.json where we can see dependencies related to testing
+
+// inside package.json
+
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/react": "^11.2.2",
+    "@testing-library/user-event": "^12.5.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.1",
+    "web-vitals": "^0.2.4"
+  },
+
+
+
+
+
+
+
+
+
+006 Running a First Test
+
+Running a First Test
+ > assuming you have the required tools and setup, we can run our first Test using the command
+	- npm test
+
+Creating a Test
+ > for the filename of the Test, we typically use the same name as the Component/Function JS file, then add ".test" between filename and ".js"
+	- ex: for "App.js", we create "App.test.js"
+ > then to create a Unit Test, we use the function test()
+
+test(string: testname, function: assertFn)
+ > built in function when you use create-react-app
+ > takes two inputs
+	1. testName
+		- string
+		- used to identify the said Test
+	2. assertFn
+		- a function
+		- this function contains one or more assert function calls used to check if test succeed or fails
+
+EX:
+Below, we have a test named "renders learns react link"
+This test asserts if the App components renders an element with text that matches the regex /learn react/i
+	- i at the end means that it will be case insensitive matching (ex: learn react, learN React, Learn React matches the regex above)
+
+// App.js
+import logo from "./logo.svg";
+import "./App.css";
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn more
+        </a>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+
+// App.test.js
+import { render, screen } from '@testing-library/react';
+import App from './App';
+
+test('renders learn react link', () => {
+  render(<App />);
+  const linkElement = screen.getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
+});
+
+
+EX:
+// Log output of "npm test" when test succeed
+ PASS  src/App.test.js
+  √ renders learn react link (46 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        4.344 s
+Ran all test suites.
+
+
+// Log output when test failed
+ FAIL  src/App.test.js
+  × renders learn react link (53 ms)
+
+  ● renders learn react link
+
+    TestingLibraryElementError: Unable to find an element with the text: /learn react/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    <body>
+      <div>
+        <div
+          class="App"
+        >
+          <header
+            class="App-header"
+          >
+            <img
+              alt="logo"
+              class="App-logo"
+              src="logo.svg"
+            />
+            <p>
+              Edit
+              <code>
+                src/App.js
+              </code>
+               and save to reload.
+            </p>
+            <a
+              class="App-link"
+              href="https://reactjs.org"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Learn more
+            </a>
+          </header>
+        </div>
+      </div>
+    </body>
+
+      4 | test('renders learn react link', () => {
+      5 |   render(<App />);
+    > 6 |   const linkElement = screen.getByText(/learn react/i);
+        |                              ^
+      7 |   expect(linkElement).toBeInTheDocument();
+      8 | });
+      9 |
+
+      at Object.getElementError (node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/query-helpers.js:90:38
+      at node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/query-helpers.js:62:17
+      at getByText (node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/query-helpers.js:111:19)
+      at Object.<anonymous> (src/App.test.js:6:30)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        5.404 s
+Ran all test suites.
+
+
+
+
+
+
+
+007 Writing Out First Test
+
+Writing a Test
+ > to write a test, we will need a JS file
+ > for naming convention, we typically use the name of JS file we are testing, and then adding ".test" before the .js extension
+	- ex: for App.js, we will create App.test.js
+
+
+Writing Test Guide: Three "A"s
+1. Arrange	> set up the test data, test conditions and test environment
+2. Act		> Run logic that should be tested (e.g. execute function)
+3. Assert	> Compare execution results with expected results
+
+
+Function / Variables used
+test(string: testName, function: testFunction)
+ > global function available
+ > used to create a Unit Test
+ > takes two inputs, which are:
+	1. testName
+		-> string used to identify the Unit Test in the log output
+	2. testFunction
+		-> function that contains the assertion logic
+
+render(JSXElement: element)
+ > function from "@testing-library/react"
+ > used to render a JSX element in the virtual dom
+
+screen
+ > object from "@testing-library/react"
+ > used to access the virtual DOM
+ > contains several functions used to do something with virtualDOM like fetching/querying/getting elements based on certain criteria
+	- get functions (ex: getByText()), return the element but THROWS an Error if it doesnt find an element that matches
+	- query function (ex: queryByText()), returns the element and WILL NOT THROW an Error if match not found
+	- find function (ex: findByText()), returns a Promise that will eventually return an Element when resolved
+ > these element finding function takes two forms
+	1. function(string: regex)
+	2. function(string: textToMatch)
+	3. function(string: textToMatch, Object: matchingOptions)
+ > for matchingOptions object, we can define several properties like
+	1. exact
+		-> boolean
+		-> define if textToMatch must be exact
+		-> if false, will include be case insensitive and substring match
+
+expect(actual: HTMLElement)
+ > global function if you have jest added in React app
+ > takes an HTML element
+ > the return value of this expect() call can then access other function used for assertion like
+ 	1. toBeInTheDocument()
+		-> asserts if the HTML element is in the DOM
+	2. toBeNull()
+		-> asserts if the HTML element passed is null
+
+EX:
+// App.js
+function App() {
+  return (
+    <div className="App">
+      <Greeting />
+    </div>
+  );
+}
+
+export default App;
+
+// Greetings.js
+import React from "react";
+
+const Greetings = () => {
+  return (
+    <div>
+      <h2>Hello world!</h2>
+      <p>It's good to see you!</p>
+    </div>
+  );
+};
+
+export default Greetings;
+
+
+// Greetings.test.js
+import Greeting from "./Greeting";
+import { render, screen } from "@testing-library/react";
+
+test("renders Hello World! as a text", () => {
+  // Arrange
+  render(<Greeting />);
+
+  // Act
+  // nothing
+
+  // Assert
+  const helloWorldElement = screen.getByText("Hello World!", { exact: false });
+  expect(helloWorldElement).toBeInTheDocument();
+});
+
+
+
+
+
+
+
+
+
+
+008 Grouping Tests Together With Test Suites
+
+Test Suites
+ > used to group up several Test
+ > we typically create a Test Suite to group up Tests belonging to one feature or component
+
+
+Creating Test Suites
+ > to create Test Suites, we will need to use the "describe" function
+ > this describe function takes two argument
+	1. Test Suite Name
+	2. Anonymous function which contains several Test functions
+
+describe( testSuiteName: string, testSuites: fn)
+ > global function available if you have Jest added
+ > takes two arguments
+	1. testSuiteName
+		> string which denotes the name of Test Suite
+	2. testSuites
+		> anonymous function take contains several Test
+
+NOTE:
+1. testSuiteName and testName should look like ONE SENTENCE
+	> this makes it easier to read what the Test Suite and Tests are for
+	> ex: "Greeting Component"
+		- "renders Hello world at the start"
+		- "renders Its a good day when button is not clicked"
+		- "renders Change when button is clicked"
+
+EX:
+// Greeting.test.js
+import Greeting from "./Greeting";
+import { render, screen } from "@testing-library/react";
+
+describe("Greeting Component")
+
+test("renders Hello World! as a text", () => {
+  // Arrange
+  render(<Greeting />);
+
+  // Act
+  // nothing
+
+  // Assert
+  const helloWorldElement = screen.getByText("Hello World!", { exact: false });
+  expect(helloWorldElement).toBeInTheDocument();
+});
+
+// Console log output
+ PASS  src/components/Greeting.test.js
+  Greeting Component
+    √ renders Hello World! as a text (51 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        6.146 s
+Ran all test suites.
+
+Watch Usage: Press w to show more.
+		
+
+
+
+
+
+
+
+
+
+009 Testing User Interaction & State
+
+Testing User Interaction & State
+ > sometimes we want to test the user interaction and the State
+	- ex: if button is click, certain UI changes must be tested
+ > for this User Event test, we can use the "@testing-library/user-event"
+ > we can import this "@testing-library/user-event" in order to access several User events like clicked, unhover, hover, etc.
+
+EX:
+In example below, specifically in the Greeting.test.js, we used the "userEvent" import in order to simulate the button click in "change" button.
+We then test its behavior, if its going to render or not render UI components
+
+// Greeting.js
+const Greeting = () => {
+  const [changedText, setChangedText] = useState(false);
+
+  const changedTextHandler = () => {
+    setChangedText(true);
+  };
+
+  return (
+    <div>
+      <h2>Hello world!</h2>
+      {!changedText && <p>It's good to see you!</p>}
+      {changedText && <p>Changed</p>}
+      <button data-testid="changeTextBtn" onClick={changedTextHandler}>
+        Change text
+      </button>
+    </div>
+  );
+};
+
+
+// Greeting.test.js
+import Greeting from "./Greeting";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+describe("Greeting Component", () => {
+  test("renders Hello World! as a text", () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+    // nothing
+
+    // Assert
+    const helloWorldElement = screen.getByText("Hello World!", {
+      exact: false,
+    });
+    expect(helloWorldElement).toBeInTheDocument();
+  });
+
+  test("renders It's good to see you! if change button is NOT clicked", () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+
+    // Assert
+    const greetingElement = screen.getByText("It's good to see you!");
+    expect(greetingElement).toBeInTheDocument();
+  });
+
+  test("renders Changed if change button is CLICKED", () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+    const button = screen.getByTestId("changeTextBtn");
+    // button.click();
+    userEvent.click(button);
+
+    // Assert
+    const greetingElement = screen.getByText("Changed");
+    expect(greetingElement).toBeInTheDocument();
+  });
+
+  test("do not renders Its good to see you if change button is CLICKED", () => {
+    // Arrange
+    render(<Greeting />);
+
+    // Act
+    const button = screen.getByTestId("changeTextBtn");
+    userEvent.click(button);
+
+    // Assert
+    const greetingElement = screen.queryByText("It's good to see you!");
+    expect(greetingElement).toBeNull();
+  });
+});
+
+
+
+
+
+
+
+
+
+010 Testing Connected Components
+
+Testing Connected Components
+ > if we are testing a Component by rendering it using render(), we are also rendering its entire Component Tree (all of its child components)
+	- whatever props that we also pass in the Component to its Child component will persist as well
+ > this means that we can do Integration testing of each Component (Parent-Child) easily 
+	- in case of Wrapper Component (which doesnt have much logic inside), we typically not do Integration testing
+
+EX:
+Below, we used the Output component to wrap the previously paragraph element in the Greeting component which is used to display greetings.
+If we run the test now, we will see that its still the same output. We are passing the test because Output component is rendered as well
+
+// Output component, a wrapper component
+import React from "react";
+
+const Output = (props) => {
+  return <p>{props.children}</p>;
+};
+
+export default Output;
+
+
+// Greeting.js
+import React, { useState } from "react";
+import Output from "./Output";
+
+const Greeting = () => {
+  const [changedText, setChangedText] = useState(false);
+
+  const changedTextHandler = () => {
+    setChangedText(true);
+  };
+
+  return (
+    <div>
+      <h2>Hello world!</h2>
+      {!changedText && <Output>It's good to see you!</Output>}
+      {changedText && <Output>Changed</Output>}
+      <button data-testid="changeTextBtn" onClick={changedTextHandler}>
+        Change text
+      </button>
+    </div>
+  );
+};
+
+export default Greeting;
+
+
+
+
+
+
+
+
+011 Testing Asynchronous Code
+
+Testing Asynchronous Code
+ > for asynchronous testing, we also need to do some changes
+	1. make the function input of test() call asynchronous
+	2. we must use the find function instead of get/query and use await keyword
+ > the reason why we cant use the get/query functions of screen is that they fetch the element INSTANTLY
+	- for this reason, elements that are not instantly rendered (ex: elements that awaits for a fetch response) will not be detected
+
+EX:
+// Async.js which contains asynchronous code
+import React, { useEffect, useState } from "react";
+
+const Async = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((data) => {
+        setPosts(data);
+      });
+  }, []);
+
+  return (
+    <div>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Async;
+
+
+// Async.test.js which uses asynchronous testFunction
+import Async from "./Async";
+import { render, screen } from "@testing-library/react";
+
+describe("Async component", () => {
+  test("renders post if request succeeds", async () => {
+    // Arrange
+    render(<Async />);
+
+    // Act
+
+    // Assert
+    const listItemElements = await screen.findAllByRole("listitem");
+    expect(listItemElements).not.toHaveLength(0);
+  });
+});
+
+
+
+
+
+
+
+
+
+012 Working with Mocks
+
+Mocks
+ > mocking is creating objects that simulate the behavior of real objects.
+ > in mocking, we typically define the expected behavior of the objects
+	- ex: if we mock the fetch(), we typically define the supposedly return object of the said fetch()
+ > we are doing this because we want to isolate the logic of the Unit we are testing away from its dependencies
+	- ex: we mock the fetch() inside a Component since we only want to test if JSX element inside it renders and not if fetch call succeeds or not
+
+Mocking in React with Jest
+ > to mock a function, we can use the jest.fn() which returns a Mock function 
+ > jest.Mock then have several functions that we can use to modify its behavior like:
+	1. mockResolvedValueOnce(resolveReturn: object)
+		- takes an object return that will be the return value if the function is resolved
+
+Function used
+jest.fn()
+ > used to create a Mock function
+ > returns a jest.Mock object
+
+jest.Mock.mockResolvedValueOnce(resolveReturn : object)
+ > takes an object return that will be the return value if the function is resolved
+
+EX:
+In example below, we mocked the window.fetch() function so that when resolved, it returns an object with property "json" having a value of an array
+
+// Async.test.js
+describe("Async component", () => {
+  test("renders post if request succeeds", async () => {
+    // Arrange
+    window.fetch = jest.fn();
+    window.fetch.mockResolvedValueOnce({
+      json: async () => [{ id: "p1", title: "First post" }],
+    });
+    render(<Async />);
+
+    // Act
+
+    // Assert
+    const listItemElements = await screen.findAllByRole("listitem");
+    expect(listItemElements).not.toHaveLength(0);
+  });
+});
+
+
+
+
+
+
+
+
+
+
+013 Summary & Furthur Resources
+
+Jest
+ > the tool that we used to create Test cases
+ > is a JavaScript testing framework maintained by Facebook Inc.
+ > documentation: https://jestjs.io/
+
+React Testing Library
+ > React Testing Library builds on top of DOM Testing Library by adding APIs for working with React components.
+ > documentation: https://testing-library.com/docs/react-testing-library/intro/

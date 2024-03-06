@@ -1,0 +1,52 @@
+59 RHCSA RHEL 8 - Use boolean settings to modify system SELinux settings
+
+
+
+Boolean settings to modify system SELinux settings
+ > Booleans within SELINUX allow us to turn on and off common rules within the policy.
+ > to list all available boolean, use "getsebool" command
+	- recommended to use grep for filtering
+ > also if you have setroubleshoot-server installed you can use "semanage" to see the boolean alongside their current and default value and description
+ > to change boolean setting value, use "setsebool" command
+
+
+setroubleshoot-server
+ > package needed to change or troubleshoot SELinux
+ > to execute "semanage", we will need to have this package installed
+
+
+
+Commands
+getsebool
+ > get SELinux boolean value(s)
+ > synopsis:
+	$ getsebool [-a] [boolean]
+ > ex:
+	$ getsebool use_virtualbox
+		- list the "use_virtualbox" boolean alongside its current value
+ 	$ getsebool -a | grep virtualbox
+		- list all se boolean and filter it to display lines with "virtualbox"
+
+
+semanage boolean
+ > used to manage booleans of SELinux to selectively enable functionality
+ > synopsis:	
+	$  semanage boolean [-h] [-n] [-N] [-S STORE] [ --extract | --deleteall | --list [-C] | --modify ( --on | --off ) boolean ]
+ > ex:
+	$ semanage boolean -l
+		> list all SELinux boolean, alongside the current value, default value, and description
+	$ semanage boolean -l | grep virtualbox
+		> list all SELinux boolean with virtualbox in the name
+
+
+setsebool
+ > set SELinux boolean value
+ > synopsis:
+	$ setsebool [ -PNV ] boolean value | bool1=val1 bool2=val2 ...
+ > options:
+	-P 	boolean setting changes persist across reboots
+	-N	the policy on disk is not reloaded into the kernel
+	-V 	verbose error messages will be printed from semanage libraries
+ > ex:
+	$ setsebool -P use_virtualbox on
+		- set the "use_virtualbox" option to "on" and make the changes persist across reboots

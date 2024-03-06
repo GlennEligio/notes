@@ -1,0 +1,31 @@
+58 RHCSA RHEL 8 - Restore default file contexts
+
+
+Changing and Restoring default file context
+ > to change the contexts of a file/folder, use "chcon" command
+ > to restore the default contexts SELinux thinks is correct, use "restorecon"
+
+
+Commands
+chcon
+ > change file SELinux security context
+ > synopsis:
+	$ chcon [OPTION]... CONTEXT FILE...
+	$ chcon [OPTION]... [-u USER] [-r ROLE] [-l RANGE] [-t TYPE] FILE...
+ > ex:
+	$ chcon unconfined_u:object_r:tmp_t:s0 file.txt
+		- changes the user context to unconfined, role context to object, and type context to tmp_t
+
+
+restorecon
+ > restore file(s) default SELinux security contexts
+ > syponsis:
+   	$ restorecon [-r|-R] [-m] [-n] [-p] [-v] [-i] [-F] [-W] [-I|-D] [-e directory] pathname ...
+	$ restorecon [-f infilename] [-e directory] [-r|-R] [-m] [-n] [-p] [-v] [-i] [-F] [-W] [-I|-D]
+ > options:
+	-R	restore default SELinux security context RECURSIVELY, affect subdirectories and files inside it
+ > ex:
+	$ restorecon file.txt
+		- restores default SELinux security context of file.txt file
+	$ restorecon -R Documents/
+		- restores default SELinux security context of Documents folder and all of its subdirectories and files

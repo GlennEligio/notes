@@ -1,0 +1,33 @@
+168 - CloudTrail Hands on
+
+Parts:
+1. CloudTrail dashboard
+2. Event history menu
+3. Creating new entry in Event history (terminate EC2 instance)
+
+
+CloudTrail dashboard
+ > consist of the following tab/menu
+	1. Dashboard
+	2. Event history
+	3. Insights
+	4. Lake
+	5. Trails
+	
+Event history menu
+ > here, we can see all the events that happened with the AWS
+ > composed of the following sections
+	1. Event table list, which composed of	
+		- Event name
+		- Event time
+		- User name
+		- Event source
+		- Resource name
+	2. Action buttons like
+		- Download events
+		- Create Athena table
+
+
+Creating new entry in Event history
+1. Create and delete an EC2 instance
+2. Wait until it reflects in the Event history menu

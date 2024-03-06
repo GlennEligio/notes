@@ -1,0 +1,3544 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://springhow.com/spring-boot-hateoas/
+Subject: Spring Boot HATEOAS for RESTFul Web Services | SpringHow
+Date: Sun, 19 Dec 2021 07:30:45 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----"
+
+
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: text/html
+Content-ID: <frame-495578CA0D8C7BD737ECE0B18E9003B3@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://springhow.com/spring-boot-hateoas/
+
+<!DOCTYPE html><html lang=3D"en-US" class=3D"no-js i-amphtml-singledoc i-am=
+phtml-standalone" itemtype=3D"https://schema.org/Blog" itemscope=3D"" amp=
+=3D"" transformed=3D"self;v=3D1" i-amphtml-layout=3D"" i-amphtml-no-boilerp=
+late=3D"" i-amphtml-binding=3D"" amp-version=3D"2112032204000"><head><meta =
+http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8"><link re=
+l=3D"stylesheet" type=3D"text/css" href=3D"cid:css-d7cee36c-d7e8-4b78-aff9-=
+abf41bec5d67@mhtml.blink" /><link rel=3D"stylesheet" type=3D"text/css" href=
+=3D"cid:css-2de8eade-55c1-4722-b47b-c73bb228e537@mhtml.blink" /><link rel=
+=3D"stylesheet" type=3D"text/css" href=3D"cid:css-cd69fc7f-63f8-4781-bcd9-b=
+2633ee2a5f2@mhtml.blink" /><link rel=3D"stylesheet" type=3D"text/css" href=
+=3D"cid:css-f2ed05a6-49e2-42ec-af92-7d49415081e0@mhtml.blink" /><link rel=
+=3D"stylesheet" type=3D"text/css" href=3D"cid:css-254ec08b-ff8c-4324-b4b6-e=
+1016db7a412@mhtml.blink" /><meta name=3D"viewport" content=3D"width=3Ddevic=
+e-width,minimum-scale=3D1"><link rel=3D"preconnect" href=3D"https://cdn.amp=
+project.org/"><meta name=3D"robots" content=3D"index, follow, max-image-pre=
+view:large, max-snippet:-1, max-video-preview:-1"><meta name=3D"description=
+" content=3D"In this article, We will learn how to implement hateoas in a S=
+pring boot restful web application. Introduction to HATEOAS Hypermedia is t=
+he most important"><meta property=3D"og:locale" content=3D"en_US"><meta pro=
+perty=3D"og:type" content=3D"article"><meta property=3D"og:title" content=
+=3D"Spring Boot HATEOAS for RESTFul Web Services"><meta property=3D"og:desc=
+ription" content=3D"In this article, We will learn how to implement hateoas=
+ in a Spring boot restful web application. Introduction to HATEOAS Hypermed=
+ia is the most important"><meta property=3D"og:url" content=3D"https://spri=
+nghow.com/spring-boot-hateoas/"><meta property=3D"og:site_name" content=3D"=
+SpringHow"><meta property=3D"article:publisher" content=3D"https://www.face=
+book.com/springhowsite"><meta property=3D"article:published_time" content=
+=3D"2020-11-12T00:00:00+00:00"><meta property=3D"article:modified_time" con=
+tent=3D"2021-09-01T14:59:42+00:00"><meta property=3D"og:image" content=3D"h=
+ttps://springhow.com/wp-content/uploads/2021/02/implementing-hateoas.png"><=
+meta property=3D"og:image:width" content=3D"6144"><meta property=3D"og:imag=
+e:height" content=3D"2412"><meta name=3D"twitter:card" content=3D"summary_l=
+arge_image"><meta name=3D"twitter:creator" content=3D"@springhowsite"><meta=
+ name=3D"twitter:site" content=3D"@springhowsite"><meta name=3D"twitter:lab=
+el1" content=3D"Written by"><meta name=3D"twitter:data1" content=3D"Raja An=
+bazhagan"><meta name=3D"twitter:label2" content=3D"Est. reading time"><meta=
+ name=3D"twitter:data2" content=3D"4 minutes"><meta name=3D"generator" cont=
+ent=3D"WordPress 5.8.2"><meta name=3D"generator" content=3D"Site Kit by Goo=
+gle 1.47.0"><meta name=3D"google-adsense-platform-account" content=3D"ca-ho=
+st-pub-2644536267352236"><meta name=3D"google-adsense-platform-domain" cont=
+ent=3D"sitekit.withgoogle.com"><meta name=3D"generator" content=3D"AMP Plug=
+in v2.2.0; mode=3Dstandard"><meta name=3D"msapplication-TileImage" content=
+=3D"https://springhow.com/wp-content/uploads/2021/02/cropped-icon-retina.pn=
+g"><link rel=3D"icon" href=3D"https://springhow.com/wp-content/uploads/2021=
+/02/cropped-icon-retina.png" sizes=3D"32x32"><link rel=3D"icon" href=3D"htt=
+ps://springhow.com/wp-content/uploads/2021/02/cropped-icon-retina.png" size=
+s=3D"192x192"><link rel=3D"profile" href=3D"http://gmpg.org/xfn/11"><link r=
+el=3D"canonical" href=3D"https://springhow.com/spring-boot-hateoas/"><link =
+rel=3D"alternate" type=3D"application/rss+xml" title=3D"SpringHow =C2=BB Fe=
+ed" href=3D"https://springhow.com/feed/"><link rel=3D"alternate" type=3D"ap=
+plication/rss+xml" title=3D"SpringHow =C2=BB Comments Feed" href=3D"https:/=
+/springhow.com/comments/feed/"><link rel=3D"alternate" type=3D"application/=
+rss+xml" title=3D"SpringHow =C2=BB Spring Boot HATEOAS for RESTFul Web Serv=
+ices Comments Feed" href=3D"https://springhow.com/spring-boot-hateoas/feed/=
+"><link rel=3D"https://api.w.org/" href=3D"https://springhow.com/wp-json/">=
+<link rel=3D"alternate" type=3D"application/json" href=3D"https://springhow=
+.com/wp-json/wp/v2/posts/143"><link rel=3D"EditURI" type=3D"application/rsd=
++xml" title=3D"RSD" href=3D"https://springhow.com/xmlrpc.php?rsd"><link rel=
+=3D"wlwmanifest" type=3D"application/wlwmanifest+xml" href=3D"https://sprin=
+ghow.com/wp-includes/wlwmanifest.xml"><link rel=3D"shortlink" href=3D"https=
+://springhow.com/?p=3D143"><link rel=3D"alternate" type=3D"application/json=
++oembed" href=3D"https://springhow.com/wp-json/oembed/1.0/embed?url=3Dhttps=
+%3A%2F%2Fspringhow.com%2Fspring-boot-hateoas%2F"><link rel=3D"alternate" ty=
+pe=3D"text/xml+oembed" href=3D"https://springhow.com/wp-json/oembed/1.0/emb=
+ed?url=3Dhttps%3A%2F%2Fspringhow.com%2Fspring-boot-hateoas%2F&amp;format=3D=
+xml"><link rel=3D"pingback" href=3D"https://springhow.com/xmlrpc.php"><link=
+ rel=3D"apple-touch-icon" href=3D"https://springhow.com/wp-content/uploads/=
+2021/02/cropped-icon-retina.png"><title>Spring Boot HATEOAS for RESTFul Web=
+ Services | SpringHow</title></head>
+
+<body class=3D"post-template-default single single-post postid-143 single-f=
+ormat-standard wp-custom-logo wp-embed-responsive footer-on-bottom animate-=
+body-popup social-brand-colors hide-focus-outline link-style-standard has-s=
+idebar content-title-style-normal content-width-normal content-style-boxed =
+content-vertical-padding-show non-transparent-header mobile-non-transparent=
+-header amp-mode-mouse" style=3D"opacity: 1; visibility: visible; animation=
+: 0s ease 0s 1 normal none running none;">
+
+
+<amp-auto-ads type=3D"adsense" data-ad-client=3D"ca-pub-7895520610170618" c=
+lass=3D"i-amphtml-layout-container i-amphtml-element i-amphtml-notbuilt amp=
+-notbuilt amp-unresolved i-amphtml-unresolved" i-amphtml-layout=3D"containe=
+r"></amp-auto-ads>
+
+<div id=3D"wrapper" class=3D"site">
+			<a class=3D"skip-link screen-reader-text scroll-ignore" href=3D"https://=
+springhow.com/spring-boot-hateoas/#main">Skip to content</a>
+		<header id=3D"masthead" class=3D"site-header" role=3D"banner" itemtype=3D=
+"https://schema.org/WPHeader" itemscope=3D"">
+	<div id=3D"main-header" class=3D"site-header-wrap">
+		<div class=3D"site-header-inner-wrap">
+			<div class=3D"site-header-upper-wrap">
+				<div class=3D"site-header-upper-inner-wrap">
+					<div class=3D"site-main-header-wrap site-header-row-container site-hea=
+der-focus-item site-header-row-layout-standard" data-section=3D"kadence_cus=
+tomizer_header_main">
+	<div class=3D"site-header-row-container-inner">
+				<div class=3D"site-container">
+			<div class=3D"site-main-header-inner-wrap site-header-row site-header-ro=
+w-has-sides site-header-row-no-center">
+									<div class=3D"site-header-main-section-left site-header-section si=
+te-header-section-left">
+						<div class=3D"site-header-item site-header-focus-item" data-section=
+=3D"title_tagline">
+	<div class=3D"site-branding branding-layout-standard"><a class=3D"brand ha=
+s-logo-image" href=3D"https://springhow.com/" rel=3D"home" aria-label=3D"Sp=
+ringHow"><amp-img width=3D"40" height=3D"40" src=3D"https://springhow.com/w=
+p-content/uploads/2021/02/icon-512x512-1-e1612715727605.png" class=3D"custo=
+m-logo amp-wp-enforced-sizes i-amphtml-layout-intrinsic i-amphtml-layout-si=
+ze-defined i-amphtml-element i-amphtml-built i-amphtml-layout" alt=3D"Sprin=
+gHow" layout=3D"intrinsic" data-hero-candidate=3D"" data-hero=3D"" i-amphtm=
+l-ssr=3D"" i-amphtml-layout=3D"intrinsic" i-amphtml-auto-lightbox-visited=
+=3D""><i-amphtml-sizer slot=3D"i-amphtml-svc" class=3D"i-amphtml-sizer"><im=
+g alt=3D"" aria-hidden=3D"true" class=3D"i-amphtml-intrinsic-sizer" role=3D=
+"presentation" src=3D"data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjQwIiB3aWR=
+0aD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmVyc2lvbj0iMS4xIi=
+8+" i-amphtml-auto-lightbox-visited=3D""></i-amphtml-sizer><img class=3D"i-=
+amphtml-fill-content i-amphtml-replaced-content" decoding=3D"async" alt=3D"=
+SpringHow" src=3D"https://springhow.com/wp-content/uploads/2021/02/icon-512=
+x512-1-e1612715727605.png" data-hero-candidate=3D"" data-hero=3D"" i-amphtm=
+l-auto-lightbox-visited=3D""></amp-img><div class=3D"site-title-wrap"><p cl=
+ass=3D"site-title">SpringHow</p></div></a></div></div>
+					</div>
+																	<div class=3D"site-header-main-section-right site-header-s=
+ection site-header-section-right">
+						<div class=3D"site-header-item site-header-focus-item site-header-ite=
+m-main-navigation header-navigation-layout-stretch-false header-navigation-=
+layout-fill-stretch-false" data-section=3D"kadence_customizer_primary_navig=
+ation">
+		<nav id=3D"site-navigation" class=3D"main-navigation header-navigation na=
+v--toggle-sub header-navigation-style-standard header-navigation-dropdown-a=
+nimation-none" role=3D"navigation" aria-label=3D"Primary Navigation">
+				<div class=3D"primary-menu-container header-menu-container">
+			<ul id=3D"primary-menu" class=3D"menu"><li id=3D"menu-item-315" class=3D=
+"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-=
+children menu-item-315"><a href=3D"https://springhow.com/category/spring/">=
+<span class=3D"nav-drop-title-wrap">Spring Framework<span class=3D"dropdown=
+-nav-toggle"><span class=3D"kadence-svg-iconset svg-baseline"><svg aria-hid=
+den=3D"true" class=3D"kadence-svg-icon kadence-arrow-down-svg" fill=3D"curr=
+entColor" version=3D"1.1" xmlns=3D"http://www.w3.org/2000/svg" width=3D"24"=
+ height=3D"24" viewBox=3D"0 0 24 24"><title>Expand</title><path d=3D"M5.293=
+ 9.707l6 6c0.391 0.391 1.024 0.391 1.414 0l6-6c0.391-0.391 0.391-1.024 0-1.=
+414s-1.024-0.391-1.414 0l-5.293 5.293-5.293-5.293c-0.391-0.391-1.024-0.391-=
+1.414 0s-0.391 1.024 0 1.414z"></path>
+				</svg></span></span></span></a>
+<ul class=3D"sub-menu">
+	<li id=3D"menu-item-316" class=3D"menu-item menu-item-type-taxonomy menu-i=
+tem-object-category menu-item-316"><a href=3D"https://springhow.com/categor=
+y/session/">Session</a></li>
+	<li id=3D"menu-item-317" class=3D"menu-item menu-item-type-taxonomy menu-i=
+tem-object-category menu-item-317"><a href=3D"https://springhow.com/categor=
+y/caching/">Caching</a></li>
+</ul>
+</li>
+<li id=3D"menu-item-2136" class=3D"menu-item menu-item-type-custom menu-ite=
+m-object-custom menu-item-2136"><a href=3D"https://springhow.com/spring-sec=
+urity/">Spring Security</a></li>
+<li id=3D"menu-item-314" class=3D"menu-item menu-item-type-taxonomy menu-it=
+em-object-category menu-item-314"><a href=3D"https://springhow.com/category=
+/thymeleaf/">Thymeleaf</a></li>
+<li id=3D"menu-item-3284" class=3D"menu-item menu-item-type-custom menu-ite=
+m-object-custom menu-item-3284"><a href=3D"https://springhow.com/spring-boo=
+t-banner-generator/#h-spring-boot-banner-generator">Banner.txt Generator</a=
+></li>
+</ul>		</div>
+	</nav>
+	</div>
+<div class=3D"site-header-item site-header-focus-item" data-section=3D"kade=
+nce_customizer_header_search">
+		<div class=3D"search-toggle-open-container">
+						=09
+					<button class=3D"search-toggle-open drawer-toggle search-toggle-style-=
+default" aria-label=3D"View Search Form" data-toggle-target=3D"#search-draw=
+er" data-toggle-body-class=3D"showing-popup-drawer-from-full" aria-expanded=
+=3D"false" data-set-focus=3D"#search-drawer .search-field" data-amp-bind-cl=
+ass=3D" siteSearchModal.expanded ? 'search-toggle-open drawer-toggle search=
+-toggle-style-default active' : 'search-toggle-open drawer-toggle search-to=
+ggle-style-default' " data-amp-bind-aria-expanded=3D"siteSearchModal.expand=
+ed ? 'true' : 'false'" i-amphtml-binding=3D"">
+						<span class=3D"search-toggle-icon"><span class=3D"kadence-svg-iconset=
+"><svg aria-hidden=3D"true" class=3D"kadence-svg-icon kadence-search-svg" f=
+ill=3D"currentColor" version=3D"1.1" xmlns=3D"http://www.w3.org/2000/svg" w=
+idth=3D"26" height=3D"28" viewBox=3D"0 0 26 28"><title>Search</title><path =
+d=3D"M18 13c0-3.859-3.141-7-7-7s-7 3.141-7 7 3.141 7 7 7 7-3.141 7-7zM26 26=
+c0 1.094-0.906 2-2 2-0.531 0-1.047-0.219-1.406-0.594l-5.359-5.344c-1.828 1.=
+266-4.016 1.937-6.234 1.937-6.078 0-11-4.922-11-11s4.922-11 11-11 11 4.922 =
+11 11c0 2.219-0.672 4.406-1.937 6.234l5.359 5.359c0.359 0.359 0.578 0.875 0=
+.578 1.406z"></path>
+				</svg></span></span>
+		</button>
+	</div>
+	</div>
+					</div>
+							</div>
+		</div>
+	</div>
+</div>
+				</div>
+			</div>
+					</div>
+	</div>
+=09
+<div id=3D"mobile-header" class=3D"site-mobile-header-wrap">
+	<div class=3D"site-header-inner-wrap">
+		<div class=3D"site-header-upper-wrap">
+			<div class=3D"site-header-upper-inner-wrap">
+			<div class=3D"site-main-header-wrap site-header-focus-item site-header-r=
+ow-layout-standard site-header-row-tablet-layout-default site-header-row-mo=
+bile-layout-default ">
+	<div class=3D"site-header-row-container-inner">
+		<div class=3D"site-container">
+			<div class=3D"site-main-header-inner-wrap site-header-row site-header-ro=
+w-has-sides site-header-row-no-center">
+									<div class=3D"site-header-main-section-left site-header-section si=
+te-header-section-left">
+						<div class=3D"site-header-item site-header-focus-item" data-section=
+=3D"title_tagline">
+	<div class=3D"site-branding mobile-site-branding branding-layout-standard =
+branding-tablet-layout-inherit branding-mobile-layout-inherit"><a class=3D"=
+brand has-logo-image" href=3D"https://springhow.com/" rel=3D"home" aria-lab=
+el=3D"SpringHow"><amp-img width=3D"40" height=3D"40" src=3D"https://springh=
+ow.com/wp-content/uploads/2021/02/icon-512x512-1-e1612715727605.png" class=
+=3D"custom-logo amp-wp-enforced-sizes i-amphtml-layout-intrinsic i-amphtml-=
+layout-size-defined i-amphtml-element i-amphtml-built" alt=3D"SpringHow" la=
+yout=3D"intrinsic" data-hero-candidate=3D"" data-hero=3D"" i-amphtml-ssr=3D=
+"" i-amphtml-layout=3D"intrinsic" i-amphtml-auto-lightbox-visited=3D""><i-a=
+mphtml-sizer slot=3D"i-amphtml-svc" class=3D"i-amphtml-sizer"><img alt=3D""=
+ aria-hidden=3D"true" class=3D"i-amphtml-intrinsic-sizer" role=3D"presentat=
+ion" src=3D"data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjQwIiB3aWR0aD0iNDAiI=
+HhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmVyc2lvbj0iMS4xIi8+" i-amph=
+tml-auto-lightbox-visited=3D""></i-amphtml-sizer><img class=3D"i-amphtml-fi=
+ll-content i-amphtml-replaced-content" decoding=3D"async" alt=3D"SpringHow"=
+ src=3D"https://springhow.com/wp-content/uploads/2021/02/icon-512x512-1-e16=
+12715727605.png" i-amphtml-auto-lightbox-visited=3D""></amp-img><div class=
+=3D"site-title-wrap"><div class=3D"site-title vs-md-false">SpringHow</div><=
+/div></a></div></div>
+					</div>
+																	<div class=3D"site-header-main-section-right site-header-s=
+ection site-header-section-right">
+						<div class=3D"site-header-item site-header-focus-item site-header-ite=
+m-navgation-popup-toggle" data-section=3D"kadence_customizer_mobile_trigger=
+">
+		<div class=3D"mobile-toggle-open-container">
+						=09
+					<button id=3D"mobile-toggle" class=3D"menu-toggle-open drawer-toggle m=
+enu-toggle-style-default" aria-label=3D"Open menu" data-toggle-target=3D"#m=
+obile-drawer" data-toggle-body-class=3D"showing-popup-drawer-from-right" ar=
+ia-expanded=3D"false" data-set-focus=3D".menu-toggle-close" data-amp-bind-c=
+lass=3D" siteNavigationMenu.expanded ? 'menu-toggle-open drawer-toggle menu=
+-toggle-style-default active' : 'menu-toggle-open drawer-toggle menu-toggle=
+-style-default' " data-amp-bind-aria-expanded=3D"siteNavigationMenu.expande=
+d ? 'true' : 'false'" i-amphtml-binding=3D"">
+						<span class=3D"menu-toggle-icon"><span class=3D"kadence-svg-iconset">=
+<svg aria-hidden=3D"true" class=3D"kadence-svg-icon kadence-menu-svg" fill=
+=3D"currentColor" version=3D"1.1" xmlns=3D"http://www.w3.org/2000/svg" widt=
+h=3D"24" height=3D"24" viewBox=3D"0 0 24 24"><title>Toggle Menu</title><pat=
+h d=3D"M3 13h18c0.552 0 1-0.448 1-1s-0.448-1-1-1h-18c-0.552 0-1 0.448-1 1s0=
+.448 1 1 1zM3 7h18c0.552 0 1-0.448 1-1s-0.448-1-1-1h-18c-0.552 0-1 0.448-1 =
+1s0.448 1 1 1zM3 19h18c0.552 0 1-0.448 1-1s-0.448-1-1-1h-18c-0.552 0-1 0.44=
+8-1 1s0.448 1 1 1z"></path>
+				</svg></span></span>
+		</button>
+	</div>
+	</div>
+					</div>
+							</div>
+		</div>
+	</div>
+</div>
+			</div>
+		</div>
+			</div>
+</div>
+</header>
+
+	<div id=3D"inner-wrap" class=3D"wrap hfeed kt-clear">
+		<div id=3D"primary" class=3D"content-area">
+	<div class=3D"content-container site-container">
+		<main id=3D"main" class=3D"site-main" role=3D"main">
+						<div class=3D"content-wrap">
+				<article id=3D"post-143" class=3D"entry content-bg single-entry post-14=
+3 post type-post status-publish format-standard has-post-thumbnail hentry c=
+ategory-restful category-spring-boot">
+	<div class=3D"entry-content-wrap">
+		<header class=3D"entry-header post-title title-align-inherit title-tablet=
+-align-inherit title-mobile-align-inherit">
+	<div class=3D"kadence-breadcrumbs yoast-bc-wrap"><span><span><a href=3D"ht=
+tps://springhow.com/">=F0=9F=8F=A0</a> =E2=9D=AF <span><a href=3D"https://s=
+pringhow.com/category/restful/">RESTFul</a> =E2=9D=AF <strong class=3D"brea=
+dcrumb_last" aria-current=3D"page">Spring Boot HATEOAS for RESTFul Web Serv=
+ices</strong></span></span></span></div><h1 class=3D"entry-title">Spring Bo=
+ot HATEOAS for RESTFul Web Services</h1><div class=3D"entry-meta entry-meta=
+-divider-dot">
+	<span class=3D"posted-by"><span class=3D"author-avatar"><a class=3D"author=
+-image" href=3D"https://springhow.com/author/raja-anbazhagan/"><amp-img alt=
+=3D"" src=3D"https://secure.gravatar.com/avatar/ae8bb86c9f66051637cb52d5de9=
+826f7?s=3D25&amp;d=3Dmm&amp;r=3Dg" srcset=3D"https://secure.gravatar.com/av=
+atar/ae8bb86c9f66051637cb52d5de9826f7?s=3D50&amp;d=3Dmm&amp;r=3Dg 2x" class=
+=3D"avatar avatar-25 photo amp-wp-enforced-sizes i-amphtml-layout-intrinsic=
+ i-amphtml-layout-size-defined i-amphtml-element i-amphtml-built i-amphtml-=
+layout" height=3D"25" width=3D"25" layout=3D"intrinsic" i-amphtml-layout=3D=
+"intrinsic" style=3D"--loader-delay-offset:107ms !important;" i-amphtml-aut=
+o-lightbox-visited=3D""><i-amphtml-sizer slot=3D"i-amphtml-svc" class=3D"i-=
+amphtml-sizer"><img alt=3D"" aria-hidden=3D"true" class=3D"i-amphtml-intrin=
+sic-sizer" role=3D"presentation" src=3D"data:image/svg+xml;base64,PHN2ZyBoZ=
+WlnaHQ9IjI1IiB3aWR0aD0iMjUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIg=
+dmVyc2lvbj0iMS4xIi8+" i-amphtml-auto-lightbox-visited=3D""></i-amphtml-size=
+r><img decoding=3D"async" alt=3D"" src=3D"https://secure.gravatar.com/avata=
+r/ae8bb86c9f66051637cb52d5de9826f7?s=3D25&amp;d=3Dmm&amp;r=3Dg" class=3D"i-=
+amphtml-fill-content i-amphtml-replaced-content" i-amphtml-auto-lightbox-vi=
+sited=3D""></amp-img></a><span class=3D"image-size-ratio"></span></span><sp=
+an class=3D"author vcard"><a class=3D"url fn n" href=3D"https://springhow.c=
+om/author/raja-anbazhagan/">Raja Anbazhagan</a></span></span>					<span cla=
+ss=3D"posted-on">
+						<time class=3D"entry-date published" datetime=3D"2020-11-12T00:00:00+=
+05:30">November 12, 2020</time><time class=3D"updated" datetime=3D"2021-09-=
+01T20:29:42+05:30">September 1, 2021</time>					</span>
+					</div>
+		<div class=3D"entry-taxonomies">
+			<span class=3D"category-links term-links category-style-pill">
+				<a href=3D"https://springhow.com/category/restful/" rel=3D"tag">RESTFul=
+</a> <a href=3D"https://springhow.com/category/spring-boot/" rel=3D"tag">Sp=
+ring Boot</a>			</span>
+		</div>
+		</header>
+
+<div class=3D"entry-content single-content">
+=09
+<p>In this article, We will learn how to implement hateoas in a Spring boot=
+ restful web application. </p>
+
+
+
+<h2 id=3D"h-introduction-to-hateoas">Introduction to HATEOAS</h2>
+
+
+
+<p>Hypermedia is the most important aspect of RESTful services. To explain =
+in short Hypermedia is a format where the response for one resource contain=
+s links to other resources that are related. Any system that uses this form=
+at is called&nbsp;<strong>Hypertext As The Engine Of Application State</str=
+ong>&nbsp;or&nbsp;<strong><a href=3D"https://spring.io/projects/spring-hate=
+oas">HATEOAS</a></strong>&nbsp;for short.</p>
+
+
+
+<div class=3D"wp-block-image"><figure class=3D"aligncenter size-large"><amp=
+-img width=3D"400" height=3D"415" src=3D"https://springhow.com/wp-content/u=
+ploads/2021/02/spring-hateoas.png" alt=3D"Spring Boot Hateoas Logo" class=
+=3D"wp-image-390 amp-wp-enforced-sizes i-amphtml-layout-intrinsic i-amphtml=
+-layout-size-defined i-amphtml-element i-amphtml-built i-amphtml-layout" sr=
+cset=3D"https://springhow.com/wp-content/uploads/2021/02/spring-hateoas.png=
+ 400w, https://springhow.com/wp-content/uploads/2021/02/spring-hateoas-289x=
+300.png 289w" sizes=3D"(max-width: 400px) 100vw, 400px" layout=3D"intrinsic=
+" disable-inline-width=3D"" i-amphtml-layout=3D"intrinsic" i-amphtml-auto-l=
+ightbox-visited=3D"" lightbox=3D"i-amphtml-auto-lightbox-0"><i-amphtml-size=
+r slot=3D"i-amphtml-svc" class=3D"i-amphtml-sizer"><img alt=3D"" aria-hidde=
+n=3D"true" class=3D"i-amphtml-intrinsic-sizer" role=3D"presentation" src=3D=
+"data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjQxNSIgd2lkdGg9IjQwMCIgeG1sbnM9=
+Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiLz4=3D" i-amphtml-a=
+uto-lightbox-visited=3D""></i-amphtml-sizer><img decoding=3D"async" alt=3D"=
+Spring Boot Hateoas Logo" src=3D"https://springhow.com/wp-content/uploads/2=
+021/02/spring-hateoas.png" class=3D"i-amphtml-fill-content i-amphtml-replac=
+ed-content" i-amphtml-auto-lightbox-visited=3D""></amp-img></figure></div>
+
+
+
+<p>Consider a web page as a resource. It contains links to other pages. Thi=
+s is what we call as HyperText pages(HTML). Now imagine if same thing can b=
+e done to a JSON response. That is what the&nbsp;<code>media type: applicat=
+ion/hal+xml</code>&nbsp;and&nbsp;<code>media type: application/hal+json</co=
+de>&nbsp;are for.</p>
+
+
+
+<p>With these new hypermedia format, a simple order object would look like =
+below.</p>
+
+
+<pre class=3D"wp-block-code" aria-describedby=3D"shcb-language-1" data-shcb=
+-language-name=3D"JSON / JSON with Comments" data-shcb-language-slug=3D"jso=
+n"><div><code class=3D"hljs language-json">{
+  <span class=3D"hljs-attr">"orderId"</span>: <span class=3D"hljs-number">1=
+</span>,
+  <span class=3D"hljs-attr">"total"</span>: <span class=3D"hljs-number">54.=
+99</span>,
+  <span class=3D"hljs-attr">"_links"</span>: {
+    <span class=3D"hljs-attr">"self"</span>: {
+      <span class=3D"hljs-attr">"href"</span>: <span class=3D"hljs-string">=
+"http://localhost:8080/orders/1"</span>
+    },
+    <span class=3D"hljs-attr">"account"</span>: {
+      <span class=3D"hljs-attr">"href"</span>: <span class=3D"hljs-string">=
+"http://localhost:8080/accounts/2"</span>
+    },
+    <span class=3D"hljs-attr">"items"</span>: {
+      <span class=3D"hljs-attr">"href"</span>: <span class=3D"hljs-string">=
+"http://localhost:8080/orders/1/items"</span>
+    }
+  }
+}</code></div><small class=3D"shcb-language" id=3D"shcb-language-1"><span c=
+lass=3D"shcb-language__label">Code language:</span> <span class=3D"shcb-lan=
+guage__name">JSON / JSON with Comments</span> <span class=3D"shcb-language_=
+_paren">(</span><span class=3D"shcb-language__slug">json</span><span class=
+=3D"shcb-language__paren">)</span></small></pre>
+
+
+<p>The response may look simple. The clients who receives these responses o=
+nly have to follow the linked resources to get the information they want. B=
+ut for a server to generate these references, It needs to have proper POJOs=
+ that can take multiple links. A way to reference other controller methods =
+in the context of current request etc.</p>
+
+
+
+<p>If we have to implement all of this by ourself, we are going to end up h=
+aving a huge pile of code liability. Thanks to HATEOAS starter in spring bo=
+ot, this job is made easy for the developers.</p>
+
+
+
+<p>Let=E2=80=99s see how we can convert the example in our previous post in=
+to a HATEOAS compliant RESTful service.</p>
+
+
+
+<h2 id=3D"spring-boot-project-setup-for-hateoas-starter">Spring Boot projec=
+t setup for HATEOAS starter</h2>
+
+
+
+<p>The setup is really simple. In the source code of&nbsp;<a href=3D"https:=
+//springhow.com/spring-boot-restful/rest-like-webservice-is-not-restful/">p=
+revious post</a>, Just replace&nbsp;<code>spring-boot-starter-web</code>&nb=
+sp;with&nbsp;<code>spring-boot-starter-hateoas</code>.This step is so easy =
+because internally this starter contains just the web starter and&nbsp;<cod=
+e>spring-hateoas</code>&nbsp;library. This library comes with helper method=
+s and a Model for&nbsp;<strong>Hypertext Application Language (HAL)</strong=
+>.</p>
+
+
+
+<p>Now that the maven part is done, There are few changes that we need to d=
+o to our code. Let=E2=80=99s recollect our Items controller. Without any ch=
+anges the controller methods look like below.</p>
+
+
+<pre class=3D"wp-block-code" aria-describedby=3D"shcb-language-2" data-shcb=
+-language-name=3D"CSS" data-shcb-language-slug=3D"css"><div><code class=3D"=
+hljs language-css">    <span class=3D"hljs-keyword">@GetMapping</span>("/")
+    List&lt;Item&gt; get() {
+        <span class=3D"hljs-selector-tag">return</span> <span class=3D"hljs=
+-selector-tag">itemRepository</span><span class=3D"hljs-selector-class">.fi=
+ndAll</span>();
+    }
+   =20
+    <span class=3D"hljs-keyword">@GetMapping</span>("/{<span class=3D"hljs-=
+selector-tag">itemId</span>}")
+    <span class=3D"hljs-selector-tag">Item</span> <span class=3D"hljs-selec=
+tor-tag">get</span>(<span class=3D"hljs-keyword">@PathVariable</span> Integ=
+er itemId) {
+        <span class=3D"hljs-selector-tag">return</span> <span class=3D"hljs=
+-selector-tag">itemRepository</span><span class=3D"hljs-selector-class">.fi=
+ndById</span>(<span class=3D"hljs-selector-tag">itemId</span>)<span class=
+=3D"hljs-selector-class">.orElseThrow</span>(<span class=3D"hljs-selector-t=
+ag">RuntimeException</span><span class=3D"hljs-selector-pseudo">::new)</spa=
+n>;
+    }</code></div><small class=3D"shcb-language" id=3D"shcb-language-2"><sp=
+an class=3D"shcb-language__label">Code language:</span> <span class=3D"shcb=
+-language__name">CSS</span> <span class=3D"shcb-language__paren">(</span><s=
+pan class=3D"shcb-language__slug">css</span><span class=3D"shcb-language__p=
+aren">)</span></small></pre>
+
+
+<p>And the responses for these controller methods are like these</p>
+
+
+<pre class=3D"wp-block-code" aria-describedby=3D"shcb-language-3" data-shcb=
+-language-name=3D"JavaScript" data-shcb-language-slug=3D"javascript"><div><=
+code class=3D"hljs language-javascript">GET http:<span class=3D"hljs-commen=
+t">//localhost:8080/items</span>
+[
+  {
+    <span class=3D"hljs-string">"id"</span>: <span class=3D"hljs-number">1<=
+/span>,
+    <span class=3D"hljs-string">"itemName"</span>: <span class=3D"hljs-stri=
+ng">"Shoe"</span>,
+    <span class=3D"hljs-string">"price"</span>: <span class=3D"hljs-number"=
+>12.99</span>
+  },
+  {
+    <span class=3D"hljs-string">"id"</span>: <span class=3D"hljs-number">2<=
+/span>,
+    <span class=3D"hljs-string">"itemName"</span>: <span class=3D"hljs-stri=
+ng">"Shirt"</span>,
+    <span class=3D"hljs-string">"price"</span>: <span class=3D"hljs-number"=
+>8.99</span>
+  }
+]</code></div><small class=3D"shcb-language" id=3D"shcb-language-3"><span c=
+lass=3D"shcb-language__label">Code language:</span> <span class=3D"shcb-lan=
+guage__name">JavaScript</span> <span class=3D"shcb-language__paren">(</span=
+><span class=3D"shcb-language__slug">javascript</span><span class=3D"shcb-l=
+anguage__paren">)</span></small></pre>
+
+<pre class=3D"wp-block-code" aria-describedby=3D"shcb-language-4" data-shcb=
+-language-name=3D"JavaScript" data-shcb-language-slug=3D"javascript"><div><=
+code class=3D"hljs language-javascript">GET http:<span class=3D"hljs-commen=
+t">//localhost:8080/items/2</span>
+{
+  <span class=3D"hljs-string">"id"</span>: <span class=3D"hljs-number">2</s=
+pan>,
+  <span class=3D"hljs-string">"itemName"</span>: <span class=3D"hljs-string=
+">"Shirt"</span>,
+  <span class=3D"hljs-string">"price"</span>: <span class=3D"hljs-number">8=
+.99</span>
+}</code></div><small class=3D"shcb-language" id=3D"shcb-language-4"><span c=
+lass=3D"shcb-language__label">Code language:</span> <span class=3D"shcb-lan=
+guage__name">JavaScript</span> <span class=3D"shcb-language__paren">(</span=
+><span class=3D"shcb-language__slug">javascript</span><span class=3D"shcb-l=
+anguage__paren">)</span></small></pre>
+
+
+<p>In order to add the&nbsp;<code>_links</code>&nbsp;to these responses,&nb=
+sp;<code>spring-hateoas</code>&nbsp;provides two major wrapper classes. The=
+y are&nbsp;<code>EntityModel</code>&nbsp;and&nbsp;<code>CollectionModel</co=
+de>. Using these classes we can add the related links with few lines of cod=
+e. Let=E2=80=99s see how I have done it.</p>
+
+
+<pre class=3D"wp-block-code" aria-describedby=3D"shcb-language-5" data-shcb=
+-language-name=3D"JavaScript" data-shcb-language-slug=3D"javascript"><div><=
+code class=3D"hljs language-javascript">package com.springhow.examples.spri=
+ngboot.rest.controller;
+
+<span class=3D"hljs-keyword">import</span> com.springhow.examples.springboo=
+t.rest.entities.Item;
+<span class=3D"hljs-keyword">import</span> com.springhow.examples.springboo=
+t.rest.entities.repositories.ItemRepository;
+<span class=3D"hljs-keyword">import</span> org.springframework.hateoas.Coll=
+ectionModel;
+<span class=3D"hljs-keyword">import</span> org.springframework.hateoas.Enti=
+tyModel;
+<span class=3D"hljs-keyword">import</span> org.springframework.web.bind.ann=
+otation.GetMapping;
+<span class=3D"hljs-keyword">import</span> org.springframework.web.bind.ann=
+otation.PathVariable;
+<span class=3D"hljs-keyword">import</span> org.springframework.web.bind.ann=
+otation.RequestMapping;
+<span class=3D"hljs-keyword">import</span> org.springframework.web.bind.ann=
+otation.RestController;
+
+<span class=3D"hljs-keyword">import</span> java.util.List;
+<span class=3D"hljs-keyword">import</span> java.util.stream.Collectors;
+
+<span class=3D"hljs-keyword">import</span> <span class=3D"hljs-keyword">sta=
+tic</span> org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+<span class=3D"hljs-keyword">import</span> <span class=3D"hljs-keyword">sta=
+tic</span> org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodO=
+n;
+
+
+@RestController
+@RequestMapping(<span class=3D"hljs-string">"/items"</span>)
+public <span class=3D"hljs-class"><span class=3D"hljs-keyword">class</span>=
+ <span class=3D"hljs-title">ItemController</span> </span>{
+
+    private final ItemRepository itemRepository;
+
+    public ItemController(ItemRepository itemRepository) {
+        <span class=3D"hljs-keyword">this</span>.itemRepository =3D itemRep=
+ository;
+    }
+
+    @GetMapping(<span class=3D"hljs-string">"/"</span>)
+    CollectionModel&lt;EntityModel&lt;Item&gt;&gt; <span class=3D"hljs-keyw=
+ord">get</span>() {
+        List&lt;EntityModel&lt;Item&gt;&gt; items =3D itemRepository.findAl=
+l().stream().map(item -&gt; EntityModel.of(item,
+                linkTo(methodOn(ItemController.class).get(item.getId())).wi=
+thSelfRel(),
+                linkTo(methodOn(ItemController.class).get()).withRel(<span =
+class=3D"hljs-string">"items"</span>)))
+                .collect(Collectors.toList());
+        <span class=3D"hljs-keyword">return</span> CollectionModel.of(items=
+, linkTo(methodOn(ItemController.class).get()).withSelfRel());
+    }
+
+    @GetMapping(<span class=3D"hljs-string">"/{itemId}"</span>)
+    EntityModel&lt;Item&gt; <span class=3D"hljs-keyword">get</span>(@PathVa=
+riable Integer itemId) {
+        Item item =3D itemRepository.findById(itemId).orElseThrow(RuntimeEx=
+ception::<span class=3D"hljs-keyword">new</span>);
+        <span class=3D"hljs-keyword">return</span> EntityModel.of(item,
+                linkTo(methodOn(ItemController.class).get(itemId)).withSelf=
+Rel(),
+                linkTo(methodOn(ItemController.class).get()).withRel(<span =
+class=3D"hljs-string">"items"</span>));
+    }
+}</code></div><small class=3D"shcb-language" id=3D"shcb-language-5"><span c=
+lass=3D"shcb-language__label">Code language:</span> <span class=3D"shcb-lan=
+guage__name">JavaScript</span> <span class=3D"shcb-language__paren">(</span=
+><span class=3D"shcb-language__slug">javascript</span><span class=3D"shcb-l=
+anguage__paren">)</span></small></pre>
+
+
+<p>Here the&nbsp;<code>linkTo</code>&nbsp;and&nbsp;<code>methodOn</code>&nb=
+sp;are static methods from the hateoas library that help deal with generati=
+ng URLs. With the above setup done, Let=E2=80=99s fire the APIs.</p>
+
+
+<pre class=3D"wp-block-code" aria-describedby=3D"shcb-language-6" data-shcb=
+-language-name=3D"JavaScript" data-shcb-language-slug=3D"javascript"><div><=
+code class=3D"hljs language-javascript">GET http:<span class=3D"hljs-commen=
+t">//localhost:8080/items/1</span>
+
+{
+  <span class=3D"hljs-string">"id"</span> : <span class=3D"hljs-number">1</=
+span>,
+  <span class=3D"hljs-string">"itemName"</span> : <span class=3D"hljs-strin=
+g">"Shoe"</span>,
+  <span class=3D"hljs-string">"price"</span> : <span class=3D"hljs-number">=
+12.99</span>,
+  <span class=3D"hljs-string">"_links"</span> : {
+    <span class=3D"hljs-string">"self"</span> : {
+      <span class=3D"hljs-string">"href"</span> : <span class=3D"hljs-strin=
+g">"http://localhost:8080/items/1"</span>
+    },
+    <span class=3D"hljs-string">"items"</span> : {
+      <span class=3D"hljs-string">"href"</span> : <span class=3D"hljs-strin=
+g">"http://localhost:8080/items/"</span>
+    }
+  }
+}</code></div><small class=3D"shcb-language" id=3D"shcb-language-6"><span c=
+lass=3D"shcb-language__label">Code language:</span> <span class=3D"shcb-lan=
+guage__name">JavaScript</span> <span class=3D"shcb-language__paren">(</span=
+><span class=3D"shcb-language__slug">javascript</span><span class=3D"shcb-l=
+anguage__paren">)</span></small></pre>
+
+
+<p>Take another example where once Cart is submitted, We are expecting to c=
+reate an order. In this case, The cart is not directly related to the order=
+ which was created. However, We can provide a link to the created Order res=
+ource through HAL like this.</p>
+
+
+<pre class=3D"wp-block-code" aria-describedby=3D"shcb-language-7" data-shcb=
+-language-name=3D"JavaScript" data-shcb-language-slug=3D"javascript"><div><=
+code class=3D"hljs language-javascript">    @PutMapping(<span class=3D"hljs=
+-string">"/{cartId}"</span>)
+    EntityModel&lt;Cart&gt; update(@PathVariable Integer cartId) {
+        Cart cartFromDB =3D cartRepository.findById(cartId).orElseThrow(Run=
+timeException::<span class=3D"hljs-keyword">new</span>);
+        cartFromDB.setStatus(CartStatus.SUBMITTED);
+        <span class=3D"hljs-comment">//Ignoring validation if the cart cont=
+ent has changed for simplicity.</span>
+        OrderHeader orderHeader =3D orderService.saveOrder(cartFromDB);
+        <span class=3D"hljs-keyword">return</span> EntityModel.of(cartFromD=
+B,
+                linkTo(methodOn(CartController.class).get(cartFromDB.getId(=
+))).withSelfRel(),
+                linkTo(methodOn(OrderController.class).getOrder(orderHeader=
+.getId())).withRel(<span class=3D"hljs-string">"order"</span>));   =20
+}</code></div><small class=3D"shcb-language" id=3D"shcb-language-7"><span c=
+lass=3D"shcb-language__label">Code language:</span> <span class=3D"shcb-lan=
+guage__name">JavaScript</span> <span class=3D"shcb-language__paren">(</span=
+><span class=3D"shcb-language__slug">javascript</span><span class=3D"shcb-l=
+anguage__paren">)</span></small></pre>
+
+
+<p>Note that the highlighted <strong>linkTo</strong> methods refer to a dif=
+ferent controller. Previously, this was not possible. the hateoas packages =
+from spring boot starter for hateoas help solve these issues.</p>
+
+
+
+<p>Also, note that the underlying service methods don=E2=80=99t change at a=
+ll. The POSTs can still take a simple POJO for inputs as far as RESTfulness=
+ is concerned.</p>
+
+
+
+<p>To Conclude, we learned how to create hateoas compliant restful web serv=
+ices using Spring Boot starter for hateoas. The full code for this implemen=
+tation is available below. <a href=3D"https://springhow.com/springhow/sprin=
+g-boot-restful-example">Feel free to clone and checkout</a>.</p>
+
+
+
+<h2><strong><em>Related</em></strong></h2>
+
+
+
+<ul class=3D"wp-block-yoast-seo-related-links"><li><a href=3D"https://sprin=
+ghow.com/spring-boot-restful-jpa-repositories/">RESTful JPA Repositories wi=
+th Spring Boot</a></li><li><a href=3D"https://springhow.com/restful-web-ser=
+vices-with-spring-boot/">RESTFul Web Services with Spring Boot</a></li><li>=
+<a href=3D"https://springhow.com/response-codes-for-restful-services/">HTTP=
+ Error codes based on Exception in Spring Boot</a></li><li><a href=3D"https=
+://springhow.com/what-are-spring-boot-starters/">Spring Boot Starters</a></=
+li><li><a href=3D"https://springhow.com/spring-boot-content-negotiation/">C=
+ontent negotiation with Spring Boot</a></li></ul>
+</div>
+<footer class=3D"entry-footer">
+	</footer>
+	</div>
+</article>
+
+
+	<nav class=3D"navigation post-navigation" role=3D"navigation" aria-label=
+=3D"Posts">
+		<h2 class=3D"screen-reader-text">Post navigation</h2>
+		<div class=3D"nav-links"><div class=3D"nav-previous"><a href=3D"https://s=
+pringhow.com/restful-web-services-with-spring-boot/" rel=3D"prev"><div clas=
+s=3D"post-navigation-sub"><small><span class=3D"kadence-svg-iconset svg-bas=
+eline"><svg aria-hidden=3D"true" class=3D"kadence-svg-icon kadence-arrow-le=
+ft-alt-svg" fill=3D"currentColor" version=3D"1.1" xmlns=3D"http://www.w3.or=
+g/2000/svg" width=3D"29" height=3D"28" viewBox=3D"0 0 29 28"><title>Previou=
+s</title><path d=3D"M28 12.5v3c0 0.281-0.219 0.5-0.5 0.5h-19.5v3.5c0 0.203-=
+0.109 0.375-0.297 0.453s-0.391 0.047-0.547-0.078l-6-5.469c-0.094-0.094-0.15=
+6-0.219-0.156-0.359v0c0-0.141 0.063-0.281 0.156-0.375l6-5.531c0.156-0.141 0=
+.359-0.172 0.547-0.094 0.172 0.078 0.297 0.25 0.297 0.453v3.5h19.5c0.281 0 =
+0.5 0.219 0.5 0.5z"></path>
+				</svg></span>Previous</small></div>RESTFul Web Services with Spring Boo=
+t</a></div><div class=3D"nav-next"><a href=3D"https://springhow.com/respons=
+e-codes-for-restful-services/" rel=3D"next"><div class=3D"post-navigation-s=
+ub"><small>Next<span class=3D"kadence-svg-iconset svg-baseline"><svg aria-h=
+idden=3D"true" class=3D"kadence-svg-icon kadence-arrow-right-alt-svg" fill=
+=3D"currentColor" version=3D"1.1" xmlns=3D"http://www.w3.org/2000/svg" widt=
+h=3D"27" height=3D"28" viewBox=3D"0 0 27 28"><title>Continue</title><path d=
+=3D"M27 13.953c0 0.141-0.063 0.281-0.156 0.375l-6 5.531c-0.156 0.141-0.359 =
+0.172-0.547 0.094-0.172-0.078-0.297-0.25-0.297-0.453v-3.5h-19.5c-0.281 0-0.=
+5-0.219-0.5-0.5v-3c0-0.281 0.219-0.5 0.5-0.5h19.5v-3.5c0-0.203 0.109-0.375 =
+0.297-0.453s0.391-0.047 0.547 0.078l6 5.469c0.094 0.094 0.156 0.219 0.156 0=
+.359v0z"></path>
+				</svg></span></small></div>HTTP Error codes based on Exception in Sprin=
+g Boot</a></div></div>
+	</nav>		<div class=3D"entry-related alignfull entry-related-style-wide">
+			<div class=3D"entry-related-inner content-container site-container">
+				<div class=3D"entry-related-inner-content alignwide">
+					<h2 class=3D"entry-related-title">Similar Posts</h2>					<div class=3D=
+"entry-related-carousel kadence-slide-init grid-cols grid-sm-col-2 grid-lg-=
+col-2" data-columns-xxl=3D"2" data-columns-xl=3D"2" data-columns-md=3D"2" d=
+ata-columns-sm=3D"2" data-columns-xs=3D"2" data-columns-ss=3D"1" data-slide=
+r-anim-speed=3D"400" data-slider-scroll=3D"1" data-slider-dots=3D"true" dat=
+a-slider-arrows=3D"true" data-slider-hover-pause=3D"false" data-slider-auto=
+=3D"false" data-slider-speed=3D"7000" data-slider-gutter=3D"40" data-slider=
+-loop=3D"false" data-slider-next-label=3D"Next" data-slider-slide-label=3D"=
+Posts" data-slider-prev-label=3D"Previous">
+						<div class=3D"carousel-item">
+<article class=3D"entry content-bg loop-entry post-79 post type-post status=
+-publish format-standard has-post-thumbnail hentry category-spring-boot">
+		<div class=3D"entry-content-wrap">
+		<header class=3D"entry-header">
+
+	<h3 class=3D"entry-title"><a href=3D"https://springhow.com/installing-spri=
+ng-boot-applications-as-linux-service/" rel=3D"bookmark">Install and Run Sp=
+ring Boot Linux Service Guide</a></h3><div class=3D"entry-meta entry-meta-d=
+ivider-dot">
+						<span class=3D"posted-on">
+						<time class=3D"entry-date published" datetime=3D"2021-10-16T21:28:08+=
+05:30">October 16, 2021</time><time class=3D"updated" datetime=3D"2021-12-0=
+3T10:49:27+05:30">December 3, 2021</time>					</span>
+										<span class=3D"category-links">
+						<span class=3D"category-link-items"><a href=3D"https://springhow.com/=
+category/spring-boot/" rel=3D"category tag">Spring Boot</a></span>					</sp=
+an>
+					</div>
+</header>
+	<div class=3D"entry-summary">
+		<p>Let=E2=80=99s learn how to install a&nbsp;spring boot as a&nbsp;Linux =
+service. Requirements You will need, Basics of&nbsp;running a spring boot a=
+pplication Understanding linux services and file system. 15 minutes of your=
+ time. Make the jar an executable Spring boot applications can be started u=
+sing the command&nbsp;java -jar hello-world.jar. We have seen this behavior=
+ in the posts&nbsp;How=E2=80=A6</p>
+	</div>
+	<footer class=3D"entry-footer">
+	</footer>
+	</div>
+</article>
+</div><div class=3D"carousel-item">
+<article class=3D"entry content-bg loop-entry post-739 post type-post statu=
+s-publish format-standard has-post-thumbnail hentry category-spring-boot ca=
+tegory-spring tag-derby tag-spring-boot">
+		<div class=3D"entry-content-wrap">
+		<header class=3D"entry-header">
+
+	<h3 class=3D"entry-title"><a href=3D"https://springhow.com/derby-database-=
+for-spring-boot/" rel=3D"bookmark">Derby Embedded Database for Spring Boot<=
+/a></h3><div class=3D"entry-meta entry-meta-divider-dot">
+						<span class=3D"posted-on">
+						<time class=3D"entry-date published" datetime=3D"2021-02-16T23:39:47+=
+05:30">February 16, 2021</time><time class=3D"updated" datetime=3D"2021-09-=
+22T14:21:21+05:30">September 22, 2021</time>					</span>
+										<span class=3D"category-links">
+						<span class=3D"category-link-items"><a href=3D"https://springhow.com/=
+category/spring-boot/" rel=3D"category tag">Spring Boot</a>, <a href=3D"htt=
+ps://springhow.com/category/spring/" rel=3D"category tag">Spring Framework<=
+/a></span>					</span>
+					</div>
+</header>
+	<div class=3D"entry-summary">
+		<p>In this post, We will see how we can use Apache Derby embedded databas=
+e with Spring Boot applications with an example. Introduction Apache Derby =
+is a pure java implementation of a relational database. Also, it complies w=
+ith JDBC and RDBMS standards. For this reason, we can easily embed Derby in=
+to applications. Derby Dependencies for Spring=E2=80=A6</p>
+	</div>
+	<footer class=3D"entry-footer">
+	</footer>
+	</div>
+</article>
+</div><div class=3D"carousel-item">
+<article class=3D"entry content-bg loop-entry post-146 post type-post statu=
+s-publish format-standard has-post-thumbnail hentry category-restful catego=
+ry-spring-boot">
+		<div class=3D"entry-content-wrap">
+		<header class=3D"entry-header">
+
+	<h3 class=3D"entry-title"><a href=3D"https://springhow.com/response-codes-=
+for-restful-services/" rel=3D"bookmark">HTTP Error codes based on Exception=
+ in Spring Boot</a></h3><div class=3D"entry-meta entry-meta-divider-dot">
+						<span class=3D"posted-on">
+						<time class=3D"entry-date published" datetime=3D"2020-11-13T00:00:00+=
+05:30">November 13, 2020</time><time class=3D"updated" datetime=3D"2021-09-=
+01T20:25:37+05:30">September 1, 2021</time>					</span>
+										<span class=3D"category-links">
+						<span class=3D"category-link-items"><a href=3D"https://springhow.com/=
+category/restful/" rel=3D"category tag">RESTFul</a>, <a href=3D"https://spr=
+inghow.com/category/spring-boot/" rel=3D"category tag">Spring Boot</a></spa=
+n>					</span>
+					</div>
+</header>
+	<div class=3D"entry-summary">
+		<p>In our previous installment, We have made sure our application follows=
+ a hypermedia format called HAL. However, At most of the controller methods=
+, we have been throwing&nbsp;RuntimeException. These by design would cause =
+500 Error codes. But REST principles dictate that proper message or indicat=
+ion must be given back to the client when possible. For example,=E2=80=A6</=
+p>
+	</div>
+	<footer class=3D"entry-footer">
+	</footer>
+	</div>
+</article>
+</div><div class=3D"carousel-item">
+<article class=3D"entry content-bg loop-entry post-2085 post type-post stat=
+us-publish format-standard has-post-thumbnail hentry category-spring-boot">
+		<div class=3D"entry-content-wrap">
+		<header class=3D"entry-header">
+
+	<h3 class=3D"entry-title"><a href=3D"https://springhow.com/lazy-initializa=
+tion-in-spring-boot/" rel=3D"bookmark">Understanding Lazy Initialization in=
+ Spring Boot</a></h3><div class=3D"entry-meta entry-meta-divider-dot">
+						<span class=3D"posted-on">
+						<time class=3D"entry-date published" datetime=3D"2021-04-10T21:04:36+=
+05:30">April 10, 2021</time><time class=3D"updated" datetime=3D"2021-04-10T=
+21:05:06+05:30">April 10, 2021</time>					</span>
+										<span class=3D"category-links">
+						<span class=3D"category-link-items"><a href=3D"https://springhow.com/=
+category/spring-boot/" rel=3D"category tag">Spring Boot</a></span>					</sp=
+an>
+					</div>
+</header>
+	<div class=3D"entry-summary">
+		<p>Starting with Spring Boot 2.2, spring beans can be lazy. That is, You =
+could create beans as and when required. Let=E2=80=99s see how to implement=
+ lazy initialization with Spring Boot. What is lazy initialization? By defa=
+ult, Spring Framework creates and injects beans and it=E2=80=99s dependenci=
+es at the time of context creation or refresh. But with=E2=80=A6</p>
+	</div>
+	<footer class=3D"entry-footer">
+	</footer>
+	</div>
+</article>
+</div><div class=3D"carousel-item">
+<article class=3D"entry content-bg loop-entry post-280 post type-post statu=
+s-publish format-standard has-post-thumbnail hentry category-spring-boot ca=
+tegory-thymeleaf">
+		<div class=3D"entry-content-wrap">
+		<header class=3D"entry-header">
+
+	<h3 class=3D"entry-title"><a href=3D"https://springhow.com/thymeleaf-fragm=
+ents/" rel=3D"bookmark">Thymeleaf Fragments in Spring Boot Application</a><=
+/h3><div class=3D"entry-meta entry-meta-divider-dot">
+						<span class=3D"posted-on">
+						<time class=3D"entry-date published" datetime=3D"2021-01-22T00:00:00+=
+05:30">January 22, 2021</time><time class=3D"updated" datetime=3D"2021-03-1=
+2T13:15:47+05:30">March 12, 2021</time>					</span>
+										<span class=3D"category-links">
+						<span class=3D"category-link-items"><a href=3D"https://springhow.com/=
+category/spring-boot/" rel=3D"category tag">Spring Boot</a>, <a href=3D"htt=
+ps://springhow.com/category/thymeleaf/" rel=3D"category tag">Thymeleaf</a><=
+/span>					</span>
+					</div>
+</header>
+	<div class=3D"entry-summary">
+		<p>Thymeleaf fragments let you break down your templates into reusable la=
+yout elements. For example, Several pages may have different content but st=
+ill have the same header and footer. In these cases, Writing these into a s=
+eparate template file and reusing it is not a bad idea. Fragments in Action=
+ Let=E2=80=99s take this snippet from a=E2=80=A6</p>
+	</div>
+	<footer class=3D"entry-footer">
+	</footer>
+	</div>
+</article>
+</div><div class=3D"carousel-item">
+<article class=3D"entry content-bg loop-entry post-3059 post type-post stat=
+us-publish format-standard has-post-thumbnail hentry category-spring-boot">
+		<div class=3D"entry-content-wrap">
+		<header class=3D"entry-header">
+
+	<h3 class=3D"entry-title"><a href=3D"https://springhow.com/spring-boot-app=
+lication-arguments/" rel=3D"bookmark">Accessing Command-line Arguments in S=
+pring Boot</a></h3><div class=3D"entry-meta entry-meta-divider-dot">
+						<span class=3D"posted-on">
+						<time class=3D"entry-date published" datetime=3D"2021-09-09T21:54:30+=
+05:30">September 9, 2021</time><time class=3D"updated" datetime=3D"2021-09-=
+09T21:54:32+05:30">September 9, 2021</time>					</span>
+										<span class=3D"category-links">
+						<span class=3D"category-link-items"><a href=3D"https://springhow.com/=
+category/spring-boot/" rel=3D"category tag">Spring Boot</a></span>					</sp=
+an>
+					</div>
+</header>
+	<div class=3D"entry-summary">
+		<p>Let=E2=80=99s learn how to read command-line arguments of a Spring Boo=
+t Application. Like any other java program, Spring Boot can take program pa=
+rameters of application parameters on startup. But spring boot goes extra-m=
+ile to argument parsing. Lets get into the details. CommandLineRunner and A=
+pplicationRunner These two interfaces are similar in nature and help you ac=
+cess=E2=80=A6</p>
+	</div>
+	<footer class=3D"entry-footer">
+	</footer>
+	</div>
+</article>
+</div>					</div>
+				</div>
+			</div>
+		</div>
+		<div id=3D"comments" class=3D"comments-area">
+		<div id=3D"respond" class=3D"comment-respond">
+		<h3 id=3D"reply-title" class=3D"comment-reply-title"><span data-amp-bind-=
+text=3D"ampCommentThreading.replyTo ? ampCommentThreading.replyTo : &quot;L=
+eave a Reply&quot;" i-amphtml-binding=3D"">Leave a Reply</span> <small></sm=
+all></h3><form method=3D"post" id=3D"commentform" class=3D"comment-form i-a=
+mphtml-form" novalidate=3D"" target=3D"_top" action-xhr=3D"https://springho=
+w.com/wp-comments-post.php?_wp_amp_action_xhr_converted=3D1" amp-novalidate=
+=3D""><p class=3D"comment-notes"><span id=3D"email-notes">Your email addres=
+s will not be published.</span> Required fields are marked <span class=3D"r=
+equired">*</span></p><p class=3D"comment-form-comment comment-form-float-la=
+bel"><textarea autocomplete=3D"new-password" id=3D"f9e6319ede" name=3D"f9e6=
+319ede" placeholder=3D"Leave a comment..." cols=3D"45" rows=3D"8" maxlength=
+=3D"65525" aria-required=3D"true" required=3D"required"></textarea><textare=
+a id=3D"comment" aria-hidden=3D"true" name=3D"comment" autocomplete=3D"new-=
+password" tabindex=3D"-1" data-amp-original-style=3D"padding:0 !important;c=
+lip:rect(1px, 1px, 1px, 1px) !important;position:absolute !important;white-=
+space:nowrap !important;height:1px !important;width:1px !important;overflow=
+:hidden !important;" class=3D"amp-wp-0c9b2a6"></textarea><label class=3D"fl=
+oat-label" for=3D"comment">Comment <span class=3D"required">*</span></label=
+></p><div class=3D"comment-input-wrap no-url-field"><p class=3D"comment-for=
+m-author"><input aria-label=3D"Name" id=3D"author" name=3D"author" type=3D"=
+text" placeholder=3D"John Doe" value=3D"" size=3D"30" maxlength=3D"245" ari=
+a-required=3D"true" required=3D"required"><label class=3D"float-label" for=
+=3D"author">Name <span class=3D"required">*</span></label></p>
+<p class=3D"comment-form-email"><input aria-label=3D"Email" id=3D"email" na=
+me=3D"email" type=3D"email" placeholder=3D"john@example.com" value=3D"" siz=
+e=3D"30" maxlength=3D"100" aria-describedby=3D"email-notes" aria-required=
+=3D"true" required=3D"required"><label class=3D"float-label" for=3D"email">=
+Email <span class=3D"required">*</span></label></p>
+</div>
+<p class=3D"comment-form-cookies-consent"><input id=3D"wp-comment-cookies-c=
+onsent" name=3D"wp-comment-cookies-consent" type=3D"checkbox" value=3D"yes"=
+> <label for=3D"wp-comment-cookies-consent">Save my name, email, and websit=
+e in this browser for the next time I comment.</label></p>
+<p class=3D"form-submit"><input name=3D"submit" type=3D"submit" id=3D"submi=
+t" class=3D"submit" value=3D"Post Comment">=20
+
+</p><div class=3D"amp-wp-default-form-message" submit-error=3D""><template =
+type=3D"amp-mustache"><p class=3D"{{#redirecting}}amp-wp-form-redirecting{{=
+/redirecting}}">{{#message}}{{{message}}}{{/message}}{{^message}}Your submi=
+ssion failed. <small>The server responded with {{status_text}} (code {{stat=
+us_code}}). Please contact the developer of this form processor to improve =
+this message. <a href=3D"https://amp-wp.org/?p=3D5463" target=3D"_blank" re=
+l=3D"nofollow noreferrer noopener">Learn More</a></small>{{/message}}</p></=
+template></div><div class=3D"amp-wp-default-form-message" submit-success=3D=
+""><template type=3D"amp-mustache"><p class=3D"{{#redirecting}}amp-wp-form-=
+redirecting{{/redirecting}}">{{#message}}{{{message}}}{{/message}}{{^messag=
+e}}It appears your submission was successful. <small>Even though the server=
+ responded OK, it is possible the submission was not processed. Please cont=
+act the developer of this form processor to improve this message. <a href=
+=3D"https://amp-wp.org/?p=3D5463" target=3D"_blank" rel=3D"nofollow norefer=
+rer noopener">Learn More</a></small>{{/message}}</p></template></div><div c=
+lass=3D"amp-wp-default-form-message" submitting=3D""><template type=3D"amp-=
+mustache"><p>Submitting=E2=80=A6</p></template></div></form>	</div>
+	</div>
+			</div>
+					</main>
+		<aside id=3D"secondary" role=3D"complementary" class=3D"primary-sidebar w=
+idget-area sidebar-slug-sidebar-primary sidebar-link-style-normal">
+	<div class=3D"sidebar-inner-wrap">
+		<section id=3D"block-46" class=3D"widget widget_block widget_search"><for=
+m role=3D"search" method=3D"get" action=3D"https://springhow.com/" class=3D=
+"wp-block-search__button-outside wp-block-search__icon-button wp-block-sear=
+ch i-amphtml-form" target=3D"_top" novalidate=3D""><div class=3D"wp-block-s=
+earch__inside-wrapper"><input type=3D"search" id=3D"wp-block-search__input-=
+1" class=3D"wp-block-search__input" name=3D"s" value=3D"" placeholder=3D"Se=
+arch..." required=3D""><button type=3D"submit" class=3D"wp-block-search__bu=
+tton has-icon"><svg id=3D"search-icon" class=3D"search-icon" viewBox=3D"0 0=
+ 24 24" width=3D"24" height=3D"24">
+			        <path d=3D"M13.5 6C10.5 6 8 8.5 8 11.5c0 1.1.3 2.1.9 3l-3.4 3 1 =
+1.1 3.4-2.9c1 .9 2.2 1.4 3.6 1.4 3 0 5.5-2.5 5.5-5.5C19 8.5 16.5 6 13.5 6zm=
+0 9.5c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"></path>
+			    </svg></button></div></form></section><section id=3D"block-7" class=
+=3D"widget widget_block"><amp-ad layout=3D"fixed-height" height=3D"320" typ=
+e=3D"adsense" data-ad-client=3D"ca-pub-7895520610170618" data-ad-slot=3D"16=
+88629181" data-ad-format=3D"auto" class=3D"i-amphtml-layout-fixed-height i-=
+amphtml-layout-size-defined i-amphtml-element i-amphtml-notbuilt amp-notbui=
+lt amp-unresolved i-amphtml-unresolved" style=3D"height:320px" i-amphtml-la=
+yout=3D"fixed-height"></amp-ad></section><section id=3D"block-4" class=3D"w=
+idget widget_block">
+<h3 id=3D"recent-posts">Recent Posts</h3>
+</section><section id=3D"block-2" class=3D"widget widget_block widget_recen=
+t_entries"><ul class=3D"wp-block-latest-posts__list alignfull wp-block-late=
+st-posts"><li><a href=3D"https://springhow.com/this-application-has-no-expl=
+icit-mapping-for-error/">This application has no explicit mapping for /erro=
+r</a></li>
+<li><a href=3D"https://springhow.com/mysql-docker-container-for-local-devel=
+opment/">Docker setup for MySQL and phpMyAdmin</a></li>
+<li><a href=3D"https://springhow.com/injecting-collection-of-objects-in-spr=
+ing/">Injecting collection of objects in Spring</a></li>
+<li><a href=3D"https://springhow.com/spring-boot-content-negotiation/">Cont=
+ent negotiation with Spring Boot</a></li>
+<li><a href=3D"https://springhow.com/spring-boot-firebase-push-notification=
+/">Send firebase push notifications From Spring Boot</a></li>
+<li><a href=3D"https://springhow.com/spring-boot-thymeleaf-views-from-datab=
+ase/">Thymeleaf views from database in Spring Boot</a></li>
+<li><a href=3D"https://springhow.com/spring-boot-email-thymeleaf/">Spring B=
+oot Email using Thymeleaf with Example</a></li>
+<li><a href=3D"https://springhow.com/spring-boot-template-engines-compariso=
+n/">FreeMarker vs Groovy vs Mustache vs Thymeleaf</a></li>
+<li><a href=3D"https://springhow.com/custom-health-check-for-springboot/">S=
+pring Boot Custom Health Indicators</a></li>
+<li><a href=3D"https://springhow.com/spring-boot-health-check-indicators/">=
+Spring Boot Health Endpoint</a></li>
+</ul></section><section id=3D"block-24" class=3D"widget widget_block"><amp-=
+ad layout=3D"fixed-height" height=3D"320" type=3D"adsense" data-ad-client=
+=3D"ca-pub-7895520610170618" data-ad-slot=3D"5065395702" data-ad-format=3D"=
+auto" class=3D"i-amphtml-layout-fixed-height i-amphtml-layout-size-defined =
+i-amphtml-element i-amphtml-notbuilt amp-notbuilt amp-unresolved i-amphtml-=
+unresolved" style=3D"height:320px" i-amphtml-layout=3D"fixed-height"></amp-=
+ad></section><section id=3D"block-5" class=3D"widget widget_block">
+<h3 id=3D"categories">Categories</h3>
+</section><section id=3D"block-3" class=3D"widget widget_block widget_categ=
+ories"><ul class=3D"wp-block-categories-list alignfull wp-block-categories"=
+>	<li class=3D"cat-item cat-item-15"><a href=3D"https://springhow.com/categ=
+ory/amqp/">AMQP</a> (1)
+</li>
+	<li class=3D"cat-item cat-item-5"><a href=3D"https://springhow.com/categor=
+y/caching/">Caching</a> (3)
+</li>
+	<li class=3D"cat-item cat-item-58"><a href=3D"https://springhow.com/catego=
+ry/java/">Java</a> (17)
+</li>
+	<li class=3D"cat-item cat-item-286"><a href=3D"https://springhow.com/categ=
+ory/jpa/">JPA</a> (3)
+</li>
+	<li class=3D"cat-item cat-item-4"><a href=3D"https://springhow.com/categor=
+y/restful/">RESTFul</a> (5)
+</li>
+	<li class=3D"cat-item cat-item-6"><a href=3D"https://springhow.com/categor=
+y/security/">Security</a> (7)
+</li>
+	<li class=3D"cat-item cat-item-7"><a href=3D"https://springhow.com/categor=
+y/session/">Session</a> (3)
+</li>
+	<li class=3D"cat-item cat-item-3"><a href=3D"https://springhow.com/categor=
+y/spring-boot/">Spring Boot</a> (78)
+</li>
+	<li class=3D"cat-item cat-item-1"><a href=3D"https://springhow.com/categor=
+y/spring/">Spring Framework</a> (16)
+</li>
+	<li class=3D"cat-item cat-item-2"><a href=3D"https://springhow.com/categor=
+y/thymeleaf/">Thymeleaf</a> (9)
+</li>
+</ul></section><section id=3D"block-25" class=3D"widget widget_block"><amp-=
+ad layout=3D"fixed-height" height=3D"320" type=3D"adsense" data-ad-client=
+=3D"ca-pub-7895520610170618" data-ad-slot=3D"1666982846" data-ad-format=3D"=
+auto" class=3D"i-amphtml-layout-fixed-height i-amphtml-layout-size-defined =
+i-amphtml-element i-amphtml-notbuilt amp-notbuilt amp-unresolved i-amphtml-=
+unresolved" style=3D"height:320px" i-amphtml-layout=3D"fixed-height"></amp-=
+ad></section><section id=3D"block-35" class=3D"widget widget_block"><p><amp=
+-ad layout=3D"fixed-height" height=3D"600" type=3D"adsense" data-ad-client=
+=3D"ca-pub-7895520610170618" data-ad-slot=3D"2449008050" data-ad-format=3D"=
+auto" class=3D"i-amphtml-layout-fixed-height i-amphtml-layout-size-defined =
+i-amphtml-element i-amphtml-notbuilt amp-notbuilt amp-unresolved i-amphtml-=
+unresolved" style=3D"height:600px" i-amphtml-layout=3D"fixed-height"></amp-=
+ad></p></section><section id=3D"block-42" class=3D"widget widget_block"></s=
+ection><section id=3D"block-48" class=3D"widget widget_block"><amp-ad layou=
+t=3D"fixed-height" height=3D"320" type=3D"adsense" data-ad-client=3D"ca-pub=
+-7895520610170618" data-ad-slot=3D"1666982846" data-ad-format=3D"auto" clas=
+s=3D"i-amphtml-layout-fixed-height i-amphtml-layout-size-defined i-amphtml-=
+element i-amphtml-notbuilt amp-notbuilt amp-unresolved i-amphtml-unresolved=
+" style=3D"height:320px" i-amphtml-layout=3D"fixed-height"></amp-ad></secti=
+on>	</div>
+</aside>
+	</div>
+</div>
+	</div>
+	<footer id=3D"colophon" class=3D"site-footer" role=3D"contentinfo">
+	<div class=3D"site-footer-wrap">
+		<div class=3D"site-bottom-footer-wrap site-footer-row-container site-foot=
+er-focus-item site-footer-row-layout-standard site-footer-row-tablet-layout=
+-default site-footer-row-mobile-layout-default" data-section=3D"kadence_cus=
+tomizer_footer_bottom">
+	<div class=3D"site-footer-row-container-inner">
+				<div class=3D"site-container">
+			<div class=3D"site-bottom-footer-inner-wrap site-footer-row site-footer-=
+row-columns-2 site-footer-row-column-layout-equal site-footer-row-tablet-co=
+lumn-layout-default site-footer-row-mobile-column-layout-row ft-ro-dir-row =
+ft-ro-collapse-normal ft-ro-t-dir-default ft-ro-m-dir-default ft-ro-lstyle-=
+plain">
+									<div class=3D"site-footer-bottom-section-1 site-footer-section foo=
+ter-section-inner-items-1">
+					=09
+<div class=3D"footer-widget-area site-info site-footer-focus-item content-a=
+lign-center content-tablet-align-default content-mobile-align-default conte=
+nt-valign-bottom content-tablet-valign-default content-mobile-valign-defaul=
+t" data-section=3D"kadence_customizer_footer_html">
+	<div class=3D"footer-widget-area-inner site-info-inner">
+		<div class=3D"footer-html inner-link-style-normal"><div class=3D"footer-h=
+tml-inner"><p>=C2=A9 2021 SpringHow</p>
+</div></div>	</div>
+</div>
+					</div>
+										<div class=3D"site-footer-bottom-section-2 site-footer-section fo=
+oter-section-inner-items-1">
+						<div class=3D"footer-widget-area widget-area site-footer-focus-item f=
+ooter-social content-align-center content-tablet-align-default content-mobi=
+le-align-default content-valign-middle content-tablet-valign-default conten=
+t-mobile-valign-default" data-section=3D"kadence_customizer_footer_social">
+	<div class=3D"footer-widget-area-inner footer-social-inner">
+		<div class=3D"footer-social-wrap"><div class=3D"footer-social-inner-wrap =
+social-show-label-false social-style-filled social-show-brand-hover"><a hre=
+f=3D"https://facebook.com/springhowsite" aria-label=3D"&quot;Facebook&quot;=
+" target=3D"_blank" rel=3D"noopener noreferrer" class=3D"social-button foot=
+er-social-item social-link-facebook"><span class=3D"kadence-svg-iconset"><s=
+vg class=3D"kadence-svg-icon kadence-facebook-alt2-svg" fill=3D"currentColo=
+r" version=3D"1.1" xmlns=3D"http://www.w3.org/2000/svg" width=3D"16" height=
+=3D"28" viewBox=3D"0 0 16 28"><title>Facebook</title><path d=3D"M14.984 0.1=
+87v4.125h-2.453c-1.922 0-2.281 0.922-2.281 2.25v2.953h4.578l-0.609 4.625h-3=
+.969v11.859h-4.781v-11.859h-3.984v-4.625h3.984v-3.406c0-3.953 2.422-6.109 5=
+.953-6.109 1.687 0 3.141 0.125 3.563 0.187z"></path>
+				</svg></span></a><a href=3D"https://twitter.com/springhowsite" aria-lab=
+el=3D"&quot;Twitter&quot;" target=3D"_blank" rel=3D"noopener noreferrer" cl=
+ass=3D"social-button footer-social-item social-link-twitter"><span class=3D=
+"kadence-svg-iconset"><svg class=3D"kadence-svg-icon kadence-twitter-svg" f=
+ill=3D"currentColor" version=3D"1.1" xmlns=3D"http://www.w3.org/2000/svg" w=
+idth=3D"26" height=3D"28" viewBox=3D"0 0 26 28"><title>Twitter</title><path=
+ d=3D"M25.312 6.375c-0.688 1-1.547 1.891-2.531 2.609 0.016 0.219 0.016 0.43=
+8 0.016 0.656 0 6.672-5.078 14.359-14.359 14.359-2.859 0-5.516-0.828-7.75-2=
+.266 0.406 0.047 0.797 0.063 1.219 0.063 2.359 0 4.531-0.797 6.266-2.156-2.=
+219-0.047-4.078-1.5-4.719-3.5 0.313 0.047 0.625 0.078 0.953 0.078 0.453 0 0=
+.906-0.063 1.328-0.172-2.312-0.469-4.047-2.5-4.047-4.953v-0.063c0.672 0.375=
+ 1.453 0.609 2.281 0.641-1.359-0.906-2.25-2.453-2.25-4.203 0-0.938 0.25-1.7=
+97 0.688-2.547 2.484 3.062 6.219 5.063 10.406 5.281-0.078-0.375-0.125-0.766=
+-0.125-1.156 0-2.781 2.25-5.047 5.047-5.047 1.453 0 2.766 0.609 3.687 1.594=
+ 1.141-0.219 2.234-0.641 3.203-1.219-0.375 1.172-1.172 2.156-2.219 2.781 1.=
+016-0.109 2-0.391 2.906-0.781z"></path>
+				</svg></span></a><a href=3D"https://www.linkedin.com/company/springhow/=
+" aria-label=3D"&quot;Linkedin&quot;" target=3D"_blank" rel=3D"noopener nor=
+eferrer" class=3D"social-button footer-social-item social-link-linkedin"><s=
+pan class=3D"kadence-svg-iconset"><svg class=3D"kadence-svg-icon kadence-li=
+nkedin-svg" fill=3D"currentColor" version=3D"1.1" xmlns=3D"http://www.w3.or=
+g/2000/svg" width=3D"24" height=3D"28" viewBox=3D"0 0 24 28"><title>Linkedi=
+n</title><path d=3D"M3.703 22.094h3.609v-10.844h-3.609v10.844zM7.547 7.906c=
+-0.016-1.062-0.781-1.875-2.016-1.875s-2.047 0.812-2.047 1.875c0 1.031 0.781=
+ 1.875 2 1.875h0.016c1.266 0 2.047-0.844 2.047-1.875zM16.688 22.094h3.609v-=
+6.219c0-3.328-1.781-4.875-4.156-4.875-1.937 0-2.797 1.078-3.266 1.828h0.031=
+v-1.578h-3.609s0.047 1.016 0 10.844v0h3.609v-6.062c0-0.313 0.016-0.641 0.10=
+9-0.875 0.266-0.641 0.859-1.313 1.859-1.313 1.297 0 1.813 0.984 1.813 2.453=
+v5.797zM24 6.5v15c0 2.484-2.016 4.5-4.5 4.5h-15c-2.484 0-4.5-2.016-4.5-4.5v=
+-15c0-2.484 2.016-4.5 4.5-4.5h15c2.484 0 4.5 2.016 4.5 4.5z"></path>
+				</svg></span></a><a href=3D"https://github.com/springhow" aria-label=3D=
+"&quot;GitHub&quot;" target=3D"_blank" rel=3D"noopener noreferrer" class=3D=
+"social-button footer-social-item social-link-github"><span class=3D"kadenc=
+e-svg-iconset"><svg class=3D"kadence-svg-icon kadence-github-svg" fill=3D"c=
+urrentColor" version=3D"1.1" xmlns=3D"http://www.w3.org/2000/svg" width=3D"=
+24" height=3D"28" viewBox=3D"0 0 24 28"><title>Github</title><path d=3D"M12=
+ 2c6.625 0 12 5.375 12 12 0 5.297-3.437 9.797-8.203 11.391-0.609 0.109-0.82=
+8-0.266-0.828-0.578 0-0.391 0.016-1.687 0.016-3.297 0-1.125-0.375-1.844-0.8=
+12-2.219 2.672-0.297 5.484-1.313 5.484-5.922 0-1.313-0.469-2.375-1.234-3.21=
+9 0.125-0.313 0.531-1.531-0.125-3.187-1-0.313-3.297 1.234-3.297 1.234-0.953=
+-0.266-1.984-0.406-3-0.406s-2.047 0.141-3 0.406c0 0-2.297-1.547-3.297-1.234=
+-0.656 1.656-0.25 2.875-0.125 3.187-0.766 0.844-1.234 1.906-1.234 3.219 0 4=
+.594 2.797 5.625 5.469 5.922-0.344 0.313-0.656 0.844-0.766 1.609-0.688 0.31=
+3-2.438 0.844-3.484-1-0.656-1.141-1.844-1.234-1.844-1.234-1.172-0.016-0.078=
+ 0.734-0.078 0.734 0.781 0.359 1.328 1.75 1.328 1.75 0.703 2.141 4.047 1.42=
+2 4.047 1.422 0 1 0.016 1.937 0.016 2.234 0 0.313-0.219 0.688-0.828 0.578-4=
+.766-1.594-8.203-6.094-8.203-11.391 0-6.625 5.375-12 12-12zM4.547 19.234c0.=
+031-0.063-0.016-0.141-0.109-0.187-0.094-0.031-0.172-0.016-0.203 0.031-0.031=
+ 0.063 0.016 0.141 0.109 0.187 0.078 0.047 0.172 0.031 0.203-0.031zM5.031 1=
+9.766c0.063-0.047 0.047-0.156-0.031-0.25-0.078-0.078-0.187-0.109-0.25-0.047=
+-0.063 0.047-0.047 0.156 0.031 0.25 0.078 0.078 0.187 0.109 0.25 0.047zM5.5=
+ 20.469c0.078-0.063 0.078-0.187 0-0.297-0.063-0.109-0.187-0.156-0.266-0.094=
+-0.078 0.047-0.078 0.172 0 0.281s0.203 0.156 0.266 0.109zM6.156 21.125c0.06=
+3-0.063 0.031-0.203-0.063-0.297-0.109-0.109-0.25-0.125-0.313-0.047-0.078 0.=
+063-0.047 0.203 0.063 0.297 0.109 0.109 0.25 0.125 0.313 0.047zM7.047 21.51=
+6c0.031-0.094-0.063-0.203-0.203-0.25-0.125-0.031-0.266 0.016-0.297 0.109s0.=
+063 0.203 0.203 0.234c0.125 0.047 0.266 0 0.297-0.094zM8.031 21.594c0-0.109=
+-0.125-0.187-0.266-0.172-0.141 0-0.25 0.078-0.25 0.172 0 0.109 0.109 0.187 =
+0.266 0.172 0.141 0 0.25-0.078 0.25-0.172zM8.937 21.438c-0.016-0.094-0.141-=
+0.156-0.281-0.141-0.141 0.031-0.234 0.125-0.219 0.234 0.016 0.094 0.141 0.1=
+56 0.281 0.125s0.234-0.125 0.219-0.219z"></path>
+				</svg></span></a></div></div>	</div>
+</div>
+					</div>
+								</div>
+		</div>
+	</div>
+</div>
+	</div>
+</footer>
+
+</div>
+
+
+
+<amp-analytics type=3D"gtag" data-credentials=3D"include" class=3D"i-amphtm=
+l-layout-fixed i-amphtml-layout-size-defined i-amphtml-element i-amphtml-no=
+tbuilt amp-notbuilt amp-unresolved i-amphtml-unresolved" style=3D"width:1px=
+;height:1px" i-amphtml-layout=3D"fixed"></amp-analytics>
+
+<amp-analytics id=3D"7eb903ab-26db-4ed0-bfd6-3841b83b93c4" class=3D"i-ampht=
+ml-layout-fixed i-amphtml-layout-size-defined i-amphtml-element i-amphtml-n=
+otbuilt amp-notbuilt amp-unresolved i-amphtml-unresolved" style=3D"width:1p=
+x;height:1px" i-amphtml-layout=3D"fixed"></amp-analytics>	<div id=3D"mobile=
+-drawer" class=3D"popup-drawer popup-drawer-layout-sidepanel popup-drawer-a=
+nimation-fade popup-drawer-side-right" data-drawer-target-string=3D"#mobile=
+-drawer" data-amp-bind-class=3D" siteNavigationMenu.expanded ? 'popup-drawe=
+r popup-drawer-layout-sidepanel popup-drawer-side-right show-drawer active'=
+ : 'popup-drawer popup-drawer-layout-sidepanel popup-drawer-side-right' " i=
+-amphtml-binding=3D"">
+		<div class=3D"drawer-overlay" data-drawer-target-string=3D"#mobile-drawer=
+"></div>
+		<div class=3D"drawer-inner">
+						<div class=3D"drawer-header">
+				<button class=3D"menu-toggle-close drawer-toggle" aria-label=3D"Close m=
+enu" data-toggle-target=3D"#mobile-drawer" data-toggle-body-class=3D"showin=
+g-popup-drawer-from-right" aria-expanded=3D"false" data-set-focus=3D".menu-=
+toggle-open" data-amp-bind-aria-expanded=3D"siteNavigationMenu.expanded ? '=
+true' : 'false'" i-amphtml-binding=3D"">
+					<span class=3D"toggle-close-bar"></span>
+					<span class=3D"toggle-close-bar"></span>
+				</button>
+			</div>
+			<div class=3D"drawer-content mobile-drawer-content content-align-left co=
+ntent-valign-top">
+								<div class=3D"site-header-item site-header-focus-item site-header-i=
+tem-mobile-navigation mobile-navigation-layout-stretch-false" data-section=
+=3D"kadence_customizer_mobile_navigation">
+		<nav id=3D"mobile-site-navigation" class=3D"mobile-navigation drawer-navi=
+gation drawer-navigation-parent-toggle-false" role=3D"navigation" aria-labe=
+l=3D"Primary Mobile Navigation">
+				<div class=3D"mobile-menu-container drawer-menu-container">
+			<ul id=3D"mobile-menu" class=3D"menu has-collapse-sub-nav"><li class=3D"=
+menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-c=
+hildren menu-item-315"><a href=3D"https://springhow.com/category/spring/">S=
+pring Framework</a>
+<ul class=3D"sub-menu">
+	<li class=3D"menu-item menu-item-type-taxonomy menu-item-object-category m=
+enu-item-316"><a href=3D"https://springhow.com/category/session/">Session</=
+a></li>
+	<li class=3D"menu-item menu-item-type-taxonomy menu-item-object-category m=
+enu-item-317"><a href=3D"https://springhow.com/category/caching/">Caching</=
+a></li>
+</ul>
+</li>
+<li class=3D"menu-item menu-item-type-custom menu-item-object-custom menu-i=
+tem-2136"><a href=3D"https://springhow.com/spring-security/">Spring Securit=
+y</a></li>
+<li class=3D"menu-item menu-item-type-taxonomy menu-item-object-category me=
+nu-item-314"><a href=3D"https://springhow.com/category/thymeleaf/">Thymelea=
+f</a></li>
+<li class=3D"menu-item menu-item-type-custom menu-item-object-custom menu-i=
+tem-3284"><a href=3D"https://springhow.com/spring-boot-banner-generator/#h-=
+spring-boot-banner-generator">Banner.txt Generator</a></li>
+</ul>		</div>
+	</nav>
+	</div>
+							</div>
+		</div>
+	</div>
+		<div id=3D"search-drawer" class=3D"popup-drawer popup-drawer-layout-fullw=
+idth" data-drawer-target-string=3D"#search-drawer" data-amp-bind-class=3D" =
+siteSearchModal.expanded ? 'popup-drawer popup-drawer-layout-fullwidth show=
+-drawer active' : 'popup-drawer popup-drawer-layout-fullwidth' " i-amphtml-=
+binding=3D"">
+		<div class=3D"drawer-overlay" data-drawer-target-string=3D"#search-drawer=
+"></div>
+		<div class=3D"drawer-inner">
+			<div class=3D"drawer-header">
+				<button class=3D"search-toggle-close drawer-toggle" aria-label=3D"Close=
+ search" data-toggle-target=3D"#search-drawer" data-toggle-body-class=3D"sh=
+owing-popup-drawer-from-full" aria-expanded=3D"false" data-set-focus=3D".se=
+arch-toggle-open" data-amp-bind-aria-expanded=3D"siteSearchModal.expanded ?=
+ 'true' : 'false'" i-amphtml-binding=3D"">
+					<span class=3D"kadence-svg-iconset"><svg class=3D"kadence-svg-icon kad=
+ence-close-svg" fill=3D"currentColor" version=3D"1.1" xmlns=3D"http://www.w=
+3.org/2000/svg" width=3D"24" height=3D"24" viewBox=3D"0 0 24 24"><title>Tog=
+gle Menu Close</title><path d=3D"M5.293 6.707l5.293 5.293-5.293 5.293c-0.39=
+1 0.391-0.391 1.024 0 1.414s1.024 0.391 1.414 0l5.293-5.293 5.293 5.293c0.3=
+91 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414l-5.293-5.293 5.293-5.293c0=
+.391-0.391 0.391-1.024 0-1.414s-1.024-0.391-1.414 0l-5.293 5.293-5.293-5.29=
+3c-0.391-0.391-1.024-0.391-1.414 0s-0.391 1.024 0 1.414z"></path>
+				</svg></span>				</button>
+			</div>
+			<div class=3D"drawer-content">
+				<form role=3D"search" method=3D"get" class=3D"search-form i-amphtml-for=
+m" action=3D"https://springhow.com/" target=3D"_top" novalidate=3D"">
+				<label>
+					<span class=3D"screen-reader-text">Search for:</span>
+					<input type=3D"search" class=3D"search-field" placeholder=3D"Search =
+=E2=80=A6" value=3D"" name=3D"s">
+				</label>
+				<input type=3D"submit" class=3D"search-submit" value=3D"Search">
+			<div class=3D"kadence-search-icon-wrap"><span class=3D"kadence-svg-icons=
+et"><svg aria-hidden=3D"true" class=3D"kadence-svg-icon kadence-search-svg"=
+ fill=3D"currentColor" version=3D"1.1" xmlns=3D"http://www.w3.org/2000/svg"=
+ width=3D"26" height=3D"28" viewBox=3D"0 0 26 28"><title>Search</title><pat=
+h d=3D"M18 13c0-3.859-3.141-7-7-7s-7 3.141-7 7 3.141 7 7 7 7-3.141 7-7zM26 =
+26c0 1.094-0.906 2-2 2-0.531 0-1.047-0.219-1.406-0.594l-5.359-5.344c-1.828 =
+1.266-4.016 1.937-6.234 1.937-6.078 0-11-4.922-11-11s4.922-11 11-11 11 4.92=
+2 11 11c0 2.219-0.672 4.406-1.937 6.234l5.359 5.359c0.359 0.359 0.578 0.875=
+ 0.578 1.406z"></path>
+				</svg></span></div></form>			</div>
+		</div>
+	</div>
+=09
+
+</body></html>
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-d7cee36c-d7e8-4b78-aff9-abf41bec5d67@mhtml.blink
+
+@charset "utf-8";
+
+html { overflow-x: hidden !important; }
+
+html.i-amphtml-fie { height: 100% !important; width: 100% !important; }
+
+html:not([amp4ads]), html:not([amp4ads]) body { height: auto !important; }
+
+html:not([amp4ads]) body { margin: 0px !important; }
+
+body { text-size-adjust: 100%; }
+
+html.i-amphtml-singledoc.i-amphtml-embedded { touch-action: pan-y pinch-zoo=
+m; }
+
+html.i-amphtml-fie > body, html.i-amphtml-singledoc > body { overflow: visi=
+ble !important; }
+
+html.i-amphtml-fie:not(.i-amphtml-inabox) > body, html.i-amphtml-singledoc:=
+not(.i-amphtml-inabox) > body { position: relative !important; }
+
+html.i-amphtml-ios-embed-legacy > body { overflow: hidden auto !important; =
+position: absolute !important; }
+
+html.i-amphtml-ios-embed { position: static; overflow-y: auto !important; }
+
+#i-amphtml-wrapper { overflow: hidden auto !important; position: absolute !=
+important; inset: 0px !important; margin: 0px !important; display: block !i=
+mportant; }
+
+html.i-amphtml-ios-embed.i-amphtml-ios-overscroll, html.i-amphtml-ios-embed=
+.i-amphtml-ios-overscroll > #i-amphtml-wrapper { }
+
+#i-amphtml-wrapper > body { position: relative !important; border-top: 1px =
+solid transparent !important; }
+
+#i-amphtml-wrapper + body { visibility: visible; }
+
+#i-amphtml-wrapper + body .i-amphtml-lightbox-element, #i-amphtml-wrapper +=
+ body[i-amphtml-lightbox] { visibility: hidden; }
+
+#i-amphtml-wrapper + body[i-amphtml-lightbox] .i-amphtml-lightbox-element {=
+ visibility: visible; }
+
+#i-amphtml-wrapper.i-amphtml-scroll-disabled, .i-amphtml-scroll-disabled { =
+overflow: hidden !important; }
+
+amp-instagram { background-color: rgb(255, 255, 255); padding: 54px 0px 0px=
+ !important; }
+
+amp-iframe iframe { box-sizing: border-box !important; }
+
+[amp-access][amp-access-hide] { display: none; }
+
+[subscriptions-dialog], body:not(.i-amphtml-subs-ready) [subscriptions-acti=
+on], body:not(.i-amphtml-subs-ready) [subscriptions-section] { display: non=
+e !important; }
+
+amp-experiment, amp-live-list > [update] { display: none; }
+
+amp-list[resizable-children] > .i-amphtml-loading-container.amp-hidden { di=
+splay: none !important; }
+
+amp-list [fetch-error], amp-list[load-more] [load-more-button], amp-list[lo=
+ad-more] [load-more-end], amp-list[load-more] [load-more-failed], amp-list[=
+load-more] [load-more-loading] { display: none; }
+
+amp-list[diffable] div[role=3D"list"] { display: block; }
+
+amp-story-page, amp-story[standalone] { min-height: 1px !important; display=
+: block !important; height: 100% !important; margin: 0px !important; paddin=
+g: 0px !important; overflow: hidden !important; width: 100% !important; }
+
+amp-story[standalone] { background-color: rgb(0, 0, 0) !important; position=
+: relative !important; }
+
+amp-story-page { background-color: rgb(117, 117, 117); }
+
+amp-story .amp-active > div, amp-story .i-amphtml-loader-background { displ=
+ay: none !important; }
+
+amp-story-page:not(:first-of-type):not([distance]):not([active]) { transfor=
+m: translateY(1000vh) !important; }
+
+amp-autocomplete { position: relative !important; display: inline-block !im=
+portant; }
+
+amp-autocomplete > input, amp-autocomplete > textarea { padding: 0.5rem; bo=
+rder: 1px solid rgba(0, 0, 0, 0.33); }
+
+.i-amphtml-autocomplete-results, amp-autocomplete > input, amp-autocomplete=
+ > textarea { font-size: 1rem; line-height: 1.5rem; }
+
+[amp-fx^=3D"fly-in"] { visibility: hidden; }
+
+amp-script[nodom], amp-script[sandboxed] { visibility: hidden; position: fi=
+xed !important; top: 0px !important; width: 1px !important; height: 1px !im=
+portant; overflow: hidden !important; }
+
+[hidden] { display: none !important; }
+
+.i-amphtml-element { display: inline-block; }
+
+.i-amphtml-blurry-placeholder { pointer-events: none; transition: opacity 0=
+.3s cubic-bezier(0, 0, 0.2, 1) 0s !important; }
+
+[layout=3D"nodisplay"]:not(.i-amphtml-element) { display: none !important; =
+}
+
+.i-amphtml-layout-fixed, [layout=3D"fixed"][width][height]:not(.i-amphtml-l=
+ayout-fixed) { display: inline-block; position: relative; }
+
+.i-amphtml-layout-responsive, [layout=3D"responsive"][width][height]:not(.i=
+-amphtml-layout-responsive), [width][height][heights]:not([layout]):not(.i-=
+amphtml-layout-responsive), [width][height][sizes]:not(img):not([layout]):n=
+ot(.i-amphtml-layout-responsive) { display: block; position: relative; }
+
+.i-amphtml-layout-intrinsic, [layout=3D"intrinsic"][width][height]:not(.i-a=
+mphtml-layout-intrinsic) { display: inline-block; position: relative; max-w=
+idth: 100%; }
+
+.i-amphtml-layout-intrinsic .i-amphtml-sizer { max-width: 100%; }
+
+.i-amphtml-intrinsic-sizer { max-width: 100%; display: block !important; }
+
+.i-amphtml-layout-container, .i-amphtml-layout-fixed-height, [layout=3D"con=
+tainer"], [layout=3D"fixed-height"][height]:not(.i-amphtml-layout-fixed-hei=
+ght) { display: block; position: relative; }
+
+.i-amphtml-layout-fill, .i-amphtml-layout-fill.i-amphtml-notbuilt, [layout=
+=3D"fill"]:not(.i-amphtml-layout-fill), body noscript > * { display: block;=
+ position: absolute; inset: 0px; overflow: hidden !important; }
+
+body noscript > * { width: 100%; height: 100%; z-index: 2; position: absolu=
+te !important; }
+
+body noscript { display: inline !important; }
+
+.i-amphtml-layout-flex-item, [layout=3D"flex-item"]:not(.i-amphtml-layout-f=
+lex-item) { display: block; position: relative; flex: 1 1 auto; }
+
+.i-amphtml-layout-fluid { position: relative; }
+
+.i-amphtml-layout-size-defined { overflow: hidden !important; }
+
+.i-amphtml-layout-awaiting-size { position: absolute !important; top: auto =
+!important; bottom: auto !important; }
+
+i-amphtml-sizer { display: block !important; }
+
+@supports (aspect-ratio:1/1) {
+  i-amphtml-sizer.i-amphtml-disable-ar { display: none !important; }
+}
+
+.i-amphtml-blurry-placeholder, .i-amphtml-fill-content { display: block; he=
+ight: 0px; max-height: 100%; max-width: 100%; min-height: 100%; min-width: =
+100%; width: 0px; margin: auto; }
+
+.i-amphtml-layout-size-defined .i-amphtml-fill-content { position: absolute=
+; inset: 0px; }
+
+.i-amphtml-replaced-content, .i-amphtml-screen-reader { padding: 0px !impor=
+tant; border: none !important; }
+
+.i-amphtml-screen-reader { position: fixed !important; top: 0px !important;=
+ left: 0px !important; width: 4px !important; height: 4px !important; opaci=
+ty: 0 !important; overflow: hidden !important; margin: 0px !important; disp=
+lay: block !important; visibility: visible !important; }
+
+.i-amphtml-screen-reader ~ .i-amphtml-screen-reader { left: 8px !important;=
+ }
+
+.i-amphtml-screen-reader ~ .i-amphtml-screen-reader ~ .i-amphtml-screen-rea=
+der { left: 12px !important; }
+
+.i-amphtml-screen-reader ~ .i-amphtml-screen-reader ~ .i-amphtml-screen-rea=
+der ~ .i-amphtml-screen-reader { left: 16px !important; }
+
+.i-amphtml-unresolved { position: relative; overflow: hidden !important; }
+
+.i-amphtml-select-disabled { user-select: none !important; }
+
+.i-amphtml-notbuilt, [layout]:not(.i-amphtml-element), [width][height][heig=
+hts]:not([layout]):not(.i-amphtml-element), [width][height][sizes]:not(img)=
+:not([layout]):not(.i-amphtml-element) { position: relative; overflow: hidd=
+en !important; color: transparent !important; }
+
+.i-amphtml-notbuilt:not(.i-amphtml-layout-container) > *, [layout]:not([lay=
+out=3D"container"]):not(.i-amphtml-element) > *, [width][height][heights]:n=
+ot([layout]):not(.i-amphtml-element) > *, [width][height][sizes]:not([layou=
+t]):not(.i-amphtml-element) > * { display: none; }
+
+amp-img:not(.i-amphtml-element)[i-amphtml-ssr] > img.i-amphtml-fill-content=
+ { display: block; }
+
+.i-amphtml-notbuilt:not(.i-amphtml-layout-container), [layout]:not([layout=
+=3D"container"]):not(.i-amphtml-element), [width][height][heights]:not([lay=
+out]):not(.i-amphtml-element), [width][height][sizes]:not(img):not([layout]=
+):not(.i-amphtml-element) { color: transparent !important; line-height: 0 !=
+important; }
+
+.i-amphtml-ghost { visibility: hidden !important; }
+
+.i-amphtml-element > [placeholder], [layout]:not(.i-amphtml-element) > [pla=
+ceholder], [width][height][heights]:not([layout]):not(.i-amphtml-element) >=
+ [placeholder], [width][height][sizes]:not([layout]):not(.i-amphtml-element=
+) > [placeholder] { display: block; line-height: normal; }
+
+.i-amphtml-element > [placeholder].amp-hidden, .i-amphtml-element > [placeh=
+older].hidden { visibility: hidden; }
+
+.i-amphtml-element:not(.amp-notsupported) > [fallback], .i-amphtml-layout-c=
+ontainer > [placeholder].amp-hidden, .i-amphtml-layout-container > [placeho=
+lder].hidden { display: none; }
+
+.i-amphtml-layout-size-defined > [fallback], .i-amphtml-layout-size-defined=
+ > [placeholder] { z-index: 1; position: absolute !important; inset: 0px !i=
+mportant; }
+
+amp-img[i-amphtml-ssr]:not(.i-amphtml-element) > [placeholder] { z-index: a=
+uto; }
+
+.i-amphtml-notbuilt > [placeholder] { display: block !important; }
+
+.i-amphtml-hidden-by-media-query { display: none !important; }
+
+.i-amphtml-element-error { background: red !important; color: rgb(255, 255,=
+ 255) !important; position: relative !important; }
+
+.i-amphtml-element-error::before { content: attr(error-message); }
+
+i-amp-scroll-container, i-amphtml-scroll-container { position: absolute; in=
+set: 0px; display: block; }
+
+i-amp-scroll-container.amp-active, i-amphtml-scroll-container.amp-active { =
+overflow: auto; }
+
+.i-amphtml-loading-container { pointer-events: none; z-index: 1; display: b=
+lock !important; }
+
+.i-amphtml-notbuilt > .i-amphtml-loading-container { display: block !import=
+ant; }
+
+.i-amphtml-loading-container.amp-hidden { visibility: hidden; }
+
+.i-amphtml-element > [overflow] { cursor: pointer; position: relative; z-in=
+dex: 2; visibility: hidden; display: initial; line-height: normal; }
+
+.i-amphtml-layout-size-defined > [overflow] { position: absolute; }
+
+.i-amphtml-element > [overflow].amp-visible { visibility: visible; }
+
+template { display: none !important; }
+
+.amp-border-box, .amp-border-box *, .amp-border-box ::after, .amp-border-bo=
+x ::before { box-sizing: border-box; }
+
+amp-pixel { display: none !important; }
+
+amp-analytics, amp-auto-ads, amp-story-auto-ads { visibility: hidden; posit=
+ion: fixed !important; top: 0px !important; width: 1px !important; height: =
+1px !important; overflow: hidden !important; }
+
+html.i-amphtml-fie > amp-analytics { position: initial !important; }
+
+[visible-when-invalid]:not(.visible), form [submit-error], form [submit-suc=
+cess], form [submitting] { display: none; }
+
+amp-accordion { display: block !important; }
+
+@media (min-width: 1px) {
+  :where(amp-accordion > section) > :first-child { margin: 0px; background-=
+color: rgb(239, 239, 239); padding-right: 20px; border: 1px solid rgb(223, =
+223, 223); }
+  :where(amp-accordion > section) > :last-child { margin: 0px; }
+}
+
+amp-accordion > section { float: none !important; }
+
+amp-accordion > section > * { float: none !important; display: block !impor=
+tant; overflow: hidden !important; position: relative !important; }
+
+amp-accordion, amp-accordion > section { margin: 0px; }
+
+amp-accordion:not(.i-amphtml-built) > section > :last-child { display: none=
+ !important; }
+
+amp-accordion:not(.i-amphtml-built) > section[expanded] > :last-child { dis=
+play: block !important; }
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-2de8eade-55c1-4722-b47b-c73bb228e537@mhtml.blink
+
+@charset "utf-8";
+
+.i-amphtml-lbg-caption-scroll { z-index: 1; color: rgb(255, 255, 255); posi=
+tion: absolute !important; left: 0px !important; right: 0px !important; bot=
+tom: 0px !important; padding-top: 40px !important; box-sizing: border-box !=
+important; text-shadow: rgba(0, 0, 0, 0.4) 1px 0px 5px !important; overflow=
+: hidden !important; max-height: calc(80px + 3rem) !important; transition: =
+max-height 0.3s ease-out 0s !important; pointer-events: none !important; }
+
+.i-amphtml-lbg-caption-text { padding: 20px !important; pointer-events: all=
+ !important; }
+
+.i-amphtml-lbg-caption-text:empty { display: none !important; }
+
+[i-amphtml-lbg-caption-state=3D"clip"] { -webkit-mask-image: linear-gradien=
+t(0deg, transparent 0rem, rgba(0, 0, 0, 0.2) 1rem, rgba(0, 0, 0, 0.55) 2rem=
+, rgb(0, 0, 0) 3rem); }
+
+[i-amphtml-lbg-caption-state=3D"expand"] { -webkit-mask-image: linear-gradi=
+ent(transparent, rgba(0, 0, 0, 0.2) 20px, rgba(0, 0, 0, 0.55) 40px, rgb(0, =
+0, 0) 60px); overflow-y: auto !important; max-height: 100% !important; tran=
+sition: max-height 0.7s ease-out 0s !important; }
+
+.i-amphtml-lbg-caption-mask { min-height: 1rem; width: 100% !important; pos=
+ition: fixed !important; bottom: 0px !important; pointer-events: all !impor=
+tant; }
+
+[i-amphtml-lbg-caption-state=3D"clip"] + .i-amphtml-lbg-caption-mask { z-in=
+dex: 1 !important; background: transparent !important; transition: backgrou=
+nd-color 0.5s ease-out 0s !important; }
+
+[i-amphtml-lbg-caption-state=3D"expand"] + .i-amphtml-lbg-caption-mask { ba=
+ckground-color: rgba(0, 0, 0, 0.4) !important; top: 0px !important; z-index=
+: 0 !important; transition: background-color 0.4s ease-in 0s !important; }
+
+.i-amphtml-lbg[gallery-view] .i-amphtml-lbg-caption { display: none; }
+
+.i-amphtml-lbg-top-bar { background: linear-gradient(rgba(0, 0, 0, 0.3), tr=
+ansparent); position: absolute !important; left: 0px !important; right: 0px=
+ !important; top: 0px !important; height: 56px !important; z-index: 1 !impo=
+rtant; }
+
+@media (min-width: 1024px) {
+  .i-amphtml-lbg-top-bar { height: 80px !important; }
+}
+
+.i-amphtml-lbg-button { width: 24px; height: 24px; padding: 16px; box-sizin=
+g: content-box; position: absolute !important; cursor: pointer !important; =
+}
+
+@media (min-width: 1024px) {
+  .i-amphtml-lbg-button { width: 40px; height: 40px; padding: 20px; }
+}
+
+.i-amphtml-lbg-button::after { content: "" !important; width: 100% !importa=
+nt; height: 100% !important; display: block !important; background-repeat: =
+no-repeat !important; background-position: 50% center !important; }
+
+.i-amphtml-lbg-button[data-action=3D"close"] { top: 0px !important; right: =
+0px !important; }
+
+.i-amphtml-lbg-button[data-action=3D"close"]::after { background-image: url=
+("data:image/svg+xml;charset=3Dutf-8,<svg viewBox=3D\"0 0 24 24\" xmlns=3D\=
+"http://www.w3.org/2000/svg\"><path d=3D\"m6.4 6.4 11.2 11.2zm11.2 0L6.4 17=
+.6z\" stroke=3D\"%23fff\" stroke-width=3D\"2\" stroke-linejoin=3D\"round\"/=
+></svg>"); }
+
+.i-amphtml-lbg-button[data-action=3D"gallery"] { top: 0px !important; left:=
+ 0px !important; }
+
+.i-amphtml-lbg-button[data-action=3D"gallery"]::after { background-image: u=
+rl("data:image/svg+xml;charset=3Dutf-8,<svg viewBox=3D\"0 0 24 24\" xmlns=
+=3D\"http://www.w3.org/2000/svg\"><g fill=3D\"%23fff\"><rect x=3D\"3\" y=3D=
+\"3\" width=3D\"6\" height=3D\"8\" rx=3D\"1\" ry=3D\"1\"/><rect x=3D\"15\" =
+y=3D\"13\" width=3D\"6\" height=3D\"8\" rx=3D\"1\" ry=3D\"1\"/><rect x=3D\"=
+11\" y=3D\"3\" width=3D\"10\" height=3D\"8\" rx=3D\"1\" ry=3D\"1\"/><rect x=
+=3D\"3\" y=3D\"13\" width=3D\"10\" height=3D\"8\" rx=3D\"1\" ry=3D\"1\"/></=
+g></svg>"); }
+
+.i-amphtml-lbg-button[data-action=3D"slides"] { display: none; top: 0px !im=
+portant; left: 0px !important; }
+
+.i-amphtml-lbg-button[data-action=3D"slides"]::after { background-image: ur=
+l("data:image/svg+xml;charset=3Dutf-8,<svg viewBox=3D\"0 0 24 24\" xmlns=3D=
+\"http://www.w3.org/2000/svg\"><rect x=3D\"4\" y=3D\"4\" width=3D\"16\" hei=
+ght=3D\"16\" rx=3D\"1\" stroke-width=3D\"2\" stroke=3D\"%23fff\" fill=3D\"n=
+one\"/><circle fill=3D\"%23fff\" cx=3D\"15.5\" cy=3D\"8.5\" r=3D\"1.5\"/><p=
+ath fill=3D\"%23fff\" d=3D\"M5 19v-6l3-3 5 5 3-3 3 3v4z\"/></svg>"); }
+
+.i-amphtml-lbg-button[data-action=3D"next"], .i-amphtml-lbg-button[data-act=
+ion=3D"prev"] { width: 40px; height: 40px; padding: 20px; top: 0px !importa=
+nt; bottom: 0px !important; margin: auto !important; filter: drop-shadow(bl=
+ack 0px 0px 1px) !important; }
+
+.i-amphtml-lbg-button[data-action=3D"next"] { right: 0px !important; left: =
+auto !important; }
+
+.i-amphtml-lbg-button[data-action=3D"next"]::after { background-image: url(=
+"data:image/svg+xml;charset=3Dutf-8,<svg viewBox=3D\"0 0 24 24\" xmlns=3D\"=
+http://www.w3.org/2000/svg\"><path d=3D\"m10 7.4 4.6 4.6-4.6 4.6\" fill=3D\=
+"none\" stroke=3D\"%23fff\" stroke-width=3D\"2\" stroke-linejoin=3D\"round\=
+" stroke-linecap=3D\"round\"/></svg>"); }
+
+.i-amphtml-lbg-button[data-action=3D"prev"] { right: auto !important; left:=
+ 0px !important; }
+
+.i-amphtml-lbg-button[data-action=3D"prev"]::after { background-image: url(=
+"data:image/svg+xml;charset=3Dutf-8,<svg viewBox=3D\"0 0 24 24\" xmlns=3D\"=
+http://www.w3.org/2000/svg\"><path d=3D\"M14 7.4 9.4 12l4.6 4.6\" fill=3D\"=
+none\" stroke=3D\"%23fff\" stroke-width=3D\"2\" stroke-linejoin=3D\"round\"=
+ stroke-linecap=3D\"round\"/></svg>"); }
+
+[i-amphtml-lbg-single-item] .i-amphtml-lbg-button[data-action=3D"gallery"],=
+ [i-amphtml-lbg-single-item] .i-amphtml-lbg-button[data-action=3D"next"], [=
+i-amphtml-lbg-single-item] .i-amphtml-lbg-button[data-action=3D"prev"] { vi=
+sibility: hidden !important; }
+
+.i-amphtml-lbg[gallery-view] .i-amphtml-lbg-button[data-action=3D"gallery"]=
+, .i-amphtml-lbg[gallery-view] .i-amphtml-lbg-button[data-action=3D"next"],=
+ .i-amphtml-lbg[gallery-view] .i-amphtml-lbg-button[data-action=3D"prev"] {=
+ display: none !important; }
+
+.i-amphtml-lbg[gallery-view] .i-amphtml-lbg-button[data-action=3D"slides"] =
+{ display: block !important; }
+
+[i-amphtml-lbg-fade] { animation-fill-mode: forwards; animation-duration: 4=
+00ms; }
+
+[i-amphtml-lbg-fade=3D"in"] { animation-name: fadeIn; }
+
+[i-amphtml-lbg-fade=3D"out"] { animation-name: fadeOut; }
+
+amp-lightbox-gallery[i-amphtml-lbg-fade] { position: relative; z-index: 214=
+7483642; animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
+
+amp-lightbox-gallery .amp-carousel-button { display: none; }
+
+amp-lightbox-gallery amp-carousel { background: transparent !important; }
+
+.i-amphtml-lbg { z-index: 2147483642; position: fixed !important; }
+
+.i-amphtml-lbg, .i-amphtml-lbg-gallery, .i-amphtml-lbg-mask { inset: 0px !i=
+mportant; }
+
+.i-amphtml-lbg-gallery, .i-amphtml-lbg-mask { background-color: rgb(0, 0, 0=
+) !important; position: absolute !important; }
+
+.i-amphtml-lbg-gallery { display: none; top: 56px !important; overflow: aut=
+o !important; }
+
+@media (min-width: 1024px) {
+  .i-amphtml-lbg-gallery { top: 80px !important; }
+}
+
+.i-amphtml-lbg-overlay:not([i-amphtml-lbg-fade]) { opacity: 0; visibility: =
+hidden; }
+
+.i-amphtml-lbg-overlay[i-amphtml-lbg-fade=3D"in"] { animation-timing-functi=
+on: ease-in; }
+
+.i-amphtml-lbg-overlay[i-amphtml-lbg-fade=3D"out"] { animation-timing-funct=
+ion: linear; }
+
+.i-amphtml-lbg[gallery-view] .i-amphtml-lbg-gallery { grid-template-columns=
+: repeat(3, 1fr); padding: 5px; display: grid !important; justify-content: =
+center !important; gap: 5px !important; grid-auto-rows: min-content !import=
+ant; }
+
+@media (min-width: 1024px) {
+  .i-amphtml-lbg[gallery-view] .i-amphtml-lbg-gallery { grid-template-colum=
+ns: repeat(4, 249.75px); }
+}
+
+.i-amphtml-lbg-gallery-thumbnail { position: relative !important; padding-t=
+op: 100% !important; }
+
+.i-amphtml-lbg-gallery-thumbnail-img { width: 100% !important; height: 100%=
+ !important; position: absolute !important; top: 0px !important; object-fit=
+: cover !important; cursor: pointer !important; }
+
+.i-amphtml-lbg-thumbnail-timestamp-container { background-color: rgb(41, 45=
+, 51); color: rgb(255, 255, 255); position: absolute; bottom: 10px; left: 1=
+0px; height: 20px; border-radius: 2px; opacity: 0.8; width: 20px; }
+
+.i-amphtml-lbg-thumbnail-timestamp-container.i-amphtml-lbg-has-timestamp { =
+font-size: 12px; padding: 0px 5px 0px 18px; line-height: 1.3rem; width: aut=
+o; }
+
+.i-amphtml-lbg-thumbnail-play-icon { background-image: url("data:image/svg+=
+xml;charset=3Dutf-8,<svg xmlns=3D\"http://www.w3.org/2000/svg\" viewBox=3D\=
+"0 0 24 24\" fill=3D\"%23fff\"><path d=3D\"M8 5v14l11-7z\"/><path d=3D\"M0 =
+0h24v24H0z\" fill=3D\"none\"/></svg>"); height: 16px; width: 16px; position=
+: absolute; left: 2px; bottom: 2px; }
+
+amp-lightbox-gallery .i-amphtml-slide-item > * { height: auto; }
+
+@keyframes fadeIn {=20
+  0% { opacity: 0; }
+  100% { opacity: 1; visibility: visible; }
+}
+
+@keyframes fadeOut {=20
+  0% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-cd69fc7f-63f8-4781-bcd9-b2633ee2a5f2@mhtml.blink
+
+@charset "utf-8";
+
+.i-amphtml-loader-background { position: absolute; inset: 0px; background-c=
+olor: rgb(248, 248, 248); }
+
+.i-amphtml-new-loader { display: inline-block; position: absolute; top: 50%=
+; left: 50%; transform: translate(-50%, -50%); width: 0px; height: 0px; col=
+or: rgb(170, 170, 170); }
+
+.i-amphtml-new-loader-size-default, .i-amphtml-new-loader-size-small { widt=
+h: 72px; height: 72px; }
+
+.i-amphtml-new-loader-logo { transform-origin: center center; opacity: 0; a=
+nimation-duration: 0.8s; animation-timing-function: ease-in; animation-iter=
+ation-count: 1; animation-direction: normal; animation-fill-mode: forwards;=
+ animation-play-state: running; animation-name: i-amphtml-new-loader-scale-=
+and-fade-in; animation-delay: calc(0.6s - var(--loader-delay-offset)); }
+
+.i-amphtml-new-loader-size-small .i-amphtml-new-loader-logo { display: none=
+; }
+
+.i-amphtml-new-loader-logo-default { fill: currentcolor; animation-duration=
+: 0.8s; animation-timing-function: ease-out; animation-iteration-count: 1; =
+animation-direction: normal; animation-fill-mode: forwards; animation-play-=
+state: running; animation-name: i-amphtml-new-loader-fade-out; animation-de=
+lay: calc(1.8s - var(--loader-delay-offset)); }
+
+.i-amphtml-new-loader-has-shim { color: rgb(255, 255, 255) !important; }
+
+.i-amphtml-new-loader-shim { width: 72px; height: 72px; border-radius: 50%;=
+ display: none; transform-origin: center center; opacity: 0; background-col=
+or: rgba(0, 0, 0, 0.6); animation-duration: 0.8s; animation-timing-function=
+: ease-in; animation-iteration-count: 1; animation-direction: normal; anima=
+tion-fill-mode: forwards; animation-play-state: running; animation-name: i-=
+amphtml-new-loader-scale-and-fade-in; animation-delay: calc(0.6s - var(--lo=
+ader-delay-offset)); }
+
+.i-amphtml-new-loader-size-small .i-amphtml-new-loader-shim { width: 48px; =
+height: 48px; margin: 12px; }
+
+.i-amphtml-new-loader-has-shim .i-amphtml-new-loader-shim { display: initia=
+l; }
+
+.i-amphtml-new-loader-has-shim .i-amphtml-new-loader-logo-default { display=
+: none; }
+
+.i-amphtml-new-loader-has-shim .i-amphtml-new-loader-transparent-on-shim { =
+fill: transparent !important; }
+
+.i-amphtml-new-loader-logo, .i-amphtml-new-loader-shim, .i-amphtml-new-load=
+er-spinner-wrapper { position: absolute; inset: 0px; }
+
+.i-amphtml-new-loader-spinner-wrapper { margin: 12px; }
+
+.i-amphtml-new-loader-spinner { stroke: currentcolor; stroke-width: 1.5px; =
+opacity: 0; animation-duration: 0.8s; animation-timing-function: ease-in; a=
+nimation-iteration-count: 1; animation-direction: normal; animation-fill-mo=
+de: forwards; animation-play-state: running; animation-name: i-amphtml-new-=
+loader-fade-in; animation-delay: calc(1.8s - var(--loader-delay-offset)); }
+
+.i-amphtml-new-loader-spinner-path { animation-duration: 0.6s, 1.2s; animat=
+ion-timing-function: steps(30), steps(59); animation-iteration-count: 1, in=
+finite; animation-direction: normal, normal; animation-fill-mode: none, non=
+e; animation-play-state: running, running; animation-name: frame-position-f=
+irst-spin, frame-position-infinite-spin; animation-delay: calc(2.8s - var(-=
+-loader-delay-offset)),calc(3.4s - var(--loader-delay-offset)); }
+
+.i-amphtml-new-loader-size-small .i-amphtml-new-loader-spinner { transform:=
+ scale(0.54545); stroke-width: 2.75px; }
+
+.i-amphtml-new-loader-size-small .i-amphtml-new-loader-spinner-path { anima=
+tion-delay: calc(1.4s - var(--loader-delay-offset)),calc(2s - var(--loader-=
+delay-offset)); }
+
+.i-amphtml-new-loader * { animation-play-state: paused; }
+
+.amp-active > .i-amphtml-new-loader * { animation-play-state: running; }
+
+.i-amphtml-new-loader-ad-logo { display: flex; align-items: center; justify=
+-content: center; width: 100%; height: 100%; }
+
+.i-amphtml-new-loader-ad-label { color: currentcolor !important; font-famil=
+y: sans-serif !important; font-feature-settings: initial !important; font-k=
+erning: initial !important; font-optical-sizing: initial !important; font-s=
+ize: 11px !important; font-stretch: initial !important; font-style: initial=
+ !important; font-variant: initial !important; font-variation-settings: ini=
+tial !important; font-weight: initial !important; forced-color-adjust: init=
+ial !important; text-orientation: initial !important; text-rendering: initi=
+al !important; -webkit-font-smoothing: initial !important; -webkit-locale: =
+initial !important; -webkit-text-orientation: initial !important; -webkit-w=
+riting-mode: initial !important; writing-mode: initial !important; zoom: in=
+itial !important; accent-color: initial !important; place-content: initial =
+!important; place-items: initial !important; place-self: initial !important=
+; alignment-baseline: initial !important; animation: initial !important; ap=
+p-region: initial !important; appearance: initial !important; aspect-ratio:=
+ initial !important; backdrop-filter: initial !important; backface-visibili=
+ty: initial !important; background: initial !important; background-blend-mo=
+de: initial !important; baseline-shift: initial !important; block-size: ini=
+tial !important; border-block: initial !important; border: 1px solid !impor=
+tant; border-radius: 2px !important; border-collapse: initial !important; b=
+order-end-end-radius: initial !important; border-end-start-radius: initial =
+!important; border-inline: initial !important; border-start-end-radius: ini=
+tial !important; border-start-start-radius: initial !important; inset: init=
+ial !important; box-shadow: initial !important; box-sizing: initial !import=
+ant; break-after: initial !important; break-before: initial !important; bre=
+ak-inside: initial !important; buffered-rendering: initial !important; capt=
+ion-side: initial !important; caret-color: initial !important; clear: initi=
+al !important; clip: initial !important; clip-path: initial !important; cli=
+p-rule: initial !important; color-interpolation: initial !important; color-=
+interpolation-filters: initial !important; color-rendering: initial !import=
+ant; color-scheme: initial !important; columns: initial !important; column-=
+fill: initial !important; gap: initial !important; column-rule: initial !im=
+portant; column-span: initial !important; contain: initial !important; cont=
+ain-intrinsic-block-size: initial !important; contain-intrinsic-size: initi=
+al !important; contain-intrinsic-inline-size: initial !important; content: =
+initial !important; content-visibility: initial !important; counter-increme=
+nt: initial !important; counter-reset: initial !important; counter-set: ini=
+tial !important; cursor: initial !important; cx: initial !important; cy: in=
+itial !important; d: initial !important; display: inline-block !important; =
+dominant-baseline: initial !important; empty-cells: initial !important; fil=
+l: initial !important; fill-opacity: initial !important; fill-rule: initial=
+ !important; filter: initial !important; flex: initial !important; flex-flo=
+w: initial !important; float: initial !important; flood-color: initial !imp=
+ortant; flood-opacity: initial !important; grid: initial !important; grid-a=
+rea: initial !important; height: initial !important; hyphens: initial !impo=
+rtant; image-orientation: initial !important; image-rendering: initial !imp=
+ortant; inline-size: initial !important; inset-block: initial !important; i=
+nset-inline: initial !important; isolation: initial !important; letter-spac=
+ing: initial !important; lighting-color: initial !important; line-break: in=
+itial !important; line-height: 1.1 !important; list-style: initial !importa=
+nt; margin-block: initial !important; margin: initial !important; margin-in=
+line: initial !important; marker: initial !important; mask: initial !import=
+ant; mask-type: initial !important; max-block-size: initial !important; max=
+-height: initial !important; max-inline-size: initial !important; max-width=
+: initial !important; min-block-size: initial !important; min-height: initi=
+al !important; min-inline-size: initial !important; min-width: initial !imp=
+ortant; mix-blend-mode: initial !important; object-fit: initial !important;=
+ object-position: initial !important; offset: initial !important; opacity: =
+initial !important; order: initial !important; origin-trial-test-property: =
+initial !important; orphans: initial !important; outline: initial !importan=
+t; outline-offset: initial !important; overflow-anchor: initial !important;=
+ overflow-clip-margin: initial !important; overflow-wrap: initial !importan=
+t; overflow: initial !important; overscroll-behavior-block: initial !import=
+ant; overscroll-behavior-inline: initial !important; overscroll-behavior: i=
+nitial !important; padding-block: initial !important; padding: 0px 0.4ch !i=
+mportant; padding-inline: initial !important; page: initial !important; pag=
+e-orientation: initial !important; paint-order: initial !important; perspec=
+tive: initial !important; perspective-origin: initial !important; pointer-e=
+vents: initial !important; position: initial !important; quotes: initial !i=
+mportant; r: initial !important; resize: initial !important; ruby-position:=
+ initial !important; rx: initial !important; ry: initial !important; scroll=
+-behavior: initial !important; scroll-margin-block: initial !important; scr=
+oll-margin: initial !important; scroll-margin-inline: initial !important; s=
+croll-padding-block: initial !important; scroll-padding: initial !important=
+; scroll-padding-inline: initial !important; scroll-snap-align: initial !im=
+portant; scroll-snap-stop: initial !important; scroll-snap-type: initial !i=
+mportant; scrollbar-gutter: initial !important; shape-image-threshold: init=
+ial !important; shape-margin: initial !important; shape-outside: initial !i=
+mportant; shape-rendering: initial !important; size: initial !important; sp=
+eak: initial !important; stop-color: initial !important; stop-opacity: init=
+ial !important; stroke: initial !important; stroke-dasharray: initial !impo=
+rtant; stroke-dashoffset: initial !important; stroke-linecap: initial !impo=
+rtant; stroke-linejoin: initial !important; stroke-miterlimit: initial !imp=
+ortant; stroke-opacity: initial !important; stroke-width: initial !importan=
+t; tab-size: initial !important; table-layout: initial !important; text-ali=
+gn: initial !important; text-align-last: initial !important; text-anchor: i=
+nitial !important; text-combine-upright: initial !important; text-decoratio=
+n: initial !important; text-decoration-skip-ink: initial !important; text-i=
+ndent: initial !important; text-overflow: initial !important; text-shadow: =
+initial !important; text-size-adjust: initial !important; text-transform: i=
+nitial !important; text-underline-offset: initial !important; text-underlin=
+e-position: initial !important; touch-action: initial !important; transform=
+: initial !important; transform-box: initial !important; transform-origin: =
+initial !important; transform-style: initial !important; transition: initia=
+l !important; user-select: initial !important; vector-effect: initial !impo=
+rtant; vertical-align: initial !important; visibility: inherit !important; =
+border-spacing: initial !important; -webkit-border-image: initial !importan=
+t; -webkit-box-align: initial !important; -webkit-box-decoration-break: ini=
+tial !important; -webkit-box-direction: initial !important; -webkit-box-fle=
+x: initial !important; -webkit-box-ordinal-group: initial !important; -webk=
+it-box-orient: initial !important; -webkit-box-pack: initial !important; -w=
+ebkit-box-reflect: initial !important; -webkit-highlight: initial !importan=
+t; -webkit-hyphenate-character: initial !important; -webkit-line-break: ini=
+tial !important; -webkit-line-clamp: initial !important; -webkit-mask-box-i=
+mage: initial !important; -webkit-mask: initial !important; -webkit-mask-co=
+mposite: initial !important; -webkit-perspective-origin-x: initial !importa=
+nt; -webkit-perspective-origin-y: initial !important; -webkit-print-color-a=
+djust: initial !important; -webkit-rtl-ordering: initial !important; -webki=
+t-ruby-position: initial !important; -webkit-tap-highlight-color: initial !=
+important; -webkit-text-combine: initial !important; -webkit-text-decoratio=
+ns-in-effect: initial !important; -webkit-text-emphasis: initial !important=
+; -webkit-text-emphasis-position: initial !important; -webkit-text-fill-col=
+or: initial !important; -webkit-text-security: initial !important; -webkit-=
+text-stroke: initial !important; -webkit-transform-origin-x: initial !impor=
+tant; -webkit-transform-origin-y: initial !important; -webkit-transform-ori=
+gin-z: initial !important; -webkit-user-drag: initial !important; -webkit-u=
+ser-modify: initial !important; white-space: initial !important; widows: in=
+itial !important; width: initial !important; will-change: initial !importan=
+t; word-break: initial !important; word-spacing: initial !important; x: ini=
+tial !important; y: initial !important; z-index: initial !important; }
+
+@keyframes i-amphtml-new-loader-fade-in {=20
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes i-amphtml-new-loader-fade-out {=20
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes i-amphtml-new-loader-scale-and-fade-in {=20
+  0% { opacity: 0; transform: scale(0); }
+  50% { transform: scale(1); }
+  100% { opacity: 1; }
+}
+
+@keyframes frame-position-first-spin {=20
+  0% { transform: translateX(0px); }
+  100% { transform: translateX(-1440px); }
+}
+
+@keyframes frame-position-infinite-spin {=20
+  0% { transform: translateX(-1440px); }
+  100% { transform: translateX(-4272px); }
+}
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-f2ed05a6-49e2-42ec-af92-7d49415081e0@mhtml.blink
+
+@charset "utf-8";
+
+form.amp-form-submit-error [submit-error], form.amp-form-submit-success [su=
+bmit-success], form.amp-form-submitting [submitting] { display: block; }
+
+textarea[autoexpand]:not(.i-amphtml-textarea-max) { overflow: hidden !impor=
+tant; }
+
+.i-amphtml-textarea-clone { visibility: hidden; position: absolute; top: -9=
+999px; left: -9999px; height: 0px !important; }
+
+.i-amphtml-validation-bubble { transform: translate(-50%, -100%); backgroun=
+d-color: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px 0p=
+x; max-width: 200px; position: absolute; display: block; box-sizing: border=
+-box; padding: 10px; border-radius: 5px; }
+
+.i-amphtml-validation-bubble::after { content: " "; position: absolute; bot=
+tom: -8px; left: 30px; width: 0px; height: 0px; border-left: 8px solid tran=
+sparent; border-right: 8px solid transparent; border-top: 8px solid rgb(255=
+, 255, 255); }
+
+[visible-when-invalid] { color: red; }
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-254ec08b-ff8c-4324-b4b6-e1016db7a412@mhtml.blink
+
+@charset "utf-8";
+
+amp-img.amp-wp-enforced-sizes { object-fit: contain; }
+
+.amp-wp-default-form-message > p { margin: 1em 0px; padding: 0.5em; }
+
+.amp-wp-default-form-message[submit-success] > p.amp-wp-form-redirecting, .=
+amp-wp-default-form-message[submitting] > p { font-style: italic; }
+
+.amp-wp-default-form-message[submit-success] > p:not(.amp-wp-form-redirecti=
+ng) { background-color: rgb(144, 238, 144); border: 1px solid green; color:=
+ rgb(0, 0, 0); }
+
+.amp-wp-default-form-message[submit-error] > p { background-color: rgb(255,=
+ 182, 193); border: 1px solid red; color: rgb(0, 0, 0); }
+
+.amp-wp-default-form-message[submit-success] > p:empty { display: none; }
+
+amp-img img, amp-img noscript { image-rendering: inherit; object-fit: inher=
+it; object-position: inherit; }
+
+.wp-block-code code { display: block; white-space: pre-wrap; overflow-wrap:=
+ break-word; }
+
+.wp-block-image { margin: 0px 0px 1em; }
+
+.wp-block-image amp-img { max-width: 100%; }
+
+.wp-block-image:not(.is-style-rounded) amp-img { border-radius: inherit; }
+
+.wp-block-image.aligncenter { text-align: center; }
+
+.wp-block-image.alignfull amp-img, .wp-block-image.alignwide amp-img { widt=
+h: 100%; }
+
+.wp-block-image .aligncenter { display: table; }
+
+.wp-block-image .aligncenter { margin-left: auto; margin-right: auto; }
+
+.wp-block-image figure { margin: 0px; }
+
+.wp-block-latest-posts.wp-block-latest-posts__list { list-style: none; padd=
+ing-left: 0px; }
+
+.wp-block-latest-posts.wp-block-latest-posts__list li { clear: both; }
+
+.wp-block-search .wp-block-search__button { background: rgb(247, 247, 247);=
+ border: 1px solid rgb(204, 204, 204); padding: 0.375em 0.625em; color: rgb=
+(50, 55, 60); margin-left: 0.625em; word-break: normal; }
+
+.wp-block-search .wp-block-search__button.has-icon { line-height: 0; }
+
+.wp-block-search .wp-block-search__button svg { min-width: 1.5em; min-heigh=
+t: 1.5em; }
+
+.wp-block-search .wp-block-search__inside-wrapper { display: flex; flex: 1 =
+1 auto; flex-wrap: nowrap; max-width: 100%; }
+
+.wp-block-search .wp-block-search__input { flex-grow: 1; min-width: 3em; bo=
+rder: 1px solid rgb(148, 148, 148); }
+
+.wp-block-search.aligncenter .wp-block-search__inside-wrapper { margin: aut=
+o; }
+
+.aligncenter { clear: both; }
+
+.screen-reader-text { border: 0px; clip: rect(1px, 1px, 1px, 1px); clip-pat=
+h: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; p=
+osition: absolute; width: 1px; }
+
+:root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) .screen-reade=
+r-text { overflow-wrap: normal; }
+
+.screen-reader-text:focus { background-color: rgb(221, 221, 221); clip-path=
+: none; color: rgb(68, 68, 68); display: block; font-size: 1em; height: aut=
+o; left: 5px; line-height: normal; padding: 15px 23px 14px; text-decoration=
+: none; top: 5px; width: auto; z-index: 100000; }
+
+:root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) .screen-reade=
+r-text:focus { clip: auto; }
+
+html { line-height: 1.15; text-size-adjust: 100%; }
+
+body { margin: 0px; }
+
+main { display: block; min-width: 0px; }
+
+h1 { font-size: 2em; margin: 0.67em 0px; }
+
+a { background-color: transparent; }
+
+strong { font-weight: bold; }
+
+code { font-family: monospace, monospace; font-size: 1em; }
+
+small { font-size: 80%; }
+
+amp-img { border-style: none; }
+
+button, input, textarea { font-size: 100%; margin: 0px; }
+
+button, input { overflow: visible; }
+
+button { text-transform: none; }
+
+button, [type=3D"button"], [type=3D"reset"], [type=3D"submit"] { appearance=
+: button; }
+
+textarea { overflow: auto; }
+
+[type=3D"checkbox"], [type=3D"radio"] { box-sizing: border-box; padding: 0p=
+x; }
+
+[type=3D"number"]::-webkit-inner-spin-button, [type=3D"number"]::-webkit-ou=
+ter-spin-button { height: auto; }
+
+[type=3D"search"] { appearance: textfield; outline-offset: -2px; }
+
+[type=3D"search"]::-webkit-search-decoration { appearance: none; }
+
+::-webkit-file-upload-button { appearance: button; font: inherit; }
+
+template { display: none; }
+
+[hidden] { display: none; }
+
+:root { --global-gray-400:#cbd5e0; --global-gray-500:#a0aec0; --global-xs-s=
+pacing:1em; --global-sm-spacing:1.5rem; --global-md-spacing:2rem; --global-=
+lg-spacing:2.5em; --global-xl-spacing:3.5em; --global-xxl-spacing:5rem; --g=
+lobal-edge-spacing:1.5rem; --global-boxed-spacing:2rem; }
+
+h1, h2, h3 { padding: 0px; margin: 0px; }
+
+h1 a, h2 a, h3 a { color: inherit; text-decoration: none; }
+
+em { font-style: italic; }
+
+pre { background: var(--global-palette7); font-family: "Courier 10 Pitch", =
+Courier, monospace; font-size: 0.9375rem; line-height: 1.6; max-width: 100%=
+; overflow: auto; padding: 1.5em; white-space: pre-wrap; }
+
+code { font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", mo=
+nospace; font-size: 0.8rem; }
+
+html { box-sizing: border-box; }
+
+*, ::before, ::after { box-sizing: inherit; }
+
+ul { margin: 0px 0px 1.5em 1.5em; padding: 0px; }
+
+ul.aligncenter { list-style: none; }
+
+ul { list-style: disc; }
+
+li > ul { margin-bottom: 0px; margin-left: 1.5em; }
+
+amp-img { display: block; height: auto; max-width: 100%; }
+
+figure { margin: 0.5em 0px; }
+
+a { color: var(--global-palette-highlight); transition: all 0.1s linear 0s;=
+ }
+
+a:hover, a:focus, a:active { color: var(--global-palette-highlight-alt); }
+
+a:hover, a:active { outline: 0px; }
+
+.inner-link-style-normal a:not(.button), .widget-area.inner-link-style-norm=
+al a:not(.button) { text-decoration: underline; }
+
+.screen-reader-text { clip: rect(1px, 1px, 1px, 1px); height: 1px; width: 1=
+px; overflow: hidden; }
+
+:root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) .screen-reade=
+r-text { position: absolute; overflow-wrap: normal; }
+
+.screen-reader-text:focus { background-color: rgb(241, 241, 241); border-ra=
+dius: 3px; box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 2px 2px; color: rgb(33, 1=
+17, 155); display: block; font-size: 0.875rem; font-weight: 700; height: au=
+to; left: 5px; line-height: normal; padding: 15px 23px 14px; text-decoratio=
+n: none; top: 5px; width: auto; z-index: 100000; }
+
+:root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) .screen-reade=
+r-text:focus { clip: auto; }
+
+.hide-focus-outline :focus { outline: 0px; }
+
+#primary[tabindex=3D"-1"]:focus { outline: 0px; }
+
+textarea { width: 100%; }
+
+input[type=3D"text"], input[type=3D"email"], input[type=3D"url"], input[typ=
+e=3D"password"], input[type=3D"search"], input[type=3D"number"], input[type=
+=3D"tel"], input[type=3D"range"], input[type=3D"date"], input[type=3D"month=
+"], input[type=3D"week"], input[type=3D"time"], input[type=3D"datetime"], i=
+nput[type=3D"datetime-local"], input[type=3D"color"], textarea { appearance=
+: none; color: var(--global-palette5); border: 1px solid var(--global-gray-=
+400); border-radius: 3px; padding: 0.4em 0.5em; max-width: 100%; background=
+: var(--global-palette9); box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px -7px; }
+
+::-webkit-input-placeholder { color: var(--global-palette6); }
+
+::placeholder { color: var(--global-palette6); }
+
+input[type=3D"text"]:focus, input[type=3D"email"]:focus, input[type=3D"url"=
+]:focus, input[type=3D"password"]:focus, input[type=3D"search"]:focus, inpu=
+t[type=3D"number"]:focus, input[type=3D"tel"]:focus, input[type=3D"range"]:=
+focus, input[type=3D"date"]:focus, input[type=3D"month"]:focus, input[type=
+=3D"week"]:focus, input[type=3D"time"]:focus, input[type=3D"datetime"]:focu=
+s, input[type=3D"datetime-local"]:focus, input[type=3D"color"]:focus, texta=
+rea:focus { color: var(--global-palette3); border-color: var(--global-palet=
+te6); outline: 0px; box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 15px -7px; }
+
+.search-form { position: relative; }
+
+.search-form input[type=3D"search"], .search-form input.search-field { padd=
+ing-right: 60px; width: 100%; }
+
+.search-form .search-submit[type=3D"submit"] { top: 0px; right: 0px; bottom=
+: 0px; position: absolute; color: transparent; background: transparent; z-i=
+ndex: 2; width: 50px; border: 0px; padding: 8px 12px 7px; border-radius: 0p=
+x; box-shadow: none; overflow: hidden; }
+
+.search-form .search-submit[type=3D"submit"]:hover, .search-form .search-su=
+bmit[type=3D"submit"]:focus { color: transparent; background: transparent; =
+box-shadow: none; }
+
+.search-form .kadence-search-icon-wrap { position: absolute; right: 0px; to=
+p: 0px; height: 100%; width: 50px; padding: 0px; text-align: center; backgr=
+ound: 0px 0px; z-index: 3; cursor: pointer; pointer-events: none; color: va=
+r(--global-palette6); text-shadow: none; display: flex; align-items: center=
+; justify-content: center; }
+
+.search-form .search-submit[type=3D"submit"]:hover ~ .kadence-search-icon-w=
+rap { color: var(--global-palette4); }
+
+button, input[type=3D"button"], input[type=3D"reset"], input[type=3D"submit=
+"] { border-radius: 3px; background: var(--global-palette-btn-bg); color: v=
+ar(--global-palette-btn); padding: 0.4em 1em; border: 0px; line-height: 1.6=
+; display: inline-block; font-family: inherit; cursor: pointer; text-decora=
+tion: none; transition: all 0.2s ease 0s; box-shadow: rgba(0, 0, 0, 0) 0px =
+0px 0px -7px; }
+
+button:visited, input[type=3D"button"]:visited, input[type=3D"reset"]:visit=
+ed, input[type=3D"submit"]:visited { background: var(--global-palette-btn-b=
+g); color: var(--global-palette-btn); }
+
+button:hover, button:focus, button:active, input[type=3D"button"]:hover, in=
+put[type=3D"button"]:focus, input[type=3D"button"]:active, input[type=3D"re=
+set"]:hover, input[type=3D"reset"]:focus, input[type=3D"reset"]:active, inp=
+ut[type=3D"submit"]:hover, input[type=3D"submit"]:focus, input[type=3D"subm=
+it"]:active { color: var(--global-palette-btn-hover); background: var(--glo=
+bal-palette-btn-bg-hover); box-shadow: rgba(0, 0, 0, 0.1) 0px 15px 25px -7p=
+x; }
+
+button:disabled, input[type=3D"button"]:disabled, input[type=3D"reset"]:dis=
+abled, input[type=3D"submit"]:disabled { cursor: not-allowed; opacity: 0.5;=
+ }
+
+.kadence-svg-iconset { display: inline-flex; align-self: center; }
+
+.kadence-svg-iconset svg { height: 1em; width: 1em; }
+
+.kadence-svg-iconset.svg-baseline svg { top: 0.125em; position: relative; }
+
+body.social-brand-colors .social-show-brand-hover .social-button:not(.ignor=
+e-brand):not(.skip):not(.ignore):hover { color: white; }
+
+.kt-clear::before, .kt-clear::after { content: " "; display: table; }
+
+.kt-clear::after { clear: both; }
+
+.content-area { margin: var(--global-xxl-spacing) 0; }
+
+.entry-content { word-break: break-word; }
+
+.site-container { margin: 0px auto; padding: 0 var(--global-content-edge-pa=
+dding); }
+
+.content-bg { background: white; }
+
+@media screen and (min-width: 1025px) {
+  .has-sidebar .content-container { display: grid; grid-template-columns: 5=
+fr 2fr; grid-gap: var(--global-xl-spacing); justify-content: center; }
+  #secondary { grid-area: 1 / 2 / auto / auto; }
+  .has-sidebar .site .content-container .alignwide, .has-sidebar .site .con=
+tent-container .alignfull { width: unset; max-width: unset; margin-left: 0p=
+x; margin-right: 0px; }
+}
+
+@media screen and (min-width: 720px) and (max-width: 1024px) {
+  :root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) .vs-md-fals=
+e { display: none; }
+}
+
+#wrapper { overflow: hidden; }
+
+.aligncenter { clear: both; display: block; margin-left: auto; margin-right=
+: auto; text-align: center; }
+
+body.footer-on-bottom #wrapper { min-height: 100vh; display: flex; flex-dir=
+ection: column; }
+
+body.footer-on-bottom #inner-wrap { flex: 1 0 auto; }
+
+:root { --global-palette1:#3182ce; --global-palette2:#2b6cb0; --global-pale=
+tte3:#1a202c; --global-palette4:#2d3748; --global-palette5:#4a5568; --globa=
+l-palette6:#718096; --global-palette7:#edf2f7; --global-palette8:#f7fafc; -=
+-global-palette9:#fff; --global-palette9rgb:255,255,255; --global-palette-h=
+ighlight:var(--global-palette1); --global-palette-highlight-alt:var(--globa=
+l-palette2); --global-palette-highlight-alt2:var(--global-palette9); --glob=
+al-palette-btn-bg:var(--global-palette1); --global-palette-btn-bg-hover:var=
+(--global-palette2); --global-palette-btn:var(--global-palette9); --global-=
+palette-btn-hover:var(--global-palette9); --global-body-font-family:-apple-=
+system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"H=
+elvetica Neue",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Sy=
+mbol"; --global-heading-font-family: inherit; --global-primary-nav-font-fam=
+ily: inherit; --global-fallback-font:sans-serif; --global-display-fallback-=
+font:sans-serif; --global-content-width:1400px; --global-content-edge-paddi=
+ng:1.5rem; }
+
+body { background: var(--global-palette8); }
+
+body, input, textarea { font-style: normal; font-weight: 400; font-size: 17=
+px; line-height: 1.6; font-family: var(--global-body-font-family); color: v=
+ar(--global-palette4); }
+
+.content-bg { background: var(--global-palette9); }
+
+h1, h2, h3 { font-family: var(--global-heading-font-family); }
+
+h1 { font-weight: 700; font-size: 32px; line-height: 1.5; color: var(--glob=
+al-palette3); }
+
+h2 { font-weight: 700; font-size: 28px; line-height: 1.5; color: var(--glob=
+al-palette3); }
+
+h3 { font-weight: 700; font-size: 24px; line-height: 1.5; color: var(--glob=
+al-palette3); }
+
+.site-container, .comments-area { max-width: 1400px; }
+
+@media (min-width: 1630px) {
+  .site .content-container .alignwide { margin-left: -115px; margin-right: =
+-115px; width: unset; max-width: unset; }
+}
+
+.content-style-boxed .site .entry-content .alignwide { margin-left: -2rem; =
+margin-right: -2rem; }
+
+@media (max-width: 1024px) {
+  .content-style-boxed .site .entry-content .alignwide { margin-left: -2rem=
+; margin-right: -2rem; }
+}
+
+@media (max-width: 767px) {
+  .content-style-boxed .site .entry-content .alignwide { margin-left: -1.5r=
+em; margin-right: -1.5rem; }
+}
+
+.content-area { margin-top: 5rem; margin-bottom: 5rem; }
+
+@media (max-width: 1024px) {
+  .content-area { margin-top: 3rem; margin-bottom: 3rem; }
+}
+
+@media (max-width: 767px) {
+  .content-area { margin-top: 2rem; margin-bottom: 2rem; }
+}
+
+.entry-content-wrap { padding: 2rem; }
+
+@media (max-width: 1024px) {
+  .entry-content-wrap { padding: 2rem; }
+}
+
+@media (max-width: 767px) {
+  .entry-content-wrap { padding: 1.5rem; }
+}
+
+.entry.single-entry { box-shadow: rgba(0, 0, 0, 0.05) 0px 15px 15px -10px; =
+border-radius: 1rem; }
+
+.entry.loop-entry { border-radius: 1rem; overflow: hidden; box-shadow: rgba=
+(0, 0, 0, 0.05) 0px 15px 15px -10px; }
+
+.loop-entry .entry-content-wrap { padding: 2rem; }
+
+@media (max-width: 1024px) {
+  .loop-entry .entry-content-wrap { padding: 2rem; }
+}
+
+@media (max-width: 767px) {
+  .loop-entry .entry-content-wrap { padding: 1.5rem; }
+}
+
+.has-sidebar:not(.has-left-sidebar) .content-container { grid-template-colu=
+mns: 1fr 28%; }
+
+.primary-sidebar.widget-area .widget { margin-bottom: 1.5em; color: var(--g=
+lobal-palette4); }
+
+button, input[type=3D"button"], input[type=3D"reset"], input[type=3D"submit=
+"] { box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px -7px; }
+
+button:hover, button:focus, button:active, input[type=3D"button"]:hover, in=
+put[type=3D"button"]:focus, input[type=3D"button"]:active, input[type=3D"re=
+set"]:hover, input[type=3D"reset"]:focus, input[type=3D"reset"]:active, inp=
+ut[type=3D"submit"]:hover, input[type=3D"submit"]:focus, input[type=3D"subm=
+it"]:active { box-shadow: rgba(0, 0, 0, 0.1) 0px 15px 25px -7px; }
+
+#colophon { background: var(--global-palette1); }
+
+.site-bottom-footer-inner-wrap { padding-top: 30px; padding-bottom: 30px; c=
+olumn-gap: 30px; }
+
+.site-bottom-footer-inner-wrap .widget { margin-bottom: 30px; }
+
+.site-bottom-footer-inner-wrap .site-footer-section:not(:last-child)::after=
+ { right: calc(-15px); }
+
+.footer-social-inner-wrap { font-size: 1em; margin-top: -0.3em; margin-left=
+: calc(-0.15em); margin-right: calc(-0.15em); }
+
+.site-footer .site-footer-wrap .site-footer-section .footer-social-wrap .so=
+cial-button { margin-top: 0.3em; margin-left: calc(0.15em); margin-right: c=
+alc(0.15em); border: 2px none transparent; border-radius: 3px; }
+
+#colophon .footer-html { font-style: normal; color: var(--global-palette8);=
+ }
+
+body.social-brand-colors .social-show-brand-hover .social-link-facebook:not=
+(.ignore-brand):not(.skip):not(.ignore):hover { background: rgb(59, 89, 152=
+); }
+
+body.social-brand-colors .social-show-brand-hover .social-link-twitter:not(=
+.ignore-brand):not(.skip):not(.ignore):hover { background: rgb(29, 161, 242=
+); }
+
+body.social-brand-colors .social-show-brand-hover .social-link-linkedin:not=
+(.ignore-brand):not(.skip):not(.ignore):hover { background: rgb(72, 117, 18=
+0); }
+
+body.social-brand-colors .social-show-brand-hover .social-link-github:not(.=
+ignore-brand):not(.skip):not(.ignore):hover { background: rgb(64, 120, 192)=
+; }
+
+.site-branding a.brand amp-img { max-width: 200px; }
+
+.site-branding { padding: 0px; }
+
+.site-branding .site-title { font-weight: 700; font-size: 26px; line-height=
+: 1.2; color: var(--global-palette3); }
+
+#masthead { background: rgb(255, 255, 255); }
+
+.site-main-header-wrap .site-header-row-container-inner { background: rgba(=
+255, 255, 255, 0); }
+
+.site-main-header-inner-wrap { min-height: 80px; }
+
+.header-navigation[class*=3D"header-navigation-style-underline"] .header-me=
+nu-container.primary-menu-container > ul > li > a::after { width: calc(100%=
+ - 1.2em); }
+
+.main-navigation .primary-menu-container > ul > li.menu-item > a { padding:=
+ 0.6em calc(0.6em); color: var(--global-palette5); }
+
+.main-navigation .primary-menu-container > ul li.menu-item > a { font-style=
+: normal; }
+
+.main-navigation .primary-menu-container > ul > li.menu-item > a:hover { co=
+lor: var(--global-palette-highlight); }
+
+.header-navigation .header-menu-container ul ul.sub-menu { background: var(=
+--global-palette3); box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 13px 0px; }
+
+.header-navigation .header-menu-container ul ul li.menu-item { border-botto=
+m: 1px solid rgba(255, 255, 255, 0.1); }
+
+.header-navigation .header-menu-container ul ul li.menu-item > a { width: 2=
+00px; padding-top: 1em; padding-bottom: 1em; color: var(--global-palette8);=
+ font-size: 12px; }
+
+.header-navigation .header-menu-container ul ul li.menu-item > a:hover { co=
+lor: var(--global-palette9); background: var(--global-palette4); }
+
+.mobile-toggle-open-container .menu-toggle-open { color: var(--global-palet=
+te5); padding: 0.4em 0.6em; font-size: 14px; }
+
+.mobile-toggle-open-container .menu-toggle-open .menu-toggle-icon { font-si=
+ze: 20px; }
+
+.mobile-toggle-open-container .menu-toggle-open:hover, .mobile-toggle-open-=
+container .menu-toggle-open:focus { color: var(--global-palette-highlight);=
+ }
+
+.mobile-navigation ul li { font-size: 14px; }
+
+.mobile-navigation ul li a { padding-top: 1em; padding-bottom: 1em; }
+
+.mobile-navigation ul li > a { color: var(--global-palette8); }
+
+.mobile-navigation ul li:not(.menu-item-has-children) a { border-bottom: 1p=
+x solid rgba(255, 255, 255, 0.1); }
+
+#mobile-drawer .drawer-header .drawer-toggle { padding: 0.6em 0.15em; font-=
+size: 24px; }
+
+.search-toggle-open-container .search-toggle-open { color: var(--global-pal=
+ette5); }
+
+.search-toggle-open-container .search-toggle-open .search-toggle-icon { fon=
+t-size: 1em; }
+
+.search-toggle-open-container .search-toggle-open:hover, .search-toggle-ope=
+n-container .search-toggle-open:focus { color: var(--global-palette-highlig=
+ht); }
+
+#search-drawer .drawer-inner { background: rgba(9, 12, 16, 0.97); }
+
+@-webkit-keyframes slbOverlay {=20
+  0% { opacity: 0; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes slbOverlay {=20
+  0% { opacity: 0; }
+  100% { opacity: 0.7; }
+}
+
+@-webkit-keyframes slbEnter {=20
+  0% { opacity: 0; transform: translate3d(0px, -1em, 0px); }
+  100% { opacity: 1; transform: translate3d(0px, 0px, 0px); }
+}
+
+@keyframes slbEnter {=20
+  0% { opacity: 0; transform: translate3d(0px, -1em, 0px); }
+  100% { opacity: 1; transform: translate3d(0px, 0px, 0px); }
+}
+
+@-webkit-keyframes slbEnterNext {=20
+  0% { opacity: 0; transform: translate3d(4em, 0px, 0px); }
+  100% { opacity: 1; transform: translate3d(0px, 0px, 0px); }
+}
+
+@keyframes slbEnterNext {=20
+  0% { opacity: 0; transform: translate3d(4em, 0px, 0px); }
+  100% { opacity: 1; transform: translate3d(0px, 0px, 0px); }
+}
+
+@-webkit-keyframes slbEnterPrev {=20
+  0% { opacity: 0; transform: translate3d(-4em, 0px, 0px); }
+  100% { opacity: 1; transform: translate3d(0px, 0px, 0px); }
+}
+
+@keyframes slbEnterPrev {=20
+  0% { opacity: 0; transform: translate3d(-4em, 0px, 0px); }
+  100% { opacity: 1; transform: translate3d(0px, 0px, 0px); }
+}
+
+.site-branding { max-height: inherit; }
+
+.site-branding a.brand { display: flex; flex-direction: row; align-items: c=
+enter; text-decoration: none; color: inherit; max-height: inherit; }
+
+.site-branding a.brand amp-img { display: block; }
+
+.site-branding .site-title { margin: 0px; }
+
+.site-branding.branding-layout-standard:not(.site-brand-logo-only) a.brand =
+amp-img { margin-right: 1em; }
+
+.header-navigation ul ul.sub-menu { display: none; position: absolute; top:=
+ 100%; flex-direction: column; background: rgb(255, 255, 255); margin-left:=
+ 0px; box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 13px; z-index: 1000; }
+
+.header-navigation ul ul.sub-menu > li:last-child { border-bottom: 0px; }
+
+.header-navigation[class*=3D"header-navigation-dropdown-animation-fade"] ul=
+ ul.sub-menu { opacity: 0; visibility: hidden; transform: translate3d(0px, =
+0px, 0px); transition: all 0.2s ease 0s; display: block; clip: rect(1px, 1p=
+x, 1px, 1px); height: 1px; overflow: hidden; }
+
+.header-navigation[class*=3D"header-navigation-dropdown-animation-fade"] ul=
+ li:hover > ul, .header-navigation[class*=3D"header-navigation-dropdown-ani=
+mation-fade"] ul li:not(.menu-item--has-toggle):focus > ul { opacity: 1; vi=
+sibility: visible; transform: translate3d(0px, 0px, 0px); clip: auto; heigh=
+t: auto; overflow: visible; }
+
+.nav--toggle-sub .dropdown-nav-toggle { display: inline-flex; background: t=
+ransparent; position: absolute; right: 0px; top: 50%; width: 0.9em; height:=
+ 0.9em; font-size: 0.9em; line-height: inherit; margin: 0px; padding: 0px; =
+border: none; border-radius: 0px; transform: translateY(-50%); overflow: vi=
+sible; }
+
+.nav--toggle-sub ul ul .dropdown-nav-toggle { right: 0.2em; }
+
+.nav--toggle-sub ul ul .dropdown-nav-toggle .kadence-svg-iconset { transfor=
+m: rotate(-90deg); }
+
+.nav--toggle-sub li.menu-item-has-children { position: relative; }
+
+.nav-drop-title-wrap { position: relative; padding-right: 1em; display: blo=
+ck; }
+
+.nav--toggle-sub li:hover > ul, .nav--toggle-sub li:not(.menu-item--has-tog=
+gle):focus > ul { display: block; }
+
+.nav--toggle-sub li:not(.menu-item--has-toggle):focus-within > ul { display=
+: block; }
+
+.header-navigation[class*=3D"header-navigation-style-underline"] .header-me=
+nu-container > ul > li > a { position: relative; }
+
+.header-navigation[class*=3D"header-navigation-style-underline"] .header-me=
+nu-container > ul > li > a::after { content: ""; width: 100%; position: abs=
+olute; bottom: 0px; height: 2px; right: 50%; background: currentcolor; tran=
+sform: scale(0, 0) translate(-50%, 0px); transition: transform 0.2s ease-in=
+-out 0s, color 0s ease-in-out 0s, -webkit-transform 0.2s ease-in-out 0s; }
+
+.header-navigation[class*=3D"header-navigation-style-underline"] .header-me=
+nu-container > ul > li > a:hover::after { transform: scale(1, 1) translate(=
+50%, 0px); }
+
+.header-navigation, .header-menu-container { display: flex; }
+
+.header-navigation li.menu-item > a { display: block; width: 100%; text-dec=
+oration: none; color: var(--global-palette4); transition: all 0.2s ease-in-=
+out 0s; }
+
+.header-navigation li.menu-item > a:hover, .header-navigation li.menu-item =
+> a:focus { color: var(--global-palette-highlight); }
+
+.header-navigation ul.sub-menu { display: block; list-style: none; margin: =
+0px; padding: 0px; }
+
+.header-navigation ul li.menu-item > a { padding: 0.6em 0.5em; }
+
+.header-navigation ul ul li.menu-item > a { padding: 1em; }
+
+.header-navigation ul ul li.menu-item > a { width: 200px; }
+
+.header-navigation ul ul ul.sub-menu { top: 0px; left: 100%; min-height: 10=
+0%; }
+
+.header-navigation .menu { display: flex; flex-wrap: wrap; justify-content:=
+ center; align-items: center; list-style: none; margin: 0px; padding: 0px; =
+}
+
+.menu-toggle-open { display: flex; background: transparent; align-items: ce=
+nter; box-shadow: none; }
+
+.menu-toggle-open .menu-toggle-icon { display: flex; }
+
+.menu-toggle-open:hover, .menu-toggle-open:focus { border-color: currentcol=
+or; background: transparent; box-shadow: none; }
+
+.menu-toggle-open.menu-toggle-style-default { border: 0px; }
+
+.site .menu-toggle-open { box-shadow: none; }
+
+.mobile-navigation { width: 100%; }
+
+.mobile-navigation a { display: block; width: 100%; text-decoration: none; =
+padding: 0.6em 0.5em; }
+
+.mobile-navigation ul { display: block; list-style: none; margin: 0px; padd=
+ing: 0px; }
+
+.mobile-navigation ul ul { padding-left: 1em; transition: all 0.2s ease-in-=
+out 0s; }
+
+.mobile-navigation ul.has-collapse-sub-nav ul.sub-menu { display: none; }
+
+body[class*=3D"amp-mode-"] .mobile-navigation ul ul { display: block; }
+
+.mobile-navigation ul ul ul ul ul ul { padding-left: 0px; }
+
+.mobile-navigation ul.has-collapse-sub-nav .sub-menu.show-drawer { display:=
+ block; }
+
+.popup-drawer { position: fixed; display: none; inset: 0px 99999rem 0px -99=
+999rem; transition: opacity 0.25s ease-in 0s, left 0s ease 0.25s, right 0s =
+ease 0.25s; z-index: 100000; }
+
+.popup-drawer .drawer-overlay { background-color: rgba(0, 0, 0, 0.4); posit=
+ion: fixed; inset: 0px; opacity: 0; transition: opacity 0.2s ease-in-out 0s=
+; }
+
+.popup-drawer .drawer-inner { width: 100%; transform: translateX(100%); max=
+-width: 90%; right: 0px; top: 0px; overflow: auto; background: rgb(9, 12, 1=
+6); color: rgb(255, 255, 255); bottom: 0px; opacity: 0; position: fixed; bo=
+x-shadow: rgba(0, 0, 0, 0.1) 0px 0px 2rem 0px; display: flex; flex-directio=
+n: column; transition: transform 0.3s cubic-bezier(0.77, 0.2, 0.05, 1) 0s, =
+opacity 0.4s cubic-bezier(0.77, 0.2, 0.05, 1) 0s, -webkit-transform 0.3s cu=
+bic-bezier(0.77, 0.2, 0.05, 1) 0s; }
+
+.popup-drawer .drawer-header { padding: 0px 1.5em; display: flex; justify-c=
+ontent: flex-end; min-height: calc(1.2em + 24px); }
+
+.popup-drawer .drawer-header .drawer-toggle { background: transparent; bord=
+er: 0px; font-size: 24px; line-height: 1; padding: 0.6em 0.15em; color: inh=
+erit; display: flex; box-shadow: none; border-radius: 0px; }
+
+.popup-drawer .drawer-header .drawer-toggle:hover { box-shadow: none; }
+
+.popup-drawer .drawer-content { padding: 0px 1.5em 1.5em; }
+
+@media screen and (max-width: 1024px) {
+  .animate-body-popup #inner-wrap, .animate-body-popup .site-header-row, .a=
+nimate-body-popup #colophon { transform: none; transition: transform 0.3s c=
+ubic-bezier(0.77, 0.2, 0.05, 1) 0s, -webkit-transform 0.3s cubic-bezier(0.7=
+7, 0.2, 0.05, 1) 0s; }
+}
+
+.popup-drawer .drawer-header .drawer-toggle { width: 1em; position: relativ=
+e; height: 1em; box-sizing: content-box; font-size: 24px; }
+
+.drawer-toggle .toggle-close-bar { width: 0.75em; height: 0.08em; backgroun=
+d: currentcolor; transform-origin: center center; position: absolute; margi=
+n-top: -0.04em; opacity: 0; border-radius: 0.08em; left: 50%; margin-left: =
+-0.375em; top: 50%; transform: rotate(45deg) translateX(-50%); transition: =
+transform 0.3s cubic-bezier(0.77, 0.2, 0.05, 1) 0.2s, opacity 0.3s cubic-be=
+zier(0.77, 0.2, 0.05, 1), -webkit-transform 0.3s cubic-bezier(0.77, 0.2, 0.=
+05, 1); }
+
+.drawer-toggle .toggle-close-bar:last-child { transform: rotate(-45deg) tra=
+nslateX(50%); }
+
+.popup-drawer.active .drawer-toggle .toggle-close-bar { transform: rotate(4=
+5deg); opacity: 1; }
+
+.popup-drawer.active .drawer-toggle .toggle-close-bar:last-child { transfor=
+m: rotate(-45deg); opacity: 1; }
+
+.popup-drawer .drawer-content.content-valign-middle { min-height: calc(100%=
+ - (1.2em + 24px)); display: flex; justify-content: center; flex-direction:=
+ column; padding-bottom: calc(1.2em + 24px); max-height: calc(100% - (1.2em=
+ + 24px)); overflow: auto; }
+
+.popup-drawer .drawer-content.content-valign-bottom { min-height: calc(100%=
+ - (1.2em + 24px)); display: flex; justify-content: flex-end; flex-directio=
+n: column; padding-bottom: calc(1.2em + 24px); max-height: calc(100% - (1.2=
+em + 24px)); overflow: auto; }
+
+.popup-drawer .drawer-content.content-valign-bottom .site-header-item-mobil=
+e-navigation { display: block; overflow: auto; max-height: calc(100% - (1.2=
+em + 24px)); }
+
+.popup-drawer .drawer-content.content-align-center { text-align: center; }
+
+.popup-drawer .drawer-content.content-align-center .site-header-item { just=
+ify-content: center; }
+
+.popup-drawer.show-drawer { display: block; }
+
+.popup-drawer.active { left: 0px; opacity: 1; right: 0px; transition: opaci=
+ty 0.25s ease-out 0s; }
+
+.popup-drawer.active .drawer-inner { opacity: 1; transform: translateX(0%);=
+ }
+
+.popup-drawer.active .drawer-overlay { opacity: 1; cursor: pointer; }
+
+body[class*=3D"showing-popup-drawer-"] { overflow: hidden; }
+
+#main-header { display: none; }
+
+#masthead { position: relative; z-index: 11; }
+
+@media screen and (min-width: 1025px) {
+  #main-header { display: block; }
+  #mobile-header { display: none; }
+}
+
+.site-header-row { display: grid; grid-template-columns: auto auto; }
+
+.site-header-section { display: flex; max-height: inherit; }
+
+.site-header-item { display: flex; align-items: center; margin-right: 10px;=
+ max-height: inherit; }
+
+.site-header-section > .site-header-item:last-child { margin-right: 0px; }
+
+.drawer-content .site-header-item { margin-right: 0px; margin-bottom: 10px;=
+ }
+
+.drawer-content .site-header-item:last-child { margin-bottom: 0px; }
+
+.site-header-section-right { justify-content: flex-end; }
+
+a.social-button { width: 2em; text-decoration: none; height: 2em; display: =
+inline-flex; justify-content: center; align-items: center; margin: 0.3em ca=
+lc(0.15em) 0px; color: var(--global-palette4); background: var(--global-pal=
+ette7); border-radius: 3px; transition: all 0.2s ease-in-out 0s; }
+
+a.social-button:hover { color: var(--global-palette-btn); background: var(-=
+-global-palette-btn-bg); }
+
+.search-toggle-open { display: flex; background: transparent; align-items: =
+center; padding: 0.5em; box-shadow: none; }
+
+.search-toggle-open .search-toggle-icon { display: flex; }
+
+.search-toggle-open .search-toggle-icon svg.kadence-svg-icon { top: -0.05em=
+; position: relative; }
+
+.search-toggle-open:hover, .search-toggle-open:focus { border-color: curren=
+tcolor; background: transparent; box-shadow: none; }
+
+.search-toggle-open.search-toggle-style-default { border: 0px; }
+
+.popup-drawer-layout-fullwidth .drawer-inner { max-width: none; background:=
+ rgba(9, 12, 16, 0.97); transition: transform 0s ease-in 0s, opacity 0.2s e=
+ase-in 0s, -webkit-transform 0s ease-in 0s; }
+
+.popup-drawer-layout-fullwidth .drawer-inner .drawer-overlay { background-c=
+olor: transparent; }
+
+#search-drawer .drawer-inner .drawer-header { position: relative; z-index: =
+100; }
+
+#search-drawer .drawer-inner .drawer-content { display: flex; justify-conte=
+nt: center; align-items: center; position: absolute; inset: 0px; padding: 2=
+em; }
+
+#search-drawer .drawer-inner form { max-width: 800px; width: 100%; margin: =
+0px auto; display: flex; }
+
+#search-drawer .drawer-inner form label { flex-grow: 2; }
+
+#search-drawer .drawer-inner form ::-webkit-input-placeholder { color: curr=
+entcolor; opacity: 0.5; }
+
+#search-drawer .drawer-inner input.search-field { width: 100%; background: =
+transparent; color: var(--global-palette6); padding: 0.8em 80px 0.8em 0.8em=
+; font-size: 20px; border: 1px solid currentcolor; }
+
+#search-drawer .drawer-inner input.search-field:focus { color: white; box-s=
+hadow: currentcolor 5px 5px 0px 0px; }
+
+#search-drawer .drawer-inner .search-submit[type=3D"submit"] { width: 70px;=
+ }
+
+#search-drawer .drawer-inner .kadence-search-icon-wrap { color: var(--globa=
+l-palette6); width: 70px; }
+
+#search-drawer .drawer-inner .search-submit[type=3D"submit"]:hover ~ .kaden=
+ce-search-icon-wrap { color: rgb(255, 255, 255); }
+
+#search-drawer .drawer-inner button[type=3D"submit"]:hover ~ .kadence-searc=
+h-icon-wrap { color: rgb(255, 255, 255); }
+
+#mobile-drawer { z-index: 99999; }
+
+#mobile-header .mobile-navigation > .mobile-menu-container.drawer-menu-cont=
+ainer > ul.menu { display: flex; flex-wrap: wrap; }
+
+#mobile-header .mobile-navigation ul li:not(.menu-item-has-children) a { bo=
+rder: 0px; }
+
+.wp-block-image { margin-bottom: 0px; }
+
+figure.wp-block-image.aligncenter amp-img { display: inline-block; }
+
+.wp-block-latest-posts.wp-block-latest-posts__list { padding-left: 0px; }
+
+.wp-block-latest-posts__list li { margin-top: var(--global-sm-spacing); }
+
+.wp-block-latest-posts__list li::after { clear: both; display: table; conte=
+nt: ""; }
+
+.wp-block-search .wp-block-search__button { border-color: var(--global-gray=
+-400); color: var(--global-palette4); background: var(--global-palette9); }
+
+.wp-block-search .wp-block-search__input { border-color: var(--global-gray-=
+400); }
+
+.post-navigation { margin: var(--global-lg-spacing) auto; }
+
+.post-navigation a { text-decoration: none; color: inherit; display: block;=
+ }
+
+.post-navigation a:hover { color: var(--global-palette-highlight); }
+
+.post-navigation .nav-links { display: grid; grid-template-columns: repeat(=
+2, 1fr); }
+
+.post-navigation .nav-previous { position: relative; }
+
+.post-navigation .nav-previous .kadence-svg-iconset { padding-right: 0.5em;=
+ }
+
+.post-navigation .nav-previous a { padding-right: var(--global-xs-spacing);=
+ }
+
+.post-navigation .nav-previous::after { position: absolute; content: ""; to=
+p: 25%; right: 0px; width: 1px; height: 50%; background: var(--global-gray-=
+500); }
+
+.post-navigation .nav-next { grid-column-start: 2; text-align: right; }
+
+.post-navigation .nav-next a { padding-left: var(--global-xs-spacing); }
+
+.post-navigation .nav-next .kadence-svg-iconset { padding-left: 0.5em; }
+
+.post-navigation-sub { margin-bottom: 0.5em; }
+
+.post-navigation-sub small { text-transform: uppercase; display: inline-blo=
+ck; font-weight: bold; letter-spacing: 0.05em; }
+
+.widget { margin-top: 0px; margin-bottom: 1.5em; }
+
+.widget-area .widget:last-child { margin-bottom: 0px; }
+
+.widget-area ul { padding-left: 0.5em; }
+
+.widget-area a:not(.button) { color: var(--global-palette3); text-decoratio=
+n: none; }
+
+.widget-area a:not(.button):hover { color: var(--global-palette-highlight);=
+ text-decoration: underline; }
+
+.widget-area .widget { margin-left: 0px; margin-right: 0px; }
+
+.widget li { line-height: 1.8; }
+
+.widget_categories ul, .widget_recent_entries ul { margin: 0px; padding: 0p=
+x; list-style-type: none; }
+
+.widget_recent_entries ul li { margin-bottom: 0.4em; }
+
+.grid-cols { display: grid; grid-template-columns: minmax(0px, 1fr); gap: 2=
+.5rem; }
+
+.site .grid-cols::before { display: none; }
+
+@media screen and (min-width: 576px) {
+  .grid-sm-col-2 { grid-template-columns: repeat(2, minmax(0px, 1fr)); }
+}
+
+@media screen and (min-width: 1025px) {
+  .grid-lg-col-2 { grid-template-columns: repeat(2, minmax(0px, 1fr)); }
+}
+
+.entry { box-shadow: rgba(0, 0, 0, 0.05) 0px 15px 25px -10px; border-radius=
+: 0.25rem; }
+
+.content-wrap { position: relative; }
+
+@media screen and (max-width: 719px) {
+  .content-style-boxed .content-bg:not(.loop-entry) { margin-left: -1rem; m=
+argin-right: -1rem; width: auto; }
+  .content-style-boxed .comments-area { padding-left: 0.5rem; padding-right=
+: 0.5rem; }
+  .primary-sidebar { padding-left: 0px; padding-right: 0px; }
+}
+
+.single-content { margin: var(--global-md-spacing) 0 0; }
+
+.single-content figure, .single-content p, .single-content pre, .single-con=
+tent form, .single-content [class*=3D"__inner-content"] { margin-top: 0px; =
+margin-bottom: var(--global-md-spacing); }
+
+.single-content h1, .single-content h2, .single-content h3 { margin: 1.5em =
+0px 0.5em; }
+
+.single-content h1:first-child, .single-content h2:first-child, .single-con=
+tent h3:first-child { margin-top: 0px; }
+
+.single-content h1 + *, .single-content h2 + *, .single-content h3 + * { ma=
+rgin-top: 0px; }
+
+.single-content ul { margin: 0 0 var(--global-md-spacing); padding-left: 2e=
+m; }
+
+.single-content ul.aligncenter { text-align: center; padding-left: 0px; }
+
+.single-content li > ul { margin: 0px; }
+
+.single-content figure:last-child, .single-content p:last-child, .single-co=
+ntent pre:last-child, .single-content form:last-child, .single-content h1:l=
+ast-child, .single-content h2:last-child, .single-content h3:last-child, .s=
+ingle-content ul:last-child { margin-bottom: 0px; }
+
+.single-content .wp-block-image { margin-top: 0px; margin-bottom: 0px; }
+
+.single-content .wp-block-image figure { margin-bottom: var(--global-md-spa=
+cing); }
+
+.single-content .wp-block-image:last-child figure { margin-bottom: 0px; }
+
+.single-content figure.wp-block-image { margin-bottom: var(--global-md-spac=
+ing); }
+
+.single-content figure.wp-block-image:last-child { margin-bottom: 0px; }
+
+.entry-content::after { display: table; clear: both; content: ""; }
+
+.kadence-breadcrumbs { margin: 1em 0px; font-size: 85%; color: var(--global=
+-palette5); }
+
+.kadence-breadcrumbs a { color: inherit; }
+
+.kadence-breadcrumbs p { margin: 0px; }
+
+.entry-content-wrap .entry-header .kadence-breadcrumbs:first-child { margin=
+-top: 0px; }
+
+.entry-meta { font-size: 80%; margin: 1em 0px; display: flex; flex-wrap: wr=
+ap; }
+
+.entry-meta > * { display: inline-flex; align-items: center; flex-wrap: wra=
+p; }
+
+.entry-meta > * time { white-space: nowrap; }
+
+.entry-meta a { color: inherit; text-decoration: none; }
+
+.entry-meta .author-avatar { width: 25px; height: 25px; margin-right: 0.5re=
+m; position: relative; display: inline-block; }
+
+.entry-meta .author-avatar a.author-image { position: absolute; inset: 0px;=
+ }
+
+.entry-meta .author-avatar .image-size-ratio { padding-bottom: 100%; displa=
+y: block; }
+
+.entry-meta .author-avatar amp-img { position: absolute; inset: 0px; border=
+-radius: 50%; }
+
+.entry-meta > ::after { margin-left: 0.5rem; margin-right: 0.5rem; content:=
+ ""; display: inline-block; background-color: currentcolor; height: 0.25rem=
+; width: 0.25rem; opacity: 0.8; border-radius: 9999px; vertical-align: 0.18=
+75em; }
+
+.entry-meta > :last-child::after { display: none; }
+
+.loop-entry .entry-header .entry-title { margin: 0px; }
+
+.loop-entry .entry-summary p, .loop-entry .entry-header .entry-meta { margi=
+n: 1em 0px; }
+
+.updated:not(.published) { display: none; }
+
+.entry-summary { margin: var(--global-xs-spacing) 0 0; }
+
+.entry-taxonomies { margin-bottom: 0.5em; letter-spacing: 0.05em; font-size=
+: 70%; text-transform: uppercase; }
+
+.entry-taxonomies a { text-decoration: none; font-weight: bold; }
+
+.entry-taxonomies .category-style-pill a { background: var(--global-palette=
+-highlight); color: white; padding: 0.25rem; border-radius: 0.25rem; margin=
+-right: 0.25rem; margin-bottom: 0.25rem; display: inline-block; line-height=
+: 1.2; }
+
+.entry-taxonomies .category-style-pill a:last-child { margin-right: 0px; }
+
+.entry-taxonomies .category-style-pill a:hover { color: white; }
+
+.loop-entry.type-post .entry-taxonomies .category-style-pill a { color: whi=
+te; }
+
+@media screen and (max-width: 719px) {
+  .loop-entry .entry-taxonomies { margin-bottom: 1em; }
+}
+
+.entry-header { margin-bottom: 1em; }
+
+.entry-footer { clear: both; }
+
+.comments-area.entry-content-wrap { margin-top: 0px; border-top-left-radius=
+: 0px; border-top-right-radius: 0px; }
+
+.alignfull, .alignwide, .entry-content .alignwide, .entry-content .alignful=
+l { margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); max-widt=
+h: 100vw; width: 100vw; padding-left: 0px; padding-right: 0px; clear: both;=
+ }
+
+.content-style-boxed .entry-content .alignwide { margin-left: -2rem; margin=
+-right: -2rem; max-width: unset; width: unset; }
+
+.entry-title { overflow-wrap: break-word; }
+
+.comments-area { margin-top: var(--global-xl-spacing); margin-left: auto; m=
+argin-right: auto; }
+
+.comment-reply-title { margin-bottom: 1em; }
+
+#cancel-comment-reply-link { margin-left: 0.8em; }
+
+.comment-form a { text-decoration: none; border: none; color: inherit; }
+
+.comment-form a:hover, .comment-form a:focus { text-decoration: underline; =
+}
+
+.comment-form { line-height: 1.3; }
+
+.comment-form p { margin: 1.5em 0px; }
+
+.comment-form .comment-notes { margin-top: -0.5em; font-size: 80%; font-sty=
+le: italic; }
+
+.comment-form .comment-input-wrap p { margin: 0px 0px 1.5em; }
+
+.comment-input-wrap input { width: 100%; }
+
+@media screen and (min-width: 767px) {
+  .comment-form .comment-input-wrap { display: grid; grid-template-columns:=
+ repeat(3, 1fr); gap: 1.5em; margin-top: -1em; }
+  .comment-form .comment-input-wrap p { margin: 0px; }
+  .comment-form .comment-input-wrap.no-url-field { grid-template-columns: r=
+epeat(2, 1fr); }
+}
+
+.comment-form a { font-weight: 500; }
+
+.comment-form label { display: block; padding-bottom: 0.4em; }
+
+.comment-form-cookies-consent { display: flex; align-items: center; }
+
+.comment-form .comment-form-cookies-consent input { font-size: 90%; vertica=
+l-align: -2px; }
+
+.comment-form .comment-form-cookies-consent label { display: inline-block; =
+padding-left: 0.6em; padding-bottom: 0px; }
+
+.comment-form .required { color: rgb(213, 78, 33); }
+
+.comment-form .comment-input-wrap p, .comment-form p.comment-form-float-lab=
+el { display: flex; flex-direction: column-reverse; align-items: flex-start=
+; }
+
+.comment-form .comment-input-wrap p label, .comment-form p.comment-form-flo=
+at-label label { transform-origin: left bottom; color: var(--global-palette=
+6); }
+
+.comment-form p.comment-form-float-label { margin-top: -1em; }
+
+.comment-form label, .comment-form input { transition: all 0.2s ease 0s; }
+
+.comment-form input:placeholder-shown + label, .comment-form textarea:place=
+holder-shown + label { white-space: nowrap; overflow: hidden; max-width: 90=
+%; text-overflow: ellipsis; cursor: text; transform: translate(0.5em, 2.35e=
+m) scale(1); }
+
+.comment-form ::-webkit-input-placeholder { transition: inherit; opacity: 0=
+; }
+
+.comment-form ::placeholder { transition: inherit; opacity: 0; }
+
+.comment-form input:focus::-webkit-input-placeholder, .comment-form textare=
+a:focus::-webkit-input-placeholder { opacity: 1; }
+
+.comment-form input:focus::-webkit-input-placeholder, .comment-form textare=
+a:focus::-webkit-input-placeholder { opacity: 1; }
+
+.comment-form input:focus::placeholder, .comment-form textarea:focus::place=
+holder { opacity: 1; }
+
+.comment-form input:not(:placeholder-shown) + label, .comment-form input:fo=
+cus + label, .comment-form textarea:not(:placeholder-shown) + label, .comme=
+nt-form textarea:focus + label { transform: translate(0px, 0px) scale(0.75)=
+; cursor: pointer; }
+
+.comment-form .comment-form-cookies-consent label:not(:placeholder-shown) {=
+ transform: none; font-size: 90%; }
+
+.primary-sidebar { padding-top: 1.5rem; padding-bottom: 1.5rem; margin-left=
+: auto; margin-right: auto; }
+
+@media screen and (min-width: 768px) {
+  .primary-sidebar { padding-left: 0px; padding-right: 0px; }
+}
+
+@media screen and (min-width: 1025px) {
+  .primary-sidebar { padding: 0px; margin: 0px; }
+}
+
+.entry-related { margin-top: var(--global-lg-spacing); margin-bottom: var(-=
+-global-lg-spacing); background: var(--global-palette7); }
+
+.content-wrap .entry-related:last-child { margin-bottom: 0px; }
+
+.entry-related-carousel .entry-summary, .entry-related-carousel .entry-foot=
+er, .entry-related-carousel .entry-taxonomies { display: none; }
+
+.entry-related-carousel h3.entry-title { font-size: 20px; }
+
+h2.entry-related-title { margin-bottom: 1.5rem; }
+
+.site .entry-related-inner { display: block; }
+
+.has-sidebar .entry-related { background: transparent; }
+
+.has-sidebar .site .entry-related-inner { padding: 0px; }
+
+.entry-related-inner-content { padding-top: var(--global-xl-spacing); paddi=
+ng-bottom: var(--global-xl-spacing); padding-left: var(--global-sm-spacing)=
+; padding-right: var(--global-sm-spacing); }
+
+.site-footer-row { display: grid; grid-template-columns: repeat(2, minmax(0=
+px, 1fr)); }
+
+@media screen and (min-width: 720px) and (max-width: 1024px) {
+  .site-footer-row-container-inner .site-footer-row.site-footer-row-tablet-=
+column-layout-default { grid-template-columns: minmax(0px, 1fr); }
+}
+
+@media screen and (max-width: 719px) {
+  .site-footer-row-container-inner .site-footer-row.site-footer-row-mobile-=
+column-layout-row { grid-template-columns: minmax(0px, 1fr); }
+}
+
+.site-footer-section { display: flex; max-height: inherit; }
+
+.footer-widget-area { flex: 1 1 0%; min-width: 0px; display: flex; }
+
+.footer-widget-area > * { flex: 1 1 0%; min-width: 0px; }
+
+.footer-widget-area.content-valign-middle { align-items: center; }
+
+.footer-widget-area.content-valign-top { align-items: flex-start; }
+
+.footer-widget-area.content-valign-bottom { align-items: flex-end; }
+
+.footer-widget-area.content-align-center { text-align: center; }
+
+.footer-widget-area.content-align-left { text-align: left; }
+
+.site-footer-wrap .footer-social-wrap .social-button { color: var(--global-=
+palette4); background: var(--global-palette7); }
+
+.site-footer-wrap .footer-social-wrap .social-button:hover { text-decoratio=
+n: none; color: var(--global-palette-btn); background: var(--global-palette=
+-btn-bg); }
+
+.site-footer-section { position: relative; }
+
+.site-footer-section:not(:last-child)::after { content: ""; position: absol=
+ute; top: 0px; bottom: 0px; height: auto; width: 0px; right: -15px; transfo=
+rm: translateX(50%); }
+
+.footer-html { margin: 1em 0px; }
+
+.footer-html p:last-child { margin-bottom: 0px; }
+
+.footer-html p:first-child { margin-top: 0px; }
+
+.post .wp-block-image amp-img { border-radius: 5px; border-color: gray; box=
+-shadow: rgba(179, 179, 179, 0.75) 2px 2px 7px 0px; }
+
+code { background-color: rgb(237, 242, 247); padding: 2px 4px; border-radiu=
+s: 5px; }
+
+:root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) code =
+{ font-size: 17px; }
+
+@media (min-width: 1024px) {
+  .post.single-entry ::-webkit-scrollbar { width: 10px; height: 10px; }
+  .post.single-entry ::-webkit-scrollbar-track { background: rgb(241, 241, =
+241); }
+  .post.single-entry ::-webkit-scrollbar-thumb { background: rgb(136, 136, =
+136); border-radius: 3px; }
+  .post.single-entry ::-webkit-scrollbar-thumb:hover { background: rgb(85, =
+85, 85); }
+}
+
+amp-ad { position: relative; }
+
+amp-ad::before { display: block; font-size: 14px; position: absolute; color=
+: white; top: 0px; left: 0px; background-color: rgba(128, 128, 128, 0.73); =
+z-index: 2; padding-left: 4px; padding-right: 4px; border-bottom-right-radi=
+us: 5px; }
+
+:root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) amp-a=
+d::before { content: "AD"; }
+
+.hljs { display: block; overflow-x: auto; padding: 0.5em; color: rgb(171, 1=
+78, 191); background: rgb(40, 44, 52); }
+
+.hljs-keyword { color: rgb(249, 38, 114); }
+
+.hljs-comment { color: rgb(177, 142, 177); font-style: italic; }
+
+.hljs-selector-tag { color: rgb(224, 108, 117); }
+
+.hljs-string { color: rgb(152, 195, 121); }
+
+.hljs-class .hljs-title { color: rgb(230, 192, 123); }
+
+.hljs-attr, .hljs-selector-class, .hljs-selector-pseudo, .hljs-number { col=
+or: rgb(209, 154, 102); }
+
+.hljs-title { color: rgb(97, 174, 238); }
+
+.wp-block-code { border: 0px; padding: 0px; }
+
+.wp-block-code > div { overflow: auto; }
+
+.shcb-language { border: 0px; clip: rect(1px, 1px, 1px, 1px); clip-path: in=
+set(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; positi=
+on: absolute; width: 1px; overflow-wrap: normal; word-break: normal; }
+
+.hljs { box-sizing: border-box; }
+
+.wp-block-code code.hljs:not(.shcb-wrap-lines) { white-space: pre; }
+
+:root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#=
+_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) .amp-wp-=
+0c9b2a6 { padding: 0px; clip: rect(1px, 1px, 1px, 1px); position: absolute;=
+ white-space: nowrap; height: 1px; width: 1px; overflow: hidden; }
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-Location: https://springhow.com/wp-content/uploads/2021/02/icon-512x512-1-e1612715727605.png
+
+iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAMAAAC7IEhfAAAAUVBMVEVHcEwAAP//AAD/AAD/AAD/
+AAD/AADWAEH/AAD/AAD/AAD/AAAAAP8AAP8AAP8AAP//AAAAAP8AAP//AAD/AAD/AAAAAP8AAP//
+AAD/AAAAAP+xVIT4AAAAGXRSTlMA95ga3/c7AgnEI+ofCsalsYJjimtLPONYlhx5tAAAAb1JREFU
+OMvVlNkWnCAMhoc1BBDcl3n/B22AEdFO29OrnsYb5Xz+Cdler//DwGoya4WB34OmV2ROyukGgrDp
+of8riEcy1S+m4ZZefmyBO3goubcgSlXO51ZRSew5141vWLi7g2DkcaA1xsAtxrlHKV0LCvKB325s
+hNjJPT+/RVI03zOiW9D+LdiRPQKAGygwgz6GEOIwev8rRdFncA3sTQ/bQlz9d3Aqrtf4LsZYGDzU
+sHjN4wccwsbep21jd4LzUxE6v44xMFbwIZGaMj7DQ5FeAbpuHYeQUDaeYC3A1OYRPIGJZMEXcK85
+4xeYqOKbbeQbCFRXT3F19KZgIUFEnvdeCNTVGVeKp9M1frTisPpcpKyor1E4JCdFHxO2xdF3XW3f
+BDYdnsdlYElspcjg6l55uEsRlZtyhDGOz+4hkUuxP1wqUwe3fihNzZXbmxg/9fy5yxN4Gy4ORnwb
+f5iUquOe+5EjavMcGStgl6o3tcNpURxKSa7ba0yc0wijUrW8Ii8A2iloL+8wu3SWxlWKUxGlQ0S+
+tFGC0ejKqqig0XmbPScbdo5596BtDuH1guetKRGCtpn90za8fvjH+/sHFbcgwGpi3EoAAAAASUVO
+RK5CYII=
+
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: image/jpeg
+Content-Transfer-Encoding: base64
+Content-Location: https://secure.gravatar.com/avatar/ae8bb86c9f66051637cb52d5de9826f7?s=25&d=mm&r=g
+
+/9j/4AAQSkZJRgABAQEAYABgAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcg
+SlBFRyB2NjIpLCBxdWFsaXR5ID0gOTAK/9sAQwADAgIDAgIDAwMDBAMDBAUIBQUEBAUKBwcGCAwK
+DAwLCgsLDQ4SEA0OEQ4LCxAWEBETFBUVFQwPFxgWFBgSFBUU/9sAQwEDBAQFBAUJBQUJFA0LDRQU
+FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU/8AAEQgAGQAZ
+AwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMF
+BQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkq
+NDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqi
+o6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/E
+AB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMR
+BAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVG
+R0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKz
+tLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A
+9dgZGBTzo9p6McfN9RmvmPxd+0v4v0rxJql3B4a0e78K6dfT2xKy/wCmiOJ2R5GQuME7GIwp4/Gv
+pcwy3rhoIFWNAS0hIwvU9ME9B6V8z67qEz/FK/0x9DW70VtTC3E4tt6iNnHmEL5e4ld7ncM8btpx
+ivnKFObj7TkumfR1pQT5OazXofSzyeZBBJvJdkVsG3wRkZwam2x/3j/34/8Ar1XvbW4tbkJPFsJx
+ghByPbn6Va2t/wA+r/8Aftv8a5JPkfLLRnTGKkk42a+Rxeq+N28La9okM6z3Ftfs6DYGyMxsdx6c
+fL16e/avQ01prq2j1CCxnAHzfvImDKrSDd0U5IA/SvFNS/5HeL/rxf8A9CNdl2l+h/8AQzX6BQpK
+NNRXSy/BHxVWfNNyfXX8R114vvPEXiPUYhvjgtZFCO2QRkAk44wPnXrycVtb7r/n+k/P/wCvXmFj
+/wAjBq3/AF7L/wChxV19fJ5rSX1i990vza/Q+ky+q40Nlu/0f6n/2Q==
+
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4----
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-Location: https://springhow.com/wp-content/uploads/2021/02/spring-hateoas.png
+
+iVBORw0KGgoAAAANSUhEUgAAAZAAAAGfCAMAAABGN3QrAAACrFBMVEVHcExssj9ptDxss0BxtDxt
+skBssz9usz9utEFtsz9utD9xuDltsz9tsz9usz5mzDNtsz9stD9ssz5tsz5usz9rsz9tsT5tsz9t
+sz9tsz9tsz8A/wCAv0Bxqjlttjdtsz9tsz9tsz9tsz9tsz9stEBtsz9zs0BttkJtsz9VqlV2sTtu
+tD9ts0GAgABttkltsz9usz5vszxtsz9tsz9tsz9mszNtsz9utD9wr0Btsz9us0Busz9ttj2Aqitt
+sz9tsz9tsz9tskFtsD1vtUFtsz9tsz9ssj5ttEFtsz9tsj9vsUFssj90uUZssUFrtTxorjptsz9s
+sz9tsz9ttD9qqkBrrkNtsz9ssz5xs0Jtsz9qsD5ssTttsz5qtUBrskBtsz9usz5tskBwuD1ttD5s
+tD5tsz5tsz9stD9ts0BstEBtsz9ttD9ttD9ssUBttD5ssz9ttkBtsz9tsz9rsT9rtT5uskBus0Bs
+sz9usz9vsT1tsz9tsz9ssz9tsz9tsz9tsz9tsz5tsz9rsz1tsz9stT5tsz9uskFtsz9ssj9ttD9u
+tUBtsz9gv0Btsz1usj5ssz9tsz9wr0Busz9tsz9utD9tskButD5us0Fts0Bss0BrtUJssj5ssj9s
+sz9tsz9vs0Btsz9tsz9ttD9ts0ButEBttD5tsz9tsz9tsz5vsUNtsj9ssz9ts0Btsj5tsz5ttEBt
+sz9ss0Btsj9mu0Rtsz9tsz9ss0BttD9stD5ttD5tsj5utEBts0Busz9ssz9ttEBusz9usj9usj5t
+sz9ts0Btsz9usz5tsz9tsz9ss0Btsz9tsj9us0Btsz9qsUBsskFtsz5usz9ssz5tsz9tsz9tsz9u
+tD9usj9tsz9usz5usz5ttD5tsz9tsz9tsz9tsz9tsz9wtD5utD9tsz+CBWzuAAAA43RSTlMAmRF4
+IojdqjO7ZhLNmyUFzH3IwFE5MWX+/fwBBAkO+Pr3w9eE+RQj7wMNui8CB9GHHvTFygrtlSD2gIkV
+BvPmzj8qN+qNY0uhWSdJCzsmFvJ2uakME+xvG3UdGoMYTLKXYBmwTlv7VZRcvdU9NHenHG6xRT50
+ZOSCLunuz5HUlrTZMt4tr0/TcZ9Ivgg2VmHnELPcQThfQ6QoHyFq1ts8naJpqCzEv+NGF7eGbI9e
+mNBQyw+22kCmi1JnnFRytUSlXXvojE1r2JqgioWQ8SRTk55a4cLHjqPwrEpz9eDlxskpbdvlJo8A
+AAgASURBVHja7d3nU1RnGIbxVwQhEkUN6sLSERQQsFew98Qee+9Ro9HExG561URN711TLOm99957
+L+8/kg9mdNdldcdBOPfDdX1n5tzzm4VlOS/HOSIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIi
+IiIiIiKiBilj+O65PzYLbpem/DZ6cZPRyB17WQ8v0Oq5E5oCxznNt3iVQks6mPeY/4dXKrtvuWmO
+2u0hL9blXS1/u3re69XjBrs/zb/3ipVcZNQjfLXXbJDR71qTvWr351n0mJAvC+L7WgRZpevhs66w
+57HBK3ehPZALpUFC46x5TCyQBvGdrIGM0vbwxdZA3hYH8XOMgXykDjLflkdOgTrIxbZAatQ9/EBb
+IPfIgyy0BdJaHqQVIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAkgTA5mb1vB9C0j8
+OjbCpXUABBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABxCBIVWJ/vStthEvrndil3e2IiIiI
+iIiIiIgofnNuv77XiKwgH9P4uTp1/V2Jzpm9stsFFWcEuAXNLh5aFffyKzMrAm1xrCEP7zq5xrzm
+OyTG9E8dXVnngLeuFTrPNHhU+MQcNV8X6qxZfVPsgHPHiB0xK+p+Io/dfbTW7Ox33IDOxXKH/vrc
+EZcj9065NV2WRi3Y/J7gMcyS1+N47C0SXJN9b+TrY4/kwdiCs+v06L1Pck2o5bGfH8Ves0mt6/AI
+LxBdk3308XyfyB4e35YRCzJLds2I/x9QPTQkO8FPjvH4slB3zdQjL/Fq3QV+UMyNQ5cJr/FDnXNu
+qfKCmGdDpUmvWeWcc09KT9hy3E+Rh6TX+H+ce2K59oTot77n9tBec8C5ZdoL/OdRINeIrxniXDPx
+CU9HgRwSX5OV5PaJT8gviwTZKb7Gt3eD1SdEfeq7UX3NSve7+oSrIkEK1dccdCH1CbdFeJSpj/Fr
+nfyE9hEgGfJrmgMCCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACSBBBJjXCEdVqQOJ3ZiOc
+0c48bSDtGmFNOiCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCBBB7m1TUJdBUiAS0qockAI
+EEAIEEAIEEAAAQQQQAABBBBAEq+s+7C04HZFcl5TAqm6pm91ftAPagy++bp+TQNk5kiV50OF9o8O
+mwfpfSDfC9UuzThI2i1eq+xNZZZBluV7uSrK7YLcK/lPgtskWQVZluUlK8q1CbK5vxetlUmQ3Mu9
+bCssgmzS9fCD8+yBPNFfGMQPsAfSTdnDby23BpKzRxrEL7IG8ri2h6+wBvKyOEhhrjGQv8RB/APG
+QLqog1xiC+Q5dY+Yh+6Kg8yWB9luC6SfPMhCWyCl8iAptkByStRB3jD2Lus+dZBfjYGIP3jeh+YZ
+A7ldHORaax+dpOdrgwywBuJ+kfbI6mwOZLg0SKrBP+G+Keyx/FGDIJ2FHz7/vsnbgA7KeuzobfNG
+uTtFPbrcZfTOxdopkh79zzd7b29VquLro148Anr3e1knudt7q8eZPh/iXiyW4ijplutsg7jaD7+T
+4cj+aVy97Q7woc+MDx6ZrqDRq/nselwd7GPRlY/eNKtbSoBr++qte+t3Mv84IGABAggBAggBAggg
+gAACCCCAAAIIWQa5MTWhvor8mgEJfclngJxKCT7yqG3k15yV0JfwhB1AAAEEEEAAAQQQQAABBBBA
+AAEEEEAAAQQQQAABBJDAg2xNbfh6njaQK1s2fNfVL0iAOwWQAAcIIIAAAggggAACCCCAAAIIIIAA
+AggggAACCCCAAAIIIA0MkqU+4V1TIGvdIPUJ6yNBnlRf8697TH3CO5EgU9XXHHb71ScMjwRJUV9z
+vjtPfEF2XiTIYfE1oVK3QnxC9E1vyeJrVjuXLv7Ix7bRNwi+oL3mkHNuifZrPDkaZIA2yBrn3OPS
+CxYcdwtt9wLlNUduof5b+QWy5vibmh9UBsl0zjl3o/Av66/F3GW+Tvg33aLwkQ2673w3Tou973+G
+7JrCYf9P2HWm6IKCB+o4iBGWfZfS8uiGOVdq/gBZVOfRmLwhmh6XRmzo3ELxd/RL4hxWWiz58PYx
+lZEb5vWUG9BlfvzjY0V6r/aB4egNOZ3E3sCfdc8JDvTlDBR759gnM3bEsJtDOgNarAyf+IzlmnZK
+33wfrKlzRNe+0zWuf8rYnJMfe71hSrYGxxetJsR/qd8265uibS2CW3Gvq1NeSU/wJPLMlhcUB/wb
+8aRnz8vMdU2pyqR+yYFtZp4jIiIiIiIiIqLAlZHYhzvljXBpVYldWo0tkNaJffjZsREurUNil9YK
+EEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEIMgM5IavqGASAYIIIAAAggggAACCCCAAAII
+IIAAAggggAACCCCAAAIIIIAAYqZkeZCnbIFMlAf51BZI7XJ1kMm2QNz96iDPGANJVQe52xjIw+Ie
+txjzcOvEn7k70hqIq9AG6WoO5GxpjzOcvX4Q9giNNwiSlq0LMsZZrJOsx2OlJkFyVol65I93NhN9
+fFrWCme19J6CHiVjnd3OeUnO488NznSLpmt5TJ3ojDdtZA8djp53uCZQ6YxeEh9sjfh4vGsqTVu6
+duEjqQHu+oGjuoYdEREREREREREREREREREREREREREREREREREREREREREREREREREREdVP/wEy
+Jx4IBEJw3AAAAABJRU5ErkJggg==
+
+------MultipartBoundary--oZZ1K6lz0SIWpFuSU3ZIW04P4mgktyv9Fw8anzeoO4------

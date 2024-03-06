@@ -1,0 +1,11 @@
+04 Spring Boot WebFlux - Functional Endpoint
+
+
+Functional Endpoint vs REST API
+1. Functional Endpoint uses Router and Handler to process Request unlike REST API where it uses Controller and Servie
+	> with Functional Endpoint, it checks the Request data and "routes" it to correct Handler
+	> with REST API, it uses RequestMapping created by Controller to determine which method endpoint to use. This method endpoint usually uses Service to perform actions
+
+
+NOTE:
+1. Both REST API and Functional Endpoint style of writing can exist in a single WebFlux app

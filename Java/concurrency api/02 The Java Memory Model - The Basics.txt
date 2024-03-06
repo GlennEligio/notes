@@ -1,0 +1,54 @@
+02 The Java Memory Model - The Basics
+
+Java Memory Model of Threads
+ > each Thread have their OWN THREAD STACK
+ > this Thread stack contains local variables and referencces to objects
+	- these can only be accessed by their respective Thread
+	- Object references points to an Object inside the Heap
+ > if two Threads access the same Object in Heap, each Thread will be their own reference, but will reference the same Object
+ > if two Threads access the same Object in Heap, and inside the said mutual Object we created another Object, then each of the Thread will create its own reference to that Object
+
+
+Thread 1
+ > Thread stack
+	- Local variable
+	- Object References
+Thread 2
+ > Thread stack
+	- Local variable
+	- Object References
+Heap
+ > Objects
+
+
+Java Memory Architecture mapped into a Hardware Architecture
+ > mapping of Java Mapping in Hardware goes as follows
+	- Threads will be lcoated in CPUs
+	- Thread stacks and Heap will be located in the RAM
+ > transfer of data from Thread Stack to Thread goes as follows
+	1. Data from RAM is transferred to L1,L2,L3 Cache of CPU
+	2. From the Caches, it will be transferred to the CPU registers based on the instructions to send to JVM
+	3. For modifying data, it will go from CPU registers -> L1,L2,L3 Cache -> RAM
+
+CPU			CPU2
+ > Thread		 > Thread2
+
+L1,L2,L3 Cache	L1,L2,L3 Cache
+
+RAM
+ > Thread Stack 1 and 2
+ > Heap
+
+
+Problems that can arises with unmanaged Threads
+1. Race condition
+ 	> Race condition in Java occurs in a multi-threaded environment when more than one thread try to access a shared resource (modify, write) at the same time. 
+	> Since multiple threads try to race each other to finish executing a method thus the name race condition.
+	> to solve this, we can use either "synchronized" or "volatile" keywords
+2. Data Update Visibility between Threads
+	> if a Thread relies on the data update the other Thread will do to a specific object, it will have no idea if the Thread finished the needed update
+	> because of this, we will run a risk where the Thread fetching the data that hasnt been updated yet
+ 	> Cache coherence also does not guarantee data update visibility
+		- CPU Register may update the data that is stored in the L1,L2,L3 Cache, which the other Thread can use to see changes in data
+		- But again, theres no guarantee that the said data is the latest one
+	> solution: use "volatile" variables or "synchronized" blocks

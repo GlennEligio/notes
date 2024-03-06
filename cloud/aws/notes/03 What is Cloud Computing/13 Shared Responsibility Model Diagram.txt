@@ -1,0 +1,36 @@
+13 Shared Responsibility Model Diagram
+
+
+Shared Responsibility Model
+ > refers to the model/diagram that defnes what the customer's and cloud provider's responsibility
+
+
+AWS definition of Customer and Cloud Provider responsibility
+Customer = Responsiblity for Security 'IN' the Cloud
+AWS = Responsibility for Security 'FOR' the Cloud
+
+
+Things included in the Customer Responsibility
+ > Customer Data
+ > Platform, Applications, Identity & Access Management
+ > Operating System, Network, & Firewall Configuration
+ > Client-side data encryption & Data Integrity Authentication
+ > Server-side encryption (file system and/or data)
+ > Networking Traffic Protection (Encryption, Integrity, Identity)
+
+
+Under AWS responsibility
+ > Software
+ > Compute, Storage, Database, Networking
+ > Hardware/AWS Global Infrastructure
+ > Regions, Availability zones, Edge locations
+
+
+
+
+AWS Acceptable Use Policy
+ > can be found in https://aws.amazon.com/aup
+ > No Illegal, Harmful, or Offensive Use or Content
+ > No Security Violations
+ > No Network Abuse
+ > No Email or Other Message Abuse

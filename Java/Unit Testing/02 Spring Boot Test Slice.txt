@@ -1,0 +1,26 @@
+Spring Boot Test Slices
+
+1. @WebMvcTest
+	> used for testing Spring MVC parts of application
+	> included in the Spring Test Context
+		@Controller, @RestController, @ControllerAdvice, @JsonComponent, Converter, Filter, WebMvcConfigurer
+	> does NOT INCLUDE
+		@Service, @Component, @Repository beans
+	> provide great support for endpoints secured by Spring Security
+		- for this, we must use Spring Security Test
+	> since the annotation provides a mocked servlet environment, theres is NO PORT to access the application (e.g. RestTemplate)
+		- therefore, you rather use the auto-configured MockMvc to access your endpoints
+
+
+2. @DataJpaTest
+	> used to test any JPA-related parts of your application
+	> included in Spring Test Context
+		@Repository, EntityManager, TestEntityManager, Datasource
+	> not included
+		@Service, @Component, @Controller beans
+	> By default, this annotation tries to auto-configure use an embedded database (e.g., H2) as the DataSource
+
+
+3. @SpringBootTest
+	> used to write test against the whole application context
+	> includes everything

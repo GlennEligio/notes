@@ -1,0 +1,24 @@
+01. Introduction
+
+Topics to discuss
+1. What is DevOps?
+2. Tools in DevOps
+3. Version Control System
+4. Centralized vs Distributed Version Control System
+5. What is Git?
+6. Features of Git
+7. Workflow of Git
+8. Branch in Git
+9. Commands in Git
+10. Demo on Git
+
+
+Scenario before Git
+	> develpers used to submit their codes to the central server without having a copy of their own
+	> Any changes made to the source code were not known to the other developers
+	> There was NO COMMUNICATION between any developers
+
+Scenario AFTER Git
+	> Every developers has an entier copy of the code on their local systems
+	> Any change made to the source code can be tracked by others
+	> There is regular communication between the developers

@@ -1,0 +1,70 @@
+06.08. Utilities - Position
+
+IX. Position
+	> main use is the additional info at the top 
+1. Postion values
+	> used to define the positioning property of an element
+	> these are NOT RESPONSIVE
+
+NOTATION:
+position-{values}
+
+Values:
+static
+relative
+absolute
+fixed
+sticky
+
+
+
+2. Arrange element
+	> we can arrange the element's position by adding position values
+	> used in CONJUNCTION with Position classes
+		-> ex: position-absolute top-0 start-0
+
+NOTATION
+{property}-{position}
+
+Properties
+    top - for the vertical top position
+    start - for the horizontal left position (in LTR)
+    bottom - for the vertical bottom position
+    end - for the horizontal right position (in LTR)
+
+Values
+    0 - for 0 edge position
+    50 - for 50% edge position
+    100 - for 100% edge position
+
+
+3. Center elements
+	> to absolutely center an element, we can use the "translate-middle" class
+		-> since by default, using the top-50 doesnt position the element at the center of the parent
+		-> it instead align the end/start side to the horizontal/vertical middle axis
+	> "translate-middle" class does the following
+		-> translateX(-50%)
+		-> translateY(-50%)
+
+NOTATION:
+translate-middle
+translate-middle-{axis}
+
+Axis
+x
+y
+
+
+X. Shadow
+1. Shadow
+	> add or remove shadows to elements
+	> we can specify how much shadow an element have
+
+NOTATION:
+shadow-{value}
+	> not passing a value will result in regular shadow (sm < reg < lg)
+
+Values
+none
+sm
+lg

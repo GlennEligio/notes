@@ -1,0 +1,72 @@
+39 RHCSA RHEL 8 - Start and stop services and configure services to start automatically at boot
+
+
+Commands
+systemctl [start | stop] SERVICE
+ > used to start or stop a service immediately
+ > changes the active status of the service
+ > ex:
+	$ systemctl start atd
+	$ systemctl stop atd
+
+
+systemctl status SERVICE
+ > check the status and information of the service
+ > information includes
+	- service directory
+	- is active
+	- pid
+	- memory used
+ > ex:
+	$ systemctl start atd
+
+
+systemctl [reload | reload-or-restart] SERVICE
+ > used to make the service reload its configuration to update
+	- prevents us from restarting the application ENTIRELY
+ > we can also make it restart if Job type reload is not applicable for the SERVICE
+ > EX:
+	$ systemctl reload atd
+	$ systemctl reload-or-restart atd
+
+
+systemctl [enable | disable | is-enabled] SERVICE
+ > enable the service, which makes it run on boot
+ > we can also disable the service to not make it run on boot
+ > ex:
+	$ systemctl enable atd
+	$ systemctl disable atd
+
+
+systemctl [is-enabled | is-failed] SERVICE
+ > is-enabled checks if the service is enabled
+ > is-failed checks if the service is still working
+ > ex
+	$ systemctl is-enabled atd
+	$ systemctl is-failed atd
+
+
+systemctl cat SERVICE
+ > displays all the information with regards to the service
+ > this informations include
+	1. service directory location
+	2. description
+	3. services to run after successfully executing the service
+	4. environment file
+	5. command to execute to start the service
+	6. wantedBy, which defines the minimum target to use to run the service
+ > ex
+	$ systemctl cat atd.service
+
+
+systemctl list-dependencies SERVICE
+ > list all the dependencies of the said Service
+ > ex:
+	$ systemctl list-dependencies atd.service
+
+
+systemctl [mask | unmask] SERVICE
+ > mask the service, which creates a symbolic link to the /dev/null
+ > all the systemctl start commands will not work, and on each reboot the service will not run
+ > ex:
+	$ systemctl mask atd.service

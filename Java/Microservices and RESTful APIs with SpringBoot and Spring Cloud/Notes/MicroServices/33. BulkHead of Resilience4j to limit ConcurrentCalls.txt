@@ -1,0 +1,52 @@
+33. BulkHead of Resilience4j to limit ConcurrentCalls
+
+BulkHead
+	> component of Resilience4j
+	> used to limit amount of ConcurrentCalls possible to a specific method
+		- this method may be a call to other Services using Http
+
+Annotation to use
+
+@BulkHead
+	> can be applied to a Class or a specific method
+	> defines that the methods of Class or a specific method have BulkHead instance attached to it
+	> this annotation have parameters like
+		a. name
+			- takes String input
+			- defines the name of the BulkHead instance
+		b. fallBackMethod
+			- takes String input
+			- defines the name of the method to be used as fallback
+			- this will be executed if a Request is received where the BulkHead instance's available Thread is full
+		c. type
+			- defines which type of BulkHead to use
+			- can be either
+				= Bulkhead.Type.THREADPOOL or BulkHead.Type.SEMAPHORE
+
+
+Properties to define for BulkHead instance
+
+maxConcurrentCalls
+	> default value is 25
+	> defines the max amount of parallel executions allowed by the bulkhead
+
+maxWaitDuration
+	> default value is 0
+	> defines the max amount of time a thread should be blocked for when attempting to enter a saturated bulkhead
+
+
+EX:
+Inside Controller class
+
+	@Bulkhead(name = "default", fallbackMethod = "hardcodedResponse", type = Bulkhead.Type.THREADPOOL)
+	public String sampleApi() {
+		logger.info("Sample Api call received");
+//		ResponseEntity<String> forEntity = new RestTemplate().getForEntity("http://localhost:8080/some-dummy-url", 
+//				String.class);
+//		return forEntity.getBody();
+		return "sample-api";
+	}
+
+
+application.properties
+resilience4j.bulkhead.instances.default.maxConcurrentCalls=10

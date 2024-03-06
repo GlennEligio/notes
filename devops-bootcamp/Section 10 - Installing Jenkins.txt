@@ -1,0 +1,316 @@
+Section 10 - Installing Jenkins
+
+68. Installing Jenkins
+
+Prerequisites:
+1. VM
+	> can be from cloud, or hosted locally
+
+
+
+
+69. Install Jenkins on a VM
+
+Steps
+1. Setup the VM to host Jenkins
+2. Connect to the VM via SSH
+3. Prepare the VM and install Jenkins
+4. Start the Jenkins
+5. Configure VM to expose Jenkins
+6. Access and Configure Jenkins
+
+
+Setup the VM to host Jenkins
+ > make sure the VM is accessible through SSH, by opening port 22
+ 
+Connect to the VM via SSH
+ > depending on how you've setup the VM, you may need to use SSH private key or user-password credentials
+ 
+Prepare the VM and install Jenkins
+1. Update the server
+	$ sudo apt-get update -y
+2. Install java
+	$ sudo apt install openjdk-11-jdk
+	$ java -version
+		- check if we successfully installed java
+3. Add repository key of Jenkins to the system
+	$ sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+4. Append the package repository to the server source list
+	> essentially, we are taking the Jenkins repo and we're adding it to our aptitude (APT) package manager
+	$ echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+5. Update aptitude package manager to embed the Jenkins repo or package inside of our package manager
+	$ sudo apt-get update -y
+6. Install Jenkins
+	$ sudo apt install jenkins
+	
+Start the Jenkins
+1. Start Jenkins service
+	$ sudo systemctl start jenkins
+2. Check status of Jenkins service
+	$ sudo systemctl status jenkins
+	
+Configure VM to expose Jenkins
+1. Allow port 8080 on ufw
+	> note that if you are using Cloud VM, ufw is disabled. go to the next step
+	$ sudo ufw allow 8080
+2. Go to the GUI dashboard of Cloud VM, and edit firewall, specifically the inbound security rule
+	> allow port 8080 in inbound firewall rules, for all ip addresses
+	
+Access and Configure Jenkins
+1. Use the ip address of VM, and the port 8080 to access Jenkins
+	> ex: 15.56.65.78:8080
+2. Use the initialAdminPassword created when we first install Jenkins
+	$ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+	ex: 8d45b55857cb4ec189188a2d00da1ec0
+3. Use the output log in Jenkins site
+4. In Getting Started section
+	> Install suggested plugins
+	> Create the First Admin User
+		- glenneligio
+		- JENKINSShuntJG01?
+	> Instance Configuration
+		- if you have DNS, you can pass that one
+		- if you dont, pass the ip address and the port
+		- dont forget to add http or https
+		- ex: http://40.121.40.56:8080/
+	> Save and finish
+	
+
+
+
+
+70. Searching through Plugins
+
+Searching Plugins
+1. Go to homepage
+2. Click 'Manage Jenkins' at the left hand side
+3. Go to System Configuration -> Manage Plugins
+	> here, we should see several tabs for 
+		a. Plugins with available updates
+		b. Plugins available
+		c. Plugins installed
+		d. Advanced settings
+			i. HTTP Proxy
+			ii. Deploy plugin
+			iii. Update Site
+			
+Inspecting, and Installing Plugins
+ > we can search plugins in the 'Plugins available' tabs
+	- ex: Azure Credentials
+		- this is used for managing Azure credentials using Jenkins Credentials API
+ > we can click the plugins to check the following
+	1. Brief documentation
+	2. Releases
+	3. Issues
+	4. Dependencies
+ > to install, click the checkbox for the plugin at the left side, then click 'Download now and Install after restart' button
+	- installed plugins should not show in the 'Available Plugins' tab anymore
+ 
+ 
+NOTE:
+1. Jenkinsfile is a 'codified plugin'
+
+
+
+
+
+71. Install Jenkins on a VM - Notes
+
+Q1: What best describes Jenkins?
+A: An Automation Server
+
+Q2:What is CI/CD?
+A. CI/CD refers to the continuous integration and continuous delivery/deployment process.
+B. CI/CD refers to the automation of routine system administration tasks.
+C. CI/CD is an application bug testing framework.
+D. CI/CD is security management framework.
+Ans: A
+
+Q3: Can we use Jenkins to automate routine system administration tasks?
+A: Yes
+
+Q4: Which of the following packages is a prerequisite for installing Jenkins ?
+A: Java
+
+Q5: Can we run Jenkins in a container ?
+A: Yes
+
+Q6: Now let us install Jenkins on the centos-host machine and configure it to run on port 8090 instead of the default port 8080.
+You can refer to the Jenkins Installation Docs located above the terminal.
+S: 
+1. Install Extra packages release by Enterprise Linux package
+	$ sudo yum install epel-release -y
+2. Install java 11
+	$ sudo yum install java-11-openjdk -y
+3. Add Jenkins.repo in yum repositories
+	$ sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo --no-check-certificate
+	$ sudo rpm --import http://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+4. Install jenkins
+	$ sudo yum install jenkins -y
+5. Edit the service file of Jenkins
+	$ sudo vi /lib/systemd/system/jenkins.service
+	
+Q7: Now, you should be able to access Jenkins using Jenkins button on the top bar. Complete its installation from UI and make sure to create first admin user as per details mentioned below:
+Username: admin
+Password: Admin321
+Full name: Admin User
+E-mail address: admin@example.com	
+
+
+
+
+
+72. Jenkins CLI
+
+SOURCE: https://www.jenkins.io/doc/book/managing/cli/
+
+Jenkins CLI
+ > Jenkins has a built-in command line interface that allows users and administrators to access Jenkins from a script or shell environment.
+ > This can be convenient for scripting of routine tasks, bulk updates, troubleshooting, and more.
+ > The command line interface can be accessed over SSH or with the Jenkins CLI client, a .jar file distributed with Jenkins.
+ 
+Using the CLI over SSH
+ > In a new Jenkins installation, the SSH service is disabled by default. Administrators may choose to set a specific port or ask Jenkins to pick a random port in the Security page.
+ > In order to determine the randomly assigned SSH port, inspect the headers returned on a Jenkins URL
+ > ex:
+	$ curl -Lv https://JENKINS_URL/login 2>&1 | grep -i 'x-ssh-endpoint'
+ 
+Authentication
+ > Whichever user used for authentication with the Jenkins controller must have the 'Overall/Read' permission in order to access the CLI. The user may require additional permissions depending on the commands executed
+ > Authentication in SSH mode relies on SSH-based public/private key authentication
+ > In order to add an SSH public key for the appropriate user, navigate to JENKINS_URL/me/configure, and paste an SSH public key into the appropriate text area
+	- this assumes that the user is already logged in
+	
+Using the CLI client
+While the SSH-based CLI is fast and covers most needs, there may be situations where the CLI client distributed with Jenkins is a better fit. For example, the default transport for the CLI client is HTTP which means no additional ports need to be opened in a firewall for its use.
+
+ 
+NOTE:
+1. Most of the time, and in tutorials, people will be working on the Jenkins dashboard instead of the CLI
+
+
+
+
+
+73. Using Jenkins CLI
+
+Accessing Jenkins CLI instruction in Jenkins
+1. Go to Jenkins homepage
+2. Go to Manage Jenkins, then at the bottom select Jenkins CLI
+	> here you see the following
+		a. java command to use the Jenkins CLI client packaged as jar file
+		b. available commands to use
+		c. Jenkins CLI jar download
+
+Using Jenkins CLI Client
+1. Download Jenkins CLI 
+2. Create API token to use
+3. Execute java command to perform Jenkins CLI commands
+	a. list available commands
+	b. list jenkins jobs
+	c. build jenkins job
+
+Download Jenkins CLI
+1. Use wget command to download it
+	$ wget http://13.230.207.206:8080/jnlpJars/jenkins-cli.jar
+
+Create API Token to use
+1. Go to current User configuration
+	> JENKINS_URL/me/configure
+2. Create new API token
+	> jenkinscli: 114af7b5c34ff29fdb0a1ee2b43eed9ed3
+	
+List available commands
+1. Execute the java command to use Jenkins CLI jar file
+	> template is 
+		- $ java -jar jenkins-cli.jar -s JENKINS_URL -auth USER:AUTH_TOKEN
+	$ java -jar jenkins-cli.jar -s http://13.230.207.206:8080/ -auth glenneligio:114af7b5c34ff29fdb0a1ee2b43eed9ed3
+
+List Jenkins job available
+0. Create a dummy Jenkins pipeline
+	> Go to home dashboard
+	> Select new Item at left hand side
+	> Select pipeline, and give it a name
+	> at the Pipeline section, open the 'try sample Pipeline' and select Hello world
+1. Use the same command as before, but add '-w 
+	$ java -jar jenkins-cli.jar -s http://13.230.207.206:8080/ -auth glenneligio:114af7b5c34ff29fdb0a1ee2b43eed9ed3 -webSocket list-jobs
+	
+Build Command
+1. Use the same command as before, but change the '-webSocker' option flag value to 'build' and pass the name of the pipeline as well
+	$ java -jar jenkins-cli.jar -s http://13.230.207.206:8080/ -auth glenneligio:114af7b5c34ff29fdb0a1ee2b43eed9ed3 -webSocket build test1
+
+
+
+
+
+74. Jenkins CLI - Notes
+
+Q1: From this lab onwards, Jenkins would be pre-deployed on the machine called jenkins-server. You can access the UI by clicking on the Jenkins button on top of the terminal. Login into the UI using the below credentials:
+Username: admin
+Password: Adm!n321
+
+Notes:
+1. You might need to restart Jenkins service after installing some plugins or after making some configuration changes. In such cases, please make sure that the Jenkins service is back to a running state before you submit your solution.
+2. Re-use the Jenkins credentials given above.
+
+
+Q2: How many users are currently configured for this Jenkins instance?
+Login to the UI, click on the People tab and find out the number of users.
+S: Go to Jenkins homepage, and then in People tab at left side
+A: 1
+
+Q3: We just updated the configuration and restarted the Jenkins service. Login to the UI again and find out the number of users that have been created.
+UserName: admin
+Password: Adm!n321
+S: Go to Jenkins homepage, and then in People tab at left side
+A: 2
+
+Q4: Whats the user id of the new user created?
+A: mike
+
+Q5: What is the Full Name of this user?
+A: Mike Wawozki
+
+Q6: For the rest of the lab, let us make use of mike to navigate through the Jenkins UI.
+Logout of the Jenkins UI as the admin user and log back in with the following credentials:
+UserName: mike
+Password: M!k3@123
+
+Q7: Is there a Public SSH Key configured for the user called mike?
+S: Navigate to JENKINS_URL/me/configure and check if theres an SSH configured
+A: No
+
+Q8: The user called mike has also been created in the jenkins-server.
+root@jenkins-server:~# id mike
+uid=1001(mike) gid=1002(mike) groups=1002(mike),27(sudo)
+root@jenkins-server:~# 
+Switch to this user by running the below command:
+root@jenkins-server:~# su - mike 
+mike@jenkins-server:~$
+
+Q9: There is a SSH key-pair created under /home/mike/.ssh.
+What is name of the public key?
+S: Print /home/mike/.ssh file content
+A: jenkins-key.pub
+
+Q10: Now add this public key (/home/mike/.ssh/jenkins_key.pub) in Jenkins for the user called mike. This will allow us to interact with Jenkins using the CLI.
+S: Print ssh public key content, then paste it on SSH key textbox in mike's JENKINS_URL/me/configure
+
+Q11: We have configured the SSH service in Jenkins to listen on a fixed port. To find out the port in use, run the command below:
+	$ curl -Lv http://localhost:8085/login 2>&1 | grep -i 'x-ssh-endpoint'
+Which port does the Jenkins SSH service use?
+A: 8085-port-9cd0590fb3a746c8.labs.kodekloud.com:8022 = 8022
+
+Q12: Now that we have the port used by the Jenkins SSH server, let us begin interacting with Jenkins over ssh with the user mike.
+As mike, try running the following commands:
+	mike@jenkins-server:~$ ssh -i /home/mike/.ssh/jenkins_key -l mike -p 8022 jenkins-server help
+Keep a note of the options used with the SSH command:
+	-i flag is used to point to mike's private SSH key. Remember, we have already added the public key in the Jenkins configuration.
+	-l is the login user which in our example is mike
+	-p is the port which we found out in the previous step to be 8022
+	
+Q13: Using the help command, find out the built-in command to safely restart Jenkins from the CLI.
+A: safe-restart

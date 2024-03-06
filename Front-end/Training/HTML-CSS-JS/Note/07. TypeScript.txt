@@ -1,0 +1,61 @@
+07. Typescript
+
+
+TYPESCRIPT
+
+Typescript
+	> Superset of JavaScript
+	> Strongly type programming language
+		- this means that we need to define the datatype
+
+Declaration of variables in TypeScript
+	> in Typescript, you need to define the datatype of the variable you declare
+
+SYNTAX:
+
+scopeKeyword varName: dataType = varValue;
+scopeKeyword varName: (dataType1 | dataType2)[] = [data1, data2, data3];
+	> here we can pass two dataTypes allowed in an array
+
+EX:
+
+var address: string = "Mumbai";
+var x: number = 2;
+var numbers: number[] = [301,302,303,304,305];
+
+
+Typescript Interfaces
+	> used to create a template for an object
+	> similar to the Class, but with addition of DEFINING DATATYPE of the properties
+
+EX:
+interface IFamily {
+    father: string;
+    mother: string;
+    sister: string;
+    brother: string;
+}
+
+
+Object extending to an Interface
+
+var family: IFamily = {
+    father: "a",
+    mother: "b",
+    sister: "c",
+    brother: "d"
+}
+
+
+
+Typescript Functions
+	> unlike Javascript functions, we will need to define DATATYPE of return and parameters
+	> below, we can see that
+		a. parameter x and y are need to be of type number
+		b. return value must be of type number as well
+
+EX:
+function add(x: number, y: number): number {
+    return x + y;
+}
+

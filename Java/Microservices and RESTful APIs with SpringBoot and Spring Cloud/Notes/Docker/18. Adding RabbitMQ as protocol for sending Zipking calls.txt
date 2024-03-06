@@ -1,0 +1,159 @@
+17. Adding RabbitMQ as protocol for sending Zipking calls
+
+RabbitMQ
+	> RabbitMQ is one of the most widely used open-source message brokers. 
+	> It was originally based on the Advanced Message Queuing Protocol (AMQP). 
+	> Later on, it has been modified to support Message Queuing Telemetry Transport (MQTT), Streaming Text Oriented Messaging Protocol (STOMP), and several other common protocols. 
+	> RabbitMQ has been designed to be used for a variety of messaging scenarios that have developed over the last 25 years. 
+	> It is well-known for Reliability and Interoperability. 
+	> It has been implemented in many languages; therefore, it is one of the best choices for building reliable, large scale, clustered, resilient messaging infrastructure.
+
+
+
+Setting up RabbitMQ server
+1. Create Docker Service to host rabbitmq
+	> image will be rabbitmq:latest
+	> memory limit to 300mb
+	> ports to open are
+		a. 5672		- Communication port
+		b. 15672	- Management port
+
+
+
+
+Setting up the MicroServices by adding RabbitMQ as protocol for sending Zipkin calls
+1. Add required dependencies
+	> Zipkin-related dependencies	
+		a. spring-cloud-starter-sleuth
+		b. spring-cloud-sleuth-zipkin
+			- both from org.springframework.cloud
+	> RabbitMQ dependency
+		a. spring-rabbit 
+			- from org.springframework.amqp
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+		</dependency>
+
+
+
+2. Setup the required configuration properties 
+	> this is for services that will send trace to Zipking through RabbitMQ
+	> as for the zipkin server, it only needs the rabbit.uri
+
+	a. spring.zipkin.sender.type=rabbit
+		> defines how we will send trace calls
+		> can be web, rabbit, or kafka, based on the how we send traces
+		> by default, we send the spans to Zipking through web (HTTP)
+	b. spring.rabbitmq.host=rabbitmq
+		> defines the ip address of the server that host the RabbitMQ server
+		> in our case, it is being ran in "rabbitmq" Docker Server, we will pass its name
+	c. rabbit.uri= amqp://guest:guest@rabbitmq:5672
+		> defines the uri where the RabbitMQ will send/redirect the trace calls
+		> in our case, we will send it in rabbitmq at port 5672, with user and pass "guest", using amqp protocol
+
+
+3. Setup the Docker Service
+	> modify the depends_on property of Service since we added rabbitmq
+	> use it on all services except rabbitmq and naming server
+		
+
+Example of docker-compose.yaml
+
+version: '3.7'
+
+services:
+  currency-exchange:
+    image: shuntjg/mmv2-currency-exchange-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8000:8000"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+  currency-conversion:
+    image: shuntjg/mmv2-currency-conversion-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8100:8100"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+  api-gateway:
+    image: shuntjg/mmv2-api-gateway:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8765:8765"
+    depends_on:
+      - naming-server
+      - rabbitmq
+    networks:
+      - currency-network
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+
+  naming-server:
+    image: shuntjg/mmv2-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - currency-network
+
+  rabbitmq:
+    image: rabbitmq:latest
+    mem_limit: 300m
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - currency-network
+
+  zipkin-server:
+    image: openzipkin/zipkin:latest
+    mem_limit: 300m
+    ports:
+      - "9411:9411"
+    depends_on:
+      - rabbitmq
+    networks:
+      - currency-network
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+
+networks:
+  currency-network:

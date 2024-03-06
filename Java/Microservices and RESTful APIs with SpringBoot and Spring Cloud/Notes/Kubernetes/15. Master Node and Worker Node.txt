@@ -1,0 +1,62 @@
+15. Master Node and Worker Node 
+
+
+Master Node	
+	> responsible for managing clusters
+
+Components of Master Node
+1. Distributed Database (etcd)
+	> stores the desired state of the cluster (configuration, data, resources, etc)
+	> all the commands that we run (creating Deployment, scaling, and exposing them) modifies this desired state that is stored inside
+	> recommended to have 3-5 replicas of these database for redundancy
+2. API Server (kube-apiserver)
+	> similar to dockerdaemon in Docker
+	> api server that processes the CLI command that we send through "kubectl"
+3. Scheduler (kube-scheduler)
+	> responsible for scheduling the Pods unto the Nodes
+		- in a K8s cluster, there will be several Node. 
+		- and when we are creating a new Pod, based on the Node's resources (cpu, mem, ports), the Scheduler will decide which Node the Pod will be created
+4. Controller Manager
+	> manages the overall health of the cluster
+	> ensures that the current state of the K8s cluster matches the desired state stored inside Distributed Database (etcd)
+		- the Controller manager will do actions to achieve this
+
+
+
+Worker Node
+	> runs the applications
+
+Components of Worker Node
+1. Pods
+	> multiple pods running containers
+2. Container Runtime
+	> since the Pods are running Container, the Worker Node must have a Container runtime
+	> any Container Runtime can be used as long as they conforms with the Container Runtime Interface (CRI)
+	> includes:
+		- containerd
+		- CRI-O
+		- Docker Engine (most common)
+		- Mirantis Container Runtime
+3. Node Agent (kubelet)
+	> ensures that it monitors whats happening in the Worker Node and reports it back to the Master Node
+		- ex: if a Pod goes down, it will report back to the Master Node
+4. Networking Component (kube-proxy)
+	> manages the Networking of the Worker Node and Pods running inside them
+	> these includes exposing Services around the Worker Nodes and Pods
+
+
+QUESTIONS
+1. Does the Master Node runs the application-related Pods?
+	- NO
+	- It only has the stuff related in managing Cluster
+2. Can you only run Docker containers in K8s?
+	- No, we can use other Container Runtimes as long as they conform with CRI
+3. What happens when the Master Node goes down?
+	- Application will still run and accessible, but no one will be managing the Cluster
+
+
+Commands
+kubectl get componentstatuses
+	> used to see the status of the Components
+	> sometimes doesnt work properly
+	> deprecated, will be removed soon

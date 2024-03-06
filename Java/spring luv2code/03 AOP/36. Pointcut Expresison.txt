@@ -1,0 +1,92 @@
+Pointcut Expression Language
+	> a predicate expression for where advice should be applied
+	> Spring AOP uses AspectJ's pointcut expression language
+	> we will start with execution pointcuts
+		- applies to execution of methods
+
+
+Execution pointcuts
+
+	execution(modifiers-pattern? return-type-pattern declaring-type-pattern? method-name-pattern(param-pattern) throws-pattern?)
+
+modifiers-pattern?
+	> Spring AOP only supports public or *
+
+return-type-pattern
+	> void, boolean, String, List<Customer>, ...
+
+declaring-type-pattern?
+	> the class name of the type what are going to use for this given method 
+
+method-name-pattern
+	> method name to match
+
+parameter-type
+	> parameter types to match
+
+throws-pattern?
+	> exception types to match
+
+NOTE: 
+	> pattern is optional if it has "?"
+	> patterns can use wildcards (*)
+	> Wildcard can be used in any pattern type
+		- method
+		- return type
+		- parameter type
+		- etc
+
+EX:
+
+	@Before("execution(public void com.dao.AccountDAO.addAccount())")
+
+MATCH ONLY addAccount() method in AccountDAO class
+public			modifier-pattern
+void			return-type-pattern
+com.dao.AccountDAO	declaring-type-pattern
+addAccount()		method-name
+
+
+	@Before("execution(public void addAccount())")
+
+MATCH ANY addAccount() method in ANY class
+
+
+	@Before("execution(public void add*())")
+
+MATCH methods starting with "add" in ANY class
+
+
+	@Before("execution(* * add*())")
+
+Match methods starting with "add" in ANY class REGARDLESS of return type and modifier
+
+
+
+NOTE:
+	Methods inside a Class with @Aspect WILL be invinsible to the Advices unless they are in the same @Aspect class
+
+
+
+PARAMETER PATTERN WILDCARDS
+For param-pattern
+
+()	- matches a method with no arguments
+(*)	- matches a method with one argument of any type
+(..)	- matches method with 0 or more arguments of any type
+(fully-classified-name-of-parameter)
+	- matches method with parameter whose type is the same as one given
+	- ex: "execution(public void addAccount(com.model.Account))"
+
+
+PACKAGE WILDCARD
+For declaring class package location, adding * means that any package
+ 
+EX:	
+	"execution(* com.luv2code.aopdemo.dao.*.*(..))"
+
+	> match any method in our DAO package: com.luv2code.aopdemo.dao
+
+
+
+

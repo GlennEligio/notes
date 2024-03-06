@@ -1,0 +1,65 @@
+03. Containers and Virtual machines
+
+Containers vs Virtual machines
+
+Containter
+	> runs natively on Linux and SHARES the kernel of the host machine with other containers
+	> runs a discrete process, taking no more memory than any other executing, making it lightweight
+
+Virtual Machine
+	> runs a full-blown "guest" OS with virtual access to host resources through a HyperVisor	
+		- since VM have its own OS, each will have Kernel which takes up a lot of space
+	> VMs incur a lot of OVERHEAD beyong what is being consumed by your application logic
+
+
+HyperVisor (Hyper-V)
+	> create several 
+	> have its OWN OS (OS ESXI)
+	> responsible for communication with the hardware (e.g. fetching hardware resources)
+
+Kernel
+	> brain of the Operating System
+
+
+
+Approach for Virtualization of Applications
+
+1. Type-1 Virtualization Structure
+	> Virtualization where a Hypervisor (Hyper-V) is installed
+	> first the Hyper-V is loaded
+	> inside Hyper-V, Image OS of the VMs are loaded
+	> inside VM, the binaries and libraries are loaded (used for running an application)
+	> then, the applications are loaded (web applications or databases)
+
+STRUCTURE:
+Hardware
+	> Hyper-V
+		> Guest 0S 1
+			> bins/lib (Binaries and Libraries)
+			> webapp
+		> Guest OS 2 
+			> bins/lib (Binaries and Libraries)
+			> db
+
+
+2. Container-Microservices
+	> best for agile methodology practices
+	> first, Host OS of Hardware is loaded
+	> inside the Host OS, Docker Engine (or docker daemon) is loaded
+	> using Docker Engine, Docker Containers are created for each Docker Images
+		- we can define a specific resources a Docker Container uses (ram, cpu, space)
+	> these Docker Images contains bin/lib 
+	
+STRUCTURE:
+Hardware
+	> Host OS
+		> Docker Engine (dockerd or docker daemon)
+			> bins/lib
+				> webapp
+			> bins/lib
+				> db
+			> bins/lib
+				> services
+
+
+

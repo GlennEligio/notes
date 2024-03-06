@@ -1,0 +1,47 @@
+Section 11 - Jenkins Plugins and Integrations
+
+75. What are plugins
+
+Plugins as a way to connect to another service
+ > in Jenkins, we have different kind of plugins, for different use cases
+ > one of these use cases in for connecting to different services, e.g. Azure
+	- this is similar to the SSO you've find in a website like 'Login with Google', 'Login with Facebook', 'Login with LinkedIn', etc
+ > ex: If we have a Jenkins and we want to connect to Azure, we would need to have an Azure plugin, and have it in the pipeline. This will allow us to connect to Azure in a programmatic level and in extension, allows us to easily work with different Azure products
+ > example Plugins
+	a. Azure plugin
+	b. AWS plugins
+	c. Github Actions Plugin
+
+
+
+76. Installing a Plugin
+
+Installing Jenkins plugins
+ > initially, we do have an option to install plugins recommended by Jenkins
+ > but after that and the Jenkins deployed already, for installing Plugins we will use the 'Plugins Index'
+	- Plugins index website: https://plugins.jenkins.io/
+	
+Example Jenkins plugins:
+1. Azure plugins
+	> Azure Commons, Azure Credentials, Azure SDK API, Azure AD, Azure VM Agents, Azure CLI, Azure Key Vault
+2. AWS
+	> Amazon Web Services SDK :: All, CloudBees AWS Credentials, Amazon Web Services SDK :: Minimal, Amazon Web Services SDK :: EC2
+3. Python
+	> Python, Python Wrapper, ShiningPanda, Pyenv Pipeline
+4. Golang
+	> Go
+
+
+
+NOTE:
+1. Jenkins have thousands of plugins available since its been out for over a decade
+
+
+
+
+77. Restarting Jenkins For Plugins That Require Restarts
+
+Restarting Jenkins For Plugins That Require Restarts
+ > when installing Plugins, some of these plugins may require Jenkins to be restarted in order to take effect
+ > in order to restart jenkins for Linux, use the systemctl restart command
+	$ sudo systemctl restart jenkins

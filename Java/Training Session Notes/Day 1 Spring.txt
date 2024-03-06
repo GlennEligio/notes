@@ -1,0 +1,258 @@
+Day 1 Spring
+
+Dependency Injection
+
+@Component(value = "componentId")
+	> added in one of the implementation of the Interface for DI
+	> defines the id of the implementation
+
+@Service(value="serviceId")
+	> added in an class
+	> defines that the Class will be of service that will implement DI
+
+@Qualifier(value="componentId")
+	> added in the field member of a @Service
+	> defines what implementation the variable will take in Dependency Injection setting
+
+@Autowired
+	> added in one of the field variables or member	
+	> says that the field variable will look for what implementation it will take based on @Qualifier
+
+
+@ComponentScan("packagename")
+	> defines where the config file/class will look for the implementations for DI
+
+@Configuration
+	> added in a class
+	> defines the Class that will take care of what implementations to take
+	> will scan for such implementation to use based on the @ComponentScan value
+
+@Lazy
+	> will make the classes in Spring container lazy loaded
+
+
+@PostConstruct
+	> added in a method of Bean
+	> the method will get called after the creation of Bean
+
+@PreDestroy
+	> added in a method of Bean
+	> the method will get called before the destruction of Bean
+
+
+@Bean
+	> added in a method inside Config class
+		- Config class is the Class with @Configuration annotation
+	> the result of method will then be the Bean object
+
+
+@SpringBootApplication
+	> added in a Class
+	> class MUST HAVE a main()	
+	> the main() will start a Spring Boot
+
+
+Eager Loading
+	> default configuration of Beans/Components in Spring Container
+	> Spring container will load ALL the beans BEFORE they are called/used
+	> means that even if the Class in NOT IN USED, they will still be loaded and initialized
+	> WASTE of RESOURCES
+
+Lazy Loading
+	> Spring container will load the Class or component ONLY if they are needed
+	> BEST PRACTICE
+
+Singleton
+	> default configuration of Components in Spring Container
+	> only one instance of a Class is created and available in memory
+
+
+
+AnnotationConfigApplicationContext Class
+	> object that defines where we will get the Spring container configuration
+	> we will pass a Class that have 
+		- @Configuration
+	> the Class we pass will then be the Config Class of our Spring container
+	> have the following method
+
+
+
+getBean("method-name-in-config-class")
+	> takes the method name of @Bean inside Config class
+getBean("bean-value")
+	> takes the value param in the @Service of class
+	> get the Bean result by either
+		a. getting the result of the method inside Config class whose method name with @Bean annotation is the same as we passed in 
+		b. creating an getting an instance of the Class whose @Service(value) is the same as the one in getBean()
+getBean("bean-value", Class object)
+	> adding Class object in SECOND parameter will define what Class type the output will be
+	> no need to CAST the output of getBean()
+
+
+
+CONVERTING XML-based <bean> to @Annotation based @Bean
+
+
+<bean> parameters and their @Annotation equivalent
+
+id="bean-id"	
+	> will be the method name of the @Bean method
+
+class="package-location-of-class"
+	> can be either
+		- the implementation of the Interface output of the @Bean method
+			= in this case, the return type of the method will be the Interface
+		- source of the factory-method specified in <bean>
+
+scope="bean-scope"
+	> can be any of these following values
+		1. singleton
+			- default scope
+			- scopes the bean definition to a single instance per Spring IoC container
+		2. prototype
+			- scopes a single bean definition to have any number of object instances.
+		3. request
+			- scopes a bean definition to an HTTP request. 
+			- Only valid in the context of a web-aware Spring ApplicationContext
+		4. session	
+			- scopes a bean definition to an HTTP session. 
+			- Only valid in the context of a web-aware Spring ApplicationContext.
+		5. global-session
+			- scopes a bean definition to a global HTTP session. 
+			- Only valid in the context of a web-aware Spring ApplicationContext.
+
+factory-method="method-name-inside-class-param"
+	> method used to create the definite output of the <bean>
+	> typically a static method inside the class
+	> inside the @Bean method, we will call and return the result of the method
+
+
+<constructor-arg> parameters and their @Bean equivalent
+	> nested inside <bean>
+	> in @Bean, can be seen as the Constructor of the Object that we will return
+
+ref="bean-id"
+	> means that a <bean>'s output (which have same id as the one we passed) will be the value of this ref
+	> in @Bean, this means that we will return the output of the @Bean call with same name of "bean-id"
+
+type="param-dataType" value="param-value"
+	> defines the parameter type and value to be passed to the constructor of Bean
+	> in @Bean, this means passing a data in the Object that we will return to @Bean method
+ 
+index="param-index" value="param-value"
+	> similar to type-value pair, instead we are passing parameters in an indexed fashion
+	> in @Bean, this means we will pass the data in specified parameter index (starts with 0)
+
+
+<property> parameters and their @Bean equivalent
+	> nested inside <bean>
+	> in @Bean, similar to calling setter method of the Object that we will return
+
+For naming syntax of the name="" value
+	> if setter method name is setBestAthlete
+		- remove the "set" substring 		- 	BestAthlete
+		- set first char to small letter	-	bestAthlete
+	> from setBestAthlete() to name="bestAthlete"
+
+name="setter-method-name" ref="bean-id"
+	> defines the name of setter method that we will call and the value that we will pass to the setter
+		- thus, the value that we will pass will be the value of property
+	> in @Bean, we will call the setter method of the Object that we will return AND pass the result of another @Bean method
+
+name="setter-method-name" value="property-value"
+	> defines the name of setter method and the value that we will pass to the setter
+		- thus, the value that we will pass will be the value of property
+	> in @Bean, we will call the setter method of the Object and passing a specific value
+
+
+
+DataSource
+	> factory for creating connection to a physical database
+	> to define the properties of the connection like db-url, user, pass, ip-address, port, etc., fill up the following information
+		spring.datasource.url=
+		spring.datasource.username=
+		spring.datasource.password=
+		spring.datasource.platform=
+	> add it to application.properties and save
+
+EX:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/accdb
+spring.datasource.username=root
+spring.datasource.password=TEST_PASSWORD
+spring.datasource.platform=mysql
+
+
+
+JdbcDaoSupport
+	> class from spring framework starter jdbc dependencies
+	> has the following method
+
+setDataSouce(DataSource)
+	> set the datasource of the application connection to the DataSource passed
+
+
+
+
+JdbcTemplate
+	> This is the central class in the JDBC core package.</b>
+	> It simplifies the use of JDBC and helps to avoid common errors.
+	> It executes core JDBC workflow, leaving application code to provide SQL and extract results. 
+	> This class executes SQL queries or updates, initiating iteration over ResultSets and catching JDBC exceptions and translatingthem to the generic, more informative exception hierarchy defined in the {@code org.springframework.dao} package.
+	> have the following methods
+
+int update()
+	> can take parameters:
+		- String sql
+		- String sql, Object[] params
+	> executes a PreparedStatement using the query
+	> the Object[] will fill up any ? in the query in the same order
+	> returns an int that defines how many rows are affected
+
+List<Map<String,Object>> queryForList()
+	> can take either
+		- String sql
+		- String sql, Object[] params
+	> returns a List of Map<String, Object>
+	> each Map<String,Object> defines the
+		- String key = column name
+		- Object value = column value
+
+Object queryForObject()
+	> used for query for a single row
+	> the sql row values will then be "mapped" to the properties of the result Object using RowMapper
+
+
+RowMapper<T>
+	> An interface used by JdbcTemplate for mapping rows of a ResultSet on a per-row basis. 
+	> Implementations of this interface perform the actual work of mapping each row to a result object, but don't need to worry about exception handling SQLExceptions will be caught and handled by the calling JdbcTemplate.
+	> needs to implement the method mapRow(ResultSet rs, int rowNum)
+
+T mapRow(ResultSet rs, int rowNum)
+	> used to map the values of sql row to an object
+	> we will then return the Object created
+
+
+getJdbcTemplate()
+	> factory method for JdbcTemplate that can be called from a JdbcDaoSupport class or subclass
+
+
+
+1st Activity
+1. Create a Restaurant Inteface
+	> add prepareDish() 
+		- String return type
+		- String param
+2. Created two implementations of Restaurant Interface
+	> Indian and ItalianRestaurant
+3. Created RoomService class that will 
+	> have a Restaurant interface as field member
+	> takeOrderFromGuest()
+		- String param
+		- String return type	
+		- returns the prepareDish() output of Restaurant field member
+4. Create AppConfig class
+	> this will be the config where we will base our Spring container configuration in project
+4. Create RoomGuest
+	> have main()
+	> 

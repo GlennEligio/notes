@@ -1,0 +1,1016 @@
+Apache NiFi Tutorial - Complete Guide
+SOURCE:https://www.youtube.com/playlist?list=PL55symSEWBbMBSnNW_Aboh2TpYkNIFMgb
+
+
+Contents:
+I. Course introduction
+II. What is a Data flow, Data pipeline, & ETL.
+III. Why should we use Framework for data flow?
+IV. What is Apache NiFi?
+V. Installing Apache NiFi in a Mac/Linux
+VI. Installing Apache NiFi in a Windows machine
+VII. NiFi user interface
+VIII. Core NiFi terminologies
+IX. More on FlowFiles of NiFi
+X. Types of Processors available in NiFi
+XI. Processor Config, Connections & Relationship
+XII. Connection Queue & Back Pressure in NiFi
+XIII. Working with Attributes & Content in NiFi
+XIV. Working with Expression language in NiFi
+XV. More on Expression language in NiFi
+XVI. Working with Process Group, Input & Output port
+XVII. Working with Templates in NiFi
+XVIII. Working with Funnels in NiFi
+XIX. Monitoring NiFi
+XX. Overview in NiFi registry
+
+
+
+
+I. Course introduction
+
+II. What is a Data Flow, Data pipeline, and ETL
+
+Data Flow
+ > refers to the moving data/content from Source to Destination
+ > Data can be either of the following
+	- CSV
+	- JSON
+	- XML
+	- HTTP data
+	- Image
+	- Videos
+	- Telemetry
+	- data
+	- etc
+
+
+Data Pipeline
+ > movement and transformation of data/content from Source to Destination
+ > transformation of data is done along the way
+ > difference between the Data Pipeline to the Data flow is the intermediate transformation of data from source to destination along the way
+ 
+ 
+ETL
+ > ETL stands for Extract, Transform, Load
+ > refers to the moment of transformation of data from source to destination
+ >  difference between the Data Pipeline and ETL is that
+	- Data Pipeline, generic term which can be used to refer to the data moment happening in stream and batch fashion
+	- ETL, refers to the data moment and transformation that happens in batch files
+	
+	
+	
+	
+III. Why should we use Framework for data flow?
+
+Problem:
+How to solve the issue with regards to the following?
+	1. Extract data from source
+	2. Transform the data we got from source
+	3. Load the transformed data to its destination
+
+
+4 V's: Challenges we have to face when solving the problem above
+
+1. Volume
+	> refers to the vast amounts of data generated every second
+2. Velocity
+	> refers to the speed at which new data is generated and the speed at which data movies
+3. Variety
+	> refers to the different types of data that is generated and that we can now use
+4. Veracity
+	> refers to the messiness or trustworthiness of the data
+	
+	
+	
+Considerations to take when solving the problem earlier:
+1. Support for multiple data formats
+	> these includes CSV, JSON, Plaintext, Images, Videos
+2. Support for various types of sources and destinations
+	> includes FTP, HTTP, SQL databases, NoSQL databases, Search engines, Cache server
+3. Scalable and Reliable for large volume and high-velocity data
+	> in the current digital era, the size of the data produced is enormous. its not just the size of the data but also the speed at which it is produced
+	> this means that the program should have HIGH THROUGHPUT and LOW LATENCY
+4. You should also consider Data Cleansing and Data Validation logics
+	> also the accuracy and the noise of the incoming data is taken into account in the design of the solution
+	
+	
+Apache NiFi - framework for the solution to the problem above
+ > a robust open-source Data ingestion and Distribution framework and more
+
+
+
+
+
+
+IV. What is Apache NiFi?
+
+Apache NiFi
+ > Apache NiFi supports powerful and scalable directed graphs of data routing, transformation, and system mediation logic
+ > NiFi was built to automate the flow of data between systems. It can propagate any data content from any source to any destination
+ 
+
+
+
+
+
+V. Installing Apache NiFi in a Mac/Linux
+
+
+
+VI. Installing Apache NiFi in a Windows machine
+
+
+Overview
+ > Apache NiFi does not come with different installers for different OS
+ > instead they offer Apache NiFi binaries from their official website, and using the OS specific startup file provided (.bat for windows, .sh for linux, etc)
+ 
+Prerequisite
+ > the only prerequisites in order to run NiFi in your local machine are:
+	1. the machine have Java installed
+		> support for Java 8 is not available, minimum is java 11
+	2. the machine have system environment variable "JAVA_HOME" and its value is set correctly
+	
+Installation
+1. Go to their website
+	> nifi.apache.org/download
+2. Download the binary file that you want
+	> for now, we can use the Binaries -> Apache NiFi Binaries link
+	> click it and in the next page, click the download link
+3. Extract the content anywhere in the local machine
+	> the folder output should contain the following folders
+		- bin
+		- conf
+		- lib
+4. In the folder output, go inside bin folder
+	> located here are the different OS specific startup files that we can use
+	> in our case, we will be using the "run-nifi.bat" file using Command Prompt
+5. After running the startup file, check the log/nifi-app.log file
+	> inside the log file, we can see the following:
+		- generated user and password
+		- endpoint exposed for us to explore NiFi user interface
+	
+	
+NOTE:
+1. It takes some time after running the startup script for the NiFi to setup. Give it some time to finish.
+2. Check the log/nifi-app.log to see the generate
+	
+	
+
+
+
+
+VII. NiFi user interface
+
+Overview
+1. One of the main features of NiFi is its easy-to-use User interface
+	> you can do drag-and-drop action to each of the components you will need in the Flow chart
+
+Components that we can add to our data flow
+1. Processors
+2. Input port
+3. Output port
+4. Process group
+5. Remote process group
+6. Funnel
+7. Template
+8. Label
+
+
+Practical: Transfer file from one directory to other
+ > here, we will be using two Processors
+	1. GetFile
+		- continuously listen to any files on the specified directory and get them
+		- this will also remove the said file on that directory as well
+	2. PutFile
+		- this processor will PUT all the file it receives to the specified directory
+
+Steps:
+1. Drag and drop two processors in the NiFi flow
+	> make one processor into a GetFile and the other one into a PutFile
+2. Configure the processors
+	> for GetFile, pass the directory where we will fetch the files
+	> for PutFile, pass the directory where we will place the files
+3. Connect the processors together
+	> set the Connector configuration as is
+4. Prepare the input and output directory if you havent done so.
+	> D:\Study\programming\workspaces\Nifi\nifi storage\output
+	> D:\Study\programming\workspaces\Nifi\nifi storage\input
+5. Prepare the file to be used for testing
+6. Start the processors
+	> they should have green start icon instead of red stop icon before
+7. Place a file in the 'input' folder
+	> we should see it disappear, and be transferred to the 'output' folder
+
+NOTE:
+1. For PutFile processor, we need to set the Relationship for "failure" and "success"
+	> we can do so by going to processor configuration -> relationships -> set failure and success to either terminate or retry
+
+
+
+
+
+
+VIII. Core NiFi terminologies
+
+Terminologies
+1. Flow-based programming (FBP)
+2. Processor
+3. Connection
+4. Process Group
+5. Controller Service
+
+Flow-based programming (FBP)
+ > NiFi is based on Flow Based Programming (FBP)
+ > Flow Based programming is a programming paradigm that defines applications as networks of "black box" processes, which exchange data across the predefined connections by message passing, where the conenctions are specified externally to the processes
+ > These black box processes can be reconnected endlessly to form different applications without having to be changed internally
+ > FBP is thus naturally 'component-oriented'
+
+
+How NiFi works?
+ > NiFi consists of atomic elements which can be combined to groups to build a simple or complex DATA Flow
+ > NiFi consist of Processors and Process Groups
+ 
+ 
+Processor
+ > Processor are an atomic elements in NiFi which can do some simple tasks
+ > At the time of recording (Jan. 20, 2019) of the Video, NiFi has 280+ Processors
+ > Each Processors in NiFi is unique in it's own way
+ > Each Processors have their own actions and responsibility as well
+	- ex: GetFile can read a file in a specific directory while PutFile can write a file in a specific directorys
+ > NiFi have processors for almost anything
+
+
+What can a Processor do?
+ > We have tons of Data Source and Data Sink Processors
+ > The Source and Sink can be anything, this includes but not limited to
+	- SQL
+	- NoSQL
+	- Search Engine (ex: Solr, ElasticSearch)
+	- Cache Server (ex: Redis, HBase)
+	- Messaging Queue (ex: Apache Kafka)
+	- AWS Entities
+ > NiFi have processors for all your data needs
+ > NiFi supports custom processors as w ell
+
+
+What is a FlowFile?
+ > FlowFile = Actual Data -> ex: CSV, JSON, XML, Plaintext, SQL, Binary, etc
+ > FlowFile is an ABSTRACTION of data in NiFi
+ > A Processor can generate new Flow File by processing an existing Flow File or ingesting new data from any source
+ 
+ 
+Connection
+ > In NiFi, all processors can be connected with each other to create a data processing flow
+ > Processors are linked via connections
+ > Each connection will act as a QUEUE for FlowFiles
+
+
+Process Group
+ > Process Group is a SET of Processors combined in NiFi
+ > Process Groups helps to maintain large and complex data flow
+ > Input and Output ports are used to move data between Process Groups
+
+
+Controller Service
+ > A Controller Service is a shared service that can be used by a Processor
+ > Controller Service can hold DB connection details
+ > We can create Controller Service for CSV Reader, JSON Writer, and many more
+ > EX:
+	1. A Processor which gets and puts data to a SQL database can have a Controller Service with the required DB Connection details
+
+
+
+
+
+
+
+IX. More on FlowFiles of NiFi
+
+FlowFile
+ > A FlowFile contains data
+ > A FlowFile is composed of two components
+	1. Content
+	2. Attributes (or metadata)
+ > Content:
+	- That's the actual content of the FlowFile
+	- It is the actual content of a file you would read using GetFile, GetHTTP, etc
+ > Attributes:
+	- These are the metadata from the FlowFile
+	- Contains information about the content:
+		a. When it was created
+		b. Name
+		c. Where is it from
+		d. What does it represent
+		
+Construct Using NiFi FlowFiles
+ > A processor can (either or both)
+	- Add, update, or remove attributes of a FlowFile
+	- Change content of a FlowFile
+ > Update the Attributes or Content or both using various processors available in NiFi to design your Dataflow to get the REQUIRED OUTPUT
+ 
+Lifecycle of FlowFile
+ > FlowFiles are persisted in the disk
+	- Whenever a FlowFile is generated by a Processor, the said FlowFile will immediately gets persisted into the disk
+ > FlowFiles are passed-by-reference
+	- only the reference of the FlowFile is passed between the Processors
+ > A new FlowFile will be created if the content of the existing FlowFile is modified or new data is ingested from source
+ > New FlowFile will be not created if the attributes of the existing FlowFile is modified
+
+
+
+
+
+
+
+X. Types of Processors available in NiFi
+
+Overview
+ > In order to create an effective dataflow, the user must understand the various types of Processors available for them to use
+ > NiFi, out of the box, have different types of processors for all your data needs
+ > Processors are capable of the following:
+	- ingest data from numerous data systems
+	- it can route, transform, process, split and aggregate data and distribute data to many systems
+ > At the time of recording this video, NiFi has 280+ Processors
+ 
+Types of Processors
+1. Data Ingestion Processors
+2. D
+
+Data Ingestion Processors
+ > used for ingesting/extracting data from popular data source currently available in market
+ > below are the example of Data Ingestion Processors
+	- GenerateFlowFiles
+	- GetFile
+	- GetFTP
+	- GetSFTP
+	- GetJSMQueue
+	- GetJMSTopic
+	- GetHTTP
+	- ListenHTTP
+	- ListenUDP
+	- GetHDFS
+	- GetKafka
+	- QueryDatabaseTable
+	- GetMongo
+	- GetTwitter
+	- ListHDFS/FetchHDFS
+ 
+Data Transformation Processors
+ > used for tranforming data to various formats according to our requirement
+ > examples are:
+	- ConvertRecord
+	- UpdateRecord
+	- ConvertJSONToSQL
+	- ReplaceText
+	- CompressContent
+	- ConvertCharacterSet
+	- EncryptContent
+	- TransformXml
+	- JoltTransformJSON
+
+Data Egress / Sending Data Processors
+ > used to send processed data to various types of destination systems
+ > examples includes:
+	- PutEmail
+	- PutFile
+	- PutFTP
+	- PutSFTP
+	- PutJMS
+	- PutSQL
+	- PutKafka
+	- PutMongo
+	- PutHDFS
+	
+Routing and Mediation Processors
+ > these processors will help us to conditionally change the way how a FlowFile to be processed
+ > examples include:
+	- ControlRate
+	- DetectDuplicate
+	- DistributeLoad
+	- RouteOnAttribute
+	- RouteOnContent
+	- ScanAttribute
+	- ScanContent
+	- ValidateXml
+	- ValidateCSV
+	
+Database Access Processors
+ > processors that are used to access the database
+ > most commonly used database access processors are
+	- ConvertJSONToSQL
+	- ExecuteSQL
+	- PutSQL
+	- SelectHiveQL
+	- PutHiveQL
+	- ListDatabaseTables
+	
+Attribute Extraction Processors
+ > processed used to extract and manipulate the attributes of a FlowFile from its content or other existing attributes, or both
+ > usually, these processors will provide with right set of attributes which can be used routing and mediation processors
+ > examples include:	
+	- EvaluateJsonPath
+	- EvaluateXPath
+	- EvaluateXQuery
+	- ExtractText
+	- HashAttribute
+	- HashContent
+	- IdentifyMimeType
+	- UpdateAttribute
+	- LogAttribute
+	
+System Interaction Processors
+ > these set of processors in NiFi supports us to run an OS specific command specified by the User and writes the output of that command to a FlowFile
+ > examples
+	- ExecuteProcess
+	- ExecuteStreamCommand
+	
+Splitting and Aggregation Processors
+ > used for splitting or aggregating data according to our requirement
+ > examples	
+	- SplitText
+	- SplitJson
+	- SplitXml
+	- SplitRecord
+	- SplitContent
+	- UnpackContent
+	- SegmentContent
+	- MergeContent
+	- QueryRecord
+	
+HTTP and UDP Processors
+ > NiFi can even ingest data or send data using HTTP and UDP protocol
+ > examples
+	- GetHTTP
+	- ListenHTTP
+	- InvokeHTTP
+	- PostHTTP
+	- HandleHttpRequest
+	- HandleHttpResponse
+	- ListenUDP
+	- PutUDP
+	- ListenUDPRecord
+	
+Amazon Web Services Processors
+ > NiFi comes with rich set of Processors to communicate with our AWS entities as well
+ > examples
+	- FetchS3Object
+	- PutS3Object
+	- PutSNS
+	- GetSQS
+	- PutSQS
+	- DeleteSQS
+	- GetDynamoDB
+	- PutDynamoDB
+	- PutLambda
+
+
+
+
+XI. Processor Config, Connections & Relationship
+
+"Configuration over coding!!!"
+ > main concept when it comes to configuring NiFi
+ 
+Type of NiFi Processor Configurations
+1. Standard Configurations
+	> Configuration common across all processors
+2. Unique Configurations
+	> COnfiguration specific to a processor
+
+Standard Configurations:
+Name
+ > help us give more meaningful name to a processor 
+ > becomes more important as the NiFi data flow becomes more dense
+Scheduling related configuration
+ > we can schedule the execution of a processor either by using Timer driven or CRON driven scheduling strategy, which every fits you the most
+ > by default, "Scheduling strategy" is set to Timer driven with "Run Schedule" of 0 sec, meaning it is running non-stop
+ 
+ 
+Relationship
+ > each Processor has zero or more Relationships defined for it
+ > Relationships are named to indicate the result of processing a FlowFile
+ > After a Processor has finished processing a FlowFile, it will transfer the FlowFile to one of the Relationships
+ > The FlowFile creator needs to handle all the relationship of a processor or terminate unhandle relationship
+	- we only terminate unhandled relationship if we dont have to do anything on it
+	- also NiFi will COMPLAIN if you have UNHANDLED relationship with the processor, which it will not allow the 
+
+
+Demo: Scheduling and Concurrency
+ > for this demo, we will be using the following processors
+	1. GenerateFlowFile
+		- used for generating random or structured flowfile
+	2. LogAttribute
+		- used for logging the attributes of the FlowFile
+	
+Configuring processor:
+1. Add two Processors, one GenerateFlowFile and one LogAttribute Processor
+2. Create connection between the two
+	> from GenerateFlowFile to LogAttribute processor
+3. Configure the relationship of the two processor
+	> by default, GenerateFlowFile will have its "success" relationship handled when we created the connection to the Log attribute
+	> for LogAttribute processor, check the "terminate" under Relationship tab of processor configuration
+	
+Testing the data flow
+1. Run the GenerateFlowFile only
+	> if we do so, we should see the queued FlowFile in the  connection between them to be increased
+	> based on the scheduling of the Processor, the queue will increase by specific interval
+		- in this case, the "Run schedule" is set to 1min, so the queue increases by 1 each minute
+2. Reset the setup
+	> stop the GenerateFlowFile
+	> reset the queue in the connection
+3. Configure the GenerateFlowFile
+	> under Scheduling of Configure Processor, set the "Concurrent Tasks" to 5
+4. Run the GenerateFlowFile again
+	> this type, we should see that the queue is now increased to 5 instead of 1
+	
+
+ 
+NOTES:
+1. The symbols next to the Processor name are:
+	- Yellow Warning sign: There are unhandled relationships, can not start the processor
+	- Red Stop sign: Relationship are handled, the processor is currently not running
+	- Green Start sign: The processor is current running
+
+
+
+
+
+
+
+
+XII. Connection Queue & Back Pressure in NiFi
+ 
+Connection Queue
+ > refers to the queue of the FlowFile in the connection between the Processor
+
+Back Pressure
+ > in NiFi or data flow context, back pressure is the resistance to the desired flow of FlowFile through a connection.
+ > in this case, we can have two threshold to define the back pressure
+	1. Back pressure object threshold
+		- defines how many FlowFile can be in the queue before the connection stop adding more in queue
+	2. Size threshold
+		- defines the total FlowFile size can be in the queue before the connection stop adding more in queue
+
+Accessing/Reading FlowFile
+ > to read a FlowFile in the queue:
+	1. Right click a connection
+		- make sure that there's an item in the queue
+	2. Click List queue
+		- we should see a table where each FlowFile is listed
+	3. Click the info icon at 1st column
+		- we can use this to see the details and attributes of the FlowFile
+	4. In the Details panel, we can see in Content Claim section the buttons to download or view the content of the FlowFile
+		- this will only be available if there is CONTENT in the FlowFile itself
+
+Demo: Accessing/Reading FlowFile
+1. Configure the GenerateFlowFile to have the unique content
+	> Go to processor configuration
+	> Go to Properties panel
+	> Set the File Size to 1B
+	> Set the Unique FlowFiles to true
+	> Apply configuration
+2. Run the GenerateFlowFile processor
+	> stop it when theres an item in the queue
+3. Right click a connection
+	> make sure that there's an item in the queue
+4. Click List queue
+	> we should see a table where each FlowFile is listed
+5. Click the info icon at 1st column
+	> we can use this to see the details and attributes of the FlowFile
+6. In the Details panel, we can see in Content Claim section the buttons to download or view the content of the FlowFile
+
+Demo: Configuring backpressure
+1. Configure the GenerateFlowFile to generate FlowFile every 0 sec to flood the queue
+	> go to processor configuration
+	> go to Scheduling panel
+	> set the Run Schedule to 0 sec
+	> apply configurations
+2. Configure the connection
+	> go to connection configuration
+	> go to Settings panel
+	> change the Back Pressure Object Threshold to 10000
+	> apply configurations
+3. RUn the GenerateFlowFile
+	> we should see that in the queue after some time, only 10000 items are present
+4. Reset the setup
+	> stop the GenerateFlowFile
+	> empty the queue
+	
+Demo: Configuring item size threshold
+1. Configure the GenerateFlowFile to generate 250mb FlowFile every 10 sec
+	> go to processor configuration
+	> go to Scheduling panel
+	> set the Run Schedule to 30 sec
+	> go to properties panel
+	> set File Size to 250MB
+	> apply configurations
+2. Configure the connection
+	> go to connection configuration
+	> go to Settings panel
+	> change the Size Threshold to 1GB
+	> apply configurations
+3. RUn the GenerateFlowFile
+	> we should see that in the queue after some time, only 4 items should be present
+4. Reset the setup
+	> stop the GenerateFlowFile
+	> empty the queue
+
+
+
+
+
+
+XIII. Working with Attributes & Content in NiFi
+
+Overview
+ > in the NiFi, there are multiple processors that we can use when it comes to transforming FlowFile attributes and content
+ > these Processors will have their own set of unique properties and use cases
+ > in this section, we will be using ReplaceText processors to change the Content of the FlowFile, and ExtractText to modify the attributes of the FlowFile
+ 
+Processors used
+1. GenerateFlowFile
+	> This processor creates FlowFiles with random data or custom content. 
+	> GenerateFlowFile is useful for load testing, configuration, and simulation. 
+	> Also see DuplicateFlowFile for additional load testing.
+2. ReplaceText
+	> Updates the content of a FlowFile by searching for some textual value in the FlowFile content (via Regular Expression/regex, or literal value) and replacing the section of the content that matches with some alternate value. 
+	> It can also be used to append or prepend text to the contents of a FlowFile.
+3. ExtractText
+	> Evaluates one or more Regular Expressions against the content of a FlowFile. 
+	> The results of those Regular Expressions are assigned to FlowFile Attributes.
+4. LogAttribute	
+	> Emits attributes of the FlowFile at the specified log level
+
+Demo: Transformation and Extraction of content in FlowFile
+1. Add four processor
+	- GenerateFlowFile
+	- ReplaceText
+	- ExtractText
+	- LogAttribute
+2. Create connections between the processors
+	> GenerateFlowFile -> ReplaceText
+		- success relationship
+	> ReplaceText -> ExtractText
+		- success relationship
+	> ExtractText -> LogAttribute
+		- matched relationship
+3. Auto terminate the remaining unhandled relationship in each processors
+4. Configure the GenerateFlowFile to generate 1 byte FlowFile with random character
+5. Run the GenerateFlowFile
+	> we should see that in each FlowFile, theres one random character
+6. Configure the ReplaceText
+	> go to processor configuration
+	> go to properties tab
+	> set replacement strategy to "Alway Replace"
+		- this will always replaces the content of FlowFile, instead of replacing specific parts of it
+	> set replacement value to "a, b, c, d"
+		- this will be the replacement value
+	> set evaluation mode to "Entire text"
+		- this mean it will evaluate and apply replacement in the Whole text instead of just line by line
+7. Run the ReplaceText
+	> if we check the queue where the output of ReplaceText is located, we should see that instead of single character, it is now REPLACED by "a, b, c, d"
+8. Configure ExtractText
+	> go to processors configuration
+	> go to the properties
+	> add an entry which will be a new Attribute(s) added in the FlowFile
+		- name: csv, value: (.+),(.+),(.+),(.+)
+		- the value is a regex, that will capture not only the whole csv text, but also each of every values in the csv text itself
+9. Run the ExtractText
+	> checking the queue where the output of ExtractText is located, we should see that in the FlowFile attributes, new one are created. with the whole csv text, alongside the individual csv text values as attributes as well
+
+
+
+
+
+
+
+XIV. Working with Expression language in NiFi
+
+SOURCE:
+https://nifi.apache.org/docs/nifi-docs/html/expression-language-guide.html
+
+Overview
+ > using NiFi Expression language, we can use the Attributes present in a FlowFile in the content itself like replacing, modifying, or transforming the content
+ > example expression ${ATTRIBUTENAME}, which is used to "inject" a value of a specific attribute of FlowFile to anywhere you want, like content of FlowFile itself
+ 
+
+
+Demo: Reading and using FlowFile attribute to write content in FlowFile using ReplaceText processor and Expression language
+
+1. Create similar configuration as before
+	> use copy and paste technique, and setup the connections
+2. Copy the ReplaceText processor, and put them in between the ExtractText and LogAttribute processors
+3. Configure the ReplaceText to use the attributes added by the ExtractText and make the content of FlowFile into json format
+	> go to ReplaceText processor configuration
+	> go the properties
+	> edit the "Replacement Value" property into a JSON object string, where each field attribute uses the attributes in FlowFile
+		- we can use expression language here
+4. Test the NiFi data flow
+	> run the flow, and check the content of the queue after the second ReplaceText, and before the LogAttribute processor
+	> the content should be a JSON object string, with the attributes of the FlowFile being the values in the key:value pairs
+	
+	
+"Replacement Value" property value
+{
+	"field1": "${csv.1}",
+	"field2": "${csv.2}",
+	"field3": "${csv.3}",	
+	"field4": "${csv.4}"
+}
+
+
+
+NOTE:
+1. You can copy/paste Processor present in NiFi flow dashboard by using CTRL+C -> CTRL+V
+
+
+
+
+
+
+
+XV. More on Expression language in NiFi
+
+Overview
+ > with Expression language, we are not just limited to the reading of the attributes of FlowFile
+
+Functionalities available in NiFi Expression Language
+1. functions
+2. boolean logic
+3. string manipulation
+4. encode/decode functions
+5. searching 
+6. mathematical operations and numeric manipulation
+7. date manipulation
+8. type coercion
+9. subjectless functions
+10. evaluating multiple attributes
+
+
+Demo: Manipulating Filename attribute of FlowFile by adding date info with specific date format, and changing file extension
+	> here, on top of the NiFi data flow we used before, we will be using two additional processor
+		1. UpdateAttribute
+		2. PutFile
+		
+Steps:
+1. On top of the NiFi data flow earlier, we will be adding two new processor after the last ReplaceText, an UpdateAttribute processor, then a PutFile processors
+2. Configure the UpdateAttribute processor
+	> specifically, we will edit the "filename" attribute
+	> go to UpdateAttribute processor configuration
+	> go to properties tab
+	> click the plus icon to add new attribute
+		- property name:
+		- property value: ${filename}-${now():toNumber():format('dd-MM-yy')}.json
+	> the property value uses the current filename attribute, then appends date information and changes the file extension to .json
+3. Configure the PutFile processor
+	> PutFile processor uses the "filename" attribute present in the FlowFile to determine the filename to be put in its directory property
+	> go to PutFile processor configuration
+	> go to properties
+	> assign a value to "Directory" property, to specify where we want to put the file
+4. Run the Nifi Data flow
+	> at the end, we should see in the output directory of PutFile json files, whose filename contains date information
+	
+
+NOTE:
+1. We can start all the processor in the current NiFi data flow diagram by right clicking the blank portion of diagram and selecting "Start"
+
+
+
+
+
+
+
+XVI. Working with Process Group, Input & Output port
+
+Process Group
+ > process group is a component used to group one or more Processors
+ > similar to Processors, we can connect Process groups with each other
+ > in order for two Process groups to connect, one Process group MUST have at least one Input port inside, and one Process group MUST have at least one Output port inside
+
+Input and Output port
+ > input and Output ports are used to specify where in the Process group should the Process group's input or output will be
+ > note that a Process group can have ONE or MORE Input or Output ports
+ 
+ 
+Demo: Create two ProcessGroup to contain processors for converting CSV to JSON, and writing JSON to a file
+	> here, we will create two ProcessGroups, with names
+		1. CSV to JSON
+		2. Write JSON to File system
+	> we will break down the NiFi data flow earlier, and put the respective processors in their correct ProcessGroup
+	> then we will setup the ProcessGroup Input and Output ports to be able to connect them together
+	
+	
+Steps
+1. Drag and drop two ProcessGroups in the NiFi flow canvas, with names:
+2. Change the names of the ProcessGroups to "CSV to JSON", and "Write JSON to File system"
+3. From the NiFi data flow earlier
+	> destroy the flow by deleting the connection between the 2nd ReplaceText and UpdateAttribute
+	> from GenerateFlowFile to last ReplaceText
+		- select them using box select tool
+		- drag and drop them to the CSV to JSON process group
+		- the process group should have blue outline if we hover to it
+	> from the UpdateAttribute up to the remaining processors
+		- select them and add them in the Write JSON to File system process group
+4. Setup the input and output ports of the ProcessGroups for connection later
+	> since the output of CSV to JSON processgroup will go to the Write JSON to File system processgroup, this means that we need:
+		- an Output port in the CSV to JSON process group and;
+		- an input port in the Write JSON to File system process group
+	> add an Output port in the CSV to JSON process group, and connect it at the END of the flow
+	> add an Input port in the Write JSON to File system process group, and connect it at the START of the flow
+5. Connect the two Process Group
+	> you will be prompted to choose the output port and input port to use in the 'CSV to JSON' and 'Write JSON to File system' process group respectively
+	> but since we only have one of each, it will use them by default
+6. Run the two ProcessGroups
+	> right click the Process Group and click start
+	> this will start the Process Group and all of the Processors inside of it
+	> we should see similar behavior as before, where new JSON files are created in the directory specified in the PutFile processor
+
+
+
+NOTE:
+1. To use box tool for multiple selection of component, we will need to hold the SHIFT key, then select all the component by adding them inside the box
+2. To leave the current ProcessGroup view in the canvas, we can either
+	> use the breadcrumb at the bottom of the canvas to switch views
+	> right click in canvas, and click Leave group
+3. We can only insert a COMPLETE NiFi processor flow inside the ProcessGroups
+	> if we want to insert a portion of NiFi processor flow, we need to cut off the connections first
+
+
+
+
+
+
+
+XVII. Working with Templates in NiFi
+
+Problem Statement
+1. How will you share a data flow with your friend or colleague to help in debugging?
+2. How will you move your data flow from one machine to another machine and continue your flow design from the new machine?
+3. How will you move your completed data flow from a development environment to a testing environment?
+
+
+NiFi templates
+ > Apache NiFi offers the concept of Templates, which makes it easier to reuse and distribute the NiFi flows. 
+ > The flows can be used by other developers or in other NiFi clusters. 
+ > It also helps NiFi developers to share their work in repositories like GitHub.
+ 
+ 
+Demo:
+1. Creating a template
+2. Checking and downloading a template
+3. Importing a template
+4. Adding a template in canvas
+
+Creating a template
+1. Select the component(s) that you want to include in the template
+	> this can be a one or more Processor, one or more ProcessGroup, etc
+2. Right click the selection and select "Create template"
+
+Checking and downloading a Template
+1. Click the hamburger menu at the top right corner
+2. Select "Templates"
+3. Click the template icon next to the trash icon for the specific template entry to download
+
+Importing a template
+1. Download any templates here
+	> https://cwiki.apache.org/confluence/display/nifi/example+dataflow+templates
+2. In the left side of the canvas, there is an "Operate" section. Click the template icon at the right most side
+	> left template icon = create template
+	> right template icon - upload template
+3. In "Upload template" modal, click the search icon and find the xml template file
+4. Click upload
+
+Adding a template in canvas
+1. Drag the template icon at the top of the canvas
+2. Select the template that you want to add in canvas
+
+
+
+
+
+
+XVIII. Working with Funnels in NiFi
+
+Funnel
+ > Funnel component in NiFi is used to COMBINED data from several connections to a single connections
+ > this allows us to "funnel" outputs from several processors to a single point
+ > to create a Funnel, we can drag the funnel icon at the top panel of NiFi
+ 
+Without Funnel
+ > if we want to funnel multiple processor output to a single point, we will need to do the following things:
+	1. create two process groups
+		- one process groups contains all the processors and a single output port. this output port will be used to funnel all the outputs of the processors
+		- one processor will contain an input port
+		- these two processors will then be connected to each other
+ > as we can see, this method is a lot harder than just using a Funnel
+ > also, note that we CAN NOT connect an Input and Output ports unless they are in SEPARATE Process groups
+
+
+
+
+
+
+XIX. Monitoring NiFi
+
+Monitoring NiFi
+ > we can monitor the status of the NiFi by looking at the following sections:
+	1. Canvas-wide information
+	2. Component-level status information
+	
+Canvas-wide informations
+ > located at the status bar at the top of canvas
+ > shows all the information from the components display currently in the Canvas like the amount of components running, etc
+ > these includes (from left to right)
+	1. Active threads
+	2. Total queued data 
+		- number of queue FlowFile
+		- size of the queued FlowFile
+	3. Transmitting Remote Process Group
+	4. Not Transmitting Remote Process Group
+	5. Running components
+	6. Stopped components
+	7. Invalid components due to configuration issues
+	8. Disabled components
+	9. Last refreshed date
+ > it also shows information related to NiFi registry like:
+	1. Up to date Version process group
+	2. Locally modified version process groups
+	3. Stale version process groups
+	4. Locally modified and stale version process groups
+	5. Sync failure versioned process groups
+	
+	
+Component-level status information
+ > each component like Processor and ProcessGroup provide status information
+ > here, it also show THE SAME information as the Canvas-wide information, except the Last refershed date
+ > on top of the Canvas-wide informations, it also provide Component level status information such as
+	1. Amount of queued FlowFile
+	2. Amount of FlowFile that goes IN
+	3. Amount of Read/Write in bytes
+	4. Amount of FlowFile that goes OUT
+ > note that
+
+	
+	
+Status Snapshot configurations
+ > By default, the component level sampling rate is 5mins
+ > The status sampled is stored in the Status Repository
+ > To view statistics of a Component, we can right click -> View status history
+ > to change the snapshot frequency, we can change it in the "nifi.properties" file, with the "nifi.components.status.snapshot.frequency" property
+	
+	
+	
+Bulletin
+ > Bulletin is where all the errors/warnings/logs of each individual components is stored
+ > in the Components, it looks like a sticky note at the top right of the component
+	- by click it, it will show issues/errors produced by the processor in the past 5 mins
+ > we can also configure the log level that will be added in Bulletin for each component by going to its configuration
+	- Processor Configuration -> Settings -> Bulletin Level
+
+
+Bulletin board
+ > similar to Bulletin, but it reads all the logs provided by all of the components in the Canvas
+ > this can be access in the hamburger menu icon at the top right
+	
+	
+Demo: Bulletin
+ > here, we will make a processor go haywire
+ > using GetFile and providing an invalid directory, or directory that we have no permission, will throw an errors
+ 
+Steps:
+0. Create a directory
+	> set the "Read permission" directory to the current User to "Deny"
+1. Add a GetFile
+2. Configure the GetFile's property where the input directory is the directory defined earlier
+3. Run the processor
+	> we should see a red sticky note at the top right which states that we dont have access
+
+
+
+
+
+XX. Overview in NiFi registry
+
+NiFi Registry
+ > NiFi Registry is a complementary project that provides a central location for storing and managing shared resources across one or more NiFi instances
+	- this means that we must download this SEPARETEL
+ > It is a separate sub-project of Apache NiFi
+ > This means we must download it separately and it will follow a different release cycle and version
+ 
+ 
+Why Nifi Registry
+ > Assume you are working in a team, and more than one person is working on a Data flow, then version control of the flow becomes complex
+ > For a very long-time, people used NiFi templates to enable version control and it's such a pain
+ > NiFi template is not created or optimized for doing version control in the first place
+ > We have to manually download the template and commit your changes to any other version control tools like TFS, SVN, or GIT.
+ > Merge is going to be a nightmare
+	- this is because for the entire NiFi data flow, we will only have ONE xml file
+	- this makes it hard to compare the changes in each versions
+ > More complexity is involved when we need to take the latest version of the template from the repository and merge it with your un-committed local version
+ 
+
+How NiFi registry helps with the issue
+ > NiFi registry provides an implementation of a Flow Registry for storing and managing versioned flows
+ > it also allows for integrates seamlessly with multiple NiFi instances by allows to store, retrieve, and upgrade versions of the data flow to the registry
+ 

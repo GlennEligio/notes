@@ -1,0 +1,64 @@
+Section 25 - Networking in Kubernetes
+141. Basics of Networking in Kubernetes
+
+Kubernetes Networking - 101
+ > IP Address is assigned to a Pod, unlike in Docker where it is assigned to Containers
+ > When K8s is intially configured, we create an internal private network with the address 10.244.0.0, and all the Pods are attached to this private network
+	- ex:
+		INTERNAL PRIVATE NETWORK - 10.244.0.0
+		POD1 - 10.244.0.4
+		POD2 - 10.244.0.3
+		POD3 - 10.244.0.2
+		
+		
+Cluster Networking
+ > when the K8s cluster is setup, K8s DOES NOT AUTOMATICALLY SETUP any kind of networking
+ > when creating a K8s cluster with one or more Nodes present, the K8s expects us to setup a networking solution that meets the criteria below
+	1. All containers/PODs can communicate to one another without NAT
+	2. All nodes can communicate with all containers and vice-versa without NAT
+ > thankfully, there are multiple pre-built solution available, which includes:
+	- Cisco AC Networks
+	- Psyllium
+	- Big Cloud Fabric
+	- Flannel
+	- VMware NSX-T
+	- TT
+	- Calico
+ > when setting up Kubernetes cluster from the scratch in our own system, we can use any of the solutions like Calico, or Flannel, etc
+ > if we are deploying on a VMware environment, vmware NSX-T might be a good option
+ > Play with K8s labs website uses Weave Net as their networking solution
+ 
+ 
+Without Cluster Networking setup
+ > with this setup, the NODE1 and NODE2 will have the same private internal ip address
+ > here, there is a chance of ip conflict, wherein a Pod in NODE 1 and NODE 2 will have the same ip address assign which can cause issues
+
+NODE 1											NODE 2
+192.168.1.2										192.168.1.3
+
+10.244.0.0 	----> SAME INTERNAL NETWORK IP <---- 10.244.0.0
+	|												|
+	V												V
+POD												POD
+10.244.0.2										10.244.0.2
+
+
+
+With Cluster Networking setup
+ > with Calico handling the routing between the private internal ip networks of Node 1 and Node 2, we can fulfill the Network requirements of Kubernetes clusters
+
+NODE 1							NODE 2
+192.168.1.2						192.168.1.3
+
+10.244.0.0 	----> ROUTING <---- 10.244.1.0
+	|				|				|
+	V				|				V
+POD					|				POD
+10.244.0.2			|			10.244.1.2
+					|
+					|
+				Handled by
+				Calico
+				
+				
+				

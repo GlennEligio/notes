@@ -1,0 +1,94 @@
+18 RHCSA RHEL 8 - Identify CPU or memory intensive processes and kill processes
+
+
+Resources that applications uses
+1. CPU 
+2. Memory 
+3. Disk usage 
+
+
+Commands
+top
+ > list all the task and processes running
+ > shows general information like
+	- total Task
+	- total Task running
+	- total Task sleeping
+ > shows informations of the tasks like
+	1. PID (Process id)
+	2. User running it
+	3. %CPU and $MEM
+	4. Total time running
+	5. command used
+	6. Priority (PR) 
+		- higher the number, higher the priority
+ 	7. Nice (NI)
+		- how nice the task is with other task
+		- low value means they will prefer to be executed first
+		- high value means they can run alongside others
+	8. VIRT (Virtual Memory)
+ > similar to task manager in Windows
+ > use arrow keys to navigate the list
+
+
+ps [option]
+ > report a snapshot of the current processes
+ > adding "-ef" option will let you see all process on the system
+ > option
+	-e 	list ALL processes in the system
+	-f 	do full-format listing
+	-u	select by real user id
+	-U 	select by effective user id
+	-d 	select all processes except session leaders
+ > ex:
+	$ ps -ef	
+		- list all current processes
+	$ ps -U root -u root
+		- list all current processes that is create by root user and whose file access permission is the root
+	$ ps -ef | grep PROCNAME
+		- list all current processes that matches the PROCNAME passed in grep command
+
+
+kill [options] PID
+ > used to kill a process by the process id
+ > options:
+	-l 	list all the kill signals available
+	-N	sends a kill signal to the application corresponding to the number used
+ > ex:
+	$ kill 757
+	$ kill -l
+	$ kill -1 3416	
+		- sends a SIGHUP, which is for hang up
+	$ kill -9 3416
+		- sends a SIGKILL, which completely kills the machine
+
+
+pidof PROC
+ > list the PID of the process name passed
+ > if no process is present will output nothing
+ > ex: 
+	$ pidof auditd
+
+
+pkill PROCNAME
+ > kill the process that matches the name specified
+ > ex:
+	$ pkill auditd
+
+
+nice [option] [COMMAND [ARG]...]
+ > run a program with modified scheduling priority
+ > options:
+	-n N		Sets the scheduling priority by N
+ > EX:
+	$ nice -n 10 Documents/script.sh
+
+
+renice [-n] priority [-g| -p| -u] identifier
+ > alter priority of running processes
+ > takes a priority number and the PID as process identifier for inputs
+ > ex:
+	$ renice +5 2480
+		- sets the NI value of the process 2480 to 5
+	$ renice -5 2480
+		- sets the NI value of the process 2480 to -5

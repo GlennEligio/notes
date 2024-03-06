@@ -1,0 +1,92 @@
+31 RHCSA RHEL 8 - Create, mount, unmount, and use vfat, ext4, and xfs file systems
+
+PREREQUISITE:
+1. Logical Volume to mount to
+
+
+Mounting a filesystem
+1. Create a Logical Volume first
+	$ lvcreate -L 2G -n lv1 vg1
+2. Create a filesystem of your chosen type
+	$ mkfs.vfat /dev/vg1/lv1
+3. Mount the filesystem to a specific directory
+	$ mount /dev/vg1/lv1 /mnt
+4. Check if its working
+	$ touch /mnt/test.txt
+	$ ls /mnt
+	$ umount /dev/vg1/lv1
+	$ ls /mnt
+5. OPTIONAL: If you want to permanently mount the filesystem, edit the "/etc/fstab"
+	/dev/vg1/lv1	/mnt		vfat		defaults		1 2
+		> with this, when you perform "mount" you dont need to specify the mount directory
+
+
+vfat, ext4, xfs filesystems
+1. ext4 filesystem provides a UUID for us to identify the filesystem
+2. ext4 filesystem contains lost+found file
+3. ext4 is preferred for filesystem with lots of files, each with small filesizes
+5. xfs is preferred for filesystem with files that have large filesizes
+5. vfat is for usb sticks, or memory cards
+
+
+Commands
+mkfs
+ > used to create a file system with specific file system type
+ > sypnosis
+	$ mkfs.fstype DEVICE
+ > takes two inputs
+	fstype	filesystem type (vfat, xfs, ext4)
+ > ex:
+	$ mkfs.vfat /dev/vg1/lv1
+	$ mkfs.xfs
+	$ mkfs.nfs
+	$ mkfs.ext4
+
+mount
+ > mount a filesystem
+ > sypnosis
+	$ mount [-fnrsvw] [-t fstype] [-o options] device dir
+ > ex:
+	$ mount /dev/vg1/lv1 /mnt
+		- mounts the Logical Volume "lv1" to the /mnt directory
+
+
+umount
+ > unmount a filesystem
+ > sypnosis
+	umount DEVICE
+ > EX:
+	$ umount /dev/vg1/lv1
+
+
+fsck
+ > check and repair a Linnux filesystem
+ > sypnosis
+	$  fsck  [-lsAVRTMNP] [-r [fd]] [-C [fd]] [-t fstype] [filesystem...] [--] [fs-specific-options]
+		- filesystem can be a device name (e.g. /dev/hdc1, /dev/sdb2), mount point (/mnt), or an ext2 label or UUID specifier
+ > ex:
+	$ fsck /dev/vg1/lv1
+
+
+dumpe2fs
+ > dump ext2/ext3/ext4 filesystem information
+ > sypnosis
+	$ dumpe2fs DEVICE
+ > EX:
+	$ dumpe2fs /dev/vg1/lv1
+
+
+xfs_repair
+ > repair an XFS filesystem
+ > sypnosis
+	$ xfs_repair DEVICE
+ > ex:
+	$ xfs_repair /dev/vg1/lv1
+
+
+xfs_info
+ > display XFS filesystem geometry information
+ > sypnosis
+	$ xfs_info [-t mtab] [mount-point | block-device | file-image]
+ > ex:
+	$ xfs_info /dev/vg1/lv1

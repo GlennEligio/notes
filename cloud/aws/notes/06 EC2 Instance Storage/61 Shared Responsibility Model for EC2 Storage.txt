@@ -1,0 +1,17 @@
+61 Shared Responsibility Model for EC2 Storage
+
+Shared Responsibility Model for EC2 Storage
+AWS Responsibilities
+ > Infrastructure
+ > Replication for data for EBS Volumes & EFS drives
+ > Replacing faulty hardware used for EBS Volume and EFS drives
+ > Ensuring their employees cannot access your data
+
+
+Customer's Responsibilities
+ > Setting up backup / snapshot procedures
+ > Setting up data encryption
+	- either other Users of application or AWS employee will not have access to data
+ > Responsibility of any data on the drives
+ > Understanding the risk of using EC2 Instance Store
+	- you can lose the drive if somehow theres a fault hardware

@@ -1,0 +1,79 @@
+09. Playing with Docker Container
+
+Docker Container related commands
+
+docker container ls
+	> used to list all Containers
+	> command flags include
+		-a
+			-> list ALL Containers, included those that are EXITED
+
+docker container run <REPOSITORY>:<TAG>
+	> used to run a Container based on the Docker Image provided
+	> if no Tag provided, will default to 'latest'
+	> command flags include:
+		-p {HostPort}:{ContainerPort}
+			-> maps a port of Host to another port in Container
+		-d
+			-> runs the Container in dettached mode
+			-> App's lifecycle inside is not attached to Container's lifecycle
+		--restart=<string>
+			-> defines the restart policy (behavior when Docker Engine restart)
+			-> can be either 'no' (default) or 'always' (automatically )
+			-> ex: --restart=always
+		-m <int><size>
+			-> defines the memory allocation limit for the Container
+			-> sizes include m (mb), G (Gb), k (kb)
+			-> ex: -m 512m
+		--cpu-quota <int>
+			-> defines the cpu quota of the Container
+			-> int can be from 0-100000
+				-> 0 being 0%, 100000 being 100%
+			-> ex: --cpu-quota 5000
+
+
+docker container logs <ContainerID>
+	> used to show the logs written inside Container
+	> command flags include
+		-f
+			-> used to 'follow' the logs / make the logs live
+
+
+docker container pause <ContainerID>
+	> used to pause the Container in its current State
+	> will not close or stop the application running inside
+
+docker container unpause <ContainerID>
+	> used to unpause the Container and resume its current State
+
+
+docker container inspect <ContainerID>
+	> used to inspect the properties of a Container
+	> following infos can be seen inside like:
+		- ID
+		- Date created
+		- Path
+		- Arguments
+		- State
+		- Network information
+		- PortBindinds
+		- Volumes
+		- Docker Image
+
+
+docker container prune
+	> used to remove all STOPPED container
+	> running containers will stay
+
+
+docker container stop <ContainerID>
+	> used to GRACEFULLY stop a Container 
+	> by gracefully, it means that the Applications inside will be given TEN SECOND to shutdown, then the Container will stop
+	> in technical terms, a SIGTERM signal will be sent to the Container to gracefully shutdown
+
+
+docker container kill <ContainerID>
+	> used to IMMEDIEATLY stop a Container
+	> compare to 'stop', the Applications will be given time to shutdown first
+	> in technical terms, a SIGKILL signal will be sent to Container to immediately terminates the process
+

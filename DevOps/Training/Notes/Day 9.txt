@@ -1,0 +1,982 @@
+Day 9
+
+Creating Pod based on a Docker Image
+1. Create a "pod1" Pod based on a a nginx Docker Image
+	kubectl run pod1 --image nginx
+2. Check the status of pods
+	kubectl get pods
+3. Delete the "pod1" pod
+	kubectl delete pod pod1
+4. Check status of pods again
+	kubectl get pods
+
+Creating Pod based on a Manifest file (yaml file)
+5. Create pod folder and go inside it
+	mkdir pod
+	cd pod/
+6. Create nginx.yaml file and inside the file, copy the following
+
+#nginx.yaml manifest file
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1
+  labels:
+    name: nginx-app
+spec:
+  containers:
+  - name: c1
+    image: nginx  
+  - name: c2
+    image: tomcat
+
+Format of Manifest file for kubernetes pods
+	> indentation is IMPORTANT
+	> case sensitive
+
+1. apiVersion
+	> refers to the apiVersion of the k8s node
+2. kind
+	> refers to the kind of k8s node (service, pods, statefulset, etc)
+3. metadata
+	> contains data of the k8s object to be created
+	> these includes
+		a. name:	
+			- refers to the name of k8s node
+		b. labels:
+			- refers to the label of the k8s node
+			- similar to labels in Docker Swarm's node
+			- we can define key value pair inside it as well
+4. spec
+	> refers to the specification of the k8s node to be created
+	> can containe the following 
+		a. containers:
+			- refers to the containers to be created inside the k8s node (or pod in this case)
+			- in this containers:, we can define two things
+				name:
+					- refers to the name of Docker container
+				image:
+					- refers to the Docker Image to be used in the Docker Container
+  
+
+6. Create k8s pod using the nginx.yaml
+	kubectl create -f nginx.yaml    
+7. Check status of the pods
+	> compared to before, the "Ready" column should be 2/2 since we have two containers instead of 1 
+	kubectl get pods
+8. Get more information on pods' status
+	> here, we can more information like ip address, nominated node, readiness gates, etc
+	kubectl get pods -o wide
+9. Get FULL information on a specific pod "pod1"
+	> includes informations like Containers, Events, Conditions, etc
+	kubectl describe pod pod1
+10. Show all properties assign by the system to a specific pod "pod1" in YAML FORMAT
+	kubectl get pods pod1 -o yaml
+11. Show all properties assign by the system to a specific pod "pod1" in JSON FORMAT
+	kubectl get pods pod1 -o json
+12. Show logs of the Containers inside a specific pod "pod1"
+	kubectl logs pod1 c1
+	kubectl logs pod2 c2
+13. Enter terminal of "c1" container of "pod1" Pod
+	kubectl exec -it pod1 -c c1 -- bash
+14. Exit terminal of "c1" container
+	exit
+15. Send request to a specific Container in a Pod
+	> Port number refers to Pod's Port that is mapped to a specific Container's Port
+	> Check Pod's ip using command in number 8.
+	> In our case, Pod ip is 192.168.104.4 and port of Container is 80
+	curl <<PodIP>>:Portnumber
+	curl 192.168.104.4:80
+16. Edit nginx.yaml file (change label)
+	kubectl edit pod pod1
+17. Apply changes we done on edit command
+	kubectl apply -f nginx.yaml    
+18. Delete pods based on the Manifest file (this will delete the pod1)
+	kubectl delete -f nginx.yaml
+19. Another way of deleting pod using pod name
+	kubectl delete pod pod1
+20. Delete all pods
+	kubectl delete pod --all
+
+
+Create new Pod
+21. Remove the nginx.yaml
+	rm nginx.yaml
+22. Create new Manifest file
+	vi nginx-pod.yaml
+23. Copy this texts inside
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+
+  name: nginx-pod
+
+  labels:
+
+    app: nginx
+
+    tier: dev
+
+spec:
+
+  containers:
+
+  - name: nginx-container
+
+    image: nginx
+
+24. Create the pod using nginx-pod.yaml
+	kubectl create -f nginx-pod.yaml
+25. Check pod status
+	> execute the command with "-o wide" and take note of IP ADDRESS
+	kubectl get pod
+	kubectl get pod -o wide
+	kubectl get pod nginx-pod -o yaml
+	kubectl describe pod nginx-pod
+
+
+Add test.html page inside nginx container
+26. Go inside nginx-pod Container
+	kubectl exec -it nginx-pod -- /bin/sh
+27. Add contents inside test.html using cat command
+	cat <<EOF > /usr/share/nginx/html/test.html
+28. Copy this body of text
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Testing..</title>
+
+</head>
+
+<body>
+
+<h1 style="color:rgb(90,70,250);">Hello, DevopsWorld...!</h1>
+
+<h2>Congratulations, you passed :-) </h2>
+
+</body>
+
+</html>
+
+29. Send EOF to signify end of file
+	EOF
+30. Exit nginx-container terminal
+	exit
+
+
+Accessing test.html inside nginx-container
+31. Expose port 80 of nginx-pod
+	kubectl expose pod nginx-pod --type=NodePort --port=80
+32. Check the svc information of nginx-pod
+	> copy the Endpoints properties
+	kubectl describe svc nginx-pod
+33. Check status of Services available
+	kubectl get svc
+34. Access test.html
+	> use curl command and the Endpoint we copied earlier, then attach "/test.html" at the end
+	curl http://192.168.104.5:80/test.html
+
+
+
+Assignment
+1. Create a Pod called nginx-pod1 with image nginx (it runs on Port 80)
+	kubectl run nginx-pod1 --image nginx
+2. Create another Pod called tomcat-pod1 with image tomcat (it runs on Port 8080)
+	kubectl run tomcat-pod1 --image tomcat
+3. Access these pods on worker nodes (use curl command ). Are you able to Access ? If not then checkout the reason.
+	> check ip of pods using "kubectl get pods -o wide"
+	curl nginx-pod1-ip:80		curl 192.168.104.6:80
+	curl tomcat-pod1-ip:8080	curl 192.168.104.7:8080
+4. Go inside tomcat pod ( use kubectl exec ....command) and try to access nginx service Pod by using nginx-pod1 IP address and pod name. Are you able to access the nginx website ? if no then figure out the reason.
+	kubectl exec -it tomcat-pod1 -- /bin/sh
+	curl 192.168.104.6:80
+5. Go inside nginx pod (use kubectl exec ....command) and try to access tomcat service with IP address and pod name ot tomcat-pod1. Are you able to access the nginx website? if no then figure out the reason.
+	kubectl exec -it nginx-pod1 -- /bin/sh
+	curl 192.168.104.7:8080
+6. Change docker image of nginx-pod1 from nginx to tomcat. Is it possible for running a pod?
+	> change image: property from nginx to tomcat	
+	kubectl edit pod nginx-pod1
+7. 
+
+
+
+ASSIGNING A POD OF SPECIFIC NODE based on Name
+	> KEY NOTE: Specify the nodeName: property of spec: to the name of node you want this pod to run
+
+1. pod.yaml file
+	vi pod.yaml
+2. inside the pod.yaml
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+
+  name: podonkwn1
+
+spec:
+
+   containers:
+
+   - name: nginx-container
+
+     image: nginx
+
+   nodeName: kwn1
+
+
+3. Run the pods using yaml file
+	kubectl create -f pod.yaml
+
+4. Delete the pod
+	kubectl delete pod --all
+
+
+
+
+
+ASSIGNING A POD OF SPECIFIC NODE based on Node Labels
+	> Key note: Specifying the nodeSelector: property with key value pairs will determine which node this pod will run
+	> Only Nodes with labels specified in nodeSelector: will be selected
+
+Node Labels
+	> labels added in the k8s nodes
+	> we can use these labels in node selector to specify the node where a pod is running
+
+1. Show all current node labels defined
+	kubectl get nodes --show-labels
+2. Show all current nodes ready in k8s cluster
+	> node2 and node3 refers to the Ubuntu server 2 3
+2. Show node labels in node "node2"
+	kubectl get nodes --show-labels node2
+3. Add a node label in node "node3"
+	kubectl label nodes node3 env=stage
+5. Edit the Node "node3", then remove the env=stage label we added
+	kubectl edit node node3
+
+
+
+
+NODESELECTOR
+	> key note: only k8s node with label "env=prod" will run this pod
+
+1. Create noteselector.yaml
+	vi nodeselector.yaml
+2. Copy the text inside 
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+
+ name: podnodeselector
+
+spec:
+
+  containers:
+
+   - name: container1
+
+     image: nginx
+
+  nodeSelector:
+
+     env: prod
+
+
+3. Add label in node2 "env=prod"
+	kubectl label nodes node2 env=prod
+4. Create pod using the nodeselector.yaml file
+	kubectl create pod -f nodeselector.yaml
+5. Check the pod status
+	> we should see that pod only got created in node2, since its the only pod with env=prod label
+	kubectl get pods -o wide
+	
+
+
+NOT ASSIGNING A POD OF SPECIFIC NODE based on Taint
+
+Taint
+	> opposite of Node Affinity
+		- in Node Affinity, Pod chooses the Node
+		- in Taint, Node chooses or repels Pods
+	> added in a Node to specify the Pods to be run
+	> Master Node is a tainted node (means no Pods will run inside it)
+
+kubectl describle node node1
+	> used to get full information of Nodes
+	> since node1 is a Master node, there should be a value in the Taint property	
+	> if we check node2, there should be no value in Taint property
+		- this means it can run any pods
+
+kubectl taint nodes <nodeName> <key value pair:effect>
+	> used to add a taint in a specific k8s node
+
+TAINT DEMONSTRATION
+1. Add a taint in the node2
+	kubectl taint nodes node2 app=web:NoSchedule
+2. Create a Manifest yaml file for a Pod (taint.yaml)
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+
+  name: myapp-pod
+
+spec:
+
+  containers:
+
+  - name: nginx-container
+
+    image: nginx
+
+  tolerations:
+
+  - key: app
+
+    operator: "Equal"
+
+    value: "web"
+
+    effect: "NoSchedule"
+
+
+3. Create a pod using the taint.yaml file
+	kubectl create -f taint.yaml file
+
+4. Check the pods status
+	> we should see that pod created by taint.yaml file (myapp-pod) will only be run inside node2
+	> reason is that only node2 have the app:web:NoSchedule taint
+
+	kubectl get pods -o wide
+
+5. Run some random pod
+	kubectl run pod1 --image nginx
+
+6. Check the pods status
+	> we should see that pod1 will only run in node3 since 
+
+
+
+CONFIGURATION MAP
+	> A ConfigMap is an API object used to store non-confidential data in key-value pairs
+	> Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.
+	> stores informations like
+		1. Nonsensitive data
+			- for sensitive data (password, api keys), use Secrets
+		2. Text files
+	> config map should be less than 1mb	
+	> to fetch a data inside configmap, use the syntax
+		filename:key
+
+Create configmap file
+1. Create a cm folder and go inside
+	mkdir cm
+	cd cm
+2. Create an application.properties file with content
+	echo  'connectionstring=staging' > application.properties
+3. Check content of application.properties
+	cat application.properties
+4. Create a config map using the application.properties whose name is "nginx-configmap-vol"
+	kubectl create configmap nginx-configmap-vol --from-file=application.properties
+5. Check list of configmaps
+	kubectl get cm
+6. Check full information of "nginx-configmap-vol" configmap
+	kubectl describe cm nginx-configmap-vol
+
+Using the configmap data
+1. Create a pod using pod.yaml
+	vi pod.yaml
+2. Inside pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-configmap-vol
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    volumeMounts:
+    - name: test-vol
+      mountPath: "/etc/non-sensitive-data"
+      readOnly: true
+  volumes:
+    - name: test-vol
+      configMap:
+        name: nginx-configmap-vol
+
+DESCRIPTIONS:
+1. volumes:
+	> similar to Docker volumes
+
+
+3. Create the pod using pod.yaml
+	kubectl create -f pod.yaml
+
+4. Enter the "nginx-pod-configmap-vol" pod terminal
+	kubectl exec -it nginx-pod-configmap-vol -- bash
+
+5. Check contents of the "/etc/non-sensitive-data" directory
+	> we should see the application.properties file
+	
+	ls /etc/non-sensitive-data
+
+6. Check content of application.properties
+	cat /etc/non-sensitive-data/application.properties
+
+
+
+
+SECRETS
+	> used to store sensitive informations
+	> Base64 algorithm is used to encode the data
+	> when consumed by a Pod, secret will be decoded
+
+0. Delete all previous pods
+	kubectl delete pods --all
+1. Create files for secret data
+	cd  /home/ubuntu
+	mkdir secret
+	cd secret/
+2. Create two files for username and password
+	echo -n 'admin' > username.txt
+	echo -n 'pa$$w00rd' > password.txt
+3. Check content of username.txt and password.txt
+	cat username.txt
+	cat password.txt
+4. Generate a k8s secret using these two files
+	kubectl create secret generic nginx-secret-vol --from-file=username.txt --from-file=password.txt
+5. Check the secrets in k8s
+	kubectl get secret
+6. Get full information of the secret we made earlier
+	kubectl describe secret nginx-secret-vol
+7. See full information of secret in yaml format
+	kubectl get secret nginx-secret-vol -o yaml
+8. Remove the username.txt
+	rm username.txt
+9. Check the secrets again
+	> we should see that the secrets are UNAFFECTED by this action using kubectl get secrets
+	kubectl get secret
+10. Create the Manifest file for pod that will consume the k8s secret
+	vi pod.yaml
+11. Paste this text
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-secret-vol
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    volumeMounts:
+    - name: test-vol
+      mountPath: "/etc/confidential"
+      readOnly: true
+  volumes:
+  - name: test-vol
+    secret:
+      secretName: nginx-secret-vol
+
+12. Create the pod using pod.yaml
+	kubectl create -f pod.yaml
+
+13. Check status of pod and the full information of nginx-pod-configmap-vol
+	kubectl get pods
+	kubectl describe pod nginx-pod-secret-vol
+
+14. Check the secrets files inside the pod
+	kubectl exec -it nginx-pod-secret-vol -- bash
+
+15. Inside the pod, check contents of /etc/confidential directory
+	ls /etc/confidential
+
+16. Check contents of the files inside
+	> we should see the DECODED secret values
+	cat /etc/confidential/username.txt
+	cat /etc/confidential/password.txt	
+
+
+
+K8S REPLICATION CONTROLLER
+	> uses a Template
+	> Template contains Pod definitions
+		- Pod definitions include Desired State of Pods like
+			1. number of replica of a specific pod
+	> Label selector
+		- used by Pod Template to define which Pod to watch/monitor
+	> we can define the Replication Controller and Template under spec: of a Manifest file
+
+EX:
+spec:
+ replicas:
+ templates:
+   metadata:
+
+
+REPLICATION CONTROLLER DEMONSTRATION
+Create Pods
+1. Create rc folder
+	mkdir rc
+	cd rc
+2. Create Manifest file for Pod to create
+	vi rc.yaml
+3. Copy inside rc.yaml
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx-rc
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+  selector:
+    app: nginx-app
+
+4. Create the Pods using the rc.yaml
+	kubectl create -f rc.yaml
+
+5. Check the pods status
+	> we should see three pods created with name "nginx-rc" with some random string at the end
+	kubectl get pods
+
+Watch the replications process
+6. Create new session of same server (Ubuntu 1)
+7. Watch events in k8s pods live
+	kubectl get pods --watch
+8. Go back to previous session
+9. Check the current pods
+	kubectl get pods
+10. Delete a pod
+	kubectl delete pods nginx-rc-g78s8
+11. Go back to other session and watch
+
+Fetch pods using label of Template
+12. Use "-l" flag to search pods using labels
+	kubectl get po -l app=nginx-app
+
+Using replication controller (rc), Scale the Pods of "nginx-rc" pods using "--replicas" flag 
+13. Scale up the "nginx-rc" by 5
+	kubectl scale rc nginx-rc --replicas=5
+14. Scale down the "nginx-rc" by 3
+	kubectl scale rc nginx-rc --replicas=3
+15. Check status of Replication Controllers
+	kubectl get rc
+
+
+Delete a specific pod using Replication Controller
+16. Delete all pods created by a specific Manifest file
+	kubectl delete -f rc.yaml
+17. Fetch all replication controller available
+	kubectl get rc
+
+
+
+
+Replica Set
+	> A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. 
+	> As such, it is often used to guarantee the availability of a specified number of identical Pods.
+	> ReplicaSet uses Set based operators (in, notin, exists)
+		- compared to ReplicationController where it uses Equality based operator (=,==,!=)
+	> ReplicaSet is defined in the selector: section of spec:
+
+selector:
+	
+
+STEPS
+1. Create rs folder and go inside it
+	mkdir rs
+	cd rs
+2. Create Manifest file for Pods we will create
+	vi rs.yaml
+3. Inside rs.yaml
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-app
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+  selector:
+    matchLabels:
+      app: nginx-app
+    matchExpressions:
+      - {key: tier, operator: In, values: [frontend]}
+
+3. Create the Pods using the rs.yaml
+	kubectl create -f rs.yaml
+
+4. Using Replication Controller operators, get status of the pods created by rs.yaml
+	kubectl get pods -l app=nginx-app
+
+5. Using Replica Set operator, get status of the pods create by rs.yaml
+	kubectl get po -l 'tier in (frontend)'
+
+6. Check the k8s replicasets
+	kubectl get rs
+
+7. Remove the Replica Set, this should also remove the Pods in this
+	kubectl delete rs --all
+
+8. Check the pods again
+	> nothings should be left except the pod1
+	kubectl get pods
+
+9. Delete the "pod1" pod
+	kubectl delete pod pod1
+
+
+
+DEPLOYMENT 
+	> a kind of K8s node
+		- kind: Deployment
+	> Deployment is using Replica Set for replication 
+	> use cases include 
+		1. for Rolling Update (eg v1 -> v2)
+		2. for Rollback update 
+		3. check for status of implementation
+	> in Deployment, we can define the Rolling Update strategy, which includes
+		1. Amount of Pods to be downed for Rolling updates
+	> Blue / Green process
+		- blue process is where Client access an old version
+		- green process is where Client access a new version
+	> 0 downtime
+		- with Deployment, we can have a zero downtime system
+		- how it is achieve with Rolling update strategy
+		- if in Rolling update strategy, we define the unavaiable pod by one, the Rolling update will be done to each pod ONE BY ONE
+		- with this, Client can still access other Pods with older version which other Pods are being updated
+	>
+
+
+CREATE K8S DEPLOYMENT
+1. Create and go inside deploy directory
+	cd /home/ubuntu
+	mkdir deploy
+	cd deploy
+2. Create Manifest file for Deployment Node
+	vi deploy.yaml
+3. Inside deploy.yaml, paste this text
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  labels:
+    app: nginx-app
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+  selector:
+    matchLabels:
+      app: nginx-app
+
+4. Create the Pods using deploy.yaml
+	kubectl create -f deploy.yaml
+
+5. Check all the information in k8s cluster
+	> this command shows informations like pods, deployments, services, replicasets, etc
+	kubectl get all
+
+6. Check each information for each time of k8s nodes
+	kubectl get deploy -l app=nginx-app
+	kubectl get rs -l app=nginx-app
+	kubectl get po -l app=nginx-app
+
+7. Check full information of the Deployment we created
+	kubectl describe deploy nginx-deploy
+
+DEPLOYMENT PROPERTY
+Annotations:
+	> shows how many revisions we made in the deployment
+RollingUpdateStrategy:
+	> defines the max % of pods to be unavailable and surged
+		- these unavailabe will then be updated with rate based on the surged value
+		- ex: if we have 10 pods, and we have 20% unavailable and 10% surge
+			= 2 pods will be unavailable and these unavailable pods will be updated 1 pod at a time
+
+
+
+
+TESTING: ROLLBACK UPDATE
+8. Set image of the "nginx-deploy"'s "nginx-container" Containers to nginx:1.91 (invalid image version)
+	> "--record" flag is used to write the command executed in the resource annotation kubernetes.io/change-cause (revision is counted)
+	> we can see this revisions in rollout history command
+
+	kubectl set image deploy nginx-deploy nginx-container=nginx:1.91 --record
+
+9. Check status of rollout
+	> should be waiting, since we used wrong nginx image version
+
+	kubectl rollout status deployment/nginx-deploy
+
+10. Check rollout revision history of "nginx-deploy" deployment
+	kubectl rollout history deployment/nginx-deploy
+
+11. Undo the rollout of wrong nginx image
+	kubectl rollout undo deployment/nginx-deploy
+
+12. Check status of rollout 
+	kubectl rollout status deployment/nginx-deploy
+
+13. Get full information of "nginx-deploy" deployment and filter it by "image"
+	kubectl describe deploy nginx-deploy | grep -i image
+
+
+Testing: Update Version of "nginx:1.7.9" to "nginx:1.9.1"
+kubectl set image deploy nginx-deploy nginx-container=nginx:1.9.1
+kubectl edit deploy nginx-deploy
+kubectl rollout status deployment/nginx-deploy
+kubectl get deploy
+
+Scale Up and down a deployment
+kubectl scale deployment nginx-deploy --replicas=5
+kubectl get deploy
+kubectl get po -o wide
+
+kubectl scale deployment nginx-deploy --replicas=3
+kubectl get deploy
+kubectl get po -o wide
+
+
+Clean up
+kubectl delete -f nginx-deploy.yaml
+kubectl get deploy
+kubectl get rs
+kubectl get po
+
+
+
+DAEMON SET
+	>  A DaemonSet ensures that all (or some) Nodes run a copy of a Pod. 
+	> As nodes are added to the cluster, Pods are added to them. 
+	> As nodes are removed from the cluster, those Pods are garbage collected. 
+	> Deleting a DaemonSet will clean up the Pods it created.
+
+
+NAMESPACE
+	> used to create separate environment (cluster, resources)
+
+Creating a Namespace
+1. Check current namespaces in k8s
+	kubectl get ns
+2. Create our own namespace
+	kubectl create ns <name>
+	kubectl create ns dev
+3. Create a Pod under a specific namespace
+	kubectl run pod1 --image=nginx --namespace=dev
+4. Check Pods under a specific namespace
+	kubectl get pods -n <namespace>
+	kubectl get pods -n dev
+
+Defining Namespace of Pods in Manifest file
+	> inside metadata:, define the namespace:
+	> pass the name of namespace to the namespace:
+EX:
+metadata:
+  namespace: dev
+
+5. Create a Manifest file for creating Pod under a namespace
+	vi pod.yaml
+6. Copy the contents inside
+apiVersion: v1
+kind: Pod
+metadata:
+   name: pod2
+   namespace: dev
+spec:
+   containers:
+   - name: c1
+     image: nginx
+
+7. Create the Pod using pod.yaml Manifest file
+	kubectl create -f pod.yaml
+8. Check the pods under "dev" namespace
+	kubectl get pods -n dev
+9. Delete the namespace "dev"
+	kubectl delete ns dev
+10. Check the pods again
+	kubectl get pods
+11. Check the pods under "dev" namespace
+	kubectl get pods -n dev
+12. Check the namespace list existing in k8s
+	kubectl get ns
+
+
+
+CREATING DASHBOARD UI 
+0. Go back to home folder
+	cd /home/ubuntu
+1. Run this yaml file
+	kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.1/aio/deploy/recommended.yaml
+2. Get the Service "kubernetes-dashboard" under "kubernets-dashboard" namespace
+	> we will see a Service
+	kubectl get svc kubernetes-dashboard -n kubernetes-dashboard
+3. Edit this service
+	> change type: from ClusterIp to NodePort
+	> with ClusterIp, we can only access this Node internally
+	> with NodePort, we can now access this Node externally
+	kubectl edit svc kubernetes-dashboard -n kubernetes-dashboard
+4. Check Ip address where the pods created by Manifest file earlier is running
+	> check which node kubernetes-dashboard is running
+	kubectl get pods -n kubernetes-dashboard -o wide
+5. Check which tcp port kubernetes-dashboard is running
+	> take note of the second number in the PORT(S) column
+	kubectl get svc kubernetes-dashboard -n kubernetes-dashboard
+6. Access the Dashboard UI
+	> public ip of node where kubernetes dashboard is running + port where kubernetes dashboard is running + "/#/login"
+	13.235.61.221:30900/#/login
+
+
+CREATE SERVICE ACCOUNT
+7. Create a serviceaccount "cluster-admin-dashboard-sa"
+	kubectl create serviceaccount cluster-admin-dashboard-sa
+8. Bind ClusterAdmin role to the service account
+	kubectl create clusterrolebinding cluster-admin-dashboard-sa --clusterrole=cluster-admin --serviceaccount=default:cluster-admin-dashboard-sa
+9. Parse the token created
+	TOKEN=$(kubectl describe secret $(kubectl -n kube-system get secret | awk '/^cluster-admin-dashboard-sa-  token-/{print $1}') | awk '$1=="token:"{print $2}')
+10. Print out the TOKEN file
+	echo $TOKEN
+
+
+ACCESS DASHBOARD UI
+11. Go to Dashboard UI
+
+12. Paste the Token we print out earlier
+	> you should be in the dashboard overview after passing the token
+
+
+
+CREATING PODS IN DASHBOARD
+13. Got the Pods at left section
+14. Press the plus icon at top	
+	> here, we can create Pods either by
+		a. writing the manifest file in the dashboard	
+		b. uploading a yaml file
+		c. using the k8s template form to fill up information about pod
+15. Copy this text inside the option 1
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod2
+spec:
+  containers:
+  - name: c1
+    image: nginx
+
+16. Check the status of Pod in Pods section
+
+17. Delete the Pod weve just created
+
+
+CREATING DEPLOYMENT
+18. Create Pods using the third option
+	name: pod-deploy
+	image: nginx	
+	service: none
+19. Go to Overview section at left
+	> we should see Deployment, Pods, Services created together
+20. Scale Deployment
+	> press three dots at the right of Deployment
+	> choose scale
+		- set to 5
+21. Check the Overview
+	> there should be 5 Pods now
+22. Delete the Deployment
+	> this will delete the Services and Pods altogether as well
+	
+
+
+HORIZONTAL POD AUTOSCALER
+	> The Horizontal Pod Autoscaler automatically scales the number of Pods in a replication controller, deployment, replica set or stateful set based on observed CPU utilization (or, with custom metrics support, on some other application-provided metrics). 	> Note that Horizontal Pod Autoscaling does not apply to objects that can't be scaled, for example, DaemonSets.
+
+
+Create the Pods for HPA demonstration
+1. Go to /home/ubuntu
+	cd /home/ubuntu
+2. Create hpa directory and go inside
+	mkdir hpa
+	cd hpa
+3. Create Manifest file for Pod
+	vi deploy.yaml
+4. Paste the text inside
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  labels:
+    app: nginx-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+             cpu: 50m
+          requests:
+             cpu: 50m
+  selector:
+    matchLabels:
+      app: nginx-app
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  labels:
+    app: nginx-app
+spec:
+  selector:
+    app: nginx-app
+  type: NodePort
+  ports:
+  - nodePort: 31111
+    port: 80
+    targetPort: 80

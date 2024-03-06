@@ -1,0 +1,135 @@
+02 Installing and Exploring Node.js
+
+Content
+4. Installing Node.js and VS Code
+5. What is Node.js
+6. Why Should I Use Node.js
+7. Your First Node.js script
+
+
+
+
+4. Installing Node.js and VS Code
+
+Requirement:
+1. NodeJS
+2. Text Editor
+
+Node.js download link
+ > https://nodejs.org/en/download/
+ > prefer using latest version 
+ > after installing the NodeJS, we will get a new command to use in command prompt, "node"
+
+Checking Nodejs version
+ > use the command "node -v"
+
+
+
+
+
+
+
+
+
+5. What is Node.js
+
+NodeJS
+ > "NodeJS is a JavaScript runtime built on Chrome's V8 JavaScript engine"
+	- JS engine COMPILES JS code into machine language that computers can use to execute
+	- V8 is written in C++
+	- Runtimes provide variation tools that node dev needs, 
+		1. libraries for setting up webservers
+		2. integrating with the file system so you can read and write from disk
+ > "NodeJS is JavaScript for servers"
+ > modified JS for running JS as standalone application, outside the browsers
+ > with NodeJS, JS devs can use JS on the server side
+	- with this, JS devs can create webservers, cli commands
+
+
+V8 JavaScript engine
+ > responsible for converting JS code into C++ function that is executed behind the scene
+ 	- behind the scene, Chrome and NodeJS libraries have specific C++ function bindings where that C++ function execute and do something
+ 	- with Chrome, it is used to communicate and modify the DOM
+ 	- for nodeJS, it is used for file systems so you can do read/write in the disk
+ > after executing the C++ function, it will return the result to the runtime (i.e. NodeJS)
+
+"cls"
+ > clear cli in command prompt
+
+node
+ > command added when we installed NODEJS
+ > if we pass this command, the command prompt will enter REPL or Read Evaluate Print Loop state
+	- it will wait and accept nodejs command, execute, then loop through the process again
+ > in REPL, we can write JS commands/expressions
+	- ex: 2+3, 'Andrew'.toUpperCase()
+
+Functions/Variables inside node
+global
+ > shows global functions like setTimeout/clearTimeout, setInterval/clearInterval
+
+process
+ > gives us various properties and methods for manipulating the node process that's running
+ > includes function like
+	1. exit
+		- function
+		- exits current node process
+		- passing no arguments will exit you to REPL
+
+
+
+
+
+
+
+
+
+
+
+
+6. Why Should I Use Node.js
+
+Why Node.js?
+1. Non-blocking I/O
+	> I/O stands for Input/Output
+ 	> Node.js doesnt block the I/O, means that while waiting for a process to finish, it can do other things as well	
+ 	> started with browser, where non-blocking I/O is important for better user interface
+	> typically seen in asynchronous processes like fetching data from remote location
+2. Event driven
+3. Have the largest ecosystem of open source libraries in the world
+	> talks about the Node.js' package ecosystem, the "npm"
+
+node commands:
+
+node <filename>
+ > used to execute a specific file, .js
+
+
+
+
+
+
+
+
+
+
+7. Your First Node.js script
+
+// hello.js
+console.log()
+
+NOTE:
+1. console object DOES NOT EXIST in normal JS
+	> this only exist in the Node.js runtime library
+2. Documentation for Node.js runtime can be seen in this website
+	> https://nodejs.org/dist/latest-v16.x/docs/api/
+
+
+COMMANDS:
+node <filename>
+ > used to execute a specific file, .js
+
+
+
+
+
+

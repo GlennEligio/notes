@@ -1,0 +1,20 @@
+159 - Amazon MQ
+
+Amazon MQ
+ > SQS and SNS are "cloud-native" services, and they're using proprietary protocols from AWS
+ > Traditional applications running from on-premise may use open protocols such as
+	- MQTT (MQ Telemetry Transport)
+	- AMQP (Advance Message Queueing Protocol)
+	- STOMP (Simple/Streaming Text Orientated Messaging Protocol)
+	- Openwire
+	- WSS (WebSockets)
+ > When migrating to the cloud, instead of re-engineering the application to use SQS and SNS, we can use Amazon MQ
+ > Amazon MQ = managed Apache ActiveMQ
+	- with this, all open protocols mentioned earlier are enabled by default
+
+NOTES:
+1. Amazon MQ does not "scale" as much as SQS/SNS
+	> you need to provision its own dedicated server
+2. Amazon MQ runs on a dedicated machine (not serverless)
+3. Amazon MQ has both queue feature (~SQS) and topic features (~SNS)
+4. Amazon MQ will only be used if a company is migrating to cloud and NEED to use one of the open protocols mentioned. Otherwise, it should be using SQS or SNS since it scales much better and way more integrated with other AWS services

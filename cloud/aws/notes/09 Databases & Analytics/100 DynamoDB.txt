@@ -1,0 +1,53 @@
+100 DynamoDB
+
+DynamoDB
+ > Fully managed highly available with replication across 3 AZ
+ > NoSQL database - not a relational database
+ > Scales to massive workloads, distributed "serverless" database
+ > Millions of requests per seonds, trillions of row, 100s of TB of storage
+ > Fast and consistent in performance
+ > Single-digit millisecond latency - low latency retrieval
+ > Integrated with IAM for security, authorization and administration
+ > Low cost and auto scaling capabilities
+ > Standard & Infrequent Access (IA) Table Class
+
+
+
+DynamoDB - type of data
+ > DynamoDB is a key/value database
+
+EX:
+	Primary Keys			Products
+	Partition Key	Sort Key
+	Product ID	Type		Attributes
+	1		Book ID		Odyssey		Homer	1871
+Items	2		Album ID	6 Partitias	Bach
+	2		Album ID:	Partita
+			Track ID:	No. 1
+	3		Movie ID	The Kid		Drama,	Chaplin
+							Comedy
+
+NOTE:
+1. Schema of each Object added in DynamoDB is DEFINED PER ITEM
+	> this means each Object can have DIFFERENT SCHEMA, independent to each other
+
+ 
+
+
+DynamoDB Accelerator - DAX
+ > Fully managed in-memory cache for DynamoDB
+ > 10x performance improvement, from single-digit millisecond latencty to microsends latency when accessing your DynamoDB tables
+ > Secure, highly scalable & highly available
+ > Difference with ElastiCache at the CCP level
+	- DAX is only used for and is integrated with DynamoDB
+	- ElastiCache can be used for other databases
+
+
+DAX diagram
+
+
+Application	<----->	DAX <-------->	Amazon Dynamo DB
+			(DynamoDB 	table1, table2, table3
+			Accelator)	
+
+

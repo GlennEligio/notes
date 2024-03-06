@@ -1,0 +1,39 @@
+69 Auto Scaling Groups ASG Overview
+
+What's an Auto Scaling Group?
+ > In real-life, the load on your websites and application can change 
+	- EX: In e-commerce, more traffic during day than night
+ > In the cloud, you can create and get rid of servers very quickly
+ > The goal of an Auto Scaling Group (ASG) is to:
+	- Scale out (add EC2 instances) to match an increased load
+	- Scale in (remove EC2 instances) to match a decreased load
+	- Ensure we have a minimum and a maximum number of machine running
+	- Automatically register new instances to a load balancer
+	- Replace unhealthy instance
+ > Cost Saving: only run at an optimal capacity (principle of the cloud)
+
+EX:
+Here, we can see three properties that we can define in an Auto Scaling Group, the Minimum, Actual/Desired, and the Maximum Size
+
+|--------------------- Maximum Size ----------------------|
+|--- Actual Size / Desired Capacity ----|
+|-- Min. size --|
+<-- EC2 --- EC2 --- EC2 --- EC2 --- EC2 --- EC2 --- EC2 -->
+					|- - Reserved - - -|
+
+
+
+Auto Scaling Group in AWS with Load Balancer
+
+			Web Traffic		
+				|
+			Load Balancer
+				|
+	|-------|-------|-------|-------|-------|-------|
+<-----	EC2 ---	EC2 ---	EC2 ---	EC2 ---	EC2 ---	EC2 --- EC2 --->
+				|- - - -  Reserved - - - -|
+
+
+
+NOTES:
+1. Auto Scaling Group can be used alongside with Load Balancer

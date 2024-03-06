@@ -1,0 +1,12 @@
+03 Using Cloud Computing and the term
+
+
+Earliest mention of Cloud Computing term
+
+"What's interesting is that there is an emergent new model, and you all ar ehere because you are part of that new model. I don't think people have really understood how big this opportunity really is. It starts with the premise that the data services and architecture should be on servers. We call it cloud computing - they should be in a 'cloud' somewhere" --- Eric Schmidt at Search Engine Strategies Conference (2006)
+
+
+Important notes in the quote
+1. It infers that users will be using hardware/servers that they don't manage or care about
+2. The usage of the servers in "cloud" will be widespread
+3. The users will only care about the specifics like the resources they want

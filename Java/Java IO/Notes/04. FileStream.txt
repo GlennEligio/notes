@@ -1,0 +1,75 @@
+04. File Streams
+
+
+File Streams
+	> composed of two Streams
+		- FileInputStream
+		- FileOutputStream
+
+FileInputStream
+	> subclass of InputStream
+	> used to establish a Stream using a File as source
+	> constructor of FileInputStream throws a FileNotFoundException
+		-> FileNotFoundException is a subclass of IOException
+
+Constructors variations
+1. @NotNull String filename
+	> by default, will look at the root directory of project
+	> we can also pass String to define the location of file inside the project
+		-> starts with the root directory of the project
+		-> ex: "src/filestream/file.txt"
+2. @NotNull File file	
+3. @NotNull FileDescriptor fdObj
+
+
+
+Reading bytes inside a FileInputStream (or InputStream in general)
+1. Use for loop and EOF output (-1) as condition
+2. Use while loop and EOF output (-1) as condition
+3. Use InputStream.available() to create byte[] of correct size to hold all bytes of InputStream
+4. Use InputStream.readAllBytes() to initialize a byte[] variable
+
+
+
+Reading byte from a file in other directory except root directory
+	> pass the file directory location of the file
+		-> starts with the root directory of the project
+
+
+
+
+
+FileOutputStream
+	> subclass of OutputStream
+	> uses to write bytes to a file
+	> if not file exist with the File/filename passed in the constructor, it will CREATE ONE
+
+Constructors variations
+@NotNull String name
+	> creates a stream to write bytes in the name file
+	> by default, it will look in the root directory of project
+	> we can pass the file directory location of the file also
+		-> starts with the root directory of the project
+		-> ex: "src/filestream/file.txt"
+	> if File have bytes stored inside it when we write on it, it will be OVERRIDEN
+
+@NotNull String name, boolean append
+	> String name parameter works the same way as constructor above
+	> boolean append defines if the bytes we write in FileOutputStream will be append to or overwrite current bytes stored
+		-> passing TRUE will append the bytes
+
+@NotNull File file
+	
+@NotNull File file, boolean append
+
+@NotNull FileDescriptor fdOjb
+
+
+Writing bytes in the FileOutputStream
+1. Create a FileOutputStream instance
+	> pass the filename or file directory location of file
+2. Write bytes in the FileOutputStream
+	> ex: use System.in.read() to read the data we write in console then call write() and pass the data received
+3. Flush the FileOutputStream
+	> this will discard the bytes in the buffer and force it to be written in the file
+4. Close the stream using close() in finally block

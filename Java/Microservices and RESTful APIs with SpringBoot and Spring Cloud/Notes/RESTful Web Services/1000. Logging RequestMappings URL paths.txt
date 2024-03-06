@@ -1,0 +1,32 @@
+Logging RequestMappings URL paths
+
+logging.level.web=TRACE
+
+Ex:
+2021-12-20 15:37:54.696 TRACE 14196 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.r.w.c.HelloWorldController:
+	{GET [/hello-world-internationalized]}: goodMorning()
+	{GET [/hello-world-bean]}: helloWorldBean()
+	{GET [/hello-world]}: helloWorld()
+	{GET [/hello-world/path-variable/{name}]}: helloWorldPathVariable(String)
+2021-12-20 15:37:54.699 TRACE 14196 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	c.r.w.c.UserController:
+	{DELETE [/users/{id}]}: deleteUser(int)
+	{GET [/users]}: retrieveAllUsers()
+	{GET [/users/{id}]}: retrieveUser(int)
+	{POST [/users]}: createUser(User)
+2021-12-20 15:37:54.701 TRACE 14196 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	s.d.s.w.Swagger2ControllerWebMvc:
+	{GET [/v2/api-docs], produces [application/json || application/hal+json]}: getDocumentation(String,HttpServletRequest)
+2021-12-20 15:37:54.705 TRACE 14196 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	s.d.s.w.ApiResourceController:
+	{GET [/swagger-resources/configuration/ui], produces [application/json]}: uiConfiguration()
+	{GET [/swagger-resources], produces [application/json]}: swaggerResources()
+	{GET [/swagger-resources/configuration/security], produces [application/json]}: securityConfiguration()
+2021-12-20 15:37:54.707 TRACE 14196 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	s.d.o.w.OpenApiControllerWebMvc:
+	{GET [/v3/api-docs], produces [application/json || application/hal+json]}: getDocumentation(String,HttpServletRequest)
+2021-12-20 15:37:54.711 TRACE 14196 --- [  restartedMain] s.w.s.m.m.a.RequestMappingHandlerMapping : 
+	o.s.b.a.w.s.e.BasicErrorController:
+	{ [/error], produces [text/html]}: errorHtml(HttpServletRequest,HttpServletResponse)
+	{ [/error]}: error(HttpServletRequest)

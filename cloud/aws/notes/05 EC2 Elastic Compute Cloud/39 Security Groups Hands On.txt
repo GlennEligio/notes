@@ -1,0 +1,38 @@
+39 Security Groups Hands On
+
+
+Security Groups
+ > earlier, we created an EC2 instance, in which we created a Security Group that it will belong it
+ > this Security Group can be accessed either in:
+	- EC2 Dashboard > Network & Security > Security Groups
+	- EC2 Dashboard > Instances > Instance's Security tab
+
+
+Security Groups property
+ > each Security group have the following properties
+	
+
+
+
+Testing the Security Group
+1. Select the EC2 instance in EC2 Dashboard
+2. Go to Security tab
+3. Click the Security group we created for it at the start
+4. Edit the Inbound rules
+5. Remove the Inbound rule for HTTP connection
+6. Save the rule
+7. Open the EC2 instance, and try to access the httpd service page
+	> use the public IP address of EC2 and use HTTP
+	> this should load forever, and will throw a CONNECTION TIMEOUT
+8. Edit the Security group by adding HTTP into the Inbound rule
+
+
+
+
+
+NOTE:
+1. Theres a default Security Group in EC2 dashboard where it allow ALL inbound and outbound ip address and port
+	> should not be used
+2. If the application that you are accessing in the EC2 instance loads forever and throws ERR_CONNECTION_TIMEOUT, most likely the issue is with the Security Group
+3. Type and Source dropdown in Inbound/Outbound rules is just a shortcut for manually entering the Port, Port range and IP address.
+	> ex: selecting HTTP will add Port 80

@@ -1,0 +1,100 @@
+Spring Bean Scopes
+
+Bean Scopes
+	> scope refers to the lifecycle of a bean
+	> answers the questions
+		1. How long does the bean live?
+		2. How many instances are created?
+		3. How is the bean shared?
+	> by default, the scope is Singleton
+
+
+Singleton Beans
+	> Spring Container creates only one instance of the bean, by default
+	> it is cached in memory
+	> all request for the bean will return a SHARED reference to the SAME bean
+
+Specifying Scope of a Bean	
+	> we can do it by adding scope="" to the <bean> parameter
+	> ex: <bean class="com.example.Bean" scope="singleton"/>
+
+Spring Bean scopes
+	> NOTE: request, session, global-session is only used for web-apps
+
+1. singleton
+	- create a single shared instance of the bean
+	- default scope
+2. prototype
+	- create a new bean instance for each container request
+3. request
+	- scope to an HTTP web request
+4. session
+	- scope to an HTTP web session
+5. global-session
+	- scope to a global HTTP web session
+
+
+Bean Lifecycle Methods
+1. Container Started
+2. Bean Instantiated
+3. Dependencies Injected
+4. Internal Spring Processing
+5. Your Custom Init() method is called
+6. Bean is ready for use
+	> at this point, we can now use the Bean
+7. Spring Container is shutdown
+8. Your Custom Destroy method is called
+9. End
+
+
+Bean Lifecycle Methods / Hooks
+	> we can add custome codes DURING Bean initialization and destruction
+
+During Bean initialization, we typically
+	> call custome business logic methods
+	> set up handles to resources like:
+		- db
+		- sockets
+		- files
+
+During Bean destruction, we typically
+	> call custom business logic methods
+	> clean up handles to resources like
+		- db
+		- sockets
+		- files
+
+
+
+Development Process of creating Bean init and destroy method
+1. Define your methods for init and destroy
+2. Configure the method names in Spring config file
+
+
+NOTE: When defining init and destroy() method, they must NOT HAVE ANY ARGUMENTS
+
+
+
+To define the Bean initialization and destruction methods
+1. <bean> xml based
+	- add init-method="" parameter and pass the method name inside the class that we will execute during bean initialization
+	- add destroy-method="" parameter and pass the method name inside the class that we will execute during bean destruction
+
+EX:
+	<bean id="beanId" class="com.model.Bean"
+		init-method="methodName"
+		destroy-method="methodName">
+	</bean>
+
+2. @Bean annotation based
+	- create the @Bean methods in @Configuration Class
+	- add initMethod="" and destroyMethod="" to @Bean annotation and pass the methodName inside the Output Class of the @Bean method will will be executed during Bean initialization and destruction
+	- below, the init() and destroy() must be present inside DatabaseInitializer Class
+EX:
+	@Bean(initMethod="init", destroyMethod="destory")
+	public DatabaseInitializer dbInitializer(){
+		return new DatabaseInitializer();
+	}
+
+
+

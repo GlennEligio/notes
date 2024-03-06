@@ -1,0 +1,40 @@
+32 Creating reactive streams
+
+
+Methods used
+Flux methods:
+Flux<T> just(T... data)
+ > Create a Flux that emits the provided elements and then completes.
+ > takes one or more data that will serve as Flux' elements
+
+Flux<T> delayElements(Duration  delay)
+ > Delay each of this Flux elements (Subscriber.onNext(T) signals) by a given Duration. 
+ > Signals are delayed and continue on the parallel default Scheduler, but empty sequences or immediate error signals are not delayed.
+
+Flux<Integer> range(int start, int count)
+ > Build a Flux that will only emit a sequence of count incrementing integers, starting from start. That is, emit integers between start (included) and start + count (excluded) then complete
+
+Flux<T> never()
+ > creates a Flux that NEVER completes
+ > does not issue onComplete, onError, or any element
+
+
+Mono methods:
+Mono<T> just(T data)
+ > create a Mono that emits the provided element and then completes
+
+Mono<T> never()
+ > creates a Mono that NEVER completes
+
+
+
+
+Creating Flux, Mono or any reactive streams
+1. Using Flux<T> just(T... data) or Mono<T> just(T data) to create a Flux/Mono and populate its element(s) of custom type
+2. Using Flux<T> range(int start, int count) to create a Flux of Integer and populate based on start and count input
+
+
+
+Configuring Flux
+1. Controlling element flow
+	> Use Flux.delayElements(Duration duration) to control how fast the elements are being emitted

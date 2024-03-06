@@ -1,0 +1,22 @@
+05. Ansible Vault
+
+
+Ansible Vault
+	> encryption/decryption utility for Ansible data files
+	> Ansible Vault is a feature of Ansible that allows you to keep SENSITIVE data such as passwords or keys in encrypted files, rather than as plaintext in playbooks or role
+	> These vault files can then be distributed or placed in source control
+	> Reading an encrypted file (either by using cat, nano, and vi) will show an encrypted text
+
+
+
+
+Commands to use
+
+To create encrypted files, it will ask password for encryption
+	ansible-vault create t.yaml
+To edit the vault file
+	ansible-vault edit t.yaml  
+To decrypt the file
+	ansible-vault decrypt t.yaml
+To encrypt the file
+	ansible-vault encrypt t.yaml

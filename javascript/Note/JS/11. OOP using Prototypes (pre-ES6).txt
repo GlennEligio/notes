@@ -1,0 +1,42 @@
+11. OOP using Prototypes (pre-ES6)
+
+XIII. OOP using Prototypes (pre-ES6)
+
+Constructor Function
+	> a function with properties attached into it
+	> we can then use this function to instantiate Prototypes
+	> to assign values to its properties, we can pass them as arguments and inside the Constructor function, assign them to each properties
+	> to assign values to an Prototype properties in Constructor function, we will use the keyword "this"
+	> to instantiate a Prototype using Constructor function, we will use the keyword "new"
+
+
+Prototype
+	> All JavaScript objects inherit properties and methods from a prototype.
+	> contains the Constructor that is used to instantiate an Object
+	> We can use this to add new Properties to an Object
+		- we cant typically add Properties in Object created from Constructor function unlike Object literals
+
+EX:
+// OOP Prototype
+
+// Constructor function
+function Person(firstName, lastName, dob) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.dob = new Date(dob);
+}
+
+// Adding new properties using prototype of Constructor Function
+Person.prototype.getFullName = function () {
+  return `${this.firstName} ${this.lastName}`;
+};
+Person.prototype.getBirthYear = function () {
+  return this.dob.getFullYear();
+};
+
+// Instantiate object
+const person1 = new Person("John", "Doe", "2-2-2222");
+const person2 = new Person("Gael", "Abrax", "1-1-1222");
+
+console.log(person1.getBirthYear());
+console.log(person2.getFullName());

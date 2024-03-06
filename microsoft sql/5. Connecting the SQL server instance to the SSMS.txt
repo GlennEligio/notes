@@ -1,0 +1,14 @@
+Connecting SQL Server to SSMS 
+
+In order to connect the SQL server we made earlier to the Microsoft SSMS,
+
+1. Lets first open the SSMS. 
+2. Then as soon as the application opens, we will be prompted to connect to a Server
+3. Choose Database Engine as Server type, then in Server Name, press the drop down menu and choose Browse for more.
+4. You will be shown a few options. Expand the Database Engine selection, and choose the SQL Server instance you made earlier. The naming convention should be like this
+
+	>>	DesktopId/InstanceIdName
+
+If its your first time creating a SQL server, it should be the one with two names that  is the SQL server youve just made.
+
+5. 

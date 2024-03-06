@@ -1,0 +1,47 @@
+10. Functions and Arrow Functions
+
+XI. Functions
+
+Function
+	> defines a specific behavior
+	> composed of
+		a. method name
+			- defines the name to used when calling the function
+		b. parameters
+			- defines the inputs of function
+			- we can define a default value for these input parameter
+				= if we pass arguments to method call, it will OVERRIDE the default values
+			- OPTIONAL to add parameters
+			- MANDATORY to pass arguments when function needs parameters
+		c. logic
+			- defines the behavior of the function
+			- typically uses the parameter input and change it to something
+		d. return value
+			- defines the return value of the function
+			- typically derived from input parameters
+	
+EX:
+// Functions
+
+// Function for adding number
+function addNum12(num1 = 1, num2 = 2) {
+  return num1 + num2;
+}
+
+console.log(addNum12(5, 10));
+
+
+
+
+XII. Arrow functions
+
+Arrow Function
+	> used to declare a function as a variable
+	> typically used when we need to pass a function as variable in some method's parameter (like Array.filter())
+	> if logic is one-line, we can OMIT the curly braces
+
+EX:
+// Arrow function equivalent
+const addNum = (num1 = 1, num2 = 2) => num1 + num2;
+
+console.log(addNum(5, 10));

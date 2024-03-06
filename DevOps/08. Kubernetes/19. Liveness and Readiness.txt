@@ -1,0 +1,127 @@
+19. Liveness and Readiness Probes
+
+
+
+Liveness and Readiness Probes
+	> added in the Pod's ContainersSpec
+	> function of K8s to check if application is running inside some of the Pods
+	> Liveness probes is used to know when to RESTART a Container
+		- if the probe check fails, the Pod will be restarted
+	> Readiness probe is used to know when a Container is ready to start ACCEPTING TRAFFIC
+		- if the probe check fails, no traffic will go through the Pod
+	> These probes can be done by multiple methods, two of which is
+		1. CLI Command
+		2. Http request
+		3. Tcp socket connection check
+
+
+Setting up Liveness and Readiness Probe
+	> we can set up Liveness and Readiness Probe in a ContainerSpec
+	> we can do this by adding a new fields inside the ContainerSpec of a PodTemplateSpec
+
+
+Liveness and Readiness Probe Manifest Guide
+	> to add a Liveness and Readiness Probe in a Container, we must edit the Manifest file where Container is made
+	> specifically, we will add these Probes in the ContainerSpec section
+	> inside ContainerSpec, we need to add
+		1. livenessProbe or readinessProbe field
+			- this denotes that we will add liveness or readiness probe to the Container
+		2. inside the livenessProbe, we can add the following fields
+			a. httpGet/exec
+				> denotes the method of checking liveness/readiness status
+			b. initialDelaySecond
+				> denotes the delay between Container spawn time to the initial Probe check
+			c. periodSeconds
+				> denotes the interval for each probe check
+		3. inside httpGet, we can define the following fields
+			a. path
+				> denotes the url path where we will send a request check
+			b. port
+				> denotes the port where we will do the check	
+			c. httpHeaders
+				> refers to the httpHeaders that we will add to the request
+				> we can define an httpHeader by adding
+					- name
+					- value
+		4. for exec, we can define the following fields
+			a. command
+				> refers to the command to use
+				> first value refers to the command keyword
+				> subsequent values are the command arguments
+
+
+
+EX: Liveness probe using httpGet
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-http
+spec:
+  containers:
+  - name: liveness
+    image: k8s.gcr.io/liveness
+    args:
+    - /server
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+        httpHeaders:
+        - name: Custom-Header
+          value: Awesome
+      initialDelaySeconds: 3
+      periodSeconds: 3
+
+	> In this Manifest, we create a Pod with Container running "k8s.gcr.io/liveness" image
+	> This Container have an livenessProbe using httpGet
+	> The livenessProbe have the following properties
+		a. Uses httpGet which sends request
+			- request destination url is "/healthz"
+			- port is 8080
+			- httpHeaders include
+				- "Custom-Header=Awesome"
+		b. delay between Container creation and initial probe check is 3sec
+		c. interval between each probe check is 3 sec
+
+
+EX: Readiness Probe using exec method
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-exec
+spec:
+  containers:
+  - name: liveness
+    image: k8s.gcr.io/busybox
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
+    readinessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+
+	> Here, we created a Pod with Container running "busybox" image
+	> We also added the following arguments in the Container
+		- this argument will do the following
+			a. create a /tmp/healthy file
+			b. sleep for 30s
+			c. remove /tmp/healthy
+			d. sleep for 600s
+	> We also have a readinessProbe in the Container
+	> This readinessProbe have the following properties
+		a. exec that execution that following command to check for readiness
+			- cat /tmp/healthy
+		b. delay between container creation and initial probe check is 5sec
+		c. interval between probe checks is 5sec

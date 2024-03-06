@@ -1,0 +1,67 @@
+03. Ansible Adhoc Commands
+
+
+Ansible Adhoc Commands
+	> Ansible Ad-Hoc commands are used to accomplish tasks QUICKLY
+	> These commands are mostly used for ONE-OFF TASKS
+	> Handy to get small tasks done quickly
+	> typical use cases for ad hoc tasks includes
+		1. Rebooting servers
+		2. Managing files
+		3. Managing packages	
+		4. Managing users and groups
+		5.Managing services
+		6.Gathering facts
+
+Syntax for Ansible Adhoc Commands
+	> Pattern refers ant matcher pattern to match to the hosts group (defined in the hosts file) or host's ip address
+	> If no module is defined, the DEFAULT module is the ansible.builtin.command (similar to shell module) module
+
+$ ansible [pattern] -m [module] -a "[module options]"
+
+
+
+
+EXAMPLES
+
+To find the documentation of the modules
+	ansible-doc -l | more
+	ansible-doc -s yum
+
+To Run ping command for all hosts
+	ansible all -m ping
+
+To Run ping command to specific slave
+	ansible -i hosts <<slave>>  -m ping
+
+To Run any command on the slave machine
+	ansible -i hosts <<slave>> -m shell -a 'ls /home'
+
+
+INSIDE /etc/ansible/hosts
+[webservers]
+172.31.27.53
+172.31.19.90
+[dbservers]
+172.31.31.119
+
+Using shell module, install apache2 in the hosts that belong to webservers
+	ansible webservers -m shell -a "apt install apache2 -y"
+
+Using shell module, purge apache2 in webservers hosts
+	ansible webservers -m shell -a "apt purge apache2 -y"
+
+Using shell module, install apach2 in the centos
+	ansible dbservers -m shell -a "yum install httpd -y" 
+
+Using service module, start the httpd in the centos
+	ansible dbservers -m service -a "name=httpd state=started"
+
+Using service module, stop the httpd service in the centOs
+	ansible dbservers -m service -a "name=httpd state=stopped"
+
+Using copy module, copy the /tmp/master.txt from MasterServer to the WebServer's and DbServer's /tmp/master.txt
+	ansible webservers,dbservers -m copy -a "src=/tmp/master.txt dest=/tmp/master.txt"
+
+Using copy module, create /tmp/master.txt and have its contents be "Testing" in WebServer and DbServer
+	ansible webservers,dbservers -m copy -a "content="Testing" dest=/tmp/master.txt"

@@ -1,0 +1,166 @@
+How to Verify Your App Using Google API with Sensitive Scopes
+
+SOURCE: https://medium.com/@arnoldcsubastil/tips-on-verifying-google-application-that-uses-sensitive-scopes-3b75dfb590ae
+
+TL;DR How to get verified
+
+Table of Contents:
+I. Story
+1. Introduction
+2. The nightmare before deployment
+3. Is it worth verifying my application?
+
+II. Requirements to have an easier verification process
+1. We are not Google, don't present like one
+2. Check all domain URLs on the app that they are all authorized domain on the console
+3. Create a home page with content that describes the app.
+4. Create a privacy policy for the app
+5. Make sure that the scopes requested will appear on the approved scopes by the user
+6. Create a video demo for the app, showing the scopes being approved by the user
+
+III. Verification process form inputs
+1. Scopes justification
+2. Any information to help in verification
+3. Contact email address
+
+IV. Conclusion
+
+V. References
+
+
+
+I. Story
+1. Introduction
+
+Imagine developing an application using the powerful APIs of Google. Enjoying every moment of it because who wouldn't?
+
+Gooogle APIs are such powerful tools. Just create an app using our own Google account using https://console.developers.google.com/. add some scope that we needed, call the API on the personal application and then - A convenient App is born. Or at least, this was our plan
+
+
+2. The nightmare before deployment
+
+As a team, we are excited to create an application that manages Google Sheets. Our application acts like IFTTT for shopping mall owners. This will let theuser choose a trigger to a certain action then the app will act as the receiver of the trigger to act. Once action intends to create spreadsheets, add some worksheets and update the contents of the rows and columns. We use the scopes for Google Sheets (updating the content of the spreadsheet created), and Google Drive (creating spreadsheet files and creating folders if needed)
+
+We've read the documentation and learned the scope and limitations of the project. Meetings after meetings we are hopeful with the deadlines that we can develop it in no time. However, this warning appears because we've used a sensitive scope. Below is the photo of the website wherein Google warns user that the app we've amde is Unverified.
+
+Well, its fine, we presume. We can still click 'Advanced' and proceed because we know the API we created is a trusted website. After using several accounts for testing, we deployed the application and presented it for official testing. Then, this happens. Below images shows that the Google TEMPORARILY DISABLED the sign in option for the app deployed.
+
+Using our account, we can still see the page with the 'Advanced' link, but for the other users, they can't see it. Turns out any unverified app will only have a limited number of emails allowed to use the 'Advanced' link.
+
+We needed to verify the app created on our Google Account. So, we tried clicking the verify button but with no luck, Google was quite strict about the requirements of the app that needs to be verified.
+
+Because of this incident - which would have been prevented if we are not too excited to use the sensitive scopes of Google or at least reading their long documentation regarding this -, we have to adjust the features of the App. We only use the non-sensitive scope of Google Sheets and Google Drive. Yes, this kind of scopes exist but with a limited features for our application. For example, we can only update the content of a spreadsheet if it was saved by the same application and we cannot create our folder, all we can do is save a spreadsheet on the root folder of Google Drive.
+
+The good thing about this situation is that the client only needs this kind of simple application, but as a developer, we still have the feeling of improving it. But because of the time constraints, we settle for the features done and left on using the scopes allowed.
+
+To save us the time and effort to sent a verification process - and read all the requirements needed -, we decided to adjust the features of our app. Instead of using the sensitive scopes, we've used different scopes (drive.appdata and drive.file) that have the same ability with the sensitive scope but with less feature and access to the API. In the case of our app that uses Google Sheets and Google Drive API, it can only manipulate the files the app created, it cannot update or delete the files that were manually created directly by the user in Google Sheets.
+
+The timeline was adjusted along with the requirements of the application. Additional meetings were held to explain the limitations that we encountered and to have additional days to develop and test the new features.
+
+But still, we needed to create an app using those sensitive scopes because of the possibilities and we must be pushed to our limits and eventually faced this kind of process.
+
+We happen to explore the possibilities when we are assigned to create an app using Google Calendar - and unlike the Google Sheets and Google Drive that both have scopes that are not sensitive, ALL the scopes of Google Calendar are sensitive. We have to use the scopes 'calendar' and 'calendar.events'.
+
+That is why we have NO CHOICE but to undergo the verification process for our app that uses the Google Calendar API. Because this is our first time to verify an app, we've committed a couple of mistakes pointed out by Google. But now that our application was verified in two weeks - this includes correction and updates to our application -, we can confirm that it can be verified by using the guides laid out by this tech blog.
+
+
+
+
+IS IT WORTH VERIFYING MY APPLICATION?
+
+Yes, that is why we pave the way and create this blog to save other developers' time on reading a long list of documentation and choosing which is important or not - and to prevent committing mistakes that are supposedly been done before it was pointed out.
+
+So don't give up and keep chasing this pavement.
+
+By the way, another thing that made it more difficult for us is that we are in a different office time for Google Assistance. That's why we need to be careful when we submit a requirement because if there is something that needs to be corrected, we will receive their feedback later at midnight when everyone in the country is sleeping. That's why every time we send a verification application, I hope and pray to receive the good news the next morining. Plenty of mornings became unpleasant because of the rejection of the verification application.
+
+This instruction was based on our experience on Google App verification and might differ from any situation from other developers. What we want is to simplify the instruction since google provides a long and confusing - for beginners, at least - requirements and as of this writing. It is really hard to find blog posts that are simple enough to follow with regards to Google app verification.
+
+
+
+
+
+THINGS TO PREPARE BEFORE THE VERIFICATION PROCESS
+ > Just make sure to following these SIX requirements to have an easier verification process:
+ 
+ 
+1. We are not Google, don't present like one.
+	> don't use Google brand names in the application name, domain url, brand logo, etc, to prevent misleading identity
+		- ex: Google Calendar Scheduling app
+		- ex: google-calendar-scheduling.com
+2. Check all domain URLs on the app that they are all authorized domain on the console
+	> all domains used on Authorized domains MUST ALL be verified domain URLs in our console under domain verification.
+		- ex: callback domain URLs that will receive the code and access token for verification
+	> It must all be publish to be accessed by Google. We can check if our domain was verified if the list of domain URLs on the Authorized domain (Oauth Consent Screen tab) can also be found on the list of domains on the 'Domain Verification' tab
+	> link for Google developer console to check Oatuh consent screen and Domain verification
+		- https://console.developers.google.com
+	> the domain URLs must be present in both
+		- Oauth Consent Screen -> Authorized Domains
+		- Domain Verification
+3. Create a home page with content that describes the app
+	> this page must contain the whole information of the app. It should answer the following questions:
+		a. What does it do?
+		b. Who's going to use it?
+		c. How does it work?
+	> also the page must not imply that this is a product of Google
+4. Create a privacy policy for the app
+	> for legality purposes, Google needs to see how well we manage all the data we will receive using their API
+	> it must follow any legal actions based on data privacy laws
+5. Make sure that the scopes requested will appear on the approved scopes by the user.
+	> As one of our mistakes, this is very important, especially for the users. The list of scope that appears here at the console (Google App List of Scopes) must also appear at the pop-up verification for the user (pop-up verification for the user to allow the app for the access)
+	> it makes it clear to the user that the scope we are accessing is the one that they allowed when they click submit. It can be done in our Authentication code by including the exact scopes on the request:
+	
+	
+EX: Google Api Library Code for scopes
+$oClient = new Google_Client();
+$oClient->setAuthConfig('js/calendarCredentials.json');
+// below is the specific scope that the application will use
+$oClient->addScope(Google_Service_Calendar::CALENDAR);
+$oClient->addScope(Google_Service_Calendar::CALENDAR_EVENTS);
+$oClient->addScope(Google_Service_Oauth2::USERINFOR_EMAIL);
+$oClient->setHttpClient(GuzzleLibrary::getInstance());
+$oClient->setRedirectUri(env('APP_URL'), '/oauth');
+$oClient->setApprovalPrompt('force');
+$oClient->setAccessType('offline');
+return $oClient;
+
+	> Take note that, even though we will not include the other scopes, it will still work as long as the scope was added on the console
+		- the only problem is that it will NOT APPEAR on the verification pop up for the user
+		- When Google checks our video demo (requirement #6), they will make sure that the pop up for the users will show the same scope saved on the console
+	
+6. Create a video demo for the app, showing the scopes being approved by the user.
+	> When our app is done, we must create a video demo of the app. 
+		- It does not need to have narration or an entire video of the developer explaining everything
+		- Just give them a run-through of the process.
+	> After submitting the verification, Google will review the requirements and will email us stating that we need to send them a demo video of the application.
+		- We must send a youtube link for this video
+		- If we don't want our application to be in public yet, we can set the video on our youtube account as 'Unlisted'
+		- This way, only the person who knows the link can view the video. Here's an instruction provided online on how to set our youtube video as unlisted and how different it is from private videos
+			-> https://wiki.umbc.edu/pages/viewpage.action?pageId=31198917
+		
+		
+		
+NOW FOR THE VERIFICATION PROCESS
+ > Now that we've prepared all the items on the checklist above, we are now ready to click the 'Submit for Verification' button under the 'OAuth Consent Screen'.
+ > Once we click the button for verification, this popup will appear. 
+ 
+Pop up fields to fill up
+1. Scopes justification
+	> just state where we will use the sensitive scope.
+	> What is the data we needed for that application to run?
+	> We must make it short and specific because it only accepts a thousand characters
+2. Any information to help in verification
+	> This is optional, but it will be a big help if we can provide a project ID of our project that is already verified
+3. Contact email address
+	> Google will send the status and anything we need to update once the verification started.
+	> They will send the requirements we failed to meet and will let us reply to that email for quicker response once we've updated the application
+	
+ > Once the application was approved (we'll receive an email that it was already approved) the app (OAuth consent screen, under APIs & Services of Google APIs) will show that the Verificaition status is "Published"
+ 
+ 
+ 
+CONCLUSION
+ > The verification process might be additional work for the development process. Based on the requirments above, we can estimate it to be done within three working days which adds to our development process
+ > However, the scopes needed to be verified are worth it. These scopes offer a powerful addition to our application that makes it more reliable. Besides, it will increase the credibility of the app, knowing that it undergoes verification from Google.
+ 
+"Extra effors can be hard, but if we desire innovation and progress, giving less effort is the hardest"

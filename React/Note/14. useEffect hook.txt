@@ -1,0 +1,38 @@
+14. useEffect hook
+
+React "useEffect" Hooks
+	> The useEffect Hook allows you to perform side effects in your components.
+		- Some examples of side effects are: fetching data, directly updating the DOM, and timers.
+	> useEffect accepts two arguments. The second argument is optional.
+		- useEffect(<function>, <dependency>)
+	> these arguments stands for
+		a. function
+			- function that will be performed everytime useEffect is executed
+		b. dependency
+			- an array of variables that useEffect monitors
+			- if one of the variable/s changed, useEffect will be executed
+			- props or states are often passed into this argument
+	> if we dont pass an argument in dependency, useEffect will run EVERYTIME COMPONENT RENDER
+	> if we pass an empty Array in dependency, the useEffect will only run ONCE
+	> if we pass an Array of variables in dependency, it will monitor changes in those variable/s, and if theres a change, it will run the useEffect
+
+1. No dependecy passed
+
+useEffect(() => {
+  //Runs on every render
+});
+
+
+2. An empty array:
+
+useEffect(() => {
+  //Runs only on the first render
+}, []);
+
+
+3. Props or state values
+
+useEffect(() => {
+  //Runs on the first render
+  //And any time any dependency value changes
+}, [prop, state]);

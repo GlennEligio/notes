@@ -1,0 +1,16 @@
+Using GMAIL account for sending message
+
+Source:
+https://www.youtube.com/watch?v=6sCFDeP-OnI&ab_channel=BeCoder
+
+1. Create gmail account
+2. Setup the two factor authentication
+3. Add App password
+4. Generate an App password
+	> for app, select Other
+	> specify the name of app
+	> this will create a four four-letter words that you will use as temporary "password"
+
+
+NOTE:
+1. Starting May 30, 2022, using the real password for gmail authentication through Less secure app option is not allowed. We will need to use "App passwords" to authenticate instead of the real password

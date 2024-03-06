@@ -1,0 +1,31 @@
+11. React Icons
+
+React Icons
+	> node package module used to provide icons to be used for designing
+	> to add this, type in the Terminal
+		npm install react-icons --save
+	> to verify installation, check the package.json in root directory
+		- we should see "react-icons" in the dependencies section
+
+Using React Icons
+	> to use a specific Icon in React App, we will need to import it
+	> to import a specific Icon, we can use the syntax
+		import { IconName } from 'react-icons'
+	> ex: importing the Times icon (X) which is named FaTimes, we can use
+		import { FaTimes } from 'react-icons/fa'
+
+EX:
+import { FaTimes } from "react-icons/fa";
+
+const Task = ({ task }) => {
+  return (
+    <div className="task">
+      <h3>
+        {task.text} <FaTimes />
+      </h3>
+      <p>{task.day}</p>
+    </div>
+  );
+};
+
+export default Task;

@@ -1,0 +1,97 @@
+17 RHCSA RHEL 8 - Interrupt the boot process in order to gain access to a system
+
+
+Interrupt the boot process to gain access to a system
+ > done typically when we forgot the ROOT password
+ > two ways of doing this
+	1. Using the original installation disk
+		- more on information only
+	2. using rd.break
+		- mostly used for the exam
+		- rd.break is the mechanism for changing password
+ > first way is the quickest, but we need to know both for the exam
+
+
+Using the original installation disk
+1. In virtualbox, insert the original installation disk (.iso file)
+	> Go to Device -> Optical Drives
+	> If the rhelos iso file is checked, it means the ISO file is mounted, click it again to unmount
+		- you may get some warning, ignore it
+	> Check the Optical Drive, and mount/insert the original installation disk- by clicking the iso file
+		- it should now be checked
+	> Reset the machine by going to
+		- Machine -> Reset
+2. Do a reset/reboot on the system which will put you in the window just like from the start
+3. Choose "Troubleshooting" option, then "Rescue a Red Hat Enterprise Linux system"
+4. From the Rescue window, choose "Continue"
+5. Press enter when ask to in order to get a Shell
+6. Execute the command below to get a bash shell
+	$ chroot /mnt/sysimage
+7. Execute "passwd" in order to change the ROOT password
+8. Exit the shell with "exit"
+9. Unmount the installation disk
+10. Check if the change password of ROOT reflects
+
+NOTES:
+1. I am getting an error where it says that I dont have partition of Linux when I run Rescue mode, will get back to later
+
+
+
+
+
+Using rd.break
+1. Reboot the VM
+2. While the VirtualBox logo is showing, press up and down quickly to show the grub screen
+	> Grub screen contains all the kernel in the OS
+	> When we install packages using yum or any package manager, it keeps a copy of the kernel
+3. Choose the one with (Ootpa) at the end and press E
+4. Go the line that starts with "linux" and go to the very end of the line
+	> press CTRL + E to do so
+5. Remove the "rhg quiet" and change it to "rd.break enforcing=0"
+	> rd.break is mechanism for changing password
+	> enforcing=0 is related to SELinux, causes the system to start in permissive mode, which is useful when troubleshooting issues
+		- prevents relabelling which consumes a lot of time
+6. Press CTRL + X to start
+7. When switch_root Shell is available, type the command below
+	> $ mount -o remount,rw /sysroot
+		- mounts the file system read and write to the "/sysroot"
+8. Execute the command below to change the Shell
+	> $ chroot /sysroot
+9. Change password using "passwd" command
+10. Enable autorelabelling by executing the command below
+	> ONLY FOR THOSE WHO DIDNT ADD "enforcing=0" earlier
+	> $ touch /.autorelabel
+11. Remount the filesystem into a read only to "/"
+	> $ mount -o remount,ro / 
+12. Exit twice
+	> once for root Shell
+	> once again for switch root
+13. Login as root but with the updated password
+14. Execute command below to restore the /etc/shadow files of SELinux context
+	> only for those who added "enforcing=0" BUT didnt execute the "touch ./autorelabel" command
+	> $ restorecon /etc/shadow
+15. Change SELinux mode from Permission to Enforcing
+	> $ setenforce 1
+16. Check the SELiunx mode
+	> $ getenforce
+
+
+
+Commands
+chroot DIRNAME
+ > change the apparent root directory for the current running process and its children
+
+passwd
+ > changes the password for the current user
+
+mount -o remount,[rwx] FILESYSTEM
+ > remount the filesystem with specified permissions
+
+restorecon /etc/shadow
+ > restore the files of /etc/shadow for SELinux
+
+setenforce [1 | 0]
+ > set the SELinux mode to Permissive (0) or Enforcing  (1)
+
+getenforce
+ > get current SELinux mode

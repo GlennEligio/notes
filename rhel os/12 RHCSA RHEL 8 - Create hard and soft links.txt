@@ -1,0 +1,43 @@
+12 RHCSA RHEL 8 - Create hard and soft links
+
+Soft link (shortcut to file)
+ > works between file systems
+ > allows linking of directories
+ > has a new inode number and file permissions
+ > permissions are not mirrored
+ > has only the path of the original file, not the contents
+ > when a soft link is viewed with "ls" command, we will be able to see the original file (softLink -> originalFile)
+ > changes in original file will reflect in the shortcut file
+ > removing original file will cause error when we use the shortcut file
+	- will also reflect in "ls" command which shows error to the shortcut
+
+Hard link (mirror of file)
+ > works only within the same filesystem
+ > cannot link directories
+ > has the same inode number and permissions of original file
+ > permissions are updated if we change the permissions of source file
+ > has the actual contents of original file, so that you still can view the contents, even if the original file is moved or removed
+ > the mirror file and original file will share the same informations like
+	- inode
+	- permissions
+	- size
+	- date created
+ > removing the original file will not affect the mirror file
+ > changes in original file will reflect in mirror file
+
+
+
+inode
+ > The inode (index node) is a data structure in a Unix-style file system that describes a file-system object such as a file or a directory. 
+ > Each inode stores the attributes and disk block locations of the object's data. File-system object attributes may include metadata (times of last change, access, modification), as well as owner and permission data.
+ > A directory is a list of inodes with their assigned names. The list includes an entry for itself, its parent, and each of its children.
+ > to see the inode of each files in a directory, use the "ls" command with "-i" option flag
+	$ ls -lia
+
+
+Commands
+ln [option] ORIGINALFILE NEWFILE
+ > used to create a link of the original file
+ > by default, creates a hardlink of the original file
+ > options
+	-s 	creates a soft link instead of hard link

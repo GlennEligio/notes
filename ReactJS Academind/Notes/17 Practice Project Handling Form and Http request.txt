@@ -1,0 +1,572 @@
+17 Practice Project Handling Form and Http request
+
+Content
+001 Module Introduction
+002 Moving Meals Data To The Backend
+003 Fetching Meals Data via Http
+004 Handling Loading State
+005 Handling Errors
+006 Adding a Checkout Form
+007 Reading Form Values
+008 Adding Form Validation
+009 Submitting & Sending Cart Data
+010 Adding Better User Feedback
+011 Summary
+
+
+
+002 Moving Meals Data To The Backend
+003 Fetching Meals Data via Http
+004 Handling Loading State
+005 Handling Errors
+
+1. Move Meals Data To The Backend
+2. Use fetch() to fetch the Meals data from Backend
+	> you can also use the custom hook for handling fetch request
+3. Create two State
+	> isLoading
+	> error
+4. Based on these States, define the Content that you want to show
+
+// useHttp hook
+import { useState, useCallback } from "react";
+
+const useHttp = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const sendRequest = useCallback(async (requestConfig, applyData) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(requestConfig.url, {
+        method: requestConfig.method ? requestConfig.method : "GET",
+        headers: requestConfig.headers ? requestConfig.headers : {},
+        body: requestConfig.body ? requestConfig.body : null,
+      });
+
+      const data = await response.json();
+
+      applyData(data);
+    } catch (error) {
+      setError(error.message);
+    }
+
+    setIsLoading(false);
+  }, []);
+
+  return {
+    isLoading,
+    error,
+    sendRequest,
+  };
+};
+
+export default useHttp;
+
+
+
+// AvailableMeals Component where we fetch the Meals Data
+const AvailableMeals = () => {
+  const {
+    isLoading: mealsLoading,
+    error: mealsError,
+    sendRequest: fetchMeals,
+  } = useHttp();
+  const [meals, setMeals] = useState([]);
+
+  const requestConfig = {
+    url: "https://react-http-83f5f-default-rtdb.firebaseio.com/meals.json",
+  };
+
+  const transformMeals = (data) => {
+    const newMeals = [];
+    for (let key in data) {
+      newMeals.push({
+        id: data[key].id,
+        name: data[key].name,
+        description: data[key].description,
+        price: data[key].price,
+      });
+    }
+    setMeals(newMeals);
+  };
+
+  useEffect(() => {
+    fetchMeals(requestConfig, transformMeals);
+  }, [fetchMeals]);
+
+  const mealsList = meals.map((meal) => (
+    <MealItem
+      key={meal.id}
+      id={meal.id}
+      name={meal.name}
+      description={meal.description}
+      price={meal.price}
+    />
+  ));
+
+  let content = <ul>{mealsList}</ul>;
+
+  if (mealsError) {
+    content = <p className={classes["error-text"]}>Something went wrong</p>;
+  }
+
+  if (mealsLoading) {
+    content = <p className={classes["loading-text"]}>Meals loading...</p>;
+  }
+
+  return (
+    <section className={classes.meals}>
+      <Card>{content}</Card>
+    </section>
+  );
+};
+
+export default AvailableMeals;
+
+
+
+006 Adding a Checkout Form
+007 Reading Form Values
+008 Adding Form Validation
+009 Submitting & Sending Cart Data
+
+1. Create a Checkout Form
+	> must have four input for the name, street, postalCode, city
+2. Read the Form values 
+	> can either use States or useRef
+3. Adding Form Validation
+	> check the States or useRef of Input (inputRef.current.target.value) and do the validation logic
+	> based on the result of validation, display the necessary content to notify user of invalid input
+4. Submitting & Sending Cart Data
+	> first, prevent the default behavior
+	> do a validation checks on the input values
+	> after all validation is passed, create an Object to be sent
+		- since we only have access to the User Data inside Checkout form and not Cart item data, we will want to either
+			a. Move submitting logic in Cart Component and pass down the submitFn in Checkout Component through props
+			b. Access Cart item inside Checkout form through Context
+
+// use-input.js
+import { useState } from "react";
+
+const useInput = (validateFn) => {
+  const [enteredValue, setEnteredValue] = useState("");
+  const [isTouched, setIsTouched] = useState(false);
+
+  const valueIsValid = validateFn(enteredValue);
+  const hasError = !valueIsValid && isTouched;
+
+  const valueChangeHandler = (event) => {
+    setEnteredValue(event.target.value);
+  };
+
+  const inputBlurHandler = (event) => {
+    setIsTouched(true);
+  };
+
+  const reset = () => {
+    setEnteredValue("");
+    setIsTouched(false);
+  };
+
+  return {
+    value: enteredValue,
+    isValid: valueIsValid,
+    hasError,
+    valueChangeHandler,
+    inputBlurHandler,
+    reset,
+  };
+};
+
+export default useInput;
+
+
+// Checkout.js
+import useInput from "../../hooks/use-input";
+import classes from "./Checkout.module.css";
+
+const Checkout = (props) => {
+  const textValidation = (text) => text.trim() !== "";
+  const postalValidation = (postal) => postal.length === 5;
+
+  const {
+    value: enteredName,
+    isValid: nameIsValid,
+    hasError: nameInputInvalid,
+    valueChangeHandler: nameChangeHandler,
+    inputBlurHandler: nameBlurHandler,
+    reset: resetName,
+  } = useInput(textValidation);
+  const {
+    value: enteredStreet,
+    isValid: streetIsValid,
+    hasError: streetInputInvalid,
+    valueChangeHandler: streetChangeHandler,
+    inputBlurHandler: streetBlurHandler,
+    reset: resetStreet,
+  } = useInput(textValidation);
+
+  const {
+    value: enteredPostal,
+    isValid: postalIsValid,
+    hasError: postalInputInvalid,
+    valueChangeHandler: postalChangeHandler,
+    inputBlurHandler: postalBlurHandler,
+    reset: resetPostal,
+  } = useInput(postalValidation);
+  const {
+    value: enteredCity,
+    isValid: cityIsValid,
+    hasError: cityInputInvalid,
+    valueChangeHandler: cityChangeHandler,
+    inputBlurHandler: cityBlurHandler,
+    reset: resetCity,
+  } = useInput(textValidation);
+
+  const formIsValid =
+    nameIsValid && cityIsValid && postalIsValid && streetIsValid;
+
+  const confirmHandler = (event) => {
+    event.preventDefault();
+
+    if (!formIsValid) {
+      return;
+    }
+
+    props.onConfirm({
+      name: enteredName,
+      street: enteredStreet,
+      city: enteredCity,
+      postalCode: enteredPostal,
+    });
+
+    resetName();
+    resetCity();
+    resetStreet();
+    resetPostal();
+  };
+
+  const nameInputClasses = nameInputInvalid
+    ? `${classes.control} ${classes.invalid}`
+    : classes.control;
+  const streetInputClasses = streetInputInvalid
+    ? `${classes.control} ${classes.invalid}`
+    : classes.control;
+  const postalInputClasses = postalInputInvalid
+    ? `${classes.control} ${classes.invalid}`
+    : classes.control;
+  const cityInputClasses = cityInputInvalid
+    ? `${classes.control} ${classes.invalid}`
+    : classes.control;
+
+  return (
+    <form className={classes.form} onSubmit={confirmHandler}>
+      <div className={nameInputClasses}>
+        <label htmlFor="name">Your Name</label>
+        <input
+          type="text"
+          id="name"
+          value={enteredName}
+          onChange={nameChangeHandler}
+          onBlur={nameBlurHandler}
+        />
+        {nameInputInvalid && <label>Please enter a name</label>}
+      </div>
+      <div className={streetInputClasses}>
+        <label htmlFor="street">Street</label>
+        <input
+          type="text"
+          id="street"
+          value={enteredStreet}
+          onChange={streetChangeHandler}
+          onBlur={streetBlurHandler}
+        />
+        {streetInputInvalid && <label>Please enter a street</label>}
+      </div>
+      <div className={postalInputClasses}>
+        <label htmlFor="postal">Postal Code</label>
+        <input
+          type="text"
+          id="post"
+          value={enteredPostal}
+          onChange={postalChangeHandler}
+          onBlur={postalBlurHandler}
+        />
+        {postalInputInvalid && (
+          <label>Please enter a five character postal code</label>
+        )}
+      </div>
+      <div className={cityInputClasses}>
+        <label htmlFor="city">City</label>
+        <input
+          type="text"
+          id="city"
+          value={enteredCity}
+          onChange={cityChangeHandler}
+          onBlur={cityBlurHandler}
+        />
+        {cityInputInvalid && <label>Please enter a city</label>}
+      </div>
+      <div className={classes.actions}>
+        <button type="button" onClick={props.onCancel}>
+          Cancel
+        </button>
+        {formIsValid && (
+          <button className={classes.submit} type="submit">
+            Confirm
+          </button>
+        )}
+      </div>
+    </form>
+  );
+};
+
+export default Checkout;
+
+
+// Cart.js
+import React, { useContext, useState } from "react";
+
+import Modal from "../UI/Modal";
+import CartItem from "./CartItem";
+import classes from "./Cart.module.css";
+import CartContext from "../../store/cart-context";
+import Checkout from "./Checkout";
+
+const Cart = (props) => {
+  const [isCheckout, setIsCheckout] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
+  const cartCtx = useContext(CartContext);
+
+  const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
+  const hasItems = cartCtx.items.length > 0;
+
+  const cartItemRemoveHandler = (id) => {
+    cartCtx.removeItem(id);
+  };
+
+  const cartItemAddHandler = (item) => {
+    cartCtx.addItem(item);
+  };
+
+  const orderHandler = () => {
+    setIsCheckout(true);
+  };
+
+  const submitOrderHandler = async (userData) => {
+    setIsSubmitting(true);
+    setDidSubmit(false);
+    await fetch(
+      "https://react-http-83f5f-default-rtdb.firebaseio.com/orders.json",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          user: userData,
+          orderedItems: cartCtx.items,
+        }),
+      }
+    );
+    setIsSubmitting(false);
+    setDidSubmit(true);
+    cartCtx.clearCart();
+  };
+
+  const modalActions = (
+    <div className={classes.actions}>
+      <button className={classes["button--alt"]} onClick={props.onClose}>
+        Close
+      </button>
+      {hasItems && (
+        <button className={classes.button} onClick={orderHandler}>
+          Order
+        </button>
+      )}
+    </div>
+  );
+
+  const cartItems = (
+    <ul className={classes["cart-items"]}>
+      {cartCtx.items.map((item) => (
+        <CartItem
+          key={item.id}
+          name={item.name}
+          amount={item.amount}
+          price={item.price}
+          onRemove={cartItemRemoveHandler.bind(null, item.id)}
+          onAdd={cartItemAddHandler.bind(null, item)}
+        />
+      ))}
+    </ul>
+  );
+
+  const cartModalContent = (
+    <React.Fragment>
+      {cartItems}
+      <div className={classes.total}>
+        <span>Total Amount</span>
+        <span>{totalAmount}</span>
+      </div>
+      {isCheckout && (
+        <Checkout onConfirm={submitOrderHandler} onCancel={props.onClose} />
+      )}
+      {!isCheckout && modalActions}
+    </React.Fragment>
+  );
+
+  const isSubmittingModalContent = <p>Sending order data...</p>;
+
+  const didSubmitModalContent = (
+    <React.Fragment>
+      <p>Successfully sent the order!</p>
+      <div className={classes.actions}>
+        <button className={classes.button} onClick={props.onClose}>
+          Close
+        </button>
+      </div>
+    </React.Fragment>
+  );
+
+  return (
+    <Modal onClose={props.onClose}>
+      {!isSubmitting && !didSubmit && cartModalContent}
+      {!isSubmitting && didSubmit && didSubmitModalContent}
+      {isSubmitting && isSubmittingModalContent}
+    </Modal>
+  );
+};
+
+export default Cart;
+
+
+
+010 Adding Better User Feedback
+
+1. Create two States for handling the following data
+	> if form is Submitting (akin to loading)
+	> if form is submitted
+2. Display Content based on those State in Cart Component
+
+// Cart.js
+
+import React, { useContext, useState } from "react";
+
+import Modal from "../UI/Modal";
+import CartItem from "./CartItem";
+import classes from "./Cart.module.css";
+import CartContext from "../../store/cart-context";
+import Checkout from "./Checkout";
+
+const Cart = (props) => {
+  const [isCheckout, setIsCheckout] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
+  const cartCtx = useContext(CartContext);
+
+  const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
+  const hasItems = cartCtx.items.length > 0;
+
+  const cartItemRemoveHandler = (id) => {
+    cartCtx.removeItem(id);
+  };
+
+  const cartItemAddHandler = (item) => {
+    cartCtx.addItem(item);
+  };
+
+  const orderHandler = () => {
+    setIsCheckout(true);
+  };
+
+  const submitOrderHandler = async (userData) => {
+    setIsSubmitting(true);
+    setDidSubmit(false);
+    await fetch(
+      "https://react-http-83f5f-default-rtdb.firebaseio.com/orders.json",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          user: userData,
+          orderedItems: cartCtx.items,
+        }),
+      }
+    );
+    setIsSubmitting(false);
+    setDidSubmit(true);
+    cartCtx.clearCart();
+  };
+
+  const modalActions = (
+    <div className={classes.actions}>
+      <button className={classes["button--alt"]} onClick={props.onClose}>
+        Close
+      </button>
+      {hasItems && (
+        <button className={classes.button} onClick={orderHandler}>
+          Order
+        </button>
+      )}
+    </div>
+  );
+
+  const cartItems = (
+    <ul className={classes["cart-items"]}>
+      {cartCtx.items.map((item) => (
+        <CartItem
+          key={item.id}
+          name={item.name}
+          amount={item.amount}
+          price={item.price}
+          onRemove={cartItemRemoveHandler.bind(null, item.id)}
+          onAdd={cartItemAddHandler.bind(null, item)}
+        />
+      ))}
+    </ul>
+  );
+
+  const cartModalContent = (
+    <React.Fragment>
+      {cartItems}
+      <div className={classes.total}>
+        <span>Total Amount</span>
+        <span>{totalAmount}</span>
+      </div>
+      {isCheckout && (
+        <Checkout onConfirm={submitOrderHandler} onCancel={props.onClose} />
+      )}
+      {!isCheckout && modalActions}
+    </React.Fragment>
+  );
+
+  const isSubmittingModalContent = <p>Sending order data...</p>;
+
+  const didSubmitModalContent = (
+    <React.Fragment>
+      <p>Successfully sent the order!</p>
+      <div className={classes.actions}>
+        <button className={classes.button} onClick={props.onClose}>
+          Close
+        </button>
+      </div>
+    </React.Fragment>
+  );
+
+  return (
+    <Modal onClose={props.onClose}>
+      {!isSubmitting && !didSubmit && cartModalContent}
+      {!isSubmitting && didSubmit && didSubmitModalContent}
+      {isSubmitting && isSubmittingModalContent}
+    </Modal>
+  );
+};
+
+export default Cart;
+
+
+
+
+
+

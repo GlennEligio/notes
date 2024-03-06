@@ -1,0 +1,27 @@
+	//Array syntax
+        /*
+            defining an Array (Array is a way to create a list of items)
+            1. creating new EMPTY array
+            dataType[] arrayName = new dataType[sizeOfArray];
+
+            2. creating array with some element defined
+            dataType[] arrayName = {value0, value1, value2, value3, value4}
+
+            index ---->               0        1       2        3      4
+
+            defining element in an Array
+            arrayName[elementIndex] = value;
+
+            **note: index of array starts in zero (0)
+
+            calling an array element
+            arrayName[elementIndex];
+
+            calling Array length instance field (returns size of array)
+            arrayName.length;
+
+            CONS of Arrays
+            1. size of array after defining it is immutable (can't be changed)
+              = calling an array element whose index is greater than array size will result in
+                out of bound error
+         */

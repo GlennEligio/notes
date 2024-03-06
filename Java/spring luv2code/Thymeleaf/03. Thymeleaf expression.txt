@@ -1,0 +1,89 @@
+03. Thymeleaf expression
+	> to use any of these expression, we must have this property in <html> element
+
+		<html xmlns:th="http://www.thymeleaf.org">
+
+
+
+th:text
+	> added in any html element that displays text
+		- <p> <h1> 
+	> used to define the Text to be displayed in an element
+	> takes either
+		- pass a hard coded value
+		- refer to a model/session/request attribute (real use case)
+
+Ex:
+		<p th:text="'Time on the server is ' + ${theDate}" class="funny"/>
+
+
+
+
+
+th:href
+	> added in <a> element
+	> used to redirect <a> to a specific endpoint in Web App
+	> takes a relative-path to redirect; uses this syntax
+		th:href="@{/relative-url-path-to-redirect}"
+	> to ADD QUERY PARAMETER, add (paramName=paramValue) and the end of url path to navigate 
+		- use the following syntax
+			th:href="@{/url-path(paramName=paramValue)}"
+			th:href="@{/url-path(paramName=${modelAttribute})}"
+	
+EX:	
+1.	<a th:href="@{/employees/showFormForAdd}">Add Employee</a>
+
+	> this will redirect user to "localhost:8080/employees/showFormForAdd"
+
+2.	<a th:href="@{/employees(employeeId=${tempEmployee.id})}">Show Employee</a>
+
+	> this will redirect user to "localhost:8080/employees?employeeId=1"
+
+
+
+
+
+th:each
+	> used for iterating a Collection (either a model or session attribute)
+	> applicable in table row <tr> element
+	> the syntax of the th:each parameter will be
+		- "loopParameter : ${modelAttributeName}"
+	> the model attribute must be of Iterable Class
+		- ex: Collection, List, etc.
+	> the loopParameter can then be used to refer to a single item inside the Collection
+		- below is an example where
+			a. "tempEmployee" is the loop parameter
+			b. "employees" is the model attribute that is a Collection
+
+			<tr th:each="tempEmployee : ${employees}">
+				<td th:text="${tempEmployee.firstName}"/>
+				<td th:text="${tempEmployee.lastName}"/>
+				<td th:text="${tempEmployee.email}"/>
+			</tr>
+
+
+
+
+
+FORM RELATED Thymeleaf expression
+
+th:action
+	> define the location to send the form data
+	> uses same syntax as th:href
+		ex: th:action="@{/employees/list}"
+	> if we use this, we STILL NEED to define the action parameter of <form>
+		- for this, we will pass "#"
+		- the Thymeleaf will handle the real work for redirecting the data of form to location
+
+th:object
+	> similar to modelAttribute in Spring Form
+	> reference to the model attribute
+	> syntax of value is same as to referencing a model attribute
+		- ex: th:object="${employee}"
+
+
+th:field
+	> used to reference a property of the th:object
+	> the syntax of the value will be
+		th:field="*{firstName}"
+	

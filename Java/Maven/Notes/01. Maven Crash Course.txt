@@ -1,0 +1,76 @@
+Maven Crash Course
+
+TOPICS TO DISCUSS:
+1. Creating Maven project with Eclipse
+2. Adding dependencies to Maven pom.xml file
+3. Build and run Maven projects
+4. Develop Maven projects for
+	- Java Apps 
+	- Spring apps
+5. Import Maven projects
+6. Run Maven from Command-Line
+
+What is Maven?
+	> Maven is a Project Management tool
+	> Most popular use of Maven is:
+		1. Build management	
+		2. Dependencies
+
+
+Maven Features
+1. Automatically takes care of dependencies used
+	> Maven will take care of the necessary jar files for the specified dependencies (Spring, Hibernate, SQLconnector, etc.)
+		- Maven will go out and download the JAR files from Maven Central Repository for those projects for you	
+		- Maven will make those JAR files available during compile/run time
+	> Also, it will download the supporting dependencies for those primary dependencies
+		- ex: Since Spring depends on commons-logging, it will also download Apache Commons Logging
+2. Automatically handle the class / build path for the user
+	> When user build and run their app, Maven will handle class / build path for them
+	> Based on config file (pom.xml), Maven will add JAR files accordingly
+
+
+STEPS ON HOW MAVEN GET DEPENDENCIES
+1. Read config file (pom.xml)
+2. Check local repo
+3. Get from remote repo
+	- in case a library doesnt exist in local repo
+4. Save in local repo
+5. Build and run
+
+
+STANDARD DIRECTORY STRUCTURE
+
+Directory		Description / Use
+
+src/main/java		Java source codes
+
+src/main/resources	Properties / config files used by your app
+
+src/main/webapp		JSP files and web config files / Other web assets (images, css, js, etc)
+
+src/test		Unit testing code and properties		
+
+target			Destination directory for compiled code.
+			Automatically created by Maven
+
+
+Standard Directory Structure Benefits
+1. New developers can easily join an ongoing project
+	- with the structure, someone can easily find code, properties files, unit test, web files, etc.
+2. Most major IDEs have built-in support for Maven
+	- Eclipse, IntelliJ, NetBeans, etc
+	- IDEs can easily read/import Maven projects
+3. Maven projects are portable
+	- Developers can easily share projects between IDEs
+	- No need to fight about which IDE is the best LOL!
+4. Can build and run a prject with minimal local configuration
+
+
+
+Advantages of Maven
+1. Dependency Management
+	- Maven will find JAR files for you
+	- No more missing JARs
+2. Building and Running your Project
+	- No more build path / classpath issues
+ 

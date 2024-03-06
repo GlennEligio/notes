@@ -1,0 +1,75 @@
+114 What is Docker
+
+
+Docker
+ > Docker is a software development platform to deploy apps
+ > Apps are packaged in containers that can be run on any OS
+ > Apps run the same, regardless of where they're run
+	- Any machine
+	- No compability issues
+	- Predictable behavior
+	- Less work
+	- Easier to maintain and deploy
+	- Works with any language, any OS, any technology
+ > Scale containers up and down very quickly (seconds)
+
+
+Diagram: Docker on an OS
+Server (ex: EC2 instance)
+ > Docker Daemon
+ 	> Docker Container 1,2,3
+		- runs Java App
+	> Docker Container 4,5
+		- runs Node JS app
+	> Docker Container 6
+		- runs MySQL
+
+Diagram explanation
+ > Inside a Server, we can run Docker Engine
+ > With Docker Engine, we can run multiple Docker Containers
+ > Docker Container can run application inside it
+
+
+
+Docker Image repositories
+ > Docker images are stored in Docker Repositories
+ > Public: DockerHub 
+	- https://hub.docker.com/
+ 	- here you can find base images for many technologies for OS
+	- some of these images are OFFICIALLY provided by companies
+	- ex: Ubuntu, MySQL, NodeJS, Java
+ > Private: Amazon ECR (Elastic Container Registry)
+
+
+
+
+Docker versus Virtual Machines (VMs)
+ > Docker is "soft of" a virtualization technology, but not exactly
+ > Resources are shared with the host => many containers on one server
+
+
+VM architecture
+Apps		Apps		Apps
+ |		 |		 |
+Guest OS	Guest OS	Guest OS
+(VM)		(VM)		(VM)
+ |		 |		 |
+ |----------- Hypervisor --------|
+ 		 |
+		Host OS
+		 |
+		Infrastructure
+
+
+Docker Architecture
+Container	Container	Container
+Container	Container	Container
+Container	Container	Container
+	|		|		|
+	|---------------|---------------|
+			|
+		Docker Daemon
+			|
+		Host OS (EC2 Instance)
+			|
+		Infrastructure

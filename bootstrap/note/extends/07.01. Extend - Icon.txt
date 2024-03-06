@@ -1,0 +1,27 @@
+07.01. Extend - Icon
+
+~~~~~ EXTEND - ICON ~~~~~~
+Icons
+	> Bootstrap offers Icons that can be used in a project
+
+Installation method
+1. using npm
+	npm i bootstrap-icons
+2. using compiled svgs
+3. using CDN
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+
+Methods of using Bootstrap Icon
+1. Download SVG and include it in HTML
+2. Use icon element and give it the appropriate class
+	> available only when using web font
+	> NOTE: To adjust icon added using icon element, use FONT-SIZE
+3. Copy and paste the svg element
+
+
+Using Bootstrap Icon
+1. Import the CSS file for Bootstrap icons
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+2. Add the Bootstrap icon that you want
+	> with the bootstrap-icons.css, we can use the icon element

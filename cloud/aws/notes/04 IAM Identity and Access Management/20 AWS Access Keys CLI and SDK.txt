@@ -1,0 +1,46 @@
+20 AWS Access Keys CLI and SDK
+
+AWS Access Options
+1. AWS Management Console 
+ > protected by password + MFA
+2. AWS Command Line Interface (CLI)
+ > protected by access keys
+3. AWS Software Developer Kit (SDK)
+ > for coding
+ > protected with access keys as well
+
+
+AWS Access Keys
+ > generated through AWS Console
+ > Users manage their own access keys
+ > Access Keys are SECRET, just like password
+	- Dont share them
+
+
+Access keys
+ > consist of the following:	
+	1. Access Key ID
+	2. Secret Access Key (dont share)
+
+
+
+AWS CLI
+ > a tool that enables you to interact with AWS services using commands in your command-line shell
+ > gives direct access to public APIs OF AWS servies
+ > alternative to using AWS Management Console
+ > open-source: https://github.com/aws/aws-cli
+ > use case includes:
+	- developing scripts to manage your resources
+
+
+
+AWS SDK
+ > AWS Software Development Kit (AWS SDK)
+ > Language-specific APIs (set of libraries)
+ > Enables you to access and manage AWS services programmatically
+ > Embedded within your application (code)
+ > Supports
+	- SDKs (JS, Python, PHP, .NET, Ruby, Java, Go, Node.js, C++)
+	- Mobile SDKs (Android, iOS, ...)
+ 	- IoT Device SDKs (Embedded C, Arduino, ...)
+ > EX: AWS CLI is built on AWS SDK for Python

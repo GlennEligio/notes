@@ -1,0 +1,156 @@
+Inversion of Control (IoC)
+	> we OUTSOURCE to an OBJECT FACTORY
+	> The approach of outsourcing the construction and management of objects
+
+
+Software Engineering Best Practice:
+1. Code to an interface
+	> instead of dirctly writing code in BaseballCoach implementation, we want to make use of a well defined interface that all coaches will support
+	> we will then just implement the said interface whenever we create the interface variants (polymorphism)
+
+
+2. Refactoring code
+	> changing variable reference to use Interface
+	> with this, we can assign it object to it as long as it is an implementation of the said Interface
+
+
+
+Spring Container
+
+Sprint Container have TWO primary functions
+1. Create and manage objects (INVERSION OF CONTROL)
+2. Inject object's dependencies (DEPENDENCY INJECTION)
+
+
+Spring Beans / Java Bean
+	> A "Spring Bean" is simply a Java object.
+	> When Java objects are created by the Spring Container, then Spring refers to them as "Spring Beans".
+	> Spring Beans are created from normal Java classes .... just like Java objects.
+
+
+THREE ways of Configuring Spring Container
+1. XML configuration file
+	> legacy, but most legacy apps still use this
+	> original implementation of Spring Container 
+2. Java Annotations
+	> modern
+3. Java Source Code
+	> modern
+
+
+Spring Development Process
+	I. Configure the Spring Beans
+	II. Create a Spring container
+	III. Retrieve Beans from Spring Container
+
+
+I. Configuring Spring Beans - XML-basedB Beans
+1. Inside an xml file (applicationContext.xml), add a <bean> inside <beans> element
+
+	<bean id="myCoach"
+		class="com.glenn.springdemo.BaseballCoach"
+	</bean>
+
+<bean> parameters
+
+id="bean-id"
+	> defines the id that the Java application will use when they want to retrieve a Bean from the Spring Container
+class="package-location"
+	> the fully qualified class name of implementation class	
+		- case where we will create an Interface object as Bean  
+
+
+
+II. Create a Spring Container
+
+Spring Container
+	> generically known as ApplicationContext
+	> specialized implementations includes
+		- ClassPathXmlApplicationContext
+		- AnnotationConfigApplicationContext
+		- GenericWebApplicationContext
+		- etc.
+	> each different implementation requires different parameters in its Constructor
+		- ClassPathXmlApplicationContext
+			= an xml file that contains the config and the beans
+		- AnnotationConfigApplicationContext
+			= a class that have @Configuration and @Bean methods inside it
+
+1. Create a Spring Container
+	> we will typically create a SpringContainer inside a main() of Class
+	> in this example we will use ClassPathXmlApplicationContext implementation
+	> ex: ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+
+III. Retrieving the Bean from the Spring Container
+	> for retrieving Bean, we will call getBean() of the SpringContainer
+	> in getBean() parameters, it will be based on what implementation of SpringContainer that we used
+		- for xml-based, pass the bean-id of <bean>
+		- for @Annotation based, pass the method name of the @Bean method
+
+
+
+
+Coding Scenario:
+MyApp will get a BaseballCoach instance
+MyApp will then get the BaseballCoach's dailyWorkout using its getter
+
+Rules:
+1. App should be configurable
+2. Easily change the coach for another sport
+	- Hockey, Cricket, Tennis, Gymnastic
+
+
+Classes needed:
+MyApp.java
+	> main method
+BaseballCoach.java
+	> implementation of Coach
+Coach.java
+	> interface after refactoring
+TrackCoach.java
+	> another implementation of Coach
+
+
+
+1. Create a new package
+
+2. Create a new class
+	> BaseballCoach
+	> add method
+		- getDailyWorkout()
+		- return type String
+		- returns "Spend 30 minutes on batting practice"
+
+3. Create new class
+	> MyApp
+	> add main()
+	> inside main()
+		- create an instance of BaseballCoach
+		- print the getDailyWorkout() of BaseballCoach instance
+
+4. Create an interface
+	> Coach
+	> add an abstract method
+		- getDailyWorkout()
+		- String return type
+ 
+5. Change the variable reference of BaseballCoach object
+	> from BaseballCoach to Coach
+
+6. Run the main method and observe the changes
+	> there should be no changes whatsoever to output
+
+
+7. Create a new class
+	> TrackCoach
+	> implements Coach interface	
+	> implement the abstract methods
+	> change return value of getDailyWorkout() to "Run a hard 5k"
+
+8. Inside MyApp's main()
+	> change the value of Coach object
+		- from BaseballCoach to TrackCoach
+
+9. CHeck the output
+	> should be changed to "Run a hard 5k"

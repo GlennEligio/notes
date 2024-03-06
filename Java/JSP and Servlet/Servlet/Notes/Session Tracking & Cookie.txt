@@ -1,0 +1,89 @@
+HttpSession object			
+	> created only ONCE per Client connection
+	> the Session is then stored in the browser
+	> Session is SHARED among all browser tabs
+	> the Session will PERSIST unless:
+		- browser is closed
+		- logout button is clicked
+		- session is timed out
+	> if above event happens, Session object will be ELIGIBLE for garbage collection
+
+SESSION TRACKING
+	> Session tracking is a way to maintain state(data) of a user
+	> used to store data to a particular client and track its visit activity
+	> useful when a clients connects to server MULTIPLE TIMES
+
+
+Session Structure
+
+Client -------> 1. Request(new) -------> Server
+Client <------- 2. Response <----------- Server
+Client -------> 3. Request <------------ Server
+
+
+Techniques of Session Tracking
+1. Cookies
+2. Url Rewriting
+3. Hidden Form Field
+4. Http Session
+
+
+
+COOKIES IN SERVLET
+Cookies
+	> a small piece of information that is persisted between the multiple client request
+	> contain a name, a single value, and some optional attributes like
+		- comment 
+		- path  
+		- domain qualifiers 
+		- age 
+		- version number
+	> using cookie, we can see the track the session of each clients
+
+
+EX:
+Client -----> 1. Request            -------> Server
+Client <----- 2. Response + Cookies <------- Server
+Client -----> 3. Request + Cookies  -------> Server
+
+
+USEFUL METHODS OF Cookie Class
+	
+public void setMaxAge(int expiry)
+	> set the MAXIMUM AGE of the cookies in seconds
+public String getName()
+	> returns the name of the cookie
+	> Name cannot be cahanged after creation
+public String getValue()
+	> returns the value of cookie
+public void setName(String name)
+	> changes the nama of the cookie
+public void setValue(String value)
+	> changes the value of the cookie
+
+
+CREATING AND DELETING A COOKIE
+
+Creation
+	> create Cookie object
+	> add Cookie in ServletResponse or HttpServletResponse
+
+		Cookie ck = new Cookie("user", "Edureka");
+		response.addCookie(ck)
+
+Deletion
+	> delete value of cookie
+	> change maximum age to 0
+	> add cookie in the response
+
+		Cookie ck = new Cookie("user","");
+		ck.setMaxAge(0);
+		response.addCookie(ck);
+
+Fetching Cookies from Client request 
+	> call getCookies() of HttpServletRequest / ServletRequest
+
+Cookies[] getCookies()
+	> will return an Array of Cookies
+	> the order of the Cookies will be based on their insertion order
+

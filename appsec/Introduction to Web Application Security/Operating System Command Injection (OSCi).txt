@@ -1,0 +1,297 @@
+Operating System Command Injection (OSCi)
+
+Content:
+I. Introduction
+01. Welcome
+02. Introduction
+03. Objectives
+04. Module outline
+II. Operating System Command Injection Overview
+05. Introduction
+06. Command injection risks
+07. Scenario
+08. The problem
+III. Occurence and Impact
+09. Introduction
+10. OSCi example
+	> Normal usage
+	> Attack code execution
+IV. Conclusion
+11. Best practices
+12. Problem identification
+13. Scenario resolution
+V. Summary
+14. Module summary
+
+
+
+
+
+
+
+
+
+
+
+I. Introduction
+01. Welcome
+02. Introduction
+
+Operating System Command Injection (or OSCi)
+ > also known as shell injection
+ > a security vulnerability that lets malicious users execute operating system commands on a system
+ > this flaw in application's code may
+	1. leave your application and data vulnerable to security threats
+	2. let attackers compromise other aprts of the hosting infrastructure, beyond the application
+
+
+
+
+
+
+
+
+03. Objectives
+
+Objectives
+1. Describe the operating system command injection vulnerability
+2. Identify sample code that harbors the operating system command injection vulnerability
+3. List methods to eliminate the vulnerability
+
+
+
+
+
+
+
+04. Module outline
+
+Module outline
+Section 1: Operating System Command Injection Overview
+Section 2: Occurence and Impact
+Section 3: Conclusion
+
+
+
+
+
+
+
+
+II. Operating System Command Injection Overview
+05. Introduction
+
+OSCi risks
+ > attacks can use command injection to execute arbitrary commands on the host operating system, through a vulnerable application
+
+OSCi causes
+1. Improperly validated input that reaches a system shell
+	> can be in form of uploaded documents, forms, cookies, or HTTP headers
+ 	> can also process insecure values received through external stream
+
+
+
+
+
+
+
+
+06. Command injection risks
+
+Command injection risks
+ > Attacker can
+	1. execute unauthorized commands
+	2. Read or modify confidential data
+	3. Disable critical software
+	4. Crash operating system
+
+Code injection vs Command injection
+ > In code injection, the attacker will inject additional code in the application
+ > In command injection, the attacker will pass commands to the operating system
+
+
+
+
+
+
+
+
+07. Scenario
+
+Scenario
+ > application uses a code to remove assignment files from the system
+ > the name of the file to remove is obtained using the GET method
+ > the filename is then passed to the system shell
+
+
+
+
+
+
+
+
+08. The problem
+
+Problem
+ > one of John's team members noticed in the logs that some system commands are executed following the assignment of filename, and deletion of the file
+
+
+
+
+
+
+
+
+III. Occurence and Impact
+09. Introduction
+
+OSCi occurence
+ > OSCi happens when an input is UNSANITIZED
+	- computers can NOT differentiate between a harmless and malicious input
+
+
+Occurence
+ > command injection vulnerabilities occur if:
+	1. unsanitized data enters the applicaton
+	2. unsanitized data becomes a part of a string that is executed as a command
+
+EX:
+$fileName is an input to the command cat $fileName to list the contents of a file
+
+// Standard input and command
+Input: file.txt
+Command: cat file.txt
+
+// Malicious input and command
+Input: file.txt; rm -rf /*
+Command: cat file.txt; rm -rf /*
+
+This results in "rm -rf /*" command being executed and deleting ALL files from the system
+
+
+
+
+Impact
+Consequences of OSCi attack
+ > the attack can corrupt your database
+ > the attacker may steal your customer information or use an API to launch a specific process or launch a distributed denial of service (DDoS) attack
+ > the attacker can exploit the capabilities built into the software
+ > the attacker may still retain access to the system even after removal of the injection
+ > the attacker can insert an unrelated command by injection a character that delimits the end of one command and beginning of another
+
+
+
+
+
+
+
+
+
+
+10. OSCi example
+
+Example code
+// catWrapper command
+# include <stdio.h>
+# include <unistd.h>
+
+int main (int argc, char **argv) {
+  char cat[] = "cat ";
+  char *command;
+  size_t commandLength;
+
+  commandLength = strlen(cat) + strlen(argv[1]) + 1;
+  command  = (char *) malloc(commandLength);
+  strncpy(command, cat, commandLength);
+  strncat(command, argv[1], (commandLength - strlen(cat)));
+
+  system(command);
+  return(0);
+}
+
+
+
+Normal usage
+ > if used as expected, the code output is simply the contents of the file requested
+
+$ ./catWrapper Story.txt
+When last we left our heroes
+
+
+
+
+
+Attack code execution
+ > an attacker can execute their code by simple adding a semicolon and another command to the end of this line 
+ > the command is executed by catWrapper, with no complaint
+
+$ ./catWrapper "Story.txt; ls"
+When last we left our heroes...
+Story.txt	doubFree.c
+nullpointer.c
+unstosig.c	www*
+a.out*
+
+
+
+
+
+
+
+
+
+IV. Conclusion
+11. Best practices
+
+Best practices
+1. Use library calls
+2. Use a known library that prevents command injection weakness
+3. Treat all input as insecure and always perform input validation
+4. Filter all characters that do not pass an extremely strict allowlist
+5. Perform security checks both on the client-side and server-side
+
+
+
+
+
+
+
+
+
+12. Problem identification
+
+Problem identification
+ > they found that the code they had written to provide the feature to delete assignment files harbored a command injection vulnerability
+ > they realized this allows users to send untrusted input directly as parameter to OS commands
+
+
+
+
+
+
+
+
+13. Scenario resolution
+
+Scenario resolution
+ > they used a web application security scanner to look for operating system command injection vulnerabilty
+ > then they tested the web pages by passing other operating system commands through user inputs, to verify the issue
+
+
+
+
+
+
+
+V. Summary
+14. Module summary
+
+Module Summary
+1. Attackers use command injection to execute arbitrary commands on the host operating system via a vulnerable application
+2. An OS command injection attack occurs when insecure input reaches a system shell
+3. Improper input validation usually leads to command injection attacks
+4. The application cannot differentiate between safe and unsafe user input
+	> Unsanitized input may lead to command injection
+5. Command injection vulnerabilities occur when insecure data is part of a string that is executed as a command
+6. Treat all input as insecure. Always employ input validation
+7. Perform security checks both on the client-side and server-side

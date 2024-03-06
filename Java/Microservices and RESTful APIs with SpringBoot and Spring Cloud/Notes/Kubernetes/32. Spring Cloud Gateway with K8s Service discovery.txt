@@ -1,0 +1,207 @@
+Spring Cloud Gateway using K8s service discovery
+
+SOURCE:
+https://blog.nitishkumarsingh.xyz/2019-10-11-spring-cloud-gateway-using-kubernetes-service-discovery/
+
+
+I. Creating Spring Cloud Gateway project
+	1. Dependencies needed
+II. application.yml file configuration
+III. Create Docker image out of Spring Boot
+	1. Dockerfile
+	2. mvn spring-boot:build-image
+IV. Create K8s resources
+	1. ServiceAccount
+	2. Role
+	3. Role Binding
+	4. Deployment and Service of Gateway
+
+I. Creating Spring Cloud Gateway project
+
+1. Dependencies needed
+	> Spring Cloud Gateway
+	> Spring Cloud Starter Kubernetes
+	> Spring Cloud Loadbalancer
+		- used to replace the deprecated Spring Cloud Starter Kubernetes Ribbon
+	> Spring Boot Starter Actuator
+		- for liveness and readiness probes
+
+2. Inject DiscoveryClient bean in the main java file
+
+@SpringBootApplication
+//@EnableEurekaClient
+@EnableDiscoveryClient
+public class ApiGatewayServer {
+
+	@Autowired
+	private DiscoveryClient discoveryClient;
+
+	public static void main(String[] args) {
+		SpringApplication.run(ApiGatewayServer.class, args);
+	}
+
+}
+
+
+
+
+II. application.yaml file
+
+spring:
+  application.name: gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+          # url-expression: "'http://'+serviceId"
+    # enable if configuration need to be loaded from ConfigMap or Secrets
+    # kubernetes:
+    #   reload:
+    #     enabled: true
+    #     mode: polling
+    #     period: 5000
+server:
+  port: 8080
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.loadbalancer: TRACE
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
+
+
+III. Creating Docker image of Gateway app
+1. Dockerfile
+	> change version of openjkd Docker image to suit your need
+
+FROM openjdk:8-jdk-alpine as build
+COPY . /app/gateway
+WORKDIR /app/gateway
+RUN ./gradlew clean build
+
+FROM openjdk:8-jdk-alpine
+COPY --from=build /app/gateway/build/libs/gateway-0.0.1-SNAPSHOT.jar /app/gateway.jar
+EXPOSE 8080
+ENTRYPOINT [ "java", "-jar", "/app/gateway.jar" ]
+
+
+2. mvn spring-boot:build-image
+	> Maven command to build Docker image from Spring Boot app
+	> need to configure the pom.xml
+
+
+
+
+IV. Create K8s resources
+
+NOTE:
+1. These resources is only applicable to namespace "default". Change them to suit your need
+
+1. ServiceAccount
+	>  allow gateway application to read details of service and pods
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gateway
+  namespace: default # change with your namespace 
+
+
+2. Role
+	>  provides permission to read services, pods and endpoints.
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gateway-role
+  namespace: default # replace with your namespace
+rules:
+- apiGroups: [""]
+  resources:
+  - endpoints
+  - namespaces
+  - pods
+  - services
+  verbs:
+  - get
+  - watch
+  - list
+
+
+3. Role Binding
+	> needed to bind role with service account
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gateway-read
+  namespace: default # This only grants permissions within the "development" namespace.
+subjects:
+- kind: ServiceAccount
+  name: gateway # Name is case sensitive
+  namespace: default
+roleRef:
+  kind: Role
+  name: gateway-role
+  apiGroup: rbac.authorization.k8s.io
+
+
+
+4. Deployment and Service of Gateway
+	> change Docker image inside deployment to your Docker image
+
+#Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: gateway
+        imagePullPolicy: Never #comment except minikube 
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /actutator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+      serviceAccountName: gateway
+
+
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  selector:
+    app: gateway
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080

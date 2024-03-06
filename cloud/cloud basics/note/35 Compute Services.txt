@@ -1,0 +1,30 @@
+35 Compute Services
+
+Different Compute Services of each Cloud Providers
+
+Compute on AWS
+Amazon EC2
+ > Virtual servers in the cloud
+ > EC2 stands for Elastic Compute Cloud
+ > Virtual machine that is provisioned on the cloud
+ > Starts with its own virtual hard drive and networking
+ > Has elasticity, which means it can scale up or down
+
+
+
+Compute on Azure
+Azure Virtual Machines
+ > same concept as Amazon EC2
+ > Azure Virtual Machines works by:
+	- picking an image (OS, like Ubuntu)
+	- select a VM configuration (processor, ram, hard drive)
+	- VM get instantiated
+	- After this, you will get a virtual machine running in a given zone (you typically need to choose a region before creating a resource)
+ 	- You can connect to the VM and run apps on it
+	- You can also shut it down
+	- Lastly, you can terminate/delete it (if you do this, you will not be able to restore data in the VM)
+ 
+
+NOTE:
+1. Cloud providers typically charge you when your VMs are RUNNING
+	> shutting down or terminating it will stop the charging

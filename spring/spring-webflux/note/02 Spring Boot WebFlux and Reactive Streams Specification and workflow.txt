@@ -1,0 +1,80 @@
+02 Spring Boot WebFlux | Reactive Streams Specification and workflow
+
+
+Reactive Stream Specification
+1. Publisher
+	- publishes an event (Database Driver)
+2. Subscriber
+	- subscribes to a Publisher to receive its emitted events (Backend app/Browser)
+3. Subscription
+4. Processor
+
+
+
+Publisher or Producer
+ > Publisher is a Data Source who will always publish event
+
+Method Signature:
+public interface Publisher<T> {
+	public void subscribe(Subcriber<? super T> s);
+}
+
+
+
+Subscriber or Consumer
+ > Subscriber will subscribe/consume the events from publisher
+
+Method signature:
+public interface Subscriber<T> {
+	public void onSubscribe(Subscription s);
+	public void onNext(T t)
+ 	public void onError(Throwable t);
+	public void onComplete();
+}
+
+
+
+Subscription
+ > Subscription represents the unique relationship between a Subscriber and a Publisher
+
+Method signature:
+public interface Subscription {
+	public void request(long n);
+	public void cancel();
+}
+
+
+
+Processor
+ > A Processor represents a processing stage - which is both a Subscriber and a Publisher and MUST obey the contracts of both
+
+Method Signature:
+public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
+
+}
+
+
+
+
+REACTIVE STREAM WORKFLOW
+1. Subscriber subscribes to a Publisher by passing a Subscriber instance to the Publisher's subscribe() method
+2. Publisher sents a Subscription instance to notify that the subscription is success
+3. Subscriber calls the request(long n) to request n items from the Publisher
+4. Publisher sends/emits the data to the Subscriber by calling its onNext(T data)
+	- based on how many request Subscriber did, the Publisher will fire that many onNext() event
+5.1. If Publisher successfully published all items, it will fire an onComplete event by calling onComplete()
+5.2 If Publisher encountered an error during publishing, it will fire an onError event by calling onError(Throwable t)
+
+NOTE:
+1. onComplete and onError events are terminal events
+	> after firing any of these two, no more events will be published to the Subscriber
+
+
+
+
+REACTIVE PROGRAMMING LIBRARIES
+1. Reactor
+	> recommended library when working with Spring
+2. RxJava
+3. Jdk9 Flow Reactive Stream	
+	> not widely used

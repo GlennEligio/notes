@@ -1,0 +1,63 @@
+14. Creating Docker Image of Spring Boot app using Maven plugin
+
+
+SOURCE:
+https://www.baeldung.com/spring-boot-docker-images
+
+
+Creating Docker Image of Spring Boot app using Maven plugin
+1. Add <configuration> tag in same level as <groupId> and <artifactId> inside <build>
+2. Inside the <configuration>, add the following elements
+	<image>
+		> defines the Docker Image properties to be used
+	<pullPolicy>
+		> defines the policy for pulling base images when creating the image for Spring boot app
+		> values can be
+			IF_NOT_PRESENT		will not pull the image remotely if present locally
+			ALWAYS			will pull the images remotely always
+
+3. Inside the <image>, add the follwing elements
+	<name>
+		> defines the name of the Docker Image
+
+
+EX:
+	> in <name>, we injected the project.artifactId and project.version
+	> these are found inside <project> of pom.xml
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>in28min/mmv2-${project.artifactId}:${project.version}</name>
+					</image>
+					<pullPolicy>IF_NOT_PRESENT</pullPolicy>
+				</configuration>				
+			</plugin>
+		</plugins>
+	</build>
+
+4. Run this command to build the docker image
+	> must be in the same directory as pom.xml of Spring Boot app
+	> -skipTests command flag is for skipping Test
+		- not recommended in production
+	
+	mvnw spring-boot:build-image -DskipTests
+
+	> or in Eclipse, press CTRL twice and type the command
+	> for Eclipse, right click the project, choose Run as, then Maven build, then type the "spring-boot:build-image -DskipTests" in the Goals
+
+
+5. Run the Docker image in a Container
+
+	docker container run -p 8000:8000 -d shuntjg/mmv2-currency-exchange-service:0.0.1-SNAPSHOT
+
+
+
+Checking the created Docker Image
+1. Run the docker images or docker image ls command
+
+

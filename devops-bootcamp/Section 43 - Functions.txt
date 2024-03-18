@@ -1,0 +1,849 @@
+Section 43 - Functions
+
+Contents:
+254. Functions
+255. Test your knowledge - Functions
+256. Arguments
+257. Test your knowledge - Arguments
+258. Return Statement
+259. Test your knowledge - Return statement
+260. List as argument
+261. Test your knowledge - List as argument
+262. Scopes
+263. Test your knowledge - Scopes
+264. Arguments Explained
+265. Test your knowledge - Arguments Explained
+
+
+
+254. Functions
+Functions
+ > functions can come from the built-in functions when installing Python, or from the custom made functions we've created
+ > ex: built in functions
+	- print(), len(), input()
+	
+	
+Benefits of Functions
+1. Preventing repetition of code
+2. Improved readability of code	
+
+	
+Creating custom Functions 
+ > to create a function, we will need the built in 'def' (stands for definition) keyword
+ > functions, like methods, composed of three parts
+	1. function name
+	2. function arguments/parameters
+	3. function body
+ > Functions can have zero arguments
+ > Functions also does not need to return a value
+	- if we need the function to return a value, we can use the 'return' keyword
+ > the syntax for this function is as follows
+	
+SYNTAX:
+def func_name(args...):
+	# func_body
+	
+EX:
+>>> def input_number():
+		return int(input("Enter a number: "))
+>>> input1 = input_number()
+>>> input2 = input_number()
+>>> input3 = input_number()
+>>> input4 = input_number()
+>>> input5 = input_number()
+>>> input1
+Enter a number: 104
+>>> print(input1)
+104
+>>> input2
+Enter a number: 34
+>>> print(input2)
+34
+
+
+
+
+
+255. Test your knowledge - Functions
+
+#1
+Q: The output of the following snippet of the code will be:
+a = 0
+def add_one(a):
+	return a+1
+
+result = add_one(a)
+print(result)
+A: 1
+
+#2
+Q: What will be the result of calling the print_info function with the arguments 'john' and 19?
+def print_info(name, age=18):
+    print(name, age)
+
+print_info('john', 19)
+A: john 19
+
+#3
+Q: Regarding the definition of the function and the sample input, Choose the correct value of the output.
+Function :  def multi_func(num1,num2):
+                      return num1 *num2 
+Sample input: print ( multi_func(5 , num1= 10) )
+A: Error, correct input should be either print(multi_func(5,10)) or print(multi_func(num1=5, num2=10))
+
+#4
+Q: Method is called by its name, but it is associated with an object.
+A: True
+
+#5
+Q: What is the error in the following snippet code:
+def multi_func():
+  result = int(input()) * 5
+  return result     
+
+print(result)
+A: The result is not defined as a global variable
+
+#6
+Q: The function can have only one parameter. If any data (parameters) are passed, they are passed explicitly.
+A: False
+
+#7
+Q: Define a function that gets the user input and multiply it by a number we passed to the function.
+Sample input:  6
+Sample output: 
+
+print( multi_num(5) )
+30
+A: def multi_num(num): return int(input()) * num
+
+#8
+Q: What is the output of the following snippet:
+def my_function(*students):
+  print("The tallest student is " + students[2])
+
+my_function("James", "Ella", "Jackson")
+A: 'The tallest student is Jackson'
+N: *args is similar to args... VarArgs of Java
+
+#9
+Q: Choose the correct answer which defines a function to get numeric input from the user:
+A: def input_num(): return int(input())
+
+
+
+
+
+
+
+256. Arguments
+
+Arguments
+ > arguments are used so that functions can take inputs
+ > to add an argument to a function, we can add the argument names in the function definition
+ > we can have multiple arguments in a function. to do so, we need to have them separated by commas
+ 
+SYNTAX:
+def func_name(arg_name_1, arg_name_2):
+	# func_body
+	
+EX:
+>>> def input_number(num):
+		return int(input("Enter a number: ")) * num
+>>> input1 = input_number(10)
+>>> input1
+Enter a number: 12
+>>> print(input1)
+120
+
+
+ 
+ 
+Mapping of Arguments and Parameters
+ > each arguments we pass in the function will be mapped to the parameters based on the position
+ > ex: 1st argument will be mapped to 1st parameter, 2nd argument will be mapped to 2nd parameter, etc
+ 
+EX:
+>>> def input_number(num1, num2):
+		return int(input("Enter a number: ")) * num1 - num2
+>>> input1 = input_number(10, 20)
+>>> input1
+Enter a number: 12
+>>> print(input1)
+100
+
+
+
+Explicit assignment of parameters
+ > we could also explicitly specify which parameters the arguments will be mapped to
+ > just make sure that multiple arguments SHOULD NOT POINT to the same parameter defined in function
+ 
+SYNTAX:
+# when calling the function
+func_name(param_name1 = arg1, param_name2 = arg2)
+ 
+EX:
+>>> def input_number(num1, num2):
+		return int(input("Enter a number: ")) * num1 - num2
+>>> input1 = input_number(num2 = 10, num1 = 20)
+>>> input1
+Enter a number: 12
+>>> print(input1)
+230
+
+EX:
+EX:
+>>> def input_number(num1, num2):
+		return int(input("Enter a number: ")) * num1 - num2
+>>> input1 = input_number(10, num1 = 20) # will throw error
+
+
+
+Default values in Function parameters
+ > we could also define default values to function parameters
+ > this means that if no argument is passed for this parameter, it will use the default value
+ > if we pass an argument though, it will be using that instead of the default value
+ 
+SYNTAX:
+def func_name(param_name = default value, param_name_2)
+
+EX:
+>>> def input_number(num = 10):
+		return int(input("Enter a number: ")) * num
+>>> input_number(5)
+Enter a number: 12
+60	
+
+
+>>> def input_number(num = 10):
+		return int(input("Enter a number: ")) * num
+>>> input_number()
+Enter a number: 12
+120
+
+
+
+
+
+257. Test your knowledge - Arguments
+
+#1
+Q: The output of the following snippet of the code will be:
+nums= [7,4,1]
+def change_third_item(list):
+	list[2] = 5
+
+change_third_item(nums)
+print(nums)
+A: [7,4,5]
+
+#2
+Q: The output of the following snippet of the code will be:
+def print_name_age(name, age=19):
+    print(name, age)
+
+print_name_age('john', 18)
+A: john 18
+
+#3
+Q: What will be the result of calling the fullname_func function with the argument 'John'?
+def fullname_func(fname):
+  print(fname + " Mark")
+
+fullname_func("John")
+A: John Mark
+
+#4
+Q: What is the output of the following snippet:
+def my_function(*friends):
+  print("The tallest student is " + friends[0])
+
+my_function("john", "Ella", "mark")
+A: The tallest student is john
+
+#5
+Q: The output of the following snippet of the code will be:
+a = 0
+def add_three(a):
+	return a+3
+
+result = add_three(a)
+print(result)
+A: 3
+
+#6
+Q: What will be the result of calling the fullname_func function with the arguments 'John' and 'Mark'?
+def fullname_func(fname, lname):
+  print(fname + " " + lname)
+
+fullname_func("John", "Mark")
+A: John Mark
+
+#7
+Q: The output of the following snippet of the code will be:
+a = 0
+def add_three(a):
+	return a+3
+
+result = add_three(3)
+print(result)
+A: 6
+N: if parameter and global variable have the same name, the parameter have HIGHER priority
+
+#8
+Q: Regarding the definition of the function and the sample input, Choose the correct value of the output.
+Function :  def add_func(num1,num2):
+                   	return num1 + num2
+ 
+Sample input: print ( add_func(5 , num1= 10) )
+A: Error, 5 and 10 are pointing in the same parameter
+
+#9
+Q: Regarding the definition of the function and the sample input, Choose the correct value of the output.
+Function :  def add_func(num1,num2):
+            	  	return num1 + num2 
+		
+Sample input: print ( add_func(5 , 5) )
+A: 10
+
+#10
+Q: Define a function that gets the user input and add to it a number we passed to the function.
+Sample input:  6
+Sample output: 
+print( add_num(5) )
+11
+A: def add_num(num): return int(input()) + num
+
+
+
+
+
+
+
+
+258. Return Statement
+
+return
+ > 'return' keyword is used to create a return statement
+ > return statement is used to return a value in the database
+ > return statements also ENDs the function or method execution
+	- this means that suceeding lines of code after the return will not be executed
+
+EX:
+>>> def print_sum(num1, num2):
+		sum = num1 + num2
+		if(sum == 0):
+			return
+		print("The sum is: ", str(sum))
+>>> print_sum(4,2)
+The sum is: 6
+>>> print_sum(-1, 1)
+>>>
+
+
+
+None
+ > Functions and methods always return something regardless if 'return' keyword is specified
+ > if the Function or method does not return anything, it will default to 'None'
+ 
+EX:
+>>> def is_even(num):
+		if(num % 2 == 0):
+			return True
+>>> print(is_even(6))
+True
+>> print(is_even(7))
+None
+
+
+
+
+
+
+259. Test your knowledge - Return statement
+
+#1
+Q: The output of the following snippet of the code will be:
+def my_function(x):
+  return 5 + x
+
+print(my_function(3))
+A: 8
+
+#2
+Q: The output of the following snippet of the code will be:
+def is_true(a): 
+  return bool(a) 
+
+result = is_true(6<3) 
+print("The result is", result)
+A: The result is False
+
+#3
+Q: The output of the following snippet of the code will be:
+def return_greeting():
+  return "Hello, World"
+
+print(return_greeting())
+A: Hello, World
+
+#4
+Q: The output of the following snippet of the code will be:
+def my_function(x):
+  return 10 - x
+
+print(my_function(4))
+A: 6
+
+#5
+Q: The output of the following snippet of the code will be:
+def square(i):
+    j = i * i
+    return j
+
+num = 2
+result = square(num)
+print("The result of ", num, " is ", result)
+A: The result of 2 is 4
+
+#6
+Q: What will the following function return?
+def add(x, y):
+  return x+y
+A: The value of x + y
+
+#7
+Q: The output of the following snippet of the code will be:
+def square(i):
+    j = i * i
+    return j
+
+print(square(3))
+A: 9
+
+#8
+Q: The output of the following snippet of the code will be:
+def is_true(a): 
+  return bool(a) 
+
+result = is_true(3<6) 
+print("The result is", result)
+A: True
+
+#9
+Q: The output of the following snippet of the code will be:
+def my_function(x):
+  return 10 / x
+
+print(my_function(2))
+A: 5.0
+
+
+
+
+
+
+
+260. List as argument
+
+List as Arguments
+ > we can also pass a List as an argument to the Function
+ > just remember that we are not passing the value, but the reference, which means that any modification done to the list input inside Function will reflect in original list
+	- to prevent this, we can create a temporary holder for the new list to return
+ 
+EX:
+>>> def multiply_values(list):
+		multiplied_values = []
+		for item in list:
+			multiplied_values.append(item * 2)
+			
+		return multiplied_values
+>>> print(multiply_values([1,2,3]))
+[2,4,6]
+>>> print(multiply_values([-4,-8,-10]))
+[-8,-16,-20]
+>>> print(multiply_values(1))
+TypeError: 'int' object is not iterable
+
+
+
+
+
+
+
+261. Test your knowledge - List as argument
+
+#1
+Q: What is the output of the following snippet:
+def mean_func(list1):
+    return sum(list1) / len(list1)
+
+print(mean_func([5, 2, 2, 4]))
+A: 3.25
+
+#2
+Q: What is the output of the following snippet:
+def double_list(numbers):
+  return 2 * numbers
+
+numbers = [1, 2, 3]
+print(double_list(numbers))
+A: [1,2,3,1,2,3]
+
+#3
+Q: What is the output of the following snippet:
+def my_function(numbers):
+  for i in numbers:
+    print(i*2+10, end=' ')
+
+numbers = [1, 2, 3]
+my_function(numbers)
+A: 12 14 16
+
+#4
+Q: What is the output of the following snippet:
+def mean_func(list1):
+    return sum(list1) / len(list1)
+
+print(mean_func([5, 6, 7, 8])) 
+A: 6.5
+
+#5
+Q: What is the output of the following snippet:
+def get_odd_func(numbers):
+    odd_numbers = [num for num in numbers if num % 2]
+    return odd_numbers
+
+print(get_odd_func([1, 2, 3, 4, 5, 6]))
+A: [1,3,5]
+
+#6
+Q: What is the output of the following snippet:
+def get_odd_func(numbers):
+    odd_numbers = [num for num in numbers if num % 2]
+    return odd_numbers
+
+print(get_odd_func([7, 4, 5, 6, 9, 8, 12]))
+A: [7,5,9]
+
+#7
+Q: What is the output of the following snippet:
+def get_even_func(numbers):
+    even_numbers = [num for num in numbers if not num % 2]
+    return even_numbers
+
+get_even_func([1, 2, 3, 4, 5, 6])
+A: [2,4,6]
+
+#8
+Q: What is the output of the following snippet:
+def my_function(names):
+  for i in names:
+    print(i, end=' ')
+
+names = ["john", "mark", "emmy"]
+my_function(names)
+A: john mark emmy
+
+#9
+Q: What is the output of the following snippet:
+def my_function(numbers):
+  for i in numbers:
+    print(i+1, end=' ')
+
+numbers = [1, 2, 3] 
+my_function(numbers)
+A: 2 3 4
+
+
+
+
+
+
+
+262. Scopes
+
+Scopes
+ > this refers to the scope of available of a certain Object or Function
+ > there are three types of scopes in Python:
+	1. Local Scope
+		- the smallest scope, where a variable si created and assigned a value WITHIN a function
+	2. Enclosing Scope
+		- this scope exist when you have nested functions
+		- its the scope of the enclosing function
+	3. Global scope
+		- the outermost scope, encompassing the entire script or module
+ > for variables defined inside a Function, that said variable is ONLY AVAILABLE within that function
+ > if there are two variable of the same name but different scope, it will prioritize the one in the smallest scope
+	- ex: Local scope > Global scope
+	- ex: if a local and global variable named 'value' is defined, when we use the 'value', the local one takes precedence
+ > only if Python cannot find the said variable in the scope will it look for the outer scopes next
+	- ex: Not found in local scope -> Global scope
+ 
+EX: locally scoped variable called outside the function
+>>> def input_number():
+		result = int(input("Enter a number: ")) * 100
+		return result
+>>> print(result)
+NameError: name 'result' is not defined
+
+
+
+EX: global and local scopes
+>>> num = 100
+>>> def input_number():
+		num = 50
+		result = int(input("Enter a number: ")) * num
+		return result
+
+
+
+Creating Globally scoped variable
+ > to create a globally scoped variable, we will need to use the 'global' keyword
+ 
+EX:
+>>> num = 100
+>>> def input_number():
+		global own_num
+		own_num = 50
+		result = int(input("Enter a number: ")) * own_num
+		return result
+>>> print(own_num)
+50
+
+
+
+
+
+
+
+263. Test your knowledge - Scopes
+
+#1
+Q: What is the output of the following snippet:
+def my_function():
+  global x
+  x = 30
+
+my_function()
+print(x)
+A: 30
+
+#2
+Q: What is the output of the following snippet:
+x = 20
+def my_function():
+  x = 30
+  print(x, end=' ')
+
+my_function()
+print(x, end=' ')
+A: 30 20
+
+#3
+Q: What is the output of the following snippet:
+def myfunc():
+  a = 20
+  print(a)
+
+myfunc()
+A: 20
+
+#4
+Q: What is the output of the following snippet:
+x = 20
+def my_function():
+  x = 30
+  print(x, end=' ')
+
+my_function()
+print(x, end=' ')
+A: 30 20
+
+#5
+Q: What is the output of the following snippet:
+def my_function():
+  def my_inner_function():
+    x = 20
+    print(x)
+  my_inner_function()
+
+my_function()
+A: 20, YES you can define functions inside a function
+
+#6
+Q: What is the output of the following snippet:
+def my_function():
+  def my_inner_function():
+    x = 20
+  print(x)
+  my_inner_function()
+
+my_function()
+A: Error, x is called outside its scope
+
+#7
+Q: What is the output of the following snippet:
+x = 30
+def my_function():
+  global x
+  x = 20
+
+my_function()
+print(x)
+A: 20, YES you can create a global variable with same name, but it will just use the previous variable's value as its new value
+
+#8
+Q: What is the output of the following snippet:
+def my_function():
+  x = 20
+  def my_inner_function():
+    print(x)
+  my_inner_function()
+my_function()
+A: 20
+
+#9
+Q: What is the output of the following snippet:
+x = 20
+def my_function():
+  print(x, end=' ')
+
+my_function()
+print(x, end=' ')
+A: 20 20 
+
+#10
+Q: What is the output of the following snippet:
+def myfunc():
+  a = 20
+
+myfunc()
+print(a)
+A: Error
+
+
+
+
+
+
+
+264. Arguments Explained
+
+Arguments and Memory
+ > for scalar arguments passed, Python creates a COPY of the value of the said variable in memory and assign it to the parameter
+	- this means that if we do modification using the parameters, it will not affect the original value of the variable passed, assuming we didn't pass a literal value
+ > for composite data type arguments like list, Python just passes the reference of the variable's value in memory to the parameter
+	- this means that if we do modification to parameter, it will reflect to the variable's value
+
+EX: Scalar arguments. 'age' variable is not affected when 'num' parameter is modified
+>>> age = 22
+>>> def multiply(num):
+		num *= 2
+		print("In multiply: ", str(num))
+>>> multiply(age)
+In multiply: 44
+>>> print(age)
+22
+
+EX: Composite data type argument, 'nums' list is affected when 'list' parameter is modified
+
+>>> nums = [1,2,3]
+>>> def change_first_item(list):
+		list[0] = 9
+>>> change_first_item(nums)
+[9,2,3]
+
+
+
+
+
+
+265. Test your knowledge - Arguments Explained
+
+#1
+Q: What is the output of the following snippet:
+def sum(a,b):
+    return a+b
+
+print(sum(2,3))
+A: 5
+
+#2
+Q: What is the output of the following snippet:
+def my_function(*argv):  
+    for arg in argv:  
+        print(arg) 
+
+my_function('Hello', 'World!')
+A: 
+Hello
+World!
+
+#3
+Q: What is the output of the following snippet:
+def division(a,b):
+    return a/b
+
+division(8,2)
+A: 4.0
+
+#4
+Q: What is the output of the following snippet:
+def sum(*args):
+    for arg in args:
+        result += arg
+    return result 
+
+print(sum(2,3,1))
+A: Error, no result variable defined
+
+#5
+Q: What is the output of the following snippet:
+def my_function(*argv):
+  print(argv[0])
+
+my_function('Hello', 'World!')
+A: Hello
+
+#6
+Q: What is the output of the following snippet:
+def my_function(*argv):
+  print(argv)
+
+my_function('Hello', 'World!')
+A: ('Hello', 'World!')
+
+#7
+Q: What is the output of the following snippet:
+def my_function(*ages):
+  print("The older friend is " + ages[0] + " years")
+
+my_function("13", "12", "11")
+A: The older friend is 13 years
+
+#8
+Q: What is the output of the following snippet:
+def my_function(arg1, *argv): 
+    print ("First argument:", arg1) 
+    for arg in argv: 
+        print("Next argument:", arg) 
+
+my_function('Welcome', 'to', 'Python!')
+A: 
+First argument: Welcome
+Next argument: to
+Next argument: Python!
+
+#9
+Q: What is the output of the following snippet:
+def my_function(arg1, *argv): 
+    print ("First argument:", arg1) 
+    for arg in argv: 
+        print("Next argument:", arg) 
+
+my_function('Welcome', 'to', 'Python!')
+A: 
+First argument: Welcome
+Next argument: to
+Next argument: Python!

@@ -1,0 +1,320 @@
+Section 40 - Python - Loops
+
+Contents:
+230. Loops - while
+231. Test your knowledge - while
+232. Loops - for
+233. Test your knowledge - for
+
+
+
+230. Loops - while
+
+while
+ > while is used to execute or do something repeatedly, as long as the condition is met in each iteration
+ > once condition is not met, the code inside while loop will not run anymore and code execution continues
+ > 'while' also accepts an else block, whose content will be executed once the condition is not met
+ 
+ 
+Ex:
+
+>>> secret_number = 3
+>>> guess = int(input("Guess a number: "))
+>>> while guess != secret_number:
+		guess = int(input("Guess a number: "))
+	else:
+		print("Congratulations, you got it!")
+		
+Console output:
+Guess a number: 0
+Guess a number: 4
+Guess a number: 3
+Congratulations, you got it!
+>>>
+
+
+
+
+
+231. Test your knowledge - while
+
+#1
+Q. Which statement will check if a is equal to b?
+A. if (a == b): and if a == b:
+
+#2
+Q. What does the following Python program display?
+x = 1
+while ( x < 20 ):
+ x = x * 2
+print(x)
+A. 32
+
+#3
+Q: What is the output when this code executes?
+x = 1
+while ( x <= 5 ):
+  x += 1
+print(x)
+A. 6
+
+#4
+Q: What will be the output of the following Python code?
+i = 5
+while True:
+    if i % 0o11 == 0:
+        break
+    print(i)
+    i += 1
+A. Below is the log output, since 0o11 is equal to 9 in decimal
+5
+6
+7
+8
+9
+
+#5
+Q. What does the following code produce as output?
+i = 1
+x = 3
+sum = 0
+while ( i <= x ):
+ sum += i
+ i += 1
+print(sum)
+A. 6
+
+
+#6
+Q. What will be the output of the following Python code?
+i = 2
+while True:
+    if i%3 == 0:
+        break
+    print(i)
+    i += 2
+A.
+2
+4
+
+#7
+Q. What is the value of x …
+x = 0
+while (x < 50):
+  x+=2
+
+print(x)
+A. 50
+
+#8
+Q. What keyword would you use to add an alternative condition to an if statement?
+A. elif
+
+#9
+Q. What will be the output of the following Python code?
+i = 1
+while True:
+    if i % 0o7 == 0:
+        break
+    print(i)
+    i += 1
+A. Control exits the loop when i becomes 7.
+1
+2
+3
+4
+5
+6
+
+#10
+Q. What will be the output of the following Python code?
+i = 1
+while True:
+    if i%3 == 0:
+        break
+    print(i)
+    i += 1
+A. 
+1
+2
+
+
+
+
+
+
+232. Loops - for
+
+range(int start, int stop, int step)
+ > range is a built in method and is used to return a sequence of number
+ > method overloads are:
+	range(int stop)
+		- prints numbers from 0 to stop-1
+	range(int start, int stop)
+		- prints numbers from start to stop-1
+	range(int start, int stop, int step)
+		- prints numbers from start to stop-1, with step increments
+ > takes three arguments
+	start 	- optional, an integer number specifying at which position to start, default is 0
+	stop	- required, an integer number specifying at which position to stop (not included)
+	step	- optional, an integer number specifying the incrementation. default is 1
+	
+
+
+for loop
+ > for loop are used to iterate a collection
+ > for loops consist of three components
+	1. collection to iterate
+	2. placeholder variable for each item in the collection
+	3. code to execute for each iteration
+	
+SYNTAX:
+for PLACEHOLDER in COLLECTION:
+	CODE_TO_EXECUTE
+	
+	
+EX:
+>>> for i in range(5):
+		print("i is: ", i)
+		
+console:
+i is 0
+i is 1
+i is 2
+i is 3
+i is 4
+		
+
+break, continue for controlling loop flow
+ > break and continue keywords are used to control the code execution inside each iteration
+ > these keyword is called inside the body of the loops
+ > when break is called, the suceeding code in that iteration will not execute, and the entire loop will stop completely
+ > when continue is called, the suceeding code in that iteration will not execute, but the loop will still continue
+ 
+ 
+EX:
+>>> for i in range(5)
+		if(i == 2):
+			continue
+		print("i is: ", i)
+		
+console:
+i is 0
+i is 1
+i is 3
+i is 4
+
+
+
+>>> for i in range(5)
+		if(i == 2):
+			break
+		print("i is: ", i)
+		
+console:
+i is 0
+i is 1
+
+
+
+
+
+
+233: Test your knowledge: Loops - for
+
+#1
+Q. What will be the output of the following Python code snippet?
+x = 'abcd'
+for i in range(len(x)):
+    i.upper()
+print (x)
+A. error, upper() does not exist in integers
+
+
+#2
+Q. What will be the output of the following Python code?
+x = 'abcd'
+for i in range(len(x)):
+    print(i)
+A. 
+0
+1
+2
+3
+
+
+#3
+Q. What will be the output of the following Python code?
+x = 'abcd'
+for i in range(len(x)):
+    print("hello")
+A. 
+hello
+hello
+hello
+hello
+
+
+#4
+Q. What will be the output of the following Python code?
+x = 'abcd'
+for i in x:
+    print(i.upper())
+A. 
+A
+B
+C 
+D
+
+
+#5
+Q. What will be the output of the following Python code?
+x = 'abcd'
+for i in range(x):
+    print(i)
+A. error, range(str) is not a proper method overload
+
+
+#6
+Q. What will be the output of the following Python code?
+x = 2021
+for i in x:
+  print(i)
+A. Error! integer is not a valid collection
+
+
+#7
+Q. We want to iterate over the values from 0 to 10, and print their values. However, we want to skip all the values that are even. How can we achieve this?
+for num in range(0, 11):
+	#your answer should be here 
+print(num)
+A. 
+if num % 2 == 0: continue;
+if num % 2 != 0: print(num);
+
+
+#8
+Q. What will be the output of the following Python code?
+x = 'abcd'
+for i in x:
+    print(i)
+    x.upper()
+A. x is not reassigned to new value 
+a
+b
+c
+d
+
+
+#9
+Q. What will be the output of the following Python code?
+x = 'abcd'
+for num in range(5, 11):
+  print(num)
+A. 
+5
+6
+7
+8
+9
+10

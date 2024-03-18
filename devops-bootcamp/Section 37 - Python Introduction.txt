@@ -1,0 +1,31 @@
+Section 37 - Python Introduction
+
+210. Course Introduction
+211. Objectives
+
+
+210. Course Introduction
+
+Python Institute
+ > present in order to provide benchmark on assessing Python programming skills
+ > provided learning paths from absolute beginner to advanced
+ > provides certifications with different levels
+	1. Entry
+		- PCEP-30-XX
+	2. Associate
+		- PCAP-31-XX
+	3. Professional
+		- PCPP-32-1XX
+		- PCPP-32-2XX
+
+
+
+211. Objectives
+
+Course Objectives
+1. Basic Concepts
+2. Data Types
+3. Operators
+4. Flow Control
+5. Data Collections
+6. Functions

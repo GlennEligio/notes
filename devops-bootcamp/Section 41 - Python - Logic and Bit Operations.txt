@@ -1,0 +1,345 @@
+Section 41 - Python - Logic and Bit Operations
+
+Contents:
+234. Logical Operators
+235. Test your knowledge - Logical Operators
+236. Bitwise Operators
+237. Test your knowledge - Bitwise Operators
+
+
+
+234. Logical Operators
+
+Logical Operators
+ > logical operators are used to evaluate logical expressions 
+ > based on the operator, and the logical expression input(s), it will return either a TRUE or FALSE
+ > in Python, there are three logical operators
+	1. and
+	2. or
+	3. not
+	
+and
+ > and is used to evaluate if two logical expression is true
+ > if both of the expressions are TRUE, then the output of the AND is TRUE
+ > else, it will be FALSE
+ 
+A	B	OUTPUT
+1	1	1
+1	0	0
+0	1	0
+0	0	0
+
+EX:
+>>> age1 = 24
+>>> age2 = 16
+>>> if(age1 >= 18 and age2 >= 18):
+		print("You are both adults")
+		
+		
+or
+ > or is used to evaluate if one of the logical expressions is true
+ > if at least one logical expression is true, it will return TRUE
+ > else, it will be FALSE
+ 
+A	B	OUTPUT
+1	1	1
+1	0	1
+0	1	1
+0	0	0
+
+EX:
+>>> age1 = 24
+>>> age2 = 16
+>>> if(age1 >= 18 and age2 >= 18):
+		print("You are both adults")
+	elif(age1 >= 18 or age2 >= 18):
+		print("One of you is an adult");
+	else:
+		print("You are both children")
+		
+		
+not
+ > not is used to invert the logical expression given
+ > if logical expression is TRUE, the output will be FALSE, and vice versa
+ 
+A	OUTPUT
+1	0
+0	1
+
+EX:
+>>> is_hungry = False
+>>> if(not is_hungry):
+		print("You are not hungry")
+		
+	
+	
+	
+	
+
+235. Test your knowledge - Logical Operators
+
+#1
+Q. What is the output of the following python code?
+x = 6
+print(x > 4 and x < 12)
+A. TRUE
+
+#2
+Q. What will be the output of the following Python code?
+is_hungry = True
+if(not is_hungry):
+  print("You are not hungry")
+else:
+  print("You are hungry")
+A. You are hungry
+
+
+#3
+Q. Which python operator means 'less than or equal to'?
+A. <=
+
+#4
+Q. What is the output of the following python code?
+x = 6
+y = 7
+print(x == y)
+A. False
+
+#5
+Q. Which of the following will evaluate to true?
+A. False or True
+
+#6
+Q. Which python operator means 'bigger than or equal to'?
+A. >=
+
+#7
+Q. What is the output of the following python code?
+x = 6
+print(x > 7 or x < 12)
+A. True
+
+#8
+Q. What will be the output of the following Python code?
+is_hungry = False
+if(not is_hungry):
+  print("You are not hungry")
+else:
+  print("You are hungry")
+A. You are not hungry
+
+
+
+
+
+
+
+236. Bitwise Operators
+
+bin(int)
+ > used to convert an integer into binary data
+
+Bitwise Operators
+ > Bitwise operators allow us to manipulate single bits of data, and return 0 or 1 based on the value of the bits that are used
+ > There are four bitwise operators that we can use
+	1. & (Bitwise AND)
+	2. | (Bitwise OR)
+	3. ^ (Bitwise XOR)
+	4. ~ (Bitwise negation)
+	
+&
+ > used to perform AND operator to the bits of the two binary data used
+
+EX:
+>>> print(bin(15))
+0b1111
+>>> print(bin(22))
+ob10110
+>>> print(15 & 22)
+6
+
+15	0 0 0 0 1 1 1 1
+22 	0 0 0 1 0 1 1 0
+6	0 0 0 0 0 1 1 0
+
+
+|
+ > used to perform OR operator to the bits of the two binary data passed
+
+EX:
+>>> print(15 | 22)
+31
+
+15	0 0 0 0 1 1 1 1
+22 	0 0 0 1 0 1 1 0
+31	0 0 0 1 1 1 1 1
+ 
+ 
+
+^
+ > used to perform XOR operator to the bits of the two binary data passed
+ > XOR returns TRUE if ONLY ONE logical expression is TRUE
+
+EX:
+>>> print(15 ^ 22)
+25
+
+15	0 0 0 0 1 1 1 1
+22 	0 0 0 1 0 1 1 0
+25	0 0 0 1 1 0 0 1
+
+
+
+~
+ > The ~ (bitwise negation) operator yields the bitwise complement of the operand. 
+ > In the binary representation of the result, every bit has the opposite value of the same bit in the binary representation of the operand. 
+ > The operand must have an integral type. 
+ 
+EX:
+>>> print(~22)
+-23
+
+22 	0 0 0 1 0 1 1 0
+-23	1 1 1 0 1 0 0 1
+
+
+
+Shortcut with Bitwise Operators
+ > we could also use shortcuts for the bitwise operators
+ 
+EX:
+bit1 &= 22
+bit1 |= 22
+bit1 ^= 22
+
+
+	
+
+Bit shifting
+ > this is the act of shifting the bits of the data we passed
+ > to do this, we can use two bit shifting operators
+	1. >> (Bit shift right)
+	2. << (Bit Shift left)
+	
+>>
+ > used to move the bits of the binary data to right based on the number of shifts given
+ 
+EX:
+>>> print(22 >> 1)
+11 
+
+22	0 0 0 1 0 1 1 0
+11	0 0 0 0 1 0 1 1
+
+>>> print(22 >> 2)
+5
+
+22	0 0 0 1 0 1 1 0
+5	0 0 0 0 0 1 0 1
+
+
+<<
+ > used to move the bits of the binary data to left based on the number of shifts given
+ 
+EX:
+>>> print(22 << 1)
+44
+
+22	0 0 0 1 0 1 1 0
+44	0 0 1 0 1 1 0 0
+
+
+
+Bit shifting and Arithmetic operations
+ > The output of the bit shifting is similar to the output of the floor division and multiplication operations
+
+EX:
+print(22 // 2)	-> 	print(22 >> 1)
+print(22 // 4)	-> 	print(22 >> 2)
+print(22 * 2)	-> 	print(22 << 1)
+print(22 * 4)	-> 	print(22 << 2)
+
+
+
+
+
+
+237. Test your knowledge - Bitwise Operators
+
+#1
+Q: What will be the output of the following Python expression?
+print(22 << 1)
+A. 44
+
+#2
+Q: Bitwise _ gives 1 if both of the bits is 1 and 0 when either of the bits are 0.
+A: AND
+
+#3
+Q: What will be the output of the following Python code snippet if x=2 ?
+x << 4
+A: 32, 2 * (2 ** 4)
+
+#4
+Q: What will be the output of the following Python expression?
+5^11
+A: 14
+5   0 1 0 1
+11  1 0 1 1
+14  1 1 1 0
+
+#5
+Q: What will be the output of the following Python expression?
+~200
+A: -201 (200 * -1 + 1)
+
+#6
+Q: Bitwise shift operators (<<, >>) has higher precedence than Bitwise AND(&) operator.
+A: TRUE
+
+#7
+Q: What will be the output of the following Python code?
+a = 20
+b = 5
+print("a | b =", a | b)
+A: 21
+20 	1	0	1	0	0
+5	0	0	1	0	1
+21	1	0	1	0	1
+
+#8
+Q: Bitwise _ gives 1 if either of the bits is 1 and 0 when both of the bits are 0.
+A: OR
+
+#9
+Q: What will be the output of the following Python expression?
+int(1001)
+A: 1001, int(binary) takes binary data, which starts with '0b' (e.g. 0b1111)
+
+#10
+Q: Which of the following represents the bitwise XOR operator?
+A: ^
+
+#11
+Q: Bitwise _ gives 1 if either of the bits is 1 and 0 when both of the bits are 1.
+A: XOR
+
+#12
+Q: What will be the output of the following Python code snippet if x=2?
+x << 2
+A: 8 (2 * (2 ** 2))
+
+#13
+Q: What will be the output of the following Python code?
+a = 20
+b = 5
+print("a & b =", a & b)
+A: 4
+20 	1	0	1	0	0
+5	0	0	1	0	1
+4	0	0	1	0	0
+
+#14
+Q: Which operator is used by the or() function?
+A: |
+	

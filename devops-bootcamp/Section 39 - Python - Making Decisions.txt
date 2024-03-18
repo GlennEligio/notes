@@ -1,0 +1,256 @@
+Section 39 - Python - Making Decisions
+
+Contents:
+226. Comparison Operators
+227. Test your Knowledge: Comparison Operators
+228. Conditional Statements
+229. Test your Knowledge: Conditional Statements
+
+
+
+226. Comparison Operators
+
+Comparison Operators
+ > comparison operators are used to compare values
+ > in Python, there are six comparison operators that we can use
+	1. == (Equals)
+	2. != (Not equals)
+	3. > (Greater than)
+	4. >= (Greater than or equal)
+	5. < (Less than)
+	6. <= (Less than or equal)
+ > the comparison is done from left hand side to right
+	- ex: print(2 >= 1) is check if the 2 is greater than or equal to 1
+	
+
+
+
+
+
+227. Test your Knowledge: Comparison Operators
+
+#1
+Q: What is the output when the following executes?
+'python'>'Python'
+A: True, Python checks equality of string by checking the order of the strings (lexicographical ordering, where words are put in dictionary order)
+
+#2
+Q: What is the output when the following executes?
+print(2 < 4)
+A: True
+
+#3
+Q: What is the output of the following python code?
+x = 6
+y = 7
+print(x != y)
+A: True
+
+#4
+Q: What is the output of the following code?
+y = 20
+x = y += 3
+print(x)
+A: SyntaxError
+
+#5
+Q: What would get printed?
+min_score = 13
+score = 13
+
+print(score > min_score)
+print(score <= min_score)
+A: False, then True
+
+
+
+
+
+
+228. Conditional Statements
+
+Conditional Statements
+ > conditional statements are statements that will only be executed if a certain condition is met
+ > this is typically done in order to control the process flow
+ > there are several ways to create a conditional statements
+	1. using 'if' keyword
+ 
+EX: 
+if condition:
+ print("The condition is true!")
+
+if
+ > if is used to create a conditional statements
+ > if needs two things
+	1. condition to check
+	2. code to executed
+ > if the condition is met, then code will be executed
+ > the syntax of using if is:
+	- condition is specified after the 'if' keyword, then a colon(:) is placed at the end
+	- in the next line, an indentation is added, then the code to execute is written
+ 
+# single if
+if condition:
+	code_to_execute;
+	
+# Sample
+if condition:
+ print("The condition is true!")
+
+
+else
+ > else can only be used with an if
+ > the syntax of using else is:
+	- an 'else' declaration must be written after an 'if' declaration
+	- 'else' section is similar to the 'if', except NO CONDITION is written since it uses the one in 'if'
+ > adding an else will allow as to specify code to execute if the condition specified is NOT met
+ 
+# syntax
+if condition:
+	print("The condition is true!")
+else:
+	print("The condition is false!")
+	
+	
+elif
+ > elif is used alongside if
+ > elif provides additional path for execution by adding another condition to pass
+ > similar to if, if the condition is met, the code inside 'elif' will be executed
+ 
+# syntax:
+if condition:
+	print("The condition is true!")
+elif second_condition:
+	print("Only the second condition is true!")
+else:
+	print("The condition is false!")
+	
+	
+Nested conditional statements
+ > it is possible for a conditional statement to include another conditional statements
+ 
+EX:
+if age >= 18:
+	if age == 18:
+		print("You are exactly 18 years old!")
+	else:
+		print("You are older than 18 years old!")
+	
+	
+Usage of parenthesis in conditions
+ > to improve readability, we could also use parenthesis to enclose the conditions
+	
+EX:
+if (age >= 18):
+	if (age == 18):
+		print("You are exactly 18 years old!")
+	else:
+		print("You are older than 18 years old!")
+	
+	
+	
+	
+
+229. Test your Knowledge: Conditional Statements
+
+#1
+Q: Which statement will check if a is equal to b?
+A: if a == b:
+if (a == b):
+
+#2
+Q: What keyword would you use to add an alternative condition to an if statement?
+A elif
+
+#3
+Q: What does the following Python program display?
+x = 3
+if ( x == 0 ):
+  print("Am I here?")
+elif ( x == 3 ):
+  print("Or here?")
+print("Or over here?")
+A: 
+Or here?
+Or over here?
+
+#4
+Q: What is the output of the following python code?
+a = 5
+b = 10
+if b > a:
+print("b is greater than a")
+A: IndentationError
+
+#5
+Q: What is the output of the following python code?
+x = -10
+if x < 0:
+    print("The negative number ",  x, " is not valid here.")
+print("This is always printed")
+A: 
+The negative number -10 is not valid here
+This is always printed
+
+#6
+Q: Which of the following is not a boolean expression?
+A: 3 + 4
+
+#7
+Q: Given the nested if-else below, what will be the value x when the code executed successfully.
+x = 0
+a = 6
+b = 6
+if a > 0:
+    if b < 0: 
+        x = x + 6 
+    elif a > 6:
+        x = x + 5
+    else:
+        x = x + 4
+else:
+    x = x + 3
+
+print(x)
+A: 4
+
+#8
+Q: What is the output of the following python code?
+if 4 + 5 == 10:
+    print("TRUE")
+else:
+    print("FALSE")
+print("TRUE")
+A: 
+FALSE
+TRUE
+
+#9
+Q: What is the output of the following python code?
+a = 5
+b = 10
+if b < a:
+  print("a is greater than b")
+elif a == b:
+  b = 5
+  print("a and b are equal")
+else:
+  print("b is greater than a")
+A: b is greater than a
+
+#10
+Q: Which one of the following if statements will not execute successfully ?
+# 1st if statement
+if True: print('hello')
+
+# 2nd if statement
+if (5,10):
+print('hello')
+
+# 3rd if statement
+if (yes):
+  print('hello')
+
+# 4th if statement
+if (5,10): print('hello')
+A: 2nd and 3rd, tuples like (5,10) is considered True since non-empty tuples are truthy in Python

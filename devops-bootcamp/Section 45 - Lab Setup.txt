@@ -1,0 +1,802 @@
+Section 45 - Lab Setup
+
+270. Virtual Box
+271. Demo - Install VirtualBox on MacOS
+272. Demo - Install VirtualBox on Windows
+273. VirtualBox Connectivity
+274. Demo - Connecting to VM on Mac
+275. Demo - Connecting to VM on Windows
+276. Virtual Box Networking
+277. Demo - Multiple VMs & Networking
+278. Vagrant
+279. Demo - Vagrant
+
+
+
+
+
+270. Virtual Box
+
+Setup Labs - Laptop or Cloud
+1. VirtualBox
+	> Deploying VMs
+	> Multiple VMs
+	> Networking and Troubleshooting Network
+	> Snapshots and Restore VMs
+2. Vagrant Basics
+	
+
+Vagrant
+ > we will use this to automate the deployment of VMs
+ > neat tool that can help us setup a local lab environment very easily
+ 
+ 
+Options for setting up Lab
+1. On-premise
+	> on laptop or computer at home
+2. Cloud
+	> private cloud within your organization, or public cloud provider like AWS, Google, Azure
+	> some cloud provider provide free tier to use their reosurces for free
+
+
+Laptop setup for Lab
+ > Set of tools that we will encounter as DevOps
+	1. Git for VSC
+	2. Jenkins for automation
+	3. Programming language like Java, Python or NodeJS
+	3. Web servers like Apache, Nginx, Tomcat
+	4. Databases like mongoDB, MySQL, PostgreSQL
+	5. Containerization tools like Docker or Kubernetes
+	6. Configuration tools like Ansible, Chef, or Puppet
+	7. Different OS like Ubuntu, CentOS, Fedora
+ > we will be using VM in order to:
+	1. Avoid modifying the laptop host machine
+	2. Easily back up changes made
+		- typically, we can SNAPSHOT a VM in Hypervisors, which let us save all changes we've made inside it	 
+	3. Easily clean up and reset the workspace
+	
+	
+Virtualization Software / Hypervisor
+ > used for creating VMs that we can use for playing, learning, etc
+ > there are several types of Hypervisors
+	1. Type 1
+		- ex: VMware ESX servers, Windows Hyper-V servers
+		- they are installed DIRECTLY on bare metal, such as a laptop or server, and then the VMs are created on that
+		- these are uesd in enterprises and production environments where you need to create and manage large number of virtual machines
+		- As such, these Hypervisor have HIGH resource requirements
+		- They also need to be installed and configured directly on the laptop and they are expensive as well
+	2. Type 2 Hypervisor
+		- ex: Oracle VirtualBox, VMware Workstation
+		- these hypervisors run on an EXISTING operating system 
+		- these allows us to easily get started with virtual machines on our laptops without having to install any other operating system, or re-image our laptop
+		- going forward, when we say HOST operating system, we are referring to the MAIN OS on our laptop
+		- GUEST operating system refers to the VMs that are created on the Hypervisors which are on the operating system
+		
+		
+		
+Oracle VirtualBox or VMware Workstation
+ > for Oracle VirtualBox
+	- FREE
+	- OpenSource
+	- Install Anywhere - Windows, Linux, Mac
+	- Snapshots and Clones
+		= used for backups
+	- Run Multiple VMs
+	- Networking
+		= create separate networks within laptop for different group of VMs
+ > for VMware Workstation
+	- COMMERCIAL
+	- Install Anywhere - Windows, Linux
+	- Snapshots & Clones
+ > for VMWare Player
+	- free version of VMware Workstation
+	- Windows/Linux		
+	- One VM at a time
+	- No Snapshots
+ > VMWare Fusion
+	- Free
+	- Mac
+	- One VM at a time
+	- No Snapshots
+ > Oracle VirtualBox would be the best choice for home lab environment
+ 
+
+Oracle VirtualBox
+ > Support:
+	- Windows, MAC OS X, Linux, Solaris
+	- https://www.virtualbox.org/manual/ch01.html#hostossupport
+ > Resource Requirements:
+	- CPU: x86 Intel or AMD
+	- Memory: 512 MB
+	- Disk space: 30 MB
+ > Recommended Resoruces:
+	- CPU: Dual or Quadcore
+	- Memory: 4GB
+	- Disk space: 100GB
+ > The more the better
+
+
+Creating a new VM in Oracle VirtualBox
+1. Click New button
+2. Configure VM
+	- give it name
+	- specify directory location
+	- OS type: Linux
+	- OS Flavor version: Red Hat (64-bit)]
+		= we will be using CentOS which is a community fork of Red Hat Enterprise Linux
+3. Assign memory resource	
+	- depends on the OS used in VM
+	- 1gb or ram
+4. Select Harddisk
+	- We will be using pre-configured disk with OS pre-installed. These are files with '.vmdk' or '.vdi' extensions
+	- We could get such disk files in OSBOXES
+		= https://www.osboxes.org/
+	- Download disk file that matches the OS type and OS flavor version of VM
+	- to do this, we will select the 'Use an existing virtual hard disk file', and select the .vmdk file
+5. Start the VM in Normal start
+
+
+CentOS 9 disk info
+Username: osboxes
+Password: osboxes.org
+Root Account Password: osboxes.org
+Guest Tools: Open-VM-Tools Installed
+Keyboard Layout: US (Qwerty)
+VMware Compatibility: Version 10+
+
+
+
+NOTES:
+1. The VM itself and the disks of the VM are stored as a file on the host operationg system
+2. While we can assign an empty disk to the VM, we could also use disk with OS pre-installed in it. This way, we don't need to install an OS when we boot up the VM
+
+
+
+
+
+
+
+271. Demo - Install VirtualBox on MacOS
+
+Steps
+1. Install VirtualBox
+2. Open Oracle VM VirtualBox Manager
+3. Download a disk file with pre-installed OS inside
+	- CentOS x64 bit
+4. Create VM
+	- Set OS type to Linux
+	- Set OS flavor version to Red Hat x64
+	- When selecting harddisk, select 'Use an existing virtual hard disk file' option and choose the .vdi file downloaded in step 3
+5. Configure VM
+	- set CPU to 2
+
+
+
+
+
+
+
+272. Demo - Install VirtualBox on Windows
+
+Prerequisites
+1. Have Virtualization enabled in BIOS of machine
+	> if not enabled, 64-bit options in VirtualBox will not be present
+
+Steps
+1. Install VirtualBox
+2. Open Oracle VM VirtualBox Manager
+3. Download a disk file with pre-installed OS inside
+	- CentOS x64 bit
+4. Create VM
+	- Set OS type to Linux
+	- Set OS flavor version to Red Hat x64
+	- When selecting harddisk, select 'Use an existing virtual hard disk file' option and choose the .vdi file downloaded in step 3
+5. Configure VM
+	- set CPU to 2
+	- in Network
+		= set "Bridge Adapter" as Network Adapter to attach to
+			- this way, the VM gets an IP address, as well as it can connect to the internet to download
+6. Start the VM
+	- use credentials shown in the osboxes for the specific OS image
+	
+CentOS 7.8.2003 disk info
+Username: osboxes.org
+Password: osboxes.org
+Root Account Password: osboxes.org
+VB Guest Additions & VMware Tools: Open-vm-Tools Installed
+Keyboard Layout: US (Qwerty)
+VMware Compatibility: Version 10+
+
+
+
+
+
+
+
+
+273. VirtualBox Connectivity
+
+Frequently Asked Questions
+1. How do I connect to the VM?
+2. How do I SSH into my VM?
+3. Why can't I access the server on my VM?
+4. What's Port mapping?
+
+
+Components of our machine as of now
+1. Host machine
+	> this refers to our laptop, and is where the VirtualBox is running
+2. Guest machine
+	> these are the VMs that we are running in the Hypervisor, which in this is the VirtualBox
+	
+
+Interacting with the VMs
+ > to interact with the VM, we can either:
+	1. use the terminal presented when we run the Normal Start
+	2. use different terminal, then access the VM using SSH (Linux VM) or Remote Desktop Tools (Windows VM)
+		- we will be using this method as we want to run the VM in Headless start
+		
+		
+Connecting to the VM
+ > when connecting to the VM, we need to consider the OS type of the VM that is running
+ > for Windows, we need to use Remote Desktop to connect to it
+ > for Linux, we need to connect through SSH using SSH clients
+	- ex: Terminal App in Linux or Mac, and tools like Putty in Windows
+ > in order to communicate with the VMs, these VMs must:
+	1. configured with IP addresses
+	2. the relevant services must be configured
+		- for Windows VM, Remote Desktop Services must be running
+		- for Linux VM, sshd service (ssh server) must be running
+ > for SSH, we can connect to a remote server using 'ssh' command, followed by the IP address of the remote server
+	- ex: ssh 192.168.1.10
+		
+		
+		
+Configuring Linux VM for connection
+1. First, check the ip addresses the Linux VM have
+	> using 'ip addr show' command, we can see the network interfaces the Linux VM is connected to, and the assigned IP address to the VM
+2. Check Network interfaces
+	> if we attached the VM to the Bridge Adapter earlier in Configuration, there should be at least TWO network interfaces
+		a. Loop back interface
+			- the VM will have 127.0.0.1/8 address assigned to it, which is the loop back address
+		b. eth0
+			- interface used for connectivity
+			- this will be the network interface where the host machine is also connected to, incase we selected the Bridge Adapter option earlier
+			- IP address to be assigned to VM will differ, but this IP address can be used by HOST terminal to connect to this VM
+			- EX: 192.168.1.10/24
+			- in case the IP address was not set, you can set the IP using the command below. Note that this will differ based on the OS you are using
+			- $ ip addr add IP_ADDR/SUBNET DEVICE_NAME INTERFACE_NAME
+			- ex: $ ip addr add 192.168.1.10/24 dev eth0
+
+
+Start SSH service
+ > SSH service comes by default with the CentOS image
+ > to check if the daemon is running, use the command below
+	$ service sshd status
+ > if it is not running, start it with command below
+	$ service sshd start
+
+
+
+NOTES:
+1. Normal start in the VirtualBox means the VirtualBox will open a window where we can interact with the VM. This can be seen as a monitor of our VMs
+2. Headless start is where the VM is running in the background with no window attached to it
+	> in this case, we will be using different method of connecting like SSH tunnelling to interact with the VM
+
+
+
+
+
+
+274. Demo - Connecting to VM on Mac
+
+
+Connecting to the VM via SSH
+1. Verify that the SSH service is running
+	$ service sshd status
+2. Turn off VM once confirm that SSH service is running
+3. Edit the VM's network configuration
+	> set Adapter as NAT
+4. Configure Port forwarding of VM
+	> in Advanced section, configure the port forwarding
+		- reason is that we have SSH service running in both host and guest vm, and since they both use port 22, there will be port collision
+	> add rule where
+		- name: SSH
+		- host port: 2222
+		- guest port: 22
+5. Turn on VM
+6. Locate the settings in the VM GUI to connect the VM in the Network interface
+	> for CentOS, it is in the Applications -> System Tools -> Settings -> Network -> Wired
+7. Connect via SSH
+	$ ssh root@127.0.0.1 -p 2222
+
+
+NOTES:
+1. VMs with NAT as the Network Adapter will have the same private internal IP address assigned to the VM by NAT router
+	> this IP address can only be accessed internally 
+	> we can not use this in HOST machine or any other VMs created on this network
+	> all VM with NAT as Network Adapter are ISOLATED
+2. If VM is connected to a Bridge Adapter, it should be in the same network as the HOST machine
+	> this means that if the host have internet connection, the VM should have it too
+	> to test this, ping the google.com
+		- $ ping 8.8.8.8
+3. To make sure the VM is connected to the Network Adapter we set up in VirtualBox, check the VM settings.
+	> for CentOS, go to the GUI,
+	> then Applications -> Settings -> Network
+	> Connect to the Wired by clicking the on button
+
+
+
+
+
+
+
+275. Demo - Connecting to VM on Windows
+
+Configure connection of VM
+1. Open VM settings
+2. Go to Network
+3. Set Adapter to Bridge Adapter
+
+Connecting to the VM via SSH
+1. Turn on VM
+2. Verify that the SSH service is running
+	$ service sshd status
+3. Locate the settings in the VM GUI to connect the VM in the Network interface
+	> for CentOS, it is in the Applications -> System Tools -> Settings -> Network -> Wired
+4. Note the IP address assigned by Bridge Adapter router to the VM
+5. Using the Ip address, connect via SSH
+	$ ssh root@192.168.2.23
+
+
+
+
+
+
+
+
+276. Virtual Box Networking
+
+Objectives
+1. Networking in VirtualBox
+2. Networking Adapters
+3. NAT
+4. Bridge
+5. Host Only
+6. Internet Connectivity
+
+Recap of Knowledge
+
+IP Address
+ > IP address is an address assigned to a server
+ > Computer systems (like our laptops or servers) have different kinds of interfaces or adapters that are used for connectivity	like:
+	- Wired Ethernet interfaces to connect to a LAN network through a hub or a switch using cable
+	- Wireless interfaces to connect to the network through Wifi
+ > Irrespective on how they connect to a network, once they do, they get an IP address ASSIGNED either MANUALLY or DYNAMICALLY
+	- if DHCP server is present in environment, IP address are assigned dynamically to machines connecting to the network
+ > This IP address is assigned to an INTERFACE
+	- ex: we have a laptop that's connected using an ethernet cable to a switch in our home. Once connection is established, our laptop gets an IP address
+	- this network interface is typically named enp#s# which stands for "ethernet network peripheral # serial #"
+
+Network Interface, and IP address assignment
+ > when we run the command below, we can see the network interface (enp0s3), and the IP address assigned to it (192.168.1.5/24)
+	$ ip addr show
+ > in case we connect our laptop using different interface (i.e. wireless), the network interface used for connecting (wlp0s2) will get another IP address assigned to it (192.168.1.6/24)
+ > in this case, the laptop is connected to the network with 2 IP addresses
+	- any other machines connected to the same network can communicate with the laptop using these IP addresses
+ 
+
+VirtualBox Networking
+ > by default, VMs will only have one adapter enabled, and it is attached to NAT
+ > in VirtualBox, there are several types of Adapters that we can attach to the laptop
+	1. NAT
+	2. Bridge Adapter
+	3. Internal network
+	4. Host-only Adapter
+	5. Generic Driver
+	6. NAT Network
+	7. Not attached
+
+VirtualBox Networking - Adapters
+Host-only network
+ > when installed, VirtualBox creates a Host-only network
+ > this network is a private internal network created inside the HOST machine, and HOST and GUEST VM can be connected to it
+	- this means that only the HOST, as well as the GUEST VMs created can access this network
+ 	- this also means that any device connected to this network cannot reach outside (e.g. internet), nor can anyone outside the network reach anyone inside
+ > HOST will be connected to this network and assigned an IP address 
+	
+Creating Host-only network
+ > to configure the host-only networks (Windows)
+	- Tools, click the menu icon
+	- Network, here we should be able to see the list of host-only network, as well as the options to create, remote, or check their properties
+
+Host-only adapter
+ > in order to attach this to a VM, we would need to configure a Host-only network
+ > if the Host-only network is configured, the HOST is assigned an IP address by default
+ > any VMs with Host-only adapters attached to them will be connected to the configured host-only network
+ > we will need to pass the name of the Host-only Adapter
+
+
+Current Network diagram with Host-only
+
+LAN (192.168.1.0)
+ > PC/HOST (assigned 192.168.1.10 from LAN)
+	> host a Host-only network (with 192.168.5.0 as network IP)
+		- PC/HOST is assigned IP address 192.168.5.1 by this network
+	> GUESTVM_1
+		- hosted inside PC/HOST
+		- connected to the Host-only network
+		- assigned ip address 192.168.5.2 by the host-only network
+	> GUESTVM_2
+		- hosted inside PC/HOST
+		- connected to the Host-only network
+		- assigned ip address 192.168.5.3 by the host-only network
+	> GUESTVM_3
+		- hosted inside PC/HOST
+		- connected to the Host-only network
+		- assigned ip address 192.168.5.4 by the host-only network
+	> GUESTVM_4
+		- hosted inside PC/HOST
+		- connected to the Host-only network
+		- assigned ip address 192.168.5.5 by the host-only network
+
+
+
+Network Address Translation (NAT) Network
+ > this network is similar to the host-only network, where it is hosted in the HOST machine
+	- all GUEST VM, and HOST, will be connected to it
+ > except this time, VMs can access network outside the HOST machine
+ > NAT Network have NAT engine (which sits on our HOST) will replace the SOURCE IP (e.g. GUEST VM IP address assigned by NAT Network) with its OWN IP address (i.e. HOST ip address assigned by LAN) when going outside the NAT Network
+ > When the request receives a response, it will again be intercepted by the NAT engine, replacing the SOURCE IP in order to have the response be received the the GUEST VM that sent it
+ 
+EX: Similar setup as above with HOST-ONLY, but the network is replaced by NAT Network. Think of the scenario below:
+ > HOST machine (that contains GUEST VM) and a Database server is connected on the same LAN
+	- LAN (192.168.1.0)
+	- HOST (192.168.1.10, assigned by LAN)
+	- DATABASE (192.168.1.11, assigned by LAN)
+ > HOST machine contains NAT Network created by VirtualBox
+	- NAT Network (192.168.5.0)
+	- HOST machine (192.168.5.1, assigned by NAT)
+ > GUEST VMs created by VirtualBox is also connected to NAT via NAT adapters
+	- GUEST VM 1 (192.168.5.2, assigned by NAT)
+	- GUEST VM 2 (192.168.5.3, assigned by NAT)
+	- GUEST VM 3 (192.168.5.4, assigned by NAT)
+	- GUEST VM 4 (192.168.5.5, assigned by NAT)
+1. If the GUESTVM_4 (192.168.5.2 IP from NAT Network) sends a request to DATABASE (192.168.1.11 from LAN), the packet is first intercepted by NAT
+2. Then the NAT engine will change the source IP from the GUEST VM (192.168.5.2) to the IP of the HOST (192.168.1.10)
+3. Then the request will be received by the database, where it will think that the request comes from the HOST machine itself, unaware of the VM
+3. Database sends a response, which is intercepted by NAT engine again and replaces the SOURCE IP (from DATABASE IP from LAN) to the GUEST VM original IP from NAT Network
+
+Creating a NAT Network 
+ > by default, VirtualBox creates a NAT network upon installation
+ > to configure the host-only networks (Windows)
+	- Tools, click the menu icon
+	- Network, here we should be able to see the several tabs, corresponding to Host-only networks, NAT Networks, and Cloud networks
+	- select NAT Networks, and either create, modify, or remove from the list
+	
+
+NAT vs NAT Network
+ > with NAT selected as ADAPTER, it will be assigned its OWN NAT router
+ > this means that it cannot communicate to other VMs, each VMs is isolated
+ > but similar to NAT Network, they can talk to external systems through the host
+ > in this case, NAT have MORE ISOLATION between the VMs
+
+
+
+Bridge Network
+ > we mainly use Bridge Network in order for EXTERNAL SYSTEM to access VMs
+ > unlike NAT Network or Host-only network, the Bridge network is always present, and we only need to have the VMs to connect to it
+ > the IP address assigned to VM by this Bridge Network is in the same IP range as that of the external LAN network (i.e. where the HOST machine is connected to as well)
+	- they are assigned IPs in the range 192.168.1.x series (e.g. 192.168.1.12)
+	- it is 
+ > this means any devices on that LAN network can see the GUEST VMs connected in Bridge network as just another virtual machine on the network
+ 
+ 
+SETUP: Bridge Network
+ > HOST machine (that contains GUEST VM) and a Database server is connected on the same LAN
+	- LAN (192.168.1.0)
+	- HOST (192.168.1.10, assigned by LAN)
+	- HOST 2 (192.168.1.25, assigned by LAN)
+	- HOST 3 (192.168.1.26, assigned by LAN)
+	- DATABASE (192.168.1.11, assigned by LAN)
+ > HOST machine contains Bridge Network
+	- the network always present
+ > GUEST VMs created by VirtualBox is also connected to Bridge network
+	- GUEST VM 1 (192.168.1.12, assigned by NAT)
+	- GUEST VM 2 (192.168.5.13, assigned by NAT)
+	- GUEST VM 3 (192.168.5.14, assigned by NAT)
+	- GUEST VM 4 (192.168.5.15, assigned by NAT)
+ > HOST 3 can access the GUEST VM 1-4 via the LAN network
+ 
+ 
+Internet connectivity
+ > for NAT or NAT network setup, VMs can still access external network via NETWORK ADDRESS TRANSLATION
+	- this means VMs can still access the internet as long as the host has internet connectivity
+ > for Bridged network, it is an EXTENSION of the external network
+	- this makes the VM just another host on the network
+	- so just like all hosts on a network, the VM should be able to reach the internet easily
+ > for Host-only network, the VMs are on an internal private network. All VMs attached to that internal network can see each other, but they CAN'T connect to any system outside of the host machine
+	- the HOST is connected to TWO networks,
+		a. the internal host where the VMs are connected
+		b. external network that has internet connectivity and to the rest of the network
+	- we can enable the host machine to FORWARD TRAFFIC from internal network to the external network by enabling IP FORWARDING in the HOST
+		- this is disabled by default
+		- this will essentially makes our laptop a ROUTER
+		
+		
+Port Forwarding
+ > Port forwarding allows us to MAP a port from the HOST to a port in the GUEST VM (e.g. port 2222 of HOST to port 22 of GUEST VM)
+ > any traffic that comes in HOST port 2222 will be FORWARDED to port 22 on the GUEST VM
+ > to configure a port forward
+	1. NAT Network
+		- go to Tools -> Network -> NAT networks -> Port forwarding
+	2. NAT
+		- go to Network settings of VM
+		- select NAT as adapter
+		- open Advanced settings
+		- select Port forwarding
+	
+ex:
+# HOST PORT 2222 -> GUEST VM PORT 22
+host> ssh 127.0.0.1 -p 2222
+	- this will be forwarded to port 22 of Guest VM which is for SSH
+ 
+ 
+ 
+ 
+
+277. Demo - Multiple VMs & Networking
+
+Cloning
+ > we typically Clone a VM in order to create a BACK UP of that VM
+ > there are two types of clone
+	1. Full clone
+		- an exact copy (including all virtual hard disk files) of the original virtual machine will be created
+	3. Linked clone
+		- a new machine will be created, but the virtual hard disk files will be tied to the virtual hard disk files of original machine
+		- you will not be able to move the new virtual machine to a different computer without moving th e original as well
+		
+VirtualBox Networking table
+1. VM can reach internet/other systems in the network
+2. VMs can reach each other
+3. Host can reach VM (Without port forwarding)
+4. Other systems in network can reach VM
+
+Solutions
+NAT
+1. YES
+2. NO 
+3. NO 
+4. NO 
+
+NAT Network
+1. YES 
+2. YES 
+3. NO 
+4. NO 
+
+Host Network
+1. NO 
+2. YES 
+3. YES 
+4. NO 
+
+Nost Network + NAT
+1. YES 
+2. YES 
+3. YES 
+4. NO 
+
+Bridged
+1. YES 
+2. YES 
+3. YES 
+4. YES
+
+
+Backing up VM
+ > besides cloning, we can also back up a VM using Snapshots
+ > to create a Snapshot of the VM, right click the menu icon at the VM, then Snapshot
+	- in the window, we can create (Take), delete, or restore VM using Snapshot
+ > we can only restore VM using Snapshot if the VM is powered off
+
+
+
+
+
+
+278. Vagrant
+
+Recap: Steps we've done using VirtualBox
+1. Download disk image with preconfigured OS
+2. Create VM
+3. Create Networks
+4. Configure Networking
+5. Configure Port Forwarding
+6. Boot up VM
+
+
+Vagrant
+ > Vagrant enables the creation and configuration of lightweight, reproducible, and portable development environments.
+ > This means that the steps mentioned above can be automated and simplified by Vagrant
+ > Vagrant is especially useful when you have complex systems involving multiple VMs and if you plan to deploy and manage the entire setup together
+ 
+ 
+Getting Started
+Prerequisites
+1. Vagrant downloaded and install
+
+Initializing Vagrant
+ > to initialize Vagrant, we will need to execute the command 'vagrant init', and passing the vagrant box name
+	- ex: $ vagrant init centos/7
+ > this command will create a Vagrantfile in current directory
+	- this file contains instruction for customizing the box
+	
+Running/Deploying Vagrant environment
+ > to start the Vagrant box, we will need to run the 'vagrant up' command
+ > in this command, the following things happens
+	1. Downloads the OS image required to create the VM
+	2. Creates the VM, gives it a random name
+	3. Configures any settings. such as port forwarding, networking, etc
+	
+Connecting to Vagrant machine
+ > to connect to Vagrant machine, we can use the command 'vagrant ssh'
+ > Vagrant will identify the port configured for port forwarding and use that to SSH
+ > Vagrant also sets up ssh key authentication, so it uses that as well
+
+
+NOTES:
+Vagrant box
+ > A Box is a vagrant term and refers to a PACKAGED FORMAT of a Vagrant environment
+ > It contains an OS image, as well as scripts required to CONFIGURE the environment
+ > To get or search for the list of Vagrant boxes that we can use, visit the link below
+	- https://app.vagrantup.com/
+	
+Vagrantfile
+ > this file contains instruction for customizing the box
+ > for example, contents of the Vagrantfile generated with 'vagrant init centos/7' is as follows
+	- it starts with the configuration block
+	- inside the configuration box, the box version is specified
+ > if we want to configure the Vagrant environment, we will be doing it in thsi file
+	- then we can share the customized Vagrant environment to other through this file
+ > whenever we run the 'vagrant up' command, it will check the Vagrantfile for any changes, and if there is changes, it will apply it to the environment
+
+EX: Vagrantfile
+Vagrant.configure("2") do |config|
+	config.vm.box = "centos/7"
+	
+end
+
+
+EX: Vagrantfile with the following configured
+1. port forwarding configured
+2. mounting of host directory to guest vm directory
+3. configure memory of the vm
+4. execute shell script file inside vm
+
+Vagrant.configure("2") do |config|
+	config.vm.box = "centos/7"
+	config.vm.network "forwarded_port", guest: 80, host: 8080
+	config.vm.synced_folder "../data", "/vagrant_data"
+	config.vm.provider "virtualbox" do |vb|
+		vb.memory = "1024"
+	end
+	config.vm.provision "shell", inline: <<-SHELL
+		apt-get update
+		apt-get install -y apache2
+	SHELL	
+end
+
+
+
+Vagrant Providers
+ > similar to Terraform, Vagrant have multiple provides supported by Vagrant
+ > the list includes:
+	- VirtualBox
+	- VMware
+	- Hyper-V
+	- Docker
+	- Custom
+
+
+
+Commands
+ > we can see the vagrant commands available using the 'vagrant' command itself
+
+Summary of vagrant commands
+1. init	
+	initializes a new Vagrant environment by created a Vagrantfile
+2. up
+	starts and provisions the vagrant environment
+3. suspend
+	suspends the machine
+4. resume
+	resume a suspended vagrant machine
+5. halt
+	stops the vagrant machine
+6. destroy
+	stops and deletes all traces of the vagrant machine
+7. status
+	outputs status of the vagrant machine
+8. reload
+	restart vagrant machine, loads new Vagrantfile configuration
+9. snapshot
+	manages snapshots: saving, restoring, etc.
+ 
+Sample vagrant commands
+1. vagrant init [name [url]]
+ > This initializes the current directory to be a Vagrant environment by creating an initial Vagrantfile if one does not already exist.
+ > If a first argument is given, it will prepopulate the config.vm.box setting in the created Vagrantfile.
+ > If a second argument is given, it will prepopulate the config.vm.box_url setting in the created Vagrantfile.
+ 
+EX:
+vagrant init hashicorp/bionic64
+vagrant init -m hashicorp/bionic64
+
+2. vagrant up
+	> Deploys/Set up the Vagrant environment using the Vagrantfile created by the 'vagrant init' command
+
+
+
+
+
+
+
+
+279. Demo - Vagrant
+
+Downloading and Installing Vagrant
+ > in vagrantup.cm/downloads.html
+ > to validate, execute 'vagrant' command
+ 
+Prerequisites for using Vagrant
+1. Provider for VM
+	> can be VirtualBox, VMware, Hyper-V, etc
+	
+Searching for Vagrant box to use
+ > go to 'app.vagrantup.com' and search for centos/7 box
+	
+Using Vagrant
+ > if we have one or more providers for VM, we must specify the Provider to use
+ > to initialize a Vagrant box, we will need to execute 'vagrant init' then the box name
+	- after executing this, we should see the Vagrantfile generated
+ > inside the Vagrantfile is the template, with ALL of the options COMMENTED OUT except for the base configurations
+	- config.vm.box = "centos/7"
+ > after initializing, we can execute 'vagrant up' to bring up the Vagrant machine
+	- if you want to use different provider, we will need to add --provider option
+	- ex: vagrant up --provider virtualbox
+ 
+Stopping Vagrant machine
+ > to stop vagrant machine, use the 'vagrant halt' command 
+ 
+Reloading the Vagrant machine
+ > if we made changes in Vagrantfile, in order for the changes to take effect, we will need to use 'vagrant reload' command 
+ 
+Powering off Vagrant machine
+ > to power off vagrant machine, use 'vagrant halt' 
+ 
+ 
+Commands:
+vagrant
+vagrant init centos/7
+cat Vagrantfile
+vagrant up
+vagrant status
+vagrant halt
+vagrant status
+vi Vagrantfile
+	- uncomment the following
+		1. Provider block for virtualbox (config.vm.provider, and the end keyword for it)
+		2. vb.memory line inside the provider block
+	- change vb.memory value to "1024"
+	- add 'vb.cpus' option inside the provider block, and pass value to 2
+	- add 'vb.name', and pass value to "my_centos_vm"
+vagrant reload
+	- after this, we will inspect the VM in VirtualBox if the changes we made in Vagrantfile took effect
+vagrant ssh
+	- exit to the VM via 'exit' command inside VM
+vagrant halt
+vagrant status
+vi Vagrantfile
+	- change/add 'config.vm.boot_timeout' config, and set value to 600
+		= 600 

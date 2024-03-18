@@ -1,0 +1,973 @@
+Section 42 - Python - List
+
+Contents:
+238. Lists
+239. Test your knowledge - Lists
+240. Lists - Methods
+241. Test your knowledge - Lists methods
+242. Iterating Lists
+243. Test your knowledge - Iterating Lists
+244. Understanding Lists
+245. Test your knowledge - Understanding Lists
+246. Slicing Lists
+247. Test your knowledge - Slicing Lists
+248. Finding in Lists
+249. Test your knowledge - Finding in Lists
+250. Nested Lists - 2D
+251. Test your knowledge - 2D Nested lists
+252. Nested List - 3D
+253. Test your knowledge - 3D Nested Lists
+
+
+
+
+238. Lists
+
+Lists
+ > list is a collection of elements
+ > each elements is a scalar, and has an index
+	- the very FIRST element in the list has INDEX ZERO
+
+EX:
+>>> countries = ["USA", "Canada", "India"]
+
+
+
+Reading and Changing List elements
+ > to read or update an element in the index, we will need to know the index of the element to read or change
+ > the syntax is as follows
+	- LIST_NAME[INDEX]
+	
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> countries[0] = "UK"
+>>> print(countries[0])
+UK
+
+
+
+len(list)
+ > len function is used to get the LENGTH of a list
+ > this refers to the size of the list
+ 
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> len(countries)
+3
+
+
+
+del
+ > del keyword is used to delete an element in the list
+ > we will need to specify the list, as well as the index of the element to remove
+ > this will update the size of the list, and in extension, the indices of the elements of the list
+	- in example below, "Canada" is remove. this will make the size of list to 2, and the index of "India" to 1
+ 
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> del countries[1]
+
+
+
+Negative index
+ > negative index is also present in the Python list, and is similar to positive indexes
+ > negative index STARTS with -1, which represents the LAST element in the list
+	- then the second last item will be -2, third last item will be -3, and so on
+	
+EX:
+>>> countries = ["USA", "Canada", "India"]
+					0		1		2
+					-3		-2		-1
+
+
+IndexError
+ > if we use an index that is not possible of a list, it will throw an IndexError
+
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> print(countries[4])
+
+
+
+Python Double Colon (::) Syntax with Collection
+ > using double colon in a collection, we can slice a list, or even reverse it
+ > the syntax of the double colon is as follows
+	collection[start:stop:step]
+ > start refers to the starting index, defaults to 0
+ > stop refers to the stopping index
+ > step refers to the steps when reading the elements
+ > passing a -1 to step will set the element reading backward, hence reversing it
+ 
+ 
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> reversed = countries[::-1]
+>>> print(reversed)
+India, Canada, USA
+
+>>> countries = ["USA", "Canada", "India"]
+>>> sliced = countries[::2]
+>>> print(sliced)
+USA, India
+
+
+
+
+
+
+239. Test your knowledge - Lists
+
+#1
+Q: What will be the output of below Python code?
+list1 = [1, 2, 3, 4, 5]
+print(list1[4])
+A. 5
+
+
+#2
+Q: Which of the following will reverse list1=[2,5,3,1]?
+A: list1[::-1]
+
+
+#3
+Q: Which of the following would give an error?
+a. list1=[] + 2
+b. list1=[] ++
+c. list1=["USA", "Canada", "India"]
+d. list=[]
+A: choices a and b
+
+
+#4
+Q: What will be the output of below Python code?
+list1 = [10, 11, 12, 13, 14]
+print(list1[::3])
+A: [10, 13]
+
+
+#5
+Q: What will be the output of below Python code?
+numbers = [1, 2, 3, 4, 5]
+numbers[4] = 6
+print(numbers[4])
+A: 6
+
+
+#6
+Q: What will be the output of below Python code?
+list1 = [1, 2, 3, 4, 5]
+list1[0] = 10
+print(list1)
+A: [10,2,3,4,5]
+
+
+
+
+240. Lists - Methods
+
+Function vs Methods
+ > Python Function and Python Methods works similarly but there are some key differences
+	- Function acts on its own
+	- Method is OWNED by the data that it works for
+ > We can this of the Methods as the Instance methods, and Function as Static Methods in Java
+ 
+ 
+List Methods
+ > in Python's List, we have several methods that we can use to modify the List where they are invoked
+ > this means that we will need an instance of List in order to invoke these methods
+
+ 
+Some List methods
+list.append(item)
+ > append is used to ADD new item at the END of the List
+
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> countries.append("Spain")
+>>> print(countries)
+["USA", "Canada", "India", "Spain"]
+
+
+list.insert(index, item)
+ > insert is used to insert an item on specific index
+ > ex: list.insert(2, "Italy") will insert Italy at index 2. This will push the previous item in index 2 to the index 3, and the item in index 3 to index 4, and so on
+
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> countries.insert(2, "Italy")
+>>> print(countries)
+["USA", "Canada", "Italy","India"]
+
+
+
+Shortcut for swapping position of list's elements
+ > to easily swap the indexes of the list's element, we can use the shortcut syntax below
+	- LIST_NAME[ITEM1_OLD_INDEX], LIST_NAME[ITEM2_OLD_INDEX] = LIST_NAME[ITEM1_NEW_INDEX], LIST_NAME[ITEM2_NEW_INDEX]
+	
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> countries[0], countries[1] = countries[1], countries[0]
+>>> print(countries)
+["Canada", "USA", "India"]
+
+
+
+list.sort()
+ > sorts the elements of the list
+ > by default, it sorts the element ASCENDINGLY (lowest to highest)
+ > this MODIFIES the original array
+ 
+EX:
+>>> ages = [10, 5, 23]
+>>> ages.sort()
+>>> print(ages)
+[5, 10, 23]
+ 
+ 
+ 
+list.reverse()
+ > reverses the order of the element in the list
+
+EX:
+>>> countries = ["USA", "Canada", "India"]
+>>> countries.reverse()
+>>> print(countries)
+["India", "Canada", "USA"]
+ 
+ 
+
+list.pop(index)
+ > removes the element on the specified index
+
+EX:
+>>> list1 = [4, 4, 3, 1]
+>>> list1.pop(2)
+>>> print(list1)
+[4,4,1]
+
+
+
+
+
+
+241. Test your knowledge - Lists methods
+
+#1
+Q: What is the len(list1) for below value?
+list1=['h', 'e', 'l', 'l', 'o']
+A: 5
+
+#2
+Q: What will be the output of below Python code?
+list1=['UK','India','Canada']
+list1.insert(1,8)
+print(list1)
+A: ['UK',8,'India','Canada']
+
+
+#3
+Q: What will be the output of following Python code?
+list1=["Go","Java","C","Python"]
+print(max(list1))
+A: Python
+
+#4
+Q: What will be the output of below Python code?
+num = [4, 4, 3, 1]
+num.sort()
+print(num)
+A: [1,3,4,4]
+
+#5
+Q: What will be the output of below Python code?
+ages = [56, 72, 24, 46]
+ages.sort()
+print(ages)
+A. [24,46,56,72]
+
+#6
+Q: What will be the output of following Python code?
+list1=["Go","Java","C","Rust"]
+print(min(list1))
+A: C
+
+#7
+Q: What will be the output of below Python code?
+list1 = [4, 4, 3, 1]
+list1.pop(2)
+print(list1)
+A: [4,4,1]
+
+#8
+Q: What will be the output of below Python code?
+list1 = [10, 20, 30, 40, 50]
+list1.append(60)
+print(list1)
+A: [10,20,30,40,50,60]
+
+
+
+
+
+
+
+242. Iterating Lists
+
+for loop with List
+ > we could use for loop to iterate each of the element in the list
+ > we will be using similar syntax, where using 'for' and 'in' keyword, as well as the collection to iterate and the placeholder for each element
+ 
+EX:
+>>> ages = [56,72,24,46]
+>>> total = 0
+>>> for age in ages:
+		total += age
+>>> average = total / len(ages)
+>>> print(average)
+49.5
+
+
+
+
+
+
+
+243. Test your knowledge - Iterating Lists
+
+#1
+Q: for i in [9, 1, 5, 6]:, how many times a loop runs ?
+A: 4
+
+#2
+Q: Which of the following statements won’t be printed when this Python code is run?
+for letter in 'KodeKloud':
+    if letter == 'u':
+        continue
+    print('Letter : ' + letter)
+A: Letter u
+
+#3
+Q: Which of the following statements won’t be printed when this Python code is run?
+for letter in 'KodeKloud':
+    if letter == 'e':
+        continue
+    print('Letter : ' + letter)
+A: Letter e
+
+#4
+Q: for i in [1, 1, 7, 0, 6]:, how many times a loop run ?
+A: 5
+
+#5
+Q: How many asterisks will be printed when the following code executes?
+for x in [0, 2, 1, 3]:
+    for y in [0, 4, 1, 2]:
+            print('*')
+A: 16
+
+#6
+Q: How many asterisks will be printed when the following code executes?
+for x in [0, 1, 1, 3]:
+    for y in [0, 2, 1, 2]:
+            print('*')
+A: 16
+
+#7
+Q: What will be printed by the following code when it executes?
+sum = 0
+values = [2,9,1,7]
+for number in values:
+    sum = sum + number
+print(sum)
+A: 19
+
+#8
+Q: What will be printed by the following code when it executes?
+sum = 0
+values = [2,9,1,7]
+for number in values:
+    sum += number
+print(sum)
+A: 19
+
+
+
+
+
+
+244. Understanding Lists
+
+List variables
+ > unlike variable that holds literal values like strings or integers, list variables only contains REFERENCE to the list of values
+ > these types of variables are called REFERENCE VARIABLES in Java
+ > this means that if we we're to create a new list variable and pass another list as its value, the new list variable will only get the reference. This will result in these two list variables references THE SAME list of values
+	- if we modify the contents of the list using the first variable, it will also reflect if we read the values in the second variable
+ > to circumvent this issue, we can use the slice() method when assigning the value of the list to another variable
+	
+EX:
+>>> ages = [92,72,24,46]
+>>> ages2 = ages
+>>> ages[0] = 56
+>>> print(ages2)
+[56,72,24,46]
+
+
+
+
+
+
+245. Test your knowledge - Understanding Lists
+
+#1
+Q: What will be the output of below Python code?
+list1 = [1, 2, 3, 4]
+for i, j in enumerate(list1):
+     print(i, j)
+A: 
+0 1
+1 2
+2 3
+3 4
+
+
+#2
+Q: Which of the following would give an error?
+A: None of the above
+
+
+#3
+Q: What will be the output of below Python code?
+list1 = [10, 11, 12, 13, 14]
+print(list1[0])
+A: 10
+
+
+#4
+Q: What will be the output of below Python code?
+list1 = [10, 11, 12, 13, 14]
+list1.append(15)
+print(list1)
+A: [10,11,12,13,14,15]
+
+
+#5
+Q: What will be the output of below Python code?
+list1 = [[1,2,3,2,5],[4,5,6,7],[8,9,10]]
+for i in list1:
+      if len(i)==3:
+        print(i)
+A: [8,9,10]
+
+
+#6
+Q: What will be the output of below Python code?
+list1 = [[1,2,3,2,5],[4,5,6,7],[8,9,10]]
+for i in list1:
+      if len(i)==4:
+        print(i)
+A: [4,5,6,7]
+
+
+#7
+Q: What will be the output of below Python code?
+list1 = [10, 11, 12, 13, 14]
+print(list1[::1])
+A: [10,11,12,13,14]
+
+
+#8
+Q: What will be the output of below Python code?
+list1 = [1, 2, 3, 4]
+for index, j in enumerate(list1):
+     print(index, j)
+A: 
+0 1
+1 2
+2 3
+3 4
+
+
+#9
+Q: What will be the output of below Python code?
+list1=[4,0,7,1]
+print(list1[::-1])
+A: [1,7,0,4]
+
+
+#10
+Q: What will be the output of below Python code?
+letters = ["A", "B", "C", "D", "E"]
+print(letters[1:])
+A: ["B", "C", "D", "E"]
+
+
+
+
+
+
+
+246. Slicing Lists
+
+Slicing Lists
+ > we can slice a list using square brackets, with the syntax below
+	list_name[start:end]
+ > start is the starting index and WILL BE INCLUDED
+ > end is the ending index, and will NOT be INCLUDED
+ > this will return a 'slice' of the said list
+ > when slicing a list, we are creating a WHOLE NEW LIST in the memory
+	- this means that if we modify the list output of slice, it will NOT AFFECT the original list
+ 
+EX:
+>>> letters = ["A", "B", "C", "D", "E"]
+>>> firstTwo = letters[0:2]
+>>> print(firstTwo)
+["A", "B"] 
+>>> print(letters[1:])
+["B", "C", "D", "E"]
+>>> print(letters[:3])
+["A", "B", "C"]
+>>> print(letters[1:-1])
+["B", "C", "D"]
+>>> print(letters[:])
+["A", "B", "C", "D", "E"]
+>>> del letters[1:3] # deletes element at index 1 to 2
+>>> del letters[:] # deletes all elements
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+247. Test your knowledge - Slicing Lists
+
+#1
+Q: What will be the output of below Python code?
+list1 = [1, 66, "python", [11, 55, "cat"], [ ], 2.22, True]
+print(list1[0:4])
+A: [1, 66, "python", [11, 55, "cat"]]
+
+#2
+Q: What will be the output of below Python code?
+my_list = [0, 1, 2, 3, 4]
+my_list.append("python")
+print(my_list[2:])
+A: [2, 3, 4, "python"]
+
+#3
+Q: What will be the output of below Python code?
+my_list = [0, 1, 2, 3, 4]
+print(my_list[::-1])
+A: [4,3,2,1,0]
+
+#4
+Q: What will be the output of below Python code?
+list1 = [1, 66, "python", [11, 55, "cat"], [ ], 2.22, True]
+print(list1.upper())
+A: Error, upper() is only available for strings
+
+#5
+Q: What will be the output of below Python code?
+my_list = [0, 1, 2, 3, 4]
+print(my_list[::3])
+A: [0,3]
+
+#6
+Q: What will be the output of below Python code?
+my_list = [0, 1, 2, 3, 4]
+print(my_list[2:4])
+A: [2,3]
+
+#7
+Q: What will be the output of below Python code?
+list1 = [1, 66, "python", [11, 55, "cat"], [ ], 2.22, True]
+print(list1[2:4])
+A: ["python", [11, 55, "cat"]]
+
+#8
+Q: What will be the output of below Python code?
+my_list = [0, 1, 2, 3, 4]
+print(my_list[::2])
+A: [0,2,4]
+
+#9
+Q: What will be the output of below Python code?
+my_list = [0, 1, 2, 3, 4]
+my_list.append("python")
+b = my_list[1:]
+print(b)
+A: [1, 2, 3, 4, 'python']
+
+#10
+Q: my_list = [0, 1, 2, 3, 4]
+print(my_list[-1])
+A: 4
+
+
+
+
+
+
+
+248. Finding in Lists
+
+Finding elements in Lists
+ > to check if an element exist in a list, we can use the "in" keyword
+	- ex: ("B" in letters)
+ > to do the opposite, which is to check if element DOES NOT exist in the list, add "not" before the "in"
+	- ex ("B" not in letters)
+	
+EX:
+>>> letters = ["A", "B", "C", "D", "E"]
+>>> print("B" not in letters)
+False
+>>> print("Z" in letters)
+False
+
+
+
+
+
+
+
+249. Test your knowledge - Finding in Lists
+
+#1
+Q: What will be the output of the following Python code?
+list1=[3,4,6,1,2]
+list2=list1
+list1[1]=9
+print(list2)
+A: [3,9,6,1,2]
+
+#2
+Q: What will be the output of the following Python code?
+list1 = [0, 3, 4, 1, 2]
+list1[2:5]=[8,9]
+print(list1)
+A: [0,3,8,9]
+
+#3
+Q: What will be the output of below Python code?
+my_list = [0, 1, 2, 3, 4]
+print(my_list.index(2))
+A: 2
+
+#4
+Q: What will be the output of the following Python code?
+list1 = [0, 3, 4, 1, 2]
+list1[2:4]=[1,2]
+print(list1)
+A: [0,3,1,2,2]
+
+#5
+Q: What will be the output of the following Python code?
+list1=[3,4,6,1,2]
+list2=list1
+list1[0]=9
+print(list2)
+A: [9,4,6,1,2]
+
+#6
+Q: Choose the correct answer if the following list contains the element 'A'. Check if you get "True" in the output.
+Li = ['A','C','b', 1, 3, 4]
+A: 'A' in Li
+
+#7
+Q: What will be the output of below Python code?
+my_list = [0, 3, 4, 1, 2]
+print(my_list.index(1))
+A: 3
+
+#8
+Q: What is the output of the following code:
+(4, 6) not in [(4, 7), (5, 6), "hello"]
+A: True
+
+#9
+Q: What will be the output of the following Python code?
+list1 = [0, 3, 4, 1, 2]
+list1[1]=[8,9]
+print(list1)
+A: [0, [8,9], 4, 1, 2]
+
+#10
+Q: What will be the output of below Python code?
+countries = ["USA", "Canada", "India"]
+countries[0], countries[1] = countries[1], countries[0]
+print(countries)
+A: ["Canada", "USA", "India"]
+
+
+
+
+
+
+
+250. Nested Lists - 2D
+
+Nested Lists
+ > nested list refers to a list that is an element of another list
+ > ex: numbers = [1,2,[3,4],5]
+ 
+ 
+2D Array
+ > 2d array is a list whose elements consist of a list
+ > to access a value in the 2d, we will be using TWO square brackets
+	- this is because the output of first square bracket will be a list again, and so we need to use another set of square brackets
+
+EX:
+>>> classroom = [
+	["Sam", "Max", "Joe"],
+	["Sofie", "Lisa", "Tim'],
+	["Claire", "Sara", "Leo"]
+] 
+>>> student = classroom[2][1]
+>>> print(student)
+"Sara"
+
+
+
+
+
+
+
+251. Test your knowledge - 2D Nested lists
+
+#1
+Q: What will be the output of the following Python code?
+matrix = [[j for j in range(3)] for i in range(3)] 
+print(matrix[1][2])
+A: 2
+
+#2
+Q: What will be the output of the following Python code?
+matrix = [[0, 1, 2], [0, 1, 2], [0, 1, 2]]
+
+matrix2 = []
+
+for submatrix in matrix:
+  for val in submatrix:
+    matrix2.append(val)
+
+print(matrix2[0])
+A: 0
+
+#3
+Q: What will be the output of the following Python code?
+matrix = [[0, 1, 2], [0, 1, 2], [0, 1, 2]]
+
+matrix2 = []
+
+for submatrix in matrix:
+  for val in submatrix:
+    matrix2.append(val)
+
+print(matrix2[2])
+A: 2
+
+#4
+Q: What will be the output of the following Python code?
+matrix = [[j for j in range(3)] for i in range(3)] 
+print(matrix[2][1])
+OUTPUT: [[0, 1, 2], [0, 1, 2], [0, 1, 2]]
+A: 1
+
+#5
+Q: What will be the output of the following Python code?
+countries = [['Egypt', 'USA', 'India'], ['Dubai', 'America', 'Spain'], ['London', 'England', 'France']]
+countries2  = [country for sublist in countries for country in sublist if len(country) < 4]
+print(countries2)
+S: countries if "len(country) < 4" filter is not present
+['Egypt', 'USA', 'India', 'Dubai', 'America', 'Spain', 'London', 'England', 'France']
+A: USA
+
+#6
+Q:Choose the correct answer to define a list “Num” which contains numbers from 1-9 with 3 elements only in the row.
+A: Num = [[1,2,3],[4,5,6],[7,8,9]]
+
+#7
+Q: What will be the output of the following Python code?
+matrix = [[j for j in range(4)] for i in range(4)] 
+print(matrix[3][1])
+A: 1
+
+#8
+Q: What will be the output of the following Python code?
+a = []
+for i in range(5):
+    a.append([])
+    for j in range(5):
+        a[i].append(j)
+
+print(a[2][3])
+A: 3
+
+#9
+Q: What will be the output of the following Python code?
+countries = [['Egypt', 'USA', 'India'],
+       ['Dubai', 'America', 'Spain'], 
+       ['London', 'England', 'France']]
+countries2  = [country for sublist in countries for country in 
+                       sublist if len(country) < 6]
+print(countries2)
+A: ['Egypt', 'USA', 'India', 'Dubai', 'Spain']
+
+#10
+Q: What will be the output of the following Python code?
+a = []
+for i in range(5):
+    a.append([])
+    for j in range(5):
+        a[i].append(j)
+
+print(a[3][3])
+A: 3
+
+#11
+Q: What will be the output of the following Python code?
+a = []
+for i in range(2):
+    a.append([])
+    for j in range(2):
+        a[i].append(j)
+
+print(a)
+A: [[0,1],[0,1]]
+
+
+
+
+
+
+
+
+252. Nested List - 3D
+
+3D Array
+ > 3D Arrays refers to a List, whose elements consist of List, whose element consist of list again
+ > ex: In example below, List2 is the 2D Array, and List1 is the 3D Array
+	List3 = [0, 1, 2]
+	List2 = [List3, List3, List3]
+	List1 = [List2, List2, List2]
+ > to access an element in the 3d array, we will need to use THREE square brackets	
+	- ex: school[0][0][3]
+	
+EX:
+>>> school = [
+	[
+		["Sam", "Max", "Joe"],
+		["Sofie", "Lisa", "Tim'],
+		["Claire", "Sara", "Leo"]
+	],
+	[
+		["Sam", "Max", "Joe"],
+		["Sofie", "Lisa", "Tim'],
+		["Claire", "Sara", "Leo"]
+	],
+	[
+		["Sam", "Max", "Joe"],
+		["Sofie", "Lisa", "Tim'],
+		["Claire", "Sara", "Leo"]
+	]
+]
+>>> student = school[1][1][1]
+>>> print(student)
+Lisa
+
+
+
+
+
+
+
+253. Test your knowledge - 3D Nested Lists
+
+#1
+Q: What will be the output of the following Python code?
+matrix = [[[0, 1, 2], [0, 1, 2], [0, 1, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]]]
+
+matrix2 = []
+
+for submatrix in matrix:
+  for val in submatrix:
+    matrix2.append(val)
+
+print(matrix2[2][2])
+A: 2
+
+
+#2
+Q: What will be the output of the following Python code?
+matrix = [[[0, 1, 2], [0, 1, 2], [0, 1, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]]]
+
+matrix2 = []
+
+for submatrix in matrix:
+  for val in submatrix:
+    matrix2.append(val)
+
+print(matrix2[2])
+A: [0,1,2]
+
+
+#3
+Q: What will be the output of the following Python code?
+matrix = [[[k for k in range(3)] for j in range(3)] for i in range(3)]
+print(matrix[2][1])
+A: [0,1,2]
+
+
+#4
+Q: What will be the output of the following Python code?
+matrix = [[[0, 1, 2], [0, 1, 2], [0, 1, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]]]
+
+matrix2 = []
+
+for submatrix in matrix:
+  for val in submatrix:
+    matrix2.append(val)
+
+print(matrix2[2][0])
+A: 0
+
+
+#5
+Q: What will be the output of the following Python code?
+matrix = [[[0, 1, 2], [0, 1, 2], [0, 1, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]], [[0, 1, 2], [0, 1, 2], [0, 1, 2]]]
+print(matrix[0][0][0])
+A: 0
+
+
+#6
+Q: Choose the correct answer to get the “Red” color from the following list:
+Colors= [ [['Blue','Green','White','Black']], [['Green','Blue','White','Yellow']] , [['White','Blue','Red','Green']] ]
+A: print(Colors[2][0][2])
+
+
+#7
+Q: What will be the output of the following Python code?
+matrix = [[[k for k in range(3)] for j in range(3)] for i in range(3)]
+print(matrix[1][2])
+A: [0,1,2]
+
+
+#8
+Q: What will be the output of the following Python code?
+matrix = [[[k for k in range(3)] for j in range(3)] for i in range(3)]
+print(matrix[0][0][1])
+A: 1
+
+
+#9
+Q: What will be the output of the following Python code?
+matrix = [[[k for k in range(3)] for j in range(3)] for i in range(3)]
+print(matrix[1][1][1])
+A: 1
+
+
+#10
+Q: Choose the correct code to get the third element in the second row, Regarding the following list :
+Colors = [ ['Red', 'Green', 'White', 'Black'], ['Green', 'Blue', 'White', 'Yellow'] ,['White', 'Blue', 'Green', 'Red'] ]
+A: print(Colors[1][2])

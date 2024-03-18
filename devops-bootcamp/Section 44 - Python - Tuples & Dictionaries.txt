@@ -1,0 +1,409 @@
+Section 44 - Tuples and Dictionaries
+
+Contents:
+266. Tuples
+267. Test your knowledge - Tuples
+268. Dictionaries
+269. Test your knowledge - Dictionaries
+
+
+266. Tuples
+
+Tuples
+ > we can think of tuples as IMMUTABLE COLLECTION
+ > Immutable means that the contents of the collection CANNOT be changed
+ > similar to a collection, we could use many of the list methods in Tuples, except those that changes the collection (e.g. list.append())
+ > also, the contents of the tuple can be of ANY TYPE
+	- ex: tuple = (1, "Lydia", age, (1,2))
+ > to create a tuple, we can do either of the following:
+	1. list a comma separated values, enclosed by parenthesis
+		- ex: tuple1 = (1,2,3)
+	2. list a comma separated values
+		- ex: tuple1 = 1,2,3
+ > we could also create a single element tuples
+	- ex: tuple = (1,) or tuple = 1, 
+	
+	
+EX:
+>>> tuple1 = (1, 2, 3)
+>>> print(tuple1)
+(1, 2, 3)
+>>> tuple2 = 1, 2, 3
+>>> print(tuple2)
+(1, 2, 3)
+
+
+>>> tuple1 = (1, 2, 3)
+>>> for item in tuple1:
+		print(item)
+1
+2
+3
+>>> print(tuple1[0:1])
+(0, 1)
+
+EX: Editing tuple
+>>> tuple1 = (1, 2, 3)
+>>> tuple1.append(4)
+AttributeError: 'tuple' object has no attribute 'append'
+
+>>> tuple1[4] = 9
+TypeError: 'tuple' object does not support item assignment
+
+>> del tuple1[1]
+TypeError: 'tuple' object doesn't support item deletion
+
+
+
+
+
+
+
+
+
+
+267. Test your knowledge - Tuples
+
+#1
+Q: What is the output of the following snippet: 
+x = tuple(3)
+print(x)
+A: Error, no comma used for single element tuple
+
+#2
+Q: Which of the following is used to create a tuple called tuple1 which contains numbers from 1 to 5?
+A: tuple1 = 1,2,3,4,5 or tuple1 = (1,2,3,4,5)
+
+#3
+Q: Access value 30 from the following tuple:
+a = (10, [20, 30], 40, 50)
+A: a[1][1]
+
+#4
+Q: A …. is a collection of items that are ordered, unchangeable, and allow duplicate values.
+A. Tuple
+
+#5
+Q: Write a Python program to create an empty tuple:
+A: x = ()
+
+#6
+Q: Access value 30 from the following tuple:
+a = (10, 20, 30, 40, 50)
+A: a[2]
+
+#7
+Q: What is the output of the following command if the tuple1 has values (0,1,2,3,4,5) :
+print(tuple1[0:4])
+A: (0,1,2,3)
+
+#8
+Q: Write a Python program to create a tuple with different data types:
+print(x)
+A: x = ("john", True, 2.2, 2)
+
+#9
+Q: What is the output of the following snippet:
+a = (10, 20, 30, 40, 50)
+a = a[::-1]
+print(a)
+A: (50,40,30,20,10)
+
+#10
+Q: What is the output of the following command if the tuple1 has values (1,2,3,4,5) :
+print(tuple1.append(6))
+A: AttributeError
+
+#11
+Q: …. is one of the data types in Python that used to store collections of data.
+A: List, Tuple, Set, Dictionary
+
+#12
+
+
+
+
+
+
+268. Dictionaries
+
+Dictionaries
+ > Dictionaries are variables that stores data in a key-value pairs
+ > They are similar to Maps in Java
+ > The syntax for the dictionary value is similar to a json string
+ > To get a specific value, we will need to use the key mapped to it
+	- ex: dictionary["key"] # value
+ > If we use key that is not present in the dictionary, it will throw an error
+ 
+EX:
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_"
+		"joe": "joejoe",
+	}
+>>> print(usernames["sarah"])
+"sarah123"
+>>> print(usernames["anotherone"])
+KeyError: 'anotherone'
+
+
+Dictionary methods
+ > there are several dictionary methods that are available for us to use
+	- dictionary.keys()
+	- dictionary.values()
+	- dictionary.items()
+	- dictionary.update()
+	- dictionary.clear()
+	- dictionary.popitem()
+	
+dictionary.keys()
+ > returns an iterable keys list
+ > we can use these keys in order to iterate through the dictionary
+	- reason is that we cannot use the methods we normally use to iterate a List, Set, or Tuple
+	
+EX:
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_"
+		"joe": "joejoe",
+	}
+>>> for key in usernames.keys():
+		print(key + " - " + usernames[key])
+lydia - lydiahallie
+sarah - sarah123
+max - max_
+joe - joejoe
+
+
+dictionary.values()
+ > returns an iterable values list of the dictionary
+ 
+EX:
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_"
+		"joe": "joejoe",
+	}
+>>> print(usernames.values())
+dict_values(['lydiahallie', 'sarah123', 'max_', 'joejoe'])
+
+
+dictionary.items()
+ > returns an iterable key value pairs of the dictionary, represented each by a tuple
+ 
+EX:
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_"
+		"joe": "joejoe",
+	}
+>>> print(usernames.items())
+dict_values([
+	('lydia', 'lydiahallie'),
+	('sarah', 'sarah123'),
+	('max', 'max_'),
+	('joe', 'joejoe')
+])
+
+
+
+Modifying a value in Dictionary
+ > modifying a value in dictionary is similar to modifying element in list
+ > instead of index, we will pass the key mapped to the said value
+ 
+EX:
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_"
+		"joe": "joejoe",
+	}
+>>> usernames["max"] = "max123"
+>>> print(usernames["max"])
+max123
+
+
+dictionary.update(dictionary)
+ > updates the dictionary by adding the dictionary we passed
+ > essentially, it will add any key value pair present in input to the current dictionary
+ 
+EX:
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_",
+		"joe": "joejoe",
+	}
+>>> usernames.update({ "chloe": "chloe123" })
+>>> print(usernames)
+usernames = {
+	"lydia": "lydiahallie",
+	"sarah": "sarah123",
+	"max": "max_",
+	"joe": "joejoe",
+	"chloe": "chloe123"
+}
+
+
+
+Deleting key value pair in a dictionary
+ > to delete a key value pair, we will also use the 'del' keyword
+ > we will be passing the key for the key value pair as input
+
+EX: 
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_",
+		"joe": "joejoe",
+	}
+>>> del usernames["max"]
+>>> print(usernames)
+usernames = {
+	"lydia": "lydiahallie",
+	"sarah": "sarah123",
+	"joe": "joejoe"
+}
+
+
+dictionary.clear()
+ > removes all key value pairs in the dictionary
+
+EX:
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_",
+		"joe": "joejoe",
+	}
+>>> usernames.clear()
+>>> print(usernames)
+usernames = {}
+
+
+dictionary.popitem()
+ > removes the last key value pair in the dictionary
+
+EX:
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_",
+		"joe": "joejoe",
+	}
+>>> usernames.popitem()
+>>> print(usernames)
+usernames = {
+	"lydia": "lydiahallie",
+	"sarah": "sarah123",
+	"max": "max_"
+}
+
+
+dictionary.copy()
+ > return a new dictionary with same content as the source dictionary
+
+EX: 
+>>> usernames = {
+		"lydia": "lydiahallie",
+		"sarah": "sarah123",
+		"max": "max_",
+		"joe": "joejoe",
+	}
+>>> usernames_copy = usernames.copy()
+>>> print(usernames_copy)
+{
+	"lydia": "lydiahallie",
+	"sarah": "sarah123",
+	"max": "max_",
+	"joe": "joejoe"
+}
+
+
+
+
+
+
+269. Test your knowledge - Dictionaries
+
+#1
+Q: A dictionary is a collection that is …, … and …
+A: Ordered, changeable, does not allow duplicates
+
+#2
+Q: What is the output of the following snippet code:
+testdict = {
+  "brand": "Samsung",
+  "ram": "3",
+  "Os": "Android",
+  "year": 2020
+}
+
+testdict.update({'brand':'oppo' })
+print(testdict)
+A: {'brand':'oppo', 'ram':'3', 'Os':'Android', 'year':2020}
+
+#3
+Q: Which of the following method is used to delete a brand's key and its value from the following dictionar
+testdict = {'brand': 'oppo', 'ram': '3', 'Os': 'Android', 'year': 2020}
+A: del testdict['brand']
+
+#4
+Q: What is the output of the following snippet code:
+testdict = {
+  "brand": "Samsung",
+  "ram": "3",
+  "Os": "Android",
+  "year": 2020
+}
+
+print(testdict.items())
+A: dict_items([('brand', 'Samsung'), ('ram', '3'), ('Os', 'Android'), ('year', 2020)])
+
+#5
+Q: …. is one of the dictionary built-in methods that used to delete the last item from the dictionary.
+A. dictionary.popitem()
+
+#6
+Q: …. is one of the dictionary built-in methods that used to delete all items from the dictionary.
+A: dictionary.clear()
+
+#7
+Q: What is the output of the following snippet code:
+testdict = {
+  "brand": "apple",
+  "ram": "3",
+  "year": 2020,
+  "year": 2021
+}
+
+print(testdict)
+A: {'brand': 'apple', 'ram': '3', 'year': 2021}
+
+#8
+Q: A …. is a collection that is ordered, changeable, and does not allow duplicates.
+A: Dictionary
+
+#9
+Q: …. is one of the dictionary built-in methods.
+A: dictionary.keys(), dictionary.values(), dictionary.items(), dictionary.update()
+
+#10
+Q: What is the output of the following snippet code:
+testdict = {
+  "brand": "Samsung",
+  "ram": "3",
+  "Os": "Android",
+  "year": 2020
+}
+
+print(testdict.keys())
+A: dict_keys(['brand', 'ram', 'Os', 'year'])
+
+#11
+Q: Dictionaries are used to store data values in key-value pairs.
+A: True

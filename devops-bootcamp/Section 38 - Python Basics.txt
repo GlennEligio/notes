@@ -1,0 +1,761 @@
+Section 38 - Python Basics
+
+Contents:
+212. Print Function
+213. Test your knowledge
+214. Literals
+215. Test your knowledge
+216. Operators
+217. Test your knowledge
+218. Variables
+219. Test your knowledge
+220. Comments
+221. Test your knowledge
+222. Input
+223. Test your knowledge
+224. String Methods
+225. Test your knowledge
+ 
+ 
+ 
+212. Print Function
+
+Functions
+ > a part of the code that's used to cause an effect or evaluate a value
+ > example function is the 'print' to print something in the console
+ > functions can come from the following:
+	1. Python (built-in functions)
+	2. Modules
+		- this includes built-in modules provided by Python, as well as the third party modules we installed
+	3. Your own code
+		- we can create our own functions as well
+		
+Arguments
+ > arguments are the inputs that we pass to the functions
+ > not all functions need to have arguments
+ > some functions can take more than one arguments
+ 
+ 
+Keyword arguments
+ > keyword arguments are special arguments that can change how the function behaves
+ > the syntax of these arguments is:
+	arg_name=arg_value
+ 
+SYNTAX of creating function
+function_name (Type argument_name_1, Type argument_name_2) {
+  // function body
+}
+
+SYNTAX of calling a function
+function_name(Object arg1, Object arg2)
+
+SYNTAX of using keyword argument
+function_name(Object arg1, keyword_arg=value)
+
+Ex:
+print("Hello future Python programmer!")
+print("Hello", end="")
+
+Function Execution steps - Python
+1. Checks function name
+	- if function is built in, it browsers the internals in order to find an existing function with that name
+	- if no function found, execution is aborted
+2. Checks argument passed
+	- it checks if the arguments passed matches to one of the function's expected set of argument
+	- it checks the type of the said arguments
+	- if the arguments have invalidated, Python leaves your code for a moment and jumps into the code of the function that we want to invoke
+3. Jumps into the function
+4. Executes the function
+5. Returns to your code
+6. Resumes execution
+
+
+
+
+Example functions:
+print(String s)
+ > a built in function
+ > prints the input string passed into the console
+	- ex:
+		print("Hello future Python programmer!")
+ > adding a \n substring in the string input will turn it into NEWLINE
+	- ex:
+		print("Hello \nfuture Python programmer!")
+ > passing multiple arguments will result in them being concatenated, separated by a space when printed out
+	- ex:
+		print("Hello", "future", "Python", "programmer!")
+ > keyword arguments includes:
+	end: String
+		- specifies the text passed at the end of the string output of the print()
+		- by default, it uses the NEWLINE
+		- this 'end' keyword can be seen when executing TWO print() functions
+			= if we pass empty string on the first print(), both of them will be printed on the SAME line
+			= else, if we didn't specify end value, it will default on using NEWLINE, hence the outputs will be printed in different lines
+	sep: String
+		- specifies the separator to be used when printing multiple string arguments
+		- default is the space
+		
+EX:
+print("Hi", "Hello", sep="! ", end="<3\n");
+print("So", "enjoying Python?", sep=", ", end=":)");
+
+# OUTPUT
+Hi! Hello<3
+So, enjoying Python?:)	
+	
+	
+
+
+213. Test your knowledge
+
+#1
+Q: The output of the following code will be:
+print('My age is ' + 25)
+A: TypeError
+
+
+#2
+Q: Is it possible to pass multiple arguments to a function?
+A: Yes
+
+#3
+Q: What is the output of the following python code?
+print(1, 2, 3, 4, sep='#', end='&')
+A: 1#2#3#4&
+
+#4
+Q: What is the special character that is used for a new line?
+A: \n
+
+#5
+Q: What is the output of the following python code?
+print("Hello" + " " "future" + " " "python!")
+A: Hello future python!
+
+#6
+Q: _______ …. is a block of code that only runs when it is called and used to cause an effect or evaluate a value.
+A: Function
+
+#7
+Q: The …. function prints the specified message to the screen, or another standard output device.
+A: print()
+
+214. Literals
+
+Literals
+ > they are the literal values that we use, different from the variables where we do not know their value itself
+	- ex: 
+		= 200
+		= "Hello!"
+		= "Python"
+		= -89
+ > There are FOUR Literal types
+	1. Integers
+		- Octal numbers
+		- Hexadecimal numbers
+	2. Floating point numbers
+	3. Strings
+	4. Booleans
+	
+	
+Integers
+ > an integer is a number that doesn't have a fraction
+	- ex: 200, 12908901, -90, 1_000_000
+ > underscores in integer are ignored by Python and is there only for readablity
+	- ex: 1_000_000
+ > for octal integers
+	- they all start with 0o (a zero, and small O)
+	- they are calculate with base 8
+	- EX: 
+		0o123 = (1 x 8^2) + (2 x 8^1) + (3 x 8^0) = 64+16+3 = 83 in decimal
+ > for hexadecimal integers
+	- they start with 0x (a zero, and small X)
+	- they are calculated with base 16
+	- ex:
+		0o123 = (1 x 16^2) + (2 x 16^1) + (3 x 16^0) = 256+32+3 = 291 in decimal
+		
+		
+Floating point numbers
+ > floating point numbers has a NON EMPTY decimal fraction
+	- ex: 45.50, -90.0, 12.1, 89.394
+ > numbers that contain a lot of decimals can also be written with an E in order to represent the number
+	- ex: 0.0000001 = 1e-7
+	
+
+String
+ > used to represent text
+ > Python recognizes string as text values enclosed with either double quotes ("), or single quotes (')
+	- ex: "Python", 'Python'
+ > we can add literal single quote inside a String by using double quote as enclosing symbol
+	- ex: "Hello! 'Python' is cool" will retain the single quote
+ > we can add literal double quote inside a String by using backslash to escape them
+	- ex: "Hello! \"Python\" is cool"
+
+
+Booleans
+ > there are two possible boolean values, True and False
+ > we can also represent truthfulness numerically using 1 (True) and 0 (False)
+ 
+ 
+
+
+215. Test your knowledge
+
+#1
+Q: Strings can be enclosed in double or single quotes.
+A: True
+
+#2
+Q: What is the data type of print(type(45.50))?
+A: float
+
+#3
+Q: What is the numerical value for boolean True?
+A: 1
+
+#4
+Q: …. is one of the literal types in Python.
+A: Numeric, Boolean, String
+
+#5
+Q: …. can be created by writing a text(a group of Characters ) surrounded by the single(") or double(" ")quotes.
+A: String literals
+
+#6
+Q: What is the data type of print(type(1_00_0000_000))?
+A: Integer
+
+#7
+Q: What is the data type of print(type(10))?
+A: integer
+
+
+
+
+216. Operators
+
+Operators 
+ > used to calculate certain values using inputs
+ > in Python, there are seven arithmetic operators
+	1. + Add
+	2. - Subtract
+	3. * Multiply
+		- for output
+			a. if both input are integers, the output will be an integer
+			b. if one of the input is a float, the output will be a float as well
+	4. / Divide
+		- for output, it will always be float
+	5. // Floor Divide
+		- for output
+			a. if both input are integers, the output will be an integer
+			b. if one of the input is a float, the output will be a float as well
+		- also round DOWN the output (for negative, it will be the lowest number)
+			= ex: 6 // 4 will be 1.0, wherein 6 / 4 will be 1.5
+			= ex: 6. // -4 will be -2.0, wherein 6. / -4 will be -1.5
+	6. % Modulo
+		- used for calculating remainder
+		- typically uses whole numbers as inputs
+	7. ** Exponential
+		- ex: 2**3 = 8
+		- for output
+			a. if both input are integers, the output will be an integer
+			b. if one of the input is a float, the output will be a float as well
+
+
+Binary vs Unary Operators
+ > binary operators needs at least TWO inputs in order to function
+ > unary operators can work even if theres only ONE input
+	- example is the minus sign. -6 will be read as negative 6
+	
+	
+Operator priority
+ > we can use two or more operators in a single operation
+ > but these operators will follow a priority
+ > from highest to lowest priority, the priority ranking goes as follows
+	+ -	(unary)
+	**
+	* / // %
+	+ - binary
+ > if the operators are on the same level, we will calculate it from the LEFT HAND SIDE
+ > ex:
+	print(10 - 6 ** 2 / 9 * 10 + 1)
+	print(10 - 36 / 9 * 10 + 1)
+	print(10 - 4 * 10 + 1)
+	print(10 - 40 + 1)
+	print(-29)
+	
+	
+
+Sub expressions
+ > sub expressions are expression inside an expression
+ > they are denoted by parenthesis
+ > these sub expression are CALCULATED first before the outside expression
+ > ex:
+	print(2 * (2+3))
+	print(2 * 5)
+	print(10)
+	
+	
+	
+
+217. Test you knowledge: Operators
+
+#1
+Q: What is the output of the following python code?
+print(13 / 4 + 13 % 4)
+A: 4.25
+
+#2
+Q: Fill in the missing operators:
+20 ... 5 ... 4 = 16.0
+A: / and *
+
+#3
+Q: What is the output of the following python code?
+print(10 - 6 ** 2 / 9 * 10 + 1)
+A: -29.0
+S: 10 - 36 / 9 * 10 + 1
+10 - 4 * 10 + 1
+10 - 40 + 1
+-30 + 1
+-29
+
+#4
+Q: What is the output of the following python code?
+print(2 ** 3)
+A: 8
+
+#5
+Q: What is the value of the expression 100 / 50 ?
+A: 2.0
+
+#6
+Q: What is the output of the following python code?
+print(2 ** 3.)
+A: 8.0
+
+#7
+Q: What is the output of print(2 * 3 ** 3 * 4)?
+A: 216
+S: 2 * 27 * 4
+54 * 4
+216
+
+#8
+Q: What does the following print?
+x = 10 / 4
+y = 5 / 2.0
+print (x + y)
+A: 5.0
+
+#9
+Q: What is the output of the following python code?
+print(9 % 4)
+A: 1
+
+#10
+Q: What is the output of the following python code?
+print(6. // 4)
+A: 1.0
+
+#11
+Q: What is the output of the following python code?
+print(10 / 2)
+A: 5.0
+
+#12
+Q: What is the output of the following python code?
+print(2*(2+3))
+A: 10
+
+
+
+
+218. Variables
+
+Variable
+ > a variable is used to hold a value
+ > to create a variable, use the syntax below
+	VARIABLE_NAME = VALUE
+ > using the equal sign, we can assign literal values to a variable
+	ex: amount_of_apples = 2
+	
+EX:
+>>> amount_of_apples = 2
+>>> cost_of_apple = 5
+>>> print(amount_of_apples * cost_of_apple)
+10
+
+
+Variable naming rules
+1. Variable name can be composed of uppercase and lowercase letters, digits, and an underscores
+	- valid: amount_of_apples
+	- invalid: am*unt_o%_app|es	
+2. The name of a variable must begin with a letter or an underscore
+	- valid: _total_cost, cost_of_apple
+	- invalid: 5apples_cost
+3. Upper and lowercase letters are treated as different variables
+	- ex: cost_of_apple is not equal to COST_OF_APPLE
+4. The name of the variable cannot be one of the Python's reserved workds
+	> these includes but not limited to
+		- False
+		- True
+		- None
+		- and
+		- as
+	> if needed, we can do so, but we will need to change the casing
+		- ex: And, As, Class
+		
+EX:
+>>> amount_of_apples = 2
+>>> cost_of_apple = 7
+>>> cost_of_apple = cost_of_apple + 2
+>>> print(amount_of_apples * cost_of_apple)
+14		
+		
+		
+		
+Shortcut operators
+ > shortcut operators is used to shorten an operation
+ > these uses the arithmetic operations we've just discussed earlier
+ > the syntax will be (OPERATOR)=
+	- ex: +=
+ > these shortcut operators are used when the operation includes the variable as the input
+ > we typically use this when reassigning new values to variable, and the initial variable value will be used
+	- ex:
+		cost_of_apple += 2 is similar to cost_of_apple = cost_of_apple + 2
+		cost_of_apple -= 2 is similar to cost_of_apple = cost_of_apple - 2
+		
+	
+
+Text and Variables in print function
+ > we can combine text and variables using the + operator in the print function
+
+EX:
+>>> print("One apple costs: " + str(cost_of_apple))
+"One apple costs: 5"
+
+
+
+
+219: Test your Knowledge: Variables
+
+#1
+Q: In Python, a variable must be declared before it is assigned a value:
+A: False
+
+#2
+Q: Which of the following is correct regarding variables in Python?
+S: Choices
+1. Variable names in Python cannot start with a number. However, it can contain the number in any other position of the variable name.
+2. Data type of variable names should not be declared
+3. Variable names can start with an underscore
+4. All of the above
+A: 4. All of the above
+
+#3
+Q: Which of the following are keywords in Python
+S: Choices
+1. return
+2. finally
+3. int
+4. All of the above
+5. float
+A: return and finally
+
+#4
+Q: What is the output of the following python code?
+amount = 4
+cost = 2
+cost += 2
+print(amount * cost)
+A: 16
+
+#5
+Q: What would get printed to the console?
+age = 22
+AGE = 44
+age /= 2
+print(age + AGE)
+A: 55.0
+
+#6
+Q: Which of the following are valid Python variable names?
+Choices:
+_st
+Age
+1st_student
+class
+A: _st and Age
+
+#7
+Q: Which of the following variable names are valid?
+2timesage = 44
+Function = "function"
+name = "Lydia"
+not = "Don't do that!"
+A: Function, name
+
+#8
+Q: What is the output of the following python code?
+y = 5
+y = "Jack"
+print(y)
+A: "Jack"
+
+#9
+Q: True is what type of variable?
+A: boolean
+
+#10
+Q: Which of the following is a valid variable name in Python?
+Choices
+1do
+do+1
+do it
+All of the above
+None of the above
+A: None of the above
+
+#11
+Q: Which of the following statements assigns the value 50 to the variable x in Python:
+A: x = 50
+
+
+
+
+
+220. Comments
+
+Comments
+ > comments are added to help developers
+ > Developers might write these in order to add tips or hints to a specific set of code
+ > To create a one line comment, add hash at the start of line (#)
+ > Comments are ignored by the Python
+ 
+Use cases for comments
+1. Add additional explanation to a code snippet
+2. Remove unwanted code snippet
+
+EX:
+>>> amount_of_apples = 2 # Amount in basket
+
+# The cost of an apple in USD
+# Should always be an integer
+>>> cost_of_apple = 5
+
+
+NOTES:
+1. Aim for a self documenting code instead of relying entirely on comments
+	> one way to do this is to make variables self-explanatory 
+	
+	
+	
+	
+221: Test your Knowledge: Comments
+
+#1
+Q: Comments can be used to ….
+Choices
+1. Comment out code that you don't want to execute
+2. explain Python code
+3. Make the code more readable
+4. None of the above
+A: 1, 2, 3
+
+
+#2
+Q: What is the output of the following python code?
+name = "Sally"# employee name
+ 
+data = "#123" 
+print (name+data)
+A: Sally#123
+
+#3
+Q: Which character is used in Python to make a single line comment?
+A: #
+
+#4
+Q: A comment in Python starts with the hash character(#) and extends to the end of the physical line.
+A: True
+
+#5
+Q: What is the output of the following python code?
+print("line1")
+#print("line2")
+print("#line3")
+A: 
+line1
+#line3
+
+#6
+Q: What is the output of the following python code?
+#x = 5
+#y = 6
+z = 7
+print(x+y+z)
+A: NameError
+
+#7
+Q: You can use Python comments inline, on independent lines, or on multiple lines to include larger documentation.
+A: True
+
+#8
+Q: What is the output of the following python code?
+#print("Hello, jack!")
+print("Hello, Sally!")
+A: Hello, Sally!
+
+
+
+
+222. Input
+
+input(String message): String
+ > input function is used to give prompt to user in order for them to provide input
+ > returns a string, which is the input provided by the user, regardless on what user provides
+	- if user provides a number, it will be a string with that number as text
+	- important to take note if we want to use input in an arithmetic operation
+ > takes an optional parameter that can be used in order to write a message before the user input
+
+ 
+EX:
+>>> favorite_color = input("What is your favorite color? ")
+>>> print("Your favorite color is " + favorite_color)
+
+What is your favorite color? blue
+Your favorite color is blue
+
+
+
+Type casting
+ > type casting is where we cast a value from one type to another
+ > to do so, we will need type casting functions corresponding to the type destination
+	- ex: int(), float(), str(), etc
+	
+EX:
+>>> age = input("How old are you? ")
+>>> print(int(age) - 10)
+How old are you? 22
+12
+
+
+Deaf program
+ > if a program that does not use any input function, it is called a deaf program
+ 
+ 
+ 
+
+223: Test your knowledge: Input
+
+#1
+Q: What is the input function?
+A: A function that allows us to ask the user to enter some data
+
+#2
+Q: What is the output of the following python code if we enter 25 as input?
+age =input("My age is: " )
+print (age)
+A: 25
+
+#3
+Q: What is the output of the following python code if we enter “Hello Python” as input?
+inputString = input('Enter a string: ')
+print(inputString, sep='#', end='&')
+A: Hello Python&
+
+#4
+Q: What will be printed when the following executes?
+print(int(15.5)-10)
+A: 5, int() returns a rounded down value if float is passed
+
+#5
+Q: In Python3, Whatever you enter as input, the input() function converts it into a string.
+A: True
+
+#6
+Q: The input() method returns string value. So, if we want to perform arithmetic operations, we need to cast the value first.
+A: True
+
+
+
+
+
+
+
+
+224. String methods
+
+String operations
+ > we can use some arithmetic operations on the strings
+	1. +
+		- this will contatenate the strings
+		- ex: print("Hello " + "there") # "Hello there"
+	2. *
+		- this will repeat the string by N times, and concatenate them together
+		- ex: print("ha" * 10) # "hahahahahahahahahaha"
+		- multiple with 0 or a negative value will result in string being an empty string
+		- ex: print ("ha" * 0) # ""			-> print("ha" * -2) # ""
+		
+		
+Type cast to Strings
+ > to type case something (e.g. int and floats) to string, we can use the str() function
+	- ex:
+		>>> print(int("22"))
+		22
+		>>> print(str(22))
+		"22"
+		
+		
+
+
+
+225: Test your knowledge: String methods
+
+#1
+Q: Which method should you use in order to convert the input into a string correctly:
+year_of_birth = int(input("In what year were you born? "))
+print("You were born in " + ...(year_of_birth))
+A: str
+
+#2
+Q: What is the output of the following python code?
+x = 5
+y = "Sally"
+print(str(x) + y)
+A: 5Sally
+
+#3
+Q: What is the output of the following python code if we enter 5 as input?
+Num = input("Enter a Number: ") 
+print (Num * 3 )
+A: 555
+
+#4
+Q: Which operator you can use to perform string concatenation?
+A: +
+
+#5
+Q: What is the output of the following python code if we enter “HelloPython” as input?
+inputString = input('Enter a string: ')
+print(inputString*2)
+A: HelloPythonHelloPython
+
+#6
+Q: What is the output of the following python code if we enter 5 as input?
+Num = input("Enter a Number: ")
+Num = int(Num) 
+print ( Num * 3 )
+A: 15
+
+#7
+Q: All string methods return new values and the original string values will be changed with the new values.
+A: False
+
+#8
+Q: What will be printed when the following executes?
+print("ha"*2)
+A: haha
+
+  

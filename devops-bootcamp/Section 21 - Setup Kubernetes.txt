@@ -1,0 +1,79 @@
+Section 21 - Setup Kubernetes
+
+119. Kubernetes Setup - Introduction and Minikube
+
+Setup Kubernetes
+1. Locally hosted or on-premise
+	> Minikube and MicroK8s
+		- solutions for developers or those who want to play around and learn Kubernetes
+	> Kubeadm
+		- used to bootstrap and manage production grade Kubernetes clusters
+2. Cloud hosted
+	> GCP, AWS, Azure
+3. Lab hosted
+	> provided by KodeKloud
+	> we can access right on our browser
+
+
+Minikube
+ > with Minikube, all of the components are BUNDLED into a single image, providing us a pre-configured SINGLE NODE Kubernetes cluster so we can get started in a matter of minute
+ > minikube provides an executable command line utility that will automatically download the ISO and deploy it in a virtualization platform such as Oracle, VirtualBox, or VMWare Fusio
+	- this means that we must have a HYPERVISION installed on our system
+	
+Kubectl
+ > kubectl is a CLI tool that we must install
+ > using this CLI tool, we can interact with the K8s cluster
+
+
+
+
+
+
+120. Demo - Minikube-Setup
+
+
+Steps
+1. Install kubectl
+2. Install minikube
+3. Enable Virtualization in the BIOS
+4. Start minikube
+5. Check minikube status
+6. Use kubectl to interact with k8s cluster
+	> get nodes
+	> deploy 'echoserver' docker image as deployment
+		- this will show the status of k8s cluster
+	> configure service to expose echoserver
+	> access echoserver service using the service
+
+NOTES:
+1. kubectl CLI tool must be installed before we install minikube
+
+
+
+
+
+
+
+121. Reference
+
+Install and set up the kubectl tool: –
+
+https://kubernetes.io/docs/tasks/tools/
+
+Install Minikube: –
+
+https://minikube.sigs.k8s.io/docs/start/
+
+Install VirtualBox: –
+
+https://www.virtualbox.org/wiki/Downloads
+
+https://www.virtualbox.org/wiki/Linux_Downloads
+
+Minikube Tutorial: –
+
+https://kubernetes.io/docs/tutorials/hello-minikube/
+
+If the minikube installation has been done on the macOS, then to access the URL on the local browser, we need to do a few steps to get the service URL to work. Those steps are covered on this documentation page: –
+
+https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-service-with-tunnel
